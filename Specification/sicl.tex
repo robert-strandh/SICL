@@ -1,0 +1,370 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{alltt}
+\usepackage{moreverb}
+\usepackage{epsfig}
+% \usepackage{makeidx}
+
+\setlength{\parskip}{0.3cm}
+\setlength{\parindent}{0cm}
+
+\def\sysname{SICL}
+
+\def\inputfig#1{\input #1}
+\def\inputtex#1{\input #1}
+
+\title{{\Huge \sysname{}}\\
+A new Common Lisp system}
+
+\author{Robert Strandh}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\sysname{} (which doesn't mean anything in particular; pronounce it
+like ``sickle'') is a project with the purpose of creating a new
+Common Lisp system.  The plan is to write it in different layers.  The
+upper layers should be written entirely in Common Lisp so as to allow
+the code to be incorporated into different implementations without
+modifications.  The lower layers should use as few primitives as
+possible, without sacrificing performance.  We think it is important
+that the code of \sysname{} be of very high quality.  To that end, we
+would like for error messages to be as explicit as possible.  Macros,
+for instance, would have to do extensive syntax analysis so as to
+prevent error messages from being phrased in terms of expanded code.
+
+To gain wide acceptance, \sysname{} should be in the public domain.
+\end{abstract}
+
+\section{Introduction}
+
+We think there is room for a new Common Lisp system, provided that it
+is different from existing systems in some crucial ways.
+
+For one thing, we would like for \sysname{} to be \emph{layered}.  The
+upper layers will contain code that is not performance critical.  This
+code will be written entirely in Common Lisp.  To avoid circular
+references, we will specify what lower-level Common Lisp primitives
+can be used to write functions in the upper layer.  If done well, code
+in this layer could be used by all free Common Lisp implementations,
+which could save considerable maintenance effort.  Examples of
+functionality in this layer would be formatted output,
+pretty-printing, and macros that can expand to portable Common Lisp
+code. 
+
+Intermediate layers will contain code that needs careful tuning to
+obtain performance, but where the tuning can be handled by writing
+different versions of the code for different cases.  For instance,
+functions that work on all kinds of sequences might have special
+versions for lists and vectors.  Similarly, such functions might have
+special versions for common values of the \texttt{:test} (such as
+the Common Lisp functions \texttt{\#:eq}, \texttt{\#:eql}, etc.)
+and \texttt{:key} arguments (such as \texttt{\#:identity},
+\texttt{\#:car}, etc).  These special cases should be handled by using
+compiler macros. 
+
+Lower layers will have to rely more and more on
+implementation-specific details, and will have to introduce
+implementation-specific primitives to be used in implementations of
+standard Common Lisp constructs.  We might provide several different
+versions of code in this layer for different low-level assumptions.
+
+A major goal of \sysname{} is to provide high-quality code.  By this,
+we do not only mean that it should be bug-free as much as possible,
+but also that it should have good documentation strings and clear
+comments when required.  Error messages should be as explicit as
+possible, and code should be written to capture as many exceptional
+situations as is possible without performance penalties.  Macro
+expansion code should do everything possible to capture as many errors
+as possible so that error reporting can be done in terms of code
+written by the programmer, as opposed to in terms of expanded code. 
+
+\section{Coding style}
+
+\subsection{Commenting}
+
+\subsection{Designators for symbol names}
+
+Always use uninterned symbols (such as \texttt{\#:hello}) whenever a
+string designator for a symbol name is called for.  In particular,
+this is useful in \texttt{defpackage} and \texttt{in-package} forms.
+
+Using the upper-case equivalent string makes the code break whenever
+the reader is case-sensitive (and it looks strange that the designator
+has a different case from the way symbol that it designates is then
+used), and using keywords unnecessarily clutters the keyword package.
+
+\section{TYPECASE and CASE}
+
+The compiler should generate very fast code for TYPECASE, at least
+when the types tested are known to be mutually exclusive and typically
+encoded in tag bits.  For this reason, TYPECASE cannot be a macro that
+expands to COND or IF (well, I guess it could, but that seem backwards).
+
+The compiler should also generate very fast code for CASE, at least
+when the cases are small integers.  
+
+Higher-level code should be able to rely on the fast implementation of
+these primitives. 
+
+\section{Low-level special operators}
+
+(this section is contrary to what I wrote in the first version.  I am
+now convinced that modern optimization technology can handle arbitrary
+tagbodies)
+
+Iteration primitives, including LOOP should compile to TAGBODY.  From
+a TAGBODY, the compiler then generates basic blocks that can then be
+optimized by known compiler technology.  The TAGBODY can contain only
+function calls, SETQs, GOs, and a conditional goto in the form of
+(when <var> (go <tag>)) [is this possible?].
+
+The special operator LET* is considered as simple as possible.  The
+LET operator is expanded to LET* (using variable renaming).  **Is this
+really important?
+
+\section{Runtime information}
+
+The compiler will generate runtime information available both to the
+debugger and to the garbage collector.  For each value of the program
+counter, all registers and stack frame locations will have accessible
+type information.  Maintaining this type information does not require
+any runtime overhead.  All that is required is a mapping from a
+program counter value to a block of runtime information. 
+
+A location (register, stack frame location) can have one of different
+types of values.  On the topmost level of abstraction, there are three
+possibilities for each location:
+
+\begin{itemize}
+\item Unused.  The location does not contain any accessible object.
+\item Tagged Lisp value.  This is the most general type.  It covers
+  every possible Lisp value.  The garbage collector must trace the
+  object contained in this location according to its type, which the
+  garbage collector itself has to test for. 
+  \begin{itemize}
+  \item Immediate Lisp value.  This type is given for tagged Lisp values
+    that are not required to be traced by the garbage collector. 
+  \item Lisp pointer.  This type is given for all tagged Lisp values
+    that are represented by pointers to heap-allocated objects.  
+  \end{itemize}
+\item Raw machine value.  No location will be tagged with this type,
+  but instead with any of the subtypes given below.
+  \begin{itemize}
+  \item Raw immediate machine value
+    \begin{itemize}
+      \item Raw integer.
+      \item Raw Unicode character.
+    \end{itemize}
+  \item Raw machine pointer
+    \begin{itemize}
+    \item Raw machine pointer to a cons cell.  
+    \item Raw machine pointer to the first element of a simple array. 
+    \item Raw machine pointer to the beginning of an instance of
+    standard-class. 
+    \item Raw machine pointer that may point inside another object.
+    In this case, the location has to be indicated as \emph{tied} to
+    another location that contains either a Lisp pointer or a raw
+    machine pointer to a known type of object.  This possibility will
+    be used when (say) a pointer to an array is stored in some
+    location, and this location contains an offset into that array.
+    The garbage collector will modify this pointer value by the same
+    amount as the one it is tied to. 
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+Low-level functions such as masking out tag bits will generate raw
+pointer values.  The compiler must generate code to keep a tagged
+pointer to the original object, unless there is a special type from
+which the type information of the original object can be inferred. 
+
+A number of functions will be provided that manipulate raw values,
+such as arithmetic on raw integers, pointer arithmetic, loading from
+and storing to memory, etc.  In order to be able to use such a
+function, the compiler must be given enough type information to infer
+the correct type of the arguments.  Conversely, functions that return
+a value of a type other than a subtype of tagged Lisp value, must be
+known to the compiler so as to forbid any use of such a value in a
+context that requires a tagged Lisp value, and the compiler must
+apply enough type inference to detect such cases. 
+
+\section{Compiler}
+
+The compiler should be as portable as possible.  It should use
+portable Common Lisp for as many of the passes as possible.  
+
+The compiler should keep information about which registers are live,
+and how values are represented in live registers, for all values of
+the program counter.  This information is used by the garbage
+collector to determine what registers should be scanned, and how.   It
+is also used by the debugger.  
+
+The compiler should do some extensive type inferencing.  It should be
+able to eliminate code for which the result of executing it is known
+as a result of the contents of the compilation environment.  
+
+\subsection{Phase 1}
+
+In phase 1 of the compilation, each expression is first converted into
+a CLOS class (say this better; expressions are already instances of
+CLOS classes) that corresponds directly to the expression itself.  
+Each special operator (\texttt{let}, \texttt{progn}, \texttt{setq},
+\texttt{if}, etc) corresponds to a class, and there is a class
+corresponding to a function call, to a variable reference, and to a
+constant.  The advantage of this representation is that variables are
+no longer represented by their names but by a class instance.  This
+implies that variable bindings can be freely moved around without the
+risk of any captures.  
+
+After conversion to class instances, each nested expression is
+\emph{normalized} in several steps.  In the first step, each
+expression that supplies a single value to another expression is
+converted into first normal form as follows:
+
+\begin{itemize}
+\item A variable reference is already in first normal form.
+\item A constant expression \texttt{c} is converted into first normal
+  form by creating a \texttt{let} form \texttt{(let ((b c)) b)} where
+  \texttt{v} is a new binding. 
+\item An expression such as \texttt{(setq var expr)} is converted into
+  first normal form by converting \texttt{expr} into first normal
+  form.
+\item An expression such as \texttt{(if test then else)} is converted
+  into first normal form by converting each sub-expression into first
+  normal form.
+\item An expression such as \texttt{(let ((v1 e1) (v2 e2) ... (vn en))
+  body)} is converted into first normal form by converting each
+  \texttt{ei} and the \texttt{body} into first normal form.
+\item An expression such as \texttt{(progn e1 e2 ... en)} is converted
+  to first normal form by converting \texttt{en} to first normal
+  form.  The other expressions do not supply values to other
+  expressions.  However, these other expressions may contain other
+  expressions that need to be converted to first normal form.
+\item A function call expression such as \texttt{(f a1 a2 ... an)} is
+  converted to first normal form by creating a \texttt{let} form
+  \texttt{(let ((v1 aa1) (v2 aa2) ... (vn aan)) (f v1 v2 ... vn))}
+  where \texttt{vi} are new bindings, and \texttt{aai} is \texttt{ai}
+  converted into first normal form.
+\end{itemize}
+
+A second normalization phase gathers up all bindings to the outermost
+level, and converts all the \texttt{let} forms into \texttt{progn}
+forms as follows: \texttt{(let ((v1 e1) (v2 e2) ... (vn en)) body)}
+becomes \texttt{(progn (setq v1 e1) (setq v2 e2) ... (setq vn en)
+  body)}.
+
+
+
+
+\section{Macros}
+
+\section{Compiler macros}
+
+{\sysname} will make extensive use of compiler macros.  Compiler
+macros are part of the standard, so this mechanism must be part of a
+conforming compiler anyway.  In many cases, instead of encoding
+special knowledge in the compiler itself, we can use compiler macros.
+By doing it this way, we simplify the compiler.
+
+We propose using compiler macros at least for the following
+situations: 
+
+\begin{itemize}
+\item to convert calls to \texttt{list} and \texttt{list*} into nested
+  calls to \texttt{cons};
+\item to convert simple calls to some built-in functions that accept
+  \texttt{:test} and \texttt{:key} keyword arguments (such as
+  \texttt{find}, \texttt{member}, etc) into calls to
+  special versions of these procedures with particularly simple
+  functions for these keyword arguments (\texttt{identity},
+  \texttt{car}, \texttt{eq}, etc);
+\item to convert calls to some functions that accept optional
+  arguments such as \texttt{last} and \texttt{butlast} into calls to
+  special versions when the optional argument is not given.
+\end{itemize}
+
+\section{Inlining}
+
+\section{Conditions and restarts}
+
+\sysname{} functions should signal conditions whenever this is
+required by the Lisp standard (of course) and whenever it is
+\emph{allowed} by the Lisp standard and reasonably efficient to do
+so.  If the standard allows for subclasses of indicated signals (I
+think this is the case), then \sysname{} should generate as specific a
+signal as possible, and the signal should contain as much information
+as possible in order to make it as easy as possible to find out where
+the problem is located. 
+
+\sysname{} function should also provide restarts whenever this is
+practical. 
+
+\section{Assertions}
+
+\section{Threading and thread safety}
+
+Consider locking free.  We predict that a technique call ``speculative
+lock elision'' will soon be available in all main processors. 
+
+\section{Generic-function dispatch}
+
+\section{Garbage collection}
+
+\section{Internationalization}
+
+We would like for {\sysname} to have the ability to report messages in
+the local language if desired.  The way we would like to do that is to
+have it report conditions according to a \texttt{language} object.  To
+accomplish this, condition reporting trampolines to an
+implementation-specific function \texttt{sicl:report-condition} which
+takes the condition, a stream, and a language as arguments.
+
+The value of the special variable \texttt{sicl:*language*} is passed
+by the condition-reporting function to \texttt{sicl:report-condition}.
+
+In other words, the default \texttt{:report} function for conditions is:
+
+\begin{verbatim}
+   (lambda (condition stream) 
+     (sicl:report-condition condition stream sicl:*language*))
+\end{verbatim}
+
+Similarly, the Common Lisp function \texttt{documentation} should
+trampoline to a function that uses the value of
+\texttt{sicl:*language*} to determine which language to use to show
+the documentation. 
+
+\section{Debugger}
+
+\section{Source code tracking}
+
+\section{Tracing}
+
+Tracing should not use the method used by some Common Lisp
+implementations to encapsulate the traced function inside a
+trace-reporting function.
+
+\section{Package structure}
+
+{\sysname} has a main package containing and exporting all Common Lisp
+symbols.  It contains no other symbols.  A number of implementation
+packages import the symbols from this package, and might define
+internal symbols as well.  Implementation packages may export symbols
+to be used by other implementation packages.
+
+This package structure allows us to isolate implementation-dependent
+symbols in different packages.  
+
+\section{Metering}
+
+Just as was the case with the Multics system, we think it is important
+to be able to meter as many system functions as possible.  We suggest
+adding such meters in every place where something measurable is going
+on, and where adding a meter does not significantly degrade
+performance.  
+
+\end{document}
