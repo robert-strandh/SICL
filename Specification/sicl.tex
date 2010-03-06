@@ -237,7 +237,7 @@ converted into first normal form as follows:
 \begin{itemize}
 \item A variable reference is already in first normal form.
 \item A constant expression \texttt{c} is converted into first normal
-  form by creating a \texttt{let} form \texttt{(let ((b c)) b)} where
+  form by creating a \texttt{let} form \texttt{(let ((v c)) b)} where
   \texttt{v} is a new binding. 
 \item An expression such as \texttt{(setq var expr)} is converted into
   first normal form by converting \texttt{expr} into first normal
