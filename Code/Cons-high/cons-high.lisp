@@ -74,7 +74,7 @@
 (define-c*r-function sixth   "ADDDDD")
 (define-c*r-function seventh "ADDDDDD")
 (define-c*r-function eighth  "ADDDDDDD")
-(define-c*r-function nineth  "ADDDDDDDD")
+(define-c*r-function ninth  "ADDDDDDDD")
 (define-c*r-function tenth   "ADDDDDDDDD")
 
 (defun generate-setf-c*r-message (function-name prefix)
@@ -156,7 +156,7 @@
 (define-setf-c*r-function sixth   "ADDDDD")
 (define-setf-c*r-function seventh "ADDDDDD")
 (define-setf-c*r-function eighth  "ADDDDDDD")
-(define-setf-c*r-function nineth  "ADDDDDDDD")
+(define-setf-c*r-function ninth  "ADDDDDDDD")
 (define-setf-c*r-function tenth   "ADDDDDDDDD")
 
 ;;; this implementation assumes that there is no 
