@@ -1,5 +1,116 @@
 (in-package :sicl.cons.high)
 
+;;; We want for error messages to be phrased in terms of a construct
+;;; that was directly used by the user's code.  So for instance, if
+;;; the user code had a call to CADDR, giving it a list where the CDDR
+;;; is not a list, we would like the error message to mention that,
+;;; and not for instance that CAR was given a non-list. 
+
+(defun generate-c*r-message (function-name prefix)
+  (if (null prefix)
+      (format nil
+              "The function ~a was given an argument~@
+               that is neither NIL nor a CONS cell"
+              function-name)
+      (format nil
+              "The function ~a was given a list whose ~@
+               C~{~a~}R is neither NIL nor a CONS cell"
+              function-name
+              (reverse prefix))))
+
+;;; FIXME fix the error messsage to signal a particular condition
+(defmacro define-c*r-function (function-name letters)
+  (flet ((primitive (letter)
+           (if (eql letter #\A) 'car 'cdr)))
+    (flet ((one-iteration (letter prefix)
+             `(if (null remaining)
+                  (return-from ,function-name nil)
+                  (if (consp remaining)
+                      (setf remaining
+                            (,(primitive letter) remaining))
+                      (error ,(generate-c*r-message function-name
+                                                    prefix))))))
+      `(defun ,function-name (list)
+         (let ((remaining list))
+           ,@(loop for letter across (reverse letters)
+                   collect (one-iteration letter prefix)
+                   collect letter into prefix)
+           remaining))))))
+
+(define-c*r-function caar "AA")
+(define-c*r-function cadr "AD")
+(define-c*r-function cdar "DA")
+(define-c*r-function cddr "DD")
+(define-c*r-function caaar "AAA")
+(define-c*r-function caadr "AAD")
+(define-c*r-function cadar "ADA")
+(define-c*r-function caddr "ADD")
+(define-c*r-function cdaar "DAA")
+(define-c*r-function cdadr "DAD")
+(define-c*r-function cddar "DDA")
+(define-c*r-function cdddr "DDD")
+(define-c*r-function caaaar "AAAA")
+(define-c*r-function caaadr "AAAD")
+(define-c*r-function caadar "AADA")
+(define-c*r-function caaddr "AADD")
+(define-c*r-function cadaar "ADAA")
+(define-c*r-function cadadr "ADAD")
+(define-c*r-function caddar "ADDA")
+(define-c*r-function cadddr "ADDD")
+(define-c*r-function cdaaar "DAAA")
+(define-c*r-function cdaadr "DAAD")
+(define-c*r-function cdadar "DADA")
+(define-c*r-function cdaddr "DADD")
+(define-c*r-function cddaar "DDAA")
+(define-c*r-function cddadr "DDAD")
+(define-c*r-function cdddar "DDDA")
+(define-c*r-function cddddr "DDDD")
+
+(define-c*r-function first   "A")
+(define-c*r-function second  "AD")
+(define-c*r-function third   "ADD")
+(define-c*r-function fourth  "ADDD")
+(define-c*r-function fifth   "ADDDD")
+(define-c*r-function sixth   "ADDDDD")
+(define-c*r-function seventh "ADDDDDD")
+(define-c*r-function eighth  "ADDDDDDD")
+(define-c*r-function nineth  "ADDDDDDDD")
+(define-c*r-function tenth   "ADDDDDDDDD")
+
+(defun generate-setf-c*r-message (function-name prefix)
+  (if (null prefix)
+      (format nil
+              "The function (SETF ~a) was given an argument~@
+               that is not a CONS cell"
+              function-name)
+      (format nil
+              "The function (SETF ~a) was given a list whose ~@
+               C~{~a~}R is not a CONS cell"
+              function-name
+              (reverse (coerce prefix 'list)))))
+
+;;; FIXME fix the error messsage to signal a particular condition
+(defmacro define-setf-c*r-function (function-name letters)
+  (flet ((primitive (letter)
+           (if (eql letter #\A) 'car 'cdr)))
+    (flet ((one-iteration (letter prefix)
+             `(if (consp remaining)
+                  (setf remaining
+                        (,(primitive letter) remaining))
+                  (error ,(generate-setf-c*r-message function-name
+                                                     prefix)))))
+      `(defun (setf ,function-name) (new-object list)
+         (let ((remaining list))
+           ,@(append (loop for letter across (reverse (subseq letters 1))
+                           collect (one-iteration letter prefix)
+                           collect letter into prefix)
+                     `(if (consp remaining)
+                          (setf (,(primitive (aref letters 0)) remaining)
+                                new-object)
+                          (error ,(generate-setf-c*r-message
+                                   function-name
+                                   (subseq letters 1))))))))))
+
 (defun (setf car) (object cons)
   (rplaca cons object)
   object)
@@ -8,271 +119,45 @@
   (rplacd cons object)
   object)
 
-(defun caar (x)
-  (car (car x)))
-
-(defun (setf caar) (object cons)
-  (setf (car (car cons)) object)
-  object)
-
-(defun cadr (x)
-  (car (cdr x)))
-
-(defun (setf cadr) (object cons)
-  (setf (car (cdr cons)) object)
-  object)
-
-(defun cdar (x)
-  (cdr (car x)))
-
-(defun (setf cdar) (object cons)
-  (setf (cdr (car cons)) object)
-  object)
-
-(defun cddr (x)
-  (cdr (cdr x)))
-
-(defun (setf cddr) (object cons)
-  (setf (cdr (cdr cons)) object)
-  object)
-
-(defun caaar (x)
-  (car (caar x)))
-
-(defun (setf caaar) (object cons)
-  (setf (car (caar cons)) object)
-  object)
-
-(defun caadr (x)
-  (car (cadr x)))
-
-(defun (setf caadr) (object cons)
-  (setf (car (cadr cons)) object)
-  object)
-
-(defun cadar (x)
-  (car (cdar x)))
-
-(defun (setf cadar) (object cons)
-  (setf (car (cdar cons)) object)
-  object)
-
-(defun caddr (x)
-  (car (cddr x)))
-
-(defun (setf caddr) (object cons)
-  (setf (car (cddr cons)) object)
-  object)
-
-(defun cdaar (x)
-  (cdr (caar x)))
-
-(defun (setf cdaar) (object cons)
-  (setf (cdr (caar cons)) object)
-  object)
-
-(defun cdadr (x)
-  (cdr (cadr x)))
-
-(defun (setf cdadr) (object cons)
-  (setf (cdr (cadr cons)) object)
-  object)
-
-(defun cddar (x)
-  (cdr (cdar x)))
-
-(defun (setf cddar) (object cons)
-  (setf (cdr (cdar cons)) object)
-  object)
-
-(defun cdddr (x)
-  (cdr (cddr x)))
-
-(defun (setf cdddr) (object cons)
-  (setf (cdr (cddr cons)) object)
-  object)
-
-(defun caaaar (x)
-  (car (caaar x)))
-
-(defun (setf caaaar) (object cons)
-  (setf (car (caaar cons)) object)
-  object)
-
-(defun caaadr (x)
-  (car (caadr x)))
-
-(defun (setf caaadr) (object cons)
-  (setf (car (caadr cons)) object)
-  object)
-
-(defun caadar (x)
-  (car (cadar x)))
-
-(defun (setf caadar) (object cons)
-  (setf (car (cadar cons)) object)
-  object)
-
-(defun caaddr (x)
-  (car (caddr x)))
-
-(defun (setf caaddr) (object cons)
-  (setf (car (caddr cons)) object)
-  object)
-
-(defun cadaar (x)
-  (car (cdaar x)))
-
-(defun (setf cadaar) (object cons)
-  (setf (car (cdaar cons)) object)
-  object)
-
-(defun cadadr (x)
-  (car (cdadr x)))
-
-(defun (setf cadadr) (object cons)
-  (setf (car (cdadr cons)) object)
-  object)
-
-(defun caddar (x)
-  (car (cddar x)))
-
-(defun (setf caddar) (object cons)
-  (setf (car (cddar cons)) object)
-  object)
-
-(defun cadddr (x)
-  (car (cdddr x)))
-
-(defun (setf cadddr) (object cons)
-  (setf (car (cdddr cons)) object)
-  object)
-
-(defun cdaaar (x)
-  (cdr (caaar x)))
-
-(defun (setf cdaaar) (object cons)
-  (setf (cdr (caaar cons)) object)
-  object)
-
-(defun cdaadr (x)
-  (cdr (caadr x)))
-
-(defun (setf cdaadr) (object cons)
-  (setf (cdr (caadr cons)) object)
-  object)
-
-(defun cdadar (x)
-  (cdr (cadar x)))
-
-(defun (setf cdadar) (object cons)
-  (setf (cdr (cadar cons)) object)
-  object)
-
-(defun cdaddr (x)
-  (cdr (caddr x)))
-
-(defun (setf cdaddr) (object cons)
-  (setf (cdr (caddr cons)) object)
-  object)
-
-(defun cddaar (x)
-  (cdr (cdaar x)))
-
-(defun (setf cddaar) (object cons)
-  (setf (cdr (cdaar cons)) object)
-  object)
-
-(defun cddadr (x)
-  (cdr (cdadr x)))
-
-(defun (setf cddadr) (object cons)
-  (setf (cdr (cdadr cons)) object)
-  object)
-
-(defun cdddar (x)
-  (cdr (cddar x)))
-
-(defun (setf cdddar) (object cons)
-  (setf (cdr (cddar cons)) object)
-  object)
-
-(defun cddddr (x)
-  (cdr (cdddr x)))
-
-(defun (setf cddddr) (object cons)
-  (setf (cdr (cdddr cons)) object)
-  object)
-
-(defun first (x)
-  (car x))
-
-(defun (setf first) (object cons)
-  (setf (car cons) object)
-  object)
-
-(defun second (x)
-  (cadr x))
-
-(defun (setf second) (object cons)
-  (setf (cadr cons) object)
-  object)
-
-(defun third (x)
-  (caddr x))
-
-(defun (setf third) (object cons)
-  (setf (caddr cons) object)
-  object)
-
-(defun fourth (x)
-  (cadddr x))
-
-(defun (setf fourth) (object cons)
-  (setf (cadddr cons) object)
-  object)
-
-(defun fifth (x)
-  (car (cddddr x)))
-
-(defun (setf fifth) (object cons)
-  (setf (car (cddddr xcons) object)
-	object)
-
-(defun sixth (x)
-  (cadr (cddddr x)))
-
-(defun (setf sixth) (object cons)
-  (setf (cadr (cddddr xcons) object)
-	object)
-
-(defun seventh (x)
-  (caddr (cddddr x)))
-
-(defun (setf seventh) (object cons)
-  (setf (caddr (cddddr xcons) object)
-	object)
-
-(defun eighth (x)
-  (cadddr (cddddr x)))
-
-(defun (setf eighth) (object cons)
-  (setf (cadddr (cddddr xcons) object)
-	object)
-
-(defun nineth (x)
-  (car (cddddr (cddddr x))))
-
-(defun (setf nineth) (object cons)
-  (setf (car (cddddr (cddddr x)cons) object)
-	object)
-
-(defun tenth (x)
-  (cadr (cddddr (cddddr x))))
-
-(defun (setf tenth) (object cons)
-  (setf (cadr (cddddr (cddddr x)cons) object)
-	object)
+(define-setf-c*r-function caar "AA")
+(define-setf-c*r-function cadr "AD")
+(define-setf-c*r-function cdar "DA")
+(define-setf-c*r-function cddr "DD")
+(define-setf-c*r-function caaar "AAA")
+(define-setf-c*r-function caadr "AAD")
+(define-setf-c*r-function cadar "ADA")
+(define-setf-c*r-function caddr "ADD")
+(define-setf-c*r-function cdaar "DAA")
+(define-setf-c*r-function cdadr "DAD")
+(define-setf-c*r-function cddar "DDA")
+(define-setf-c*r-function cdddr "DDD")
+(define-setf-c*r-function caaaar "AAAA")
+(define-setf-c*r-function caaadr "AAAD")
+(define-setf-c*r-function caadar "AADA")
+(define-setf-c*r-function caaddr "AADD")
+(define-setf-c*r-function cadaar "ADAA")
+(define-setf-c*r-function cadadr "ADAD")
+(define-setf-c*r-function caddar "ADDA")
+(define-setf-c*r-function cadddr "ADDD")
+(define-setf-c*r-function cdaaar "DAAA")
+(define-setf-c*r-function cdaadr "DAAD")
+(define-setf-c*r-function cdadar "DADA")
+(define-setf-c*r-function cdaddr "DADD")
+(define-setf-c*r-function cddaar "DDAA")
+(define-setf-c*r-function cddadr "DDAD")
+(define-setf-c*r-function cdddar "DDDA")
+(define-setf-c*r-function cddddr "DDDD")
+
+(define-setf-c*r-function first   "A")
+(define-setf-c*r-function second  "AD")
+(define-setf-c*r-function third   "ADD")
+(define-setf-c*r-function fourth  "ADDD")
+(define-setf-c*r-function fifth   "ADDDD")
+(define-setf-c*r-function sixth   "ADDDDD")
+(define-setf-c*r-function seventh "ADDDDDD")
+(define-setf-c*r-function eighth  "ADDDDDDD")
+(define-setf-c*r-function nineth  "ADDDDDDDD")
+(define-setf-c*r-function tenth   "ADDDDDDDDD")
 
 ;;; this implementation assumes that there is no 
 ;;; structure sharing between the &rest argument
@@ -288,7 +173,7 @@
 ;;; this implementation assumes that there is no 
 ;;; structure sharing between the &rest argument
 ;;; and the last argument to apply
-;;; TODO: fix the assert to signal a particular condition
+;;; FIXME: fix the assert to signal a particular condition
 (defun list* (&rest elements)
   (assert (not (null elements)))
   (if (null (cdr elements))
@@ -365,6 +250,7 @@
   (loop repeat length
 	collect initial-element))
 
+;;; FIXME: Check at each iteration that we have a list. 
 (defun nthcdr (n list)
   (assert (and (integerp n) (>= n 0)))
   (loop repeat n
@@ -372,8 +258,10 @@
 	do (pop list))
   list)
 
+;;; FIXME: Iterate and check at each iteration that we have a list. 
 (defun nth (n list)
   (car (nthcdr n list)))
 
+;;; FIXME: Iterate and check at each iteration that we have a list. 
 (defun (setf nth) (object n list)
   (setf (car (nthcdr n list)) object))
