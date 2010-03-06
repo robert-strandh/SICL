@@ -86,6 +86,15 @@ written by the programmer, as opposed to in terms of expanded code.
 
 \subsection{Commenting}
 
+In most programs, comments introduce unnecessary redundancies that can
+then easily get out of sync with the code.  This is less risky for an
+implementation of a specification that is not likely to change.
+Furthermore, we would like \sysname{} to be not only a high-quality
+implementation, but we would like for its code to be very readable.
+For that reason, we think it is preferable to write \sysname{} in a
+``literate programming'' style, with significant comments explaining
+the code. 
+
 \subsection{Designators for symbol names}
 
 Always use uninterned symbols (such as \texttt{\#:hello}) whenever a
@@ -257,10 +266,24 @@ forms as follows: \texttt{(let ((v1 e1) (v2 e2) ... (vn en)) body)}
 becomes \texttt{(progn (setq v1 e1) (setq v2 e2) ... (setq vn en)
   body)}.
 
+\section{Standard functions}
 
+Standard functions should always check the validity of their arguments
+and of any other aspect of the environment.  If such a function fails
+to accomplish its task, it should signal an appropriate condition, and
+that condition should refer to the name of the function, and should
+indicate as precisely as possible what the problem is.  So for
+instance if the function CDADR is given the following list as an
+argument: (1 2) it should signal an error with a message such as:
+``The function CDADR was given the list (1 2) whose CADR is neither
+NIL nor a CONS cell''.  This excludes implementing CDADR as a simple
+call to the CDR of the CADR.
 
+\section{Standard macros}
 
-\section{Macros}
+Standard macros must to extensive syntax analysis on their input so as
+to avoid compilation errors that are phrased in terms of expanded
+code.  
 
 \section{Compiler macros}
 
@@ -313,6 +336,20 @@ lock elision'' will soon be available in all main processors.
 \section{Generic-function dispatch}
 
 \section{Garbage collection}
+
+\section{Docstrings}
+
+We believe that it is a bad idea for an implementation of a Lisp
+system to have docstrings in the same place as the definition of the
+language item that is documented, for several reasons.  First, to the
+person reading the code, the docstring is most often noise, because it
+is known from the standard what the language item is about.  Second,
+it often looks ugly with multiple lines starting in column 1 of the
+source file.  Third, it makes internationalization harder.
+
+For this reason, we will provide language-specific files containing
+all docstrings of Common Lisp in the form of calls to (SETF
+DOCUMENTATION). 
 
 \section{Internationalization}
 
