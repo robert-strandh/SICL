@@ -3,37 +3,35 @@
 (defun fmt (&rest args)
   (apply #'format nil args))
 
-(setf (documentation 'car 'function)
-      (fmt "Lambda list: (OBJECT)~@
-            When OBJECT is a CONS cell, return the CAR of that cell.~@
-            When OBJECT is NIL, return NIL."))
+;;; Create documentation for a function.
+(defun fundoc (name string)
+  (setf (documentation name 'function) string)
+  (setf (documentation (fdefinition name) 'function)
+        (documentation name 'function)))
 
-(setf (documentation #'car 'function)
-      (documentation 'car 'function))
+(fundoc 'car
+        (fmt "Lambda list: (OBJECT)~@
+              When OBJECT is a CONS cell, return the CAR of that cell.~@
+              When OBJECT is NIL, return NIL."))
 
-(setf (documentation 'cdr 'function)
-      (fmt "Lambda list: (OBJECT)~@
-            When OBJECT is a CONS cell, return the CDR of that cell.~@
-            When OBJECT is NIL, return NIL."))
-
-(setf (documentation #'cdr 'function)
-      (documentation 'cdr 'function))
+(fundoc 'cdr
+        (fmt "Lambda list: (OBJECT)~@
+              When OBJECT is a CONS cell, return the CDR of that cell.~@
+              When OBJECT is NIL, return NIL."))
 
 (defmacro make-c*r-documentation (function-name)
   (let* ((name (symbol-name function-name))
          (letters (reverse (cdr (butlast (coerce name 'list))))))
     (flet ((primitive (letter)
              (if (eql letter #\A) 'car 'cdr)))
-      `(progn (setf (documentation ',function-name 'function)
-                    ,(fmt "Lambda list: (OBJECT)~@
-                           Equivalent to ~a"
-                          (loop with form = 'object
-                                for letter in letters
-                                do (setf form
-                                         (list (primitive letter) form))
-                                finally (return form))))
-              (setf (documentation (fdefinition ',function-name) 'function)
-                    (documentation ',function-name 'function))))))
+      `(fundoc ',function-name
+                ,(fmt "Lambda list: (OBJECT)~@
+                       Equivalent to ~a"
+                      (loop with form = 'object
+                            for letter in letters
+                            do (setf form
+                                     (list (primitive letter) form))
+                            finally (return form)))))))
              
 (make-c*r-documentation caar)
 (make-c*r-documentation cadr)
@@ -64,55 +62,44 @@
 (make-c*r-documentation cdddar)
 (make-c*r-documentation cddddr)
 
-(setf (documentation 'list 'function)
-      (fmt "Lambda list: (&rest OBJECTS)~@
-            Return a list containing the objects in OBJECTS.~@"))
+(fundoc 'list
+        (fmt "Lambda list: (&rest OBJECTS)~@
+              Return a list containing the objects in OBJECTS.~@"))
 
-(setf (documentation #'list 'function)
-      (documentation 'list 'function))
+(fundoc 'list*
+        (fmt "Lambda list: (&rest OBJECTS)~@
+              At least one argument must be given.~@
+              Return a list containing the objects in OBJECTS,~@
+              except that the last object in OBJECTS becomes the~@
+              CDR of the last CONS cell created.~@
+              When given a single argument, retun that argument."))
 
-(setf (documentation 'list* 'function)
-      (fmt "Lambda list: (&rest OBJECTS)~@
-            At least one argument must be given.~@
-            Return a list containing the objects in OBJECTS,~@
-            except that the last object in OBJECTS becomes the~@
-            CDR of the last CONS cell created.~@
-            When given a single argument, retun that argument."))
-
-(setf (documentation #'list* 'function)
-      (documentation 'list* 'function))
-
-(setf (documentation 'first 'function)
-      (fmt "Lambda list: (LIST)~@
-            Return the first element of the list LIST.~@
-            When LIST is neither a list nor NIL,~@
-            an error is signaled."))
-
-(setf (documentation #'first 'function)
-      (documentation 'first 'function))
+(fundoc 'first
+        (fmt "Lambda list: (LIST)~@
+              Return the first element of the list LIST.~@
+              When LIST is neither a list nor NIL,~@
+              an error is signaled."))
 
 (defmacro make-nth-documentation (function-name number)
-  `(progn (setf (documentation ',function-name 'function)
-                ,(fmt "Lambda list: (LIST)~@
-                       Return the ~a element of the list LIST.~@
-                       When LIST is a proper list with fewer than ~a element,~@
-                       NIL is returned.~@
-                       When LIST is not a proper list, and it has fewer than~@
-                       ~a elements, an error is signaled.~@
-                       In particular, when LIST is neither a list nor NIL,~@
-                       an error is signaled."
-                      (string-downcase (symbol-name function-name))
-                      number
-                      number))
-          (setf (documentation (fdefinition ',function-name) 'function)
-                (documentation ',function-name 'function))))
+  `(fundoc ',function-name
+            ,(fmt "Lambda list: (LIST)~@
+                   Return the ~a element of the list LIST.~@
+                   When LIST is a proper list with fewer than ~a element,~@
+                   NIL is returned.~@
+                   When LIST is not a proper list, and it has fewer than~@
+                   ~a elements, an error is signaled.~@
+                   In particular, when LIST is neither a list nor NIL,~@
+                   an error is signaled."
+                  (string-downcase (symbol-name function-name))
+                  number
+                  number)))
 
-(make-nth-documentation 'second  "two")
-(make-nth-documentation 'third   "three")
-(make-nth-documentation 'fourth  "four")
-(make-nth-documentation 'fifth   "five")
-(make-nth-documentation 'sixth   "six")
-(make-nth-documentation 'seventh "seven")
-(make-nth-documentation 'eighth  "eight")
-(make-nth-documentation 'ninth   "nine")
-(make-nth-documentation 'tenth   "ten")
+(make-nth-documentation second  "two")
+(make-nth-documentation third   "three")
+(make-nth-documentation fourth  "four")
+(make-nth-documentation fifth   "five")
+(make-nth-documentation sixth   "six")
+(make-nth-documentation seventh "seven")
+(make-nth-documentation eighth  "eight")
+(make-nth-documentation ninth   "nine")
+(make-nth-documentation tenth   "ten")
