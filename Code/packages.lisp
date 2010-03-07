@@ -1020,3 +1020,7 @@
 (defpackage :sicl.backends.cl
     (:use :sicl :sicl.memory :sicl.tags)
   (:export))
+
+(defpackage :sicl.documentation
+    (:use :sicl)
+  (:export))
