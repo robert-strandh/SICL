@@ -118,4 +118,19 @@
               When LIST is not a proper list, and it has fewer than~@
               N+1 elements, an error is signaled.~@
               In particular, when LIST is neither a list nor NIL,~@
-              an error is signaled."))
+              an error is signaled.~@
+              When N is not a nonnegative integer, an error~@
+              of type TYPE-ERROR is signaled."))
+
+(fundoc 'nthcdr
+        (fmt "Lambda list: (N LIST)~@
+              where N is a nonnegative integer~@
+              and LIST is a (not necessarily proper) list.~@
+              Return the result of calling CDR N times on LIST.~@
+              When LIST is not a proper list, and it has fewer than~@
+              N elements, an error is signaled.~@
+              In particular, when LIST is neither a list nor NIL,~@
+              an error is signaled.~@
+              When N is not a nonnegative integer, an error~@
+              of type TYPE-ERROR is signaled."))
+              
