@@ -103,3 +103,19 @@
 (make-nth-documentation eighth  "eight")
 (make-nth-documentation ninth   "nine")
 (make-nth-documentation tenth   "ten")
+
+(fundoc 'cons
+        (fmt "Lambda list: (OBJECT-1 OBJEC-2)~@
+              Return a new CONS cell with OBJECT-1 in the~@
+              CAR field and OBJECT-2 in the CDR field."))
+
+(fundoc 'nth
+        (fmt "Lambda list: (N LIST)~@
+              where N is a nonnegative integer~@
+              and LIST is a (not necessarily proper) list.~@
+              Return the Nth element of the list LIST~@
+              where the first element is the zeroeth.~@
+              When LIST is not a proper list, and it has fewer than~@
+              N+1 elements, an error is signaled.~@
+              In particular, when LIST is neither a list nor NIL,~@
+              an error is signaled."))
