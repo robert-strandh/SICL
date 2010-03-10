@@ -134,3 +134,60 @@
               When N is not a nonnegative integer, an error~@
               of type TYPE-ERROR is signaled."))
               
+(fundoc '<
+        (fmt "Lambda list: (&rest NUMBERS).~@
+              At least one argument is required.~@
+              Return true if the numbers in NUMBERS are in~@
+              monotonically strictly increasing order.~@
+              Might signal an error of type TYPE-ERROR if some~@
+              of the objects in NUMBERS are not real numbers.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract.~@"))
+
+(fundoc '<=
+        (fmt "Lambda list: (&rest NUMBERS).~@
+              At least one argument is required.~@
+              Return true if the numbers in NUMBERS are in~@
+              monotonically nondecreasing order.~@
+              Might signal an error of type TYPE-ERROR if some~@
+              of the objects in NUMBERS are not real numbers.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract.~@"))
+
+(fundoc '=
+        (fmt "Lambda list: (&rest NUMBERS).~@
+              At least one argument is required.~@
+              Return true if the numbers in NUMBERS have the same value.~@
+              Might signal an error of type TYPE-ERROR if some~@
+              of the objects in NUMBERS are not numbers.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract.~@"))
+
+(fundoc '/=
+        (fmt "Lambda list: (&rest NUMBERS).~@
+              At least one argument is required.~@
+              Return true no two numbers in NUMBERS have the same value.~@
+              Might signal an error of type TYPE-ERROR if some~@
+              of the objects in NUMBERS are not numbers.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract.~@"))
+
+(fundoc '>
+        (fmt "Lambda list: (&rest NUMBERS).~@
+              At least one argument is required.~@
+              Return true if the numbers in NUMBERS are in~@
+              monotonically strictly decreasing order.~@
+              Might signal an error of type TYPE-ERROR if some~@
+              of the objects in NUMBERS are not real numbers.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract.~@"))
+
+(fundoc '>=
+        (fmt "Lambda list: (&rest NUMBERS).~@
+              At least one argument is required.~@
+              Return true if the numbers in NUMBERS are in~@
+              monotonically nonincreasing order.~@
+              Might signal an error of type TYPE-ERROR if some~@
+              of the objects in NUMBERS are not real numbers.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract.~@"))
