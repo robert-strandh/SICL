@@ -139,8 +139,10 @@
               At least one argument is required.~@
               Return true if the numbers in NUMBERS are in~@
               monotonically strictly increasing order.~@
-              Might signal an error of type TYPE-ERROR if some~@
-              of the objects in NUMBERS are not real numbers.~@
+              The consequences are undefined if some of the objects~@
+              in numbers are not real numbers, but if that is the case~@
+              and a condition is signaled, that condition is an error~@
+              of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
               unable to fulfil its contract.~@"))
 
@@ -149,8 +151,10 @@
               At least one argument is required.~@
               Return true if the numbers in NUMBERS are in~@
               monotonically nondecreasing order.~@
-              Might signal an error of type TYPE-ERROR if some~@
-              of the objects in NUMBERS are not real numbers.~@
+              The consequences are undefined if some of the objects~@
+              in numbers are not real numbers, but if that is the case~@
+              and a condition is signaled, that condition is an error~@
+              of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
               unable to fulfil its contract.~@"))
 
@@ -158,8 +162,10 @@
         (fmt "Lambda list: (&rest NUMBERS).~@
               At least one argument is required.~@
               Return true if the numbers in NUMBERS have the same value.~@
-              Might signal an error of type TYPE-ERROR if some~@
-              of the objects in NUMBERS are not numbers.~@
+              The consequences are undefined if some of the objects~@
+              in numbers are not real numbers, but if that is the case~@
+              and a condition is signaled, that condition is an error~@
+              of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
               unable to fulfil its contract.~@"))
 
@@ -167,8 +173,10 @@
         (fmt "Lambda list: (&rest NUMBERS).~@
               At least one argument is required.~@
               Return true no two numbers in NUMBERS have the same value.~@
-              Might signal an error of type TYPE-ERROR if some~@
-              of the objects in NUMBERS are not numbers.~@
+              The consequences are undefined if some of the objects~@
+              in numbers are not real numbers, but if that is the case~@
+              and a condition is signaled, that condition is an error~@
+              of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
               unable to fulfil its contract.~@"))
 
@@ -177,8 +185,10 @@
               At least one argument is required.~@
               Return true if the numbers in NUMBERS are in~@
               monotonically strictly decreasing order.~@
-              Might signal an error of type TYPE-ERROR if some~@
-              of the objects in NUMBERS are not real numbers.~@
+              The consequences are undefined if some of the objects~@
+              in numbers are not real numbers, but if that is the case~@
+              and a condition is signaled, that condition is an error~@
+              of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
               unable to fulfil its contract.~@"))
 
@@ -187,7 +197,22 @@
               At least one argument is required.~@
               Return true if the numbers in NUMBERS are in~@
               monotonically nonincreasing order.~@
-              Might signal an error of type TYPE-ERROR if some~@
-              of the objects in NUMBERS are not real numbers.~@
+              The consequences are undefined if some of the objects~@
+              in numbers are not real numbers, but if that is the case~@
+              and a condition is signaled, that condition is an error~@
+              of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
               unable to fulfil its contract.~@"))
+
+(fundoc 'abs
+        (fmt "Lambda list: (NUMBER).~@
+              Return the absolute value of the number NUMBER.~@
+              If given a real number, the result type is the same~@
+              as that of the number given, so that if for instance~@
+              a double float is given, then the result is a double
+              float as well.~@
+              If given a complex number, the result is a real number.~@
+              In that case, the return value might be a floating point number,~@
+              even if the result could be expressed as an exact rational number.~@
+              The consequences are undefine if NUMBER is not a number.~@"))
+
