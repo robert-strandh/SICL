@@ -215,4 +215,64 @@
               In that case, the return value might be a floating point number,~@
               even if the result could be expressed as an exact rational number.~@
               The consequences are undefine if NUMBER is not a number.~@"))
+(fundoc 'acons
+        (fmt "Lambda List: (KEY DATUM ALIST).~@
+              Return a new association list with a CONS of the~@
+              KEY and the DATUM as a first element, and ALIST as the~@
+              rest.  It is entirely equivalent to~@
+              (cons (cons KEY DATUM) ALIST.~@"))
 
+(fundoc 'acos "Lambda list: (NUMBER).~@
+               Return the arc cosine of the number NUMBER.~@
+               If NUMBER is not a number, then an error of type~@
+               TYPE-ERROR is signaled.~@
+               Might signal an error of type ARITHMETIC-ERROR if~@
+               unable to fulfil its contract.~@"))
+        
+(fundoc 'asin "Lambda list: (NUMBER).~@
+               Return the arc sine of the number NUMBER.~@
+               If NUMBER is not a number, then an error of type~@
+               TYPE-ERROR is signaled.~@
+               Might signal an error of type ARITHMETIC-ERROR if~@
+               unable to fulfil its contract.~@"))
+        
+(fundoc 'atan "Lambda list: (NUMBER1 &optional NUMBER2).~@
+               If NUMBER2 is not supplied, return the arc tangent~@
+               of the number NUMBER1.  In that case, NUMBER1 can be~@
+               any number.~@
+               If NUMBER2 is supplied, return the arc tangent of~@
+               NUMBER1/NUMBER2.  In that case, NUMBER1 and NUMBER2 must~@
+               both be real numbers.~@
+               If NUMBER2 is not given, the result is in the interval~@
+               ]-pi/2,pi/2[~@
+               If number2 is given, the result is in the interval~@
+               [-pi,pi[ when minus zero is NOT supported, and in the interval~@
+               [-pi,pi] when minu zero IS supported.~@
+               If NUMBER2 is not supplied and NUMBER1 is not a number,~@
+               then an error of type TYPE-ERROR is signaled.~@
+               If NUMBER2 is supplied, and at least one of the two~@
+               numbers is not real, an error of type TYPE-ERROR is signaled.~@
+               Might signal an error of type ARITHMETIC-ERROR if~@
+               unable to fulfil its contract.~@"))
+        
+(fundoc 'asinh "Lambda list: (NUMBER).~@
+                Return the hypberbolic arc sine of the number NUMBER.~@
+                If NUMBER is not a number, then an error of type~@
+                TYPE-ERROR is signaled.~@
+                Might signal an error of type ARITHMETIC-ERROR if~@
+                unable to fulfil its contract.~@"))
+        
+(fundoc 'acosn "Lambda list: (NUMBER).~@
+                Return the hypberbolic arc cosine of the number NUMBER.~@
+                If NUMBER is not a number, then an error of type~@
+                TYPE-ERROR is signaled.~@
+                Might signal an error of type ARITHMETIC-ERROR if~@
+                unable to fulfil its contract.~@"))
+        
+(fundoc 'atanh "Lambda list: (NUMBER).~@
+                Return the hypberbolic arc tangent of the number NUMBER.~@
+                If NUMBER is not a number, then an error of type~@
+                TYPE-ERROR is signaled.~@
+                Might signal an error of type ARITHMETIC-ERROR if~@
+                unable to fulfil its contract.~@"))
+        
