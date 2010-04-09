@@ -48,18 +48,20 @@
 				  :fill-pointer t)
 	for new-char = (read-char stream nil nil)
 	until (eql new-char #\")
-	do (case new-char
-	     ((nil) (error 'end-of-file :stream stream))
-	     (#\\ (let ((next-char (read-char stream)))
-		    (when (null next-char)
-		      (error 'end-of-file :stream stream))
-		    (vector-push-extend new-char result)))
+	do (cond 
+	     ((null new-char)
+	      (error 'end-of-file :stream stream))
+	     ((eq (syntax-type *readtable* new-char) 'single-escape)
+	      (let ((next-char (read-char stream nil nil)))
+		(when (null next-char)
+		  (error 'end-of-file :stream stream))
+		(vector-push-extend next-char result)))
 	     (t (vector-push-extend new-char result)))
 	finally (return (copy-seq result))))
 
 (defun semicolon-function (stream char)
   (declare (ignore char))
-  (loop for new-char = (read-char stream nil nil)
+  (loop for new-char = (read-char stream nil nil t)
 	until (or (null new-char) (eql new-char #\Newline))
 	finally (return (values))))
 
@@ -287,7 +289,7 @@
 		    +alphabetic+)))
     (not (equal (bit-and trait traits) #*00000000000000))))
 
-(defvar *standard-readtable*
+(defparameter *standard-readtable*
   (let ((table (make-readtable)))
     ;; initialize all characters to be invalid constituent at first
     (loop for i from 0 below 128
@@ -365,13 +367,13 @@
 					  (cdr pair)
 					  nil
 					  *standard-readtable*))
-      `((#\' . ,#'single-quote-function)
-	(#\" . ,#'double-quote-function)
-	(#\; . ,#'semicolon-function)
-	(#\) . ,#'right-parenthesis-function)
-	(#\( . ,#'left-parenthesis-function)
-	(#\` . ,#'backquote-function)
-	(#\, . ,#'comma-function)))
+      `((#\' . single-quote-function)
+	(#\" . double-quote-function)
+	(#\; . semicolon-function)
+	(#\) . right-parenthesis-function)
+	(#\( . left-parenthesis-function)
+	(#\` . backquote-function)
+	(#\, . comma-function)))
 
 (set-macro-character #\# #'hash-function t *standard-readtable*)
 
