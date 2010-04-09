@@ -68,7 +68,7 @@
   (:report
    (lambda (condition stream)
      (declare (ignore condition))
-     (format stream "Unmatched right parenthesis found"))))
+     (format stream "Unmatched right parenthesis found."))))
 
 (defun right-parenthesis-function (stream char)
   (declare (ignore stream char))
@@ -90,8 +90,8 @@
   (:report
    (lambda (condition stream)
      (declare (ignore condition))
-     (format stream "A token consisting of a single dot was found ~
-                     in a context that does not permit such a token"))))
+     (format stream "A token consisting of a single dot was found ~@
+                     in a context that does not permit such a token."))))
 
 (define-condition no-object-preceding-dot (reader-error)
   ()
@@ -101,22 +101,59 @@
      (format stream "A left parenthesis cannot be ~
                      immediately followed by a dot"))))
 
+(define-condition multiple-objects-following-dot (reader-error)
+  ((%offending-expression
+    :initarg :offending-expression
+    :reader offending-expression))
+  (:report
+   (lambda (condition stream)
+     (format stream "A second expression following a dot~@
+                     inside a list was found: ~S."
+	     (offending-expression condition)))))
+
 (defun left-parenthesis-function (stream char)
   (declare (ignore char))
   (let* ((sentinel (list nil))
 	 (last-cons sentinel))
+    ;; We continue reading subexpressions
+    ;; until we get informed by the condition
+    ;; unmatched-right-parenthesis that a right
+    ;; parenthesis was found. 
     (handler-case 
      (progn 
+       ;; Read a first subexpression.  If we find a single dot
+       ;; token (which is indicated by the condition single-dot-token
+       ;; being signaled from the recursive read), then we in 
+       ;; turn signal the no-object-preceding-dot condition.
        (setf (cdr last-cons)
 	     (handler-case (list (read stream t nil t))
 	       (single-dot-token () (error 'no-object-preceding-dot))))
+       ;; Come here when we successfully read the first subexpression
+       ;; of the list. 
        (setf last-cons (cdr last-cons))
+       ;; Continue reading more subexpressions, appending
+       ;; them to the end of the list we are accumulating.
+       ;; If when reading such an expression, we get informed,
+       ;; by the single-dot-token condition being signaled,
+       ;; that a single dot has been found.  Enter into a final 
+       ;; processing stage where two expression are read,
+       ;; the first one which must a normal expression
+       ;; following the dot, and the second one must
+       ;; result in the signal unmatched-right-parenthesis
+       ;; being signaled. 
        (loop for expr = (handler-case (read stream t nil t)
 			  (single-dot-token ()
 			    (setf (cdr last-cons)
 				  (read stream t nil t))
-			    (return-from left-parenthesis-function
-			      (cdr sentinel))))
+			    (handler-case
+				(let ((exp (read stream t nil t)))
+				  ;; An expression was successfully
+				  ;; read, which shouldn't happen.
+				  (error 'multiple-objects-following-dot
+					 :offending-expression exp))
+			      (unmatched-right-parenthesis ()
+				(return-from left-parenthesis-function
+				  (cdr sentinel))))))
 	     do (setf (cdr last-cons) (list expr)
 		      last-cons (cdr last-cons))))
      (unmatched-right-parenthesis ()
@@ -454,6 +491,9 @@
 	    (error 'invalid-character
 		   :stream input-stream :char char)))
      10
-     ;; build the token here
-     )
+     (if (equal token ".")
+	 (error 'single-dot-token)
+	 ;; build the token here
+	 nil
+	 ))
     token))
