@@ -480,7 +480,7 @@
                           (setf (label instruction) b2)
                           (push b2 (successors b1))
                           (push b1 (predecessors b1))))))
-    ;; Finally remove all label instrutions
+    ;; Finally remove all label instructions
     (loop for block in blocks
           do (when (typep (first (instructions block)) 'mir-label)
                (pop (instructions block))))
