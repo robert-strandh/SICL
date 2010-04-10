@@ -25,31 +25,12 @@
 	   #:readtablep
 	   #:readtable-case
 	   #:copy-readtable
+	   #:char
+	   #:get-macro-character
+	   #:set-macro-character
 	   ))
 
 (in-package #:sicl-read)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Character syntax-types
-
-(defclass syntax-type () ())
-
-(defclass whitespace (syntax-type) ())
-
-(defclass constituent (syntax-type)
-  ((%traits :initarg :traits :reader traits)))
-
-(defclass macro-char (syntax-type)
-  ((%dispatch-function :initarg dispatch-function :reader dispatch-function)))
-
-(defclass terminating-macro-char (macro-char) ())
-
-(defclass non-terminating-macro-char (macro-char) ())
-
-(defclass single-escape (syntax-type) ())
-
-(defclass multiple-escape (syntax-type) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -67,30 +48,32 @@
 				  :fill-pointer t)
 	for new-char = (read-char stream nil nil)
 	until (eql new-char #\")
-	do (case new-char
-	     ((nil) (error 'end-of-file :stream stream))
-	     (#\\ (let ((next-char (read-char stream)))
-		    (when (null next-char)
-		      (error 'end-of-file :stream stream))
-		    (vector-push-extend new-char result)))
+	do (cond 
+	     ((null new-char)
+	      (error 'end-of-file :stream stream))
+	     ((eq (syntax-type *readtable* new-char) 'single-escape)
+	      (let ((next-char (read-char stream nil nil)))
+		(when (null next-char)
+		  (error 'end-of-file :stream stream))
+		(vector-push-extend next-char result)))
 	     (t (vector-push-extend new-char result)))
 	finally (return (copy-seq result))))
 
 (defun semicolon-function (stream char)
   (declare (ignore char))
-  (loop for new-char = (read-char stream nil nil)
+  (loop for new-char = (read-char stream nil nil t)
 	until (or (null new-char) (eql new-char #\Newline))
 	finally (return (values))))
 
-(defun unmatched-right-parenthesis (reader-error)
+(define-condition unmatched-right-parenthesis (reader-error)
   ()
   (:report
    (lambda (condition stream)
      (declare (ignore condition))
-     (format stream "Unmatched right parenthesis found"))))
+     (format stream "Unmatched right parenthesis found."))))
 
 (defun right-parenthesis-function (stream char)
-  (delcare (ignore char))
+  (declare (ignore stream char))
   (error 'unmatched-right-parenthesis))
 
 ;;; This condition is signaled when a token consisting
@@ -108,37 +91,90 @@
   ()
   (:report
    (lambda (condition stream)
-     (decalre (ignore condition))
-     (format stream "A token consisting of a single dot was found ~
-                     in a context that does not permit such a token"))))
+     (declare (ignore condition))
+     (format stream "A token consisting of a single dot was found ~@
+                     in a context that does not permit such a token."))))
 
 (define-condition no-object-preceding-dot (reader-error)
   ()
   (:report
    (lambda (condition stream)
+     (declare (ignore condition))
      (format stream "A left parenthesis cannot be ~
                      immediately followed by a dot"))))
+
+(define-condition multiple-objects-following-dot (reader-error)
+  ((%offending-expression
+    :initarg :offending-expression
+    :reader offending-expression))
+  (:report
+   (lambda (condition stream)
+     (format stream "A second expression following a dot~@
+                     inside a list was found: ~S."
+	     (offending-expression condition)))))
 
 (defun left-parenthesis-function (stream char)
   (declare (ignore char))
   (let* ((sentinel (list nil))
 	 (last-cons sentinel))
+    ;; We continue reading subexpressions
+    ;; until we get informed by the condition
+    ;; unmatched-right-parenthesis that a right
+    ;; parenthesis was found. 
     (handler-case 
      (progn 
+       ;; Read a first subexpression.  If we find a single dot
+       ;; token (which is indicated by the condition single-dot-token
+       ;; being signaled from the recursive read), then we in 
+       ;; turn signal the no-object-preceding-dot condition.
        (setf (cdr last-cons)
-	     (handler-case (read stream t nil t)
+	     (handler-case (list (read stream t nil t))
 	       (single-dot-token () (error 'no-object-preceding-dot))))
+       ;; Come here when we successfully read the first subexpression
+       ;; of the list. 
        (setf last-cons (cdr last-cons))
+       ;; Continue reading more subexpressions, appending
+       ;; them to the end of the list we are accumulating.
+       ;; If when reading such an expression, we get informed,
+       ;; by the single-dot-token condition being signaled,
+       ;; that a single dot has been found.  Enter into a final 
+       ;; processing stage where two expression are read,
+       ;; the first one which must a normal expression
+       ;; following the dot, and the second one must
+       ;; result in the signal unmatched-right-parenthesis
+       ;; being signaled. 
        (loop for expr = (handler-case (read stream t nil t)
 			  (single-dot-token ()
 			    (setf (cdr last-cons)
 				  (read stream t nil t))
-			    (return-from left-parenthesis-function
-			      (cdr sentinel))))
+			    (handler-case
+				(let ((exp (read stream t nil t)))
+				  ;; An expression was successfully
+				  ;; read, which shouldn't happen.
+				  (error 'multiple-objects-following-dot
+					 :offending-expression exp))
+			      (unmatched-right-parenthesis ()
+				(return-from left-parenthesis-function
+				  (cdr sentinel))))))
 	     do (setf (cdr last-cons) (list expr)
 		      last-cons (cdr last-cons))))
      (unmatched-right-parenthesis ()
        (return-from left-parenthesis-function (cdr sentinel))))))
+
+(defun backquote-function (stream char)
+  (declare (ignore stream char))
+  ;; define it
+  )
+
+(defun comma-function (stream char)
+  (declare (ignore stream char))
+  ;; define it
+  )
+
+(defun hash-function (stream char)
+  (declare (ignore stream char))
+  ;; define it
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -154,6 +190,7 @@
 	     (which-directive condition)))))
 
 (defun sharp-sign-single-quote-function (stream char parameter)
+  (declare (ignore char))
   (unless (null parameter)
     (error 'no-parameter-allowed
 	   :which-directive "#'"
@@ -163,6 +200,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Readtable
+
+;;; Constituent-traits
+(defparameter +invalid+                      #*00000000000001)
+(defparameter +alphabetic+                   #*00000000000010)
+(defparameter +alphadigit+                   #*00000000000100)
+(defparameter +package-marker+               #*00000000001000)
+(defparameter +plus-sign+                    #*00000000010000)
+(defparameter +minus-sign+                   #*00000000100000)
+(defparameter +dot+                          #*00000001000000)
+(defparameter +decimal-point+                #*00000010000000)
+(defparameter +ratio-marker+                 #*00000100000000)
+(defparameter +float-exponent-marker+        #*00001000000000)
+(defparameter +short-float-exponent-marker+  #*00010000000000)
+(defparameter +single-float-exponent-marker+ #*00100000000000)
+(defparameter +double-float-exponent-marker+ #*01000000000000)
+(defparameter +long-float-exponent-marker+   #*10000000000000)
 
 ;;; Return true if and only of the object is a readtable
 (defgeneric readtablep (object)
@@ -178,11 +231,23 @@
 
 (defclass readtable ()
   ((%case :initform :upcase :accessor readtable-case)
-   (%ascii :initform (make-array 128) :reader ascii)
-   (%others :initform (make-hash-table) :reader others)
-   (%default-syntax-class :initform (make-instance 'constituent
-				      :traits '(alphabetic))
-			  :reader default-syntax-class)))
+   (%ascii-syntax-types :initform (make-array 128)
+			:reader ascii-syntax-types)
+   (%ascii-constituent-traits
+    :initform (make-array 128 :initial-element #*0000000000000)
+    :reader ascii-constituent-traits)
+   (%other-syntax-types :initform (make-hash-table) :reader others)
+   (%macro-functions :initform (make-hash-table) :reader macro-functions)))
+
+(defun syntax-type (table char)
+  (if (< (char-code char) 128)
+      (aref (ascii-syntax-types table) (char-code char))
+      (gethash char (others table) 'constituent)))
+
+(defun (setf syntax-type) (new-type table char)
+  (if (< (char-code char) 128)
+      (setf (aref (ascii-syntax-types table) (char-code char)) new-type)
+      (setf (gethash char (others table)) new-type)))
 
 (defmethod readtablep ((object readtable))
   t)
@@ -199,274 +264,238 @@
 ;;; standard syntax.
 (defun copy-readtable (&optional (from-readtable *readtable*)
 				 (to-readtable (make-readtable)))
-  ;; FIXME: Implement this function
-  (declare (ignore from-readtable to-readtable))
-  nil)
+  (setf (readtable-case to-readtable) (readtable-case from-readtable))
+  (loop for i from 0 below 128
+	do (setf (aref (ascii-syntax-types to-readtable) i)
+		 (aref (ascii-syntax-types from-readtable) i))
+	   (setf (aref (ascii-constituent-traits to-readtable) i)
+		 (aref (ascii-constituent-traits from-readtable) i)))
+  ;; copy the hash-tables
+  )
 
-(defvar *initial-readtable*
+(defun add-constituent-trait (table char trait)
+  (setf (aref (ascii-constituent-traits table) (char-code char))
+	(bit-ior (aref (ascii-constituent-traits table) (char-code char))
+		 trait)))
+
+(defun set-constituent-trait (table char trait)
+  (setf (aref (ascii-constituent-traits table) (char-code char))
+	trait))
+
+(defun has-constituent-trait (table char trait)
+  (let ((traits (if (< (char-code char) 128)
+		    (aref (ascii-constituent-traits table)
+			  (char-code char))
+		    +alphabetic+)))
+    (not (equal (bit-and trait traits) #*00000000000000))))
+
+(defparameter *standard-readtable*
   (let ((table (make-readtable)))
-    ;; initial all characters to be invalid at first
+    ;; initialize all characters to be invalid constituent at first
     (loop for i from 0 below 128
-	  do (setf (aref (ascii table) i)
-		   (make-instance 'constituent
-		     :traits '(invalid))))
+	  do (setf (aref (ascii-syntax-types table) i)
+		   'constituent)
+	     (setf (aref (ascii-constituent-traits table) i)
+		   +invalid+))
     ;; do the whitespace characters
     (loop for char in '(#\Backspace #\Newline #\Linefeed
 			#\Page #\Return #\Space)
-	  do (setf (aref (ascii table) (char-code char))
-		   (make-instance 'whitespace)))
+	  do (setf (aref (ascii-syntax-types table) (char-code char))
+		   'whitespace))
+    (loop for char in '(#\" #\' #\( #\) #\, #\; #\`)
+	  do (setf (aref (ascii-syntax-types table) (char-code char))
+		   'terminating-macro-char))
+    (setf (aref (ascii-syntax-types table) (char-code #\#))
+	  'non-terminating-macro-char)
+    (setf (aref (ascii-syntax-types table) (char-code #\\))
+	  'single-escape)
+    (setf (aref (ascii-syntax-types table) (char-code #\|))
+	  'multiple-escape)
     ;; diverse constituent characters
-    (loop for char in '(#\! #\$ #\% #\& #\* #\/ #\: #\< #\= #\> 
-			#\? #\@ #\[ #\] #\^ #\_ #\{ #\} #\~ #\Rubout)
-	  do (setf (aref (ascii table) (char-code char))
-		   (make-instance 'constituent
-		     :traits '(alphabetic))))
-    (setf (aref (ascii table) (char-code #\+))
-	  (make-instance 'constituent
-	    :traits '(alphabetic plus-sign)))
-    (setf (aref (ascii table) (char-code #\-))
-	  (make-instance 'constituent
-	    :traits '(alphabetic minus-sign)))
-    (setf (aref (ascii table) (char-code #\.))
-	  (make-instance 'constituent
-	    :traits '(alphabetic dot decimal-point)))
-    (setf (aref (ascii table) (char-code #\:))
-	  (make-instance 'constituent
-	    :traits '(alphabetic package-marker)))
-    (setf (aref (ascii table) (char-code #\/))
-	  (make-instance 'constituent
-	    :traits '(alphabetic ratio-marker)))
-    ;; do the letters
-    (loop for i from (char-code #\A) to (char-code #\Z)
-	  do (setf (aref (ascii table) i)
-		   (make-instance 'constituent
-		     :traits '(alphadigit))))
-    ;; do the letters
-    (loop for i from (char-code #\a) to (char-code #\z)
-	  do (setf (aref (ascii table) i)
-		   (make-instance 'constituent
-		     :traits '(alphadigit))))
-    ;; do the digits
-    (loop for i from (char-code #\0) to (char-code #\9)
-	  do (setf (aref (ascii table) i)
-		   (make-instance 'constituent
-		     :traits '(alphadigit))))
-
+    (loop for char in '(#\! #\" #\# #\$ #\% #\& #\' #\( #\) #\*
+			#\, #\; #\< #\= #\> #\? #\@ #\[ #\\ #\]
+			#\^ #\_ #\` #\| #\~ #\{ #\} #\+ #\- #\. #\/)
+	  do (set-constituent-trait table char +alphabetic+))
+    (loop for code from (char-code #\0) to (char-code #\9)
+	  do (set-constituent-trait table (code-char code) +alphadigit+))
+    (loop for code from (char-code #\A) to (char-code #\Z)
+	  do (set-constituent-trait table (code-char code) +alphadigit+))
+    (loop for code from (char-code #\a) to (char-code #\z)
+	  do (set-constituent-trait table (code-char code) +alphadigit+))
+    (set-constituent-trait table #\: +package-marker+)
+    (set-constituent-trait table #\+ +plus-sign+)
+    (set-constituent-trait table #\- +minus-sign+)
+    (set-constituent-trait table #\. +dot+)
+    (set-constituent-trait table #\. +decimal-point+)
+    (set-constituent-trait table #\/ +ratio-marker+)
+    (set-constituent-trait table #\D +double-float-exponent-marker+)
+    (set-constituent-trait table #\d +double-float-exponent-marker+)
+    (set-constituent-trait table #\E +float-exponent-marker+)
+    (set-constituent-trait table #\e +float-exponent-marker+)
+    (set-constituent-trait table #\F +single-float-exponent-marker+)
+    (set-constituent-trait table #\f +single-float-exponent-marker+)
+    (set-constituent-trait table #\L +long-float-exponent-marker+)
+    (set-constituent-trait table #\l +long-float-exponent-marker+)
+    (set-constituent-trait table #\S +short-float-exponent-marker+)
+    (set-constituent-trait table #\s +short-float-exponent-marker+)
     table))
+
+(defvar *initial-readtable* (copy-readtable *standard-readtable*))
 
 (defvar *readtable* *initial-readtable*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Reader state
+;;; 
 
-(defclass reader-state ()
-  ((%preserve-whitespace-p :initarg :preserve-whitespace-p
-			   :initform nil
-			   :reader preserve-whitespace-p)))
+(defun get-macro-character (char &optional (readtable *readtable*))
+  (let ((fun (gethash char (macro-functions readtable)))
+	(syntax-type (syntax-type readtable char)))
+    (values fun (eq syntax-type 'non-terminating-macro-char))))
 
-(defclass initial (reader-state) ())
+(defun set-macro-character (char new-function
+			    &optional
+			    non-terminating-p
+			    (readtable *readtable*))
+  (setf (syntax-type readtable char)
+	(if non-terminating-p
+	    'non-terminating-macro-char
+	    'terminating-macro-char))
+  (setf (gethash char (macro-functions readtable)) new-function))
+  
+(mapc (lambda (pair) (set-macro-character (car pair)
+					  (cdr pair)
+					  nil
+					  *standard-readtable*))
+      `((#\' . single-quote-function)
+	(#\" . double-quote-function)
+	(#\; . semicolon-function)
+	(#\) . right-parenthesis-function)
+	(#\( . left-parenthesis-function)
+	(#\` . backquote-function)
+	(#\, . comma-function)))
 
-(defclass token-accumulation (reader-state)
-  ((%chars-so-far :initarg :chars-so-far :reader chars-so-far)
-   ;; a bit vector with the same length as chars-so-far, and
-   ;; which indicates whether the i-eth character was escaped. 
-   (%escaped-chars :initarg :escaped-chars :reader escaped-chars)))
-
-(defclass odd-number-of-escapes (token-accumulation) ())
-
-(defclass even-number-of-escapes (token-accumulation) ())
+(set-macro-character #\# #'hash-function t *standard-readtable*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Reader algorithm
 
-(defgeneric read-internal (stream char syntax-class reader-state))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class whitespace)
-			  (reader-state initial))
-  ;; the HyperSpec says we discard the character and
-  ;; re-enter the initial state
-  reader-state)
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class macro-char)
-			  (reader-state initial))
-  (multiple-value-call
-      (lambda (&optional (value nil value-p))
-	(when value-p
-	  (values value t)))
-    (funcall (dispatch-function syntax-class)
-	     stream char)))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class single-escape)
-			  (reader-state initial))
-  (let ((new-char (read-char stream nil nil)))
-    (when (null new-char)
-      (error 'end-of-file :stream stream))
-    (change-class reader-state
-		  'even-number-of-escapes
-		  :chars-so-far (make-array 1
-					    :element-type 'character
-					    :initial-element new-char
-					    :adjustable t
-					    :fill-pointer t)
-		  :escaped-chars (make-array 1
-					     :element-type 'bit
-					     :initial-element 1
-					     :adjustable t
-					     :fill-pointer t))))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class multiple-escape)
-			  (reader-state initial))
-  (change-class reader-state
-		'odd-number-of-escapes
-		:chars-so-far (make-array 0
-					  :element-type 'character
-					  :adjustable t
-					  :fill-pointer t)
-		:escaped-chars (make-array 0
-					   :element-type 'bit
-					   :adjustable t
-					   :fill-pointer t)))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class constituent)
-			  (reader-state initial))
-  (when (member :invalid (traits syntax-class))
-    (error 'reader-error :stream stream))
-  (change-class reader-state
-		'even-number-of-escapes
-		:chars-so-far (make-array 1
-					  :element-type 'character
-					  :initial-element char
-					  :adjustable t
-					  :fill-pointer t)
-		:escaped-chars (make-array 1
-					   :element-type 'bit
-					   :initial-element 0
-					   :adjustable t
-					   :fill-pointer t)))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class constituent)
-			  (reader-state even-number-of-escapes))
-  (when (member :invalid (traits syntax-class))
-    (error 'reader-error :stream stream))
-  (vector-push-extend final-char (chars-so-far reader-state))
-  (vector-push-extend 0 (escaped-chars reader-state)))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class non-terminating-macro-char)
-			  (reader-state even-number-of-escapes))
-  (vector-push-extend final-char (chars-so-far reader-state))
-  (vector-push-extend 0 (escaped-chars reader-state)))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class single-escape)
-			  (reader-state token-accumulation))
-  (let ((new-char (read-char stream nil nil)))
-    (when (null new-char)
-      (error 'end-of-file :stream stream))
-    (vector-push-extend new-char (chars-so-far reader-state))
-    (vector-push-extend 1 (escaped-chars reader-state))))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class multiple-escape)
-			  (reader-state even-number-of-escapes))
-  (change-class reader-state 'odd-number-of-escapes))
-
-
-(defun make-token (string)
-  ;; FIXME check for number or potential number
-  string)
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class terminating-macro-char)
-			  (reader-state even-number-of-escapes))
-  (unread-char char stream)
-  (values (make-token (chars-so-far reader-state)) t))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class whitespace)
-			  (reader-state even-number-of-escapes))
-  (when (preserve-whitespace-p reader-state)
-    (unread-char char stream))
-  (values (make-token (chars-so-far reader-state)) t))
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class constituent)
-			  (reader-state odd-number-of-escapes))
-  (when (member :invalid (traits syntax-class))
-    (error 'reader-error :stream stream))
-  (vector-push-extend char (chars-so-far reader-state))
-  (vector-push-extend 1 (escaped-chars reader-state)))
-  
-(defmethod read-internal (stream
-			  char
-			  (syntax-class macro-char)
-			  (reader-state odd-number-of-escapes))
-  (vector-push-extend char (chars-so-far reader-state))
-  (vector-push-extend 1 (escaped-chars reader-state)))
-  
-
-(defmethod read-internal (stream
-			  char
-			  (syntax-class whitespace)
-			  (reader-state odd-number-of-escapes))
-  (vector-push-extend char (chars-so-far reader-state))
-  (vector-push-extend 1 (escaped-chars reader-state)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Main entry point
-
-(defun syntax-class (char)
-  (if (<= (char-code char) 127)
-      (aref (ascii *readtable*) (char-code char))
-      (let ((val (gethash char (others *readtable*))))
-	(or val (default-syntax-class *readtable*)))))
-
-(defun read (&optional input-stream (eof-error-p t) eof-value recursive-p)
-  (declare (ignore recursive-p))
+(define-condition invalid-character (reader-error)
+  ((%char :initarg :char :reader char))
+  (:report
+   (lambda (condition stream)
+     (format stream
+	     "Invalid character ~s on stream ~s."
+	     (char condition)
+	     (stream-error-stream condition)))))
+(defun read (&optional
+	     input-stream
+	     (eof-error-p t)
+	     (eof-value nil)
+	     (recursive-p nil))
   (setf input-stream
-	(cond ((null input-stream)
-	       *standard-input*)
-	      ((eq input-stream t)
-	       *terminal-io*)
+	(cond ((eq input-stream t) *terminal-io*)
+	      ((null input-stream) *standard-input*)
 	      (t input-stream)))
-  (let ((state (make-instance 'initial)))
-    (loop with endp = nil
-	  with result = nil
-	  do (let ((char (read-char input-stream nil nil)))
-	       (if (null char)
-		   (if (typep state 'even-number-of-escapes)
-		       (return (make-token (chars-so-far state)))
-		       (if eof-error-p
-			   (error 'end-of-file :stream input-stream)
-			   (return eof-value)))
-		   (multiple-value-bind (value value-p)
-		       (read-internal input-stream
-				      char
-				      (syntax-class char)
-				      state)
-		     (setf endp value-p
-			   result value))))
-	  until endp
-	  finally (return result))))
-
+  (let ((table *readtable*)
+	char syntax-type token)
+  (tagbody
+     1
+     (setf char (read-char input-stream eof-error-p eof-value recursive-p))
+     (setf syntax-type (syntax-type table char))
+     (cond ((and (eq syntax-type 'constituent)
+		 (has-constituent-trait table char +invalid+))
+	    ;; do this better
+	    (error 'invalid-character :stream input-stream :char char))
+	   ((eq syntax-type 'whitespace)
+	    (go 1))
+	   ((or (eq syntax-type 'terminating-macro-char)
+		(eq syntax-type 'non-terminating-macro-char))
+	    (let* ((fun (gethash char (macro-functions table)))
+		   (values (multiple-value-list
+			      (funcall fun input-stream char))))
+	      (if (null values)
+		  (go 1)
+		  (return-from read (first values)))))
+	   ((eq syntax-type 'single-escape)
+	    ;; do this better by signaling a more specific condition.
+	    (setf char (read-char input-stream t nil t))
+	    (setf token (make-array 1
+				    :initial-element char
+				    :element-type 'character
+				    :adjustable t
+				    :fill-pointer 1))
+	    (go 8))
+	   ((eq syntax-type 'multiple-escape)
+	    (setf token (make-array 0
+				    :element-type 'character
+				    :adjustable t
+				    :fill-pointer 0))
+	    (go 9))
+	   ((eq syntax-type 'constituent)
+	    ;; handle case conversion, etc
+	    (setf token (make-array 1
+				    :initial-element char
+				    :element-type 'character
+				    :adjustable t
+				    :fill-pointer 1))
+	    (go 8)))
+     8
+     (setf char (read-char input-stream nil nil t))
+     (if (null char)
+	 (go 10)
+	 (progn (setf syntax-type (syntax-type table char))
+		(cond ((or (eq syntax-type 'constituent)
+			   (eq syntax-type 'non-terminating-macro-char))
+		       (vector-push-extend char token)
+		       (go 8))
+		      ((eq syntax-type 'single-escape)
+		       ;; do this better by signaling a	
+		       ;; more specific condition.
+		       (setf char (read-char input-stream t nil t))
+		       (vector-push-extend char token)
+		       (go 8))
+		      ((eq syntax-type 'multiple-escape)
+		       (go 9))
+		      ((and (eq syntax-type 'constituent)
+			    (has-constituent-trait table char +invalid+))
+		       ;; do this better
+		       (error 'invalid-character
+			      :stream input-stream :char char))
+		      ((eq syntax-type 'terminating-macro-char)
+		       (unread-char char input-stream)
+		       (go 10))
+		      ((eq syntax-type 'whitespace)
+		       ;; check for preserving whitespace
+		       (unread-char char input-stream)
+		       (go 10)))))
+     9
+     ;; do this better by signaling a
+     ;; more specific condition.
+     (setf char (read-char input-stream t nil t))
+     (setf syntax-type (syntax-type table char))
+     (cond ((or (eq syntax-type 'constituent)
+		(eq syntax-type 'whitespace))
+	    (vector-push-extend char token)
+	    (go 9))
+	   ((eq syntax-type 'single-escape)
+	    ;; do this better by signaling a	
+	    ;; more specific condition.
+	    (setf char (read-char input-stream t nil t))
+	    (vector-push-extend char token)
+	    (go 9))
+	   ((eq syntax-type 'multiple-escape)
+	    (go 8))
+	   ((and (eq syntax-type 'constituent)
+		 (has-constituent-trait table char +invalid+))
+	    ;; do this better
+	    (error 'invalid-character
+		   :stream input-stream :char char)))
+     10
+     (if (equal token ".")
+	 (error 'single-dot-token)
+	 ;; build the token here
+	 nil
+	 ))
+    token))
