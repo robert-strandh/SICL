@@ -27,7 +27,7 @@
          (remaining-dimension-vars (loop repeat (1- length) collect (gensym)))
          (array-var (gensym)))
     `(let ((,array-var ,array))
-       (assert (= ,length (length (array-dimensions ,array-var))))
+       (assert (= ,length (array-rank ,array-var)))
        (let (,@(mapcar #'list subscript-vars subscripts))
          (let (,@(loop for var in dimension-vars
                        for dimension from 0
