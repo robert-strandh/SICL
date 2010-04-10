@@ -144,7 +144,7 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract.~@"))
+              unable to fulfil its contract."))
 
 (fundoc '<=
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -156,7 +156,7 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract.~@"))
+              unable to fulfil its contract."))
 
 (fundoc '=
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -167,7 +167,7 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract.~@"))
+              unable to fulfil its contract."))
 
 (fundoc '/=
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -178,7 +178,7 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract.~@"))
+              unable to fulfil its contract."))
 
 (fundoc '>
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -190,7 +190,7 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract.~@"))
+              unable to fulfil its contract."))
 
 (fundoc '>=
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -202,7 +202,7 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract.~@"))
+              unable to fulfil its contract."))
 
 (fundoc 'abs
         (fmt "Lambda list: (NUMBER).~@
@@ -214,65 +214,109 @@
               If given a complex number, the result is a real number.~@
               In that case, the return value might be a floating point number,~@
               even if the result could be expressed as an exact rational number.~@
-              The consequences are undefine if NUMBER is not a number.~@"))
+              The consequences are undefine if NUMBER is not a number."))
+
 (fundoc 'acons
         (fmt "Lambda List: (KEY DATUM ALIST).~@
               Return a new association list with a CONS of the~@
               KEY and the DATUM as a first element, and ALIST as the~@
               rest.  It is entirely equivalent to~@
-              (cons (cons KEY DATUM) ALIST.~@"))
+              (cons (cons KEY DATUM) ALIST."))
 
-(fundoc 'acos "Lambda list: (NUMBER).~@
-               Return the arc cosine of the number NUMBER.~@
-               If NUMBER is not a number, then an error of type~@
-               TYPE-ERROR is signaled.~@
-               Might signal an error of type ARITHMETIC-ERROR if~@
-               unable to fulfil its contract.~@"))
+(fundoc 'acos 
+        (fmt "Lambda list: (NUMBER).~@
+              Return the arc cosine of the number NUMBER.~@
+              If NUMBER is not a number, then an error of type~@
+              TYPE-ERROR is signaled.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract."))
         
-(fundoc 'asin "Lambda list: (NUMBER).~@
-               Return the arc sine of the number NUMBER.~@
-               If NUMBER is not a number, then an error of type~@
-               TYPE-ERROR is signaled.~@
-               Might signal an error of type ARITHMETIC-ERROR if~@
-               unable to fulfil its contract.~@"))
+(fundoc 'asin 
+        (fmt "Lambda list: (NUMBER).~@
+              Return the arc sine of the number NUMBER.~@
+              If NUMBER is not a number, then an error of type~@
+              TYPE-ERROR is signaled.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract."))
         
-(fundoc 'atan "Lambda list: (NUMBER1 &optional NUMBER2).~@
-               If NUMBER2 is not supplied, return the arc tangent~@
-               of the number NUMBER1.  In that case, NUMBER1 can be~@
-               any number.~@
-               If NUMBER2 is supplied, return the arc tangent of~@
-               NUMBER1/NUMBER2.  In that case, NUMBER1 and NUMBER2 must~@
-               both be real numbers.~@
-               If NUMBER2 is not given, the result is in the interval~@
-               ]-pi/2,pi/2[~@
-               If number2 is given, the result is in the interval~@
-               [-pi,pi[ when minus zero is NOT supported, and in the interval~@
-               [-pi,pi] when minu zero IS supported.~@
-               If NUMBER2 is not supplied and NUMBER1 is not a number,~@
-               then an error of type TYPE-ERROR is signaled.~@
-               If NUMBER2 is supplied, and at least one of the two~@
-               numbers is not real, an error of type TYPE-ERROR is signaled.~@
-               Might signal an error of type ARITHMETIC-ERROR if~@
-               unable to fulfil its contract.~@"))
+(fundoc 'atan 
+        (fmt "Lambda list: (NUMBER1 &optional NUMBER2).~@
+              If NUMBER2 is not supplied, return the arc tangent~@
+              of the number NUMBER1.  In that case, NUMBER1 can be~@
+              any number.~@
+              If NUMBER2 is supplied, return the arc tangent of~@
+              NUMBER1/NUMBER2.  In that case, NUMBER1 and NUMBER2 must~@
+              both be real numbers.~@
+              If NUMBER2 is not given, the result is in the interval~@
+              ]-pi/2,pi/2[~@
+              If number2 is given, the result is in the interval~@
+              [-pi,pi[ when minus zero is NOT supported, and in the interval~@
+              [-pi,pi] when minu zero IS supported.~@
+              If NUMBER2 is not supplied and NUMBER1 is not a number,~@
+              then an error of type TYPE-ERROR is signaled.~@
+              If NUMBER2 is supplied, and at least one of the two~@
+              numbers is not real, an error of type TYPE-ERROR is signaled.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract."))
         
-(fundoc 'asinh "Lambda list: (NUMBER).~@
-                Return the hypberbolic arc sine of the number NUMBER.~@
-                If NUMBER is not a number, then an error of type~@
-                TYPE-ERROR is signaled.~@
-                Might signal an error of type ARITHMETIC-ERROR if~@
-                unable to fulfil its contract.~@"))
+(fundoc 'asinh 
+        (fmt "Lambda list: (NUMBER).~@
+              Return the hypberbolic arc sine of the number NUMBER.~@
+              If NUMBER is not a number, then an error of type~@
+              TYPE-ERROR is signaled.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract."))
         
-(fundoc 'acosn "Lambda list: (NUMBER).~@
-                Return the hypberbolic arc cosine of the number NUMBER.~@
-                If NUMBER is not a number, then an error of type~@
-                TYPE-ERROR is signaled.~@
-                Might signal an error of type ARITHMETIC-ERROR if~@
-                unable to fulfil its contract.~@"))
+(fundoc 'acosh
+        (fmt "Lambda list: (NUMBER).~@
+              Return the hypberbolic arc cosine of the number NUMBER.~@
+              If NUMBER is not a number, then an error of type~@
+              TYPE-ERROR is signaled.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract."))
         
-(fundoc 'atanh "Lambda list: (NUMBER).~@
-                Return the hypberbolic arc tangent of the number NUMBER.~@
-                If NUMBER is not a number, then an error of type~@
-                TYPE-ERROR is signaled.~@
-                Might signal an error of type ARITHMETIC-ERROR if~@
-                unable to fulfil its contract.~@"))
+(fundoc 'atanh
+        (fmt "Lambda list: (NUMBER).~@
+              Return the hypberbolic arc tangent of the number NUMBER.~@
+              If NUMBER is not a number, then an error of type~@
+              TYPE-ERROR is signaled.~@
+              Might signal an error of type ARITHMETIC-ERROR if~@
+              unable to fulfil its contract."))
         
+(fundoc 'add-method
+        (fmt "Lambdsa list: (GENERIC-FUNCTION METHOD).~@
+              Add a method to a generic function.~@
+              If there is already a method of GENERIC-FUNCTION~@
+              with the same parameter specializers, and the same~@
+              qualifiers, then METHOD replaces the existing one.~@
+              If the lambda list of the method function of METHOD~@
+              is not congruent with that of GENERIC-FUNCTION,~@
+              then an error of type TYPE-ERROR is signaled.~@
+              If METHOD is a method of a generic function other than~@
+              GENERIC-FUNCTION, then an error of type TYPE-ERROR is signaled.~@
+              The consequences are undefined if GENERIC-FUNCTION~@
+              is not a generic fuction, or of METHOD is not a method."))
+
+(fundoc 'adjoin
+        (fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT.~@
+              If ITEM is already an element of LIST, then return LIST.~@
+              Otherwise return LIST with ITEM as an additional element,~@
+              as if (cons ITEM LIST) had been called.~@
+              KEY is a designator for a function that takes one argument~@
+              which is applied to ITEM and the elements of LIST before~@
+              an equality test is applied.~@
+              TEST and TEST-NOT are designators functions of functions~@
+              that take two arguments and which return a true value if~@
+              and only if their arguments are considered equal.~@
+              TEST and TEST-NOT must not be given simultaneously.~@
+              ADJOIN might signal an error of type TYPE-ERROR is LIST is~@
+              not a proper list."))
+
+(fundoc 'adjustable-array-p
+        (fmt "Lambda list: (ARRAY).~@
+              Return a true value if and only if ARRAY is an adjustable~@
+              array, i.e., if passing ARRAY to ADJUST-ARRAY could return~@
+              an array identical to ARRAY.~@
+              If ARRAY is not an array, then an error of type TYPE-ERROR~@
+              is signaled."))
+
