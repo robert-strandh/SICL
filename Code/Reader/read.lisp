@@ -379,6 +379,45 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; In order to preserve the source-code positions of the expressions
+;;; read, we define a class that contains the expression itself, a
+;;; start and an end position, and a list of subexpressions.
+
+(defclass expression ()
+  ((%start :initarg :start :reader start)
+   (%end :initarg :end :reader end)
+   (%expression :initarg :expression :reader expression)
+   (%sub-expressions :initarg :sub-expressions :reader sub-expressions)))
+
+(defmethod print-object ((exp expression) stream)
+  (format stream "[(~a ~a) ~s ~s]"
+          (start exp)
+          (end exp)
+          (expression exp)
+          (sub-expressions exp)))
+
+(defparameter *expression-stack* '())
+
+(defun push-expression-stack ()
+  (unless (null *expression-stack*)
+    (push '() *expression-stack*)))
+
+(defun pop-expression-stack ()
+  (unless (null *expression-stack*)
+    (pop *expression-stack*)))
+
+(defun combine-expression-stack (expression start end)
+  (unless (null *expression-stack*)
+    (push (make-instance 'expression
+                         :start start
+                         :end end
+                         :expression expression
+                         :sub-expressions
+                         (nreverse (car *expression-stack*)))
+          (cadr *expression-stack*))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Reader algorithm
 
 (define-condition invalid-character (reader-error)
@@ -389,6 +428,7 @@
 	     "Invalid character ~s on stream ~s."
 	     (char condition)
 	     (stream-error-stream condition)))))
+
 (defun read (&optional
 	     input-stream
 	     (eof-error-p t)
@@ -399,103 +439,121 @@
 	      ((null input-stream) *standard-input*)
 	      (t input-stream)))
   (let ((table *readtable*)
-	char syntax-type token)
-  (tagbody
+	char syntax-type token start)
+    (tagbody
      1
-     (setf char (read-char input-stream eof-error-p eof-value recursive-p))
-     (setf syntax-type (syntax-type table char))
-     (cond ((and (eq syntax-type 'constituent)
-		 (has-constituent-trait table char +invalid+))
-	    ;; do this better
-	    (error 'invalid-character :stream input-stream :char char))
-	   ((eq syntax-type 'whitespace)
-	    (go 1))
-	   ((or (eq syntax-type 'terminating-macro-char)
-		(eq syntax-type 'non-terminating-macro-char))
-	    (let* ((fun (gethash char (macro-functions table)))
-		   (values (multiple-value-list
-			      (funcall fun input-stream char))))
-	      (if (null values)
-		  (go 1)
-		  (return-from read (first values)))))
-	   ((eq syntax-type 'single-escape)
-	    ;; do this better by signaling a more specific condition.
-	    (setf char (read-char input-stream t nil t))
-	    (setf token (make-array 1
-				    :initial-element char
-				    :element-type 'character
-				    :adjustable t
-				    :fill-pointer 1))
-	    (go 8))
-	   ((eq syntax-type 'multiple-escape)
-	    (setf token (make-array 0
-				    :element-type 'character
-				    :adjustable t
-				    :fill-pointer 0))
-	    (go 9))
-	   ((eq syntax-type 'constituent)
-	    ;; handle case conversion, etc
-	    (setf token (make-array 1
-				    :initial-element char
-				    :element-type 'character
-				    :adjustable t
-				    :fill-pointer 1))
-	    (go 8)))
+       (setf start (file-position input-stream))
+       (setf char (read-char input-stream eof-error-p eof-value recursive-p))
+       (setf syntax-type (syntax-type table char))
+       (cond ((and (eq syntax-type 'constituent)
+                   (has-constituent-trait table char +invalid+))
+              ;; do this better
+              (error 'invalid-character :stream input-stream :char char))
+             ((eq syntax-type 'whitespace)
+              (go 1))
+             ((or (eq syntax-type 'terminating-macro-char)
+                  (eq syntax-type 'non-terminating-macro-char))
+              (push-expression-stack)
+              (unwind-protect 
+                   (let* ((fun (gethash char (macro-functions table)))
+                          (values (multiple-value-list
+                                      (funcall fun input-stream char))))
+                     (if (null values)
+                         (go 1)
+                         (progn (combine-expression-stack
+                                 (first values) start (file-position input-stream))
+                                (return-from read (first values)))))
+                (pop-expression-stack)))
+             ((eq syntax-type 'single-escape)
+              ;; do this better by signaling a more specific condition.
+              (setf char (read-char input-stream t nil t))
+              (setf token (make-array 1
+                                      :initial-element char
+                                      :element-type 'character
+                                      :adjustable t
+                                      :fill-pointer 1))
+              (go 8))
+             ((eq syntax-type 'multiple-escape)
+              (setf token (make-array 0
+                                      :element-type 'character
+                                      :adjustable t
+                                      :fill-pointer 0))
+              (go 9))
+             ((eq syntax-type 'constituent)
+              ;; handle case conversion, etc
+              (setf token (make-array 1
+                                      :initial-element char
+                                      :element-type 'character
+                                      :adjustable t
+                                      :fill-pointer 1))
+              (go 8)))
      8
-     (setf char (read-char input-stream nil nil t))
-     (if (null char)
-	 (go 10)
-	 (progn (setf syntax-type (syntax-type table char))
-		(cond ((or (eq syntax-type 'constituent)
-			   (eq syntax-type 'non-terminating-macro-char))
-		       (vector-push-extend char token)
-		       (go 8))
-		      ((eq syntax-type 'single-escape)
-		       ;; do this better by signaling a	
-		       ;; more specific condition.
-		       (setf char (read-char input-stream t nil t))
-		       (vector-push-extend char token)
-		       (go 8))
-		      ((eq syntax-type 'multiple-escape)
-		       (go 9))
-		      ((and (eq syntax-type 'constituent)
-			    (has-constituent-trait table char +invalid+))
-		       ;; do this better
-		       (error 'invalid-character
-			      :stream input-stream :char char))
-		      ((eq syntax-type 'terminating-macro-char)
-		       (unread-char char input-stream)
-		       (go 10))
-		      ((eq syntax-type 'whitespace)
-		       ;; check for preserving whitespace
-		       (unread-char char input-stream)
-		       (go 10)))))
+       (setf char (read-char input-stream nil nil t))
+       (if (null char)
+           (go 10)
+           (progn (setf syntax-type (syntax-type table char))
+                  (cond ((or (eq syntax-type 'constituent)
+                             (eq syntax-type 'non-terminating-macro-char))
+                         (vector-push-extend char token)
+                         (go 8))
+                        ((eq syntax-type 'single-escape)
+                         ;; do this better by signaling a	
+                         ;; more specific condition.
+                         (setf char (read-char input-stream t nil t))
+                         (vector-push-extend char token)
+                         (go 8))
+                        ((eq syntax-type 'multiple-escape)
+                         (go 9))
+                        ((and (eq syntax-type 'constituent)
+                              (has-constituent-trait table char +invalid+))
+                         ;; do this better
+                         (error 'invalid-character
+                                :stream input-stream :char char))
+                        ((eq syntax-type 'terminating-macro-char)
+                         (unread-char char input-stream)
+                         (go 10))
+                        ((eq syntax-type 'whitespace)
+                         ;; check for preserving whitespace
+                         (unread-char char input-stream)
+                         (go 10)))))
      9
-     ;; do this better by signaling a
-     ;; more specific condition.
-     (setf char (read-char input-stream t nil t))
-     (setf syntax-type (syntax-type table char))
-     (cond ((or (eq syntax-type 'constituent)
-		(eq syntax-type 'whitespace))
-	    (vector-push-extend char token)
-	    (go 9))
-	   ((eq syntax-type 'single-escape)
-	    ;; do this better by signaling a	
-	    ;; more specific condition.
-	    (setf char (read-char input-stream t nil t))
-	    (vector-push-extend char token)
-	    (go 9))
-	   ((eq syntax-type 'multiple-escape)
-	    (go 8))
-	   ((and (eq syntax-type 'constituent)
-		 (has-constituent-trait table char +invalid+))
-	    ;; do this better
-	    (error 'invalid-character
-		   :stream input-stream :char char)))
+       ;; do this better by signaling a
+       ;; more specific condition.
+       (setf char (read-char input-stream t nil t))
+       (setf syntax-type (syntax-type table char))
+       (cond ((or (eq syntax-type 'constituent)
+                  (eq syntax-type 'whitespace))
+              (vector-push-extend char token)
+              (go 9))
+             ((eq syntax-type 'single-escape)
+              ;; do this better by signaling a	
+              ;; more specific condition.
+              (setf char (read-char input-stream t nil t))
+              (vector-push-extend char token)
+              (go 9))
+             ((eq syntax-type 'multiple-escape)
+              (go 8))
+             ((and (eq syntax-type 'constituent)
+                   (has-constituent-trait table char +invalid+))
+              ;; do this better
+              (error 'invalid-character
+                     :stream input-stream :char char)))
      10
-     (if (equal token ".")
-	 (error 'single-dot-token)
-	 ;; build the token here
-	 nil
-	 ))
+       (if (equal token ".")
+           (error 'single-dot-token)
+           ;; build the token here
+           nil
+           ))
+    (push-expression-stack)
+    (combine-expression-stack token start (file-position input-stream))
+    (pop-expression-stack)
     token))
+
+(defun read-with-position (&optional
+                           input-stream
+                           (eof-error-p t)
+                           (eof-value nil)
+                           (recursive-p nil))
+  (let ((*expression-stack* (list '())))
+    (values (read input-stream eof-error-p eof-value recursive-p)
+            (caar *expression-stack*))))
