@@ -173,6 +173,7 @@
   ()
   (:report
    (lambda (condition stream)
+     (declare (ignore condition))
      (format stream
 	     "Expected a loop keyword indicating a for/as-hash, ~
               but reached the end of the loop body"))))
@@ -190,6 +191,7 @@
   ()
   (:report
    (lambda (condition stream)
+     (declare (ignore condition))
      (format stream
 	     "Expected the loop keyword in/or, ~
               but reached the end of the loop body"))))
@@ -206,6 +208,7 @@
   ()
   (:report
    (lambda (condition stream)
+     (declare (ignore condition))
      (format stream
 	     "Expected (hash-key other-var), ~
               but reached the end of the loop body"))))
@@ -214,6 +217,7 @@
   ()
   (:report
    (lambda (condition stream)
+     (declare (ignore condition))
      (format stream
 	     "Expected (hash-value other-var), ~
               but reached the end of the loop body"))))
@@ -238,6 +242,7 @@
   ()
   (:report
    (lambda (condition stream)
+     (declare (ignore condition))
      (format stream
 	     "Expected a for/as preposition, ~
               but reached the end of the loop body"))))
@@ -710,6 +715,7 @@
 (defun parse-for/as-arithmetic (body)
   (multiple-value-bind (prepositions rest)
       (parse-preposition body)
+    (declare (ignore rest))
     ;; check the prepositions
     (cond ((null prepositions)
 	   (error 'expected-preposition-but-end))
