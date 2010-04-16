@@ -286,7 +286,7 @@
   `(defun ,name (,body-var)
      (when (or (null ,body-var)
 	       (and ,@(mapcar (lambda (start-symbol)
-				`(not (symbol-equal (car ,body-var) ,start-symbol)))
+				`(not (symbol-equal (car ,body-var) ',start-symbol)))
 			      start-symbols)))
        (return-from ,name (values nil ,body-var)))
      ,@body))
@@ -501,7 +501,7 @@
   (multiple-value-bind (form rest1)
       (parse-form body)
     (if (or (null rest1)
-	    (not (symbol-equal (car rest1) #:by)))
+	    (not (symbol-equal (car rest1) '#:by)))
 	(values (make-instance class-name
 			       :list-form form
 			       :step-fun-form #'cdr)
@@ -516,14 +516,14 @@
 (define-elementary-parser parse-for/as-in body (#:in)
   (parse-for/as-in/on (cdr body) 'for/as-in-list-subclause))
 
-(define-elementary-parser parse-for/as-n body (#:n)
+(define-elementary-parser parse-for/as-on body (#:n)
   (parse-for/as-in/on (cdr body) 'for/as-on-list-subclause))
 
 (define-elementary-parser parse-for/as-equals-then body (#:=)
   (multiple-value-bind (form1 rest1)
       (parse-form (cdr body))
     (if (or (null rest1)
-	    (not (symbol-equal (car rest1) #:then)))
+	    (not (symbol-equal (car rest1) '#:then)))
 	(values (make-instance 'for/as-equals-then-subclause
 		  :form1 form1
 		  :form2 form1)
@@ -547,8 +547,8 @@
   (let ((hash-table-form nil))
     (cond ((null body)
 	   (error 'expected-in/of-but-end))
-	  ((not (or (symbol-equal (car body) #:in)
-		    (symbol-equal (car body) #:of)))
+	  ((not (or (symbol-equal (car body) '#:in)
+		    (symbol-equal (car body) '#:of)))
 	   (error 'expected-in/of-but-found
 		  :found (car body)))
 	  ((null (progn (pop body) body))
@@ -557,8 +557,8 @@
 	   (setf hash-table-form (car body))
 	   (pop body)
 	   (cond ((or (null body)
-		      (not (symbol-equal (car body) #:using)))
-		  (values (make-instanc class-name
+		      (not (symbol-equal (car body) '#:using)))
+		  (values (make-instanc 'for/as-hash-key-subclause
 					:hash-table-form hash-table-form
 					:other-var nil)
 			  body))
@@ -567,7 +567,7 @@
 		 (t
 		  (let ((using-arg (car body)))
 		    (if (or (not (consp using-arg))
-			    (not (symbol-equal (car using-arg) #:has-value))
+			    (not (symbol-equal (car using-arg) '#:has-value))
 			    (not (consp (cdr using-arg)))
 			    (not (null (cddr using-arg)))
 			    (not (symbolp (cadr using-arg))))
@@ -593,8 +593,8 @@
 	   (setf hash-table-form (car body))
 	   (pop body)
 	   (cond ((or (null body)
-		      (not (symbol-equal (car body) #:using)))
-		  (values (make-instanc class-name
+		      (not (symbol-equal (car body) '#:using)))
+		  (values (make-instanc 'for-as-hash-value-subclause
 					:hash-table-form hash-table-form
 					:other-var nil)
 			  body))
@@ -603,7 +603,7 @@
 		 (t
 		  (let ((using-arg (car body)))
 		    (if (or (not (consp using-arg))
-			    (not (symbol-equal (car using-arg) #:has-key))
+			    (not (symbol-equal (car using-arg) '#:has-key))
 			    (not (consp (cdr using-arg)))
 			    (not (null (cddr using-arg)))
 			    (not (symbolp (cadr using-arg))))
@@ -620,8 +620,8 @@
 (defun parse-for/as-package (body class-name)
   (cond ((null body)
 	 (error 'expected-in/of-but-end))
-	((not (or (symbol-equal (car body) #:in)
-		  (symbol-equal (car body) #:of)))
+	((not (or (symbol-equal (car body) '#:in)
+		  (symbol-equal (car body) '#:of)))
 	 (error 'expected-in/of-but-found
 		:found (car body)))
 	((null (cddr body))
@@ -633,13 +633,13 @@
 		   (cdddr body))))))
 
 (define-elementary-parser parse-for/as-package-symbols body (#:symbol #:symbols)
-  (parse-for/as-package (cdr body 'for/as-package-symbols-subcause)))
+  (parse-for/as-package (cdr body) 'for/as-package-symbols-subcause))
 
 (define-elementary-parser parse-for/as-package-present-symbols body (#:present-symbol #:present-symbols)
-  (parse-for/as-package (cdr body 'for/as-package-present-symbols-subcause)))
+  (parse-for/as-package (cdr body) 'for/as-package-present-symbols-subcause))
 
 (define-elementary-parser parse-for/as-package-external-symbols body (#:external-symbol #:external-symbols)
-  (parse-for/as-package (cdr body 'for/as-package-external-symbols-subcause)))
+  (parse-for/as-package (cdr body) 'for/as-package-external-symbols-subcause))
 
 (define-elementary-parser parse-for/as-hash/package body (#:being)
   (cond ((null (cdr body))
@@ -769,12 +769,12 @@
 	  (parse-compound-forms (cdr body))
 	(values (cons (car body) compound-forms) rest))))
 
-(defun parse-nonempty-compund-forms (body)
+(defun parse-nonempty-compound-forms (body)
   (if (null body)
       (error 'expected-compound-form-but-end)
-      (multiple-value-bind (compund-forms rest)
+      (multiple-value-bind (compound-forms rest)
 	  (parse-compound-forms body)
-	(if (null compund-forms)
+	(if (null compound-forms)
 	    (error 'expected-compound-form-but-found
 		   :found (car body))
 	    (values compound-forms rest)))))
@@ -787,7 +787,7 @@
     (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
   ())
 
-(define-elementary-parser parse-initially body (#:initially)
+(define-elementary-parser parse-initially-clause body (#:initially)
   (multiple-value-bind (compound-forms rest)
       (parse-nonempty-compound-forms (cdr body))
     (values (make-instance 'initially-clause :forms compound-forms)
@@ -801,7 +801,7 @@
     (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
   ())
 
-(define-elementary-parser parse-finally body (#:finally)
+(define-elementary-parser parse-finally-clause body (#:finally)
   (multiple-value-bind (compound-forms rest)
       (parse-nonempty-compound-forms (cdr body))
     (values (make-instance 'finally-clause :forms compound-forms)
@@ -814,7 +814,7 @@
 (defun parse-initial-final (body)
   (parse-alternative body
 		     #'parse-initially-clause
-		     #'parse-finally-clause)
+		     #'parse-finally-clause))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -824,7 +824,7 @@
   (parse-alternative body
 		     #'parse-with-clause
 		     #'parse-initial-final
-		     #'parse-for/as-clause)
+		     #'parse-for/as-clause))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -846,8 +846,11 @@
 (defclass return-clause (clause main-clause-mixin)
   ((%form :initarg :form :reader form)))
 
-(defmethod parse-body (body (keyword (eql 'return)))
-  (parse-form body))
+(define-elementary-parser parse-return-clause body (#:return)
+  (multiple-value-bind (form rest)
+      (parse-form (cdr body))
+    (values (make-instance 'return-clause :form form)
+          rest)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -884,7 +887,7 @@
       (let ((result (make-instance 'class-name
 		      :form (car body))))
 	(if (and (not (null (cdr body)))
-		 (symbol-equal (cadr body) #:into))
+		 (symbol-equal (cadr body) '#:into))
 	    (cond ((null (cddr body))
 		   (error 'expected-simple-var-but-end))
 		  ((not (symbolp (caddr body)))
@@ -925,7 +928,7 @@
       (let ((result (make-instance 'class-name
 		      :form (car body))))
 	(if (and (not (null (cdr body)))
-		 (symbol-equal (cadr body) #:into))
+		 (symbol-equal (cadr body) '#:into))
 	    (cond ((null (cddr body))
 		   (error 'expected-simple-var-but-end))
 		  ((not (symbolp (caddr body)))
@@ -964,7 +967,7 @@
 
 (defun parse-accumulation (body)
   (parse-alternative body
-		     #'parse-list-accumulation
+		     #'parse-list-accumulation-clause
 		     #'parse-numeric-accumulation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1070,7 +1073,7 @@
 		     #'parse-accumulation
 		     #'parse-conditional
 		     #'parse-termination-test
-		     #'parse-initial-final)
+		     #'parse-initial-final))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1091,10 +1094,10 @@
 	(cond ((not (null rest3))
 	       (error 'expected-keyword-but-found
 		      :found (car rest3)))
-	      (make-instance 'loop-body
-		:name-clause name-clause
-		:variable-clauses variable-clauses
-		:main-clauses main-clauses))))))
+	      (t (make-instance 'loop-body
+                   :name-clause name-clause
+                   :variable-clauses variable-clauses
+                   :main-clauses main-clauses)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
