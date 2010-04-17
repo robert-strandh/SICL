@@ -19,7 +19,8 @@
 ;;; packages.lisp.
 (defpackage #:sicl-loop
     (:use #:common-lisp)
-  (:shadow #:loop))
+  (:shadow #:loop)
+  (:export #:loop))
 
 (in-package #:sicl-loop)
 
@@ -563,9 +564,9 @@
 	   (pop body)
 	   (cond ((or (null body)
 		      (not (symbol-equal (car body) '#:using)))
-		  (values (make-instanc 'for/as-hash-key-subclause
-					:hash-table-form hash-table-form
-					:other-var nil)
+		  (values (make-instance 'for/as-hash-key-subclause
+                                         :hash-table-form hash-table-form
+                                         :other-var nil)
 			  body))
 		 ((null (cdr body))
 		  (error 'expected-hash-value-but-end))
@@ -588,8 +589,8 @@
   (let ((hash-table-form nil))
     (cond ((null body)
 	   (error 'expected-in/of-but-end))
-	  ((not (or (symbol-equal (car body) #:in)
-		    (symbol-equal (car body) #:of)))
+	  ((not (or (symbol-equal (car body) '#:in)
+		    (symbol-equal (car body) '#:of)))
 	   (error 'expected-in/of-but-found
 		  :found (car body)))
 	  ((null (progn (pop body) body))
@@ -599,9 +600,9 @@
 	   (pop body)
 	   (cond ((or (null body)
 		      (not (symbol-equal (car body) '#:using)))
-		  (values (make-instanc 'for-as-hash-value-subclause
-					:hash-table-form hash-table-form
-					:other-var nil)
+		  (values (make-instance 'for-as-hash-value-subclause
+                                         :hash-table-form hash-table-form
+                                         :other-var nil)
 			  body))
 		 ((null (cdr body))
 		  (error 'expected-hash-key-but-end))
@@ -753,13 +754,13 @@
 	      (error 'expected-for/as-subclause-but-found
 		     :found (car rest1))
 	      (setf (var-spec subclause) var
-		    (type-spec subclause type-spec)))
+		    (type-spec subclause) type-spec))
 	  (values subclause rest2)))))
 
 (define-elementary-parser parse-for/as-clause body (#:for #:as)
   (multiple-value-bind (subclauses rest)
       (parse-sequence (cons 'and (cdr body))
-		      #'parse-and-for-/as-subclause)
+		      #'parse-and-for/as-subclause)
     (values (make-instance 'for/as-clause
 	      :subclauses subclauses)
 	    rest)))
@@ -860,12 +861,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Parse a do-clause
+
+(defclass do-clause (clause main-clause-mixin)
+  ((%form :initarg :form :reader form)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Parse unconditional
 
 (defun parse-unconditional (body)
   (parse-alternative body
 		     #'parse-do-clause
 		     #'parse-return-clause))
+
+(define-elementary-parser parse-do-clause body (#:do)
+  (multiple-value-bind (form rest)
+      (parse-form (cdr body))
+    (values (make-instance 'do-clause :form form)
+          rest)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -890,7 +904,7 @@
 (defun parse-list-accumulation-clause (body class-name)
   (if (null body)
       (error 'expected-form-but-end)
-      (let ((result (make-instance 'class-name
+      (let ((result (make-instance class-name
 		      :form (car body))))
 	(if (and (not (null (cdr body)))
 		 (symbol-equal (cadr body) '#:into))
@@ -931,7 +945,7 @@
 (defun parse-numeric-accumulation-clause (body class-name)
   (if (null body)
       (error 'expected-form-but-end)
-      (let ((result (make-instance 'class-name
+      (let ((result (make-instance class-name
 		      :form (car body))))
 	(if (and (not (null (cdr body)))
 		 (symbol-equal (cadr body) '#:into))
@@ -973,7 +987,9 @@
 
 (defun parse-accumulation (body)
   (parse-alternative body
-		     #'parse-list-accumulation-clause
+		     #'parse-collect
+                     #'parse-append
+                     #'parse-nconc
 		     #'parse-numeric-accumulation))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1003,6 +1019,7 @@
 (defun parse-conditional (body class-name)
   (multiple-value-bind (form rest1)
       (parse-form body)
+    (declare (ignore rest1))
     (multiple-value-bind (then-clauses rest2)
 	(parse-selectable-clauses body)
       (cond ((or (null rest2)
@@ -1030,6 +1047,12 @@
 		       (if (symbol-equal (car rest3) ':#end)
 			   (cdr rest3)
 			   rest3))))))))
+
+(define-elementary-parser parse-if/when body (#:if #:when)
+  (parse-conditional body 'if/when-clause))
+
+(define-elementary-parser parse-unless body (#:if)
+  (parse-conditional body 'unless-clause))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1077,8 +1100,14 @@
   (parse-alternative body
 		     #'parse-unconditional
 		     #'parse-accumulation
-		     #'parse-conditional
-		     #'parse-termination-test
+		     #'parse-if/when
+                     #'parse-unless
+		     #'parse-while-clause
+                     #'parse-until-clause
+                     #'parse-repeat-clause
+                     #'parse-always-clause
+                     #'parse-never-clause
+                     #'parse-thereis-clause
 		     #'parse-initial-final))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1162,3 +1191,21 @@
       (extract-aux d-var-spec d-type-spec)
       result)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Code generation
+
+(defgeneric generate-code (clause))
+
+(defmethod generate-code ((clause while-clause))
+  `(unless ,(form clause)
+     (go end)))
+
+(defmethod generate-code ((clause until-clause))
+  `(when ,(form clause)
+     (go end)))
+
+(defmacro loop (&rest body)
+  `(tagbody
+      ,@(mapcar #'generate-code (main-clauses (parse-loop-body body)))
+    end))
