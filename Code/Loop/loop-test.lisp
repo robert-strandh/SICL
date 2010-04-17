@@ -9,3 +9,15 @@
 
 (define-test loop-while-nil
   (assert-equal nil (sicl-loop:loop while nil)))
+
+(define-test loop-until-expr
+  (assert-equal 10
+                (let ((n 0))
+                  (sicl-loop:loop until (= (incf n) 10))
+                  n)))
+
+(define-test loop-while-expr
+  (assert-equal 10
+                (let ((n 0))
+                  (sicl-loop:loop while (< (incf n) 10))
+                  n)))

@@ -1207,5 +1207,7 @@
 
 (defmacro loop (&rest body)
   `(tagbody
+    again
       ,@(mapcar #'generate-code (main-clauses (parse-loop-body body)))
+      (go again)
     end))
