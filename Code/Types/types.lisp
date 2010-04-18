@@ -1,3 +1,27 @@
+;;; This type is introduced just for documentation purposes.
+(deftype generalized-boolean () t)
+
+;;; A general predicate is a function that takes an 
+;;; arbitrary object, and returns a generalized boolean.
+;;; We also require that a general predicate is pure, i.e.
+;;; that it no observable effect on the environment, and 
+;;; that its return value depends only on its argument.
+(deftype general-predicate () '(function (t) generalized-boolean))
+
+;;; A symbol predicate is like a general predicate, but its argument
+;;; must be of type symbol. 
+(deftype symbol-predicate () '(function (symbol) generalized-boolean))
+
+;;; This function is used in the definition of the type 
+;;; character-designator 
+(defun name-of-length-1 (symbol)
+  (= 1 (length (symbol-name symbol))))
+
+(declaim (ftype symbol-predicate name-of-length-1))
+
+(deftype character-designator ()
+  '(or character (string 1) (and symbol (satisfies name-of-length-1))))
+
 ;;; Used for function arguments that apply a key function
 ;;; before comparing two objects.
 (deftype keyfun () (function (t) t))
@@ -139,7 +163,7 @@
                     (function (real real) number))
                 atan))
 
-(declaim (ftype (function (t) t)
+(declaim (ftype general-predicate
                 atom))
 
 (declaim (ftype (function ((array bit) &rest list) bit)
@@ -165,7 +189,7 @@
                           (array bit))
                 bit-not))
 
-(declaim (ftype (function (t) t)
+(declaim (ftype general-predicate
                 bit-vector-p))
 
 ;;; This could be done better for any particular implementation.
@@ -181,8 +205,8 @@
 (declaim (ftype (function (symbol) t)
                 boundp))
 
-(declaim (ftype (function (&optional (or string function)) &rest list) null)
-         break)
+(declaim (ftype (function (&optional (or string function)) &rest list) null
+                break))
 
 (declaim (ftype (function (broadcast-stream) list)
                 broadcast-stream-streams))
@@ -195,15 +219,43 @@
                 byte-position))
 
 (declaim (ftype (function (list) t)
-                car cdr
-                caar cadr cdar cddr
-                caaar caadr cadar caddr cdaar cdadr cddar cdddr
-                caaaar caaadr caadar caaddr cadaar cadadr caddar cadddr
-                cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cddddr))
+                car
+                cdr
+                caar
+                cadr
+                cdar
+                cddr
+                caaar
+                caadr
+                cadar
+                caddr
+                cdaar
+                cdadr
+                cddar
+                cdddr
+                caaaar
+                caaadr
+                caadar
+                caaddr
+                cadaar
+                cadadr
+                caddar
+                cadddr
+                cdaaar
+                cdaadr
+                cdadar
+                cdaddr
+                cddaar
+                cddadr
+                cdddar
+                cddddr))
 
 (declaim (ftype (function (number &optional (real 0))
                           (values integer real))
-                floor ceiling truncate round))
+                floor
+                ceiling
+                truncate
+                round))
 
 (declaim (ftype (function (cell-error) t)
                 cell-error-name))
@@ -224,9 +276,18 @@
                 char-upcase char-downcase))
 
 (declaim (ftype (function (&rest list) t)
-                char= char/= char< char> char<= char>=
-                char-equal char-not-equal char-lessp
-                char-greaterp char-not-greaterp char-not-lessp))
+                char=
+                char/=
+                char<
+                char>
+                char<=
+                char>=
+                char-equal
+                char-not-equal
+                char-lessp
+                char-greaterp
+                char-not-greaterp
+                char-not-lessp))
 
 (declaim (ftype (function (character) (integer 0))
                 char-int))
@@ -234,17 +295,21 @@
 (declaim (ftype (function (character) (or string null))
                 char-name))
 
-(declaim (ftype (function ((or (string 1) symbol character))
+(declaim (ftype (function (character-designator)
                           character)
                 character))
 
-(declaim (ftype (function (t) t) characterp))
+(declaim (ftype general-predicate
+                characterp))
 
-(declaim (ftype (function (real) complex) cis))
+(declaim (ftype (function (real) complex)
+                cis))
 
-(declaim (ftype (function (class) symbol) class-name))
+(declaim (ftype (function (class) symbol)
+                class-name))
 
-(declaim (ftype (function (t) class) class-of))
+(declaim (ftype (function (t) class)
+                class-of))
 
 (declaim (ftype (function (&optional (or (member t nil) stream)) null)
                 clear-input
@@ -255,11 +320,13 @@
 (declaim (ftype (function (stream &key (abort t)) t)
                 close))
 
-(declaim (ftype (function (hash-table) hash-table) clrhash))
+(declaim (ftype (function (hash-table) hash-table)
+                clrhash))
 
 (declaim (ftype (function (t) (or character null)) code-char))
 
-(declaim (ftype (function (t t) t) coerce))
+(declaim (ftype (function (t t) t)
+                coerce))
 
 (declaim (ftype (function (t &optional t)
                           (values t t t))
@@ -272,17 +339,19 @@
                              (print t)
                              (external-format t))
                           (values t t t))
-                (compile-file)))
+                compile-file))
                 
 (declaim (ftype (function (t &key (output-file t)) t)
                 compile-file-pathname))
 
-(declaim (ftype (function (t) t) compiled-function-p))
+(declaim (ftype general-predicate
+                compiled-function-p))
 
 (declaim (ftype (function (t &optional t) (or function null))
                 compiler-macro-function))
 
-(declaim (ftype (function (function) function) complement))
+(declaim (ftype (function (function) function)
+                complement))
 
 (declaim (ftype (function (real &optional real) complex)
                 (or rational complex)
@@ -299,34 +368,45 @@
 (declaim (ftype (function (concatenated-stream) list)
                 concatenated-stream-streams))
 
-(declaim (ftype (function (number) number) conjugate))
+(declaim (ftype (function (number) number)
+                conjugate))
 
-(declaim (ftype (function (t t) cons) cons))
+(declaim (ftype (function (t t) cons)
+                cons))
 
-(declaim (ftype (function (t) t) consp))
+(declaim (ftype general-predicate
+                consp))
 
-(declaim (ftype (function (t) function) constantly))
+(declaim (ftype (function (t) (function ()))
+                constantly))
 
-(declaim (ftype (function (t &optional t) t) constantp))
+(declaim (ftype general-predicate
+                constantp))
 
 (declaim (ftype (function (&optional (or condition null)) null)
                 continue))
 
-(declaim (ftype (function (list) list) copy-alist copy-list))
+(declaim (ftype (function (list) list)
+                copy-alist
+                copy-list))
 
-(declaim (ftype (function (&optional t) t) copy-pprint-dispatch))
+(declaim (ftype (function (&optional t) t)
+                copy-pprint-dispatch))
 
 (declaim (ftype (function (&optional (or null readtable) (or null readtable))
                           (or null readtable))
                 copy-readtable))
 
-(declaim (ftype (function (sequence) sequence) copy-seq))
+(declaim (ftype (function (sequence) sequence)
+                copy-seq))
 
 (declaim (ftype (function (structure-object) structure-object) copy-structure))
 
-(declaim (ftype (function (symbol &optional t) symbol) copy-symbol))
+(declaim (ftype (function (symbol &optional t) symbol)
+                copy-symbol))
 
-(declaim (ftype (function (t) t) copy-tree))
+(declaim (ftype (function (t) t)
+                copy-tree))
 
 (declaim (ftype (function (t sequence
                              &key
