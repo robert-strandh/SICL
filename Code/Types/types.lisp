@@ -24,17 +24,35 @@
 
 ;;; Used for function arguments that apply a key function
 ;;; before comparing two objects.
-(deftype keyfun () (function (t) t))
+(deftype keyfun () '(function (t) t))
 
-;;; Used for function arguments that test the equality 
-;;; between to keys. 
-(deftype testfun () (function (t t) t))
+(deftype keyfun-designator () '(or keyfun symbol))
 
-(deftype nonnegative-fixnum () (and fixnum unsigned-byte))
+;;; Used for one-argument tests
+(deftype testfun1 () '(function (t) generalized-boolean))
 
-(deftype function-designator () (or function symbol))
+(deftype testfun1-designator () '(or testfun1 symbol))
 
-(deftype string-designator () (or character symbol string))
+;;; Used for two-argument tests
+(deftype testfun2 () (function (t t) 'generalized-boolean))
+
+(deftype testfun2-designator () '(or testfun2 symbol))
+
+(deftype nonnegative-fixnum () '(and fixnum unsigned-byte))
+
+(deftype function-designator () '(or function symbol))
+
+(deftype extended-function-designator () '(or function symbol list))
+
+(deftype string-designator () '(or character symbol string))
+
+(deftype pathname-designator () '(or string stream pathname))
+
+(deftype package-designator () '(or (string-designator package)))
+
+(deftype byte-specifier () t)
+
+(deftype radix () '(integer 2 36))
 
 (declaim (ftype (function (&optional (or null condition)) nil)
                 abort))
@@ -55,9 +73,9 @@
                 add-method))
 
 (declaim (ftype (function (t list
-                           &key (key (or keyfun null))
-                                (test (or testfun null))
-                                (test-not (or testfun null))))
+                           &key (key keyfun)
+                                (test testfun2-designator)
+                                (test-not testfun2-designator)))
                 adjoin))
 
 (declaim (ftype (function (array (or fixnum list)
@@ -97,6 +115,7 @@
                            &optional package-designator)
                           list)
                 apropos-list))
+
 (declaim (ftype (function (array &rest list) t)
                 aref))
 
@@ -137,16 +156,17 @@
                 ash))
          
 (declaim (ftype (function (t list
-                           &key (key (or function-designator nil))
-                                (test function-designator)
-                                (test-not function-designator))
+                           &key (key keyfun-designator)
+                                (test testfun2-designator)
+                                (test-not testfun2-designator))
                           (or cons nil))
                 assoc))
 
-(declaim (ftype (function (function-designator list
-                           &key (key (or function-designator nil))
-                                (test function-designator)
-                                (test-not function-designator))
+(declaim (ftype (function (testfun1-designator
+                           list
+                           &key (key keyfun-designator)
+                                (test testfun1-designator)
+                                (test-not testfun1-designator))
                           (or cons nil))
                 assoc-if
                 assoc-if-not))
@@ -408,32 +428,188 @@
 (declaim (ftype (function (t) t)
                 copy-tree))
 
-(declaim (ftype (function (t sequence
-                             &key
-                             (from-end t)
-                             (start (or null (integer 0)))
-                             (end (or null (integer 0)))
-                             (key (or symbol function))
-                             (test (or symbol function))
-                             (test-not (or symbol function))))
+(declaim (ftype (function (t
+                           sequence
+                           &key
+                           (from-end generalized-boolean)
+                           (start (integer 0))
+                           (end (or null (integer 0)))
+                           (key keyfun-designator)
+                           (test testfun2-designator)
+                           (test-not testfun2-designator)))
                 count))
 
-(declaim (ftype (function (function sequence
-                             &key
-                             (from-end t)
-                             (start (or null (integer 0)))
-                             (end (or null (integer 0)))
-                             (key (or symbol function))))
-                count-if count-if-not))
+(declaim (ftype (function (testfun1-designator
+                           sequence
+                           &key
+                           (from-end generalized-boolean)
+                           (start (integer 0))
+                           (end (or null (integer 0)))
+                           (key keyfun-designator)))
+                count-if
+                count-if-not))
+
+(declaim (ftype (or (function (short-float)
+                              (values short-float integer (member 1S0 -1S0)))
+                    (function (single-float)
+                              (values single-float integer (member 1F0 -1F0)))
+                    (function (double-float)
+                              (values double-float integer (member 1D0 -1D0)))
+                    (function (long-float)
+                              (values long-float integer (member 1L0 -1L0))))
+                decode-float))
+
+(declaim (ftype (function ((integer 0))
+                          (values (integer 0 59)
+                                  (integer 0 59)
+                                  (integer 0 23)
+                                  (integer 1 31)
+                                  (integer 1 12)
+                                  (integer 1900)
+                                  (ingeter 0 6)
+                                  generalized-boolean
+                                  rational))
+                decode-universal-time))
+
+(declaim (ftype (function (t
+                           sequence
+                           &key
+                           (from-end generalized-boolean)
+                           (test testfun2-designator)
+                           (test-not testfun2-designator)
+                           (start (integer 0))
+                           (end (or null (integer 0)))
+                           (count (or null integer))
+                           (key keyfun-designator)))
+                delete
+                remove))
+
+(declaim (ftype (function (testfun1-designator
+                           sequence
+                           &key
+                           (from-end generalized-boolean)
+                           (start (integer 0))
+                           (end (or null (integer 0)))
+                           (count (or null integer))
+                           (key keyfun-designator)))
+                delete-if
+                delete-if-not
+                remove-if
+                remove-if-not))
+
+(declaim (ftype (function (sequence
+                           &key
+                           (from-end generalized-boolean)
+                           (test testfun2-designator)
+                           (test-not testfun2-designator)
+                           (start (integer 0))
+                           (end (or null (integer 0)))
+                           (key keyfun-designator)))
+                delete-duplicates
+                remove-duplicates))
+
+(declaim (ftype (function (pathname-designator) (member t))
+                delete-file))
+
+(declaim (ftype (function (package-designator) generalized-boolean)
+                delete-package))
+
+(declaim (ftype (function (rational) integer)
+                denominator
+                numerator))
+
+(declaim (ftype (function (integer byte-specifier integer) integer)
+                deposit-field))
+
+(declaim (ftype (function (t &optional stream) (values))
+                describe))
+
+(declaim (ftype (function (t stream) t)
+                describe-object))
+
+(declaim (ftype (function ((integer 0) &optional radix) (or character null))
+                digit-char))
+
+(declaim (ftype (function (character &optional radix) (or (integer 0) null))
+                digit-char-p))
+
+(declaim (ftype (function (pathname-designator) list)
+                directory))
+
+(declaim (ftype (function (pathname-designator) (or string null))
+                directory-namestring
+                file-namestring
+                host-namestring
+                namestring))
+
+(declaim (ftype (function (extended-function-designator) null)
+                disassemble))
+
+(declaim (ftype (function (integer byte-specifier integer) integer)
+                dpb))
+
+(declaim (ftype (function (&optional pathname-designator) t)
+                dribble))
+
+(declaim (ftype (function (pathname-designator &optional pathname-designator)
+                          (or string null))
+                enough-namestring))
+
+(declaim (ftype (function (float) integer)
+                float-radix))
+
+(declaim (ftype (or (function (short-float) short-float)
+                    (function (single-float) single-float)
+                    (function (double-float) double-float)
+                    (function (long-float) long-float))
+                    (function (short-float short-float) short-float)
+                    (function (short-float single-float) single-float)
+                    (function (short-float double-float) double-float)
+                    (function (short-float long-float) long-float)
+                    (function (single-float short-float) single-float)
+                    (function (single-float single-float) single-float)
+                    (function (single-float double-float) double-float)
+                    (function (single-float long-float) long-float)
+                    (function (double-float short-float) double-float)
+                    (function (double-float single-float) double-float)
+                    (function (double-float double-float) double-float)
+                    (function (double-float long-float) long-float)
+                    (function (long-float short-float) long-float)
+                    (function (long-float single-float) long-float)
+                    (function (long-float double-float) long-float)
+                    (function (long-float long-float) long-float))
+         float-sign)
+
+(declaim (ftype (function (float) (integer 0))
+                float-digits))
+
+(declaim (ftype (function (float) (integer 0))
+                float-precision))
 
 (declaim (ftype (function (number &optional (real 0))
                           (values (real 0) real))
                 ffloor fceiling ftruncate fround))
+
+(declaim (ftype (or (function (short-float)
+                              (values short-float integer (member -1 1)))
+                    (function (single-float)
+                              (values single-float integer (member -1 1)))
+                    (function (double-float)
+                              (values double-float integer (member -1 1)))
+                    (function (long-float)
+                              (values long-float integer (member -1 1))))
+                integer-decode-float))
 
 (declaim (ftype (function (simple-string (integer 0)) character)
                 schar))
 
 (declaim (ftype (function ((simple-array bit) &rest list) bit)
                 sbit))
+
+(declaim (ftype (or (function (short-float integer) short-float)
+                    (function (single-float integer) single-float)
+                    (function (double-float integer) double-float)
+                    (function (long-float integer) long-float))
+                scale-float))
 
 
