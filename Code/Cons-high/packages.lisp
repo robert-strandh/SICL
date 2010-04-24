@@ -1,5 +1,5 @@
-;;; We want to shadow the exact same symbols from the COMMON-LISP
-;;; package as the ones we want to export.  To avoid repeating 
+;;; The symbols that are shadowed from the COMMON-LISP package
+;;; are also symbols that we want to export.  To avoid repeating 
 ;;; that list of symbols, we use the reader macros #= and ##. 
 ;;; It is interesting to note that we would normally write 
 ;;; (:shadow <string1> <string2> ...), but in order to put a 
