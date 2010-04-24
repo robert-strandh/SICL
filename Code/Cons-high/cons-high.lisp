@@ -1,4 +1,4 @@
-(in-package :sicl.cons.high)
+(in-package :sicl-cons-high)
 
 ;;; We want for error messages to be phrased in terms of a construct
 ;;; that was directly used by the user's code.  So for instance, if
@@ -6,17 +6,18 @@
 ;;; is not a list, we would like the error message to mention that,
 ;;; and not for instance that CAR was given a non-list. 
 
-(defun generate-c*r-message (function-name prefix)
-  (if (null prefix)
-      (format nil
-              "The function ~a was given an argument~@
+(eval-when (:compile-toplevel :load-toplevel)
+  (defun generate-c*r-message (function-name prefix)
+    (if (null prefix)
+        (format nil
+                "The function ~a was given an argument~@
                that is neither NIL nor a CONS cell"
-              function-name)
-      (format nil
-              "The function ~a was given a list whose ~@
+                function-name)
+        (format nil
+                "The function ~a was given a list whose ~@
                C~{~a~}R is neither NIL nor a CONS cell"
-              function-name
-              (reverse prefix))))
+                function-name
+                (reverse prefix)))))
 
 ;;; FIXME fix the error messsage to signal a particular condition
 (defmacro define-c*r-function (function-name letters)
@@ -29,13 +30,13 @@
                       (setf remaining
                             (,(primitive letter) remaining))
                       (error ,(generate-c*r-message function-name
-                                                    prefix))))))
+                                                                prefix))))))
       `(defun ,function-name (list)
          (let ((remaining list))
            ,@(loop for letter across (reverse letters)
                    collect (one-iteration letter prefix)
                    collect letter into prefix)
-           remaining))))))
+           remaining)))))
 
 (define-c*r-function caar "AA")
 (define-c*r-function cadr "AD")
@@ -77,47 +78,51 @@
 (define-c*r-function ninth  "ADDDDDDDD")
 (define-c*r-function tenth   "ADDDDDDDDD")
 
-(defun generate-setf-c*r-message (function-name prefix)
-  (if (null prefix)
-      (format nil
-              "The function (SETF ~a) was given an argument~@
+(eval-when (:compile-toplevel :load-toplevel)
+  (defun generate-setf-c*r-message (function-name prefix)
+    (if (null prefix)
+        (format nil
+                "The function (SETF ~a) was given an argument~@
                that is not a CONS cell"
-              function-name)
-      (format nil
-              "The function (SETF ~a) was given a list whose ~@
+                function-name)
+        (format nil
+                "The function (SETF ~a) was given a list whose ~@
                C~{~a~}R is not a CONS cell"
-              function-name
-              (reverse (coerce prefix 'list)))))
+                function-name
+                (reverse (coerce prefix 'cons))))))
 
 ;;; FIXME fix the error messsage to signal a particular condition
-(defmacro define-setf-c*r-function (function-name letters)
-  (flet ((primitive (letter)
-           (if (eql letter #\A) 'car 'cdr)))
-    (flet ((one-iteration (letter prefix)
-             `(if (consp remaining)
-                  (setf remaining
-                        (,(primitive letter) remaining))
-                  (error ,(generate-setf-c*r-message function-name
-                                                     prefix)))))
-      `(defun (setf ,function-name) (new-object list)
-         (let ((remaining list))
-           ,@(append (loop for letter across (reverse (subseq letters 1))
-                           collect (one-iteration letter prefix)
-                           collect letter into prefix)
-                     `(if (consp remaining)
-                          (setf (,(primitive (aref letters 0)) remaining)
-                                new-object)
-                          (error ,(generate-setf-c*r-message
-                                   function-name
-                                   (subseq letters 1))))))))))
+(eval-when (:compile-toplevel :load-toplevel)
+  (defmacro define-setf-c*r-function (function-name letters)
+    (flet ((primitive (letter)
+             (if (eql letter #\A) 'car 'cdr)))
+      (flet ((one-iteration (letter prefix)
+               `(if (consp remaining)
+                    (setf remaining
+                          (,(primitive letter) remaining))
+                    (error ,(generate-setf-c*r-message function-name
+                                                                   prefix)))))
+        `(defun (setf ,function-name) (new-object list)
+           (let ((remaining list))
+             ,@(append (loop for letter across (reverse (subseq letters 1))
+                             collect (one-iteration letter prefix)
+                             collect letter into prefix)
+                       `(if (consp remaining)
+                            (setf (,(primitive (aref letters 0)) remaining)
+                                  new-object)
+                            (error ,(generate-setf-c*r-message
+                                     function-name
+                                     (subseq letters 1)))))))))))
 
-(defun (setf car) (object cons)
-  (rplaca cons object)
-  object)
+;;; These are commented out for now because they
+;;; trip the package lock of the CL package.
+;; (defun (setf car) (object cons)
+;;   (rplaca cons object)
+;;   object)
 
-(defun (setf cdr) (object cons)
-  (rplacd cons object)
-  object)
+;; (defun (setf cdr) (object cons)
+;;   (rplacd cons object)
+;;   object)
 
 (define-setf-c*r-function caar "AA")
 (define-setf-c*r-function cadr "AD")
@@ -148,7 +153,7 @@
 (define-setf-c*r-function cdddar "DDDA")
 (define-setf-c*r-function cddddr "DDDD")
 
-(define-setf-c*r-function first   "A")
+;; (define-setf-c*r-function first   "A")
 (define-setf-c*r-function second  "AD")
 (define-setf-c*r-function third   "ADD")
 (define-setf-c*r-function fourth  "ADDD")
