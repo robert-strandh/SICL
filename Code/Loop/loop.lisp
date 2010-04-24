@@ -15,6 +15,12 @@
 ;;; A portable implementation of the LOOP macro.
 ;;; This implementation does not use any iteration construct. 
 
+;;; It would be good if we could get rid of the use of mapping
+;;; functions here, so that the mapping functions could use loop
+;;; without introducing a circular dependency.  I am not sure at this
+;;; point how important it is to avoid such circular dependencies, but
+;;; I don't want to take the risk either. 
+
 ;;; Ultimately, this form should be moved to a central place, such as
 ;;; packages.lisp.
 (defpackage #:sicl-loop
