@@ -30,7 +30,7 @@
                       (setf remaining
                             (,(primitive letter) remaining))
                       (error ,(generate-c*r-message function-name
-                                                                prefix))))))
+                                                    prefix))))))
       `(defun ,function-name (list)
          (let ((remaining list))
            ,@(loop for letter across (reverse letters)
