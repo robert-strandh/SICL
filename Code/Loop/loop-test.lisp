@@ -1,7 +1,3 @@
-(defpackage #:sicl-loop-test
-    (:use #:common-lisp #:sicl-loop #:lisp-unit)
-  (:shadow #:loop))
-
 (in-package #:sicl-loop-test)
 
 (define-test loop-until-t

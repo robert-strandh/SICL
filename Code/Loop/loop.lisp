@@ -21,13 +21,6 @@
 ;;; point how important it is to avoid such circular dependencies, but
 ;;; I don't want to take the risk either. 
 
-;;; Ultimately, this form should be moved to a central place, such as
-;;; packages.lisp.
-(defpackage #:sicl-loop
-    (:use #:common-lisp)
-  (:shadow #:loop)
-  (:export #:loop))
-
 (in-package #:sicl-loop)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
