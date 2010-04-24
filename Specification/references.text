@@ -1,0 +1,80 @@
+Here are some references to papers and books that 
+can be useful for implementing various parts of SICL.
+
+* Steven S Muchnick
+  Advanced Compiler Design and Implementation
+  Academic Press 1997
+
+  This book contains lots of algorithms for code optimization.
+  Unfortunately, the book uses an archaic algorithmic language that
+  doesn't take advantage of progress of modern programming languages.
+  It would be interesting to have a Lisp library of functions and data
+  structures that implement the algorithms in this book.
+
+  Many algorithms in this book are required in order to implement the
+  compiler.
+
+* William D Clinger
+  How to read floating-point numbers accurately
+  PLDI 1990 [16]
+  pages 92-101
+  ftp://ftp.ccs.neu.edu/pub/people/will/howtoread.ps
+
+  This paper explains how to read an external decimal representation
+  of a floating point number so that the resulting internal binary
+  representation is as close as possible to the external
+  representation.  
+
+  We need the result of this paper in the READ function so that we can
+  convert a token representing a floating-point number to an accurate
+  floating-point number.   
+
+* Guy L Steele Jr and Joh L White
+  How to print Floating-Point Numbers Accurately
+  PLDI 1990
+  pages 112-126
+
+  This paper explains how to print a decimal representation of a
+  floating-point number so that when it is read back using the
+  algorithm by Clinger, you get the same internal representation as
+  you had. 
+
+  We need the result of this paper in the FORMAT function for printing
+  floating-point numers with different precisions. 
+
+* Guy L Steele Jr and Joh L White
+  retrospective: How to print Floating-Point Numbers Accurately
+  kurtstephens.com/files/p372-steele.pdf
+
+  Contains both a retrospective and the original paper. 
+
+* Gregor Kiczales and Luis Rodriguez
+  Efficient Method Dispatch in PCL
+  1990 ACM Conference on Lisp and functional programming.
+  pages 99-105 
+
+* Eric Amiel, Olivier Grubner, and Eric Simon
+  Optimized Muti-method Dispatch Using Compressed Dispatch Tables
+  Proceedings of OOPSLA 1994
+  pages 244-258
+
+* Candy Pang, Wade Holst, Yuri Leontiev, and Duane Szafron
+  Multi-Method Dispatch Using Multiple Row Displacement. 
+  Proceedings ECOOP 99 Lisbon Portugal 1999.
+
+* Craig Chambers and Weimin Chen
+  Efficient Multiple and Predicate Dispatching
+  1999
+  http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.37.6735&rep=rep1&type=pdf
+
+  The list of references in this article is particularly interesting.
+  I took all of the previous references to multiple dispatch from
+  there.  This last paper and the work it builds on should probably be
+  read first. 
+
+* Gregor Kiczales, Jim des Rivieres, and Daniel G Bobrow
+  The Art of the Metaobject Protocol
+  MIT Press 1991
+
+  Required reading in order to implement most of CLOS. 
+
