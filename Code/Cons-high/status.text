@@ -1,0 +1,83 @@
+What is done:
+
+  There are definitions of all c*r functions except car and cdr
+
+  There are definitions of first, second, ..., tenth.
+
+  There are definitions of the functions list, list*, last,
+  copy-list, list-length, make-list, nth, and nthcdr. 
+
+How to test it:
+
+  1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
+
+  2. Run (asdf:operate 'asdf:load-op :sicl-cons-high-test).
+
+  3. Do (in-package #:sicl-cons-high-test).
+
+  4. Do a (run-tests) you should see some failures and some
+     successes.  The failures are that type-error should be singaled,
+     but simple-error was signaled instead. 
+
+What remains to to:
+
+  Define a subclass of type-error and make the functions signal 
+  that condition instead of signaling a simple-error.
+
+  Add tests to test functions that are currently not tested. 
+
+  Include more functions that can be found in the conses dictionary:
+
+     copy-tree
+     sublis
+     nsublis
+     subst
+     subst-if
+     subst-if-not
+     nsubst
+     nsubst-if
+     nsubst-if-not
+     tree-equal
+     endp
+     null
+     nconc
+     append
+     revappend
+     nreconc
+     butlast
+     nbutlast
+     last
+     ldiff
+     tailp
+     rest
+     member
+     member-if
+     member-if-not
+     mapc
+     mapcar
+     mapcan
+     mapl
+     maplist
+     mapcon
+     acons
+     assoc
+     assoc-if
+     assoc-if-not
+     copy-alist
+     pairlis
+     rassoc
+     rassoc-if
+     rassoc-if-not
+     get-properties
+     getf
+     intersection
+     nintersection
+     adjoin
+     set-difference
+     nset-difference
+     set-exclusive-or
+     nset-exclusive-or
+     subsetp
+     union
+     nunion
+  
