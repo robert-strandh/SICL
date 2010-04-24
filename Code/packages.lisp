@@ -1,6 +1,6 @@
 ;;; this is the package that will become the CL package at
 ;;; runtime.  
-(defpackage :sicl
+(defpackage #:sicl
     (:use)
   (:export
     #:&allow-other-keys
@@ -982,7 +982,7 @@
     #:yes-or-no-p
     #:zerop))
 
-(defpackage :sicl.tags
+(defpackage #:sicl.tags
     (:use)
   (:export #:machine-word
 	   #:+machine-word-length+
@@ -996,7 +996,7 @@
 	   #:+tag-immediate+
 	   #:+tag-other+))
 
-(defpackage :sicl.memory
+(defpackage #:sicl.memory
     (:use)
   (:export
    #:load-word
@@ -1005,22 +1005,18 @@
    #:store-byte
    #:allocate-words))
 
-(defpackage :sicl.cons.low
+(defpackage #:sicl.cons.low
     (:use :sicl :sicl.tags :sicl.memory)
   (:export))
 
-(defpackage :sicl.cons.high
-    (:use :sicl)
+(defpackage #:sicl.arithmetic
+    (:use #:sicl)
   (:export))
 
-(defpackage :sicl.arithmetic
-    (:use :sicl)
-  (:export))
-
-(defpackage :sicl.backends.cl
+(defpackage #:sicl.backends.cl
     (:use :sicl :sicl.memory :sicl.tags)
   (:export))
 
-(defpackage :sicl.documentation
-    (:use :sicl)
+(defpackage #:sicl.documentation
+    (:use #:sicl)
   (:export))
