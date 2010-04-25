@@ -1,0 +1,11 @@
+What is done:
+
+How to test it:
+
+What remains to do:
+
+  Add more tests.  There is a subdirectory Format-tests
+  the contents of which should probably me moved here, the files
+  renamed (.lsp -> .lisp), and they should be adapted to the
+  lisp-unit testing framework.  The system definition should
+  include these new files. 
