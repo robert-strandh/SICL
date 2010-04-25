@@ -6,6 +6,6 @@
    (:file "read" :depends-on ("packages"))))
 
 (asdf:defsystem :sicl-read-test
-  :depends-on (:sicl-read)
+  :depends-on (:lisp-unit :sicl-read)
   :components
   ((:file "test" :depends-on ())))
