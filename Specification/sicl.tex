@@ -376,14 +376,63 @@ trampoline to a function that uses the value of
 the documentation. 
 
 \section{Debugger}
+\label{section-debugging}
+
+Part of the reason for SICL is to have a system that provides
+excellent debugging facilities for the programmer.  We imagine that a
+thread will be debugged by a debugger running in a different thread.
+The debugger should be able to set breakpoints before and after
+expressions, and at the beginning or the end of a function.  
+We imagine this being done by a conditional branch at strategic points
+in the code, perhaps implemented as a ``skip the next instruction of
+condition is false'' instruction, if that should turn out to be faster
+than a normal conditional branch.  The condition tests a flag in the
+current thread.  If the flag is set, then a call is made to determine
+whether there is a breakpoint at this place.  If not, it returns and
+execution continues as usual.  If there is a breakpoint, then
+execution stops and the debugger thread is given the possibility to
+inspect the state of the debugged thread. 
+
+For the highest debug level, the conditional branch should be
+generated before and after each expression, including each variable
+reference.  This can be a bit costly for local variables because it
+would slow down execution significantly.  Lower debug levels may
+generate the conditional branch only when the cost of the branch is
+negligible compared to the cost of evaluating the expression. 
+
+In order not to slow down the execution too much, there should be a
+quick test to determine that there is no breakpoint at a particular
+place in the code.  We still have to think of ways of doing that.  One
+might imagine a conservative test that is quick but possibly not
+entirely accurate, perhaps based on intervals of values of the program
+counter (say, take PC, shift it right by some number of bits, check a
+bitvector to see if the corresponding bit is set, if not, there is no
+breakpoint here). 
+
+For each possible breakpoint, the system must keep a description of
+the lexical environment.  This includes mappings from variable names
+to registers or stack locations, information about liveness of
+registers and stack location, how a variable is stored in a location
+(immediate value, pointer, with or without type tag, etc). 
 
 \section{Source code tracking}
+
+The SICL reader provides an entry point that returns a second value
+which contains a syntax tree in which each expression is associated
+with source-code location.  The compiler calls this entry point, and
+creates its abstract syntax tree with this information in it.  
+
+After the compiler has called a macro expander, the resulting
+expansion is traversed in the search of expressions that are eq to the
+arguments given to the macro expander.  Such expressions are
+associated with the source code location of the argument. 
 
 \section{Tracing}
 
 Tracing should not use the method used by some Common Lisp
 implementations to encapsulate the traced function inside a
-trace-reporting function.
+trace-reporting function.  Instead it could use the same mechanism as
+the one used for debugging (see section \ref{section-debugging}). 
 
 \section{Package structure}
 
