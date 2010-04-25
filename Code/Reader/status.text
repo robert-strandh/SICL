@@ -24,7 +24,7 @@ How to test it:
 
 What remains to to:
 
-  Define more tests.
+  Define more tests.  
 
   Backquote, comma, comma at-sign.  The standard recommends that
   these be implemented in a way similar to the way it is done in 
@@ -47,7 +47,3 @@ What remains to to:
   a floating point number accurately). 
 
   Fix the way in which the consing dot is handled. 
-
-
- 
-  
