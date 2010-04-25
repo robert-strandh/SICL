@@ -291,7 +291,19 @@ code.
 macros are part of the standard, so this mechanism must be part of a
 conforming compiler anyway.  In many cases, instead of encoding
 special knowledge in the compiler itself, we can use compiler macros.
-By doing it this way, we simplify the compiler.
+By doing it this way, we simplify the compiler, and we provide a set
+of completely portable macros that any implementation can use. 
+
+Compiler macros should be used whenever the exact shape of the call
+site might be used to improve performance of the callee.  For
+instance, when the callee uses keyword arguments, we can eliminate the
+overhead of keyword-value parsing at runtime and instead call a
+special version of the callee that does not have to do any such
+parsing.  
+
+Similarly, functions that take a \texttt{\&rest} argument can provide
+special cases for different common sizes of the \texttt{\&rest}
+argument.
 
 We propose using compiler macros at least for the following
 situations: 
@@ -310,7 +322,17 @@ situations:
   special versions when the optional argument is not given.
 \end{itemize}
 
+Compiler macros should not be used in the place of inlining (see
+section \ref{section-inlining}).
+
 \section{Inlining}
+\label{section-inlining}
+
+The SICL compiler will use inlining in order to make type inferencing
+more effective so that several tests can be avoided.  Implementors of
+SICL features other than the compiler can assume that inlining is done
+when it seems reasonable.  Therefore, even fairly low-level functions
+such as \texttt{aref} can be implemented as portable Lisp code. 
 
 \section{Conditions and restarts}
 
