@@ -44,13 +44,6 @@
 ;;;     of some characters might be altered (for ignored newline 
 ;;;     directive)?
 
-
-;;; Ultimately, this form should be moved to a central place, such as
-;;; packages.lisp.
-(defpackage #:sicl-format
-    (:use #:common-lisp)
-  (:shadow #:format #:type))
-
 (in-package #:sicl-format)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

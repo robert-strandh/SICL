@@ -1,7 +1,3 @@
-(defpackage #:sicl-format-test
-    (:use #:common-lisp #:lisp-unit)
-  (:shadowing-import-from #:sicl-format #:format))
-
 (in-package #:sicl-format-test)
 
 (define-test general
