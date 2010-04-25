@@ -1,0 +1,29 @@
+What is done:
+
+  A version of find if (untested)
+
+How to test it:
+
+  1. Load lisp-unit.lisp and sequences.asd into your lisp system.
+
+  2. Run (asdf:operate 'asdf:load-op :sicl-sequences-test).
+
+  3. Do (in-package #:sicl-sequences-test).
+
+  4. Do a (run-tests)
+
+What remains to to:
+
+  Test find-if.
+
+  Add more sequence functions:
+
+    find
+    find-if-not
+    remove
+    remove-if
+    remove-if-not
+    substite
+    substitute-if
+    substitute-if-not
+    etc.
