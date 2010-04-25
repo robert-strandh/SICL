@@ -12,23 +12,26 @@
 ;;; Author: Robert Strandh (strandh@labri.fr)
 ;;; Date: 2008
 ;;;
-;;; A portable implementation of the Common Lisp READ function.
-
-;;; Ultimately, this form should be moved to a central place, such as
-;;; packages.lisp.
-(defpackage #:sicl-read
-    (:use #:common-lisp)
-  ;; For now, shadow these symbols.
-  (:shadow #:read
-	   #:*readtable*
-	   #:readtable
-	   #:readtablep
-	   #:readtable-case
-	   #:copy-readtable
-	   #:char
-	   #:get-macro-character
-	   #:set-macro-character
-	   ))
+;;; A portable implementation of nearly all of the Common Lisp READ
+;;; function.  Interestingly, it is not possible to implement #= and
+;;; ## portably, because of the following property: When there is a
+;;; label on an object that has not yet been built, and a reference to
+;;; that label inside the object itself, such as #1=(#1#), when the
+;;; #1# is seen, it cannot be resolved, so some kind of temporary
+;;; value must be put there instead.  Later, this value must be
+;;; replaced by a reference to the object ultimately built.  I can see
+;;; two ways of doing that: One way would be for READ to can scan the
+;;; object recursively to search for the value to be replaced.  But
+;;; this cannot be done portably, because functions from the 
+;;; Meta-Object Protocol are needed to scan instances of for example
+;;; standard-object.  Onother way would be to allow for a particular
+;;; value to stand for some indirection to a different value and
+;;; trap any attempt to return this value in a way similar to 
+;;; how unbound variables are handled.  Clearly, this second method
+;;; requires deep knowledge about some of the most basic mechanisms
+;;; of the implementation, so that method is not portable either. 
+;;; For now, we just leave it up to each system to implement
+;;; #= and ##. 
 
 (in-package #:sicl-read)
 
