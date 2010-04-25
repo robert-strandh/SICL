@@ -16,7 +16,7 @@
                  #:char
                  #:get-macro-character
                  #:set-macro-character))
-  (:export #read-with-position
+  (:export #:read-with-position
            . #1#))
 
 ;;; In the test package, we want to import all symbols of the
