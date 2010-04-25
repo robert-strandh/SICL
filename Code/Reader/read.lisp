@@ -35,6 +35,8 @@
 
 (in-package #:sicl-read)
 
+(defparameter *readtable* nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro character functions
@@ -343,9 +345,9 @@
     (set-constituent-trait table #\s +short-float-exponent-marker+)
     table))
 
-(defvar *initial-readtable* (copy-readtable *standard-readtable*))
+(defparameter *initial-readtable* (copy-readtable *standard-readtable*))
 
-(defvar *readtable* *initial-readtable*)
+(setf *readtable* *initial-readtable*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
