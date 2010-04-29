@@ -576,37 +576,41 @@
 
 ;;; Order of evaluation tests
 
-;; (define-test find-if.order.1
-;;   (let ((i 0) x y)
-;;     (values
-;;      (find-if (progn (setf x (incf i)) #'identity)
-;; 	      (progn (setf y (incf i)) '(nil nil nil a nil nil)))
-;;      i x y))
-;;   a 2 1 2)
+(define-test find-if.order.1
+  (let ((i 0) x y)
+    (assert-equal
+     '(a 2 1 2)
+     (list
+      (find-if (progn (setf x (incf i)) #'identity)
+               (progn (setf y (incf i)) '(nil nil nil a nil nil)))
+      i x y))))
 
-;; (define-test find-if.order.2
-;;   (let ((i 0) a b c d e f)
-;;     (values
-;;      (find-if (progn (setf a (incf i)) #'null)
-;; 	      (progn (setf b (incf i)) '(nil nil nil a nil nil))
-;; 	      :start (progn (setf c (incf i)) 1)
-;; 	      :end   (progn (setf d (incf i)) 4)
-;; 	      :from-end (setf e (incf i))
-;; 	      :key   (progn (setf f (incf i)) #'null)
-;; 	      )
-;;      i a b c d e f))
-;;   a 6 1 2 3 4 5 6)
+(define-test find-if.order.2
+  (let ((i 0) a b c d e f)
+    (assert-equal
+     '(a 6 1 2 3 4 5 6)
+     (list
+      (find-if (progn (setf a (incf i)) #'null)
+               (progn (setf b (incf i)) '(nil nil nil a nil nil))
+               :start (progn (setf c (incf i)) 1)
+               :end   (progn (setf d (incf i)) 4)
+               :from-end (setf e (incf i))
+               :key   (progn (setf f (incf i)) #'null)
+               )
+      i a b c d e f))))
 
+(define-test find-if.order.3
+  (let ((i 0) a b c d e f)
+    (assert-equal
+     '(a 6 1 2 3 4 5 6)
+     (list
+      (find-if (progn (setf a (incf i)) #'null)
+               (progn (setf b (incf i)) '(nil nil nil a nil nil))
+               :key   (progn (setf c (incf i)) #'null)
+               :from-end (setf d (incf i))
+               :end   (progn (setf e (incf i)) 4)
+               :start (progn (setf f (incf i)) 1)
+               )
+      i a b c d e f))))
 
-;; (define-test find-if.order.3
-;;   (let ((i 0) a b c d e f)
-;;     (values
-;;      (find-if (progn (setf a (incf i)) #'null)
-;; 	      (progn (setf b (incf i)) '(nil nil nil a nil nil))
-;; 	      :key   (progn (setf c (incf i)) #'null)
-;; 	      :from-end (setf d (incf i))
-;; 	      :end   (progn (setf e (incf i)) 4)
-;; 	      :start (progn (setf f (incf i)) 1)
-;; 	      )
-;;      i a b c d e f))
-;;   a 6 1 2 3 4 5 6)
+  
