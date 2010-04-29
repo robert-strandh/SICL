@@ -1,6 +1,7 @@
 What is done:
 
-  A version of find if (untested)
+  A version of find-if. 
+  Tests from Paul Dietz' ansi test suite. 
 
 How to test it:
 
@@ -14,7 +15,9 @@ How to test it:
 
 What remains to to:
 
-  Test find-if.
+  Add tests that use APPLY and non-constant keyword arguments, so that
+  we can test the function find-if, and not the specialized versions
+  created by the compiler macro. 
 
   Add more sequence functions:
 
