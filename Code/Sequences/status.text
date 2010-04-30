@@ -1,7 +1,8 @@
 What is done:
 
   A version of find-if. 
-  Tests from Paul Dietz' ansi test suite. 
+  A version of find-if-not
+  Tests from Paul Dietz' ansi test suite for those functions
 
 How to test it:
 
@@ -16,13 +17,18 @@ How to test it:
 What remains to to:
 
   Add tests that use APPLY and non-constant keyword arguments, so that
-  we can test the function find-if, and not the specialized versions
-  created by the compiler macro. 
+  we can test the functions find-if and find-if-not, and not the
+  specialized versions created by the compiler macro.
+
+  Currently, the order-of-evaluation tests fail.  This is because the
+  compiler macros are not careful enough to preserve order of
+  evaluation.  Things can get pretty complicated there.  I wonder if
+  it is worth the trouble for the compiler macros to identify all
+  those special cases. 
 
   Add more sequence functions:
 
     find
-    find-if-not
     remove
     remove-if
     remove-if-not
