@@ -295,10 +295,10 @@
                         `(find-if-from-end-bounded-key
                           ,predicate ,sequence ,start ,end ,key)
                         `(if ,from-end
-                             `(find-if-from-end-bounded-key
-                               ,predicate ,sequence ,start ,end ,key)
-                             `(find-if-from-start-bounded-key
-                               ,predicate ,sequence ,start ,end ,key)))
+                             (find-if-from-end-bounded-key
+                              ,predicate ,sequence ,start ,end ,key)
+                             (find-if-from-start-bounded-key
+                              ,predicate ,sequence ,start ,end ,key)))
                     `(find-if-from-start-bounded-key
                       ,predicate ,sequence ,start ,end ,key))
                 (if from-end-p
@@ -306,10 +306,10 @@
                         `(find-if-from-end-bounded-identity
                           ,predicate ,sequence ,start ,end)
                         `(if ,from-end
-                             `(find-if-from-end-bounded-identity
-                               ,predicate ,sequence ,start ,end)
-                             `(find-if-from-start-bounded-identity
-                               ,predicate ,sequence ,start ,end)))
+                             (find-if-from-end-bounded-identity
+                              ,predicate ,sequence ,start ,end)
+                             (find-if-from-start-bounded-identity
+                              ,predicate ,sequence ,start ,end)))
                     `(find-if-from-start-bounded-identity
                       ,predicate ,sequence ,start ,end)))
             (if (and keyp (not (null key)))
@@ -318,10 +318,10 @@
                         `(find-if-from-end-unbounded-key
                           ,predicate ,sequence ,start ,key)
                         `(if ,from-end
-                             `(find-if-from-end-unbounded-key
-                               ,predicate ,sequence ,start ,key)
-                             `(find-if-from-start-unbounded-key
-                               ,predicate ,sequence ,start ,key)))
+                             (find-if-from-end-unbounded-key
+                              ,predicate ,sequence ,start ,key)
+                             (find-if-from-start-unbounded-key
+                              ,predicate ,sequence ,start ,key)))
                     `(find-if-from-start-unbounded-key
                       ,predicate ,sequence ,start ,key))
                 (if from-end-p
@@ -329,10 +329,10 @@
                         `(find-if-from-end-unbounded-identity
                           ,predicate ,sequence ,start)
                         `(if ,from-end
-                             `(find-if-from-end-unbounded-identity
-                               ,predicate ,sequence ,start)
-                             `(find-if-from-start-unbounded-identity
-                               ,predicate ,sequence ,start)))
+                             (find-if-from-end-unbounded-identity
+                              ,predicate ,sequence ,start)
+                             (find-if-from-start-unbounded-identity
+                              ,predicate ,sequence ,start)))
                     `(find-if-from-start-unbounded-identity
                       ,predicate ,sequence ,start)))))
     (error () form)))
@@ -632,10 +632,10 @@
                         `(find-if-not-from-end-bounded-key
                           ,predicate ,sequence ,start ,end ,key)
                         `(if ,from-end
-                             `(find-if-not-from-end-bounded-key
-                               ,predicate ,sequence ,start ,end ,key)
-                             `(find-if-not-from-start-bounded-key
-                               ,predicate ,sequence ,start ,end ,key)))
+                             (find-if-not-from-end-bounded-key
+                              ,predicate ,sequence ,start ,end ,key)
+                             (find-if-not-from-start-bounded-key
+                              ,predicate ,sequence ,start ,end ,key)))
                     `(find-if-not-from-start-bounded-key
                       ,predicate ,sequence ,start ,end ,key))
                 (if from-end-p
@@ -643,10 +643,10 @@
                         `(find-if-not-from-end-bounded-identity
                           ,predicate ,sequence ,start ,end)
                         `(if ,from-end
-                             `(find-if-not-from-end-bounded-identity
-                               ,predicate ,sequence ,start ,end)
-                             `(find-if-not-from-start-bounded-identity
-                               ,predicate ,sequence ,start ,end)))
+                             (find-if-not-from-end-bounded-identity
+                              ,predicate ,sequence ,start ,end)
+                             (find-if-not-from-start-bounded-identity
+                              ,predicate ,sequence ,start ,end)))
                     `(find-if-not-from-start-bounded-identity
                       ,predicate ,sequence ,start ,end)))
             (if (and keyp (not (null key)))
@@ -655,10 +655,10 @@
                         `(find-if-not-from-end-unbounded-key
                           ,predicate ,sequence ,start ,key)
                         `(if ,from-end
-                             `(find-if-not-from-end-unbounded-key
-                               ,predicate ,sequence ,start ,key)
-                             `(find-if-not-from-start-unbounded-key
-                               ,predicate ,sequence ,start ,key)))
+                             (find-if-not-from-end-unbounded-key
+                              ,predicate ,sequence ,start ,key)
+                             (find-if-not-from-start-unbounded-key
+                              ,predicate ,sequence ,start ,key)))
                     `(find-if-not-from-start-unbounded-key
                       ,predicate ,sequence ,start ,key))
                 (if from-end-p
@@ -666,10 +666,10 @@
                         `(find-if-not-from-end-unbounded-identity
                           ,predicate ,sequence ,start)
                         `(if ,from-end
-                             `(find-if-not-from-end-unbounded-identity
-                               ,predicate ,sequence ,start)
-                             `(find-if-not-from-start-unbounded-identity
-                               ,predicate ,sequence ,start)))
+                             (find-if-not-from-end-unbounded-identity
+                              ,predicate ,sequence ,start)
+                             (find-if-not-from-start-unbounded-identity
+                              ,predicate ,sequence ,start)))
                     `(find-if-not-from-start-unbounded-identity
                       ,predicate ,sequence ,start)))))
     (error () form)))
