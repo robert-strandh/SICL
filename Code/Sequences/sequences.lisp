@@ -1,5 +1,58 @@
 (in-package #:sicl-sequences)
 
+;;; Preserving order of evaluation with a compiler macro gets
+;;; complicated.  The left-to-right order in the original 
+;;; call must be respected.  So for instance, if we have 
+;;; a call such as (find-if p s :key <x> :end <y> :start <z>)
+;;; the expressions <x>, <y>, and <z> must be evaluated in
+;;; that order.  One solution to this problem is to generate
+;;; code such as (let ((key <x>) (end <y>) (start <z>)) ...)
+;;; and then use the variables key, end, start in the body of
+;;; the let.  However, things are a bit more complicated, 
+;;; because section 3.4.1.4 of the HyperSpec says that there
+;;; can be multiple occurences of a keyword in a call, so that
+;;; (find-if p s :key <x> :end <y> :start <z> :key <w>) is
+;;; legal.  In this case, <w> must be evaluated last, but 
+;;; the value of the :key argument is the value of <x>.  
+;;; So we must handle multiple occurences by generating something
+;;; like (let ((key <x>) (end <y>) (start <z>) (ignore <w>)) ...) 
+;;; where ignore is a unique symbol.  But we must also preserve 
+;;; that symbol for later so that we can declare it to be ignored
+;;; in order to avoid compiler warnings. 
+
+;;; Yet another complication happens because if the call contains
+;;; :allow-other-keys t, then pretty much any other keyword can be 
+;;; present.  Again, we generate a unique symbol for that case. 
+
+;;; Things are further complicated by the fact that the special
+;;; versions of many functions always take a start parameter.  If
+;;; the call doesn't have a :start keyword argument, we need to 
+;;; initialize start to 0. 
+
+;;; Translate from a keyword to a variable name
+(defparameter *vars* '((:start . start)
+                       (:end . end)
+                       (:from-end . from-end)
+                       (:key . key)
+                       (:test . test)
+                       (:test-not . test-not)
+                       (:count . count)))
+
+;;; For a list with alternating keywords, and expressions, 
+;;; generate a list of binding for let.  For instance,
+;;; if we have (:key <x> :end <y> :start <z>), we generate
+;;; ((key <x>) (end <y>) (start <z>)).  If a keyword occurs 
+;;; more than once in the list, generate a binding with a 
+;;; generated symbol instead. 
+(defun make-bindings (plist)
+  (loop with keywords = '()
+        for (key value) on plist by #'cddr
+        collect (list (if (member key keywords)
+                          (gensym)
+                          (or (cdr (assoc key *vars*)) (gensym)))
+                      value)
+        do (push key keywords)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function find-if
@@ -288,53 +341,69 @@
                            (end nil endp)
                            (key nil keyp))
           args
-        (if (and endp (not (null end)))
-            (if (and keyp (not (null key)))
-                (if from-end-p
-                    (if (eq from-end t)
-                        `(find-if-from-end-bounded-key
-                          ,predicate ,sequence ,start ,end ,key)
-                        `(if ,from-end
-                             (find-if-from-end-bounded-key
-                              ,predicate ,sequence ,start ,end ,key)
-                             (find-if-from-start-bounded-key
-                              ,predicate ,sequence ,start ,end ,key)))
-                    `(find-if-from-start-bounded-key
-                      ,predicate ,sequence ,start ,end ,key))
-                (if from-end-p
-                    (if (eq from-end t)
-                        `(find-if-from-end-bounded-identity
-                          ,predicate ,sequence ,start ,end)
-                        `(if ,from-end
-                             (find-if-from-end-bounded-identity
-                              ,predicate ,sequence ,start ,end)
-                             (find-if-from-start-bounded-identity
-                              ,predicate ,sequence ,start ,end)))
-                    `(find-if-from-start-bounded-identity
-                      ,predicate ,sequence ,start ,end)))
-            (if (and keyp (not (null key)))
-                (if from-end-p
-                    (if (eq from-end t)
-                        `(find-if-from-end-unbounded-key
-                          ,predicate ,sequence ,start ,key)
-                        `(if ,from-end
-                             (find-if-from-end-unbounded-key
-                              ,predicate ,sequence ,start ,key)
-                             (find-if-from-start-unbounded-key
-                              ,predicate ,sequence ,start ,key)))
-                    `(find-if-from-start-unbounded-key
-                      ,predicate ,sequence ,start ,key))
-                (if from-end-p
-                    (if (eq from-end t)
-                        `(find-if-from-end-unbounded-identity
-                          ,predicate ,sequence ,start)
-                        `(if ,from-end
-                             (find-if-from-end-unbounded-identity
-                              ,predicate ,sequence ,start)
-                             (find-if-from-start-unbounded-identity
-                              ,predicate ,sequence ,start)))
-                    `(find-if-from-start-unbounded-identity
-                      ,predicate ,sequence ,start)))))
+        (declare (ignore start))
+        (let ((bindings (make-bindings (cddr args))))
+          `(let ((start 0))
+             ;; start must have a value in case no :start keyword
+             ;; argument was given.  On the other hand, if a :start
+             ;; keyword argument WAS given, then this variable will
+             ;; be shadowed by the let bindings below, and in that
+             ;; case, this variable is not used, which is why we
+             ;; declare it ignorable. 
+             (declare (ignorable start))
+             (let ((predicate ,predicate)
+                   (sequence ,sequence)
+                   ,@bindings)
+               ;; Just make every variable ignorable in
+               ;; case there are gensyms among them.
+               (declare (ignorable ,@(mapcar #'car bindings)))
+               ,(if (and endp (not (null end)))
+                    (if (and keyp (not (null key)))
+                        (if from-end-p
+                            (if (eq from-end t)
+                                `(find-if-from-end-bounded-key
+                                  predicate sequence start end key)
+                                `(if from-end
+                                     (find-if-from-end-bounded-key
+                                      predicate sequence start end key)
+                                     (find-if-from-start-bounded-key
+                                      predicate sequence start end key)))
+                            `(find-if-from-start-bounded-key
+                              predicate sequence start end key))
+                        (if from-end-p
+                            (if (eq from-end t)
+                                `(find-if-from-end-bounded-identity
+                                  predicate sequence start end)
+                                `(if from-end
+                                     (find-if-from-end-bounded-identity
+                                      predicate sequence start end)
+                                     (find-if-from-start-bounded-identity
+                                      predicate sequence start end)))
+                            `(find-if-from-start-bounded-identity
+                              predicate sequence start end)))
+                    (if (and keyp (not (null key)))
+                        (if from-end-p
+                            (if (eq from-end t)
+                                `(find-if-from-end-unbounded-key
+                                  predicate sequence start key)
+                                `(if from-end
+                                     (find-if-from-end-unbounded-key
+                                      predicate sequence start key)
+                                     (find-if-from-start-unbounded-key
+                                      predicate sequence start key)))
+                            `(find-if-from-start-unbounded-key
+                              predicate sequence start key))
+                        (if from-end-p
+                            (if (eq from-end t)
+                                `(find-if-from-end-unbounded-identity
+                                  predicate sequence start)
+                                `(if from-end
+                                     (find-if-from-end-unbounded-identity
+                                      predicate sequence start)
+                                     (find-if-from-start-unbounded-identity
+                                      predicate sequence start)))
+                            `(find-if-from-start-unbounded-identity
+                              predicate sequence start))))))))
     (error () form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -625,52 +694,68 @@
                            (end nil endp)
                            (key nil keyp))
           args
-        (if (and endp (not (null end)))
-            (if (and keyp (not (null key)))
-                (if from-end-p
-                    (if (eq from-end t)
-                        `(find-if-not-from-end-bounded-key
-                          ,predicate ,sequence ,start ,end ,key)
-                        `(if ,from-end
-                             (find-if-not-from-end-bounded-key
-                              ,predicate ,sequence ,start ,end ,key)
-                             (find-if-not-from-start-bounded-key
-                              ,predicate ,sequence ,start ,end ,key)))
-                    `(find-if-not-from-start-bounded-key
-                      ,predicate ,sequence ,start ,end ,key))
-                (if from-end-p
-                    (if (eq from-end t)
-                        `(find-if-not-from-end-bounded-identity
-                          ,predicate ,sequence ,start ,end)
-                        `(if ,from-end
-                             (find-if-not-from-end-bounded-identity
-                              ,predicate ,sequence ,start ,end)
-                             (find-if-not-from-start-bounded-identity
-                              ,predicate ,sequence ,start ,end)))
-                    `(find-if-not-from-start-bounded-identity
-                      ,predicate ,sequence ,start ,end)))
-            (if (and keyp (not (null key)))
-                (if from-end-p
-                    (if (eq from-end t)
-                        `(find-if-not-from-end-unbounded-key
-                          ,predicate ,sequence ,start ,key)
-                        `(if ,from-end
-                             (find-if-not-from-end-unbounded-key
-                              ,predicate ,sequence ,start ,key)
-                             (find-if-not-from-start-unbounded-key
-                              ,predicate ,sequence ,start ,key)))
-                    `(find-if-not-from-start-unbounded-key
-                      ,predicate ,sequence ,start ,key))
-                (if from-end-p
-                    (if (eq from-end t)
-                        `(find-if-not-from-end-unbounded-identity
-                          ,predicate ,sequence ,start)
-                        `(if ,from-end
-                             (find-if-not-from-end-unbounded-identity
-                              ,predicate ,sequence ,start)
-                             (find-if-not-from-start-unbounded-identity
-                              ,predicate ,sequence ,start)))
-                    `(find-if-not-from-start-unbounded-identity
-                      ,predicate ,sequence ,start)))))
+        (declare (ignore start))
+        (let ((bindings (make-bindings (cddr args))))
+          `(let ((start 0))
+             ;; start must have a value in case no :start keyword
+             ;; argument was given.  On the other hand, if a :start
+             ;; keyword argument WAS given, then this variable will
+             ;; be shadowed by the let bindings below, and in that
+             ;; case, this variable is not used, which is why we
+             ;; declare it ignorable. 
+             (declare (ignorable start))
+             (let ((predicate ,predicate)
+                   (sequence ,sequence)
+                   ,@bindings)
+               ;; Just make every variable ignorable in
+               ;; case there are gensyms among them.
+               (declare (ignorable ,@(mapcar #'car bindings)))
+               ,(if (and endp (not (null end)))
+                    (if (and keyp (not (null key)))
+                        (if from-end-p
+                            (if (eq from-end t)
+                                `(find-if-not-from-end-bounded-key
+                                  predicate sequence start end key)
+                                `(if from-end
+                                     (find-if-not-from-end-bounded-key
+                                      predicate sequence start end key)
+                                     (find-if-not-from-start-bounded-key
+                                      predicate sequence start end key)))
+                            `(find-if-not-from-start-bounded-key
+                              predicate sequence start end key))
+                        (if from-end-p
+                            (if (eq from-end t)
+                                `(find-if-not-from-end-bounded-identity
+                                  predicate sequence start end)
+                                `(if from-end
+                                     (find-if-not-from-end-bounded-identity
+                                      predicate sequence start end)
+                                     (find-if-not-from-start-bounded-identity
+                                      predicate sequence start end)))
+                            `(find-if-not-from-start-bounded-identity
+                              predicate sequence start end)))
+                    (if (and keyp (not (null key)))
+                        (if from-end-p
+                            (if (eq from-end t)
+                                `(find-if-not-from-end-unbounded-key
+                                  predicate sequence start key)
+                                `(if from-end
+                                     (find-if-not-from-end-unbounded-key
+                                      predicate sequence start key)
+                                     (find-if-not-from-start-unbounded-key
+                                      predicate sequence start key)))
+                            `(find-if-not-from-start-unbounded-key
+                              predicate sequence start key))
+                        (if from-end-p
+                            (if (eq from-end t)
+                                `(find-if-not-from-end-unbounded-identity
+                                  predicate sequence start)
+                                `(if from-end
+                                     (find-if-not-from-end-unbounded-identity
+                                      predicate sequence start)
+                                     (find-if-not-from-start-unbounded-identity
+                                      predicate sequence start)))
+                            `(find-if-not-from-start-unbounded-identity
+                              predicate sequence start))))))))
     (error () form)))
 
