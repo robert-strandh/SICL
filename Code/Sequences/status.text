@@ -20,13 +20,148 @@ What remains to to:
   we can test the functions find-if and find-if-not, and not the
   specialized versions created by the compiler macro.
 
-  Add more sequence functions:
+  We need a subclass of the type-error condition, say
+  not-a-proper-sequence that we can signal in case the sequence is
+  not a proper sequence. 
+
+  We also need a subclass of the type-error condition, say
+  not-a-valid-sequence-index that we can signal in case some index is
+  not a valid sequence index.  
+
+  Add more sequence functions.
 
     find
-    remove
-    remove-if
-    remove-if-not
-    substite
-    substitute-if
-    substitute-if-not
-    etc.
+
+      Function and compiler macro must test that it is not the case
+      that both :test and :test-not are supplied in the same call.
+
+      As for find-if and find-if-not, special cases should be provided
+      for a :key of nil, etc.  In addition, special cases should be
+      provided for common and cheap :test and :test-not cases, notably
+      #'eq and #'eql. 
+
+    remove, remove-if, remove-if-not
+
+      Special cases are as with find, find-if, and find-if-not plus
+      that special versions for a :count of nil should be provided. 
+
+      To remove things from a list when :from-end is t and :count is
+      provided copy the elements to a new list in the reverse order,
+      then traverse that list, while reversing the order and removing
+      the elements. 
+
+    delete, delete-if, delete-if-not
+
+      Special cases are as with remove, remove-if, and remove-if not. 
+
+      To delete elements from a list, keep a pointer to the preceding
+      element, and bypass any cell containing an element to be
+      deleted. 
+
+      The difficult case is to delete from a list when :from-end is
+      true and :count is given.  We might just give up in this case,
+      and not modify the list at all. 
+
+      If the sequence is a vector, just do the same thing that remove
+      does. 
+
+    copy-seq
+
+      Nothing in particular here.  
+
+    elt
+
+      On a list, it is probably better to implement this using loop,
+      as opposed to calling nth, because we might want to check that
+      we have a proper list.
+
+    fill
+
+      Special case when the sequence is a list and :end is nil.
+
+    make-sequence
+
+      I don't know how to do this portably at the moment.  The problem
+      is that it is implementation-dependent what a recognizable
+      subtype of (say) a vector is. 
+
+    subseq
+
+      Special version for the case where :end is not given or is nil. 
+
+    map
+
+      Same problem as make-sequence.
+
+    map-into
+
+      Provide special versions for 1 and 2 sequences, and for all 
+      combinations of types of the sequences (including the resulting
+      sequence). 
+
+    reduce
+
+    count, count-if, count-if-not
+
+      This is the only sequence function where it is specified that if
+      :from-end is true, then the test must be applied from the end to
+      the beginning. 
+
+    length
+
+      Signal an error if it is not a proper sequence. 
+
+    reverse, nreverse 
+
+      Nothing special.
+
+    sort, stable-sort
+
+      Use quicksort for sort and perhaps heapsort for stable-sort. 
+
+    substite, substitute-if, substitute-if-not
+    nsubstite, nsubstitute-if, nsubstitute-if-not
+
+    position, position-if, position-if-not
+
+      Very similar to find, find-if, and find-if-not.
+
+    search
+
+      It is easy to do a quadratic version of this.  Is it possible to
+      do better in the presence of arbitrary tests?  I suppose it
+      would be possible to make a special version if sequence-1 is 
+      constant, and the test is eql.  Then it should be possible to
+      construct an automaton.  But is it worth it? 
+
+    mismatch
+
+    replace
+
+      There is an interesting special case here, namely when the two
+      sequences are the same, the regions overlap, and the target
+      region is located after the source region.  In that case, one
+      cannot copy from the beginning to the end.  It is possible to
+      copy from the end to the beginning, but that might defeat the
+      prefetch policiy of the cache.  If the two regions are
+      sufficiently far apart, sub-regions of the size corresponding to
+      the difference in start position could be copied from end to
+      start, each sub-region being copied from start to end.  Again,
+      is it worth it?  It might be, because this is actually used to
+      implement gap-buffers used in things like Climacs. 
+
+    concatenate
+
+      Same problem as make-sequence
+
+    merge
+
+      Same problem as make-sequence
+
+
+    remove-duplicates, delete-duplicates
+
+      Special versions when the test is one for which we can portably 
+      create a hash table, because then we can determine by looking in
+      the hash table whether we have seen the element before.
+
