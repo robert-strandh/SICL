@@ -1,5 +1,9 @@
 (in-package #:sicl-sequences-test)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function find-if
+
 (define-test find-if-list.1
   (assert-equal 'nil
                 (find-if #'identity ())))
@@ -612,6 +616,10 @@
                :start (progn (setf f (incf i)) 1)
                )
       i a b c d e f))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function find-if-not
 
 (define-test find-if-not-list.1
   (assert-equal
@@ -1270,3 +1278,207 @@
       i a b c d e f))))
 
   
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test length
+
+(define-test length.list.1
+  (assert-equal
+   0
+   (length nil)))
+
+(define-test length.list.2
+  (assert-equal
+   5
+   (length '(a b c d e))))
+
+(define-test length.list.3
+  (assert-equal
+   200000
+   (length (make-list 200000))))
+
+(defun length.list-4-body ()
+  (let ((x ()))
+    (loop
+     for i from 0 to 999 do
+     (progn
+       (unless (eql (length x) i) (return nil))
+       (push i x))
+     finally (return t))))
+
+(define-test length.list-4
+  (assert-equal
+   t
+   (length.list-4-body)))
+
+(define-test length.vector.1
+  (assert-equal
+   0
+   (length #())))
+
+(define-test length.vector.2
+  (assert-equal
+   1
+   (length #(a))))
+
+(define-test length.vector.3
+  (assert-equal
+   2
+   (length #(a b))))
+
+(define-test length.vector.4
+  (assert-equal
+   3
+   (length #(a b c))))
+
+(define-test length.nonsimple-vector.1
+  (assert-equal
+   10
+   (length (make-array 10 :fill-pointer t :adjustable t))))
+
+(define-test length.nonsimple-vector.2
+  (assert-equal
+   5
+   (let ((a (make-array 10 :fill-pointer t :adjustable t)))
+     (setf (fill-pointer a) 5)
+     (length a))))
+
+(define-test length.bit-vector.1
+  (assert-equal
+   0
+   (length #*)))
+
+(define-test length.bit-vector.2
+  (assert-equal
+   1
+   (length #*1)))
+
+(define-test length.bit-vector.3
+  (assert-equal
+   1
+   (length #*0)))
+
+(define-test length.bit-vector.4
+  (assert-equal
+   6
+   (length #*010101)))
+
+(define-test length.bit-vector.5
+  (assert-equal
+   '(5 1)
+   (let ((i 0))
+     (flet ((%f () (incf i)
+              (make-array 5 :element-type 'bit
+                          :initial-contents '(0 0 1 1 0))))
+       (list
+        (length (the (simple-bit-vector 5) (%f)))
+        i)))))
+
+(define-test length.string.1
+  (assert-equal
+   0
+   (length "")))
+
+(define-test length.string.2
+  (assert-equal
+   1
+   (length "a")))
+
+(define-test length.string.3
+  (assert-equal
+   13
+   (length "abcdefghijklm")))
+
+(define-test length.string.4
+  (assert-equal
+   1
+   (length "\ ")))
+
+(define-test length.string.5
+  (assert-equal
+   '(5 1)
+   (let ((i 0))
+     (flet ((%f () (incf i)
+              (make-string 5 :initial-element #\a)))
+       (list (length (the (simple-string 5) (%f))) i)))))
+  
+
+(define-test length.string.6
+  (assert-equal
+   '(5 1)
+   (let ((i 0))
+     (flet ((%f () (incf i)
+              (make-array 5 :element-type 'base-char
+                          :initial-element #\a)))
+       (list (length (the (simple-base-string 5) (%f))) i)))))
+
+(define-test length.error.6
+  (assert-error 'program-error (length)))
+
+(define-test length.error.7
+  (assert-error 'program-error (length nil nil)))
+
+(define-test length.error.8
+  (assert-error 'type-error (locally (length 'a) t)))
+
+;;; Length on vectors created with make-array
+
+(define-test length.array.1
+  (assert-equal
+   20
+   (length (make-array '(20)))))
+
+(define-test length.array.2
+  (assert-equal
+   100001
+   (length (make-array '(100001)))))
+
+(define-test length.array.3
+  (assert-equal
+   0
+   (length (make-array '(0)))))
+
+(define-test length.array.4
+  (assert-equal
+   10
+   (let ((x (make-array '(100) :fill-pointer 10)))
+     (length x))))
+
+(define-test length.array.5
+  (assert-equal
+   20
+   (let ((x (make-array '(100) :fill-pointer 10)))
+     (setf (fill-pointer x) 20)
+     (length x))))
+
+;;; Unusual vectors
+
+(define-test length.array.6
+  (assert-equal
+   nil
+   (loop for i from 1 to 40
+         for etype = `(unsigned-byte ,i)
+         for vec = (make-array 7 :element-type etype :initial-element 0)
+         for len = (length vec)
+         unless (eql len 7)
+           collect (list i vec len))))
+
+(define-test length.array.7
+  (assert-equal
+   nil
+   (loop for i from 1 to 40
+         for etype = `(signed-byte ,i)
+         for vec = (make-array 13 :element-type etype :initial-element 0)
+         for len = (length vec)
+         unless (eql len 13)
+           collect (list i vec len))))
+
+(define-test length.array.8
+  (assert-equal
+   nil
+   (loop for etype in '(short-float single-float double-float long-float rational)
+         for vec = (make-array 5 :element-type etype :initial-element (coerce 0 etype))
+         for len = (length vec)
+         unless (eql len 5)
+           collect (list etype vec len))))
+

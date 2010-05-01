@@ -759,3 +759,19 @@
                               predicate sequence start))))))))
     (error () form)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function length
+
+(defun length (sequence)
+  (etypecase sequence
+    (vector
+       (if (array-has-fill-pointer-p sequence)
+           (fill-pointer sequence)
+           (array-dimension sequence 0)))
+    (list
+       (loop while (not (endp sequence))
+             count t
+             do (pop sequence)))))
+
+
