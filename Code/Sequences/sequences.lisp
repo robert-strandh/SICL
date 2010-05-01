@@ -761,6 +761,1173 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function find
+
+(defun find-list-from-start-unbounded-eq-identity
+    (item list start)
+  (loop for element in (nthcdr start list)
+        when (eq item element)
+          return element))  
+
+(defun find-list-from-start-unbounded-eq-key
+    (item list start key)
+  (loop for element in (nthcdr start list)
+        when (eq item (funcall key element))
+          return element))  
+
+(defun find-list-from-start-unbounded-not-eq-identity
+    (item list start)
+  (loop for element in (nthcdr start list)
+        when (not (eq item element))
+          return element))  
+
+(defun find-list-from-start-unbounded-not-eq-key
+    (item list start key)
+  (loop for element in (nthcdr start list)
+        when (not (eq item (funcall key element)))
+          return element))  
+
+(defun find-list-from-start-unbounded-eql-identity
+    (item list start)
+  (loop for element in (nthcdr start list)
+        when (eql item element)
+          return element))  
+
+(defun find-list-from-start-unbounded-eql-key
+    (item list start key)
+  (loop for element in (nthcdr start list)
+        when (eql item (funcall key element))
+          return element))  
+
+(defun find-list-from-start-unbounded-not-eql-identity
+    (item list start)
+  (loop for element in (nthcdr start list)
+        when (not (eql item element))
+          return element))  
+
+(defun find-list-from-start-unbounded-not-eql-key
+    (item list start key)
+  (loop for element in (nthcdr start list)
+        when (not (eql item (funcall key element)))
+          return element))  
+
+(defun find-list-from-start-unbounded-test-identity
+    (item list start test)
+  (loop for element in (nthcdr start list)
+        when (funcall test item element)
+          return element))  
+
+(defun find-list-from-start-unbounded-test-key
+    (item list start test key)
+  (loop for element in (nthcdr start list)
+        when (funcall test item (funcall key element))
+          return element))
+
+(defun find-list-from-start-unbounded-test-not-identity
+    (item list start test)
+  (loop for element in (nthcdr start list)
+        when (not (funcall test item element))
+          return element))
+
+(defun find-list-from-start-unbounded-test-not-key
+    (item list start test key)
+  (loop for element in (nthcdr start list)
+        when (not (funcall test item (funcall key element)))
+          return element))
+
+(defun find-list-from-start-bounded-eq-identity
+    (item list start end)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (eq item element)
+          return element))  
+
+(defun find-list-from-start-bounded-eq-key
+    (item list start end key)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (eq item (funcall key element))
+          return element))  
+
+(defun find-list-from-start-bounded-not-eq-identity
+    (item list start end)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (eq item element))
+          return element))  
+
+(defun find-list-from-start-bounded-not-eq-key
+    (item list start end key)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (eq item (funcall key element)))
+          return element))  
+
+(defun find-list-from-start-bounded-eql-identity
+    (item list start end)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (eql item element)
+          return element))  
+
+(defun find-list-from-start-bounded-eql-key
+    (item list start end key)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (eql item (funcall key element))
+          return element))  
+
+(defun find-list-from-start-bounded-not-eql-identity
+    (item list start end)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (eql item element))
+          return element))  
+
+(defun find-list-from-start-bounded-not-eql-key
+    (item list start end key)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (eql item (funcall key element)))
+          return element))  
+
+(defun find-list-from-start-bounded-test-identity
+    (item list start end test)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (funcall test item element)
+          return element))  
+
+(defun find-list-from-start-bounded-test-key
+    (item list start end test key)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (funcall test item (funcall key element))
+          return element))
+
+(defun find-list-from-start-bounded-test-not-identity
+    (item list start end test)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (funcall test item element))
+          return element))
+
+(defun find-list-from-start-bounded-test-not-key
+    (item list start end test key)
+  (loop for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (funcall test item (funcall key element)))
+          return element))
+
+(defun find-list-from-end-unbounded-eq-identity
+    (item list start)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (eq item element)
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-eq-key
+    (item list start key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (eq item (funcall key element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-not-eq-identity
+    (item list start)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (not (eq item element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-not-eq-key
+    (item list start key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (not (eq item (funcall key element)))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-eql-identity
+    (item list start)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (eql item element)
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-eql-key
+    (item list start key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (eql item (funcall key element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-not-eql-identity
+    (item list start)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (not (eql item element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-not-eql-key
+    (item list start key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (not (eql item (funcall key element)))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-test-identity
+    (item list start test)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (funcall test item element)
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-test-key
+    (item list start test key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (funcall test item (funcall key element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-test-not-identity
+    (item list start test)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (not (funcall test item element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-unbounded-test-not-key
+    (item list start test key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        when (not (funcall test item (funcall key element)))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-eq-identity
+    (item list start end)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (eq item element)
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-eq-key
+    (item list start end key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (eq item (funcall key element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-not-eq-identity
+    (item list start end)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (eq item element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-not-eq-key
+    (item list start end key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (eq item (funcall key item)))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-eql-identity
+    (item list start end)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (eql item element)
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-eql-key
+    (item list start end key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (eql item (funcall key element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-not-eql-identity
+    (item list start end)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (eql item element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-not-eql-key
+    (item list start end key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (eql item (funcall key element)))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-test-identity
+    (item list start end test)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (funcall test item element)
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-test-key
+    (item list start end test key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (funcall test item (funcall key element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-test-not-identity
+    (item list start end test)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (funcall test item element))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-list-from-end-bounded-test-not-key
+    (item list start end test key)
+  (loop with value = nil
+        for element in (nthcdr start list)
+        repeat (- end start)
+        when (not (funcall test item (funcall key element)))
+          do (setf value element)
+        finally (return value)))
+
+(defun find-vector-from-start-eq-identity
+    (item vector start end)
+  (loop for index from start below end
+        when (eq item (aref vector index))
+          return (aref vector index)))
+
+(defun find-vector-from-start-eq-key
+    (item vector start end key)
+  (loop for index from start below end
+        when (eq item (funcall key (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-start-not-eq-identity
+    (item vector start end)
+  (loop for index from start below end
+        when (not (eq item (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-start-not-eq-key
+    (item vector start end key)
+  (loop for index from start below end
+        when (not (eq item (funcall key (aref vector index))))
+          return (aref vector index)))
+
+(defun find-vector-from-start-eql-identity
+    (item vector start end)
+  (loop for index from start below end
+        when (eql item (aref vector index))
+          return (aref vector index)))
+
+(defun find-vector-from-start-eql-key
+    (item vector start end key)
+  (loop for index from start below end
+        when (eql item (funcall key (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-start-not-eql-identity
+    (item vector start end)
+  (loop for index from start below end
+        when (not (eql item (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-start-not-eql-key
+    (item vector start end key)
+  (loop for index from start below end
+        when (not (eql item (funcall key (aref vector index))))
+          return (aref vector index)))
+
+(defun find-vector-from-start-test-identity
+    (item vector start end test)
+  (loop for index from start below end
+        when (funcall test item (aref vector index))
+          return (aref vector index)))
+
+(defun find-vector-from-start-test-key
+    (item vector start end test key)
+  (loop for index from start below end
+        when (funcall test item (funcall key (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-start-test-not-identity
+    (item vector start end test)
+  (loop for index from start below end
+        when (not (funcall test item (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-start-test-not-key
+    (item vector start end test key)
+  (loop for index from start below end
+        when (not (funcall test item (funcall key (aref vector index))))
+          return (aref vector index)))
+
+(defun find-vector-from-end-eq-identity
+    (item vector start end)
+  (loop for index downfrom (1- end) to start
+        when (eq item (aref vector index))
+          return (aref vector index)))
+
+(defun find-vector-from-end-eq-key
+    (item vector start end key)
+  (loop for index downfrom (1- end) to start
+        when (eq item (funcall key (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-end-not-eq-identity
+    (item vector start end)
+  (loop for index downfrom (1- end) to start
+        when (not (eq item (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-end-not-eq-key
+    (item vector start end key)
+  (loop for index downfrom (1- end) to start
+        when (not (eq item (funcall key (aref vector index))))
+          return (aref vector index)))
+
+(defun find-vector-from-end-eql-identity
+    (item vector start end)
+  (loop for index downfrom (1- end) to start
+        when (eql item (aref vector index))
+          return (aref vector index)))
+
+(defun find-vector-from-end-eql-key
+    (item vector start end key)
+  (loop for index downfrom (1- end) to start
+        when (eql item (funcall key (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-end-not-eql-identity
+    (item vector start end)
+  (loop for index downfrom (1- end) to start
+        when (not (eql item (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-end-not-eql-key
+    (item vector start end key)
+  (loop for index downfrom (1- end) to start
+        when (not (eql item (funcall key (aref vector index))))
+          return (aref vector index)))
+
+(defun find-vector-from-end-test-identity
+    (item vector start end test)
+  (loop for index downfrom (1- end) to start
+        when (funcall test item (aref vector index))
+          return (aref vector index)))
+
+(defun find-vector-from-end-test-key
+    (item vector start end test key)
+  (loop for index downfrom (1- end) to start
+        when (funcall test item (funcall key (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-end-test-not-identity
+    (item vector start end test)
+  (loop for index downfrom (1- end) to start
+        when (not (funcall test item (aref vector index)))
+          return (aref vector index)))
+
+(defun find-vector-from-end-test-not-key
+    (item vector start end test key)
+  (loop for index downfrom (1- end) to start
+        when (not (funcall test item (funcall key (aref vector index))))
+          return (aref vector index)))
+
+(defun find-from-start-unbounded-eq-identity
+    (item sequence start)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-eq-identity
+        item sequence start (length sequence)))
+    (list
+       (find-list-from-start-unbounded-eq-identity
+        item sequence start))))
+
+(defun find-from-start-unbounded-eq-key
+    (item sequence start key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-eq-key
+        item sequence start (length sequence) key))
+    (list
+       (find-list-from-start-unbounded-eq-key
+        item sequence start key))))
+
+(defun find-from-start-unbounded-not-eq-identity
+    (item sequence start)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-not-eq-identity
+        item sequence start (length sequence)))
+    (list
+       (find-list-from-start-unbounded-not-eq-identity
+        item sequence start))))
+
+(defun find-from-start-unbounded-not-eq-key
+    (item sequence start key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-not-eq-key
+        item sequence start (length sequence) key))
+    (list
+       (find-list-from-start-unbounded-not-eq-key
+        item sequence start key))))
+
+(defun find-from-start-unbounded-eql-identity
+    (item sequence start)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-eql-identity
+        item sequence start (length sequence)))
+    (list
+       (find-list-from-start-unbounded-eql-identity
+        item sequence start))))
+
+(defun find-from-start-unbounded-eql-key
+    (item sequence start key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-eql-key
+        item sequence start (length sequence) key))
+    (list
+       (find-list-from-start-unbounded-eql-key
+        item sequence start key))))
+
+(defun find-from-start-unbounded-not-eql-identity
+    (item sequence start)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-not-eql-identity
+        item sequence start (length sequence)))
+    (list
+       (find-list-from-start-unbounded-not-eql-identity
+        item sequence start))))
+
+(defun find-from-start-unbounded-not-eql-key
+    (item sequence start key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-not-eql-key
+        item sequence start (length sequence) key))
+    (list
+       (find-list-from-start-unbounded-not-eql-key
+        item sequence start key))))
+
+(defun find-from-start-unbounded-test-identity
+    (item sequence start test)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-test-identity
+        item sequence start (length sequence) test))
+    (list
+       (find-list-from-start-unbounded-test-identity
+        item sequence start test))))
+
+(defun find-from-start-unbounded-test-key
+    (item sequence start test key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-test-key
+        item sequence start (length sequence) test key))
+    (list
+       (find-list-from-start-unbounded-test-key
+        item sequence start test key))))
+
+(defun find-from-start-unbounded-test-not-identity
+    (item sequence start test)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-test-not-identity
+        item sequence start (length sequence) test))
+    (list
+       (find-list-from-start-unbounded-test-not-identity
+        item sequence start test))))
+
+(defun find-from-start-unbounded-test-not-key
+    (item sequence start test key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-test-not-key
+        item sequence start (length sequence) test key))
+    (list
+       (find-list-from-start-unbounded-test-not-key
+        item sequence start test key))))
+
+(defun find-from-start-bounded-eq-identity
+    (item sequence start end)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-eq-identity
+        item sequence start end))
+    (list
+       (find-list-from-start-bounded-eq-identity
+        item sequence start end))))
+
+(defun find-from-start-bounded-eq-key
+    (item sequence start end key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-eq-key
+        item sequence start end key))
+    (list
+       (find-list-from-start-bounded-eq-key
+        item sequence start end key))))
+
+(defun find-from-start-bounded-not-eq-identity
+    (item sequence start end)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-not-eq-identity
+        item sequence start end))
+    (list
+       (find-list-from-start-bounded-not-eq-identity
+        item sequence start end))))
+
+(defun find-from-start-bounded-not-eq-key
+    (item sequence start end key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-not-eq-key
+        item sequence start end key))
+    (list
+       (find-list-from-start-bounded-not-eq-key
+        item sequence start end key))))
+
+(defun find-from-start-bounded-eql-identity
+    (item sequence start end)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-eql-identity
+        item sequence start end))
+    (list
+       (find-list-from-start-bounded-eql-identity
+        item sequence start end))))
+
+(defun find-from-start-bounded-eql-key
+    (item sequence start end key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-eql-key
+        item sequence start end key))
+    (list
+       (find-list-from-start-bounded-eql-key
+        item sequence start end key))))
+
+(defun find-from-start-bounded-not-eql-identity
+    (item sequence start end)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-not-eql-identity
+        item sequence start end))
+    (list
+       (find-list-from-start-bounded-not-eql-identity
+        item sequence start end))))
+
+(defun find-from-start-bounded-not-eql-key
+    (item sequence start end key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-not-eql-key
+        item sequence start end key))
+    (list
+       (find-list-from-start-bounded-not-eql-key
+        item sequence start end key))))
+
+(defun find-from-start-bounded-test-identity
+    (item sequence start end test)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-test-identity
+        item sequence start end test))
+    (list
+       (find-list-from-start-bounded-test-identity
+        item sequence start end test))))
+
+(defun find-from-start-bounded-test-key
+    (item sequence start end test key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-test-key
+        item sequence start end test key))
+    (list
+       (find-list-from-start-bounded-test-key
+        item sequence start end test key))))
+
+(defun find-from-start-bounded-test-not-identity
+    (item sequence start end test)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-test-not-identity
+        item sequence start end test))
+    (list
+       (find-list-from-start-bounded-test-not-identity
+        item sequence start end test))))
+
+(defun find-from-start-bounded-test-not-key
+    (item sequence start end test key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-start-test-not-key
+        item sequence start end test key))
+    (list
+       (find-list-from-start-bounded-test-not-key
+        item sequence start end test key))))
+
+(defun find-from-end-unbounded-eq-identity
+    (item sequence start)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-eq-identity
+        item sequence start (length sequence)))
+    (list
+       (find-list-from-end-unbounded-eq-identity
+        item sequence start))))
+
+(defun find-from-end-unbounded-eq-key
+    (item sequence start key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-eq-key
+        item sequence start (length sequence) key))
+    (list
+       (find-list-from-end-unbounded-eq-key
+        item sequence start key))))
+
+(defun find-from-end-unbounded-not-eq-identity
+    (item sequence start)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-not-eq-identity
+        item sequence start (length sequence)))
+    (list
+       (find-list-from-end-unbounded-not-eq-identity
+        item sequence start))))
+
+(defun find-from-end-unbounded-not-eq-key
+    (item sequence start key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-not-eq-key
+        item sequence start (length sequence) key))
+    (list
+       (find-list-from-end-unbounded-not-eq-key
+        item sequence start key))))
+
+(defun find-from-end-unbounded-eql-identity
+    (item sequence start)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-eql-identity
+        item sequence start (length sequence)))
+    (list
+       (find-list-from-end-unbounded-eql-identity
+        item sequence start))))
+
+(defun find-from-end-unbounded-eql-key
+    (item sequence start key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-eql-key
+        item sequence start (length sequence) key))
+    (list
+       (find-list-from-end-unbounded-eql-key
+        item sequence start key))))
+
+(defun find-from-end-unbounded-not-eql-identity
+    (item sequence start)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-not-eql-identity
+        item sequence start (length sequence)))
+    (list
+       (find-list-from-end-unbounded-not-eql-identity
+        item sequence start))))
+
+(defun find-from-end-unbounded-not-eql-key
+    (item sequence start key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-not-eql-key
+        item sequence start (length sequence) key))
+    (list
+       (find-list-from-end-unbounded-not-eql-key
+        item sequence start key))))
+
+(defun find-from-end-unbounded-test-identity
+    (item sequence start test)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-test-identity
+        item sequence start (length sequence) test))
+    (list
+       (find-list-from-end-unbounded-test-identity
+        item sequence start test))))
+
+(defun find-from-end-unbounded-test-key
+    (item sequence start test key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-test-key
+        item sequence start (length sequence) test key))
+    (list
+       (find-list-from-end-unbounded-test-key
+        item sequence start test key))))
+
+(defun find-from-end-unbounded-test-not-identity
+    (item sequence start test)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-test-not-identity
+        item sequence start (length sequence) test))
+    (list
+       (find-list-from-end-unbounded-test-not-identity
+        item sequence start test))))
+
+(defun find-from-end-unbounded-test-not-key
+    (item sequence start test key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-test-not-key
+        item sequence start (length sequence) test key))
+    (list
+       (find-list-from-end-unbounded-test-not-key
+        item sequence start test key))))
+
+(defun find-from-end-bounded-eq-identity
+    (item sequence start end)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-eq-identity
+        item sequence start end))
+    (list
+       (find-list-from-end-bounded-eq-identity
+        item sequence start end))))
+
+(defun find-from-end-bounded-eq-key
+    (item sequence start end key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-eq-key
+        item sequence start end key))
+    (list
+       (find-list-from-end-bounded-eq-key
+        item sequence start end key))))
+
+(defun find-from-end-bounded-not-eq-identity
+    (item sequence start end)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-not-eq-identity
+        item sequence start end))
+    (list
+       (find-list-from-end-bounded-not-eq-identity
+        item sequence start end))))
+
+(defun find-from-end-bounded-not-eq-key
+    (item sequence start end key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-not-eq-key
+        item sequence start end key))
+    (list
+       (find-list-from-end-bounded-not-eq-key
+        item sequence start end key))))
+
+(defun find-from-end-bounded-eql-identity
+    (item sequence start end)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-eql-identity
+        item sequence start end))
+    (list
+       (find-list-from-end-bounded-eql-identity
+        item sequence start end))))
+
+(defun find-from-end-bounded-eql-key
+    (item sequence start end key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-eql-key
+        item sequence start end key))
+    (list
+       (find-list-from-end-bounded-eql-key
+        item sequence start end key))))
+
+(defun find-from-end-bounded-not-eql-identity
+    (item sequence start end)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-not-eql-identity
+        item sequence start end))
+    (list
+       (find-list-from-end-bounded-not-eql-identity
+        item sequence start end))))
+
+(defun find-from-end-bounded-not-eql-key
+    (item sequence start end key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-not-eql-key
+        item sequence start end key))
+    (list
+       (find-list-from-end-bounded-not-eql-key
+        item sequence start end key))))
+
+(defun find-from-end-bounded-test-identity
+    (item sequence start end test)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-test-identity
+        item sequence start end test))
+    (list
+       (find-list-from-end-bounded-test-identity
+        item sequence start end test))))
+
+(defun find-from-end-bounded-test-key
+    (item sequence start end test key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-test-key
+        item sequence start end test key))
+    (list
+       (find-list-from-end-bounded-test-key
+        item sequence start end test key))))
+
+(defun find-from-end-bounded-test-not-identity
+    (item sequence start end test)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-test-not-identity
+        item sequence start end test))
+    (list
+       (find-list-from-end-bounded-test-not-identity
+        item sequence start end test))))
+
+(defun find-from-end-bounded-test-not-key
+    (item sequence start end test key)
+  (etypecase sequence
+    (vector
+       (find-vector-from-end-test-not-key
+        item sequence start end test key))
+    (list
+       (find-list-from-end-bounded-test-not-key
+        item sequence start end test key))))
+
+(defun find (item sequence
+             &key
+             from-end
+             test
+             test-not
+             (start 0)
+             end
+             key)
+  ;; FIXME do this better
+  (assert (not (minusp start)))
+  (assert (or (null test) (null test-not)))
+  (if from-end
+      (if key
+          (if end
+              (if test
+                  (if (eq test #'eql)
+                      (find-from-end-bounded-eql-key
+                       item sequence start end key)
+                      (if (eq test #'eq)
+                          (find-from-end-bounded-eq-key
+                           item sequence start end key)
+                          (find-from-end-bounded-test-key
+                           item sequence start end test key)))
+                  (if test-not
+                      (if (eq test-not #'eql)
+                          (find-from-end-bounded-not-eql-key
+                           item sequence start end key)
+                          (if (eq test-not #'eq)
+                              (find-from-end-bounded-not-eq-key
+                               item sequence start end key)
+                              (find-from-end-bounded-test-not-key
+                               item sequence start end test-not key)))
+                      (find-from-end-bounded-eql-key
+                       item sequence start end key)))
+              (if test
+                  (if (eq test #'eql)
+                      (find-from-end-unbounded-eql-key
+                       item sequence start key)
+                      (if (eq test #'eq)
+                          (find-from-end-unbounded-eq-key
+                           item sequence start key)
+                          (find-from-end-unbounded-test-key
+                           item sequence start test key)))
+                  (if test-not
+                      (if (eq test-not #'eql)
+                          (find-from-end-unbounded-not-eql-key
+                           item sequence start key)
+                          (if (eq test-not #'eq)
+                              (find-from-end-unbounded-not-eq-key
+                               item sequence start key)
+                              (find-from-end-unbounded-test-not-key
+                               item sequence start test-not key)))
+                      (find-from-end-unbounded-eql-key
+                       item sequence start key))))
+          (if end
+              (if test
+                  (if (eq test #'eql)
+                      (find-from-end-bounded-eql-identity
+                       item sequence start end)
+                      (if (eq test #'eq)
+                          (find-from-end-bounded-eq-identity
+                           item sequence start end)
+                          (find-from-end-bounded-test-identity
+                           item sequence start end test)))
+                  (if test-not
+                      (if (eq test-not #'eql)
+                          (find-from-end-bounded-not-eql-identity
+                           item sequence start end)
+                          (if (eq test-not #'eq)
+                              (find-from-end-bounded-not-eq-identity
+                               item sequence start end)
+                              (find-from-end-bounded-test-not-identity
+                               item sequence start end test)))
+                      (find-from-end-bounded-eql-identity
+                       item sequence start end)))
+              (if test
+                  (if (eq test #'eql)
+                      (find-from-end-unbounded-eql-identity
+                       item sequence start)
+                      (if (eq test #'eq)
+                          (find-from-end-unbounded-eq-identity
+                           item sequence start)
+                          (find-from-end-unbounded-test-identity
+                           item sequence start test)))
+                  (if test-not
+                      (if (eq test-not #'eql)
+                          (find-from-end-unbounded-not-eql-identity
+                           item sequence start)
+                          (if (eq test-not #'eq)
+                              (find-from-end-unbounded-not-eq-identity
+                               item sequence start)
+                              (find-from-end-unbounded-test-not-identity
+                               item sequence start test)))
+                      (find-from-end-unbounded-eql-identity
+                       item sequence start)))))
+      (if key
+          (if end
+              (if test
+                  (if (eq test #'eql)
+                      (find-from-start-bounded-eql-key
+                       item sequence start end key)
+                      (if (eq test #'eq)
+                          (find-from-start-bounded-eq-key
+                           item sequence start end key)
+                          (find-from-start-bounded-test-key
+                           item sequence start end test key)))
+                  (if test-not
+                      (if (eq test-not #'eql)
+                          (find-from-start-bounded-not-eql-key
+                           item sequence start end key)
+                          (if (eq test-not #'eq)
+                              (find-from-start-bounded-not-eq-key
+                               item sequence start end key)
+                              (find-from-start-bounded-test-not-key
+                               item sequence start end test-not key)))
+                      (find-from-start-bounded-eql-key
+                       item sequence start end key)))
+              (if test
+                  (if (eq test #'eql)
+                      (find-from-start-unbounded-eql-key
+                       item sequence start key)
+                      (if (eq test #'eq)
+                          (find-from-start-unbounded-eq-key
+                           item sequence start key)
+                          (find-from-start-unbounded-test-key
+                           item sequence start test key)))
+                  (if test-not
+                      (if (eq test-not #'eql)
+                          (find-from-start-unbounded-not-eql-key
+                           item sequence start key)
+                          (if (eq test-not #'eq)
+                              (find-from-start-unbounded-not-eq-key
+                               item sequence start key)
+                              (find-from-start-unbounded-test-not-key
+                               item sequence start test-not key)))
+                      (find-from-start-unbounded-eql-key
+                       item sequence start key))))
+          (if end
+              (if test
+                  (if (eq test #'eql)
+                      (find-from-start-bounded-eql-identity
+                       item sequence start end)
+                      (if (eq test #'eq)
+                          (find-from-start-bounded-eq-identity
+                           item sequence start end)
+                          (find-from-start-bounded-test-identity
+                           item sequence start end test)))
+                  (if test-not
+                      (if (eq test-not #'eql)
+                          (find-from-start-bounded-not-eql-identity
+                           item sequence start end)
+                          (if (eq test-not #'eq)
+                              (find-from-start-bounded-not-eq-identity
+                               item sequence start end)
+                              (find-from-start-bounded-test-not-identity
+                               item sequence start end test)))
+                      (find-from-start-bounded-eql-identity
+                       item sequence start end)))
+              (if test
+                  (if (eq test #'eql)
+                      (find-from-start-unbounded-eql-identity
+                       item sequence start)
+                      (if (eq test #'eq)
+                          (find-from-start-unbounded-eq-identity
+                           item sequence start)
+                          (find-from-start-unbounded-test-identity
+                           item sequence start test)))
+                  (if test-not
+                      (if (eq test-not #'eql)
+                          (find-from-start-unbounded-not-eql-identity
+                           item sequence start)
+                          (if (eq test-not #'eq)
+                              (find-from-start-unbounded-not-eq-identity
+                               item sequence start)
+                              (find-from-start-unbounded-test-not-identity
+                               item sequence start test)))
+                      (find-from-start-unbounded-eql-identity
+                       item sequence start)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function length
 
 (defun length (sequence)

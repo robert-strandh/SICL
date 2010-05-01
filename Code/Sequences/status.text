@@ -1,7 +1,9 @@
 What is done:
 
-  find-if, find-if-not.
+  find-if, find-if-not. (functions and compiler macros)
   Tests from Paul Dietz' ansi test suite for those functions
+
+  find (function only). 
 
   length.
   Tests from Paul Dietz' ansi test suite for that function.
@@ -36,13 +38,8 @@ What remains to to:
 
     find
 
-      Function and compiler macro must test that it is not the case
-      that both :test and :test-not are supplied in the same call.
-
-      As for find-if and find-if-not, special cases should be provided
-      for a :key of nil, etc.  In addition, special cases should be
-      provided for common and cheap :test and :test-not cases, notably
-      #'eq and #'eql. 
+      Write the compiler macro.
+      Include the tests. 
 
     remove, remove-if, remove-if-not
 
