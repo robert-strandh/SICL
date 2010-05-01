@@ -7,7 +7,8 @@
 ;;; express that as (:shadow . (<string1> <string2> ...)) instead. 
 (defpackage #:sicl-sequences
     (:use #:cl)
-  (:shadow . #1=(#:find #:find-if #:find-if-not))
+  (:shadow . #1=(#:find #:find-if #:find-if-not
+                 #:length))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
