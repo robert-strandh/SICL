@@ -5,6 +5,8 @@ What is done:
 
   find (function only). 
 
+  position, position-if, position-if-not (functions only).
+
   length.
   Tests from Paul Dietz' ansi test suite for that function.
 
@@ -116,10 +118,6 @@ What remains to to:
 
     substite, substitute-if, substitute-if-not
     nsubstite, nsubstitute-if, nsubstitute-if-not
-
-    position, position-if, position-if-not
-
-      Very similar to find, find-if, and find-if-not.
 
     search
 

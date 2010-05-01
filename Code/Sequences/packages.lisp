@@ -8,6 +8,7 @@
 (defpackage #:sicl-sequences
     (:use #:cl)
   (:shadow . #1=(#:find #:find-if #:find-if-not
+                 #:position #:position-if #:position-if-not
                  #:length #:reduce))
   (:export . #1#))
 
