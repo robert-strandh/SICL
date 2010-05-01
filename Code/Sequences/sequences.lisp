@@ -1,5 +1,9 @@
 (in-package #:sicl-sequences)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tools for writing compiler macros.
+
 ;;; Preserving order of evaluation with a compiler macro gets
 ;;; complicated.  The left-to-right order in the original 
 ;;; call must be respected.  So for instance, if we have 
@@ -4271,3 +4275,45 @@
                    function sequence start initial-value)
                   (reduce-from-start-unbounded-identity-no-initial
                    function sequence start))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function fill
+
+(defun fill-list-unbounded
+    (list item start)
+  (loop for sublist on (nthcdr start list)
+        do (setf (car sublist) item))
+  list)
+
+(defun fill-list-bounded
+    (list item start end)
+  (loop for sublist on (nthcdr start list)
+        repeat (- end start)
+        do (setf (car sublist) item))
+  list)
+
+(defun fill-vector
+    (vector item start end)
+  (loop for index from start below end
+        do (setf (aref vector index) item))
+  vector)
+
+(defun fill (sequence item
+             &key
+             (start 0)
+             end)
+  (etypecase sequence
+    (vector
+       (if end
+           (fill-vector sequence item start end)
+           (fill-vector sequence item start (length sequence))))
+    (list
+       (if end
+           (fill-list-bounded sequence item start end)
+           (fill-list-unbounded sequence item start)))))
+
+       
+           
+        
+

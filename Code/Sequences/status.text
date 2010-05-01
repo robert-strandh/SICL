@@ -12,6 +12,8 @@ What is done:
 
   reduce
 
+  fill (function only).
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.
@@ -42,6 +44,11 @@ What remains to to:
 
       Write the compiler macro.
       Include the tests. 
+
+    position, position-if, position-if-not
+
+      Write the compiler macro.
+      Include the tests.
 
     remove, remove-if, remove-if-not
 
@@ -80,7 +87,8 @@ What remains to to:
 
     fill
 
-      Special case when the sequence is a list and :end is nil.
+      Write the compiler macro.
+      Include the tests.
 
     make-sequence
 
