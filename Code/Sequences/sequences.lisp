@@ -774,4 +774,436 @@
              count t
              do (pop sequence)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function reduce
 
+(defun reduce-list-from-start-unbounded-identity-no-initial
+    (function list start)
+  (let ((remaining (nthcdr start list)))
+    (cond ((null remaining) (funcall function))
+          ((null (cdr remaining)) (car remaining))
+          (t (loop with value = (car remaining)
+                   for element in (cdr remaining)
+                   do (setf value (funcall function value element))
+                   finally (return value))))))
+
+(defun reduce-list-from-start-unbounded-identity-initial
+    (function list start initial)
+  (let ((remaining (nthcdr start list)))
+    (cond ((null remaining) initial)
+          (t (loop with value = initial
+                   for element in remaining
+                   do (setf value (funcall function value element))
+                   finally (return value))))))
+
+(defun reduce-list-from-start-unbounded-key-no-initial
+    (function list start key)
+  (let ((remaining (nthcdr start list)))
+    (cond ((null remaining) (funcall function))
+          ((null (cdr remaining)) (car remaining))
+          (t (loop with value = (funcall key (car remaining))
+                   for element in (cdr remaining)
+                   do (setf value (funcall function
+                                           value
+                                           (funcall key element)))
+                   finally (return value))))))
+
+(defun reduce-list-from-start-unbounded-key-initial
+    (function list start key initial)
+  (let ((remaining (nthcdr start list)))
+    (cond ((null remaining) initial)
+          (t (loop with value = initial
+                   for element in remaining
+                   do (setf value (funcall function
+                                           value
+                                           (funcall key element)))
+                   finally (return value))))))
+
+
+(defun reduce-list-from-start-bounded-identity-no-initial
+    (function list start end)
+  (let ((remaining (nthcdr start list)))
+    (cond ((null remaining) (funcall function))
+          ((null (cdr remaining)) (car remaining))
+          (t (loop with value = (car remaining)
+                   for element in (cdr remaining)
+                   repeat (- end start 1)
+                   do (setf value (funcall function value element))
+                   finally (return value))))))
+
+(defun reduce-list-from-start-bounded-identity-initial
+    (function list start end initial)
+  (let ((remaining (nthcdr start list)))
+    (cond ((null remaining) initial)
+          (t (loop with value = initial
+                   for element in remaining
+                   repeat (- end start)
+                   do (setf value (funcall function value element))
+                   finally (return value))))))
+
+(defun reduce-list-from-start-bounded-key-no-initial
+    (function list start end key)
+  (let ((remaining (nthcdr start list)))
+    (cond ((null remaining) (funcall function))
+          ((null (cdr remaining)) (car remaining))
+          (t (loop with value = (funcall key (car remaining))
+                   for element in (cdr remaining)
+                   repeat (- end start 1)
+                   do (setf value (funcall function
+                                           value
+                                           (funcall key element)))
+                   finally (return value))))))
+
+(defun reduce-list-from-start-bounded-key-initial
+    (function list start end key initial)
+  (let ((remaining (nthcdr start list)))
+    (cond ((null remaining) initial)
+          (t (loop with value = initial
+                   for element in remaining
+                   repeat (- end start)
+                   do (setf value (funcall function
+                                           value
+                                           (funcall key element)))
+                   finally (return value))))))
+
+(defun reduce-list-from-end-unbounded-identity-no-initial
+    (function list start)
+  (reduce-list-from-start-unbounded-identity-no-initial
+   function (reverse (nthcdr start list)) 0))
+
+(defun reduce-list-from-end-unbounded-identity-initial
+    (function list start initial)
+  (reduce-list-from-start-unbounded-identity-initial
+   function (reverse (nthcdr start list)) 0 initial))
+
+(defun reduce-list-from-end-unbounded-key-no-initial
+    (function list start key)
+  (reduce-list-from-start-unbounded-key-no-initial
+   function (reverse (nthcdr start list)) 0 key))
+
+(defun reduce-list-from-end-unbounded-key-initial
+    (function list start key initial)
+  (reduce-list-from-start-unbounded-key-initial
+   function (reverse (nthcdr start list)) 0 key initial))
+
+(defun reduce-list-from-end-bounded-identity-no-initial
+    (function list start end)
+  (reduce-list-from-start-unbounded-identity-no-initial
+   function (nreverse (subseq list start end)) 0))
+
+(defun reduce-list-from-end-bounded-identity-initial
+    (function list start end initial)
+  (reduce-list-from-start-unbounded-identity-initial
+   function (nreverse (subseq list start end)) 0 initial))
+
+(defun reduce-list-from-end-bounded-key-no-initial
+    (function list start end key)
+  (reduce-list-from-start-unbounded-key-no-initial
+   function (nreverse (subseq list start end)) 0 key))
+
+(defun reduce-list-from-end-bounded-key-initial
+    (function list start end key initial)
+  (reduce-list-from-start-unbounded-key-initial
+   function (nreverse (subseq list start end)) 0 key initial))
+
+(defun reduce-vector-from-start-identity-no-initial
+    (function vector start end)
+  (cond ((<= end start) (funcall function))
+        ((= 1 (- end start)) (aref vector start))
+        (t (loop with value = (aref vector start)
+                 for index from (1+ start) below end
+                 do (setf value (funcall function
+                                         value
+                                         (aref vector index)))
+                 finally (return value)))))
+
+(defun reduce-vector-from-start-identity-initial
+    (function vector start end initial)
+  (cond ((<= end start) initial)
+        (t (loop with value = initial
+                 for index from start below end
+                 do (setf value (funcall function
+                                         value
+                                         (aref vector index)))
+                 finally (return value)))))
+
+(defun reduce-vector-from-start-key-no-initial
+    (function vector start end key)
+  (cond ((<= end start) (funcall function))
+        ((= 1 (- end start)) (aref vector start))
+        (t (loop with value = (funcall key (aref vector start))
+                 for index from (1+ start) below end
+                 do (setf value (funcall function
+                                         value
+                                         (funcall key (aref vector index))))
+                 finally (return value)))))
+
+
+(defun reduce-vector-from-start-key-initial
+    (function vector start end key initial)
+  (cond ((<= end start) initial)
+        (t (loop with value = initial
+                 for index from start below end
+                 do (setf value (funcall function
+                                         value
+                                         (funcall key (aref vector index))))
+                 finally (return value)))))
+
+(defun reduce-vector-from-end-identity-no-initial
+    (function vector start end)
+  (cond ((<= end start) (funcall function))
+        ((= 1 (- end start)) (aref vector start))
+        (t (loop with value = (aref vector (1- start))
+                 for index downfrom (- end 2) to start
+                 do (setf value (funcall function
+                                         value
+                                         (aref vector index)))
+                 finally (return value)))))
+
+(defun reduce-vector-from-end-identity-initial
+    (function vector start end initial)
+  (cond ((<= end start) initial)
+        (t (loop with value = initial
+                 for index downfrom (1- end) to start
+                 do (setf value (funcall function
+                                         value
+                                         (aref vector index)))
+                 finally (return value)))))
+
+(defun reduce-vector-from-end-key-no-initial
+    (function vector start end key)
+  (cond ((<= end start) (funcall function))
+        ((= 1 (- end start)) (aref vector start))
+        (t (loop with value = (funcall key (aref vector (1- end)))
+                 for index downfrom (- end 2) to start
+                 do (setf value (funcall function
+                                         value
+                                         (funcall key (aref vector index))))
+                 finally (return value)))))
+
+
+(defun reduce-vector-from-end-key-initial
+    (function vector start end key initial)
+  (cond ((<= end start) initial)
+        (t (loop with value = initial
+                 for index downfrom (1- end) to start
+                 do (setf value (funcall function
+                                         value
+                                         (funcall key (aref vector index))))
+                 finally (return value)))))
+
+(defun reduce-from-start-unbounded-identity-no-initial
+    (function sequence start)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-start-identity-no-initial
+        function sequence start (length sequence)))
+    (list 
+       (reduce-list-from-start-unbounded-identity-no-initial
+        function sequence start))))
+       
+(defun reduce-from-start-unbounded-identity-initial
+    (function sequence start initial)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-start-identity-initial
+        function sequence start (length sequence) initial))
+    (list 
+       (reduce-list-from-start-unbounded-identity-initial
+        function sequence start initial))))
+
+(defun reduce-from-start-unbounded-key-no-initial
+    (function sequence start key)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-start-key-no-initial
+        function sequence start (length sequence) key))
+    (list 
+       (reduce-list-from-start-unbounded-key-no-initial
+        function sequence start key))))
+       
+(defun reduce-from-start-unbounded-key-initial
+    (function sequence start key initial)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-start-key-initial
+        function sequence start (length sequence) key initial))
+    (list 
+       (reduce-list-from-start-unbounded-key-initial
+        function sequence start key initial))))
+
+(defun reduce-from-start-bounded-identity-no-initial
+    (function sequence start end)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-start-identity-no-initial
+        function sequence start end))
+    (list 
+       (reduce-list-from-start-bounded-identity-no-initial
+        function sequence start end))))
+       
+(defun reduce-from-start-bounded-identity-initial
+    (function sequence start end initial)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-start-identity-initial
+        function sequence start end initial))
+    (list 
+       (reduce-list-from-start-bounded-identity-initial
+        function sequence start end initial))))
+
+(defun reduce-from-start-bounded-key-no-initial
+    (function sequence start end key)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-start-key-no-initial
+        function sequence start end key))
+    (list 
+       (reduce-list-from-start-bounded-key-no-initial
+        function sequence start end key))))
+       
+(defun reduce-from-start-bounded-key-initial
+    (function sequence start end key initial)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-start-key-initial
+        function sequence start end key initial))
+    (list 
+       (reduce-list-from-start-bounded-key-initial
+        function sequence start end key initial))))
+
+(defun reduce-from-end-unbounded-identity-no-initial
+    (function sequence start)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-end-identity-no-initial
+        function sequence start (length sequence)))
+    (list 
+       (reduce-list-from-end-unbounded-identity-no-initial
+        function sequence start))))
+       
+(defun reduce-from-end-unbounded-identity-initial
+    (function sequence start initial)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-end-identity-initial
+        function sequence start (length sequence) initial))
+    (list 
+       (reduce-list-from-end-unbounded-identity-initial
+        function sequence start initial))))
+
+(defun reduce-from-end-unbounded-key-no-initial
+    (function sequence start key)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-end-key-no-initial
+        function sequence start (length sequence) key))
+    (list 
+       (reduce-list-from-end-unbounded-key-no-initial
+        function sequence start key))))
+       
+(defun reduce-from-end-unbounded-key-initial
+    (function sequence start key initial)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-end-key-initial
+        function sequence start (length sequence) key initial))
+    (list 
+       (reduce-list-from-end-unbounded-key-initial
+        function sequence start key initial))))
+
+(defun reduce-from-end-bounded-identity-no-initial
+    (function sequence start end)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-end-identity-no-initial
+        function sequence start end))
+    (list 
+       (reduce-list-from-end-bounded-identity-no-initial
+        function sequence start end))))
+       
+(defun reduce-from-end-bounded-identity-initial
+    (function sequence start end initial)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-end-identity-initial
+        function sequence start end initial))
+    (list 
+       (reduce-list-from-end-bounded-identity-initial
+        function sequence start end initial))))
+
+(defun reduce-from-end-bounded-key-no-initial
+    (function sequence start end key)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-end-key-no-initial
+        function sequence start end key))
+    (list 
+       (reduce-list-from-end-bounded-key-no-initial
+        function sequence start end key))))
+       
+(defun reduce-from-end-bounded-key-initial
+    (function sequence start end key initial)
+  (etypecase sequence
+    (vector
+       (reduce-vector-from-end-key-initial
+        function sequence start end key initial))
+    (list 
+       (reduce-list-from-end-bounded-key-initial
+        function sequence start end key initial))))
+
+(defun reduce (function sequence
+               &key
+               key
+               from-end
+               (start 0)
+               end
+               (initial-value nil initial-value-p))
+    (if from-end
+        (if key
+          (if end
+              (if initial-value-p
+                  (reduce-from-end-bounded-key-initial
+                   function sequence start end key initial-value)
+                  (reduce-from-end-bounded-key-no-initial
+                   function sequence start end key))
+              (if initial-value-p
+                  (reduce-from-end-unbounded-key-initial
+                   function sequence start key initial-value)
+                  (reduce-from-end-unbounded-key-no-initial
+                   function sequence start key)))
+          (if end
+              (if initial-value-p
+                  (reduce-from-end-bounded-identity-initial
+                   function sequence start end initial-value)
+                  (reduce-from-end-bounded-identity-no-initial
+                   function sequence start end))
+              (if initial-value-p
+                  (reduce-from-end-unbounded-identity-initial
+                   function sequence start initial-value)
+                  (reduce-from-end-unbounded-identity-no-initial
+                   function sequence start))))
+        (if key
+          (if end
+              (if initial-value-p
+                  (reduce-from-start-bounded-key-initial
+                   function sequence start end key initial-value)
+                  (reduce-from-start-bounded-key-no-initial
+                   function sequence start end key))
+              (if initial-value-p
+                  (reduce-from-start-unbounded-key-initial
+                   function sequence start key initial-value)
+                  (reduce-from-start-unbounded-key-no-initial
+                   function sequence start key)))
+          (if end
+              (if initial-value-p
+                  (reduce-from-start-bounded-identity-initial
+                   function sequence start end initial-value)
+                  (reduce-from-start-bounded-identity-no-initial
+                   function sequence start end))
+              (if initial-value-p
+                  (reduce-from-start-unbounded-identity-initial
+                   function sequence start initial-value)
+                  (reduce-from-start-unbounded-identity-no-initial
+                   function sequence start))))))

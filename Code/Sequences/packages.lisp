@@ -8,7 +8,7 @@
 (defpackage #:sicl-sequences
     (:use #:cl)
   (:shadow . #1=(#:find #:find-if #:find-if-not
-                 #:length))
+                 #:length #:reduce))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

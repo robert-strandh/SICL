@@ -6,6 +6,8 @@ What is done:
   length.
   Tests from Paul Dietz' ansi test suite for that function.
 
+  reduce
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.
@@ -100,8 +102,6 @@ What remains to to:
       Provide special versions for 1 and 2 sequences, and for all 
       combinations of types of the sequences (including the resulting
       sequence). 
-
-    reduce
 
     count, count-if, count-if-not
 
