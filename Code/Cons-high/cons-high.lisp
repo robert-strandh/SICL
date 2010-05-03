@@ -270,3 +270,8 @@
 ;;; FIXME: Iterate and check at each iteration that we have a list. 
 (defun (setf nth) (object n list)
   (setf (car (nthcdr n list)) object))
+
+(defun copy-tree (tree)
+  (if (atom tree)
+      tree
+      (cons (copy-tree (car tree)) (copy-tree (cdr tree)))))
