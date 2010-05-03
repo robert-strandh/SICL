@@ -275,3 +275,67 @@
   (if (atom tree)
       tree
       (cons (copy-tree (car tree)) (copy-tree (cdr tree)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function tree-equal 
+
+(defun tree-equal-eq (tree1 tree2)
+  (or (eq tree1 tree2)
+      (and (consp tree1)
+           (consp tree2)
+           (tree-equal-eq (car tree1) (car tree2))
+           (tree-equal-eq (cdr tree1) (cdr tree2)))))
+
+(defun tree-equal-eql (tree1 tree2)
+  (or (eql tree1 tree2)
+      (and (consp tree1)
+           (consp tree2)
+           (tree-equal-eql (car tree1) (car tree2))
+           (tree-equal-eql (cdr tree1) (cdr tree2)))))
+
+(defun tree-equal-not-eq (tree1 tree2)
+  (or (not (eq tree1 tree2))
+      (and (consp tree1)
+           (consp tree2)
+           (tree-equal-not-eq (car tree1) (car tree2))
+           (tree-equal-not-eq (cdr tree1) (cdr tree2)))))
+
+(defun tree-equal-not-eql (tree1 tree2)
+  (or (not (eql tree1 tree2))
+      (and (consp tree1)
+           (consp tree2)
+           (tree-equal-not-eql (car tree1) (car tree2))
+           (tree-equal-not-eql (cdr tree1) (cdr tree2)))))
+
+(defun tree-equal-test (tree1 tree2 test)
+  (or (funcall test tree1 tree2)
+      (and (consp tree1)
+           (consp tree2)
+           (tree-equal-test (car tree1) (car tree2) test)
+           (tree-equal-test (cdr tree1) (cdr tree2) test))))
+
+(defun tree-equal-test-not (tree1 tree2 test)
+  (or (not (funcall test tree1 tree2))
+      (and (consp tree1)
+           (consp tree2)
+           (tree-equal-test-not (car tree1) (car tree2) test)
+           (tree-equal-test-not (cdr tree1) (cdr tree2) test))))
+
+(defun tree-equal (tree1 tree2
+                   &key
+                   (test nil testp)
+                   (test-not nil test-not-p))
+  ;; FIXME Do this better
+  (assert (or (null testp) (null test-not-p)))
+  (if testp
+      (if (eq test #'eq)
+          (tree-equal-eq tree1 tree2)
+          (if (eq test #'eql)
+              (tree-equal-eql tree1 tree2)
+              (tree-equal-test tree1 tree2 test)))
+      (if (eq test-not #'eq)
+          (tree-equal-not-eq tree1 tree2)
+          (if (eq test #'eql)
+              (tree-equal-not-eql tree1 tree2)
+              (tree-equal-test-not tree1 tree2 test-not)))))

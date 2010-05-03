@@ -7,7 +7,9 @@ What is done:
   There are definitions of the functions list, list*, last,
   copy-list, list-length, make-list, nth, and nthcdr. 
 
-  copy-tree
+  copy-tree, no tests.
+
+  tree-equal, no tests.
 
 How to test it:
 
@@ -38,7 +40,6 @@ What remains to to:
      nsubst
      nsubst-if
      nsubst-if-not
-     tree-equal
      endp
      null
      nconc

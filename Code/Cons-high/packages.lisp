@@ -18,7 +18,7 @@
                  #:sixth #:seventh #:eighth #:ninth #:tenth
                  #:list #:list* #:last
                  #:copy-list #:list-length #:make-list
-                 #:nth #:nthcdr #:copy-tree))
+                 #:nth #:nthcdr #:copy-tree #:tree-equal))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
