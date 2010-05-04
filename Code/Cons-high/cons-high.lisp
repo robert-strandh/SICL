@@ -339,3 +339,14 @@
           (if (eq test #'eql)
               (tree-equal-not-eql tree1 tree2)
               (tree-equal-test-not tree1 tree2 test-not)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function endp
+
+(defun endp (list)
+  (cond ((null list) t)
+        ((consp list) nil)
+        (t (error (make-instance 'type-error
+                                 :datum list
+                                 :expected-type 'list)))))
