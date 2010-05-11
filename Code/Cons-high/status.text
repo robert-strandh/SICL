@@ -15,6 +15,8 @@ What is done:
 
   mapcar (function and compiler macro), no tests.  
 
+  mapc (function and compiler macro), no tests.  
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -58,7 +60,6 @@ What remains to to:
      member
      member-if
      member-if-not
-     mapc
      mapcan
      mapl
      maplist
