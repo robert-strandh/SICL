@@ -12,6 +12,14 @@
     (loop for list in lists
 	  append list)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nconc
+
+(defun nconc (&rest lists)
+  (loop for list in lists
+        nconc list))
+
 ;;; We want for error messages to be phrased in terms of a construct
 ;;; that was directly used by the user's code.  So for instance, if
 ;;; the user code had a call to CADDR, giving it a list where the CDDR
