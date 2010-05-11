@@ -13,7 +13,7 @@ What is done:
 
   endp, no tests.
 
-  mapcar, no tests.  
+  mapcar (function and compiler macro), no tests.  
 
 How to test it:
 
@@ -33,9 +33,6 @@ What remains to to:
   that condition instead of signaling a simple-error.
 
   Add tests to test functions that are currently not tested. 
-
-  Compiler macro for mapcar.
-
 
   Include more functions that can be found in the conses dictionary:
 
