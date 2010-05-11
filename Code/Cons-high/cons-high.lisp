@@ -424,8 +424,7 @@
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
 	until (loop for list in remaining thereis (null list))
-	collect (apply function
-		       (loop for list on remaining collect (car list)))))
+	collect (apply function remaining)))
 
 ;;; The compiler macro for maplist generates code to loop
 ;;; individually over each list given, and thus avoids having
@@ -442,4 +441,37 @@
 				       for list in lists
 				       collect `(for ,var on ,list)))
 	       collect (funcall ,funvar ,@vars)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function mapl
+
+(defun mapl (function &rest lists)
+  ;; FIXME: do this better
+  (assert (not (null lists)))
+  (loop for remaining = lists
+	  then (loop for list in remaining collect (cdr list))
+	until (loop for list in remaining thereis (null list))
+	do (apply function remaining))
+  ;; The mapl function returns the first list
+  (car lists))
+
+;;; The compiler macro for mapl generates code to loop
+;;; individually over each list given, and thus avoids having
+;;; a list of lists (which implies consing).  Since the number
+;;; of lists given is known, we can use funcall instead of 
+;;; apply when we call the function. 
+(define-compiler-macro mapl (&whole form function &rest lists)
+  (if (null lists)
+      form
+      (let ((funvar (gensym))
+	    (firstlist (gensym))
+	    (vars (loop for var in lists collect (gensym))))
+	`(loop with ,funvar = ,function
+	       with ,firstlist = ,(car lists)
+	       ,@(apply #'append (loop for var in vars
+				       for list in (cons firstlist (cdr lists))
+				       collect `(for ,var on ,list)))
+	       do (funcall ,funvar ,@vars)
+	       finally (return ,firstlist)))))
 

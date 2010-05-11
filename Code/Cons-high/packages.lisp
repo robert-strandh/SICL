@@ -20,7 +20,7 @@
                  #:copy-list #:list-length #:make-list
                  #:nth #:nthcdr #:copy-tree #:tree-equal
                  #:endp
-		 #:mapcar #:mapc #:maplist))
+		 #:mapcar #:mapc #:maplist #:mapl #:mapcan #:mapcon))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
