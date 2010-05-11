@@ -420,3 +420,13 @@
 (define-test cddddr.error.4
   (assert-error 'type-error (cddddr '(a c e . b))))
 
+;;; This test verifies that append preserves the structure of
+;;; the last list.  We use (loop ... append ...) to implement
+;;; the append function, and some implementations of loop are
+;;; known not to respect that rule. 
+
+(define-test append.sharing
+  (assert-equal t
+                (let ((list1 '(1 2))
+                      (list2 '(3 4)))
+                  (eq (cddr (append list1 list2)) list2))))
