@@ -13,6 +13,8 @@ What is done:
 
   endp, no tests.
 
+  mapcar, no tests.  
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -31,6 +33,9 @@ What remains to to:
   that condition instead of signaling a simple-error.
 
   Add tests to test functions that are currently not tested. 
+
+  Compiler macro for mapcar.
+
 
   Include more functions that can be found in the conses dictionary:
 
@@ -57,7 +62,6 @@ What remains to to:
      member-if
      member-if-not
      mapc
-     mapcar
      mapcan
      mapl
      maplist

@@ -350,3 +350,17 @@
         (t (error (make-instance 'type-error
                                  :datum list
                                  :expected-type 'list)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function mapcar
+
+(defun mapcar (function &rest lists)
+  ;; FIXME: do this better
+  (assert (not (null lists)))
+  (loop for remaining = lists
+	  then (loop for list in remaining collect (cdr list))
+	until (loop for list in remaining thereis (null list))
+	collect (apply function
+		       (loop for list in remaining collect (car list)))))
+

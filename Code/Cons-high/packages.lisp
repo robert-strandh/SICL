@@ -19,7 +19,8 @@
                  #:list #:list* #:last
                  #:copy-list #:list-length #:make-list
                  #:nth #:nthcdr #:copy-tree #:tree-equal
-                 #:endp))
+                 #:endp
+		 #:mapcar))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
