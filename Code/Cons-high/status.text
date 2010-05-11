@@ -19,6 +19,12 @@ What is done:
 
   maplist (function and compiler macro), no tests.  
 
+  mapl (function and compiler macro), no tests.  
+
+  mapcan (function and compiler macro), no tests.  
+
+  mapcon (function and compiler macro), no tests.  
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -62,9 +68,6 @@ What remains to to:
      member
      member-if
      member-if-not
-     mapcan
-     mapl
-     mapcon
      acons
      assoc
      assoc-if

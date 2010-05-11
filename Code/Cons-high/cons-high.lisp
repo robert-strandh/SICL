@@ -475,3 +475,60 @@
 	       do (funcall ,funvar ,@vars)
 	       finally (return ,firstlist)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function mapcan
+
+(defun mapcan (function &rest lists)
+  ;; FIXME: do this better
+  (assert (not (null lists)))
+  (loop for remaining = lists
+	  then (loop for list in remaining collect (cdr list))
+	until (loop for list in remaining thereis (null list))
+	nconc (apply function
+		     (loop for list in remaining collect (car list)))))
+
+;;; The compiler macro for mapcan generates code to loop
+;;; individually over each list given, and thus avoids having
+;;; a list of lists (which implies consing).  Since the number
+;;; of lists given is known, we can use funcall instead of 
+;;; apply when we call the function. 
+(define-compiler-macro mapcan (&whole form function &rest lists)
+  (if (null lists)
+      form
+      (let ((funvar (gensym))
+	    (vars (loop for var in lists collect (gensym))))
+	`(loop with ,funvar = ,function
+	       ,@(apply #'append (loop for var in vars
+				       for list in lists
+				       collect `(for ,var in ,list)))
+	       nconc (funcall ,funvar ,@vars)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function mapcon
+
+(defun mapcon (function &rest lists)
+  ;; FIXME: do this better
+  (assert (not (null lists)))
+  (loop for remaining = lists
+	  then (loop for list in remaining collect (cdr list))
+	until (loop for list in remaining thereis (null list))
+	nconc (apply function remaining)))
+
+;;; The compiler macro for mapcon generates code to loop
+;;; individually over each list given, and thus avoids having
+;;; a list of lists (which implies consing).  Since the number
+;;; of lists given is known, we can use funcall instead of 
+;;; apply when we call the function. 
+(define-compiler-macro mapcon (&whole form function &rest lists)
+  (if (null lists)
+      form
+      (let ((funvar (gensym))
+	    (vars (loop for var in lists collect (gensym))))
+	`(loop with ,funvar = ,function
+	       ,@(apply #'append (loop for var in vars
+				       for list in lists
+				       collect `(for ,var on ,list)))
+	       nconc (funcall ,funvar ,@vars)))))
+
