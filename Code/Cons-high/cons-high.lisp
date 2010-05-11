@@ -1,11 +1,14 @@
 (in-package :sicl-cons-high)
 
-;;; We need a version of append for many of the expansions.  But since
-;;; we don't have one yet, we define our own version of it, and use
-;;; that version instead.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function append
+
+;;; We need the append function in macro expanders in this module
+;;; so we define it first.  
 
 (eval-when (:compile-toplevel :load-toplevel)
-  (defun xappend (&rest lists)
+  (defun append (&rest lists)
     (loop for list in lists
 	  append list)))
 
@@ -113,15 +116,15 @@
                                                                    prefix)))))
         `(defun (setf ,function-name) (new-object list)
            (let ((remaining list))
-             ,@(xappend (loop for letter across (reverse (subseq letters 1))
-			      collect (one-iteration letter prefix)
-			      collect letter into prefix)
-			`(if (consp remaining)
-			     (setf (,(primitive (aref letters 0)) remaining)
-				   new-object)
-			     (error ,(generate-setf-c*r-message
-				      function-name
-				      (subseq letters 1)))))))))))
+             ,@(append (loop for letter across (reverse (subseq letters 1))
+			     collect (one-iteration letter prefix)
+			     collect letter into prefix)
+		       `(if (consp remaining)
+			    (setf (,(primitive (aref letters 0)) remaining)
+				  new-object)
+			    (error ,(generate-setf-c*r-message
+				     function-name
+				     (subseq letters 1)))))))))))
 
 ;;; These are commented out for now because they
 ;;; trip the package lock of the CL package.
@@ -384,9 +387,9 @@
       (let ((funvar (gensym))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       ,@(apply #'xappend (loop for var in vars
-					for list in lists
-					collect `(for ,var in ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for list in lists
+				       collect `(for ,var in ,list)))
 	       collect (funcall ,funvar ,@vars)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -417,9 +420,9 @@
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
 	       with ,firstlist = ,(car lists)
-	       ,@(apply #'xappend (loop for var in vars
-					for list in (cons firstlist (cdr lists))
-					collect `(for ,var in ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for list in (cons firstlist (cdr lists))
+				       collect `(for ,var in ,list)))
 	       do (funcall ,funvar ,@vars)
 	       finally (return ,firstlist)))))
 
@@ -446,9 +449,9 @@
       (let ((funvar (gensym))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       ,@(apply #'xappend (loop for var in vars
-					for list in lists
-					collect `(for ,var on ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for list in lists
+				       collect `(for ,var on ,list)))
 	       collect (funcall ,funvar ,@vars)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -478,9 +481,9 @@
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
 	       with ,firstlist = ,(car lists)
-	       ,@(apply #'xappend (loop for var in vars
-					for list in (cons firstlist (cdr lists))
-					collect `(for ,var on ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for list in (cons firstlist (cdr lists))
+				       collect `(for ,var on ,list)))
 	       do (funcall ,funvar ,@vars)
 	       finally (return ,firstlist)))))
 
@@ -508,9 +511,9 @@
       (let ((funvar (gensym))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       ,@(apply #'xappend (loop for var in vars
-					for list in lists
-					collect `(for ,var in ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for list in lists
+				       collect `(for ,var in ,list)))
 	       nconc (funcall ,funvar ,@vars)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -536,52 +539,7 @@
       (let ((funvar (gensym))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       ,@(apply #'xappend (loop for var in vars
-					for list in lists
-					collect `(for ,var on ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for list in lists
+				       collect `(for ,var on ,list)))
 	       nconc (funcall ,funvar ,@vars)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function append
-
-(defun append (&rest lists)
-  (let ((remaining lists))
-    ;; Remove a prefix of lists containing only empty lists.
-    (loop until (or (null remaining) (not (null (car remaining))))
-	  do (pop remaining))
-    (cond ((null remaining)
-	   ;; All the lists given were empty.
-	   '())
-	  ((null (cdr remaining))
-	   ;; Only the last list given was nonempty.
-	   ;; Don't copy it in this case. 
-	   (car remaining))
-	  (t
-	   ;; The first list of remaining is non empty,
-	   ;; and there are more lists after it.
-	   ;; Start duplication by copying the first
-	   ;; cons cell of the list that is the first
-	   ;; element of remaining.  Keep two pointers
-	   ;; to that cell; one that remains intact, to
-	   ;; be returned in the end, and another that
-	   ;; points to the last cell having been copied. 
-	   ;; current-list contains the remaining cells
-	   ;; to be copied of the current list. 
-	   (let* ((current-list (cdr (car remaining)))
-		  (last-cell (list (car (car remaining))))
-		  (retval last-cell))
-	     (pop remaining)
-	     (loop until (null remaining)
-		   ;; copy the cells of current list
-		   do (loop until (null current-list)
-			    do (setf (cdr last-cell)
-				     (list (pop current-list)))
-			       ;; make last-cell point to the
-			       ;; last cell copied. 
-			       (pop last-cell))
-		      ;; we have copied all the cells of
-		      ;; current-list. 
-		      (setf current-list (pop remaining))
-		   finally (setf (cdr last-cell) current-list)
-			   (return retval)))))))
