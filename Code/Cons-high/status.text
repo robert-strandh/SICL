@@ -25,10 +25,13 @@ What is done:
 
   mapcon (function and compiler macro), no tests.  
 
-  append (function only), no test.
+  append (function only), no tests.
 
-  nconc (function only), no test.
+  nconc (function only), no tests.
 
+  revappend, no tests.
+
+  nreconc, no tests.
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -59,8 +62,6 @@ What remains to to:
      nsubst-if
      nsubst-if-not
      null
-     revappend
-     nreconc
      butlast
      nbutlast
      last

@@ -551,3 +551,28 @@
 				       for list in lists
 				       collect `(for ,var on ,list)))
 	       nconc (funcall ,funvar ,@vars)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function revappend
+
+(defun revappend (list tail)
+  (loop with result = tail
+        for element in list
+        do (push element result)
+        finally (return result)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nreconc
+
+(defun nreconc (list tail)
+  (loop with remaining = list
+        with result = tail
+        until (null remaining)
+        do (let ((temp (cdr remaining)))
+             (setf (cdr remaining) result
+                   result remaining
+                   remaining temp))
+        finally (return result)))
+

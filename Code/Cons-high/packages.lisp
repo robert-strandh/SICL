@@ -21,7 +21,8 @@
                  #:nth #:nthcdr #:copy-tree #:tree-equal
                  #:endp
 		 #:mapcar #:mapc #:maplist #:mapl #:mapcan #:mapcon
-		 #:append #:nconc))
+		 #:append #:nconc
+                 #:revappend #:nreconc))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
