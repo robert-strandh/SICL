@@ -184,6 +184,16 @@
 (define-setf-c*r-function ninth  "ADDDDDDDD")
 (define-setf-c*r-function tenth   "ADDDDDDDDD")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; type list
+
+(deftype list () '(or cons null))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function list
+
 ;;; this implementation assumes that there is no 
 ;;; structure sharing between the &rest argument
 ;;; and the last argument to apply
@@ -194,6 +204,10 @@
   (if (null args)
       'nil
       `(cons ,(car args) (list ,@(cdr args)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function list*
 
 ;;; this implementation assumes that there is no 
 ;;; structure sharing between the &rest argument
@@ -213,9 +227,13 @@
 	 ((null (cdr args)) (car args))
 	 (t `(cons ,(car args) (list* ,@(cdr args))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function last
+
 (defun last (list &optional (n 1))
   (check-type list list "a list")
-  (check-type n (and integer (not (satisfies minusp))) "a nonnegative integer")
+  (check-type n (integer 0) "a nonnegative integer")
   (let ((remaining list))
     (loop repeat n
 	  until (atom remaining)
@@ -228,9 +246,7 @@
 ;;; special version of last used when the second argument to
 ;;; last is 1. 
 (defun last-1 (list)
-  (assert (listp list)
-	  (list)
-	  must-be-list :datum list)
+  (check-type list list "a list")
   (loop for rest on list
 	do (setf list rest))
   list)
@@ -241,7 +257,7 @@
       form))
 
 (defun copy-list (list)
-  (assert (listp list))
+  (check-type list list "a list")
   (if (null list)
       nil
       (let* ((result (list (car list)))
@@ -271,13 +287,13 @@
 	finally (assert (listp fast)) (return length)))
 
 (defun make-list (length &key (initial-element nil))
-  (assert (and (integerp length) (>= length 0)))
+  (check-type length (integer 0) "a nonnegative integer")
   (loop repeat length
 	collect initial-element))
 
 ;;; FIXME: Check at each iteration that we have a list. 
 (defun nthcdr (n list)
-  (assert (and (integerp n) (>= n 0)))
+  (check-type n (integer 0) "a nonnegative integer")
   (loop repeat n
 	until (null list)
 	do (pop list))
@@ -365,11 +381,8 @@
 ;;; Function endp
 
 (defun endp (list)
-  (cond ((null list) t)
-        ((consp list) nil)
-        (t (error (make-instance 'type-error
-                                 :datum list
-                                 :expected-type 'cl:list)))))
+  (check-type list list "a list")
+  (null list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -576,3 +589,29 @@
                    remaining temp))
         finally (return result)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function butlast
+
+;;; The HyperSpec doesn't specify what happens if n is 0.
+;;; There is a note that says:
+;;;
+;;;     (butlast list n) ==  (ldiff list (last list n))
+;;;
+;;; but notes are not normative.  If you do believe this note,
+;;; then (butlast '(1 2 3 . 4) 0) should return (1 2 3), i.e., 
+;;; it doesn't return the unmodified list.  
+;;;
+;;; This implementation works according to the HyperSpec note
+;;; when n is 0.
+
+(defun butlast (list &optional (n 1))
+  (check-type list list "a list")
+  (check-type n (integer 0) "a nonnegative integer")
+  (let ((remaining list))
+    (loop repeat n
+	  until (atom remaining)
+	  do (pop remaining))
+    (loop until (atom remaining)
+          do (pop remaining)
+          collect (pop list))))
