@@ -33,6 +33,10 @@ What is done:
 
   nreconc, no tests.
 
+  butlast, no tests.
+
+  nbutlast, function and special case for n = 1, no tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -63,8 +67,6 @@ What remains to to:
      nsubst-if
      nsubst-if-not
      null
-     butlast
-     nbutlast
      ldiff
      tailp
      rest

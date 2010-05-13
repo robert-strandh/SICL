@@ -127,12 +127,12 @@
              ,@(append (loop for letter across (reverse (subseq letters 1))
 			     collect (one-iteration letter prefix)
 			     collect letter into prefix)
-		       `(if (consp remaining)
-			    (setf (,(primitive (aref letters 0)) remaining)
-				  new-object)
-			    (error ,(generate-setf-c*r-message
-				     function-name
-				     (subseq letters 1)))))))))))
+		       `((if (consp remaining)
+                             (setf (,(primitive (aref letters 0)) remaining)
+                                   new-object)
+                             (error ,(generate-setf-c*r-message
+                                      function-name
+                                      (subseq letters 1))))))))))))
 
 ;;; These are commented out for now because they
 ;;; trip the package lock of the CL package.
@@ -615,3 +615,47 @@
     (loop until (atom remaining)
           do (pop remaining)
           collect (pop list))))
+
+;;; There is probably no point in making a special version of 
+;;; butlast for n = 1, because the time is going to be dominated
+;;; by consing up the new list anyawy. 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nbutlast
+
+;;; Special version for n = 1.  This version avoids that 
+;;; the list be traversed several times, and since list traversal
+;;; dominates the time here, this is a win.
+
+(defun nbutlast-1 (list)
+  (check-type list list "a list")
+  (if (atom (cdr list))
+      nil
+      ;; The compiler probably isn't smart enough to eliminate
+      ;; common subexpressions such as (cdr x), so we do it
+      ;; manually by only doing a single cdr in each iteration,
+      ;; and by storing pointers to the result in local variables.
+      (let ((a list)
+            (b (cdr list))
+            (c (cddr list)))
+        (loop until (atom c)
+              do (setf a b
+                       b c
+                       c (cdr c)))
+        (setf (cdr a) nil)
+        list)))
+
+(defun nbutlast (list &optional (n 1))
+  (check-type list list "a list")
+  (check-type n (integer 0) "a nonnegative integer")
+  (if (= n 1)
+      (nbutlast-1 list)
+      (let ((length (loop for conses = list then (cdr conses)
+                          until (atom conses)
+                          count t)))
+        (if (<= length n)
+            nil
+            (progn (setf (cdr (nthcdr (- length (1+ n)) list)) nil)
+                   list)))))
+

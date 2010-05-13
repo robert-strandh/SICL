@@ -23,7 +23,7 @@
 		 #:mapcar #:mapc #:maplist #:mapl #:mapcan #:mapcon
 		 #:append #:nconc
                  #:revappend #:nreconc
-                 #:last #:butlast))
+                 #:last #:butlast #:nbutlast))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
