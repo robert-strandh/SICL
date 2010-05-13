@@ -553,6 +553,45 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the list* function
+
+(define-test list*.1
+  (assert-equal '(1 2 3) (list* 1 '(2 3))))
+
+(define-test list*.2
+  (assert-equal '(1 2 3) (list* 1 2 '(3))))
+
+(define-test list*.3
+  (assert-equal '(1 2 3) (list* 1 2 3 '())))
+
+(define-test list*.4
+  (assert-equal 'a (list* 'a)))
+
+(define-test list*.5
+  (assert-equal '(1 2 . 3) (list* 1 2 3)))
+
+(define-test list*.apply.1
+  (assert-equal '(1 2 3)
+                (apply (cadr (list 1 #'list*)) (list 1 '(2 3)))))
+
+(define-test list*.apply.2
+  (assert-equal '(1 2 3)
+                (apply (cadr (list 1 #'list*)) (list 1 2 '(3)))))
+
+(define-test list*.apply.3
+  (assert-equal '(1 2 3)
+                (apply (cadr (list 1 #'list*)) (list 1 2 3 '()))))
+
+(define-test list*.apply.4
+  (assert-equal 'a
+                (apply (cadr (list 1 #'list*)) (list 'a))))
+
+(define-test list*.apply.5
+  (assert-equal '(1 2 . 3)
+                (apply (cadr (list 1 #'list*)) (list 1 2 3))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1
