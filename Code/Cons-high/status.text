@@ -25,9 +25,9 @@ What is done:
 
   mapcon (function and compiler macro), no tests.  
 
-  append (function only), no tests.
+  append (function only), a few tests.
 
-  nconc (function only), no tests.
+  nconc (function only), a few tests.
 
   revappend, no tests.
 
