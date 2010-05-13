@@ -498,6 +498,61 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the list function
+
+(define-test list.1
+  (assert-equal '() (list)))
+
+(define-test list.2
+  (assert-equal '(1) (list 1)))
+
+(define-test list.3
+  (assert-equal '(1 2) (list 1 2)))
+
+(define-test list.4
+  (assert-equal '(1 2 3) (list 1 2 3)))
+
+(define-test list.5
+  (assert-equal '((a) (b) 1 2) (list '(a) '(b) 1 2)))
+
+(define-test list.apply.1a
+  (assert-equal '() (apply (cadr (list 1 #'list)) '())))
+
+(define-test list.apply.2a
+  (assert-equal '(1) (apply (cadr (list 1 #'list)) (list 1))))
+
+(define-test list.apply.3a
+  (assert-equal '(1 2) (apply (cadr (list 1 #'list)) (list 1 2))))
+
+(define-test list.apply.4a
+  (assert-equal '(1 2 3) (apply (cadr (list 1 #'list)) (list 1 2 3))))
+
+(define-test list.apply.5a
+  (assert-equal '((a) (b) 1 2)
+                (apply (cadr (list 1 #'list)) (list '(a) '(b) 1 2))))
+
+(define-test list.apply.1b
+  (assert-equal '() (apply (cadr (list 1 'list)) '())))
+
+(define-test list.apply.2b
+  (assert-equal '(1) (apply (cadr (list 1 'list)) (list 1))))
+
+(define-test list.apply.3b
+  (assert-equal '(1 2) (apply (cadr (list 1 'list)) (list 1 2))))
+
+(define-test list.apply.4b
+  (assert-equal '(1 2 3) (apply (cadr (list 1 'list)) (list 1 2 3))))
+
+(define-test list.apply.5b
+  (assert-equal '((a) (b) 1 2)
+                (apply (cadr (list 1 'list)) (list '(a) '(b) 1 2))))
+
+(define-test list.order.1
+  (let ((i 0))
+    (assert-equal '(1 2 3) (list (incf i) (incf i) (incf i)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1

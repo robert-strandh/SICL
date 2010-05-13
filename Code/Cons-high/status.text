@@ -1,10 +1,14 @@
 What is done:
 
-  There are definitions of all c*r functions except car and cdr
+  There are definitions of all c*r functions except car and cdr, 
+  and there are tests for those functions. 
 
-  There are definitions of first, second, ..., tenth.
+  There are definitions of first, second, ..., tenth.  No tests. 
 
-  There are definitions of the functions list, list*, last,
+  There is a definition and a compiler macro for the list function,
+  and there are tests for it as well.
+
+  There are definitions of the functions list*, last,
   copy-list, list-length, make-list, nth, and nthcdr. 
 
   copy-tree, no tests.
