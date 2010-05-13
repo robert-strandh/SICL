@@ -39,9 +39,29 @@
 ;;;
 ;;; Function nconc
 
+;;; It used to be the case that the append function was defined
+;;; in terms of (loop ... nconc ...), but it turns out that
+;;; some implementations have buggy versions of (loop ... nconc ...) 
+;;; so it is better to just define it in terms of a lower-level
+;;; construct.  Doing it this way allows for implementations with 
+;;; a buggy loop to still use this module without first replacing
+;;; loop by ours. 
+
 (defun nconc (&rest lists)
-  (loop for list in lists
-        nconc list))
+  (let ((result nil)
+        (frontier nil))
+    (loop for list in lists
+          do (if (null result)
+                 (setf result list)
+                 (progn (when (null frontier)
+                          (setf frontier result))
+                        (let ((next (cdr frontier)))
+                          (loop until (atom next)
+                                do (setf frontier next)
+                                   (setf next (cdr next)))
+                          (check-type next null "nil"))
+                        (setf (cdr frontier) list))))
+    result))
 
 ;;; We want for error messages to be phrased in terms of a construct
 ;;; that was directly used by the user's code.  So for instance, if
