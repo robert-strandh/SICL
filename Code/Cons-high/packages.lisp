@@ -27,7 +27,8 @@
                  #:last #:butlast #:nbutlast
                  #:subst #:subst-if #:subst-if-not
                  #:nsubst #:nsubst-if #:nsubst-if-not
-                 #:assoc #:assoc-if #:assoc-if-not))
+                 #:assoc #:assoc-if #:assoc-if-not
+                 #:sublis #:nsublis))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
