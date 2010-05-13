@@ -1622,3 +1622,99 @@
                       (sublis-not-eql-identity alist tree)
                       (sublis-test-not-identity alist tree test-not)))
               (sublis-eql-identity alist tree)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function member
+
+(defun member-eq-identity (item list)
+  (loop for rest on list
+        when (eq item (car rest))
+          return rest))  
+
+(defun member-eq-key (item list key)
+  (loop for rest on list
+        when (eq item (funcall key (car rest)))
+          return rest))  
+
+(defun member-not-eq-identity (item list)
+  (loop for rest on list
+        when (not (eq item (car rest)))
+          return rest))  
+
+(defun member-not-eq-key (item list key)
+  (loop for rest on list
+        when (not (eq item (funcall key (car rest))))
+          return rest))  
+
+(defun member-eql-identity (item list)
+  (loop for rest on list
+        when (eql item (car rest))
+          return rest))  
+
+(defun member-eql-key (item list key)
+  (loop for rest on list
+        when (eql item (funcall key (car rest)))
+          return rest))  
+
+(defun member-not-eql-identity (item list)
+  (loop for rest on list
+        when (not (eql item (car rest)))
+          return rest))  
+
+(defun member-not-eql-key (item list key)
+  (loop for rest on list
+        when (not (eql item (funcall key (car rest))))
+          return rest))  
+
+(defun member-test-identity (item list test)
+  (loop for rest on list
+        when (funcall test item (car rest))
+          return rest))  
+
+(defun member-test-key (item list test key)
+  (loop for rest on list
+        when (funcall test item (funcall key (car rest)))
+          return rest))
+
+(defun member-test-not-identity (item list test)
+  (loop for rest on list
+        when (not (funcall test item (car rest)))
+          return rest))
+
+(defun member-test-not-key (item list test key)
+  (loop for rest on list
+        when (not (funcall test item (funcall key (car rest))))
+          return rest))
+
+(defun member (item list &key key test test-not)
+  ;; FIXME: do this better
+  (assert (or (null test) (null test-not)))
+  (if key
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (member-eq-key item list key)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (member-eql-key item list key)
+                  (member-test-key item list test key)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (member-not-eq-key item list key)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (member-not-eql-key item list key)
+                      (member-test-not-key item list test-not key)))
+              (member-eql-key item list key)))
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (member-eq-identity item list)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (member-eql-identity item list)
+                  (member-test-identity item list test)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (member-not-eq-identity item list)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (member-not-eql-identity item list)
+                      (member-test-not-identity item list test-not)))
+              (member-eql-identity item list)))))
+
