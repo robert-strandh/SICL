@@ -16,6 +16,7 @@
                  #:cddaar #:cddadr #:cdddar #:cddddr
                  #:first #:second #:third #:fourth #:fifth
                  #:sixth #:seventh #:eighth #:ninth #:tenth
+                 #:rest
                  #:list #:list* #:last
                  #:copy-list #:list-length #:make-list
                  #:nth #:nthcdr #:copy-tree #:tree-equal

@@ -69,7 +69,6 @@ What remains to to:
      null
      ldiff
      tailp
-     rest
      member
      member-if
      member-if-not
