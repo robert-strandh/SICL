@@ -24,7 +24,9 @@
 		 #:mapcar #:mapc #:maplist #:mapl #:mapcan #:mapcon
 		 #:append #:nconc
                  #:revappend #:nreconc
-                 #:last #:butlast #:nbutlast))
+                 #:last #:butlast #:nbutlast
+                 #:subst #:subst-if #:subst-if-not
+                 #:nsubst #:nsubst-if #:nsubst-if-not))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

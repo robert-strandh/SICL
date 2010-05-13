@@ -37,6 +37,18 @@ What is done:
 
   nbutlast, function and special case for n = 1, no tests.
 
+  subst, function with several special cases.  No tests.
+
+  subst-if, function with several special cases.  No tests.
+
+  subst-if-not, function with several special cases.  No tests.
+
+  nsubst, function with several special cases.  No tests.
+
+  nsubst-if, function with several special cases.  No tests.
+
+  nsubst-if-not, function with several special cases.  No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -60,12 +72,6 @@ What remains to to:
 
      sublis
      nsublis
-     subst
-     subst-if
-     subst-if-not
-     nsubst
-     nsubst-if
-     nsubst-if-not
      null
      ldiff
      tailp

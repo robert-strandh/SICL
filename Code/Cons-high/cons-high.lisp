@@ -666,3 +666,593 @@
             (progn (setf (cdr (nthcdr (- length (1+ n)) list)) nil)
                    list)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function subst
+
+;;; Special version if test is eq and key is identity.
+
+(defun subst-eq-identity (new old tree)
+  (labels ((traverse (tree)
+             (cond ((eq tree old) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test is eql and key is identity.
+
+(defun subst-eql-identity (new old tree)
+  (labels ((traverse (tree)
+             (cond ((eql tree old) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test is eq and key is given.
+
+(defun subst-eq-key (new old tree key)
+  (labels ((traverse (tree)
+             (cond ((eq (funcall key tree) old) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test is eql and key is given.
+
+(defun subst-eql-key (new old tree key)
+  (labels ((traverse (tree)
+             (cond ((eql (funcall key tree) old) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test is given and key is identity.
+
+(defun subst-test-identity (new old tree test)
+  (labels ((traverse (tree)
+             (cond ((funcall test old tree) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test and key both are given.
+
+(defun subst-test-key (new old tree test key)
+  (labels ((traverse (tree)
+             (cond ((funcall test old (funcall key tree)) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test-not is eq and key is identity.
+
+(defun subst-not-eq-identity (new old tree)
+  (labels ((traverse (tree)
+             (cond ((not (eq tree old)) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test-not is eql and key is identity.
+
+(defun subst-not-eql-identity (new old tree)
+  (labels ((traverse (tree)
+             (cond ((not (eql tree old)) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test-not is eq and key is given.
+
+(defun subst-not-eq-key (new old tree key)
+  (labels ((traverse (tree)
+             (cond ((not (eq (funcall key tree) old)) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test-not is eql and key is given.
+
+(defun subst-not-eql-key (new old tree key)
+  (labels ((traverse (tree)
+             (cond ((not (eql (funcall key tree) old)) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test-not is given and key is identity.
+
+(defun subst-test-not-identity (new old tree test)
+  (labels ((traverse (tree)
+             (cond ((not (funcall test old tree)) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version if test-not and key both are given
+
+(defun subst-test-not-key (new old tree test key)
+  (labels ((traverse (tree)
+             (cond ((not (funcall test old (funcall key tree))) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+(defun subst (new old tree &key key test test-not)
+  ;; FIXME do this better
+  (assert (or (null test) (null test-not)))
+  (if key
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (subst-eq-key new old tree key)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (subst-eql-key new old tree key)
+                  (subst-test-key  new old tree test key)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (subst-not-eq-key new old tree key)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (subst-not-eql-key new old tree key)
+                      (subst-test-not-key  new old tree test key)))
+              (subst-eql-key new old tree key)))
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (subst-eq-identity new old tree)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (subst-eql-identity new old tree)
+                  (subst-test-identity  new old tree test)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (subst-not-eq-identity new old tree)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (subst-not-eql-identity new old tree)
+                      (subst-test-not-identity  new old tree test)))
+              (subst-eql-identity new old tree)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function subst-if
+
+;;; Special version where the key function is identity.
+
+(defun subst-if-identity (new predicate tree)
+  ;; Define a local function so as to avoid passing the new and
+  ;; predicate arguments to each recursive call.
+  (labels ((traverse (tree)
+             (cond ((funcall predicate tree) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version where the key function is something other than
+;;; identity.
+
+(defun subst-if-key (new predicate tree key)
+  ;; Define a local function so as to avoid passing the new and
+  ;; predicate arguments to each recursive call.
+  (labels ((traverse (tree)
+             (cond ((funcall predicate (funcall key tree)) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+(defun subst-if (new predicate tree &key key)
+  (if (null key)
+      (subst-if-identity new predicate tree)
+      (subst-if-key new predicate tree key)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function subst-if-not
+
+;;; Special version where the key function is identity.
+
+(defun subst-if-not-identity (new predicate tree)
+  ;; Define a local function so as to avoid passing the new and
+  ;; predicate arguments to each recursive call.
+  (labels ((traverse (tree)
+             (cond ((not (funcall predicate tree)) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+;;; Special version where the key function is something other than
+;;; identity.
+
+(defun subst-if-not-key (new predicate tree key)
+  ;; Define a local function so as to avoid passing the new and
+  ;; predicate arguments to each recursive call.
+  (labels ((traverse (tree)
+             (cond ((not (funcall predicate (funcall key tree))) new)
+                   ((atom tree) tree)
+                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
+    (traverse tree)))
+
+(defun subst-if-not (new predicate tree &key key)
+  (if (null key)
+      (subst-if-not-identity new predicate tree)
+      (subst-if-not-key new predicate tree key)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nsubst
+
+;;; Special version if test is eq and key is identity.
+
+(defun nsubst-eq-identity (new old tree)
+  (labels ((traverse (tree)
+             (cond ((eq (car tree) old)
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((eq (cdr tree) old)
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((eq tree old) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test is eql and key is identity.
+
+(defun nsubst-eql-identity (new old tree)
+  (labels ((traverse (tree)
+             (cond ((eql (car tree) old)
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((eql (cdr tree) old)
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((eql tree old) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test is eq and key is given.
+
+(defun nsubst-eq-key (new old tree key)
+  (labels ((traverse (tree)
+             (cond ((eq (funcall key (car tree)) old)
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((eq (funcall key (cdr tree)) old)
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((eq (funcall key tree) old) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test is eql and key is given.
+
+(defun nsubst-eql-key (new old tree key)
+  (labels ((traverse (tree)
+             (cond ((eql (funcall key (car tree)) old)
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((eql (funcall key (cdr tree)) old)
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((eql (funcall key tree) old) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test is given and key is identity.
+
+(defun nsubst-test-identity (new old tree test)
+  (labels ((traverse (tree)
+             (cond ((funcall test old (car tree))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((funcall test old (cdr tree))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((funcall test old tree) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test and key both are given.
+
+(defun nsubst-test-key (new old tree test key)
+  (labels ((traverse (tree)
+             (cond ((funcall test old (funcall key (car tree)))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((funcall test old (funcall key (cdr tree)))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((funcall test old (funcall key tree)) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test-not is eq and key is identity.
+
+(defun nsubst-not-eq-identity (new old tree)
+  (labels ((traverse (tree)
+             (cond ((not (eq (car tree) old))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((not (eq (cdr tree) old))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((not (eq tree old)) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test-not is eql and key is identity.
+
+(defun nsubst-not-eql-identity (new old tree)
+  (labels ((traverse (tree)
+             (cond ((not (eql (car tree) old))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((not (eql (cdr tree) old))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((not (eql tree old)) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test-not is eq and key is given.
+
+(defun nsubst-not-eq-key (new old tree key)
+  (labels ((traverse (tree)
+             (cond ((eq (funcall key (car tree)) old)
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((eq (funcall key (cdr tree)) old)
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((eq (funcall key tree) old) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test-not is eql and key is given.
+
+(defun nsubst-not-eql-key (new old tree key)
+  (labels ((traverse (tree)
+             (cond ((not (eql (funcall key (car tree)) old))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((not (eql (funcall key (cdr tree)) old))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((not (eql (funcall key tree) old)) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test-not is given and key is identity.
+
+(defun nsubst-test-not-identity (new old tree test)
+  (labels ((traverse (tree)
+             (cond ((not (funcall test old (car tree)))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((not (funcall test old (cdr tree)))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((not (funcall test tree old)) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version if test-not and key both are given
+
+(defun nsubst-test-not-key (new old tree test key)
+  (labels ((traverse (tree)
+             (cond ((not (funcall test old (funcall key (car tree))))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((not (funcall test old (funcall key (cdr tree))))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((not (funcall test old (funcall key tree))) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+(defun nsubst (new old tree &key key test test-not)
+  ;; FIXME do this better
+  (assert (or (null test) (null test-not)))
+  (if key
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (nsubst-eq-key new old tree key)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (nsubst-eql-key new old tree key)
+                  (nsubst-test-key  new old tree test key)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (nsubst-not-eq-key new old tree key)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (nsubst-not-eql-key new old tree key)
+                      (nsubst-test-not-key  new old tree test key)))
+              (nsubst-eql-key new old tree key)))
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (nsubst-eq-identity new old tree)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (nsubst-eql-identity new old tree)
+                  (nsubst-test-identity  new old tree test)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (nsubst-not-eq-identity new old tree)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (nsubst-not-eql-identity new old tree)
+                      (nsubst-test-not-identity  new old tree test)))
+              (nsubst-eql-identity new old tree)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nsubst-if
+
+;;; Special version where the key function is identity.
+
+(defun nsubst-if-identity (new predicate tree)
+  ;; Define a local function so as to avoid passing the new and
+  ;; predicate arguments to each recursive call.
+  (labels ((traverse (tree)
+             (cond ((funcall predicate (car tree))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((funcall predicate (cdr tree))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((funcall predicate tree) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version where the key function is something other than
+;;; identity.
+
+(defun nsubst-if-key (new predicate tree key)
+  ;; Define a local function so as to avoid passing the new and
+  ;; predicate arguments to each recursive call.
+  (labels ((traverse (tree)
+             (cond ((funcall predicate (funcall key (car tree)))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((funcall predicate (funcall key (cdr tree)))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((funcall predicate tree) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+(defun nsubst-if (new predicate tree &key key)
+  (if (null key)
+      (nsubst-if-identity new predicate tree)
+      (nsubst-if-key new predicate tree key)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nsubst-if-not
+
+;;; Special version where the key function is identity.
+
+(defun nsubst-if-not-identity (new predicate tree)
+  ;; Define a local function so as to avoid passing the new and
+  ;; predicate arguments to each recursive call.
+  (labels ((traverse (tree)
+             (cond ((not (funcall predicate (car tree)))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((not (funcall predicate (cdr tree)))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((not (funcall predicate tree)) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+;;; Special version where the key function is something other than
+;;; identity.
+
+(defun nsubst-if-not-key (new predicate tree key)
+  ;; Define a local function so as to avoid passing the new and
+  ;; predicate arguments to each recursive call.
+  (labels ((traverse (tree)
+             (cond ((not (funcall predicate (funcall key (car tree))))
+                    (setf (car tree) new))
+                   ((atom (car tree))
+                    nil)
+                   (t
+                    (traverse (car tree))))
+             (cond ((not (funcall predicate (funcall key (cdr tree))))
+                    (setf (cdr tree) new))
+                   ((atom (cdr tree))
+                    nil)
+                   (t
+                    (traverse (cdr tree))))))
+    (cond ((not (funcall predicate tree)) new)
+          ((atom tree) tree)
+          (t (traverse tree) tree))))
+
+(defun nsubst-if-not (new predicate tree &key key)
+  (if (null key)
+      (nsubst-if-not-identity new predicate tree)
+      (nsubst-if-not-key new predicate tree key)))
+
