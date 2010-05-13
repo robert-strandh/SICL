@@ -26,7 +26,8 @@
                  #:revappend #:nreconc
                  #:last #:butlast #:nbutlast
                  #:subst #:subst-if #:subst-if-not
-                 #:nsubst #:nsubst-if #:nsubst-if-not))
+                 #:nsubst #:nsubst-if #:nsubst-if-not
+                 #:assoc #:assoc-if #:assoc-if-not))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

@@ -1256,3 +1256,168 @@
       (nsubst-if-not-identity new predicate tree)
       (nsubst-if-not-key new predicate tree key)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function assoc
+
+;;; Special version when test is eq and key is identity.
+
+(defun assoc-eq-identity (item alist)
+  (loop for element in alist
+        when (eq (car element) item)
+          return element))
+
+;;; Special version when test is eql and key is identity.
+
+(defun assoc-eql-identity (item alist)
+  (loop for element in alist
+        when (eql (car element) item)
+          return element))
+        
+;;; Special version when test is eq and key is given.
+
+(defun assoc-eq-key (item alist key)
+  (loop for element in alist
+        when (eq (funcall key (car element)) item)
+          return element))
+  
+;;; Special version when test is eql and key is given.
+
+(defun assoc-eql-key (item alist key)
+  (loop for element in alist
+        when (eql (funcall key (car element)) item)
+          return element))
+
+;;; Special version when test is given and key is identity.
+
+(defun assoc-test-identity (item alist test)
+  (loop for element in alist
+        when (funcall test (car element) item)
+          return element))
+
+;;; Special version when test and key are both given.
+
+(defun assoc-test-key (item alist test key)
+  (loop for element in alist
+        when (funcall test (funcall key (car element)) item)
+          return element))
+  
+;;; Special version when test-not is eq and key is identity.
+
+(defun assoc-not-eq-identity (item alist)
+  (loop for element in alist
+        when (not (eq (car element) item))
+          return element))
+
+;;; Special version when test-not is eql and key is identity.
+
+(defun assoc-not-eql-identity (item alist)
+  (loop for element in alist
+        when (not (eql (car element) item))
+          return element))
+        
+;;; Special version when test-not is eq and key is given.
+
+(defun assoc-not-eq-key (item alist key)
+  (loop for element in alist
+        when (not (eq (funcall key (car element)) item))
+          return element))
+  
+;;; Special version when test-not is eql and key is given.
+
+(defun assoc-not-eql-key (item alist key)
+  (loop for element in alist
+        when (not (eql (funcall key (car element)) item))
+          return element))
+
+;;; Special version when test-not is given and key is identity.
+
+(defun assoc-test-not-identity (item alist test)
+  (loop for element in alist
+        when (not (funcall test (car element) item))
+          return element))
+
+;;; Special version when test-not and key are both given.
+
+(defun assoc-test-not-key (item alist test key)
+  (loop for element in alist
+        when (not (funcall test (funcall key (car element)) item))
+          return element))
+  
+(defun assoc (item alist &key key test test-not)
+  ;; FIXME: do this better
+  (assert (or (null test) (null test-not)))
+  (if key
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (assoc-eq-key item alist key)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (assoc-eql-key item alist key)
+                  (assoc-test-key item alist test key)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (assoc-not-eq-key item alist key)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (assoc-not-eql-key item alist key)
+                      (assoc-test-not-key item alist test-not key)))
+              (assoc-eql-key item alist key)))
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (assoc-eq-identity item alist)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (assoc-eql-identity item alist)
+                  (assoc-test-identity item alist test)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (assoc-not-eq-identity item alist)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (assoc-not-eql-identity item alist)
+                      (assoc-test-not-identity item alist test-not)))
+              (assoc-eql-identity item alist)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function assoc-if
+
+;;; Special version when key is identity
+
+(defun assoc-if-identity (predicate alist)
+  (loop for element in alist
+        when (funcall predicate (car element))
+          return element))
+
+;;; Special version when key is given
+
+(defun assoc-if-key (predicate alist key)
+  (loop for element in alist
+        when (funcall predicate (funcall key (car element)))
+          return element))
+
+(defun assoc-if (predicate alist &key key)
+  (if key
+      (assoc-if-key predicate alist key)
+      (assoc-if-identity predicate alist)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function assoc-if-not
+
+;;; Special version when key is identity
+
+(defun assoc-if-not-identity (predicate alist)
+  (loop for element in alist
+        when (not (funcall predicate (car element)))
+          return element))
+
+;;; Special version when key is given
+
+(defun assoc-if-not-key (predicate alist key)
+  (loop for element in alist
+        when (not (funcall predicate (funcall key (car element))))
+          return element))
+
+(defun assoc-if-not (predicate alist &key key)
+  (if key
+      (assoc-if-not-key predicate alist key)
+      (assoc-if-not-identity predicate alist)))
+

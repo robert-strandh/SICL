@@ -49,6 +49,12 @@ What is done:
 
   nsubst-if-not, function with several special cases.  No tests.
 
+  assoc, function with several special cases.  No tests.
+
+  assoc-if, function with several special cases.  No tests.
+
+  assoc-if-not, function with several special cases.  No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -79,9 +85,6 @@ What remains to to:
      member-if
      member-if-not
      acons
-     assoc
-     assoc-if
-     assoc-if-not
      copy-alist
      pairlis
      rassoc
