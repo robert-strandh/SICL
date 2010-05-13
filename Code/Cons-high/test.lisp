@@ -2066,8 +2066,8 @@ the condition to go uncaught if it cannot be classified."
   (assert-equal 'x (append 'x)))
 
 (define-test append.3
-  (assert-equal '
-   (a b c d e f g)
+  (assert-equal
+   '(a b c d e f g)
    (let ((x (list 'a 'b 'c 'd))
          (y (list 'e 'f 'g)))
      (let ((xcopy (make-scaffold-copy x))
