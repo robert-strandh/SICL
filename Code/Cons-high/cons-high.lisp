@@ -7,10 +7,33 @@
 ;;; We need the append function in macro expanders in this module
 ;;; so we define it first.  
 
+;;; It used to be the case that the append function was defined
+;;; in terms of (loop ... append ...), but it turns out that
+;;; some implementations have buggy versions of (loop ... append ...) 
+;;; so it is better to just define it in terms of a lower-level
+;;; construct.  Doing it this way allows for implementations with 
+;;; a buggy loop to still use this module without first replacing
+;;; loop by ours. 
+
 (eval-when (:compile-toplevel :load-toplevel)
   (defun append (&rest lists)
-    (loop for list in lists
-	  append list)))
+    (let ((result nil)
+          (frontier nil))
+      (loop for list in lists
+            do (if (null result)
+                   (setf result list)
+                   (progn (when (null frontier)
+                            (setf result (cons (car result) (cdr result))
+                                  frontier result))
+                          (let ((next (cdr frontier)))
+                            (loop until (atom next)
+                                  do (setf next (cons (car next) (cdr next)))
+                                     (setf (cdr frontier) next)
+                                     (setf frontier next)
+                                     (setf next (cdr next)))
+                            (check-type next null "nil"))
+                          (setf (cdr frontier) list))))
+      result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -39,18 +62,16 @@
                 function-name
                 (reverse prefix)))))
 
-;;; FIXME fix the error messsage to signal a particular condition
 (defmacro define-c*r-function (function-name letters)
   (flet ((primitive (letter)
            (if (eql letter #\A) 'car 'cdr)))
     (flet ((one-iteration (letter prefix)
-             `(if (null remaining)
-                  (return-from ,function-name nil)
-                  (if (consp remaining)
-                      (setf remaining
-                            (,(primitive letter) remaining))
-                      (error ,(generate-c*r-message function-name
-                                                    prefix))))))
+             `(progn (check-type remaining list "a list")
+                     (if (null remaining)
+                         (return-from ,function-name nil)
+                         (if (consp remaining)
+                             (setf remaining
+                                   (,(primitive letter) remaining)))))))
       `(defun ,function-name (list)
          (let ((remaining list))
            ,@(loop for letter across (reverse letters)
@@ -111,28 +132,22 @@
                 function-name
                 (reverse (coerce prefix 'cons))))))
 
-;;; FIXME fix the error messsage to signal a particular condition
 (eval-when (:compile-toplevel :load-toplevel)
   (defmacro define-setf-c*r-function (function-name letters)
     (flet ((primitive (letter)
              (if (eql letter #\A) 'car 'cdr)))
       (flet ((one-iteration (letter prefix)
-               `(if (consp remaining)
-                    (setf remaining
-                          (,(primitive letter) remaining))
-                    (error ,(generate-setf-c*r-message function-name
-                                                                   prefix)))))
+               `(progn (check-type remaining cons "a cons cell")
+                       (setf remaining
+                             (,(primitive letter) remaining)))))
         `(defun (setf ,function-name) (new-object list)
            (let ((remaining list))
              ,@(append (loop for letter across (reverse (subseq letters 1))
 			     collect (one-iteration letter prefix)
 			     collect letter into prefix)
-		       `((if (consp remaining)
-                             (setf (,(primitive (aref letters 0)) remaining)
-                                   new-object)
-                             (error ,(generate-setf-c*r-message
-                                      function-name
-                                      (subseq letters 1))))))))))))
+		       `((check-type remaining cons "a cons cell")
+                         (setf (,(primitive (aref letters 0)) remaining)
+                               new-object)))))))))
 
 ;;; These are commented out for now because they
 ;;; trip the package lock of the CL package.
