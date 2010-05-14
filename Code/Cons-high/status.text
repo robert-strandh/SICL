@@ -16,9 +16,9 @@ What is done:
 
   Function copy-tree with some tests.
 
-  tree-equal, no tests.
+  Function tree-equal with some tests.
 
-  endp, no tests.
+  Function endp with tests.
 
   mapcar (function and compiler macro), no tests.  
 

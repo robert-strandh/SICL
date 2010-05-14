@@ -639,6 +639,40 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the endp function
+
+(define-test endp.1
+  (assert-true (endp '())))
+
+(define-test endp.2
+  (assert-false (endp '(1 . 2))))
+
+(define-test endp.3
+  (assert-error 'type-error (endp 1)))
+
+(define-test endp.4
+  (assert-error 'type-error (endp #\a)))
+
+(define-test endp.5
+  (assert-error 'type-error (endp "a")))
+
+(define-test endp.6
+  (assert-error 'type-error (endp 'a)))
+
+(define-test endp.7
+  (assert-error 'type-error (endp 1.0)))
+
+(define-test endp.8
+  (assert-error 'type-error (endp #(a))))
+
+(define-test endp.9
+  (assert-error 'type-error (endp *standard-input*)))
+
+(define-test endp.10
+  (assert-error 'type-error (endp *package*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1
