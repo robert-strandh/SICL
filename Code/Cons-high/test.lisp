@@ -673,6 +673,46 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the mapcar function
+
+(define-test mapcar.1
+  (assert-equal '() (mapcar #'1+ '())))
+
+(define-test mapcar.2
+  (assert-equal '(1) (mapcar #'1+ '(0))))
+
+(define-test mapcar.3
+  (assert-equal '(-1 -2 -3) (mapcar #'- '(1 2 3))))
+
+(define-test mapcar.4
+  (assert-equal '(2 4 6) (mapcar #'+ '(1 2 3) '(1 2 3))))
+
+(define-test mapcar.5
+  (assert-equal '(3 6 9) (mapcar #'+ '(1 2 3) '(1 2 3) '(1 2 3))))
+
+(define-test mapcar.6
+  (assert-equal '(2 4) (mapcar #'+ '(1 2 3 4 5) '(1 2))))
+
+(define-test mapcar.7
+  (assert-equal '(2 4) (mapcar #'+ '(1 2) '(1 2 3 4 5))))
+
+(define-test mapcar.error.1
+  (assert-error 'type-error (mapcar #'1+ 1)))
+
+(define-test mapcar.error.2
+  (assert-error 'type-error (mapcar #'1+ #(1 2 3))))
+
+(define-test mapcar.error.3
+  (assert-error 'type-error (mapcar #'1+ '(1 2 . 3))))
+
+(define-test mapcar.order.1
+  (let ((i 0)
+        (funs (vector #'1+ #'1-))
+        (lists '((1 2) (3 4) (5 6))))
+    (assert-equal '(4 5) (mapcar (aref funs (incf i)) (nth (incf i) lists)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1

@@ -20,7 +20,7 @@ What is done:
 
   Function endp with tests.
 
-  mapcar (function and compiler macro), no tests.  
+  mapcar (function and compiler macro) with tests.
 
   mapc (function and compiler macro), no tests.  
 
