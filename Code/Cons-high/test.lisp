@@ -705,6 +705,9 @@
 (define-test mapcar.error.3
   (assert-error 'type-error (mapcar #'1+ '(1 2 . 3))))
 
+(define-test mapcar.error.4
+  (assert-error 'type-error (mapcar #'1+ "1")))
+
 (define-test mapcar.order.1
   (let ((i 0)
         (funs (vector #'1+ #'1-))
