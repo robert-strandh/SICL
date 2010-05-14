@@ -729,8 +729,8 @@
     (assert-equal '(1 2 3 12)
                   (append (mapc (lambda (x y) (incf i (+ x y)))
                                 '(1 2 3)
-                                '(1 2 3)
-                          (list i))))))
+                                '(1 2 3))
+                          (list i)))))
 
 (define-test mapc.error.1
   (assert-error 'type-error (mapc #'1+ 1)))
@@ -740,6 +740,9 @@
 
 (define-test mapc.error.3
   (assert-error 'type-error (mapc #'1+ '(1 2 . 3))))
+
+(define-test mapc.error.4
+  (assert-error 'type-error (mapc #'1+ "1")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
