@@ -749,6 +749,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the maplist function
+
+(define-test maplist.1
+  (assert-equal '() (maplist #'car '())))
+
+(define-test maplist.1
+  (assert-equal '(1 2 3) (maplist #'car '(1 2 3))))
+
+(define-test maplist.error.1
+  (assert-error 'type-error (maplist #'car 1)))
+
+(define-test maplist.error.2
+  (assert-error 'type-error (maplist #'car #(1 2 3))))
+
+(define-test maplist.error.3
+  (assert-error 'type-error (maplist #'car '(1 2 . 3))))
+
+(define-test maplist.error.4
+  (assert-error 'type-error (maplist #'car "1")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1
