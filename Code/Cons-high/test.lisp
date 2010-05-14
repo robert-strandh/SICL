@@ -713,6 +713,36 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the mapc function
+
+(define-test mapc.1
+  (assert-equal '() (mapcar #'1+ '())))
+
+(define-test mapc.2
+  (let ((i 0))
+    (assert-equal '(1 2 3 6)
+                  (append (mapc (lambda (x) (incf i x)) '(1 2 3))
+                          (list i)))))
+
+(define-test mapc.3
+  (let ((i 0))
+    (assert-equal '(1 2 3 12)
+                  (append (mapc (lambda (x y) (incf i (+ x y)))
+                                '(1 2 3)
+                                '(1 2 3)
+                          (list i))))))
+
+(define-test mapc.error.1
+  (assert-error 'type-error (mapc #'1+ 1)))
+
+(define-test mapc.error.2
+  (assert-error 'type-error (mapc #'1+ #(1 2 3))))
+
+(define-test mapc.error.3
+  (assert-error 'type-error (mapc #'1+ '(1 2 . 3))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1
