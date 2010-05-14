@@ -8,10 +8,13 @@ What is done:
   There is a definition and a compiler macro for the list function,
   and there are tests for it as well.
 
-  There are definitions of the functions list*, last,
-  copy-list, list-length, make-list, nth, and nthcdr. 
+  There is a definition and a compiler macro for the list* function,
+  and there are tests for it as well.
 
-  copy-tree, no tests.
+  There are definitions of the functions last, copy-list, list-length,
+  make-list, nth, and nthcdr.
+
+  Function copy-tree with some tests.
 
   tree-equal, no tests.
 

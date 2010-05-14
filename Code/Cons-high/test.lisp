@@ -592,6 +592,53 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the copy-tree function
+
+(define-test copy-tree.1
+  (assert-equal 'x (copy-tree 'x)))
+
+(define-test copy-tree.2
+  (assert-equal '(a . b) (copy-tree '(a . b))))
+
+(define-test copy-tree.3
+  (let ((tree '(((((a b . c) d (e (f g)) . h))) (i j (k)))))
+    (assert-equal tree (copy-tree tree))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the tree-equal function
+
+(define-test tree-equal.1
+  (assert-true (tree-equal nil nil)))
+
+(define-test tree-equal.2
+  (assert-true (tree-equal 1 1)))
+
+(define-test tree-equal.3
+  (assert-true (tree-equal '(1) '(1))))
+
+(define-test tree-equal.4
+  (assert-true (tree-equal '(1 . 2) '(1 . 2))))
+
+(define-test tree-equal.5
+  (assert-false (tree-equal 1 2)))
+
+(define-test tree-equal.6
+  (assert-false (tree-equal '(1) '(2))))
+
+(define-test tree-equal.7
+  (assert-true (tree-equal '(1) '(2)
+                           :test (lambda (x y)
+                                   (or (eql x y)
+                                       (and (numberp x)
+                                            (numberp y)
+                                            (<= (abs (- x y)) 1)))))))
+
+(define-test tree-equal.8
+  (assert-false (tree-equal '(1) '(2) :test-not #'eql)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1
