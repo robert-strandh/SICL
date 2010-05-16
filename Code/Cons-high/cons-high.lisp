@@ -529,7 +529,10 @@
 	`(loop with ,funvar = ,function
 	       ,@(apply #'append (loop for var in vars
 				       for list in lists
-				       collect `(for ,var on ,list)))
+				       collect `(for ,var = ,list
+                                                     then (cdr ,var))))
+               do ,@(loop for var in vars
+                          collect `(check-type ,var list "a list"))
 	       collect (funcall ,funvar ,@vars)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
