@@ -771,6 +771,35 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the mapl function
+
+(define-test mapl.1
+  (assert-equal '() (mapl #'car '())))
+
+(define-test mapl.2
+  (assert-equal '(1) (mapl #'car '(1))))
+
+(define-test mapl.3
+  (let ((i 0))
+    (assert-equal 6
+                  (progn (mapl (lambda (sublist) (incf i (car sublist)))
+                               '(1 2 3))
+                         i))))
+
+(define-test mapl.error.1
+  (assert-error 'type-error (mapl #'car 1)))
+
+(define-test mapl.error.2
+  (assert-error 'type-error (mapl #'car #(1 2 3))))
+
+(define-test mapl.error.3
+  (assert-error 'type-error (mapl #'car '(1 2 . 3))))
+
+(define-test mapl.error.4
+  (assert-error 'type-error (mapl #'car "1")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1

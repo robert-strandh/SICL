@@ -24,17 +24,9 @@ What is done:
 
   mapc (function and compiler macro) with tests.
 
-  maplist (function and compiler macro), with some test.
-  Currently, the tests that ought to signal a type-error fail.
-  The reason for this is that the compiler macro for maplist
-  uses loop to loop over the sublists, and the `on' loop keyword
-  generates a test for `atom' in order to determine when to 
-  quit iterating, so if it is not a proper list, no error is
-  signaled. I guess the solution would be to replace the use
-  of `on' by some other construct such as 
-  for sublist = list then (cdr sublist) and check manually.
+  maplist (function and compiler macro), with some tests.
 
-  mapl (function and compiler macro), no tests.  
+  mapl (function and compiler macro), with some tests.
 
   mapcan (function and compiler macro), no tests.  
 

@@ -530,9 +530,8 @@
 	       ,@(apply #'append (loop for var in vars
 				       for list in lists
 				       collect `(for ,var = ,list
-                                                     then (cdr ,var))))
-               do ,@(loop for var in vars
-                          collect `(check-type ,var list "a list"))
+                                                       then (cdr ,var)
+                                                     until (endp ,var))))
 	       collect (funcall ,funvar ,@vars)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -564,7 +563,9 @@
 	       with ,firstlist = ,(car lists)
 	       ,@(apply #'append (loop for var in vars
 				       for list in (cons firstlist (cdr lists))
-				       collect `(for ,var on ,list)))
+				       collect `(for ,var = ,list
+                                                       then (cdr ,var)
+                                                     until (endp ,var))))
 	       do (funcall ,funvar ,@vars)
 	       finally (return ,firstlist)))))
 
