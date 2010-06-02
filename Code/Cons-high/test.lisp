@@ -800,6 +800,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the mapcan function
+
+(define-test mapcan.1
+  (assert-equal '(a b c)
+		(mapcan #'list '(a b c))))
+
+(define-test mapcan.2
+  (assert-equal '(a d b e c f)
+		(mapcan #'list '(a b c) '(d e f))))
+
+(define-test mapcan.3
+  (assert-equal '(a b c . f)
+		(mapcan #'cons '(a b c) '(d e f))))
+
+(define-test mapcan.4
+  (let ((a (list 'a))
+	(b (list 'b))
+	(c (list 'c)))
+    (assert-eq c
+	       (cddr (mapcan #'identity (list a b c))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1

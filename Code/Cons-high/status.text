@@ -28,7 +28,7 @@ What is done:
 
   mapl (function and compiler macro), with some tests.
 
-  mapcan (function and compiler macro), no tests.  
+  mapcan (function and compiler macro), with some tests.  
 
   mapcon (function and compiler macro), no tests.  
 
