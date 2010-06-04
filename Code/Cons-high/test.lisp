@@ -981,6 +981,11 @@
   (assert-equal 'c
 		(revappend '() 'c)))
 
+(define-test revappend.7
+  (let ((l '(x)))
+    (assert-equal l
+		  (cdr (revappend '(a) l)))))
+
 (define-test revappend.error.1
   (assert-error 'type-error
 		(revappend 'a '())))
@@ -996,4 +1001,53 @@
 (define-test revappend.error.4
   (assert-error 'type-error
 		(revappend #(a b) '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nreconc function
+
+(define-test nreconc.1
+  (assert-equal '()
+		(nreconc '() '())))
+
+(define-test nreconc.2
+  (assert-equal '(a)
+		(nreconc (copy-list '(a)) '())))
+
+(define-test nreconc.3
+  (assert-equal '(b a)
+		(nreconc (copy-list '(a b)) '())))
+
+(define-test nreconc.4
+  (assert-equal '(b a c)
+		(nreconc (copy-list '(a b)) '(c))))
+
+(define-test nreconc.5
+  (assert-equal '(b a . c)
+		(nreconc (copy-list '(a b)) 'c)))
+
+(define-test nreconc.6
+  (assert-equal 'c
+		(nreconc '() 'c)))
+
+(define-test nreconc.7
+  (let ((l '(x)))
+    (assert-equal l
+		  (cdr (nreconc (copy-list '(a)) l)))))
+
+(define-test nreconc.error.1
+  (assert-error 'type-error
+		(nreconc 'a '())))
+
+(define-test nreconc.error.2
+  (assert-error 'type-error
+		(nreconc (copy-tree '(a . b)) '())))
+
+(define-test nreconc.error.3
+  (assert-error 'type-error
+		(nreconc 1 '())))
+
+(define-test nreconc.error.4
+  (assert-error 'type-error
+		(nreconc #(a b) '())))
 
