@@ -2,10 +2,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Type null
+
+(deftype null () 'cl:null)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function null
+
+;;; We need the null function in macro expanders in this module
+;;; so we define it early.  
+
+(eval-when (:compile-toplevel :load-toplevel)
+  (defun null (object)
+    (eq object '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function append
 
 ;;; We need the append function in macro expanders in this module
-;;; so we define it first.  
+;;; so we define it early.  
 
 ;;; It used to be the case that the append function was defined
 ;;; in terms of (loop ... append ...), but it turns out that

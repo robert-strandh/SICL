@@ -66,6 +66,9 @@ What is done:
 
   member, function with several special cases.  No tests.
 
+  null, function only, with tests. 
+
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -88,7 +91,6 @@ What remains to to:
   Include more functions that can be found in the conses dictionary:
 
      nsublis
-     null
      ldiff
      tailp
      member-if

@@ -29,7 +29,8 @@
                  #:nsubst #:nsubst-if #:nsubst-if-not
                  #:assoc #:assoc-if #:assoc-if-not
                  #:member #:member-if #:member-if-not
-                 #:sublis #:nsublis))
+                 #:sublis #:nsublis
+		 #:null))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

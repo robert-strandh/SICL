@@ -1051,3 +1051,26 @@
   (assert-error 'type-error
 		(nreconc #(a b) '())))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the null function
+
+(define-test null.1
+  (assert-equal t
+		(null '())))
+
+(define-test null.2
+  (assert-equal nil
+		(null 1)))
+
+(define-test null.3
+  (assert-equal nil
+		(null #\a)))
+
+(define-test null.4
+  (assert-equal nil
+		(null #())))
+
+(define-test null.5
+  (assert-equal nil
+		(null "")))
