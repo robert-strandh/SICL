@@ -821,6 +821,22 @@
     (assert-eq c
 	       (cddr (mapcan #'identity (list a b c))))))
 
+(define-test mapcan.5
+  (assert-equal '()
+		(mapcan #'identity '())))
+
+(define-test mapcan.error.1
+  (assert-error 'type-error (mapcan #'car 1)))
+
+(define-test mapcan.error.2
+  (assert-error 'type-error (mapcan #'car #(1 2 3))))
+
+(define-test mapcan.error.3
+  (assert-error 'type-error (mapcan #'car '(1 2 . 3))))
+
+(define-test mapcan.error.4
+  (assert-error 'type-error (mapcan #'car "1")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the append function
