@@ -953,3 +953,47 @@
                   (apply (cadr (list 'a 'nconc))
                          (copy-tree (list list1 list2))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the revappend function
+
+(define-test revappend.1
+  (assert-equal '()
+		(revappend '() '())))
+
+(define-test revappend.2
+  (assert-equal '(a)
+		(revappend '(a) '())))
+
+(define-test revappend.3
+  (assert-equal '(b a)
+		(revappend '(a b) '())))
+
+(define-test revappend.4
+  (assert-equal '(b a c)
+		(revappend '(a b) '(c))))
+
+(define-test revappend.5
+  (assert-equal '(b a . c)
+		(revappend '(a b) 'c)))
+
+(define-test revappend.6
+  (assert-equal 'c
+		(revappend '() 'c)))
+
+(define-test revappend.error.1
+  (assert-error 'type-error
+		(revappend 'a '())))
+
+(define-test revappend.error.2
+  (assert-error 'type-error
+		(revappend '(a . b) '())))
+
+(define-test revappend.error.3
+  (assert-error 'type-error
+		(revappend 1 '())))
+
+(define-test revappend.error.4
+  (assert-error 'type-error
+		(revappend #(a b) '())))
+
