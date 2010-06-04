@@ -30,7 +30,7 @@
                  #:assoc #:assoc-if #:assoc-if-not
                  #:member #:member-if #:member-if-not
                  #:sublis #:nsublis
-		 #:null))
+		 #:null #:acons))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

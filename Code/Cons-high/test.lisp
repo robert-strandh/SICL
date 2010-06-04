@@ -1074,3 +1074,19 @@
 (define-test null.5
   (assert-equal nil
 		(null "")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the acons function
+
+(define-test acons.1
+  (assert-equal '((a . b))
+		(acons 'a 'b '())))
+
+(define-test acons.2
+  (assert-equal '((a . b) c)
+		(acons 'a 'b '(c))))
+
+(define-test acons.3
+  (assert-equal '((a . b) . c)
+		(acons 'a 'b 'c)))

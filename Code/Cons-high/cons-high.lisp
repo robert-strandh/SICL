@@ -1754,3 +1754,11 @@
                       (member-test-not-identity item list test-not)))
               (member-eql-identity item list)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function acons
+
+(defun acons (key datum alist)
+  (cons (cons key datum) alist))
+
+

@@ -66,7 +66,10 @@ What is done:
 
   member, function with several special cases.  No tests.
 
-  null, function only, with tests. 
+  null, function only, with tests.  The null type is defined
+  to be equivalent to cl:null for now. 
+
+  acons, function with tests
 
 
 How to test it:
@@ -95,7 +98,6 @@ What remains to to:
      tailp
      member-if
      member-if-not
-     acons
      copy-alist
      pairlis
      rassoc
