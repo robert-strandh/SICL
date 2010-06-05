@@ -31,7 +31,7 @@
                  #:rassoc #:rassoc-if #:rassoc-if-not
                  #:member #:member-if #:member-if-not
                  #:sublis #:nsublis
-		 #:null #:acons))
+		 #:null #:acons #:pairlis))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

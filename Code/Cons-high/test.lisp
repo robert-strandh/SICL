@@ -1393,3 +1393,24 @@
   (assert-error 'type-error
 		(rassoc-if-not (complement (lambda (x) (eq x 'a)))
 			      '((b . c) nil d (a b)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the pairlis function
+
+(define-test pairlis.1
+  (assert-equal '()
+		(pairlis '() '())))
+
+(define-test pairlis.2
+  (let ((tail '((a b) (c d))))
+    (assert-eq tail
+	       (cddr (pairlis '(1 2) '(2 3) tail)))))
+
+(define-test pairlis.3
+  (assert-equal '((c . d) (a . b) (e f))
+		(pairlis '(a c) '(b d) '((e f)))))
+
+(define-test parilis.error.1
+  (assert-error 'type-error
+		(pairlis '(a . b) '(c d) '((e f)))))

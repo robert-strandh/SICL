@@ -2012,4 +2012,12 @@
 (defun acons (key datum alist)
   (cons (cons key datum) alist))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function pairlis
 
+(defun pairlis (keys data &optional alist)
+  (loop for result = alist then (acons key datum result)
+	for key in keys
+	for datum in data
+	finally (return result)))

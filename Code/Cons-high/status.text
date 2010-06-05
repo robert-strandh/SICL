@@ -79,8 +79,9 @@ What is done:
   null, function only, with tests.  The null type is defined
   to be equivalent to cl:null for now. 
 
-  acons, function with tests
+  acons, function with tests.
 
+  pairlis, function with tests.
 
 How to test it:
 
@@ -107,7 +108,6 @@ What remains to to:
      ldiff
      tailp
      copy-alist
-     pairlis
      get-properties
      getf
      intersection
