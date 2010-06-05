@@ -1414,3 +1414,28 @@
 (define-test parilis.error.1
   (assert-error 'type-error
 		(pairlis '(a . b) '(c d) '((e f)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the copy-alist function
+
+(define-test copy-alist.1
+  (assert-equal '()
+		(copy-alist '())))
+
+(define-test copy-alist.2
+  (assert-equal '((a) (b))
+		(copy-alist '((a) (b)))))
+
+(define-test copy-alist.3
+  (assert-false (let ((alist '((a) (b))))
+		  (eq (car alist)
+		      (car (copy-alist alist))))))
+
+(define-test copy-alist.error.1
+  (assert-error 'type-error
+		(copy-alist '(a))))
+
+(define-test copy-alist.error.2
+  (assert-error 'type-error
+		(copy-alist '((a) .b))))

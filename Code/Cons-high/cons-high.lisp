@@ -2021,3 +2021,11 @@
 	for key in keys
 	for datum in data
 	finally (return result)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function copy-alist
+
+(defun copy-alist (alist)
+  (loop for element in alist
+	collect (cons (car element) (cdr element))))
