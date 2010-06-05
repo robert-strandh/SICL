@@ -1090,3 +1090,249 @@
 (define-test acons.3
   (assert-equal '((a . b) . c)
 		(acons 'a 'b 'c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the assoc function
+
+(define-test assoc.1
+  (assert-equal '(a . b)
+		(assoc 'a '((b) nil (a . b) (a . c)))))
+
+(define-test assoc.2
+  (assert-equal nil
+		(assoc 'c '((b) nil (a . b) (a . c)))))
+
+(define-test assoc.3
+  (assert-equal '(nil . c)
+		(assoc 'nil '((b) nil (a . b) (nil . c)))))
+
+(define-test assoc.4
+  (assert-equal '(123 . b)
+		(assoc 123 '((b) nil (123 . b) (nil . c)))))
+
+(define-test assoc.5
+  (assert-equal '(#\a . b)
+		(assoc #\a '((b) nil (#\a . b) (nil . c)))))
+
+(define-test assoc.6
+  (assert-equal '((a b) c)
+		(assoc '(a b) '((a . b) nil ((a b) c) (d e))
+		       :test #'equal)))
+
+(define-test assoc.7
+  (assert-equal '((a b) c)
+		(assoc '(a b) '((a . b) nil ((a b) c) (d e))
+		       :test-not (complement #'equal))))
+
+(define-test assoc.8
+  (assert-equal '((a b) c)
+		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+		       :key #'car)))
+
+(define-test assoc.error.1
+  (assert-error 'type-error
+		(assoc 'a '((b . c) nil d (a b)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the assoc-if function
+
+(define-test assoc-if.1
+  (assert-equal '(a . b)
+		(assoc-if (lambda (x) (eq x 'a))
+			  '((b) nil (a . b) (a . c)))))
+
+(define-test assoc-if.2
+  (assert-equal nil
+		(assoc-if (lambda (x) (eq x 'c))
+			  '((b) nil (a . b) (a . c)))))
+
+(define-test assoc-if.3
+  (assert-equal '(nil . c)
+		(assoc-if #'null
+			  '((b) nil (a . b) (nil . c)))))
+
+(define-test assoc-if.4
+  (assert-equal '(123 . b)
+		(assoc-if (lambda (x) (eql x 123))
+			  '((b) nil (123 . b) (nil . c)))))
+
+(define-test assoc-if.5
+  (assert-equal '(#\a . b)
+		(assoc-if (lambda (x) (eql x #\a))
+			  '((b) nil (#\a . b) (nil . c)))))
+
+(define-test assoc-if.6
+  (assert-equal '((a b) c)
+		(assoc-if (lambda (x) (eq x 'a))
+			  '(((b a) . b) nil ((a b) c) ((d) e))
+			  :key #'car)))
+
+(define-test assoc-if.error.1
+  (assert-error 'type-error
+		(assoc-if (lambda (x) (eq x 'a))
+			  '((b . c) nil d (a b)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the assoc-if-not function
+
+(define-test assoc-if-not.1
+  (assert-equal '(a . b)
+		(assoc-if-not (complement (lambda (x) (eq x 'a)))
+			      '((b) nil (a . b) (a . c)))))
+
+(define-test assoc-if-not.2
+  (assert-equal nil
+		(assoc-if-not (complement (lambda (x) (eq x 'c)))
+			      '((b) nil (a . b) (a . c)))))
+
+(define-test assoc-if-not.3
+  (assert-equal '(nil . c)
+		(assoc-if-not (complement #'null)
+			      '((b) nil (a . b) (nil . c)))))
+
+(define-test assoc-if-not.4
+  (assert-equal '(123 . b)
+		(assoc-if-not (complement (lambda (x) (eql x 123)))
+			      '((b) nil (123 . b) (nil . c)))))
+
+(define-test assoc-if-not.5
+  (assert-equal '(#\a . b)
+		(assoc-if-not (complement (lambda (x) (eql x #\a)))
+			      '((b) nil (#\a . b) (nil . c)))))
+
+(define-test assoc-if-not.6
+  (assert-equal '((a b) c)
+		(assoc-if-not (complement (lambda (x) (eq x 'a)))
+			      '(((b a) . b) nil ((a b) c) ((d) e))
+			      :key #'car)))
+
+(define-test assoc-if-not.error.1
+  (assert-error 'type-error
+		(assoc-if-not (complement (lambda (x) (eq x 'a)))
+			      '((b . c) nil d (a b)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the rassoc function
+
+(define-test rassoc.1
+  (assert-equal '(a . b)
+		(rassoc 'b '((b) nil (a . b) (a . c)))))
+
+(define-test rassoc.2
+  (assert-equal nil
+		(rassoc 'd '((b) nil (a . b) (a . c)))))
+
+(define-test rassoc.3
+  (assert-equal '(b)
+		(rassoc 'nil '((b) nil (a . b) (nil . c)))))
+
+(define-test rassoc.4
+  (assert-equal '(b . 123)
+		(rassoc 123 '((b) nil (b . 123) (nil . c)))))
+
+(define-test rassoc.5
+  (assert-equal '(b . #\a)
+		(rassoc #\a '((b) nil (b . #\a) (nil . c)))))
+
+(define-test rassoc.6
+  (assert-equal '((a b) c)
+		(rassoc '(c) '((a . b) nil ((a b) c) (d e))
+		       :test #'equal)))
+
+(define-test rassoc.7
+  (assert-equal '((a b) c)
+		(rassoc '(c) '((a . b) nil ((a b) c) (d e))
+		       :test-not (complement #'equal))))
+
+(define-test rassoc.8
+  (assert-equal '((a b) c)
+		(rassoc 'c '(((b a) b) nil ((a b) c) ((d) e))
+		       :key #'car)))
+
+(define-test rassoc.error.1
+  (assert-error 'type-error
+		(rassoc 'a '((b . c) nil d (a b)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the rassoc-if function
+
+(define-test rassoc-if.1
+  (assert-equal '(a . b)
+		(rassoc-if (lambda (x) (eq x 'b))
+			  '((b) nil (a . b) (a . c)))))
+
+(define-test rassoc-if.2
+  (assert-equal nil
+		(rassoc-if (lambda (x) (eq x 'd))
+			  '((b) nil (a . b) (a . c)))))
+
+(define-test rassoc-if.3
+  (assert-equal '(b)
+		(rassoc-if #'null
+			  '((b) nil (a . b) (nil . c)))))
+
+(define-test rassoc-if.4
+  (assert-equal '(b . 123)
+		(rassoc-if (lambda (x) (eql x 123))
+			  '((b) nil (b . 123) (nil . c)))))
+
+(define-test rassoc-if.5
+  (assert-equal '(b . #\a)
+		(rassoc-if (lambda (x) (eql x #\a))
+			  '((b) nil (b . #\a) (nil . c)))))
+
+(define-test rassoc-if.6
+  (assert-equal '((a b) c)
+		(rassoc-if (lambda (x) (eq x 'c))
+			  '(((b a) b) nil ((a b) c) ((d) e))
+			  :key #'car)))
+
+(define-test rassoc-if.error.1
+  (assert-error 'type-error
+		(rassoc-if (lambda (x) (eq x 'a))
+			  '((b . c) nil d (a b)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the rassoc-if-not function
+
+(define-test rassoc-if-not.1
+  (assert-equal '(a . b)
+		(rassoc-if-not (complement (lambda (x) (eq x 'b)))
+			      '((b) nil (a . b) (a . c)))))
+
+(define-test rassoc-if-not.2
+  (assert-equal nil
+		(rassoc-if-not (complement (lambda (x) (eq x 'd)))
+			      '((b) nil (a . b) (a . c)))))
+
+(define-test rassoc-if-not.3
+  (assert-equal '(b)
+		(rassoc-if-not (complement #'null)
+			      '((b) nil (a . b) (nil . c)))))
+
+(define-test rassoc-if-not.4
+  (assert-equal '(b . 123)
+		(rassoc-if-not (complement (lambda (x) (eql x 123)))
+			      '((b) nil (b . 123) (nil . c)))))
+
+(define-test rassoc-if-not.5
+  (assert-equal '(b . #\a)
+		(rassoc-if-not (complement (lambda (x) (eql x #\a)))
+			      '((b) nil (b . #\a) (nil . c)))))
+
+(define-test rassoc-if-not.6
+  (assert-equal '((a b) c)
+		(rassoc-if-not (complement (lambda (x) (eq x 'c)))
+			      '(((b a) b) nil ((a b) c) ((d) e))
+			      :key #'car)))
+
+(define-test rassoc-if-not.error.1
+  (assert-error 'type-error
+		(rassoc-if-not (complement (lambda (x) (eq x 'a)))
+			      '((b . c) nil d (a b)))))

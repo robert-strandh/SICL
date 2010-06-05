@@ -56,11 +56,17 @@ What is done:
 
   nsubst-if-not, function with several special cases.  No tests.
 
-  assoc, function with several special cases.  No tests.
+  assoc, function with several special cases.  Some tests.
 
-  assoc-if, function with several special cases.  No tests.
+  assoc-if, function with several special cases.  Some tests.
 
-  assoc-if-not, function with several special cases.  No tests.
+  assoc-if-not, function with several special cases.  Some tests.
+
+  rassoc, function with several special cases. Some tests.
+
+  rassoc-if, function with several special cases. Some tests.
+
+  rassoc-if-not, function with several special cases. Some tests.
 
   sublis, function with several special cases.  No tests.
 
@@ -100,9 +106,6 @@ What remains to to:
      member-if-not
      copy-alist
      pairlis
-     rassoc
-     rassoc-if
-     rassoc-if-not
      get-properties
      getf
      intersection

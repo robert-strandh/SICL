@@ -1335,84 +1335,96 @@
 
 (defun assoc-eq-identity (item alist)
   (loop for element in alist
-        when (eq (car element) item)
+        when (and (not (null element))
+		  (eq (car element) item))
           return element))
 
 ;;; Special version when test is eql and key is identity.
 
 (defun assoc-eql-identity (item alist)
   (loop for element in alist
-        when (eql (car element) item)
+        when (and (not (null element))
+		  (eql (car element) item))
           return element))
         
 ;;; Special version when test is eq and key is given.
 
 (defun assoc-eq-key (item alist key)
   (loop for element in alist
-        when (eq (funcall key (car element)) item)
+        when (and (not (null element))
+		  (eq (funcall key (car element)) item))
           return element))
   
 ;;; Special version when test is eql and key is given.
 
 (defun assoc-eql-key (item alist key)
   (loop for element in alist
-        when (eql (funcall key (car element)) item)
+        when (and (not (null element))
+		  (eql (funcall key (car element)) item))
           return element))
 
 ;;; Special version when test is given and key is identity.
 
 (defun assoc-test-identity (item alist test)
   (loop for element in alist
-        when (funcall test (car element) item)
+        when (and (not (null element))
+		  (funcall test (car element) item))
           return element))
 
 ;;; Special version when test and key are both given.
 
 (defun assoc-test-key (item alist test key)
   (loop for element in alist
-        when (funcall test (funcall key (car element)) item)
+        when (and (not (null element))
+		  (funcall test (funcall key (car element)) item))
           return element))
   
 ;;; Special version when test-not is eq and key is identity.
 
 (defun assoc-not-eq-identity (item alist)
   (loop for element in alist
-        when (not (eq (car element) item))
+        when (and (not (null element))
+		  (not (eq (car element) item)))
           return element))
 
 ;;; Special version when test-not is eql and key is identity.
 
 (defun assoc-not-eql-identity (item alist)
   (loop for element in alist
-        when (not (eql (car element) item))
+        when (and (not (null element))
+		  (not (eql (car element) item)))
           return element))
         
 ;;; Special version when test-not is eq and key is given.
 
 (defun assoc-not-eq-key (item alist key)
   (loop for element in alist
-        when (not (eq (funcall key (car element)) item))
+        when (and (not (null element))
+		  (not (eq (funcall key (car element)) item)))
           return element))
   
 ;;; Special version when test-not is eql and key is given.
 
 (defun assoc-not-eql-key (item alist key)
   (loop for element in alist
-        when (not (eql (funcall key (car element)) item))
+        when (and (not (null element))
+		  (not (eql (funcall key (car element)) item)))
           return element))
 
 ;;; Special version when test-not is given and key is identity.
 
 (defun assoc-test-not-identity (item alist test)
   (loop for element in alist
-        when (not (funcall test (car element) item))
+        when (and (not (null element))
+		  (not (funcall test (car element) item)))
           return element))
 
 ;;; Special version when test-not and key are both given.
 
 (defun assoc-test-not-key (item alist test key)
   (loop for element in alist
-        when (not (funcall test (funcall key (car element)) item))
+        when (and (not (null element))
+		  (not (funcall test (funcall key (car element)) item)))
           return element))
   
 (defun assoc (item alist &key key test test-not)
@@ -1454,14 +1466,16 @@
 
 (defun assoc-if-identity (predicate alist)
   (loop for element in alist
-        when (funcall predicate (car element))
+        when (and (not (null element))
+		  (funcall predicate (car element)))
           return element))
 
 ;;; Special version when key is given
 
 (defun assoc-if-key (predicate alist key)
   (loop for element in alist
-        when (funcall predicate (funcall key (car element)))
+        when (and (not (null element))
+		  (funcall predicate (funcall key (car element))))
           return element))
 
 (defun assoc-if (predicate alist &key key)
@@ -1477,20 +1491,203 @@
 
 (defun assoc-if-not-identity (predicate alist)
   (loop for element in alist
-        when (not (funcall predicate (car element)))
+        when (and (not (null element))
+		  (not (funcall predicate (car element))))
           return element))
 
 ;;; Special version when key is given
 
 (defun assoc-if-not-key (predicate alist key)
   (loop for element in alist
-        when (not (funcall predicate (funcall key (car element))))
+        when (and (not (null element))
+		  (not (funcall predicate (funcall key (car element)))))
           return element))
 
 (defun assoc-if-not (predicate alist &key key)
   (if key
       (assoc-if-not-key predicate alist key)
       (assoc-if-not-identity predicate alist)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function rassoc
+
+;;; Special version when test is eq and key is identity.
+
+(defun rassoc-eq-identity (item alist)
+  (loop for element in alist
+        when (and (not (null element))
+		  (eq (cdr element) item))
+          return element))
+
+;;; Special version when test is eql and key is identity.
+
+(defun rassoc-eql-identity (item alist)
+  (loop for element in alist
+        when (and (not (null element))
+		  (eql (cdr element) item))
+          return element))
+        
+;;; Special version when test is eq and key is given.
+
+(defun rassoc-eq-key (item alist key)
+  (loop for element in alist
+        when (and (not (null element))
+		  (eq (funcall key (cdr element)) item))
+          return element))
+  
+;;; Special version when test is eql and key is given.
+
+(defun rassoc-eql-key (item alist key)
+  (loop for element in alist
+        when (and (not (null element))
+		  (eql (funcall key (cdr element)) item))
+          return element))
+
+;;; Special version when test is given and key is identity.
+
+(defun rassoc-test-identity (item alist test)
+  (loop for element in alist
+        when (and (not (null element))
+		  (funcall test (cdr element) item))
+          return element))
+
+;;; Special version when test and key are both given.
+
+(defun rassoc-test-key (item alist test key)
+  (loop for element in alist
+        when (and (not (null element))
+		  (funcall test (funcall key (cdr element)) item))
+          return element))
+  
+;;; Special version when test-not is eq and key is identity.
+
+(defun rassoc-not-eq-identity (item alist)
+  (loop for element in alist
+        when (and (not (null element))
+		  (not (eq (cdr element) item)))
+          return element))
+
+;;; Special version when test-not is eql and key is identity.
+
+(defun rassoc-not-eql-identity (item alist)
+  (loop for element in alist
+        when (and (not (null element))
+		  (not (eql (cdr element) item)))
+          return element))
+        
+;;; Special version when test-not is eq and key is given.
+
+(defun rassoc-not-eq-key (item alist key)
+  (loop for element in alist
+        when (and (not (null element))
+		  (not (eq (funcall key (cdr element)) item)))
+          return element))
+  
+;;; Special version when test-not is eql and key is given.
+
+(defun rassoc-not-eql-key (item alist key)
+  (loop for element in alist
+        when (and (not (null element))
+		  (not (eql (funcall key (cdr element)) item)))
+          return element))
+
+;;; Special version when test-not is given and key is identity.
+
+(defun rassoc-test-not-identity (item alist test)
+  (loop for element in alist
+        when (and (not (null element))
+		  (not (funcall test (cdr element) item)))
+          return element))
+
+;;; Special version when test-not and key are both given.
+
+(defun rassoc-test-not-key (item alist test key)
+  (loop for element in alist
+        when (and (not (null element))
+		  (not (funcall test (funcall key (cdr element)) item)))
+          return element))
+  
+(defun rassoc (item alist &key key test test-not)
+  ;; FIXME: do this better
+  (assert (or (null test) (null test-not)))
+  (if key
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (rassoc-eq-key item alist key)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (rassoc-eql-key item alist key)
+                  (rassoc-test-key item alist test key)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (rassoc-not-eq-key item alist key)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (rassoc-not-eql-key item alist key)
+                      (rassoc-test-not-key item alist test-not key)))
+              (rassoc-eql-key item alist key)))
+      (if test
+          (if (or (eq test #'eq) (eq test 'eq))
+              (rassoc-eq-identity item alist)
+              (if (or (eq test #'eql) (eq test 'eql))
+                  (rassoc-eql-identity item alist)
+                  (rassoc-test-identity item alist test)))
+          (if test-not
+              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                  (rassoc-not-eq-identity item alist)
+                  (if (or (eq test-not #'eql) (eq test-not 'eql))
+                      (rassoc-not-eql-identity item alist)
+                      (rassoc-test-not-identity item alist test-not)))
+              (rassoc-eql-identity item alist)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function rassoc-if
+
+;;; Special version when key is identity
+
+(defun rassoc-if-identity (predicate alist)
+  (loop for element in alist
+        when (and (not (null element))
+		  (funcall predicate (cdr element)))
+          return element))
+
+;;; Special version when key is given
+
+(defun rassoc-if-key (predicate alist key)
+  (loop for element in alist
+        when (and (not (null element))
+		  (funcall predicate (funcall key (cdr element))))
+          return element))
+
+(defun rassoc-if (predicate alist &key key)
+  (if key
+      (rassoc-if-key predicate alist key)
+      (rassoc-if-identity predicate alist)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function rassoc-if-not
+
+;;; Special version when key is identity
+
+(defun rassoc-if-not-identity (predicate alist)
+  (loop for element in alist
+        when (and (not (null element))
+		  (not (funcall predicate (cdr element))))
+          return element))
+
+;;; Special version when key is given
+
+(defun rassoc-if-not-key (predicate alist key)
+  (loop for element in alist
+        when (and (not (null element))
+		  (not (funcall predicate (funcall key (cdr element)))))
+          return element))
+
+(defun rassoc-if-not (predicate alist &key key)
+  (if key
+      (rassoc-if-not-key predicate alist key)
+      (rassoc-if-not-identity predicate alist)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

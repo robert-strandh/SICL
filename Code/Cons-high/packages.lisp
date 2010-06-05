@@ -28,6 +28,7 @@
                  #:subst #:subst-if #:subst-if-not
                  #:nsubst #:nsubst-if #:nsubst-if-not
                  #:assoc #:assoc-if #:assoc-if-not
+                 #:rassoc #:rassoc-if #:rassoc-if-not
                  #:member #:member-if #:member-if-not
                  #:sublis #:nsublis
 		 #:null #:acons))
