@@ -2029,3 +2029,14 @@
 (defun copy-alist (alist)
   (loop for element in alist
 	collect (cons (car element) (cdr element))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function tailp
+
+(defun tailp (object list)
+  (loop for rest = list then (cdr rest)
+	until (atom rest)
+	when (eql object rest)
+	  return t
+	finally (return (eql object rest))))

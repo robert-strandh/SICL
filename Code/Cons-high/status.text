@@ -85,6 +85,9 @@ What is done:
 
   copy-alist, function with tests.
 
+  tailp, function with tests. 
+
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -108,7 +111,6 @@ What remains to to:
 
      nsublis
      ldiff
-     tailp
      get-properties
      getf
      intersection

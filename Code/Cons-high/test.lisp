@@ -1439,3 +1439,27 @@
 (define-test copy-alist.error.2
   (assert-error 'type-error
 		(copy-alist '((a) .b))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the tailp function
+
+(define-test tailp.1
+  (assert-false (tailp 123 '())))
+
+(define-test tailp.2
+  (assert-false (tailp 123 '(123))))
+
+(define-test tailp.3
+  (assert-true (tailp 123 123)))
+
+(define-test tailp.4
+  (assert-true (tailp 123 '(a . 123))))
+
+(define-test tailp.5
+  (let ((tail '(a b)))
+    (assert-true (tailp tail (list* 1 2 tail)))))
+
+(define-test tailp.5
+  (let ((tail '(a b)))
+    (assert-false (tailp tail (list* 1 2 (copy-list tail))))))
