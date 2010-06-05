@@ -1093,6 +1093,63 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the member function
+
+(define-test member.1
+  (assert-equal nil
+		(member 234 '())))
+
+(define-test member.2
+  (assert-equal '(123 b c)
+		(member 123 '(a b 123 b c))))
+
+(define-test member.3
+  (assert-equal '((123) b c)
+		(member '(123) '(a b (123) b c)
+			:test #'equal)))
+
+(define-test member.4
+  (assert-equal nil
+		(member 123 '(a b c d e))))
+
+(define-test member.error.1
+  (assert-error 'type-error
+		(member 123 '(a b . 123))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the member-if function
+
+(define-test member-if.1
+  (assert-equal nil
+		(member-if #'oddp '(2 4 6))))
+
+(define-test member-if.2
+  (assert-equal '(3 4)
+		(member-if #'oddp '(2 6 3 4))))
+
+(define-test member-if.error.1
+  (assert-error 'type-error
+		(member-if #'oddp '(2 4 6 . 7))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the member-if-not function
+
+(define-test member-if-not.1
+  (assert-equal nil
+		(member-if-not #'evenp '(2 4 6))))
+
+(define-test member-if-not.2
+  (assert-equal '(3 4)
+		(member-if-not #'evenp '(2 6 3 4))))
+
+(define-test member-if-not.error.1
+  (assert-error 'type-error
+		(member-if-not #'evenp '(2 4 6 . 7))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the assoc function
 
 (define-test assoc.1
@@ -1241,7 +1298,7 @@
 (define-test rassoc.6
   (assert-equal '((a b) c)
 		(rassoc '(c) '((a . b) nil ((a b) c) (d e))
-		       :test #'equal)))
+			:test #'equal)))
 
 (define-test rassoc.7
   (assert-equal '((a b) c)

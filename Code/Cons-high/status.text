@@ -70,7 +70,11 @@ What is done:
 
   sublis, function with several special cases.  No tests.
 
-  member, function with several special cases.  No tests.
+  member, function with several special cases.  Some tests.
+
+  member-if, function with two special cases.  Some tests.
+
+  member-if-not, function with two special cases.  Some tests.
 
   null, function only, with tests.  The null type is defined
   to be equivalent to cl:null for now. 
@@ -102,8 +106,6 @@ What remains to to:
      nsublis
      ldiff
      tailp
-     member-if
-     member-if-not
      copy-alist
      pairlis
      get-properties
