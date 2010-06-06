@@ -87,6 +87,7 @@ What is done:
 
   tailp, function with tests. 
 
+  union, function with several special cases.  Some tests.
 
 How to test it:
 
@@ -121,6 +122,5 @@ What remains to to:
      set-exclusive-or
      nset-exclusive-or
      subsetp
-     union
      nunion
   

@@ -1463,3 +1463,49 @@
 (define-test tailp.5
   (let ((tail '(a b)))
     (assert-false (tailp tail (list* 1 2 (copy-list tail))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the union function
+
+(define-test union.1
+  (assert-equal '()
+		(union '() '())))
+
+(define-test union.2
+  (assert-equal '()
+		(union '() '() :test #'eq)))
+
+(define-test union.3
+  (assert-equal '()
+		(union '() '() :test #'eql)))
+
+(define-test union.4
+  (assert-equal '()
+		(union '() '() :test #'equal)))
+
+(define-test union.5
+  (assert-equal '()
+		(union '() '() :test #'equalp)))
+
+(define-test union.6
+  (assert-equal '()
+		(union '() '() :test #'<)))
+
+(define-test union.7
+  (assert-equal '()
+		(set-difference (union '(1 2 3) '(3 4 5))
+				'(1 2 3 4 5))))
+
+(define-test union.8
+  (assert-equal '()
+		(set-difference (union '(abc def) '(abc ghi)
+				       :test #'eq)
+				'(abc def ghi)
+				:test #'eq)))
+(define-test union.9
+  (assert-equal '()
+		(set-difference (union '("abc" "def") '("abc" "ghi")
+				       :test #'equal)
+				'("abc" "def" "ghi")
+				:test #'equal)))

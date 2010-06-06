@@ -32,7 +32,8 @@
                  #:member #:member-if #:member-if-not
                  #:sublis #:nsublis
 		 #:null #:acons #:pairlis #:copy-alist
-		 #:tailp #:ldiff))
+		 #:tailp #:ldiff
+		 #:union #:intersection))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

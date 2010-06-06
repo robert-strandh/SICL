@@ -2040,3 +2040,189 @@
 	when (eql object rest)
 	  return t
 	finally (return (eql object rest))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function union
+
+(defun union-identity-eql (list1 list2)
+  (loop with result = list2
+	for element in list1
+	unless (member element list2)
+	  do (push element result)
+	finally (return result)))
+
+(defun union-identity-eq (list1 list2)
+  (loop with result = list2
+	for element in list1
+	unless (member element list2 :test #'eq)
+	  do (push element result)
+	finally (return result)))
+
+(defun union-key-eql (list1 list2 key)
+  (loop with result = list2
+	for element in list1
+	unless (member element list2 :key key)
+	  do (push element result)
+	finally (return result)))
+
+(defun union-key-eq (list1 list2 key)
+  (loop with result = list2
+	for element in list1
+	unless (member element list2 :test #'eq :key key)
+	  do (push element result)
+	finally (return result)))
+
+(defun union-identity-test (list1 list2 test)
+  (loop with result = list2
+	for element in list1
+	unless (member element list2 :test test)
+	  do (push element result)
+	finally (return result)))
+
+(defun union-key-test (list1 list2 key test)
+  (loop with result = list2
+	for element in list1
+	unless (member element list2 :test test :key key)
+	  do (push element result)
+	finally (return result)))
+
+(defun union-identity-test-not (list1 list2 test-not)
+  (loop with result = list2
+	for element in list1
+	unless (member element list2 :test-not test-not)
+	  do (push element result)
+	finally (return result)))
+
+(defun union-key-test-not (list1 list2 key test-not)
+  (loop with result = list2
+	for element in list1
+	unless (member element list2 :test-not test-not :key key)
+	  do (push element result)
+	finally (return result)))
+
+(defun union-identity-eq-hash (list1 list2)
+  (let ((table (make-hash-table :test #'eq)))
+    (loop for element in list1
+	  do (setf (gethash element table) element))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element being the hash-values of table
+	  collect element)))
+
+(defun union-identity-eql-hash (list1 list2)
+  (let ((table (make-hash-table :test #'eql)))
+    (loop for element in list1
+	  do (setf (gethash element table) element))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element being the hash-values of table
+	  collect element)))
+
+(defun union-identity-equal-hash (list1 list2)
+  (let ((table (make-hash-table :test #'equal)))
+    (loop for element in list1
+	  do (setf (gethash element table) element))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element being the hash-values of table
+	  collect element)))
+
+(defun union-identity-equalp-hash (list1 list2)
+  (let ((table (make-hash-table :test #'equalp)))
+    (loop for element in list1
+	  do (setf (gethash element table) element))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element being the hash-values of table
+	  collect element)))
+
+(defun union-key-eq-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'eq)))
+    (loop for element in list1
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element being the hash-values of table
+	  collect element)))
+
+(defun union-key-eql-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'eql)))
+    (loop for element in list1
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element being the hash-values of table
+	  collect element)))
+
+(defun union-key-equal-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'equal)))
+    (loop for element in list1
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element being the hash-values of table
+	  collect element)))
+
+(defun union-key-equalp-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'equalp)))
+    (loop for element in list1
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element being the hash-values of table
+	  collect element)))
+
+(defun union (list1 list2 &key key test test-not)
+  ;; FIXME do this better
+  (assert (or (null test) (null test-not)))
+  (let ((use-hash (> (* (length list1) (length list2)) 1000)))
+    (if key
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (union-key-eq-hash list1 list2 key)
+		       (union-key-eq list1 list2 key)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (union-key-eql-hash list1 list2 key)
+		       (union-key-eql list1 list2 key)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (union-key-equal-hash list1 list2 key)
+		       (union-key-test list1 list2 key #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (union-key-equalp-hash list1 list2 key)
+		       (union-key-test list1 list2 key #'equalp)))
+		  (t
+		   (union-key-test list1 list2 key test)))
+	    (if test-not
+		(union-key-test-not list1 list2 key test-not)
+		(if use-hash
+		    (union-key-eql-hash list1 list2 key)
+		    (union-key-eql list1 list2 key))))
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (union-identity-eq-hash list1 list2)
+		       (union-identity-eq list1 list2)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (union-identity-eql-hash list1 list2)
+		       (union-identity-eql list1 list2)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (union-identity-equal-hash list1 list2)
+		       (union-identity-test list1 list2 #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (union-identity-equalp-hash list1 list2)
+		       (union-identity-test list1 list2 #'equalp)))
+		  (t
+		   (union-identity-test list1 list2 test)))
+	    (if test-not
+		(union-identity-test-not list1 list2 test-not)
+		(if use-hash
+		    (union-identity-eql-hash list1 list2)
+		    (union-identity-eql list1 list2)))))))
