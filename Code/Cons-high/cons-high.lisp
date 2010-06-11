@@ -2226,3 +2226,72 @@
 		(if use-hash
 		    (union-identity-eql-hash list1 list2)
 		    (union-identity-eql list1 list2)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function adjoin
+
+(defun adjoin-identity-eq (item list)
+  (if (member item list :test #'eq)
+      list
+      (cons item list)))
+
+(defun adjoin-identity-eql (item list)
+  (if (member item list)
+      list
+      (cons item list)))
+
+(defun adjoin-identity-test (item list test)
+  (if (member item list :test test)
+      list
+      (cons item list)))
+
+(defun adjoin-identity-test-not (item list test-not)
+  (if (member item list :test-not test-not)
+      list
+      (cons item list)))
+
+(defun adjoin-key-eq (item list key)
+  (if (member (funcall key item) list :key key :test #'eq)
+      list
+      (cons item list)))
+
+(defun adjoin-key-eql (item list key)
+  (if (member (funcall key item) list :key key)
+      list
+      (cons item list)))
+
+(defun adjoin-key-test (item list key test)
+  (if (member (funcall key item) list :key key :test test)
+      list
+      (cons item list)))
+
+(defun adjoin-key-test-not (item list key test-not)
+  (if (member (funcall key item) list :key key :test-not test-not)
+      list
+      (cons item list)))
+
+(defun adjoin (item list &key key test test-not)
+  ;; FIXME: do this better
+  (assert (or (null test) (null test-not)))
+  (if key
+      (if test
+	  (if (or (eq test #'eq) (eq test 'eq))
+	      (adjoin-key-eq item list key)
+	      (if (or (eq test #'eql) (eq test 'eql))
+		  (adjoin-key-eql item list key)
+		  (adjoin-key-test item list key test)))
+	  (if test-not
+	      (adjoin-key-test-not item list key test-not)
+	      (adjoin-key-eql item list key)))
+      (if test
+	  (if (or (eq test #'eq) (eq test 'eq))
+	      (adjoin-identity-eq item list)
+	      (if (or (eq test #'eql) (eq test 'eql))
+		  (adjoin-identity-eql item list)
+		  (adjoin-identity-test item list test)))
+	  (if test-not
+	      (adjoin-identity-test-not item list test-not)
+	      (adjoin-identity-eql item list)))))
+
+

@@ -1509,3 +1509,111 @@
 				       :test #'equal)
 				'("abc" "def" "ghi")
 				:test #'equal)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the adjoin function
+
+(define-test adjoin.1
+  (assert-equal '(1)
+		(adjoin 1 '())))
+
+(define-test adjoin.2
+  (assert-equal '(1 2)
+		(adjoin 1 '(2))))
+
+(define-test adjoin.3
+  (assert-equal '(2 1)
+		(adjoin 1 '(2 1))))
+
+(define-test adjoin.4
+  (assert-equal '(1)
+		(adjoin 1 '() :test #'eql)))
+
+(define-test adjoin.5
+  (assert-equal '(1 2)
+		(adjoin 1 '(2) :test #'eql)))
+
+(define-test adjoin.6
+  (assert-equal '(2 1)
+		(adjoin 1 '(2 1) :test #'eql)))
+
+(define-test adjoin.7
+  (assert-equal '(1)
+		(adjoin 1 '() :test 'eql)))
+
+(define-test adjoin.8
+  (assert-equal '(1 2)
+		(adjoin 1 '(2) :test 'eql)))
+
+(define-test adjoin.9
+  (assert-equal '(2 1)
+		(adjoin 1 '(2 1) :test 'eql)))
+
+(define-test adjoin.10
+  (assert-equal '(a)
+		(adjoin 'a '() :test #'eq)))
+
+(define-test adjoin.11
+  (assert-equal '(a b)
+		(adjoin 'a '(b) :test #'eq)))
+
+(define-test adjoin.12
+  (assert-equal '(b a)
+		(adjoin 'a '(b a) :test #'eq)))
+
+(define-test adjoin.13
+  (assert-equal '(a)
+		(adjoin 'a '() :test 'eq)))
+
+(define-test adjoin.14
+  (assert-equal '(a b)
+		(adjoin 'a '(b) :test 'eq)))
+
+(define-test adjoin.15
+  (assert-equal '(b a)
+		(adjoin 'a '(b a) :test 'eq)))
+
+(define-test adjoin.16
+  (assert-equal '(1)
+		(adjoin 1 '() :test-not #'eql)))
+
+(define-test adjoin.17
+  (assert-equal '(2)
+		(adjoin 1 '(2) :test-not #'eql)))
+
+(define-test adjoin.18
+  (assert-equal '(1 1)
+		(adjoin 1 '(1) :test-not #'eql)))
+
+(define-test adjoin.19
+  (assert-equal '(1)
+		(adjoin 1 '() :test-not 'eql)))
+
+(define-test adjoin.20
+  (assert-equal '(2)
+		(adjoin 1 '(2) :test-not 'eql)))
+
+(define-test adjoin.21
+  (assert-equal '(1 1)
+		(adjoin 1 '(1) :test-not 'eql)))
+
+(define-test adjoin.22
+  (assert-equal '((1 2) (3 4))
+		(adjoin '(1 2) '((3 4)) :test #'equal)))
+
+(define-test adjoin.22
+  (assert-equal '((3 4) (1 2))
+		(adjoin '(1 2) '((3 4) (1 2)) :test #'equal)))
+
+(define-test adjoin.23
+  (assert-equal '((3 4))
+		(adjoin '(1 2) '((3 4)) :test-not #'equal)))
+
+(define-test adjoin.24
+  (assert-equal '((1 2) (1 2))
+		(adjoin '(1 2) '((1 2)) :test-not #'equal)))
+
+(define-test adjoin.25
+  (assert-equal '((3 4) (1 2))
+		(adjoin '(1 2) '((3 4) (1 2)) :key #'car)))

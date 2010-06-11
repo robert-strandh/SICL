@@ -33,7 +33,8 @@
                  #:sublis #:nsublis
 		 #:null #:acons #:pairlis #:copy-alist
 		 #:tailp #:ldiff
-		 #:union #:intersection))
+		 #:union #:intersection
+		 #:adjoin))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

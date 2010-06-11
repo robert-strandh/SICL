@@ -89,6 +89,9 @@ What is done:
 
   union, function with several special cases.  Some tests.
 
+  adjoin, function with some special cases.  Some tests.
+
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -116,7 +119,6 @@ What remains to to:
      getf
      intersection
      nintersection
-     adjoin
      set-difference
      nset-difference
      set-exclusive-or
