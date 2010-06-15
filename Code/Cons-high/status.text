@@ -70,6 +70,8 @@ What is done:
 
   sublis, function with several special cases.  No tests.
 
+  nsublis, function with several special cases.  No tests.
+
   member, function with several special cases.  Some tests.
 
   member-if, function with two special cases.  Some tests.
@@ -113,7 +115,6 @@ What remains to to:
 
   Include more functions that can be found in the conses dictionary:
 
-     nsublis
      ldiff
      get-properties
      getf
