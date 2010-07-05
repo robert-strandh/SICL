@@ -1466,6 +1466,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the ldiff function
+
+(define-test ldiff.1
+  (let ((list '(a b c . d)))
+    (assert-equal nil (ldiff list list))))
+
+(define-test ldiff.2
+  (let ((list '(a b c . d)))
+    (assert-equal '(a) (ldiff list (cdr list)))))
+
+(define-test ldiff.3
+  (let ((list '(a b c . d)))
+    (assert-equal '(a b c) (ldiff list 'd))))
+
+(define-test ldiff.4
+  (let ((list '(a b c . d)))
+    (assert-equal '(a b c . d) (ldiff list (cons 'c 'd)))))
+
+(define-test ldiff.5
+  (let ((list '(a b c . d)))
+    (assert-equal '(a b c . d) (ldiff list 234))))
+
+(define-test ldiff.6
+  (let ((list '(a b c . d)))
+    (assert-equal '(a b c . d) (ldiff list nil))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the union function
 
 (define-test union.1

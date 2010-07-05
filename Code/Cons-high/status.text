@@ -89,6 +89,8 @@ What is done:
 
   tailp, function with tests. 
 
+  ldiff, function with tests.
+
   union, function with several special cases.  Some tests.
 
   adjoin, function with some special cases.  Some tests.
@@ -115,7 +117,6 @@ What remains to to:
 
   Include more functions that can be found in the conses dictionary:
 
-     ldiff
      get-properties
      getf
      intersection
