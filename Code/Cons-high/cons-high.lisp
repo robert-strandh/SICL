@@ -2051,15 +2051,15 @@
 
 (defun nsublis-test-not-key (alist tree test key)
   (labels ((traverse (tree)
-             (let ((entry (assoc-test-not-keyh (car tree) alist test key)))
+             (let ((entry (assoc-test-not-key (car tree) alist test key)))
                (cond ((not (null entry)) (setf (car tree) (cdr entry)))
                      ((atom (car tree)) nil)
                      (t (traverse (car tree)))))
-	     (let ((entry (assoc-test-not-keyh (cdr tree) alist test key)))
+	     (let ((entry (assoc-test-not-key (cdr tree) alist test key)))
                (cond ((not (null entry)) (setf (cdr tree) (cdr entry)))
                      ((atom tree) nil)
                      (t (traverse (cdr tree)))))))
-    (let ((entry (assoc-test-not-keyh tree alist test key)))
+    (let ((entry (assoc-test-not-key tree alist test key)))
       (cond ((not (null entry)) (cdr entry))
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
@@ -2484,6 +2484,168 @@
 		(if use-hash
 		    (union-identity-eql-hash list1 list2)
 		    (union-identity-eql list1 list2)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function intersection
+
+(defun intersection-identity-eql (list1 list2)
+  (loop for element in list1
+	when (member element list2)
+	  collect element))
+
+(defun intersection-identity-eq (list1 list2)
+  (loop for element in list1
+	when (member element list2 :test #'eq)
+	  collect element))
+
+(defun intersection-key-eql (list1 list2 key)
+  (loop for element in list1
+	when (member element list2 :key key)
+	  collect element))
+
+(defun intersection-key-eq (list1 list2 key)
+  (loop for element in list1
+	when (member element list2 :test #'eq :key key)
+	  collect element))
+
+(defun intersection-identity-test (list1 list2 test)
+  (loop for element in list1
+	when (member element list2 :test test)
+	  collect element))
+
+(defun intersection-key-test (list1 list2 key test)
+  (loop for element in list1
+	when (member element list2 :test test :key key)
+	  collect element))
+
+(defun intersection-identity-test-not (list1 list2 test-not)
+  (loop for element in list1
+	when (member element list2 :test-not test-not)
+	  collect element))
+
+(defun intersection-key-test-not (list1 list2 key test-not)
+  (loop for element in list1
+	when (member element list2 :test-not test-not :key key)
+	  collect element))
+
+(defun intersection-identity-eq-hash (list1 list2)
+  (let ((table (make-hash-table :test #'eq)))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element in list1
+	  when (nth-value 1 (gethash element table))
+	    collect element)))
+
+(defun intersection-identity-eql-hash (list1 list2)
+  (let ((table (make-hash-table :test #'eql)))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element in list1
+	  when (nth-value 1 (gethash element table))
+	    collect element)))
+
+(defun intersection-identity-equal-hash (list1 list2)
+  (let ((table (make-hash-table :test #'equal)))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element in list1
+	  when (nth-value 1 (gethash element table))
+	    collect element)))
+
+(defun intersection-identity-equalp-hash (list1 list2)
+  (let ((table (make-hash-table :test #'equalp)))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element in list1
+	  when (nth-value 1 (gethash element table))
+	    collect element)))
+
+(defun intersection-key-eq-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'eq)))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list1
+	  when (nth-value 1 (gethash (funcall key element) table))
+	    collect element)))
+
+(defun intersection-key-eql-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'eql)))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list1
+	  when (nth-value 1 (gethash (funcall key element) table))
+	    collect element)))
+
+(defun intersection-key-equal-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'equal)))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list1
+	  when (nth-value 1 (gethash (funcall key element) table))
+	    collect element)))
+
+(defun intersection-key-equalp-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'equalp)))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list1
+	  when (nth-value 1 (gethash (funcall key element) table))
+	    collect element)))
+
+(defun intersection (list1 list2 &key key test test-not)
+  ;; FIXME do this better
+  (assert (or (null test) (null test-not)))
+  (let ((use-hash (> (* (length list1) (length list2)) 1000)))
+    (if key
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (intersection-key-eq-hash list1 list2 key)
+		       (intersection-key-eq list1 list2 key)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (intersection-key-eql-hash list1 list2 key)
+		       (intersection-key-eql list1 list2 key)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (intersection-key-equal-hash list1 list2 key)
+		       (intersection-key-test list1 list2 key #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (intersection-key-equalp-hash list1 list2 key)
+		       (intersection-key-test list1 list2 key #'equalp)))
+		  (t
+		   (intersection-key-test list1 list2 key test)))
+	    (if test-not
+		(intersection-key-test-not list1 list2 key test-not)
+		(if use-hash
+		    (intersection-key-eql-hash list1 list2 key)
+		    (intersection-key-eql list1 list2 key))))
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (intersection-identity-eq-hash list1 list2)
+		       (intersection-identity-eq list1 list2)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (intersection-identity-eql-hash list1 list2)
+		       (intersection-identity-eql list1 list2)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (intersection-identity-equal-hash list1 list2)
+		       (intersection-identity-test list1 list2 #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (intersection-identity-equalp-hash list1 list2)
+		       (intersection-identity-test list1 list2 #'equalp)))
+		  (t
+		   (intersection-identity-test list1 list2 test)))
+	    (if test-not
+		(intersection-identity-test-not list1 list2 test-not)
+		(if use-hash
+		    (intersection-identity-eql-hash list1 list2)
+		    (intersection-identity-eql list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
