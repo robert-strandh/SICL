@@ -1538,6 +1538,74 @@
 				'("abc" "def" "ghi")
 				:test #'equal)))
 
+(define-test union.10
+  (assert-equal 1
+                (length (union '(1) '(3) :key #'oddp))))
+
+(define-test union.11
+  (assert-equal 2
+                (length (union '(4 1) '(3) :key #'oddp))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the intersection function
+
+(define-test intersection.1
+  (assert-equal '()
+                (intersection '() '())))
+
+(define-test intersection.2
+  (assert-equal '()
+                (intersection '() '() :test #'eq)))
+
+(define-test intersection.3
+  (assert-equal '()
+                (intersection '() '() :test #'equal)))
+
+(define-test intersection.4
+  (assert-equal '()
+                (intersection '() '() :test #'equalp)))
+
+(define-test intersection.5
+  (assert-equal '()
+                (intersection '(a b) '())))
+
+(define-test intersection.6
+  (assert-equal '()
+                (intersection '(a b) '() :test #'eq)))
+
+(define-test intersection.7
+  (assert-equal '()
+                (intersection '(a b) '() :test #'equal)))
+
+(define-test intersection.8
+  (assert-equal '()
+                (intersection '(a b) '() :test #'equalp)))
+
+(define-test intersection.9
+  (assert-equal '()
+                (intersection '() '(a b))))
+
+(define-test intersection.10
+  (assert-equal '()
+                (intersection '() '(a b) :test #'eq)))
+
+(define-test intersection.11
+  (assert-equal '()
+                (intersection '() '(a b) :test #'equal)))
+
+(define-test intersection.12
+  (assert-equal '()
+                (intersection '() '(a b) :test #'equalp)))
+
+(define-test intersection.13
+  (assert-equal 1
+                (length (intersection '(1) '(3) :key #'oddp))))
+
+(define-test intersection.14
+  (assert-equal 0
+                (length (intersection '(1) '(4) :key #'oddp))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the adjoin function

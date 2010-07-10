@@ -2320,14 +2320,14 @@
 (defun union-key-eql (list1 list2 key)
   (loop with result = list2
 	for element in list1
-	unless (member element list2 :key key)
+	unless (member (funcall key element) list2 :key key)
 	  do (push element result)
 	finally (return result)))
 
 (defun union-key-eq (list1 list2 key)
   (loop with result = list2
 	for element in list1
-	unless (member element list2 :test #'eq :key key)
+	unless (member (funcall key element) list2 :test #'eq :key key)
 	  do (push element result)
 	finally (return result)))
 
@@ -2341,7 +2341,7 @@
 (defun union-key-test (list1 list2 key test)
   (loop with result = list2
 	for element in list1
-	unless (member element list2 :test test :key key)
+	unless (member (funcall key element) list2 :test test :key key)
 	  do (push element result)
 	finally (return result)))
 
@@ -2355,7 +2355,7 @@
 (defun union-key-test-not (list1 list2 key test-not)
   (loop with result = list2
 	for element in list1
-	unless (member element list2 :test-not test-not :key key)
+	unless (member (funcall key element) list2 :test-not test-not :key key)
 	  do (push element result)
 	finally (return result)))
 
@@ -2501,12 +2501,12 @@
 
 (defun intersection-key-eql (list1 list2 key)
   (loop for element in list1
-	when (member element list2 :key key)
+	when (member (funcall key element) list2 :key key)
 	  collect element))
 
 (defun intersection-key-eq (list1 list2 key)
   (loop for element in list1
-	when (member element list2 :test #'eq :key key)
+	when (member (funcall key element) list2 :test #'eq :key key)
 	  collect element))
 
 (defun intersection-identity-test (list1 list2 test)
@@ -2516,7 +2516,7 @@
 
 (defun intersection-key-test (list1 list2 key test)
   (loop for element in list1
-	when (member element list2 :test test :key key)
+	when (member (funcall key element) list2 :test test :key key)
 	  collect element))
 
 (defun intersection-identity-test-not (list1 list2 test-not)
@@ -2526,7 +2526,7 @@
 
 (defun intersection-key-test-not (list1 list2 key test-not)
   (loop for element in list1
-	when (member element list2 :test-not test-not :key key)
+	when (member (funcall key element) list2 :test-not test-not :key key)
 	  collect element))
 
 (defun intersection-identity-eq-hash (list1 list2)
