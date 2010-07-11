@@ -81,15 +81,6 @@
 	    `(progn (rplaca ,subform-temp ,store-temp) ,store-temp)
 	    `(car ,subform-temp))))
 
-(define-setf-expander rest (x)
-  (let ((subform-temp (gensym))
-	(store-temp (gensym)))
-    (values (list subform-temp)
-	    (list x)
-	    (list store-temp)
-	    `(progn (rplacd ,subform-temp ,store-temp) ,store-temp)
-	    `(cdr ,subform-temp))))
-
 (defmacro define-nth-expander (reader n)
   `(define-setf-expander ,reader (x)
      (let ((subform-temp (gensym))
@@ -110,20 +101,6 @@
 (define-nth-expander ninth 8)
 (define-nth-expander tenth 9)
      
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Nth
-
-(define-setf-expander nth (n x)
-  (let ((n-temp (gensym))
-	(x-temp (gensym))
-	(store-temp (gensym)))
-    (values (list n-temp x-temp)
-	    (list n x)
-	    (list store-temp)
-	    `(progn (rplaca (nthcdr ,n-temp ,x-temp) ,store-temp) ,store-temp)
-	    `(nth ,n-temp ,x-temp))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; The 
