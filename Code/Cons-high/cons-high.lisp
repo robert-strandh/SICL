@@ -3563,3 +3563,31 @@
 		(if use-hash
 		    (subsetp-identity-eql-hash list1 list2)
 		    (subsetp-identity-eql list1 list2)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function getf
+
+(defun getf (plist indicator &optional default)
+  (check-type plist list)
+  (loop for rest on plist by #'cddr
+	;; FIXME do this better
+	do (assert (consp (cdr rest)))
+	when (eq (car rest) indicator)
+	  return (cadr rest)
+	finally (return default)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function get-properties
+
+(defun get-properties (plist indicator-list)
+  (check-type plist list)
+  (loop for rest on plist by #'cddr
+	;; FIXME do this better
+	do (assert (consp (cdr rest)))
+	   (let ((temp (member (car rest) indicator-list :test #'eq)))
+	     (unless (null temp)
+	       (return-from get-properties (values (car temp) (cadr rest) rest))))
+	finally (return (values nil nil nil))))
+

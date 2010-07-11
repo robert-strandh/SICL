@@ -111,6 +111,10 @@ What is done:
 
   subsetp, function with several special cases.  No tests.
 
+  getf, function.  No tests.
+
+  get-properties, function. No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -130,7 +134,12 @@ What remains to to:
 
   Add tests to test functions that are currently not tested. 
 
-  Include more functions that can be found in the conses dictionary:
+  Include more things that can be found in the conses dictionary:
 
-     get-properties
-     getf
+     setf expander for getf
+     function (setf rest) (move from setf-expanders)
+     function (setf nth) (move from setf-expanders)
+     macro push
+     macro pop
+     macro remf
+     macro pushnew
