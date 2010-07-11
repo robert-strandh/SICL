@@ -105,6 +105,9 @@ What is done:
 
   adjoin, function with some special cases.  Some tests.
 
+  set-exclusive-or, function with several special cases.  No tests.
+
+  nset-exclusive-or, function with several special cases.  No tests.
 
 How to test it:
 
@@ -129,6 +132,4 @@ What remains to to:
 
      get-properties
      getf
-     set-exclusive-or
-     nset-exclusive-or
      subsetp
