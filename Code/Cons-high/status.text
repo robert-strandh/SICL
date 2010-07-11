@@ -119,6 +119,10 @@ What is done:
 
   macro pop.  No tests.
 
+  setf expander for rest
+
+  function (setf nth)
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -141,7 +145,5 @@ What remains to to:
   Include more things that can be found in the conses dictionary:
 
      setf expander for getf
-     function (setf rest) (move from setf-expanders)
-     function (setf nth) (move from setf-expanders)
      macro remf
      macro pushnew

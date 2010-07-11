@@ -277,6 +277,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Setf expander for rest
+
+(define-setf-expander rest (x)
+  (let ((subform-temp (gensym))
+	(store-temp (gensym)))
+    (values (list subform-temp)
+	    (list x)
+	    (list store-temp)
+	    `(progn (rplacd ,subform-temp ,store-temp) ,store-temp)
+	    `(cdr ,subform-temp))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; type list
 
 (deftype list () '(or cons null))
