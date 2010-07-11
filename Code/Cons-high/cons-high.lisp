@@ -2771,6 +2771,229 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function set-difference
+
+(defun set-difference-identity-eql (list1 list2)
+  (loop for element in list1
+	unless (member element list2)
+	  collect element))
+
+(defun set-difference-identity-eq (list1 list2)
+  (loop for element in list1
+	unless (member element list2 :test #'eq)
+	  collect element))
+
+(defun set-difference-key-eql (list1 list2 key)
+  (loop for element in list1
+	unless (member (funcall key element) list2 :key key)
+	  collect element))
+
+(defun set-difference-key-eq (list1 list2 key)
+  (loop for element in list1
+	unless (member (funcall key element) list2 :test #'eq :key key)
+	  collect element))
+
+(defun set-difference-identity-test (list1 list2 test)
+  (loop for element in list1
+	unless (member element list2 :test test)
+	  collect element))
+
+(defun set-difference-key-test (list1 list2 key test)
+  (loop for element in list1
+	unless (member (funcall key element) list2 :test test :key key)
+	  collect element))
+
+(defun set-difference-identity-test-not (list1 list2 test-not)
+  (loop for element in list1
+	unless (member element list2 :test-not test-not)
+	  collect element))
+
+(defun set-difference-key-test-not (list1 list2 key test-not)
+  (loop for element in list1
+	unless (member (funcall key element) list2 :test-not test-not :key key)
+	  collect element))
+
+(defun set-difference-identity-eq-hash (list1 list2)
+  (let ((table (make-hash-table :test #'eq)))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element in list1
+	  unless (nth-value 1 (gethash element table))
+	    collect element)))
+
+(defun set-difference-identity-eql-hash (list1 list2)
+  (let ((table (make-hash-table :test #'eql)))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element in list1
+	  unless (nth-value 1 (gethash element table))
+	    collect element)))
+
+(defun set-difference-identity-equal-hash (list1 list2)
+  (let ((table (make-hash-table :test #'equal)))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element in list1
+	  unless (nth-value 1 (gethash element table))
+	    collect element)))
+
+(defun set-difference-identity-equalp-hash (list1 list2)
+  (let ((table (make-hash-table :test #'equalp)))
+    (loop for element in list2
+	  do (setf (gethash element table) element))
+    (loop for element in list1
+	  unless (nth-value 1 (gethash element table))
+	    collect element)))
+
+(defun set-difference-key-eq-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'eq)))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list1
+	  unless (nth-value 1 (gethash (funcall key element) table))
+	    collect element)))
+
+(defun set-difference-key-eql-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'eql)))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list1
+	  unless (nth-value 1 (gethash (funcall key element) table))
+	    collect element)))
+
+(defun set-difference-key-equal-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'equal)))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list1
+	  unless (nth-value 1 (gethash (funcall key element) table))
+	    collect element)))
+
+(defun set-difference-key-equalp-hash (list1 list2 key)
+  (let ((table (make-hash-table :test #'equalp)))
+    (loop for element in list2
+	  do (setf (gethash (funcall key element) table) element))
+    (loop for element in list1
+	  unless (nth-value 1 (gethash (funcall key element) table))
+	    collect element)))
+
+(defun set-difference (list1 list2 &key key test test-not)
+  ;; FIXME do this better
+  (assert (or (null test) (null test-not)))
+  (let ((use-hash (> (* (length list1) (length list2)) 1000)))
+    (if key
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (set-difference-key-eq-hash list1 list2 key)
+		       (set-difference-key-eq list1 list2 key)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (set-difference-key-eql-hash list1 list2 key)
+		       (set-difference-key-eql list1 list2 key)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (set-difference-key-equal-hash list1 list2 key)
+		       (set-difference-key-test list1 list2 key #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (set-difference-key-equalp-hash list1 list2 key)
+		       (set-difference-key-test list1 list2 key #'equalp)))
+		  (t
+		   (set-difference-key-test list1 list2 key test)))
+	    (if test-not
+		(set-difference-key-test-not list1 list2 key test-not)
+		(if use-hash
+		    (set-difference-key-eql-hash list1 list2 key)
+		    (set-difference-key-eql list1 list2 key))))
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (set-difference-identity-eq-hash list1 list2)
+		       (set-difference-identity-eq list1 list2)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (set-difference-identity-eql-hash list1 list2)
+		       (set-difference-identity-eql list1 list2)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (set-difference-identity-equal-hash list1 list2)
+		       (set-difference-identity-test list1 list2 #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (set-difference-identity-equalp-hash list1 list2)
+		       (set-difference-identity-test list1 list2 #'equalp)))
+		  (t
+		   (set-difference-identity-test list1 list2 test)))
+	    (if test-not
+		(set-difference-identity-test-not list1 list2 test-not)
+		(if use-hash
+		    (set-difference-identity-eql-hash list1 list2)
+		    (set-difference-identity-eql list1 list2)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nset-difference
+
+;;; We take advantage of the fact that the standard doesn't 
+;;; require this function to have any side effects. 
+
+(defun nset-difference (list1 list2 &key key test test-not)
+  ;; FIXME do this better
+  (assert (or (null test) (null test-not)))
+  (let ((use-hash (> (* (length list1) (length list2)) 1000)))
+    (if key
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (set-difference-key-eq-hash list1 list2 key)
+		       (set-difference-key-eq list1 list2 key)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (set-difference-key-eql-hash list1 list2 key)
+		       (set-difference-key-eql list1 list2 key)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (set-difference-key-equal-hash list1 list2 key)
+		       (set-difference-key-test list1 list2 key #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (set-difference-key-equalp-hash list1 list2 key)
+		       (set-difference-key-test list1 list2 key #'equalp)))
+		  (t
+		   (set-difference-key-test list1 list2 key test)))
+	    (if test-not
+		(set-difference-key-test-not list1 list2 key test-not)
+		(if use-hash
+		    (set-difference-key-eql-hash list1 list2 key)
+		    (set-difference-key-eql list1 list2 key))))
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (set-difference-identity-eq-hash list1 list2)
+		       (set-difference-identity-eq list1 list2)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (set-difference-identity-eql-hash list1 list2)
+		       (set-difference-identity-eql list1 list2)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (set-difference-identity-equal-hash list1 list2)
+		       (set-difference-identity-test list1 list2 #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (set-difference-identity-equalp-hash list1 list2)
+		       (set-difference-identity-test list1 list2 #'equalp)))
+		  (t
+		   (set-difference-identity-test list1 list2 test)))
+	    (if test-not
+		(set-difference-identity-test-not list1 list2 test-not)
+		(if use-hash
+		    (set-difference-identity-eql-hash list1 list2)
+		    (set-difference-identity-eql list1 list2)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function adjoin
 
 (defun adjoin-identity-eq (item list)

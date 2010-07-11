@@ -34,6 +34,8 @@
 		 #:null #:acons #:pairlis #:copy-alist
 		 #:tailp #:ldiff
 		 #:union #:nunion #:intersection #:nintersection
+		 #:set-difference #:nset-difference
+		 #:set-exclusive-or #:nset-exclusive-or
 		 #:adjoin))
   (:export . #1#))
 

@@ -99,6 +99,10 @@ What is done:
 
   nintersection, function with several special cases.  Some tests.
 
+  set-difference, function with several special cases.  No tests.
+
+  nset-difference, function with several special cases.  No tests.
+
   adjoin, function with some special cases.  Some tests.
 
 
@@ -125,8 +129,6 @@ What remains to to:
 
      get-properties
      getf
-     set-difference
-     nset-difference
      set-exclusive-or
      nset-exclusive-or
      subsetp
