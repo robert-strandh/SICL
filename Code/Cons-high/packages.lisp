@@ -33,7 +33,7 @@
                  #:sublis #:nsublis
 		 #:null #:acons #:pairlis #:copy-alist
 		 #:tailp #:ldiff
-		 #:union #:intersection
+		 #:union #:nunion #:intersection #:nintersection
 		 #:adjoin))
   (:export . #1#))
 

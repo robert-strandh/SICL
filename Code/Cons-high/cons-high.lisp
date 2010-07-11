@@ -2487,6 +2487,67 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function nunion
+
+;;; We take advantage of the fact that the standard doesn't 
+;;; require this function to have any side effects. 
+
+(defun nunion (list1 list2 &key key test test-not)
+  ;; FIXME do this better
+  (assert (or (null test) (null test-not)))
+  (let ((use-hash (> (* (length list1) (length list2)) 1000)))
+    (if key
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (union-key-eq-hash list1 list2 key)
+		       (union-key-eq list1 list2 key)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (union-key-eql-hash list1 list2 key)
+		       (union-key-eql list1 list2 key)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (union-key-equal-hash list1 list2 key)
+		       (union-key-test list1 list2 key #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (union-key-equalp-hash list1 list2 key)
+		       (union-key-test list1 list2 key #'equalp)))
+		  (t
+		   (union-key-test list1 list2 key test)))
+	    (if test-not
+		(union-key-test-not list1 list2 key test-not)
+		(if use-hash
+		    (union-key-eql-hash list1 list2 key)
+		    (union-key-eql list1 list2 key))))
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (union-identity-eq-hash list1 list2)
+		       (union-identity-eq list1 list2)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (union-identity-eql-hash list1 list2)
+		       (union-identity-eql list1 list2)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (union-identity-equal-hash list1 list2)
+		       (union-identity-test list1 list2 #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (union-identity-equalp-hash list1 list2)
+		       (union-identity-test list1 list2 #'equalp)))
+		  (t
+		   (union-identity-test list1 list2 test)))
+	    (if test-not
+		(union-identity-test-not list1 list2 test-not)
+		(if use-hash
+		    (union-identity-eql-hash list1 list2)
+		    (union-identity-eql list1 list2)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function intersection
 
 (defun intersection-identity-eql (list1 list2)
@@ -2594,6 +2655,67 @@
 	    collect element)))
 
 (defun intersection (list1 list2 &key key test test-not)
+  ;; FIXME do this better
+  (assert (or (null test) (null test-not)))
+  (let ((use-hash (> (* (length list1) (length list2)) 1000)))
+    (if key
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (intersection-key-eq-hash list1 list2 key)
+		       (intersection-key-eq list1 list2 key)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (intersection-key-eql-hash list1 list2 key)
+		       (intersection-key-eql list1 list2 key)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (intersection-key-equal-hash list1 list2 key)
+		       (intersection-key-test list1 list2 key #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (intersection-key-equalp-hash list1 list2 key)
+		       (intersection-key-test list1 list2 key #'equalp)))
+		  (t
+		   (intersection-key-test list1 list2 key test)))
+	    (if test-not
+		(intersection-key-test-not list1 list2 key test-not)
+		(if use-hash
+		    (intersection-key-eql-hash list1 list2 key)
+		    (intersection-key-eql list1 list2 key))))
+	(if test
+	    (cond ((or (eq test #'eq) (eq test 'eq))
+		   (if use-hash
+		       (intersection-identity-eq-hash list1 list2)
+		       (intersection-identity-eq list1 list2)))
+		  ((or (eq test #'eql) (eq test 'eql))
+		   (if use-hash
+		       (intersection-identity-eql-hash list1 list2)
+		       (intersection-identity-eql list1 list2)))
+		  ((or (eq test #'equal) (eq test 'equal))
+		   (if use-hash
+		       (intersection-identity-equal-hash list1 list2)
+		       (intersection-identity-test list1 list2 #'equal)))
+		  ((or (eq test #'equalp) (eq test 'equalp))
+		   (if use-hash
+		       (intersection-identity-equalp-hash list1 list2)
+		       (intersection-identity-test list1 list2 #'equalp)))
+		  (t
+		   (intersection-identity-test list1 list2 test)))
+	    (if test-not
+		(intersection-identity-test-not list1 list2 test-not)
+		(if use-hash
+		    (intersection-identity-eql-hash list1 list2)
+		    (intersection-identity-eql list1 list2)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nintersection
+
+;;; We take advantage of the fact that the standard doesn't 
+;;; require this function to have any side effects. 
+
+(defun nintersection (list1 list2 &key key test test-not)
   ;; FIXME do this better
   (assert (or (null test) (null test-not)))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))

@@ -93,7 +93,11 @@ What is done:
 
   union, function with several special cases.  Some tests.
 
+  nunion, function with several special cases.  Some tests.
+
   intersection, function with several special cases.  Some tests.
+
+  nintersection, function with several special cases.  Some tests.
 
   adjoin, function with some special cases.  Some tests.
 
@@ -121,11 +125,8 @@ What remains to to:
 
      get-properties
      getf
-     nintersection
      set-difference
      nset-difference
      set-exclusive-or
      nset-exclusive-or
      subsetp
-     nunion
-  

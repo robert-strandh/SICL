@@ -1548,6 +1548,60 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the nunion function
+
+(define-test nunion.1
+  (assert-equal '()
+		(nunion '() '())))
+
+(define-test nunion.2
+  (assert-equal '()
+		(nunion '() '() :test #'eq)))
+
+(define-test nunion.3
+  (assert-equal '()
+		(nunion '() '() :test #'eql)))
+
+(define-test nunion.4
+  (assert-equal '()
+		(nunion '() '() :test #'equal)))
+
+(define-test nunion.5
+  (assert-equal '()
+		(nunion '() '() :test #'equalp)))
+
+(define-test nunion.6
+  (assert-equal '()
+		(nunion '() '() :test #'<)))
+
+(define-test nunion.7
+  (assert-equal '()
+		(set-difference (nunion (list 1 2 3) (list 3 4 5))
+				'(1 2 3 4 5))))
+
+(define-test nunion.8
+  (assert-equal '()
+		(set-difference (nunion (list 'abc 'def) (list 'abc 'ghi)
+					:test #'eq)
+				'(abc def ghi)
+				:test #'eq)))
+(define-test nunion.9
+  (assert-equal '()
+		(set-difference (nunion (list "abc" "def") (list "abc" "ghi")
+					:test #'equal)
+				'("abc" "def" "ghi")
+				:test #'equal)))
+
+(define-test nunion.10
+  (assert-equal 1
+                (length (nunion (list 1) (list 3) :key #'oddp))))
+
+(define-test nunion.11
+  (assert-equal 2
+                (length (nunion (list 4 1) (list 3) :key #'oddp))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the intersection function
 
 (define-test intersection.1
@@ -1605,6 +1659,66 @@
 (define-test intersection.14
   (assert-equal 0
                 (length (intersection '(1) '(4) :key #'oddp))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nintersection function
+
+(define-test nintersection.1
+  (assert-equal '()
+                (nintersection '() '())))
+
+(define-test nintersection.2
+  (assert-equal '()
+                (nintersection '() '() :test #'eq)))
+
+(define-test nintersection.3
+  (assert-equal '()
+                (nintersection '() '() :test #'equal)))
+
+(define-test nintersection.4
+  (assert-equal '()
+                (nintersection '() '() :test #'equalp)))
+
+(define-test nintersection.5
+  (assert-equal '()
+                (nintersection (list 'a 'b) '())))
+
+(define-test nintersection.6
+  (assert-equal '()
+                (nintersection (list 'a 'b) '() :test #'eq)))
+
+(define-test nintersection.7
+  (assert-equal '()
+                (nintersection (list 'a 'b) '() :test #'equal)))
+
+(define-test nintersection.8
+  (assert-equal '()
+                (nintersection (list 'a 'b) '() :test #'equalp)))
+
+(define-test nintersection.9
+  (assert-equal '()
+                (nintersection '() (list 'a 'b))))
+
+(define-test nintersection.10
+  (assert-equal '()
+                (nintersection '() (list 'a 'b) :test #'eq)))
+
+(define-test nintersection.11
+  (assert-equal '()
+                (nintersection '() (list 'a 'b) :test #'equal)))
+
+(define-test nintersection.12
+  (assert-equal '()
+                (nintersection '() (list 'a 'b) :test #'equalp)))
+
+(define-test nintersection.13
+  (assert-equal 1
+                (length (nintersection (list 1) (list 3) :key #'oddp))))
+
+(define-test nintersection.14
+  (assert-equal 0
+                (length (nintersection (list 1) (list 4) :key #'oddp))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
