@@ -115,6 +115,10 @@ What is done:
 
   get-properties, function. No tests.
 
+  macro push.  No tests.
+
+  macro pop.  No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -139,7 +143,5 @@ What remains to to:
      setf expander for getf
      function (setf rest) (move from setf-expanders)
      function (setf nth) (move from setf-expanders)
-     macro push
-     macro pop
      macro remf
      macro pushnew
