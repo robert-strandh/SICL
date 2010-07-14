@@ -54,6 +54,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function list
+
+;;; We need the list function in the implementation of other functions
+;;; and or macros in this module, so we define it early.
+
+;;; this implementation assumes that there is no 
+;;; structure sharing between the &rest argument
+;;; and the last argument to apply
+(defun list (&rest elements)
+  elements)
+
+(define-compiler-macro list (&rest args)
+  (if (null args)
+      'nil
+      `(cons ,(car args) (list ,@(cdr args)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Macro push
 
 ;;; We need the push macro in the implementation of other functions
@@ -293,21 +311,6 @@
 ;;; type list
 
 (deftype list () '(or cons null))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function list
-
-;;; this implementation assumes that there is no 
-;;; structure sharing between the &rest argument
-;;; and the last argument to apply
-(defun list (&rest elements)
-  elements)
-
-(define-compiler-macro list (&rest args)
-  (if (null args)
-      'nil
-      `(cons ,(car args) (list ,@(cdr args)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3624,6 +3627,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Setf expander for getf
+
+(define-setf-expander getf (place indicator &optional default &environment env)
+  (let ((indicator-var (gensym))
+	(default-var (gensym))
+	(value-var (gensym)))
+    (multiple-value-bind (vars vals store-vars writer-form reader-form)
+	(get-setf-expansion place env)
+      (values (append vars (list indicator-var default-var))
+	      (append vals (list indicator default))
+	      (list value-var)
+	      `(progn (loop for rest on ,reader-form by #'cddr
+			    when (eq (car rest) ,indicator-var)
+			      do (setf (cadr rest) ,value-var)
+				 (return nil)
+			    finally (let ((,(car store-vars)
+					   (list* ,indicator-var ,value-var ,reader-form)))
+				      ,writer-form))
+		      ,value-var)
+	      `(getf ,reader-form ,indicator-var ,default)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function get-properties
 
 (defun get-properties (plist indicator-list)
@@ -3635,4 +3661,34 @@
 	     (unless (null temp)
 	       (return-from get-properties (values (car temp) (cadr rest) rest))))
 	finally (return (values nil nil nil))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro remf
+
+;;; FIXME, I guess macros such as remf should check that 
+;;; store-vars has a length of 1.
+
+(defmacro remf (place indicator &environment env)
+  (let ((indicator-var (gensym)))
+    (multiple-value-bind (vars vals store-vars writer-form reader-form)
+	(get-setf-expansion place env)
+      `(let (,@(mapcar #'list vars vals)
+	     (,indicator-var ,indicator))
+	 (setq ,(car store-vars) ,reader-form)
+	 (if (null ,(car store-vars))
+	     nil
+	     (if (eq (car ,(car store-vars)) ,indicator-var)
+		 (progn (setf ,(car store-vars) (cddr ,(car store-vars)))
+			,writer-form
+			t)
+		 (loop for rest on (cdr ,(car store-vars)) by #'cddr
+		       when (null (cdr rest))
+			 return nil
+		       do (assert (consp (cddr rest)))
+		       when (eq (cadr rest) ,indicator-var)
+			 do (setf (cdr rest) (cdddr rest))
+			    (return t))))))))
+
+			  
 

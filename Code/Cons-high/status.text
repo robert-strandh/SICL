@@ -123,6 +123,10 @@ What is done:
 
   function (setf nth)
 
+  setf expander for getf.  No tests. 
+
+  macro remf.  No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -144,6 +148,4 @@ What remains to to:
 
   Include more things that can be found in the conses dictionary:
 
-     setf expander for getf
-     macro remf
      macro pushnew

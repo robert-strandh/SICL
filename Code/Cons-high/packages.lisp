@@ -38,7 +38,8 @@
 		 #:set-exclusive-or #:nset-exclusive-or
 		 #:adjoin #:subsetp
 		 #:getf #:get-properties
-		 #:push #:pop))
+		 #:push #:pop
+		 #:remf #:pushnew))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
