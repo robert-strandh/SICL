@@ -127,6 +127,8 @@ What is done:
 
   macro remf.  No tests.
 
+  macro pushnew.  No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and cons-high.asd into your lisp system.
@@ -145,7 +147,3 @@ What remains to to:
   that condition instead of signaling a simple-error.
 
   Add tests to test functions that are currently not tested. 
-
-  Include more things that can be found in the conses dictionary:
-
-     macro pushnew
