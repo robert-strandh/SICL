@@ -68,9 +68,9 @@ What is done:
 
   rassoc-if-not, function with several special cases. Some tests.
 
-  sublis, function with several special cases.  No tests.
+  sublis, function with several special cases.  A few tests.
 
-  nsublis, function with several special cases.  No tests.
+  nsublis, function with several special cases.  A few tests.
 
   member, function with several special cases.  Some tests.
 

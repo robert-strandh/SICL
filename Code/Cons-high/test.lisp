@@ -1398,6 +1398,36 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the sublis function
+
+(define-test sublis.1
+  (assert-equal '((1 x) (((2 y z))) ((c)))
+		(sublis '((a . 1) (b . 2))
+			(copy-tree '((a x) (((b y z))) ((c)))))))
+
+(define-test sublis.2
+  (assert-equal '(1 ((2)) (1))
+		(sublis '((a . 1) (b . 2))
+			(copy-tree '((a x) (((b y z))) ((a))))
+			:key #'car :test #'equal)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nsublis function
+
+(define-test nsublis.1
+  (assert-equal '((1 x) (((2 y z))) ((c)))
+		(sublis '((a . 1) (b . 2))
+			(copy-tree '((a x) (((b y z))) ((c)))))))
+
+(define-test nsublis.2
+  (assert-equal '(1 ((2)) (1))
+		(sublis '((a . 1) (b . 2))
+			(copy-tree '((a x) (((b y z))) ((a))))
+			:key #'car :test #'equal)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the pairlis function
 
 (define-test pairlis.1
