@@ -573,6 +573,8 @@
 ;;;
 ;;; Function maplist
 
+
+
 (defun maplist (function &rest lists)
   ;; FIXME: do this better
   (assert (not (null lists)))
@@ -591,13 +593,14 @@
       form
       (let ((funvar (gensym))
 	    (vars (loop for var in lists collect (gensym))))
-	`(loop with ,funvar = ,function
-	       ,@(apply #'append (loop for var in vars
-				       for list in lists
-				       collect `(for ,var = ,list
-                                                       then (cdr ,var)
-                                                     until (endp ,var))))
-	       collect (funcall ,funvar ,@vars)))))
+        `(loop with ,funvar = ,function
+              ,@(loop for var in vars
+                   for list in lists
+                   append `(for ,var = ,list then (cdr ,var)))
+              ,@(loop for var in vars
+                   for list in lists
+                   append `(until (endp ,var)))
+            collect (funcall ,funvar ,@vars)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -625,14 +628,16 @@
 	    (firstlist (gensym))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       with ,firstlist = ,(car lists)
-	       ,@(apply #'append (loop for var in vars
-				       for list in (cons firstlist (cdr lists))
-				       collect `(for ,var = ,list
-                                                       then (cdr ,var)
-                                                     until (endp ,var))))
-	       do (funcall ,funvar ,@vars)
-	       finally (return ,firstlist)))))
+            with ,firstlist = ,(car lists)
+            ,@ (loop for var in vars
+                  for list in (cons firstlist (cdr lists))
+                  append `(for ,var = ,list
+                               then (cdr ,var)))
+            ,@ (loop for var in vars
+                  for list in (cons firstlist (cdr lists))
+                  append `(until (endp ,var)))
+            do (funcall ,funvar ,@vars)
+            finally (return ,firstlist)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
