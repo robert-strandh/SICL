@@ -924,14 +924,16 @@
     (assert-eq list1 (nconc list1 list2))
     (assert-eq list2 (cdddr list1))))
 
-(define-test nconc.error.1
-  (assert-error 'type-error (nconc (copy-tree '(a . b))
-                                   (copy-tree '(z)))))
+(define-test nconc.5
+  (assert-equal '(a z)
+		(nconc (copy-tree '(a . b))
+		       (copy-tree '(z)))))
 
-(define-test nconc.error.2
-  (assert-error 'type-error (nconc (copy-tree '(x y z))
-                                   (copy-tree '(a . b))
-                                   (copy-tree '(z)))))
+(define-test nconc.6
+  (assert-equal '(x y z a z)
+		(nconc (copy-tree '(x y z))
+		       (copy-tree '(a . b))
+		       (copy-tree '(z)))))
 
 (define-test nconc.order.1
   (assert-equal

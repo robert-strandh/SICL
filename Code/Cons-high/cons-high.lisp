@@ -62,8 +62,10 @@
 ;;; this implementation assumes that there is no 
 ;;; structure sharing between the &rest argument
 ;;; and the last argument to apply
-(defun list (&rest elements)
-  elements)
+
+(eval-when (:compile-toplevel :load-toplevel)
+  (defun list (&rest elements)
+    elements))
 
 (define-compiler-macro list (&rest args)
   (if (null args)
@@ -125,8 +127,7 @@
                         (let ((next (cdr frontier)))
                           (loop until (atom next)
                                 do (setf frontier next)
-                                   (setf next (cdr next)))
-                          (check-type next null "nil"))
+                                   (setf next (cdr next))))
                         (setf (cdr frontier) list))))
     result))
 
