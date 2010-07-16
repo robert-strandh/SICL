@@ -114,7 +114,8 @@ encoded in tag bits.  For this reason, TYPECASE cannot be a macro that
 expands to COND or IF (well, I guess it could, but that seem backwards).
 
 The compiler should also generate very fast code for CASE, at least
-when the cases are small integers.  
+when the cases represent a dense and compact range of integers or
+object that can be associated with such integers.
 
 Higher-level code should be able to rely on the fast implementation of
 these primitives. 
