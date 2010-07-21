@@ -1411,6 +1411,12 @@
 			(copy-tree '((a x) (((b y z))) ((a))))
 			:key #'car :test #'equal)))
 
+(define-test sublis.3
+  (let ((tree (copy-tree '((a x) (((b y z))) ((c))))))
+    (assert-eq tree
+	       (sublis '((f . 1) (g . 2))
+		       tree))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the nsublis function
