@@ -1859,3 +1859,260 @@
 (define-test adjoin.25
   (assert-equal '((3 4) (1 2))
 		(adjoin '(1 2) '((3 4) (1 2)) :key #'car)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the pushnew macro
+
+(define-test pushnew.1
+  (let ((list '()))
+    (assert-equal '(1)
+		  (pushnew 1 list))
+    (assert-equal '(1)
+		  list)))
+
+(define-test pushnew.2
+  (let ((list '(1)))
+    (assert-equal '(1)
+		  (pushnew 1 list))
+    (assert-equal '(1)
+		  list)))
+
+(define-test pushnew.3
+  (let ((list '(2)))
+    (assert-equal '(1 2)
+		  (pushnew 1 list))
+    (assert-equal '(1 2)
+		  list)))
+
+(define-test pushnew.4
+  (let ((list '(2 1)))
+    (assert-equal '(2 1)
+		  (pushnew 1 list))
+    (assert-equal '(2 1)
+		  list)))
+
+(define-test pushnew-test.eql.1
+  (let ((list '()))
+    (assert-equal '(1)
+		  (pushnew 1 list :test #'eql))
+    (assert-equal '(1)
+		  list)))
+
+(define-test pushnew-test.eql.2
+  (let ((list '(1)))
+    (assert-equal '(1)
+		  (pushnew 1 list :test #'eql))
+    (assert-equal '(1)
+		  list)))
+
+(define-test pushnew-test.eql.3
+  (let ((list '(2)))
+    (assert-equal '(1 2)
+		  (pushnew 1 list :test #'eql))
+    (assert-equal '(1 2)
+		  list)))
+
+(define-test pushnew-test.eql.4
+  (let ((list '(2 1)))
+    (assert-equal '(2 1)
+		  (pushnew 1 list :test #'eql))
+    (assert-equal '(2 1)
+		  list)))
+
+(define-test pushnew-test-eq.1
+  (let ((list '()))
+    (assert-equal '(a)
+		  (pushnew 'a list :test #'eq))
+    (assert-equal '(a)
+		  list)))
+
+(define-test pushnew-test-eq.2
+  (let ((list '(a)))
+    (assert-equal '(a)
+		  (pushnew 'a list :test #'eq))
+    (assert-equal '(a)
+		  list)))
+
+(define-test pushnew-test-eq.3
+  (let ((list '(b)))
+    (assert-equal '(a b)
+		  (pushnew 'a list :test #'eq))
+    (assert-equal '(a b)
+		  list)))
+
+(define-test pushnew-test-eq.4
+  (let ((list '(b a)))
+    (assert-equal '(b a)
+		  (pushnew 'a list :test #'eq))
+    (assert-equal '(b a)
+		  list)))
+
+(define-test pushnew-test-equal.1
+  (let ((list '()))
+    (assert-equal '((a))
+		  (pushnew '(a) list :test #'equal))
+    (assert-equal '((a))
+		  list)))
+
+(define-test pushnew-test-equal.2
+  (let ((list '((a))))
+    (assert-equal '((a))
+		  (pushnew '(a) list :test #'equal))
+    (assert-equal '((a))
+		  list)))
+
+(define-test pushnew-test-equal.3
+  (let ((list '((b))))
+    (assert-equal '((a) (b))
+		  (pushnew '(a) list :test #'equal))
+    (assert-equal '((a) (b))
+		  list)))
+
+(define-test pushnew-test-equal.4
+  (let ((list '((b) (a))))
+    (assert-equal '((b) (a))
+		  (pushnew '(a) list :test #'equal))
+    (assert-equal '((b) (a))
+		  list)))
+
+(define-test pushnew-key-nil.1
+  (let ((list '()))
+    (assert-equal '(1)
+		  (pushnew 1 list :key nil))
+    (assert-equal '(1)
+		  list)))
+
+(define-test pushnew-key-nil.2
+  (let ((list '(1)))
+    (assert-equal '(1)
+		  (pushnew 1 list :key nil))
+    (assert-equal '(1)
+		  list)))
+
+(define-test pushnew-key-nil.3
+  (let ((list '(2)))
+    (assert-equal '(1 2)
+		  (pushnew 1 list :key nil))
+    (assert-equal '(1 2)
+		  list)))
+
+(define-test pushnew-key-nil.4
+  (let ((list '(2 1)))
+    (assert-equal '(2 1)
+		  (pushnew 1 list :key nil))
+    (assert-equal '(2 1)
+		  list)))
+
+(define-test pushnew-test-eql-key-nil.1
+  (let ((list '()))
+    (assert-equal '(1)
+		  (pushnew 1 list :test #'eql :key nil))
+    (assert-equal '(1)
+		  list)))
+
+(define-test pushnew-test-eql-key-nil.2
+  (let ((list '(1)))
+    (assert-equal '(1)
+		  (pushnew 1 list :test #'eql :key nil))
+    (assert-equal '(1)
+		  list)))
+
+(define-test pushnew-test-eql-key-nil.3
+  (let ((list '(2)))
+    (assert-equal '(1 2)
+		  (pushnew 1 list :test #'eql :key nil))
+    (assert-equal '(1 2)
+		  list)))
+
+(define-test pushnew-test-eql-key-nil.4
+  (let ((list '(2 1)))
+    (assert-equal '(2 1)
+		  (pushnew 1 list :test #'eql :key nil))
+    (assert-equal '(2 1)
+		  list)))
+
+(define-test pushnew-test-eq-key-nil.1
+  (let ((list '()))
+    (assert-equal '(a)
+		  (pushnew 'a list :test #'eq :key nil))
+    (assert-equal '(a)
+		  list)))
+
+(define-test pushnew-test-eq-key-nil.2
+  (let ((list '(a)))
+    (assert-equal '(a)
+		  (pushnew 'a list :test #'eq :key nil))
+    (assert-equal '(a)
+		  list)))
+
+(define-test pushnew-test-eq-key-nil.3
+  (let ((list '(b)))
+    (assert-equal '(a b)
+		  (pushnew 'a list :test #'eq :key nil))
+    (assert-equal '(a b)
+		  list)))
+
+(define-test pushnew-test-eq-key-nil.4
+  (let ((list '(b a)))
+    (assert-equal '(b a)
+		  (pushnew 'a list :test #'eq :key nil))
+    (assert-equal '(b a)
+		  list)))
+
+(define-test pushnew-test-equal-key-nil.1
+  (let ((list '()))
+    (assert-equal '((a))
+		  (pushnew '(a) list :test #'equal :key nil))
+    (assert-equal '((a))
+		  list)))
+
+(define-test pushnew-test-equal-key-nil.2
+  (let ((list '((a))))
+    (assert-equal '((a))
+		  (pushnew '(a) list :test #'equal :key nil))
+    (assert-equal '((a))
+		  list)))
+
+(define-test pushnew-test-equal-key-nil.3
+  (let ((list '((b))))
+    (assert-equal '((a) (b))
+		  (pushnew '(a) list :test #'equal :key nil))
+    (assert-equal '((a) (b))
+		  list)))
+
+(define-test pushnew-test-equal-key-nil.4
+  (let ((list '((b) (a))))
+    (assert-equal '((b) (a))
+		  (pushnew '(a) list :test #'equal :key nil))
+    (assert-equal '((b) (a))
+		  list)))
+
+(define-test pushnew-key-car.1
+  (let ((list '()))
+    (assert-equal '((1))
+		  (pushnew '(1) list :key #'car))
+    (assert-equal '((1))
+		  list)))
+
+(define-test pushnew-key-car.2
+  (let ((list '((1))))
+    (assert-equal '((1))
+		  (pushnew '(1) list :key #'car))
+    (assert-equal '((1))
+		  list)))
+
+(define-test pushnew-key-car.3
+  (let ((list '((2))))
+    (assert-equal '((1) (2))
+		  (pushnew '(1) list :key #'car))
+    (assert-equal '((1) (2))
+		  list)))
+
+(define-test pushnew-key-car.4
+  (let ((list '((2) (1))))
+    (assert-equal '((2) (1))
+		  (pushnew '(1) list :key #'car))
+    (assert-equal '((2) (1))
+		  list)))
+

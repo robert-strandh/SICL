@@ -127,7 +127,9 @@ What is done:
 
   macro remf.  No tests.
 
-  macro pushnew.  No tests.
+  pushnew, macro with several special cases.  Several tests, but still
+  need tests to check for possible multiple evaluations and correct
+  evaluation order. 
 
 How to test it:
 

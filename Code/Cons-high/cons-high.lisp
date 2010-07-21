@@ -3756,7 +3756,7 @@
 		   &environment env
 		   &rest args
 		   &key
-		   (key nil key-p)
+		   key
 		   (test nil test-p)
 		   (test-not nil test-not-p))
   (declare (ignore key))
@@ -3767,8 +3767,9 @@
       `(let ((,item-var ,item)
 	     ,@(mapcar #'list vars vals)
 	     ,@(make-bindings args))
+	 (declare (ignorable key))
 	 (let ((,(car store-vars) ,reader-form))
-	   ,(if key-p
+	   ,(if key
 		(if test-p
 		    `(unless (member (funcall key ,item-var) ,(car store-vars)
 				     :test test :key key)
@@ -3781,14 +3782,14 @@
 					 :key key)
 			   (push ,item-var ,(car store-vars)))))
 		(if test-p
-		    `(unless (member (funcall key ,item-var) ,(car store-vars)
+		    `(unless (member ,item-var ,(car store-vars)
 				     :test test)
 		       (push ,item-var ,(car store-vars)))
 		    (if test-not-p
-			`(unless (member (funcall key ,item-var) ,(car store-vars)
+			`(unless (member ,item-var ,(car store-vars)
 					 :test-not test-not)
 			   (push ,item-var ,(car store-vars)))
-			`(unless (member (funcall key ,item-var) ,(car store-vars))
+			`(unless (member ,item-var ,(car store-vars))
 			   (push ,item-var ,(car store-vars))))))
 	   ,writer-form)))))
 
