@@ -2116,3 +2116,34 @@
     (assert-equal '((2) (1))
 		  list)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the pop macro
+
+(define-test pop.1
+  (let ((var (list 1)))
+    (assert-equal 1
+		  (pop var))
+    (assert-equal '()
+		  var)))
+
+(define-test pop.2
+  (let ((var (list 1 2)))
+    (assert-equal 1
+		  (pop var))
+    (assert-equal '(2)
+		  var)))
+
+(define-test pop.3
+  (let ((list (list (list 1))))
+    (assert-equal 1
+		  (pop (car list)))
+    (assert-equal '(())
+		  list)))
+
+(define-test pop.4
+  (let ((list (list (list 1 2))))
+    (assert-equal 1
+		  (pop (car list)))
+    (assert-equal '((2))
+		  list)))

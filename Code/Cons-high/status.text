@@ -117,7 +117,7 @@ What is done:
 
   macro push.  No tests.
 
-  macro pop.  No tests.
+  macro pop.  Some tests.
 
   setf expander for rest
 
