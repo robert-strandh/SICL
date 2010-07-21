@@ -2170,3 +2170,33 @@
 (define-test nsubst.1
   (assert-equal '(a (c))
 		(nsubst 'c '(b) (copy-tree '(a ((b)))) :test-not (complement #'equal))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the getf function
+
+(define-test getf.1
+  (assert-equal nil
+		(getf '() 'a)))
+
+(define-test getf.2
+  (assert-equal 1
+		(getf '(a 1) 'a)))
+
+(define-test getf.3
+  (assert-equal 1
+		(getf '(b 2 a 1) 'a)))
+
+(define-test getf.3
+  (assert-equal nil
+		(getf '(b 2 a 1) 'c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the remf macro
+
+(define-test remf.1
+  (let ((list (copy-tree '(a 1 b 2 c 3))))
+    (assert-true (remf list 'c))
+    (assert-equal '(a 1 b 2)
+		  list)))

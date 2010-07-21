@@ -111,7 +111,7 @@ What is done:
 
   subsetp, function with several special cases.  No tests.
 
-  getf, function.  No tests.
+  getf, function.  Some tests.
 
   get-properties, function. No tests.
 
@@ -125,7 +125,7 @@ What is done:
 
   setf expander for getf.  No tests. 
 
-  macro remf.  No tests.
+  macro remf.  Some tests.
 
   pushnew, macro with several special cases.  Several tests, but still
   need tests to check for possible multiple evaluations and correct

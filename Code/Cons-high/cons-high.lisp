@@ -3751,20 +3751,20 @@
 	(get-setf-expansion place env)
       `(let (,@(mapcar #'list vars vals)
 	     (,indicator-var ,indicator))
-	 (setq ,(car store-vars) ,reader-form)
-	 (if (null ,(car store-vars))
-	     nil
-	     (if (eq (car ,(car store-vars)) ,indicator-var)
-		 (progn (setf ,(car store-vars) (cddr ,(car store-vars)))
-			,writer-form
-			t)
-		 (loop for rest on (cdr ,(car store-vars)) by #'cddr
-		       when (null (cdr rest))
-			 return nil
-		       do (assert (consp (cddr rest)))
-		       when (eq (cadr rest) ,indicator-var)
-			 do (setf (cdr rest) (cdddr rest))
-			    (return t))))))))
+	 (let ((,(car store-vars) ,reader-form))
+	   (if (null ,(car store-vars))
+	       nil
+	       (if (eq (car ,(car store-vars)) ,indicator-var)
+		   (progn (setf ,(car store-vars) (cddr ,(car store-vars)))
+			  ,writer-form
+			  t)
+		   (loop for rest on (cdr ,(car store-vars)) by #'cddr
+			 when (null (cdr rest))
+			   return nil
+			 do (assert (consp (cddr rest)))
+			 when (eq (cadr rest) ,indicator-var)
+			   do (setf (cdr rest) (cdddr rest))
+			      (return t)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
