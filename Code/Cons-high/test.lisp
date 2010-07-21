@@ -2153,3 +2153,20 @@
 		  (pop (car list)))
     (assert-equal '((2))
 		  list)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the subst function
+
+(define-test subst.1
+  (assert-equal '(a (c))
+		(subst 'c '(b) '(a ((b))) :test-not (complement #'equal))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nsubst function
+
+(define-test nsubst.1
+  (assert-equal '(a (c))
+		(nsubst 'c '(b) (copy-tree '(a ((b)))) :test-not (complement #'equal))))

@@ -44,13 +44,13 @@ What is done:
 
   nbutlast, function and special case for n = 1, no tests.
 
-  subst, function with several special cases.  No tests.
+  subst, function with several special cases.  Almost no tests.
 
   subst-if, function with several special cases.  No tests.
 
   subst-if-not, function with several special cases.  No tests.
 
-  nsubst, function with several special cases.  No tests.
+  nsubst, function with several special cases.  Almost no tests.
 
   nsubst-if, function with several special cases.  No tests.
 

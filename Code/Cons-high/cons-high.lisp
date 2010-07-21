@@ -918,7 +918,7 @@
                   (subst-not-eq-key new old tree key)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
                       (subst-not-eql-key new old tree key)
-                      (subst-test-not-key  new old tree test key)))
+                      (subst-test-not-key  new old tree test-not key)))
               (subst-eql-key new old tree key)))
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -931,7 +931,7 @@
                   (subst-not-eq-identity new old tree)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
                       (subst-not-eql-identity new old tree)
-                      (subst-test-not-identity  new old tree test)))
+                      (subst-test-not-identity  new old tree test-not)))
               (subst-eql-identity new old tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1257,7 +1257,7 @@
                   (nsubst-not-eq-key new old tree key)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
                       (nsubst-not-eql-key new old tree key)
-                      (nsubst-test-not-key  new old tree test key)))
+                      (nsubst-test-not-key  new old tree test-not key)))
               (nsubst-eql-key new old tree key)))
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -1270,7 +1270,7 @@
                   (nsubst-not-eq-identity new old tree)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
                       (nsubst-not-eql-identity new old tree)
-                      (nsubst-test-not-identity  new old tree test)))
+                      (nsubst-test-not-identity  new old tree test-not)))
               (nsubst-eql-identity new old tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
