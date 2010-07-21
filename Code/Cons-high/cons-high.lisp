@@ -3756,10 +3756,9 @@
 		   &environment env
 		   &rest args
 		   &key
-		   key
+		   (key nil key-p)
 		   (test nil test-p)
 		   (test-not nil test-not-p))
-  (declare (ignore key))
   (assert (or (null test) (null test-not)))
   (let ((item-var (gensym)))
     (multiple-value-bind (vars vals store-vars writer-form reader-form)
@@ -3767,7 +3766,7 @@
       `(let ((,item-var ,item)
 	     ,@(mapcar #'list vars vals)
 	     ,@(make-bindings args))
-	 (declare (ignorable key))
+	 ,@(if key-p `((declare (ignorable key))) `())
 	 (let ((,(car store-vars) ,reader-form))
 	   ,(if key
 		(if test-p
