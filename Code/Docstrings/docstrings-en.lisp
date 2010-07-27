@@ -298,7 +298,7 @@
               is not a generic fuction, or of METHOD is not a method."))
 
 (fundoc 'adjoin
-        (fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT.~@
+        (fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT).~@
               If ITEM is already an element of LIST, then return LIST.~@
               Otherwise return LIST with ITEM as an additional element,~@
               as if (cons ITEM LIST) had been called.~@
@@ -320,3 +320,57 @@
               If ARRAY is not an array, then an error of type TYPE-ERROR~@
               is signaled."))
 
+(fundoc 'atom
+        (fmt "Lambda list: (OBJECT).~@
+              Return true if OBJECT is an atom (i.e. anything other than~@
+              a cons cell), otherwise false"))
+
+(fundoc 'cons
+	(fmt "Lambda list: (OBJECT-1 OBJECT-2).~@
+              Return a freshly allocated cons cell, with OBJECT-1 in its ~@
+              car cell and OBJECT-2 in its cdr cell."))
+
+(fundoc 'consp
+        (fmt "Lambda list: (OBECT).~@
+              Return true if OBJECT is a cons cell, false otherwise."))
+
+(fundoc 'copy-tree
+        (fmt "Lambda list: (TREE).~@
+              Return a copy of the tree TREE.~@
+              A deep copy of TREE is constructed, in that all the cons cells~@
+              of TREE are recursively copied.  Only the leaves (i.e. atoms)~@
+              of TREE are not copied.~@
+              Circularity or partial substructure sharing in TREE~@
+              are not preserved."))
+
+(fundoc 'rplaca
+        (fmt "Lambda list: (CONS OBJECT).~@
+              Replace the contents of the car cell of the cons cell CONS~@
+              by OBJECT, and return the cons cell CONS.~@
+              An error of type type-error is signaled if CONS is not~@
+              a cons cell. "))
+
+(fundoc 'rplacd
+        (fmt "Lambda list: (CONS OBJECT).~@
+              Replace the contents of the cdr cell of the cons cell CONS~@
+              by OBJECT, and return the cons cell CONS.~@
+              An error of type type-error is signaled if CONS is not~@
+              a cons cell. "))
+
+(fundoc 'sublis
+        (fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT).~@
+              Return a new tree, which is like TREE, except that occurrences~@
+              of keys of the association list ALIST in TREE are replaced by~@
+              the object associated with that key in ALIST.  When no substitutions~@
+              are made, the original tree TREE is returned.~@
+              When KEY is given and not NIL, it is a designator for a function of~@
+              one argument which is applied to the elements of TREE before~@
+              testing agains the keys of ALIST.~@
+              When TEST is given, it must be a designator for a function that~@
+              returns a generalized boolean, and it is used to deterine whether~@
+              elements of TREE correspond to a key of ALIST.~@
+              When TEST-NOT is given, it must be a designator for a function that~@
+              returns a generalized boolean, and it is used to deterine whether~@
+              elements of TREE do not correspond to a key of ALIST.~@
+              At most one of TEST and TEST-NOT can be given.~@
+              If neither TEST nor TEST-NOT is given, EQL is used."))
