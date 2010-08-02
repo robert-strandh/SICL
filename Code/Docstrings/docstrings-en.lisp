@@ -72,7 +72,7 @@
               Return a list containing the objects in OBJECTS,~@
               except that the last object in OBJECTS becomes the~@
               CDR of the last CONS cell created.~@
-              When given a single argument, retun that argument."))
+              When given a single argument, return that argument."))
 
 (fundoc 'first
         (fmt "Lambda list: (LIST)~@
@@ -105,33 +105,33 @@
 (make-nth-documentation tenth   "ten")
 
 (fundoc 'cons
-        (fmt "Lambda list: (OBJECT-1 OBJEC-2)~@
+        (fmt "Lambda list: (OBJECT-1 OBJECT-2)~@
               Return a new CONS cell with OBJECT-1 in the~@
               CAR field and OBJECT-2 in the CDR field."))
 
 (fundoc 'nth
         (fmt "Lambda list: (N LIST)~@
-              where N is a nonnegative integer~@
+              where N is a non-negative integer~@
               and LIST is a (not necessarily proper) list.~@
               Return the Nth element of the list LIST~@
-              where the first element is the zeroeth.~@
+              where the first element is the zeroth.~@
               When LIST is not a proper list, and it has fewer than~@
               N+1 elements, an error is signaled.~@
               In particular, when LIST is neither a list nor NIL,~@
               an error is signaled.~@
-              When N is not a nonnegative integer, an error~@
+              When N is not a non-negative integer, an error~@
               of type TYPE-ERROR is signaled."))
 
 (fundoc 'nthcdr
         (fmt "Lambda list: (N LIST)~@
-              where N is a nonnegative integer~@
+              where N is a non-negative integer~@
               and LIST is a (not necessarily proper) list.~@
               Return the result of calling CDR N times on LIST.~@
               When LIST is not a proper list, and it has fewer than~@
               N elements, an error is signaled.~@
               In particular, when LIST is neither a list nor NIL,~@
               an error is signaled.~@
-              When N is not a nonnegative integer, an error~@
+              When N is not a non-negative integer, an error~@
               of type TYPE-ERROR is signaled."))
               
 (fundoc '<
@@ -144,19 +144,19 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
 
 (fundoc '<=
         (fmt "Lambda list: (&rest NUMBERS).~@
               At least one argument is required.~@
               Return true if the numbers in NUMBERS are in~@
-              monotonically nondecreasing order.~@
+              monotonically non-decreasing order.~@
               The consequences are undefined if some of the objects~@
               in numbers are not real numbers, but if that is the case~@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
 
 (fundoc '=
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -167,7 +167,7 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
 
 (fundoc '/=
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -178,7 +178,7 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
 
 (fundoc '>
         (fmt "Lambda list: (&rest NUMBERS).~@
@@ -190,19 +190,19 @@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
 
 (fundoc '>=
         (fmt "Lambda list: (&rest NUMBERS).~@
               At least one argument is required.~@
               Return true if the numbers in NUMBERS are in~@
-              monotonically nonincreasing order.~@
+              monotonically non-increasing order.~@
               The consequences are undefined if some of the objects~@
               in numbers are not real numbers, but if that is the case~@
               and a condition is signaled, that condition is an error~@
               of type TYPE-ERROR.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
 
 (fundoc 'abs
         (fmt "Lambda list: (NUMBER).~@
@@ -229,7 +229,7 @@
               If NUMBER is not a number, then an error of type~@
               TYPE-ERROR is signaled.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
         
 (fundoc 'asin 
         (fmt "Lambda list: (NUMBER).~@
@@ -237,7 +237,7 @@
               If NUMBER is not a number, then an error of type~@
               TYPE-ERROR is signaled.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
         
 (fundoc 'atan 
         (fmt "Lambda list: (NUMBER1 &optional NUMBER2).~@
@@ -251,40 +251,40 @@
               ]-pi/2,pi/2[~@
               If number2 is given, the result is in the interval~@
               [-pi,pi[ when minus zero is NOT supported, and in the interval~@
-              [-pi,pi] when minu zero IS supported.~@
+              [-pi,pi] when minus zero IS supported.~@
               If NUMBER2 is not supplied and NUMBER1 is not a number,~@
               then an error of type TYPE-ERROR is signaled.~@
               If NUMBER2 is supplied, and at least one of the two~@
               numbers is not real, an error of type TYPE-ERROR is signaled.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
         
 (fundoc 'asinh 
         (fmt "Lambda list: (NUMBER).~@
-              Return the hypberbolic arc sine of the number NUMBER.~@
+              Return the hyperbolic arc sine of the number NUMBER.~@
               If NUMBER is not a number, then an error of type~@
               TYPE-ERROR is signaled.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
         
 (fundoc 'acosh
         (fmt "Lambda list: (NUMBER).~@
-              Return the hypberbolic arc cosine of the number NUMBER.~@
+              Return the hyperbolic arc cosine of the number NUMBER.~@
               If NUMBER is not a number, then an error of type~@
               TYPE-ERROR is signaled.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
         
 (fundoc 'atanh
         (fmt "Lambda list: (NUMBER).~@
-              Return the hypberbolic arc tangent of the number NUMBER.~@
+              Return the hyperbolic arc tangent of the number NUMBER.~@
               If NUMBER is not a number, then an error of type~@
               TYPE-ERROR is signaled.~@
               Might signal an error of type ARITHMETIC-ERROR if~@
-              unable to fulfil its contract."))
+              unable to fulfill its contract."))
         
 (fundoc 'add-method
-        (fmt "Lambdsa list: (GENERIC-FUNCTION METHOD).~@
+        (fmt "Lambda list: (GENERIC-FUNCTION METHOD).~@
               Add a method to a generic function.~@
               If there is already a method of GENERIC-FUNCTION~@
               with the same parameter specializers, and the same~@
@@ -295,7 +295,7 @@
               If METHOD is a method of a generic function other than~@
               GENERIC-FUNCTION, then an error of type TYPE-ERROR is signaled.~@
               The consequences are undefined if GENERIC-FUNCTION~@
-              is not a generic fuction, or of METHOD is not a method."))
+              is not a generic function, or of METHOD is not a method."))
 
 (fundoc 'adjoin
         (fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT).~@
@@ -325,13 +325,8 @@
               Return true if OBJECT is an atom (i.e. anything other than~@
               a cons cell), otherwise false"))
 
-(fundoc 'cons
-	(fmt "Lambda list: (OBJECT-1 OBJECT-2).~@
-              Return a freshly allocated cons cell, with OBJECT-1 in its ~@
-              car cell and OBJECT-2 in its cdr cell."))
-
 (fundoc 'consp
-        (fmt "Lambda list: (OBECT).~@
+        (fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is a cons cell, false otherwise."))
 
 (fundoc 'copy-tree
@@ -342,6 +337,25 @@
               of TREE are not copied.~@
               Circularity or partial substructure sharing in TREE~@
               are not preserved."))
+
+(fundoc 'nsublis
+        (fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT).~@
+              Return a new tree, which is like TREE, except that occurrences~@
+              of keys of the association list ALIST in TREE are replaced by~@
+              the object associated with that key in ALIST.  When no substitutions~@
+              are made, the original tree TREE is returned.~@
+              Relevant parts of TREE may be destructively modified.~@
+              When KEY is given and not NIL, it is a designator for a function of~@
+              one argument which is applied to the elements of TREE before~@
+              testing against the keys of ALIST.~@
+              When TEST is given, it must be a designator for a function that~@
+              returns a generalized Boolean, and it is used to determine whether~@
+              elements of TREE correspond to a key of ALIST.~@
+              When TEST-NOT is given, it must be a designator for a function that~@
+              returns a generalized Boolean, and it is used to determine whether~@
+              elements of TREE do not correspond to a key of ALIST.~@
+              At most one of TEST and TEST-NOT can be given.~@
+              If neither TEST nor TEST-NOT is given, EQL is used."))
 
 (fundoc 'rplaca
         (fmt "Lambda list: (CONS OBJECT).~@
@@ -365,12 +379,30 @@
               are made, the original tree TREE is returned.~@
               When KEY is given and not NIL, it is a designator for a function of~@
               one argument which is applied to the elements of TREE before~@
-              testing agains the keys of ALIST.~@
+              testing against the keys of ALIST.~@
               When TEST is given, it must be a designator for a function that~@
-              returns a generalized boolean, and it is used to deterine whether~@
+              returns a generalized Boolean, and it is used to determine whether~@
               elements of TREE correspond to a key of ALIST.~@
               When TEST-NOT is given, it must be a designator for a function that~@
-              returns a generalized boolean, and it is used to deterine whether~@
+              returns a generalized Boolean, and it is used to determine whether~@
               elements of TREE do not correspond to a key of ALIST.~@
               At most one of TEST and TEST-NOT can be given.~@
               If neither TEST nor TEST-NOT is given, EQL is used."))
+
+(fundoc 'subst
+	(fmt "Lambda list: (NEW OLD TREE &key KEY TEST TEST-NOT).~@
+              Return a new tree, which is like TREE, except that each occurrence~@
+              of OLD in TREE is replaced by NEW.  If no substitutions are made,~@
+              then the original TREE may be returned.~@
+              When KEY is given and not NIL, it is a designator for a function of~@
+              one argument which is applied to the elements of TREE before~@
+              testing against OLD.~@
+              When TEST is given, it must be a designator for a function that~@
+              returns a generalized Boolean, and it is used to determine whether~@
+              elements of TREE correspond to OLD.~@
+              When TEST-NOT is given, it must be a designator for a function that~@
+              returns a generalized Boolean, and it is used to determine whether~@
+              elements of TREE do not correspond OLD.~@
+              At most one of TEST and TEST-NOT can be given.~@
+              If neither TEST nor TEST-NOT is given, EQL is used."))
+
