@@ -74,6 +74,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function mapcar
+;;;
+;;; The compiler macro is defined later because it uses the append
+;;; function that may not be defined at this point.
+
+(eval-when (:compile-toplevel :load-toplevel)
+  (defun mapcar (function &rest lists)
+    ;; FIXME: do this better
+    (assert (not (null lists)))
+    (loop for remaining = lists
+	    then (loop for list in remaining collect (cdr list))
+	  until (loop for list in remaining thereis (null list))
+	  collect (apply function
+			 (loop for list in remaining collect (car list))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Macro push
 
 ;;; We need the push macro in the implementation of other functions
@@ -131,40 +148,19 @@
                         (setf (cdr frontier) list))))
     result))
 
-;;; We want for error messages to be phrased in terms of a construct
-;;; that was directly used by the user's code.  So for instance, if
-;;; the user code had a call to CADDR, giving it a list where the CDDR
-;;; is not a list, we would like the error message to mention that,
-;;; and not for instance that CAR was given a non-list. 
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (defun generate-c*r-message (function-name prefix)
-    (if (null prefix)
-        (format nil
-                "The function ~a was given an argument~@
-               that is neither NIL nor a CONS cell"
-                function-name)
-        (format nil
-                "The function ~a was given a list whose ~@
-               C~{~a~}R is neither NIL nor a CONS cell"
-                function-name
-                (reverse prefix)))))
-
 (defmacro define-c*r-function (function-name letters)
   (flet ((primitive (letter)
            (if (eql letter #\A) 'car 'cdr)))
-    (flet ((one-iteration (letter prefix)
+    (flet ((one-iteration (letter)
              `(progn (check-type remaining list "a list")
                      (if (null remaining)
                          (return-from ,function-name nil)
-                         (if (consp remaining)
-                             (setf remaining
-                                   (,(primitive letter) remaining)))))))
+			 (setf remaining
+			       (,(primitive letter) remaining))))))
       `(defun ,function-name (list)
          (let ((remaining list))
            ,@(loop for letter across (reverse letters)
-                   collect (one-iteration letter prefix)
-                   collect letter into prefix)
+                   collect (one-iteration letter))
            remaining)))))
 
 (define-c*r-function caar "AA")
@@ -208,31 +204,17 @@
 (define-c*r-function tenth   "ADDDDDDDDD")
 
 (eval-when (:compile-toplevel :load-toplevel)
-  (defun generate-setf-c*r-message (function-name prefix)
-    (if (null prefix)
-        (format nil
-                "The function (SETF ~a) was given an argument~@
-                that is not a CONS cell"
-                function-name)
-        (format nil
-                "The function (SETF ~a) was given a list whose ~@
-                C~{~a~}R is not a CONS cell"
-                function-name
-                (reverse (coerce prefix 'cons))))))
-
-(eval-when (:compile-toplevel :load-toplevel)
   (defmacro define-setf-c*r-function (function-name letters)
     (flet ((primitive (letter)
              (if (eql letter #\A) 'car 'cdr)))
-      (flet ((one-iteration (letter prefix)
+      (flet ((one-iteration (letter)
                `(progn (check-type remaining cons "a cons cell")
                        (setf remaining
                              (,(primitive letter) remaining)))))
         `(defun (setf ,function-name) (new-object list)
            (let ((remaining list))
              ,@(append (loop for letter across (reverse (subseq letters 1))
-			     collect (one-iteration letter prefix)
-			     collect letter into prefix)
+			     collect (one-iteration letter))
 		       `((check-type remaining cons "a cons cell")
                          (setf (,(primitive (aref letters 0)) remaining)
                                new-object)))))))))
@@ -509,16 +491,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function mapcar
-
-(defun mapcar (function &rest lists)
-  ;; FIXME: do this better
-  (assert (not (null lists)))
-  (loop for remaining = lists
-	  then (loop for list in remaining collect (cdr list))
-	until (loop for list in remaining thereis (null list))
-	collect (apply function
-		       (loop for list in remaining collect (car list)))))
+;;; Compiler macro for mapcar.  
+;;;
+;;; The function is defined earlier because it is needed in
+;;; macroexpanders for push and pop.
 
 ;;; The compiler macro for mapcar generates code to loop
 ;;; individually over each list given, and thus avoids having
@@ -2145,7 +2121,7 @@
                (cond ((not (null entry)) (setf (cdr tree) (cdr entry)))
                      ((atom tree) nil)
                      (t (traverse (cdr tree)))))))
-    (let ((entry (assoc-not-eql-identity (funcall key tree) alist key)))
+    (let ((entry (assoc-not-eql-identity (funcall key tree) alist)))
       (cond ((not (null entry)) (cdr entry))
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
