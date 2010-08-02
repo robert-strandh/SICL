@@ -406,3 +406,24 @@
               At most one of TEST and TEST-NOT can be given.~@
               If neither TEST nor TEST-NOT is given, EQL is used."))
 
+(fundoc 'subst-if
+	(fmt "Lambda list: (NEW PREDICATE &key KEY).~@
+              Return a new tree, which is like TREE except that each node~@
+              for which PREDICATE returns true is replaced by NEW.~@
+              If no substitutions are made, then the original TREE may be returned.~@
+              PREDICATE is a designator for a function of one argument~@
+              returning a generalized Boolean.~@
+              When KEY is given and not NIL, it is a designator for a function of~@
+              one argument which is applied to the elements of TREE before~@
+              PREDICATE is applied."))
+
+(fundoc 'subst-if-not
+	(fmt "Lambda list: (NEW PREDICATE &key KEY).~@
+              Return a new tree, which is like TREE except that each node~@
+              for which PREDICATE returns false is replaced by NEW.~@
+              If no substitutions are made, then the original TREE may be returned.~@
+              PREDICATE is a designator for a function of one argument~@
+              returning a generalized Boolean.~@
+              When KEY is given and not NIL, it is a designator for a function of~@
+              one argument which is applied to the elements of TREE before~@
+              PREDICATE is applied."))
