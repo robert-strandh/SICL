@@ -338,6 +338,84 @@
               Circularity or partial substructure sharing in TREE~@
               are not preserved."))
 
+(fundoc 'decode-float
+	(fmt "Lambda list: (FLOAT).~@
+              Return three values: the significand, the expnent, and the sign~@
+              of the argument.  The return values are related to each other~@
+              in that (* significand (expt (float b exponent)) sign) where~@
+              b is the radix of the radix of the floating-point representation~@
+              as reported by FLOAT-RADIX.
+              The significand is a floating-point number of the same type as~@
+              the argument, and it is scaled so that it is greater than~@
+              or equal to 1/b where b again is the radix of the floating-point~@
+              representation, and strictly less than 1.  If the argument is zero~@
+              (positive or negative) the significand is positive zero.~@
+              The exponent is an integer that makes the relation described~@
+              above hold. If the argument is zero, then the exponent could~@
+              be some arbitrary integer.~@
+              The sign is a floating-point value of the same type as the argument~@
+              and is equal to 1.0 if the argument is greater than or equal to 0~@
+              and equal to -1.0 if the argument is negative."))
+
+(fundoc 'float-digits
+	(fmt "Lambda list: (FLOAT).~@
+              Return the number of digits used in the representation of FLOAT.~@
+              The return value is a nonnegative integer and represents the~@              
+              number of radix-b digits, where b is the radix of the number,~@
+              as reported by FLOAT-RADIX.~@
+              The number includes digits that are not necessarily explicitly~@
+              present in the representation of the floating-point number.~@
+              In particular, if IEEE 754 arithmetic is used, the return-value~@
+              is one plus the size of the field used to represent the mantissa.~@
+              The return value does not change as a result of the number being~@
+              represented with fewer significant digits, such as when IEEE 754~@
+              denormalized numbers are used.  To detect such situations,~@
+              use FLOAT-PRECISION instead."))
+
+(fundoc 'float-radix
+	(fmt "Lambda list: (FLOAT).~@
+              Return the number of significant digits used in the representation~@
+              of the argument.~@
+              The return value is a nonnegative integer and represents the~@              
+              number of radix-b digits, where b is the radix of the number,~@
+              as reported by FLOAT-RADIX.~@
+              If the argument is numerically equal to 0, then the return value~@
+              is the integer 0.~@
+              This function is different from FLOAT-DIGITS in that if the number~@
+              is stored with fewer than the maximum number of digits possible,~@
+              such as when IEEE 754 denormalized numbers are used, then the loss~@
+              of significant digits is reflected in the return value of this function."))
+
+(fundoc 'float-radix
+	(fmt "Lambda list: (FLOAT).~@
+              Return the radix of its argument.  
+              The radix is an integer whose value must be taken into account~@
+              in other floating-point functions, notably DECODE-FLOAT.~@"
+
+(fundoc 'float-sign
+	(fmt "Lambda list: (FLOAT-1 &optional FLOAT-2).~@
+              Return a floating-point number that has the sign of FLOAT-1~@
+              and the magnitude of FLOAT-2.  The default value of FLOAT-2~@
+              is (float 1 FLOAT-1), that is, it is numerically equal to 1~@
+              and it has the same type as FLOAT-1."))
+
+(fundoc 'integer-decode-float
+	(fmt "Lambda list: (FLOAT).@
+              Return three values: the significand, the exponent, and the sign~@
+              of the argument.  The return values are related to each other~@
+              in that (scale-float (float significand FLOAT) exponent)~@
+              is equal to (abs FLOAT).  However there are no restrictions~@
+              on the magnitude of the significand and the exponent.  Some~@
+              arbitrary scaling between the two are possible.~@
+              The significand is an integer that represents the mantissa~@
+              of the argument. If the argument is zero, then the value of the~@
+              significand is 0. 
+              The exponent is an integer that makes the relation describe~@
+              above hold.  If the argument is zero, then the value of the~@
+              exponent is some arbitrary integer.~@
+              The sign is an integer equal to -1 if the argument is negative~@
+              and equal to 1 if the argument is positive or 0."
+
 (fundoc 'nsublis
         (fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT).~@
               Return a new tree, which is like TREE, except that occurrences~@
@@ -370,6 +448,13 @@
               by OBJECT, and return the cons cell CONS.~@
               An error of type type-error is signaled if CONS is not~@
               a cons cell. "))
+
+(fundoc 'scale-float
+	(fmt "Lambda list: (FLOAT INTEGER).~@
+              Return a floating-point number that is FLOAT scaled by INTEGER,~@
+              i.e., (* FLOAT (expt (float b FLOAT) INTEGER)), where b is the~@
+              radix of the floating-point representation as reported by~@
+              FLOAT-RADIX.~@"))
 
 (fundoc 'sublis
         (fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT).~@
