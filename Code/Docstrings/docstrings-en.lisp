@@ -320,6 +320,31 @@
               If ARRAY is not an array, then an error of type TYPE-ERROR~@
               is signaled."))
 
+(fundoc 'alpha-char-p
+	(fmt "Lambda list: (CHARACTER).~@
+              Return true if CHARACTER is alphabetic.  Return false otherwise.~@
+              If CHARACTER is not a character, an error of type type-error~@
+              is signaled."))
+
+(fundoc 'alphanumericp
+	(fmt "Lambda list: (CHARACTER).~@
+              Return true if CHARACTER is alphabetic or numeric.~@
+              Return false otherwise.~@
+              If CHARACTER is not a character, an error of type type-error~@
+              is signaled."))
+
+(fundoc 'append
+	(fmt "Lambda list: (&rest LISTS).~@
+              Return a new list which is the concatenation of the lists in LISTS.~@
+              All arguments except the last one must be proper lists.~@
+              The last argument may be any object.~@
+              Each of the argument except the last one is copied.~@
+              The last argument is not copied, and shares structure with
+              the return value.~@
+              As a special case, when every argument except the last is NIL~@
+              (which includes the case where there is only one argument),~@
+              then the last argument is returned.~@"))
+
 (fundoc 'atom
         (fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is an atom (i.e. anything other than~@
