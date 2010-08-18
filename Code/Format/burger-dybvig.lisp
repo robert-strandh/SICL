@@ -394,9 +394,10 @@
 ;;; Test that the two implemetations above give the same result
 ;;; for all single floats.  Running this test may take a few days
 ;;; on a good 64-bit machine.
-(defun test-dybvig-2 ()
-  (loop for x = (predecessor most-positive-single-float) then (predecessor x)
+(defun test-dybvig-2 (start)
+  (loop for x = start then (predecessor x)
 	for i from 0
+	until (= x 0)
 	do (when (zerop (mod i 1000000))
 	     (format *trace-output* "~s~%" x)
 	     (finish-output *trace-output*))

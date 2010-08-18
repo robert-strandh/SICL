@@ -6,8 +6,9 @@ What is done:
   Common Lisp functions if they are available. 
 
   We have an implementation of the Burger-Dybvig algorithm that we
-  plan to use for the floating-point printer operations.  We are
-  currently conducting tests to verify that it is correct. 
+  plan to use for the floating-point printer operations.  We have 
+  tested it against a slower but simpler implementation for all
+  single-floats, and the two versions give the same result. 
 
   We also have an implementation of a very fast algorithm that
   generates floating-point digits using floating-point arithmetic.  
