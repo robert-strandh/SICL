@@ -167,13 +167,13 @@
 ;;; Create an abstract syntax tree from the raw form returned by
 ;;; the reader
 (defun make-ast (form)
-  (cond ((constantp form)
-	 (make-instance 'constant-form
-			:original-form form))
-	((symbolp form)
+  (cond ((symbolp form)
 	 (make-instance 'symbol-form
 			:original-form form))
-	((consp form)
+	((atom form)
+	 (make-instance 'constant-form
+			:original-form form))
+	(t
 	 (assert (proper-list-p form))
 	 (make-instance 'compound-form
 			:original-form form
@@ -195,31 +195,27 @@
 	      nil)))))
 
 ;;; Search an ast to see whether its original form is eq to the ast
-(defgeneric search-ast (form ast))
-
-(defmethod search-ast (form ast)
-  (if (eq form (original-form ast))
-      ast
-      nil))
-
-(defmethod search-ast (form (ast compound-form))
-  (or (call-next-method)
-      (find-if (lambda (subform)
+(defun search-ast (form ast)
+  (cond ((eq form (original-form ast))
+	 ast)
+	((typep ast 'compound-form)
+	 (some (lambda (subform)
 		 (search-ast form subform))
-	       (subforms ast))))
+	       (subforms ast)))
+	(t nil)))
 
 ;;; Create a new ast from the form by either finding
 ;;; an existing (sub) ast that has form as its original form,
 ;;; or by creating a new ast. 
 (defun fixup (form ast)
   (or (search-ast form ast)
-      (cond ((constantp form)
-	     (make-instance 'constant-form
-			    :original-form form))
-	    ((symbolp form)
+      (cond ((symbolp form)
 	     (make-instance 'symbol-form
 			    :original-form form))
-	    ((consp form)
+	    ((atom form)
+	     (make-instance 'constant-form
+			    :original-form form))
+	    (t
 	     (assert (proper-list-p form))
 	     (make-instance 'compound-form
 			    :original-form form
@@ -286,10 +282,10 @@
   ;; FIXME: issue a warning if the variable doesn't exist 
   (make-instance 'setq-form
 		 :original-form (original-form ast)
-		 :variable (lookup (original-form (car (subforms ast)))
+		 :variable (lookup (original-form (cadr (subforms ast)))
 				   environment
 				   'variable)
-		 :value (convert (cadr (subforms ast)) environment)))
+		 :value (convert (caddr (subforms ast)) environment)))
 
 (defmethod convert-special ((op (eql 'progn)) ast environment)
   (cond ((null (cdr (subforms ast)))
@@ -340,11 +336,11 @@
 			    :value 
 			    (convert (if (typep binding-form 'symbol-form)
 					 nil
-					 (car (subforms binding-form)))
+					 (cadr (subforms binding-form)))
 				     environment)))))
       (loop for binding in bindings
 	    do (add-binding (name (variable binding))
-			    (value binding)
+			    (variable binding)
 			    (variables new-environment)))
       (make-instance 'let-form
 		     :original-form (original-form ast)
@@ -352,9 +348,6 @@
 		     :body-form
 		     (convert-implicit-progn body-forms new-environment)))))
 
-;;; At the moment, this will never be used, because the form
-;;; has been converted to a constant already, given that constantp
-;;; returns true for something like (quote ...)
 (defmethod convert-special ((op (eql 'quote)) ast environment)
   (assert (= (length (subforms ast)) 2))
   (make-instance 'constant-form
