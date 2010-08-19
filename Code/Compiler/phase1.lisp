@@ -24,19 +24,24 @@
 ;;;
 ;;; Internal representation of source code
 
+;;; Terminology: We use `form' to mean raw Lisp expressions
+;;; resulting from READing source code.  We use `ast'  for
+;;; the abstract syntax tree resulting from converting such
+;;; raw expressions to instances of our compiler objects. 
+
 ;;; The first step is to convert the raw Lisp form into an 
 ;;; abstract syntax tree, so that we can then use generic
 ;;; function dispatch for the following steps. 
 
-(defclass form (compiler-object)
-  ((%original-form :initarg :original-form :accessor original-form)))
+(defclass ast (compiler-object)
+  ((%form :initarg :form :accessor form)))
 
-(defclass symbol-form (form) ())  
+(defclass symbol-ast (ast) ())  
 
-(defclass constant-form (form) ())
+(defclass constant-ast (ast) ())
 
-(defclass compound-form (form)
-  ((%subforms :initarg :subforms :reader subforms)))
+(defclass compound-ast (ast)
+  ((%children :initarg :children :reader children)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -164,31 +169,41 @@
 (defun proper-list-p (list)
   (null (last list 0)))
 
-;;; Create an abstract syntax tree from the raw form returned by
-;;; the reader
+;;; The first step is to turn raw forms into abstract syntax trees
+;;; (asts).  In this step, we only distinguish between 3 kinds of ast,
+;;; a symbol, a non-symbol atom, and a compound ast.  
 (defun make-ast (form)
   (cond ((symbolp form)
-	 (make-instance 'symbol-form
-			:original-form form))
+	 (make-instance 'symbol-ast
+			:form form))
 	((atom form)
-	 (make-instance 'constant-form
-			:original-form form))
+	 (make-instance 'constant-ast
+			:form form))
 	(t
 	 (assert (proper-list-p form))
-	 (make-instance 'compound-form
-			:original-form form
-			:subforms (mapcar #'make-ast form)))))
+	 (make-instance 'compound-ast
+			:form form
+			:children (mapcar #'make-ast form)))))
 
+;;; The second step is to turn the trivial ast into something more
+;;; sophisiticated, in which the environment has been consulted to
+;;; determine whether we have a special-form, a function call, a macro
+;;; call, etc.  In this step, we also expand macros, so that the 
+;;; resulting ast only contains special forms and function calls.  We
+;;; also recognize every special form and take into account the influence
+;;; on the environment of each one.  So for instance, a LET results in
+;;; the creation of a new environment which is used to convert the
+;;; body of the LET. 
 (defgeneric convert (ast environment))
 
-(defmethod convert ((ast constant-form) environment)
+(defmethod convert ((ast constant-ast) environment)
   ast)
 
-(defmethod convert ((ast symbol-form) environment)
-  (let ((macro-expansion (lookup (original-form ast) environment 'symbol-macro)))
+(defmethod convert ((ast symbol-ast) environment)
+  (let ((macro-expansion (lookup (form ast) environment 'symbol-macro)))
     (if (not (null macro-expansion))
 	(convert (make-ast macro-expansion) environment)
-	(let ((variable (lookup (original-form ast) environment 'variable)))
+	(let ((variable (lookup (form ast) environment 'variable)))
 	  (if (not (null variable))
 	      variable
 	      ;; handle unknown variable
@@ -196,12 +211,12 @@
 
 ;;; Search an ast to see whether its original form is eq to the ast
 (defun search-ast (form ast)
-  (cond ((eq form (original-form ast))
+  (cond ((eq form (form ast))
 	 ast)
-	((typep ast 'compound-form)
-	 (some (lambda (subform)
-		 (search-ast form subform))
-	       (subforms ast)))
+	((typep ast 'compound-ast)
+	 (some (lambda (child)
+		 (search-ast form child))
+	       (children ast)))
 	(t nil)))
 
 ;;; Create a new ast from the form by either finding
@@ -210,161 +225,161 @@
 (defun fixup (form ast)
   (or (search-ast form ast)
       (cond ((symbolp form)
-	     (make-instance 'symbol-form
-			    :original-form form))
+	     (make-instance 'symbol-ast
+			    :form form))
 	    ((atom form)
-	     (make-instance 'constant-form
-			    :original-form form))
+	     (make-instance 'constant-ast
+			    :form form))
 	    (t
 	     (assert (proper-list-p form))
-	     (make-instance 'compound-form
-			    :original-form form
-			    :subforms (mapcar (lambda (subform)
-						(fixup subform ast))
+	     (make-instance 'compound-ast
+			    :form form
+			    :children (mapcar (lambda (child)
+						(fixup child ast))
 					      form))))))
 
-(defclass variable-form (form)
+(defclass variable-ast (ast)
   ((%name :initarg :name :reader name)))
 
-(defclass function-call-form (form)
-  ((%function-form :initarg :function-form :reader function-form)
+(defclass function-call-ast (ast)
+  ((%function-ast :initarg :function-ast :reader function-ast)
    (%arguments :initarg :arguments :reader arguments)))
 
-(defclass progn-form (form)
-  ((%body-forms :initarg :body-forms :reader body-forms)))
+(defclass progn-ast (ast)
+  ((%body-asts :initarg :body-asts :reader body-asts)))
 
-(defclass binding-form (form)
+(defclass binding-ast (ast)
   ((%variable :initarg :variable :reader variable)
    (%value :initarg :value :reader value)))
 
-(defclass let-form (form)
+(defclass let-ast (ast)
   ((%bindings :initarg :bindings :reader bindings)
-   (%body-form :initarg :body-form :reader body-form)))
+   (%body-ast :initarg :body-ast :reader body-ast)))
 
-(defclass setq-form (form)
+(defclass setq-ast (ast)
   ((%variable :initarg :variable :reader variable)
    (%value :initarg :value :reader value)))
 
-(defclass if-form (form)
-  ((%test-form :initarg :test-form :reader test-form)
-   (%then-form :initarg :then-form :reader then-form)
-   (%else-form :initarg :else-form :reader else-form)))
+(defclass if-ast (ast)
+  ((%test-ast :initarg :test-ast :reader test-ast)
+   (%then-ast :initarg :then-ast :reader then-ast)
+   (%else-ast :initarg :else-ast :reader else-ast)))
 
 (defgeneric convert-special (operator ast environment))
 
-(defmethod convert ((ast compound-form) environment)
+(defmethod convert ((ast compound-ast) environment)
   ;; possibly expand macros
   (let ((macro-function
-	 (lookup (car (original-form ast)) environment 'macro)))
+	 (lookup (car (form ast)) environment 'macro)))
     (if (not (null macro-function))
-	(convert (fixup (funcall macro-function (original-form ast) nil) ast) environment)
+	(convert (fixup (funcall macro-function (form ast) nil) ast) environment)
 	(let ((special-operator
-	       (lookup (car (original-form ast)) environment 'special-operator)))
+	       (lookup (car (form ast)) environment 'special-operator)))
 	  (if (not (null special-operator))
-	      (convert-special (car (original-form ast))
+	      (convert-special (car (form ast))
 			       ast
 			       environment)
-	      (if (symbolp (car (original-form ast)))
-		  (make-instance 'function-call-form
-				 :original-form (original-form ast)
+	      (if (symbolp (car (form ast)))
+		  (make-instance 'function-call-ast
+				 :form (form ast)
 				 ;; this is wrong of course
-				 :function-form (car (original-form ast))
+				 :function-ast (car (form ast))
 				 :arguments
 				 (mapcar (lambda (argument)
 					   (convert argument environment))
-					 (cdr (subforms ast))))
+					 (cdr (children ast))))
 		  ;; this is wrong too
 		  nil))))))
 	      
 (defmethod convert-special ((op (eql 'setq)) ast environment)
-  (assert (= (length (subforms ast)) 3))
-  (assert (typep (car (subforms ast)) 'symbol-form))
+  (assert (= (length (children ast)) 3))
+  (assert (typep (car (children ast)) 'symbol-ast))
   ;; FIXME: issue a warning if the variable doesn't exist 
-  (make-instance 'setq-form
-		 :original-form (original-form ast)
-		 :variable (lookup (original-form (cadr (subforms ast)))
+  (make-instance 'setq-ast
+		 :form (form ast)
+		 :variable (lookup (form (cadr (children ast)))
 				   environment
 				   'variable)
-		 :value (convert (caddr (subforms ast)) environment)))
+		 :value (convert (caddr (children ast)) environment)))
 
 (defmethod convert-special ((op (eql 'progn)) ast environment)
-  (cond ((null (cdr (subforms ast)))
-	 (make-instance 'constant-form
-			:original-form nil
+  (cond ((null (cdr (children ast)))
+	 (make-instance 'constant-ast
+			:form nil
 			:value nil))
-	((null (cddr (subforms ast)))
-	 (convert (cadr (subforms ast)) environment))
-	(t (make-instance 'progn-form
-	     :original-form (original-form ast)
-	     :body-forms (loop for form in (cdr (subforms ast))
-			       collect (convert form environment))))))
+	((null (cddr (children ast)))
+	 (convert (cadr (children ast)) environment))
+	(t (make-instance 'progn-ast
+	     :form (form ast)
+	     :body-asts (loop for ast in (cdr (children ast))
+			       collect (convert ast environment))))))
 
 (defun convert-implicit-progn (asts environment)
-  (let ((ast (make-instance 'compound-form
-			    :original-form nil
-			    :subforms
-			    (cons (make-instance 'symbol-form
-						 :original-form nil)
+  (let ((ast (make-instance 'compound-ast
+			    :form nil
+			    :children
+			    (cons (make-instance 'symbol-ast
+						 :form nil)
 				  asts))))
     (convert-special 'progn ast environment)))
 
 (defmethod convert-special ((op (eql 'let)) ast environment)
-  (assert (>= (length (subforms ast)) 2))
-  (destructuring-bind (binding-forms &rest body-forms) (cdr (subforms ast))
-    (assert (typep binding-forms 'compound-form))
+  (assert (>= (length (children ast)) 2))
+  (destructuring-bind (binding-asts &rest body-asts) (cdr (children ast))
+    (assert (typep binding-asts 'compound-ast))
     (let* ((new-environment (make-instance 'lexical-environment
 					   :parent environment))
 	   (bindings
-	    (loop for binding-form in (subforms binding-forms)
-		  do (assert (or (typep binding-form 'symbol-form)
-				 (and (typep binding-form 'compound-form)
-				      (= (length (subforms binding-form)) 2)
-				      (typep (car (subforms binding-form))
-					     'symbol-form))))
-		  collect (make-instance 'binding-form
-			    :original-form (original-form binding-form)
+	    (loop for binding-ast in (children binding-asts)
+		  do (assert (or (typep binding-ast 'symbol-ast)
+				 (and (typep binding-ast 'compound-ast)
+				      (= (length (children binding-ast)) 2)
+				      (typep (car (children binding-ast))
+					     'symbol-ast))))
+		  collect (make-instance 'binding-ast
+			    :form (form binding-ast)
 			    :variable 
-			    (make-instance 'variable-form
-			      :original-form 
-			      (original-form (if (typep binding-form 'symbol-form)
-						 binding-form
-						 (car (subforms binding-form))))
+			    (make-instance 'variable-ast
+			      :form 
+			      (form (if (typep binding-ast 'symbol-ast)
+						 binding-ast
+						 (car (children binding-ast))))
 			      :name
-			      (original-form (if (typep binding-form 'symbol-form)
-						 binding-form
-						 (car (subforms binding-form)))))
+			      (form (if (typep binding-ast 'symbol-ast)
+						 binding-ast
+						 (car (children binding-ast)))))
 			    :value 
-			    (convert (if (typep binding-form 'symbol-form)
+			    (convert (if (typep binding-ast 'symbol-ast)
 					 nil
-					 (cadr (subforms binding-form)))
+					 (cadr (children binding-ast)))
 				     environment)))))
       (loop for binding in bindings
 	    do (add-binding (name (variable binding))
 			    (variable binding)
 			    (variables new-environment)))
-      (make-instance 'let-form
-		     :original-form (original-form ast)
+      (make-instance 'let-ast
+		     :form (form ast)
 		     :bindings bindings
-		     :body-form
-		     (convert-implicit-progn body-forms new-environment)))))
+		     :body-ast
+		     (convert-implicit-progn body-asts new-environment)))))
 
 (defmethod convert-special ((op (eql 'quote)) ast environment)
-  (assert (= (length (subforms ast)) 2))
-  (make-instance 'constant-form
-		 :original-form (original-form ast)
-		 :value (cadr (subforms ast))))
+  (assert (= (length (children ast)) 2))
+  (make-instance 'constant-ast
+		 :form (form ast)
+		 :value (cadr (children ast))))
 
 (defmethod convert-special ((op (eql 'if)) ast environment)
-  (assert (<= 3 (length (subforms ast)) 4))
-  (make-instance 'if-form
-		 :original-form (original-form ast)
-		 :test-form (convert (cadr (subforms ast)) environment)
-		 :then-form (convert (caddr (subforms ast)) environment)
-		 :else-form (if (null (cdddr (subforms ast)))
-				(make-instance 'constant-form
-					       :original-form nil
-					       :value nil)
-				(convert (cadddr (subforms ast)) environment))))
+  (assert (<= 3 (length (children ast)) 4))
+  (make-instance 'if-ast
+		 :form (form ast)
+		 :test-ast (convert (cadr (children ast)) environment)
+		 :then-ast (convert (caddr (children ast)) environment)
+		 :else-ast (if (null (cdddr (children ast)))
+			       (make-instance 'constant-ast
+					      :form nil
+					      :value nil)
+			       (convert (cadddr (children ast)) environment))))
 
 ;; (defgeneric normalize (form))
 
@@ -462,7 +477,7 @@
 ;; (defgeneric compile-expression (form values successors))
 
 ;; ;;; factor the duplicated code
-;; (defmethod compile-expression ((form constant-form) values successors)
+;; (defmethod compile-expression ((form constant-ast) values successors)
 ;;   (if (null values)
 ;;       (warn "constant form compiled in a context where its value is not needed")
 ;;       (let ((succ successors))
