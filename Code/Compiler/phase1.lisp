@@ -22,6 +22,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; The base classes for conditions used here. 
+
+(define-condition compilation-program-error (program-error)
+  ;; Add information about where to locate the form.
+  ((%form :initarg :form :reader form)))
+
+(define-condition compilation-warning (warning)
+  ;; Add information about where to locate the form.
+  ((%form :initarg :form :reader form)))
+
+(define-condition compilation-style-warning (style-warning)
+  ;; Add information about where to locate the form.
+  ((%form :initarg :form :reader form)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Internal representation of source code
 
 ;;; Terminology: We use `form' to mean raw Lisp expressions
@@ -29,9 +45,10 @@
 ;;; the abstract syntax tree resulting from converting such
 ;;; raw expressions to instances of our compiler objects. 
 
-;;; The first step is to convert the raw Lisp form into an 
-;;; abstract syntax tree, so that we can then use generic
-;;; function dispatch for the following steps. 
+;;; The first step is to turn raw forms into abstract syntax trees
+;;; (asts), so that we can then use generic function dispatch for the
+;;; following steps. .  In this step, we only distinguish between 3
+;;; kinds of ast, a symbol, a non-symbol atom, and a compound ast.
 
 (defclass ast (compiler-object)
   ((%form :initarg :form :accessor form)))
@@ -42,6 +59,25 @@
 
 (defclass compound-ast (ast)
   ((%children :initarg :children :reader children)))
+
+(defun proper-list-p (list)
+  (null (last list 0)))
+
+(define-condition form-is-not-a-proper-list (compilation-program-error) ())
+
+(defun make-ast (form)
+  (cond ((symbolp form)
+	 (make-instance 'symbol-ast
+			:form form))
+	((atom form)
+	 (make-instance 'constant-ast
+			:form form))
+	(t
+	 (unless (proper-list-p form)
+	   (error 'form-is-not-a-proper-list :form form))
+	 (make-instance 'compound-ast
+			:form form
+			:children (mapcar #'make-ast form)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -166,25 +202,6 @@
 			 (namespace-name (eql 'special-operator)))
   nil)
   
-(defun proper-list-p (list)
-  (null (last list 0)))
-
-;;; The first step is to turn raw forms into abstract syntax trees
-;;; (asts).  In this step, we only distinguish between 3 kinds of ast,
-;;; a symbol, a non-symbol atom, and a compound ast.  
-(defun make-ast (form)
-  (cond ((symbolp form)
-	 (make-instance 'symbol-ast
-			:form form))
-	((atom form)
-	 (make-instance 'constant-ast
-			:form form))
-	(t
-	 (assert (proper-list-p form))
-	 (make-instance 'compound-ast
-			:form form
-			:children (mapcar #'make-ast form)))))
-
 ;;; The second step is to turn the trivial ast into something more
 ;;; sophisiticated, in which the environment has been consulted to
 ;;; determine whether we have a special-form, a function call, a macro
@@ -208,16 +225,6 @@
 	      variable
 	      ;; handle unknown variable
 	      nil)))))
-
-;;; Search an ast to see whether its original form is eq to the ast
-(defun search-ast (form ast)
-  (cond ((eq form (form ast))
-	 ast)
-	((typep ast 'compound-ast)
-	 (some (lambda (child)
-		 (search-ast form child))
-	       (children ast)))
-	(t nil)))
 
 ;;; Create a new ast from the form by either finding an existing (sub)
 ;;; ast that has form as its original form, or by creating a new ast.
@@ -252,6 +259,17 @@
 ;;; again.  If a number shows up, replace it by (1+ number) and try
 ;;; again.  If a character shows up, replace it by the one with the
 ;;; next code, and try again. 
+
+;;; Search an ast to see whether its original form is eq to the ast
+(defun search-ast (form ast)
+  (cond ((eq form (form ast))
+	 ast)
+	((typep ast 'compound-ast)
+	 (some (lambda (child)
+		 (search-ast form child))
+	       (children ast)))
+	(t nil)))
+
 (defun fixup (form ast)
   (or (search-ast form ast)
       (cond ((symbolp form)
@@ -321,16 +339,39 @@
 		  ;; this is wrong too
 		  nil))))))
 	      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting setq
+
+(define-condition setq-must-have-even-number-of-arguments
+    (compilation-program-error)
+  ())
+
+(define-condition setq-variable-must-be-a-symbol
+    (compilation-program-error)
+  ())
+
+(define-condition setq-variable-does-not-exist
+    (compilation-warning)
+  ())
+
 (defmethod convert-special ((op (eql 'setq)) ast environment)
+  ;; FIXME check if the length is odd
   (assert (= (length (children ast)) 3))
+  ;; FIXME check ever other argument
   (assert (typep (car (children ast)) 'symbol-ast))
   ;; FIXME: issue a warning if the variable doesn't exist 
+  ;; FIXME: turn it into a progn of setqs with two args. 
   (make-instance 'setq-ast
 		 :form (form ast)
 		 :variable (lookup (form (cadr (children ast)))
 				   environment
 				   'variable)
 		 :value (convert (caddr (children ast)) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting progn
 
 (defmethod convert-special ((op (eql 'progn)) ast environment)
   (cond ((null (cdr (children ast)))
@@ -352,6 +393,10 @@
 						 :form nil)
 				  asts))))
     (convert-special 'progn ast environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting let
 
 (defmethod convert-special ((op (eql 'let)) ast environment)
   (assert (>= (length (children ast)) 2))
@@ -393,11 +438,19 @@
 		     :body-ast
 		     (convert-implicit-progn body-asts new-environment)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting quote
+
 (defmethod convert-special ((op (eql 'quote)) ast environment)
   (assert (= (length (children ast)) 2))
   (make-instance 'constant-ast
 		 :form (form ast)
 		 :value (cadr (children ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting if
 
 (defmethod convert-special ((op (eql 'if)) ast environment)
   (assert (<= 3 (length (children ast)) 4))
