@@ -383,8 +383,9 @@
 	(t (make-instance 'progn-ast
 	     :form (form ast)
 	     :body-asts (loop for ast in (cdr (children ast))
-			       collect (convert ast environment))))))
+			      collect (convert ast environment))))))
 
+;;; FIXME: generate a form by consing PROGN to the front???
 (defun convert-implicit-progn (asts environment)
   (let ((ast (make-instance 'compound-ast
 			    :form nil
@@ -398,6 +399,8 @@
 ;;;
 ;;; Converting let
 
+;;; FIXME: handle declarations
+;;; FIXME: change the asserts to calls to error or warn.
 (defmethod convert-special ((op (eql 'let)) ast environment)
   (assert (>= (length (children ast)) 2))
   (destructuring-bind (binding-asts &rest body-asts) (cdr (children ast))
