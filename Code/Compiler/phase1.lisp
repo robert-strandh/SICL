@@ -219,9 +219,39 @@
 	       (children ast)))
 	(t nil)))
 
-;;; Create a new ast from the form by either finding
-;;; an existing (sub) ast that has form as its original form,
-;;; or by creating a new ast. 
+;;; Create a new ast from the form by either finding an existing (sub)
+;;; ast that has form as its original form, or by creating a new ast.
+;;; This could be done a lot better.  For one thing, it is going to do
+;;; the wrong thing if the original form contains a symbol, that also
+;;; happens to be introduced by the macro.  The same thing is true for
+;;; things like small numbers, characters, etc.  One possibility would
+;;; be to try to expand the macro with some unique object in place of
+;;; suspicious atoms, and see whether the expansion then contains
+;;; those unique objects.  If it does, then we are sure of the origin,
+;;; and if it does not contain it, then we know it was introduced by
+;;; the macro expander.  However, that technique might fail in a
+;;; couple of ways.  First, the macro function might have inspected
+;;; the object and failed to expand, so we have to catch such errors.
+;;; Luckily, we are allowed to call the macroexpander as many times as
+;;; we like.  Also, the macro function might have done silly things
+;;; such as applied COPY-TREE to some parts of the original form. 
+;;;
+;;; So here is a suggested technique.  Initially, recognize only
+;;; objects that cannot have been introduced by the macro, such as
+;;; (typically) conses, but also atoms other than numbers, symbols,
+;;; and characters.  In a second step, check the expanded form for
+;;; numbers, symbols, and characters that do not exist in the original
+;;; form.  Such atoms must have been introduced by the macroexpander,
+;;; and a new ast can be created form them.  In a third step, Check
+;;; the expanded form for atoms that are not inside already recognized
+;;; subforms.  For each such atom in the original form, replace it by
+;;; a different object of the same type and macroexpand again.  If the
+;;; macroexpansion succeeds, then identify the original ast.  So for
+;;; instance, if we suspect that a symbol from the original form shows
+;;; up in the expanded form, replace it by a GENSYMed symbol and try
+;;; again.  If a number shows up, replace it by (1+ number) and try
+;;; again.  If a character shows up, replace it by the one with the
+;;; next code, and try again. 
 (defun fixup (form ast)
   (or (search-ast form ast)
       (cond ((symbolp form)
