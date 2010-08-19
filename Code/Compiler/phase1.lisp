@@ -63,7 +63,7 @@
 (defun proper-list-p (list)
   (null (last list 0)))
 
-(define-condition form-is-not-a-proper-list (compilation-program-error) ())
+(define-condition form-is-must-be-a-proper-list (compilation-program-error) ())
 
 (defun make-ast (form)
   (cond ((symbolp form)
@@ -74,7 +74,7 @@
 			:form form))
 	(t
 	 (unless (proper-list-p form)
-	   (error 'form-is-not-a-proper-list :form form))
+	   (error 'form-must-be-a-proper-list :form form))
 	 (make-instance 'compound-ast
 			:form form
 			:children (mapcar #'make-ast form)))))
@@ -279,7 +279,9 @@
 	     (make-instance 'constant-ast
 			    :form form))
 	    (t
-	     (assert (proper-list-p form))
+	     (unless (proper-list-p form)
+	       (error 'form-must-be-a-proper-list
+		      :form form))
 	     (make-instance 'compound-ast
 			    :form form
 			    :children (mapcar (lambda (child)
@@ -356,10 +358,14 @@
   ())
 
 (defmethod convert-special ((op (eql 'setq)) ast environment)
-  ;; FIXME check if the length is odd
-  (assert (= (length (children ast)) 3))
-  ;; FIXME check ever other argument
-  (assert (typep (car (children ast)) 'symbol-ast))
+  (unless (oddp (length (children ast)))
+    (error 'setq-must-have-even-number-of-arguments
+	   :form (form ast)))
+  ;; FIXME check every other argument
+  (loop for child in (cdr (children ast)) by #'cddr
+	do (unless (typep child 'symbol-ast)
+	     (error 'setq-variable-must-be-a-symbol
+		    :form (form child))))
   ;; FIXME: issue a warning if the variable doesn't exist 
   ;; FIXME: turn it into a progn of setqs with two args. 
   (make-instance 'setq-ast
@@ -399,21 +405,51 @@
 ;;;
 ;;; Converting let
 
+(define-condition form-must-have-bindings
+    (compilation-program-error)
+  ())
+
+(define-condition bindings-must-be-a-list
+    (compilation-program-error)
+  ())
+
+(define-condition binding-must-be-symbol-or-list
+    (compilation-program-error)
+  ())
+
+(define-condition binding-must-have-length-two
+    (compilation-program-error)
+  ())
+
+(define-condition variable-must-be-a-symbol
+    (compilation-program-error)
+  ())    
+
 ;;; FIXME: handle declarations
-;;; FIXME: change the asserts to calls to error or warn.
 (defmethod convert-special ((op (eql 'let)) ast environment)
-  (assert (>= (length (children ast)) 2))
+  (unless (>= (length (children ast)) 2)
+    (error 'let-must-have-bindings :form (form ast)))
   (destructuring-bind (binding-asts &rest body-asts) (cdr (children ast))
-    (assert (typep binding-asts 'compound-ast))
+    (unless (typep binding-asts 'compound-ast)
+      (error 'let-bindings-must-be-a-list :form (form binding-asts)))
     (let* ((new-environment (make-instance 'lexical-environment
 					   :parent environment))
 	   (bindings
 	    (loop for binding-ast in (children binding-asts)
-		  do (assert (or (typep binding-ast 'symbol-ast)
-				 (and (typep binding-ast 'compound-ast)
-				      (= (length (children binding-ast)) 2)
-				      (typep (car (children binding-ast))
-					     'symbol-ast))))
+		  do (unless (or (typep binding-ast 'symbol-ast)
+				 (typep binding-ast 'compound-ast))
+		       (error 'let-binding-must-be-symbol-or-list
+			      :form (form binding-ast)))
+		     (when (and (typep binding-ast 'compound-ast)
+				(/= (length (children binding-ast)) 2))
+		       (error 'let-binding-must-have-length-two
+			      :form (form binding-ast)))
+		     (when (and (typep binding-ast 'compound-ast)
+				(= (length (children binding-ast)) 2)
+				(not (typep (car (children binding-ast))
+					    'symbol-ast)))
+		       (error 'variable-must-be-a-symbol
+			      :form (form (car (children binding-ast)))))
 		  collect (make-instance 'binding-ast
 			    :form (form binding-ast)
 			    :variable 
@@ -445,8 +481,14 @@
 ;;;
 ;;; Converting quote
 
+(define-condition quote-must-have-a-single-argument
+    (compilation-program-error)
+  ())
+
 (defmethod convert-special ((op (eql 'quote)) ast environment)
-  (assert (= (length (children ast)) 2))
+  (unless (= (length (children ast)) 2)
+    (error 'quote-must-have-a-single-argument
+	   :form (form ast)))
   (make-instance 'constant-ast
 		 :form (form ast)
 		 :value (cadr (children ast))))
@@ -455,8 +497,14 @@
 ;;;
 ;;; Converting if
 
+(define-condition if-must-have-three-or-four-arguments
+    (compilation-program-error)
+  ())
+
 (defmethod convert-special ((op (eql 'if)) ast environment)
-  (assert (<= 3 (length (children ast)) 4))
+  (unless (<= 3 (length (children ast)) 4)
+    (error 'if-must-have-three-or-four-arguments
+	   :form (form ast)))
   (make-instance 'if-ast
 		 :form (form ast)
 		 :test-ast (convert (cadr (children ast)) environment)
@@ -467,127 +515,3 @@
 					      :value nil)
 			       (convert (cadddr (children ast)) environment))))
 
-;; (defgeneric normalize (form))
-
-;; (defmethod normalize (form)
-;;   form)
-
-;; (defun bindings-or-nil (form)
-;;   (if (typep form 'let-form) (bindings form) '()))
-
-;; (defun body-form-or-form (form)
-;;   (if (typep form 'let-form) (body-form form) form))
-
-;; (defun mappend (fun &rest lists)
-;;   (mapcan #'copy-list
-;; 	  (apply #'mapcar fun lists)))
-
-;; (defmethod normalize ((form if-form))
-;;   (let ((normalized-test-form (normalize (test-form form)))
-;; 	(normalized-then-form (normalize (then-form form)))
-;; 	(normalized-else-form (normalize (else-form form))))
-;;     (if (and (not (typep normalized-test-form 'let-form))
-;; 	     (not (typep normalized-then-form 'let-form))
-;; 	     (not (typep normalized-else-form 'let-form)))
-;; 	(make-instance 'if-form
-;; 	  :test-form normalized-test-form
-;; 	  :then-form normalized-then-form
-;; 	  :else-form normalized-else-form)
-;; 	(make-instance 'let-form
-;; 	  :bindings (append (bindings-or-nil normalized-test-form)
-;; 			    (bindings-or-nil normalized-then-form)
-;; 			    (bindings-or-nil normalized-else-form))
-;; 	  :body-form (make-instance 'if-form
-;; 		       :test-form (body-form-or-form normalized-test-form)
-;; 		       :then-form (body-form-or-form normalized-then-form)
-;; 		       :else-form (body-form-or-form normalized-else-form))))))
-
-;; (defun body-forms-or-list-of-form (form)
-;;   (if (typep form 'progn-form) (body-forms form) (list form)))
-
-;; ;; (defmethod normalize ((form progn-form))
-;; ;;   (let* ((normalized-body-forms (mapcar #'normalize (body-forms form)))
-;; ;; 	 (bindings (mappend #'bindings-or-nil normalized-body-forms)))
-;; ;;     (if (null bindings)
-;; ;; 	(make-instance 'progn-form
-;; ;; 	  :body-forms normalized-body-forms)
-;; ;; 	(let ((let-free-body-forms (mapcar #'body-form-or-form normalized-body-forms))
-;; ;; 	      (new-body-forms (mappend #'body-forms-or-list-form let-free-body-form)))
-;; ;; 	  (make-instance 'let-form
-;; ;; 	    :bindings bindings
-;; ;; 	    :body-form (make-instance 'progn-form
-;; ;; 			 :body-forms new-body-forms))))))
-
-;; (defmethod normalize ((form let-form))
-;;   (let ((normalized-body-form (normalize (body-form form))))
-;;     (if (typep normalized-body-form 'let-form)
-;; 	(make-instance 'let-form
-;; 	  :bindings (append (bindings form) (bindings normalized-body-form))
-;; 	  :body-form (body-form normalized-body-form))
-;; 	(make-instance 'let-form
-;; 	  :bindings (bindings form)
-;; 	  :body-form normalized-body-form))))
-
-;; ;; (defmethod normalize ((form function-call-form))
-;; ;;   (let ((function-reference (function-reference form))
-;; ;; 	(normalized-arguments (mapcar #'normalize (arguments form)))
-;; ;; 	(bindings (mappend #'bindings-or-nil normalized-arguments)))
-;; ;;     (if (null bindings)
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Graph
-
-;; (defclass instruction () ())
-
-;; (defclass single-successor-instruction (instruction)
-;;   ((%successor :initarg :successor :accessor successor)))
-
-;; (defclass copy-instruction (single-successor-instruction)
-;;   ((%destination :initarg :destination :accessor destination)
-;;    (%source :initarg :source :accessor source)))
-
-;; (defclass load-instruction (single-successor-instruction)
-;;   ((%destination :initarg :destination :accessor destination)
-;;    (%value :initarg :value :accessor value)))
-
-;; (defclass test-instruction (instruction)
-;;   ((%place :initarg :place :accessor place)
-;;    (%true-successor :initarg :true-successor :accessor true-successor)
-;;    (%false-successor :initarg :false-successor :accessor false-successor)))
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Compile an expression in internal form
-
-;; (defgeneric compile-expression (form values successors))
-
-;; ;;; factor the duplicated code
-;; (defmethod compile-expression ((form constant-ast) values successors)
-;;   (if (null values)
-;;       (warn "constant form compiled in a context where its value is not needed")
-;;       (let ((succ successors))
-;; 	(loop for place in (cdr values)
-;; 	      do (setf succ (make-instance 'load-instruction
-;; 			      :destination place
-;; 			      :value nil
-;; 			      :successor succ)))
-;; 	(make-instance 'load-instruction
-;; 	  :destination (car values)
-;; 	  :value form
-;; 	  :successor succ))))
-
-;; ;;; factor the duplicated code
-;; (defmethod compile-expression ((form variable-form) values successors)
-;;   (if (null values)
-;;       (warn "variable form compiled in a context where its value is not needed")
-;;       (let ((succ successors))
-;; 	(loop for place in (cdr values)
-;; 	      do (setf succ (make-instance 'load-instruction
-;; 			      :destination place
-;; 			      :value nil
-;; 			      :successor succ)))
-;; 	(make-instance 'copy-instruction
-;; 	  :destination (car values)
-;; 	  :value form
-;; 	  :successor succ))))
