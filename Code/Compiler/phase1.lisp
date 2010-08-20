@@ -295,26 +295,6 @@
   ((%function-ast :initarg :function-ast :reader function-ast)
    (%arguments :initarg :arguments :reader arguments)))
 
-(defclass progn-ast (ast)
-  ((%body-asts :initarg :body-asts :reader body-asts)))
-
-(defclass binding-ast (ast)
-  ((%variable :initarg :variable :reader variable)
-   (%value :initarg :value :reader value)))
-
-(defclass let-ast (ast)
-  ((%bindings :initarg :bindings :reader bindings)
-   (%body-ast :initarg :body-ast :reader body-ast)))
-
-(defclass setq-ast (ast)
-  ((%variable :initarg :variable :reader variable)
-   (%value :initarg :value :reader value)))
-
-(defclass if-ast (ast)
-  ((%test-ast :initarg :test-ast :reader test-ast)
-   (%then-ast :initarg :then-ast :reader then-ast)
-   (%else-ast :initarg :else-ast :reader else-ast)))
-
 (defgeneric convert-special (operator ast environment))
 
 (defmethod convert ((ast compound-ast) environment)
@@ -343,41 +323,10 @@
 	      
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting setq
-
-(define-condition setq-must-have-even-number-of-arguments
-    (compilation-program-error)
-  ())
-
-(define-condition setq-variable-must-be-a-symbol
-    (compilation-program-error)
-  ())
-
-(define-condition setq-variable-does-not-exist
-    (compilation-warning)
-  ())
-
-(defmethod convert-special ((op (eql 'setq)) ast environment)
-  (unless (oddp (length (children ast)))
-    (error 'setq-must-have-even-number-of-arguments
-	   :form (form ast)))
-  ;; FIXME check every other argument
-  (loop for child in (cdr (children ast)) by #'cddr
-	do (unless (typep child 'symbol-ast)
-	     (error 'setq-variable-must-be-a-symbol
-		    :form (form child))))
-  ;; FIXME: issue a warning if the variable doesn't exist 
-  ;; FIXME: turn it into a progn of setqs with two args. 
-  (make-instance 'setq-ast
-		 :form (form ast)
-		 :variable (lookup (form (cadr (children ast)))
-				   environment
-				   'variable)
-		 :value (convert (caddr (children ast)) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Converting progn
+
+(defclass progn-ast (ast)
+  ((%body-asts :initarg :body-asts :reader body-asts)))
 
 (defmethod convert-special ((op (eql 'progn)) ast environment)
   (cond ((null (cdr (children ast)))
@@ -403,11 +352,114 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting let
+;;; Converting block
 
-(define-condition form-must-have-bindings
+(defclass block-ast (ast)
+  ((%tag :initarg :tag :reader tag)
+   (%body-ast :initarg :body-ast :reader body-ast)))
+
+(define-condition block-must-have-at-least-one-argument
     (compilation-program-error)
   ())
+
+(define-condition block-name-must-be-a-symbol
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'block)) ast environment)
+  ;; Check that there is at least one argument.
+  (unless (>= (length (children ast)) 2)
+    (error 'block-must-have-at-least-one-argument
+	   :form (form ast)))
+  ;; Check that the block name is a symbol
+  (unless (typep (cadr (children ast)) 'symbol-ast)
+    (error 'block-name-must-be-a-symbol
+	   :form (cadr (children ast))))
+  (let ((new-environment (make-instance 'lexical-environment
+					:parent environment)))
+    (add-binding (form (cadr (children ast)))
+		 ;; Do we want to introduce a class for block tags?
+		 (cadr (children ast)) 
+		 (block-tags new-environment))
+    (make-instance 'block-ast
+      :form (form ast)
+      :tag (cadr (children ast))
+      :body-ast (convert-implicit-progn (cddr (children ast)) new-environment))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting return-from
+
+(defclass return-from-ast (ast)
+  ((%tag :initarg :tag :reader tag)
+   (%result :initarg :result :reader result)))
+
+(define-condition return-from-must-have-one-or-two-arguments
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'return-from)) ast environment)
+  ;; Check that we have the right number of arguments
+  (unless (<= 2 (length (children ast)) 3)
+    (error 'return-from-must-have-one-or-two-arguments
+	   :form (form ast)))
+  (make-instance 'return-from-ast
+    :form (form ast)
+    :tag (lookup (form (cadr ast)) environment 'block-tag)
+    :result (if (= (length (children ast)) 3)
+		(convert (caddr (children ast)) environment)
+		(make-instance 'constant-ast :form nil))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting setq
+
+(defclass setq-ast (ast)
+  ((%variable :initarg :variable :reader variable)
+   (%value :initarg :value :reader value)))
+
+(define-condition setq-must-have-even-number-of-arguments
+    (compilation-program-error)
+  ())
+
+(define-condition setq-variable-must-be-a-symbol
+    (compilation-program-error)
+  ())
+
+(define-condition setq-variable-does-not-exist
+    (compilation-warning)
+  ())
+
+(defmethod convert-special ((op (eql 'setq)) ast environment)
+  ;; Check that the progn form has an even number of arguments.
+  (unless (oddp (length (children ast)))
+    (error 'setq-must-have-even-number-of-arguments
+	   :form (form ast)))
+  ;; Check that even arguments are symbols. 
+  (loop for child in (cdr (children ast)) by #'cddr
+	do (unless (typep child 'symbol-ast)
+	     (error 'setq-variable-must-be-a-symbol
+		    :form (form child))))
+  ;; FIXME: issue a warning if the variable doesn't exist 
+  ;; FIXME: turn it into a progn of setqs with two args. 
+  (make-instance 'setq-ast
+		 :form (form ast)
+		 :variable (lookup (form (cadr (children ast)))
+				   environment
+				   'variable)
+		 :value (convert (caddr (children ast)) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting let
+
+(defclass binding-ast (ast)
+  ((%variable :initarg :variable :reader variable)
+   (%value :initarg :value :reader value)))
+
+(defclass let-ast (ast)
+  ((%bindings :initarg :bindings :reader bindings)
+   (%body-ast :initarg :body-ast :reader body-ast)))
 
 (define-condition bindings-must-be-a-list
     (compilation-program-error)
@@ -425,31 +477,39 @@
     (compilation-program-error)
   ())    
 
+(defun check-bindings (binding-asts)
+  (unless (typep binding-asts 'compound-ast)
+    (error 'bindings-must-be-a-list :form (form binding-asts)))
+  (loop for binding-ast in (children binding-asts)
+	do (unless (or (typep binding-ast 'symbol-ast)
+		       (typep binding-ast 'compound-ast))
+	     (error 'binding-must-be-symbol-or-list
+		    :form (form binding-ast)))
+	   (when (and (typep binding-ast 'compound-ast)
+		      (/= (length (children binding-ast)) 2))
+	     (error 'binding-must-have-length-two
+		    :form (form binding-ast)))
+	   (when (and (typep binding-ast 'compound-ast)
+		      (= (length (children binding-ast)) 2)
+		      (not (typep (car (children binding-ast))
+				  'symbol-ast)))
+	     (error 'variable-must-be-a-symbol
+		    :form (form (car (children binding-ast)))))))
+
+(define-condition form-must-have-bindings
+    (compilation-program-error)
+  ())
+
 ;;; FIXME: handle declarations
 (defmethod convert-special ((op (eql 'let)) ast environment)
   (unless (>= (length (children ast)) 2)
-    (error 'let-must-have-bindings :form (form ast)))
+    (error 'must-have-bindings :form (form ast)))
   (destructuring-bind (binding-asts &rest body-asts) (cdr (children ast))
-    (unless (typep binding-asts 'compound-ast)
-      (error 'let-bindings-must-be-a-list :form (form binding-asts)))
+    (check-bindings binding-asts)
     (let* ((new-environment (make-instance 'lexical-environment
 					   :parent environment))
 	   (bindings
 	    (loop for binding-ast in (children binding-asts)
-		  do (unless (or (typep binding-ast 'symbol-ast)
-				 (typep binding-ast 'compound-ast))
-		       (error 'let-binding-must-be-symbol-or-list
-			      :form (form binding-ast)))
-		     (when (and (typep binding-ast 'compound-ast)
-				(/= (length (children binding-ast)) 2))
-		       (error 'let-binding-must-have-length-two
-			      :form (form binding-ast)))
-		     (when (and (typep binding-ast 'compound-ast)
-				(= (length (children binding-ast)) 2)
-				(not (typep (car (children binding-ast))
-					    'symbol-ast)))
-		       (error 'variable-must-be-a-symbol
-			      :form (form (car (children binding-ast)))))
 		  collect (make-instance 'binding-ast
 			    :form (form binding-ast)
 			    :variable 
@@ -496,6 +556,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting if
+
+(defclass if-ast (ast)
+  ((%test-ast :initarg :test-ast :reader test-ast)
+   (%then-ast :initarg :then-ast :reader then-ast)
+   (%else-ast :initarg :else-ast :reader else-ast)))
 
 (define-condition if-must-have-three-or-four-arguments
     (compilation-program-error)
