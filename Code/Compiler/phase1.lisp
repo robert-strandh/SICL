@@ -669,7 +669,7 @@
 ;;;
 ;;; Converting go
 
-(defclass go-tag (ast)
+(defclass go-tag-ast (ast)
   ((%tag :initarg :tag :reader tag)))
 
 (define-condition go-must-have-exactly-one-argument
@@ -686,7 +686,49 @@
 	      (typep (cadr (children ast)) 'symbol))
     (error 'go-tag-must-be-symbol-or-integer
 	   :form (cadr (children ast))))
-  (make-instance 'go-tag
+  (make-instance 'go-tag-ast
 		 :form (cadr (children ast))
 		 :tag (lookup (cadr (children ast)) environment 'go-tag)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting eval-when
+
+(defclass eval-when-ast (ast)
+  ((%situations :initarg :situations :reader situations)
+   (%body-ast :inintarg :body-ast :reader body-ast)))
+
+(define-condition eval-when-must-have-at-least-one-argument
+    (compilation-program-error)
+  ())
+
+(define-condition situations-must-be-a-list
+    (compilation-program-error)
+  ())
+
+(define-condition invalid-eval-when-situation
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'eval-when)) ast environment)
+  ;; Check the number of arguments
+  (unless (>= (length (children ast)) 2)
+    (error 'eval-when-must-have-at-least-one-argument
+	   :form (form ast)))
+  ;; Check that the first argument is a list
+  (unless (typep (cadr (children ast)) 'compound-ast)
+    (error 'situations-must-be-a-list
+	   :form (cadr (children ast))))
+  ;; Check each situation
+  (loop for situation in (cadr (children ast))
+	do (unless (and (typep situation 'symbol-ast)
+			(member (form situation)
+				'(:compile-toplevel :load-toplevel :execute
+				  compile load eval)))
+	     ;; FIXME: perhaps we should warn about the deprecated situations
+	     (error 'invalid-eval-when-situation
+		    :form (form situation))))
+  (make-instance 'eval-when-ast
+		 :form (form ast)
+		 :situations (mapcar #'form (children (cadr ast)))
+		 :body-ast (convert-implicit-progn (cddr (children ast)) environment)))
