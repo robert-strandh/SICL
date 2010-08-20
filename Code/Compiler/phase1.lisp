@@ -580,3 +580,49 @@
 					      :value nil)
 			       (convert (cadddr (children ast)) environment))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting catch
+
+(defclass catch-ast (ast)
+  ((%tag :initarg :tag :reader tag)
+   (%body-ast :initarg :body-ast :reader body-ast)))
+
+(define-condition catch-must-have-at-least-one-argument
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'catch)) ast environment)
+  ;; Check the number of arguments
+  (unless (>= (length (children ast)) 2)
+    (error 'catch-must-have-at-least-one-argument
+	   :form (form ast)))
+  (make-instance 'catch-ast
+    :form (form ast)
+    :tag (convert (cadr (children ast)) environment)
+    :body-ast (convert-implicit-progn (cddr (children ast)) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting throw
+
+(defclass throw-ast (ast)
+  ((%tag :initarg :tag :reader tag)
+   (%result :iniarg :result :reader result)))
+
+(define-condition throw-must-have-exactly-two-arguments
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'throw)) ast environment)
+  ;; Check the number of arguments
+  (unless (= (length (children ast)) 3)
+    (error 'throw-must-have-exactly-two-arguments
+	   :form (form ast)))
+  (make-instance 'throw-ast
+    :form (form ast)
+    :tag (convert (cadr (children ast)) environment)
+    :result (convert (caddr (children ast)) environment)))
+
+
+
