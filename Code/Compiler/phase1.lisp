@@ -735,6 +735,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting the
+
+(defclass the-ast (ast)
+  ((%value-type :initarg :value-type :reader value-type)
+   (%result :initarg :result :reader result)))
+
+(define-condition the-must-have-exactly-two-arguments
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'the)) ast environment)
+  ;; Check the number of arguments
+  (unless (= (length (children ast)) 3)
+    (error 'the-must-have-exactly-two-arguments
+	   :form (form ast)))
+  (make-instance 'the-ast
+    :form (form ast)
+    ;; FIXME: do something smarter about the type
+    :value-type (cadr (children ast))
+    :result (convert (caddr (children ast)) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting unwind-protect
 
 (defclass unwind-protect-ast (ast)
