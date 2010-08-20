@@ -201,6 +201,11 @@
 			 (environment lexical-environment)
 			 (namespace-name (eql 'special-operator)))
   nil)
+
+(defmethod lookup-level (name
+			 (environment lexical-environment)
+			 (namespace-name (eql 'go-tag)))
+  (lookup-in-namespace name (go-tags environment)))
   
 ;;; The second step is to turn the trivial ast into something more
 ;;; sophisiticated, in which the environment has been consulted to
@@ -624,5 +629,64 @@
     :tag (convert (cadr (children ast)) environment)
     :result (convert (caddr (children ast)) environment)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting tagbody
 
+(defclass tag-ast (ast)
+  ((%name :initarg name :reader name)))
+
+(defclass tagbody-ast (ast)
+  ((%body-asts :initarg body-asts :reader body-asts)))
+
+(define-condition go-tag-must-be-symbol-or-integer
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'tagbody)) ast environment)
+  (let ((new-environment (make-instance 'lexical-environment
+					:parent environment)))
+    ;; Gather up the tags from the body and insert them into
+    ;; the new environment
+    ;; FIXME: we might want to check that the tags are unique. 
+    (loop for child in (children ast)
+	  do (unless (typep child 'compound-ast)
+	       (unless (or (typep (form child) 'symbol)
+			   (typep (form child) 'integer))
+		 (error 'go-tag-must-be-symbol-or-integer
+			:form (form child)))
+	       (add-binding (form child)
+			    (make-instance 'tag-ast :form (form child))
+			    (go-tags new-environment))))
+    (make-instance 'tagbody-ast
+      :form (form ast)
+      :body-asts (loop for child in (children ast)
+		       collect (if (typep child 'compound-ast)
+				   (convert child new-environment)
+				   (lookup (form child) new-environment 'go-tag))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting go
+
+(defclass go-tag (ast)
+  ((%tag :initarg :tag :reader tag)))
+
+(define-condition go-must-have-exactly-one-argument
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'go)) ast environment)
+  ;; Check the number of arguments
+  (unless (= (length (children ast)) 2)
+    (error 'go-must-have-exactly-one-argument
+	   :form (form ast)))
+  ;; Check that the go tag is a symbol or an integer
+  (unless (or (typep (cadr (children ast)) 'integer)
+	      (typep (cadr (children ast)) 'symbol))
+    (error 'go-tag-must-be-symbol-or-integer
+	   :form (cadr (children ast))))
+  (make-instance 'go-tag
+		 :form (cadr (children ast))
+		 :tag (lookup (cadr (children ast)) environment 'go-tag)))
 
