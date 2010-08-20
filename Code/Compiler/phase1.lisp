@@ -729,6 +729,28 @@
 	     (error 'invalid-eval-when-situation
 		    :form (form situation))))
   (make-instance 'eval-when-ast
-		 :form (form ast)
-		 :situations (mapcar #'form (children (cadr ast)))
-		 :body-ast (convert-implicit-progn (cddr (children ast)) environment)))
+    :form (form ast)
+    :situations (mapcar #'form (children (cadr ast)))
+    :body-ast (convert-implicit-progn (cddr (children ast)) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting unwind-protect
+
+(defclass unwind-protect-ast (ast)
+  ((%protected-ast :initarg :protected-ast :reader protected-ast)
+   (%cleanup-ast :initarg :cleanup-ast :reader cleanup-ast)))
+
+(define-condition unwind-protect-must-have-at-leat-one-argument
+    (compilation-program-error)
+  ())
+
+(defmethod convert-special ((op (eql 'unwind-protect)) ast environment)
+  ;; Check the number of arguments
+  (unless (>= (length (children ast)) 2)
+    (error 'unwind-protect-must-have-at-leat-one-argument
+	   :form (form ast)))
+  (make-instance 'unwind-protect-ast
+    :form (form ast)
+    :cleanup-ast (convert-implicit-progn (cddr (children ast)) environment)))
+
