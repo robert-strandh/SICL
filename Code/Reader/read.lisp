@@ -268,7 +268,7 @@
 ;;; first argument is NIL, then restore the resulting readtable to
 ;;; standard syntax.
 (defun copy-readtable (&optional (from-readtable *readtable*)
-				 (to-readtable (make-readtable)))
+		       (to-readtable (make-readtable)))
   (setf (readtable-case to-readtable) (readtable-case from-readtable))
   (loop for i from 0 below 128
 	do (setf (aref (ascii-syntax-types to-readtable) i)
@@ -276,7 +276,13 @@
 	   (setf (aref (ascii-constituent-traits to-readtable) i)
 		 (aref (ascii-constituent-traits from-readtable) i)))
   ;; copy the hash-tables
-  )
+  (loop for key being each hash-key of (others from-readtable)
+	using (hash-value value)
+	do (setf (gethash key (others to-readtable)) value))
+  (loop for key being each hash-key of (macro-functions from-readtable)
+	using (hash-value value)
+	do (setf (gethash key (macro-functions to-readtable)) value))
+  to-readtable)
 
 (defun add-constituent-trait (table char trait)
   (setf (aref (ascii-constituent-traits table) (char-code char))
@@ -344,10 +350,6 @@
     (set-constituent-trait table #\S +short-float-exponent-marker+)
     (set-constituent-trait table #\s +short-float-exponent-marker+)
     table))
-
-(defparameter *initial-readtable* (copy-readtable *standard-readtable*))
-
-(setf *readtable* *initial-readtable*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -562,3 +564,9 @@
   (let ((*expression-stack* (list '())))
     (values (read input-stream eof-error-p eof-value recursive-p)
             (caar *expression-stack*))))
+
+
+(defparameter *initial-readtable* (copy-readtable *standard-readtable*))
+
+(setf *readtable* *initial-readtable*)
+
