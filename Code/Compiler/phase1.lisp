@@ -20,35 +20,44 @@
 			 (slot-value obj (sb-mop:slot-definition-name slot))
 			 "no-value")))))
 
+;;; Terminology: We use `form' to mean raw Lisp expressions
+;;; resulting from READing source code.  We use `ast'  for
+;;; the abstract syntax tree resulting from converting such
+;;; raw expressions to instances of our compiler objects, or
+;;; from using a sophisticated reader that associate source
+;;; code position with forms. 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; The base classes for conditions used here. 
 
+;;; These classes have a slot that will contain an abstract
+;;; syntax tree.  A standard report function would just
+;;; show the corresponding form, but condition handler 
+;;; used in an integrated development environment could
+;;; determine the location of the source code from the 
+;;; ast, load the corresponding file and highlight the
+;;; relevant part. 
+
 (define-condition compilation-program-error (program-error)
-  ;; Add information about where to locate the form.
-  ((%form :initarg :form :reader form)))
+  ((%ast :initarg :ast :reader ast)))
 
 (define-condition compilation-warning (warning)
-  ;; Add information about where to locate the form.
-  ((%form :initarg :form :reader form)))
+  ((%ast :initarg :ast :reader ast)))
 
 (define-condition compilation-style-warning (style-warning)
-  ;; Add information about where to locate the form.
-  ((%form :initarg :form :reader form)))
+  ((%ast :initarg :ast :reader ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Internal representation of source code
 
-;;; Terminology: We use `form' to mean raw Lisp expressions
-;;; resulting from READing source code.  We use `ast'  for
-;;; the abstract syntax tree resulting from converting such
-;;; raw expressions to instances of our compiler objects. 
-
 ;;; The first step is to turn raw forms into abstract syntax trees
 ;;; (asts), so that we can then use generic function dispatch for the
 ;;; following steps. .  In this step, we only distinguish between 3
 ;;; kinds of ast, a symbol, a non-symbol atom, and a compound ast.
+;;; Eventually, we will have a reader that delivers asts directly, and
+;;; they will be labeled with the location of the source code. 
 
 (defclass ast (compiler-object)
   ((%form :initarg :form :accessor form)))
@@ -60,28 +69,40 @@
 (defclass compound-ast (ast)
   ((%children :initarg :children :reader children)))
 
-(defun proper-list-p (list)
-  (null (last list 0)))
-
-(define-condition form-is-must-be-a-proper-list (compilation-program-error) ())
+;;; Like mapcar, but if the list is a dotted list, 
+;;; preserve that structure and apply the function to
+;;; the terminating atom as well. 
+(defun map-maybe-dotted-list (fun list)
+  (cond ((null list)
+	 nil)
+	((atom list)
+	 (funcall fun list))
+	(t
+	 (cons (funcall fun (car list))
+	       (map-maybe-dotted-list fun (cdr list))))))
 
 (defun make-ast (form)
   (cond ((symbolp form)
-	 (make-instance 'symbol-ast
-			:form form))
+	 (make-instance 'symbol-ast :form form))
 	((atom form)
-	 (make-instance 'constant-ast
-			:form form))
+	 (make-instance 'constant-ast :form form))
 	(t
-	 (unless (proper-list-p form)
-	   (error 'form-must-be-a-proper-list :form form))
-	 (make-instance 'compound-ast
-			:form form
-			:children (mapcar #'make-ast form)))))
+	 (let ((children (map-maybe-dotted-list #'bla form)))
+	   (make-instance 'compound-ast
+			  :children children
+			  :form (map-maybe-dotted-list #'form children))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Environment
+;;;
+;;; This code is currently wrong, because it assumes that
+;;; every failed lookup in a recent partial environment should test
+;;; the next environment up the chain, but that isn't true, since
+;;; for instance local functions shadow macros and compiler macros. 
+;;; The way to fix this is to eliminate the lookup-level function, 
+;;; and have the lookup function decide, for each namespace, whether
+;;; to look further up the chain. 
 
 (defclass namespace (compiler-object)
   ((%bindings :initarg :bindings :accessor bindings)))
@@ -284,14 +305,17 @@
 	     (make-instance 'constant-ast
 			    :form form))
 	    (t
-	     (unless (proper-list-p form)
-	       (error 'form-must-be-a-proper-list
-		      :form form))
 	     (make-instance 'compound-ast
 			    :form form
-			    :children (mapcar (lambda (child)
-						(fixup child ast))
-					      form))))))
+			    :children
+			    (map-maybe-dotted-list (lambda (child)
+						     (fixup child ast))
+						   form))))))
+
+(define-condition form-must-be-a-proper-list (compilation-program-error) ())
+
+(defun proper-list-p (list)
+  (null (last list 0)))
 
 (defclass variable-ast (ast)
   ((%name :initarg :name :reader name)))
@@ -303,7 +327,17 @@
 (defgeneric convert-special (operator ast environment))
 
 (defmethod convert ((ast compound-ast) environment)
+  ;; I seem to have read somewhere that all valid compound
+  ;; forms are proper lists, but I am not entirely sure about it. 
+  (unless (proper-list-p (form ast))
+    (error 'form-must-be-a-proper-list
+	   :ast ast))
   ;; possibly expand macros
+  ;; FIXME: all this should be done by our own version of 
+  ;; macroexpand.  It has to be our own version because 
+  ;; macroexpand-1 is the one that uses the environment to
+  ;; find the correct macro function to use, and the host
+  ;; cannot understand the environment structure of the target. 
   (let ((macro-function
 	 (lookup (car (form ast)) environment 'macro)))
     (if (not (null macro-function))
@@ -375,11 +409,11 @@
   ;; Check that there is at least one argument.
   (unless (>= (length (children ast)) 2)
     (error 'block-must-have-at-least-one-argument
-	   :form (form ast)))
+	   :ast ast))
   ;; Check that the block name is a symbol
   (unless (typep (cadr (children ast)) 'symbol-ast)
     (error 'block-name-must-be-a-symbol
-	   :form (cadr (children ast))))
+	   :ast (cadr (children ast))))
   (let ((new-environment (make-instance 'lexical-environment
 					:parent environment)))
     (add-binding (form (cadr (children ast)))
@@ -407,7 +441,7 @@
   ;; Check that we have the right number of arguments
   (unless (<= 2 (length (children ast)) 3)
     (error 'return-from-must-have-one-or-two-arguments
-	   :form (form ast)))
+	   :ast ast))
   (make-instance 'return-from-ast
     :form (form ast)
     :tag (lookup (form (cadr ast)) environment 'block-tag)
@@ -439,12 +473,12 @@
   ;; Check that the progn form has an even number of arguments.
   (unless (oddp (length (children ast)))
     (error 'setq-must-have-even-number-of-arguments
-	   :form (form ast)))
+	   :ast ast))
   ;; Check that even arguments are symbols. 
   (loop for child in (cdr (children ast)) by #'cddr
 	do (unless (typep child 'symbol-ast)
 	     (error 'setq-variable-must-be-a-symbol
-		    :form (form child))))
+		    :ast child)))
   ;; FIXME: issue a warning if the variable doesn't exist 
   ;; FIXME: turn it into a progn of setqs with two args. 
   (make-instance 'setq-ast
@@ -484,22 +518,22 @@
 
 (defun check-bindings (binding-asts)
   (unless (typep binding-asts 'compound-ast)
-    (error 'bindings-must-be-a-list :form (form binding-asts)))
+    (error 'bindings-must-be-a-list :ast binding-asts))
   (loop for binding-ast in (children binding-asts)
 	do (unless (or (typep binding-ast 'symbol-ast)
 		       (typep binding-ast 'compound-ast))
 	     (error 'binding-must-be-symbol-or-list
-		    :form (form binding-ast)))
+		    :ast binding-ast))
 	   (when (and (typep binding-ast 'compound-ast)
 		      (/= (length (children binding-ast)) 2))
 	     (error 'binding-must-have-length-two
-		    :form (form binding-ast)))
+		    :ast binding-ast))
 	   (when (and (typep binding-ast 'compound-ast)
 		      (= (length (children binding-ast)) 2)
 		      (not (typep (car (children binding-ast))
 				  'symbol-ast)))
 	     (error 'variable-must-be-a-symbol
-		    :form (form (car (children binding-ast)))))))
+		    :ast (car (children binding-ast))))))
 
 (define-condition form-must-have-bindings
     (compilation-program-error)
@@ -508,7 +542,7 @@
 ;;; FIXME: handle declarations
 (defmethod convert-special ((op (eql 'let)) ast environment)
   (unless (>= (length (children ast)) 2)
-    (error 'must-have-bindings :form (form ast)))
+    (error 'must-have-bindings :ast ast))
   (destructuring-bind (binding-asts &rest body-asts) (cdr (children ast))
     (check-bindings binding-asts)
     (let* ((new-environment (make-instance 'lexical-environment
@@ -553,7 +587,7 @@
 (defmethod convert-special ((op (eql 'quote)) ast environment)
   (unless (= (length (children ast)) 2)
     (error 'quote-must-have-a-single-argument
-	   :form (form ast)))
+	   :ast ast))
   (make-instance 'constant-ast
 		 :form (form ast)
 		 :value (cadr (children ast))))
@@ -574,7 +608,7 @@
 (defmethod convert-special ((op (eql 'if)) ast environment)
   (unless (<= 3 (length (children ast)) 4)
     (error 'if-must-have-three-or-four-arguments
-	   :form (form ast)))
+	   :ast ast))
   (make-instance 'if-ast
 		 :form (form ast)
 		 :test-ast (convert (cadr (children ast)) environment)
@@ -601,7 +635,7 @@
   ;; Check the number of arguments
   (unless (>= (length (children ast)) 2)
     (error 'catch-must-have-at-least-one-argument
-	   :form (form ast)))
+	   :ast ast))
   (make-instance 'catch-ast
     :form (form ast)
     :tag (convert (cadr (children ast)) environment)
@@ -613,7 +647,7 @@
 
 (defclass throw-ast (ast)
   ((%tag :initarg :tag :reader tag)
-   (%result :iniarg :result :reader result)))
+   (%result :initarg :result :reader result)))
 
 (define-condition throw-must-have-exactly-two-arguments
     (compilation-program-error)
@@ -623,7 +657,7 @@
   ;; Check the number of arguments
   (unless (= (length (children ast)) 3)
     (error 'throw-must-have-exactly-two-arguments
-	   :form (form ast)))
+	   :ast ast))
   (make-instance 'throw-ast
     :form (form ast)
     :tag (convert (cadr (children ast)) environment)
@@ -654,7 +688,7 @@
 	       (unless (or (typep (form child) 'symbol)
 			   (typep (form child) 'integer))
 		 (error 'go-tag-must-be-symbol-or-integer
-			:form (form child)))
+			:ast child))
 	       (add-binding (form child)
 			    (make-instance 'tag-ast :form (form child))
 			    (go-tags new-environment))))
@@ -680,12 +714,12 @@
   ;; Check the number of arguments
   (unless (= (length (children ast)) 2)
     (error 'go-must-have-exactly-one-argument
-	   :form (form ast)))
+	   :ast ast))
   ;; Check that the go tag is a symbol or an integer
   (unless (or (typep (cadr (children ast)) 'integer)
 	      (typep (cadr (children ast)) 'symbol))
     (error 'go-tag-must-be-symbol-or-integer
-	   :form (cadr (children ast))))
+	   :ast (cadr (children ast))))
   (make-instance 'go-tag-ast
 		 :form (cadr (children ast))
 		 :tag (lookup (cadr (children ast)) environment 'go-tag)))
@@ -696,7 +730,7 @@
 
 (defclass eval-when-ast (ast)
   ((%situations :initarg :situations :reader situations)
-   (%body-ast :inintarg :body-ast :reader body-ast)))
+   (%body-ast :initarg :body-ast :reader body-ast)))
 
 (define-condition eval-when-must-have-at-least-one-argument
     (compilation-program-error)
@@ -714,11 +748,11 @@
   ;; Check the number of arguments
   (unless (>= (length (children ast)) 2)
     (error 'eval-when-must-have-at-least-one-argument
-	   :form (form ast)))
+	   :ast ast))
   ;; Check that the first argument is a list
   (unless (typep (cadr (children ast)) 'compound-ast)
     (error 'situations-must-be-a-list
-	   :form (cadr (children ast))))
+	   :ast (cadr (children ast))))
   ;; Check each situation
   (loop for situation in (cadr (children ast))
 	do (unless (and (typep situation 'symbol-ast)
@@ -727,7 +761,7 @@
 				  compile load eval)))
 	     ;; FIXME: perhaps we should warn about the deprecated situations
 	     (error 'invalid-eval-when-situation
-		    :form (form situation))))
+		    :ast situation)))
   (make-instance 'eval-when-ast
     :form (form ast)
     :situations (mapcar #'form (children (cadr ast)))
@@ -749,7 +783,7 @@
   ;; Check the number of arguments
   (unless (= (length (children ast)) 3)
     (error 'the-must-have-exactly-two-arguments
-	   :form (form ast)))
+	   :ast ast))
   (make-instance 'the-ast
     :form (form ast)
     ;; FIXME: do something smarter about the type
@@ -772,8 +806,143 @@
   ;; Check the number of arguments
   (unless (>= (length (children ast)) 2)
     (error 'unwind-protect-must-have-at-leat-one-argument
-	   :form (form ast)))
+	   :ast ast))
   (make-instance 'unwind-protect-ast
     :form (form ast)
     :cleanup-ast (convert-implicit-progn (cddr (children ast)) environment)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parse a lambda list
+
+;;; FIXME: factor this later. 
+(defclass ordinary-lambda-list ()
+  (;; A list of required parameters.
+   (%required-parameters :initarg :required-parameters
+			 :reader required-parameters)
+   ;; A list of optional parameters.
+   (%optional-parameters :initarg :optional-parameters
+			 :reader optional-parameters)
+   ;; A rest parameter or nil.
+   (%rest-parameter :initarg :rest-parameter
+		    :reader rest-parameter)
+   ;; A list of key parameters.
+   (%key-parameters :initarg :key-parameters
+		    :reader key-parameters)
+   ;; Either nil or t
+   (%allow-other-keys-parameter :initform nil
+				:initarg :allow-other-keys-parameter
+				:reader allow-other-keys-parameter)
+   ;; A list of aux parameters. 
+   (%aux-parameters :initarg :aux-parameters
+		    :reader aux-parameters)))
+
+(define-condition parameter-starting-with-ampersand
+    (compilation-warning)
+  ())
+
+(define-condition misplaced-optional-in-lambda-list
+    (compilation-program-error)
+  ())
+
+(define-condition misplaced-rest-in-lambda-list
+    (compilation-program-error)
+  ())
+
+(define-condition misplaced-key-in-lambda-list
+    (compilation-program-error)
+  ())
+
+(define-condition misplaced-aux-in-lambda-list
+    (compilation-program-error)
+  ())
+
+(define-condition malformed-required-parameter
+    (compilation-program-error)
+  ())
+
+(define-condition malformed-optional-parameter
+    (compilation-program-error)
+  ())
+
+(define-condition malformed-rest-parameter
+    (compilation-program-error)
+  ())
+
+(define-condition malformed-key-parameter
+    (compilation-program-error)
+  ())
+
+(define-condition malformed-aux-parameter
+    (compilation-program-error)
+  ())
+
+(define-condition key-or-aux-expected
+    (compilation-program-error)
+  ())
+
+(defun parse-ordinary-lambda-list (lambda-list-ast)
+  (let ((required '())
+	(optional '())
+	(rest nil)
+	(key '())
+	(allow-other-keys nil)
+	(aux '())
+	(children (children lambda-list-ast)))
+    ;; Parse required parameters.
+    (loop until (or (null children)
+		    (member (form (car children)) '(&optional &rest &key &aux)))
+	  do (let ((parameter (pop children)))
+	       (unless (symbolp (form parameter))
+		 (error 'malformed-rest-parameter
+			:ast parameter))
+	       (when (eql (char (symbol-name (form parameter)) 0) #\&)
+		 (warn 'parameter-starting-with-ampersand
+		       :ast parameter))
+	       (push parameter required)))
+    ;; Parse optional parameters
+    (when (eq (form (car children)) '&optional)
+      (pop children)
+      (loop until (or (null children)
+		      (member (form (car children)) '(&rest &key &aux)))
+	    do (let ((parameter (pop children)))
+		 (when (eq (form parameter) '&optional)
+		   (error 'misplaced-optional-in-lambda-list
+			  :ast parameter
+		 (cond ((symbolp (form parameter))
+			(when (eql (char (symbol-name (form parameter)) 0) #\&)
+			  (warn 'parameter-starting-with-ampersand
+				:ast parameter))
+			(push parameter optional))
+		       ((or (not (consp (form parameter)))
+			    (not (proper-list-p (form parameter)))
+			    (> (length (children parameter)) 3))
+			(error 'malformed-optional-parameter
+			       :ast parameter))
+		       (t
+			(push parameter optional))))))))
+    ;; Parse rest parameter
+    (when (eq (form (car children)) '&rest)
+      (pop children)
+      (let ((parameter (pop children)))
+	(when (eq (form parameter) '&optional)
+	  (error 'misplaced-optional-in-lambda-list
+		 :ast parameter
+	(when (eq (form parameter) '&rest)
+	  (error 'misplaced-rest-in-lambda-list
+		 :ast parameter))
+	(unless (symbolp (form parameter))
+	  (error 'malformed-rest-parameter
+		 :ast parameter))
+	(when (eql (char (symbol-name (form parameter)) 0) #\&)
+	  (warn 'parameter-starting-with-ampersand
+		:ast parameter))
+	(setf rest parameter)))))
+    ;; Parse key parameters
+    (make-instance 'ordinary-lambda-list
+		   :required-parameters (nreverse required)
+		   :optional-parameters (nreverse optional)
+		   :rest-parameter rest
+		   :key-parameters (nreverse key)
+		   :allow-other-keys-parameter allow-other-keys
+		   :aux-parameters (nreverse aux))))
