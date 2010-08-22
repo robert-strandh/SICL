@@ -176,7 +176,7 @@
   ;; define it
   )
 
-(defun hash-function (stream char)
+(defun sharpsign-function (stream char)
   (declare (ignore stream char))
   ;; define it
   )
@@ -185,7 +185,7 @@
 ;;;
 ;;; Dispatch macro character functions
 
-(define-condition no-parameter-allowed ()
+(define-condition no-parameter-allowed (reader-error)
   ((%which-directive :initarg :which-directive :reader which-directive)
    (%parameter :initarg :parameter :reader parameter))
   (:report
@@ -194,13 +194,60 @@
 	     "The ~a directive does not take a numeric parameter"
 	     (which-directive condition)))))
 
-(defun sharp-sign-single-quote-function (stream char parameter)
+(defun sharpsign-single-quote-function (stream char parameter)
   (declare (ignore char))
   (unless (null parameter)
     (error 'no-parameter-allowed
 	   :which-directive "#'"
 	   :parameter parameter))
   (list 'function (read stream t nil t)))
+
+(defparameter *character-names*
+  (let ((table (make-hash-table :test #'equal)))
+    (setf (gethash "NEWLINE" table) #\Newline)
+    (setf (gethash "SPACE" table) #\Space)
+    (setf (gethash "RUBOUT" table) #\Rubout)
+    (setf (gethash "PAGE" table) #\Page)
+    (setf (gethash "TAB" table) #\Tab)
+    (setf (gethash "BACKSPACE" table) #\Backspace)
+    (setf (gethash "RETURN" table) #\Return)
+    (setf (gethash "LINEFEED" table) #\Linefeed)
+    table))
+
+(define-condition unknown-character-name (reader-error)
+  ((%name :initarg :name :reader name)))
+
+(defun sharpsign-backslash-function (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (error 'no-parameter-allowed
+	   :which-directive "#\\"
+	   :parameter parameter))
+  (let ((char (read-char stream nil nil t)))
+    (when (null char)
+      (error 'end-of-file :stream stream))
+    (let ((next-char (read-char stream nil nil t)))
+      (cond ((null next-char)
+	     char)
+	    ((not (eq (syntax-type *readtable* next-char) 'constituent))
+	     (unread-char next-char stream)
+	     char)
+	    (t
+	     (let ((name (make-array 10 :element-type 'character :fill-pointer 2)))
+	       (setf (aref name 0) char
+		     (aref name 1) next-char)
+	       (loop for char = (read-char stream nil nil t)
+		     while (and (not (null char))
+				(eq (syntax-type *readtable* char) 'constituent))
+		     do (vector-push-extend char name)
+		     finally (progn (unless (null char)
+				      (unread-char char stream))
+				    (let ((char (gethash (string-upcase name)
+							 *character-names*)))
+				      (when (null char)
+					(error 'unknown-character-name
+					       :name name))
+				      (return char))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
