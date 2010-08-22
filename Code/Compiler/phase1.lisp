@@ -815,28 +815,6 @@
 ;;;
 ;;; Parse a lambda list
 
-;;; FIXME: factor this later. 
-(defclass ordinary-lambda-list ()
-  (;; A list of required parameters.
-   (%required-parameters :initarg :required-parameters
-			 :reader required-parameters)
-   ;; A list of optional parameters.
-   (%optional-parameters :initarg :optional-parameters
-			 :reader optional-parameters)
-   ;; A rest parameter or nil.
-   (%rest-parameter :initarg :rest-parameter
-		    :reader rest-parameter)
-   ;; A list of key parameters.
-   (%key-parameters :initarg :key-parameters
-		    :reader key-parameters)
-   ;; Either nil or t
-   (%allow-other-keys-parameter :initform nil
-				:initarg :allow-other-keys-parameter
-				:reader allow-other-keys-parameter)
-   ;; A list of aux parameters. 
-   (%aux-parameters :initarg :aux-parameters
-		    :reader aux-parameters)))
-
 (define-condition parameter-starting-with-ampersand
     (compilation-warning)
   ())
@@ -857,11 +835,88 @@
     (compilation-program-error)
   ())
 
+(define-condition key-or-aux-expected
+    (compilation-program-error)
+  ())
+
+;;; FIXME: introduce style warnings for situations when a
+;;; lambda-list keyword taking a list of parameters is
+;;; not followed by any parmeter at all. 
+
+(defparameter *lambda-list-keywords* 
+  '(&optional &rest &body &key &aux &whole &environment &allow-other-keys))
+
+;;; The different parsers take a list of asts and return two values A
+;;; list of parameters (or a single parameter in case of &rest,
+;;; &whole, etc)and the remaining lambda list to parse.  The
+;;; lambda-list keyword has been removed before the parser is called.
+;;; The original-ast is used only for reporting errors and warnings.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parser for required parameters
+
 (define-condition malformed-required-parameter
     (compilation-program-error)
   ())
 
+(defun parse-required (asts original-ast)
+  (declare (ignore original-ast))
+  (loop with result = '()
+	until (or (null asts)
+		  (member (form (car asts)) *lambda-list-keywords*))
+	do (let ((parameter (pop asts)))
+	     (unless (symbolp (form parameter))
+	       (error 'malformed-required-parameter
+		      :ast parameter))
+	     (when (eql (char (symbol-name (form parameter)) 0) #\&)
+	       (warn 'parameter-starting-with-ampersand
+		     :ast parameter))
+	     (push (form parameter) result))
+	finally (return (values (nreverse result) asts))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parser for optional parameters
+
+(define-condition empty-optional-parameter-list
+    (compilation-style-warning)
+  ())
+
 (define-condition malformed-optional-parameter
+    (compilation-program-error)
+  ())
+
+(defun parse-optional (asts original-ast)
+  (when (or (null asts)
+	    (member (form (car asts)) *lambda-list-keywords*))
+    (warn 'empty-optional-parameter-list
+	  ;; find the &optional lambda-list keyword
+	  :ast (car (last (children original-ast) (1+ (length asts))))))
+  (loop with result = '()
+	until (or (null asts)
+		  (member (form (car asts)) *lambda-list-keywords*))
+	do (let ((parameter (pop asts)))
+	     (cond ((symbolp (form parameter))
+		    (when (eql (char (symbol-name (form parameter)) 0) #\&)
+		      (warn 'parameter-starting-with-ampersand
+			    :ast parameter))
+		    (push parameter result))
+		   ;; FIXME: check for more problems.
+		   ((or (not (consp (form parameter)))
+			(not (proper-list-p (form parameter)))
+			(> (length (children parameter)) 3))
+		    (error 'malformed-optional-parameter
+			   :ast parameter))
+		   (t
+		    (push parameter result))))
+	finally (return (values (nreverse result) asts))))
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parser for rest parameter
+
+(define-condition rest-must-be-followed-by-a-prameter
     (compilation-program-error)
   ())
 
@@ -869,80 +924,241 @@
     (compilation-program-error)
   ())
 
-(define-condition malformed-key-parameter
+(defun parse-rest (asts original-ast)
+  (when (or (null asts)
+	    (member (form (car asts)) *lambda-list-keywords*))
+    (warn 'rest-must-be-followed-by-a-prameter
+	  ;; find the &rest lambda-list keyword
+	  :ast (car (last (children original-ast) (1+ (length asts))))))
+  (let ((parameter (pop asts)))
+    (unless (symbolp (form parameter))
+      (error 'malformed-rest-parameter
+	     :ast parameter))
+    (when (eql (char (symbol-name (form parameter)) 0) #\&)
+      (warn 'parameter-starting-with-ampersand
+	    :ast parameter))
+    (values parameter asts)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parser for key parameters
+
+(define-condition empty-key-parameter-list
+    (compilation-style-warning)
+  ())
+
+(define-condition key-parameter-must-be-a-symbol-or-a-proper-list
     (compilation-program-error)
+  ())
+
+(define-condition key-parameter-list-must-have-length-between-one-and-three
+    (compilation-program-error)
+  ())
+
+(define-condition key-var-must-be-a-symbol-or-a-list-of-length-one-or-two
+    (compilation-program-error)
+  ())
+
+(define-condition key-supplied-p-parameter-must-be-a-symbol
+    (compilation-program-error)
+  ())
+
+(defun parse-key (asts original-ast)
+  (when (or (null asts)
+	    (member (form (car asts)) *lambda-list-keywords*))
+    (warn 'empty-key-parameter-list
+	  ;; find the &key lambda-list keyword
+	  :ast (car (last (children original-ast) (1+ (length asts))))))
+  (loop with result = '()
+	until (or (null asts)
+		  (member (form (car asts)) *lambda-list-keywords*))
+	do (let ((parameter (pop asts)))
+	     (cond ((symbolp (form parameter))
+		    (when (eql (char (symbol-name (form parameter)) 0) #\&)
+		      (warn 'parameter-starting-with-ampersand
+			    :ast parameter))
+		    (push parameter result))
+		   ((or (not (consp (form parameter)))
+			(not (proper-list-p (form parameter))))
+		    (error 'key-parameter-must-be-a-symbol-or-a-proper-list
+			   :ast parameter))
+		   ((not (<= 1 (length (children parameter)) 3))
+		    (error 'key-parameter-list-must-have-length-between-one-and-three
+			   :ast parameter))
+		   ((not (or (symbolp (car (form parameter)))
+			     (and (consp (car (form parameter)))
+				  (proper-list-p (car (form parameter)))
+				  (<= 1 (length (car (form parameter))) 2))))
+		    (error 'key-var-must-be-a-symbol-or-a-list-of-length-one-or-two
+			   :ast (car (children parameter))))
+		   (t
+		    (when (and (= (length (children parameter)) 3)
+			       (not (typep (third (children parameter)) 'symbol-ast)))
+		      (error 'key-supplied-p-parameter-must-be-a-symbol
+			     :ast (third (children parameter))))
+		    (push parameter result))))
+	finally (return (values (nreverse result) asts))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parser for aux parameters
+
+(define-condition empty-aux-parameter-list
+    (compilation-style-warning)
   ())
 
 (define-condition malformed-aux-parameter
     (compilation-program-error)
   ())
 
-(define-condition key-or-aux-expected
+(defun parse-aux (asts original-ast)
+  (when (or (null asts)
+	    (member (form (car asts)) *lambda-list-keywords*))
+    (warn 'empty-aux-parameter-list
+	  ;; find the &aux lambda-list keyword
+	  :ast (car (last (children original-ast) (1+ (length asts))))))
+  (loop with result = '()
+	until (or (null asts)
+		  (member (form (car asts)) *lambda-list-keywords*))
+	do (let ((parameter (pop asts)))
+	     (cond ((symbolp (form parameter))
+		    (when (eql (char (symbol-name (form parameter)) 0) #\&)
+		      (warn 'parameter-starting-with-ampersand
+			    :ast parameter))
+		    (push parameter result))
+		   ;; FIXME: check for more problems.
+		   ((or (not (consp (form parameter)))
+			(not (proper-list-p (form parameter)))
+			(> (length (children parameter)) 2))
+		    (error 'malformed-aux-parameter
+			   :ast parameter))
+		   (t
+		    (push parameter result))))
+	finally (return (values (nreverse result) asts))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parse ordinary lambda list
+
+;;; FIXME: factor this later. 
+(defclass ordinary-lambda-list ()
+  (;; A list of required parameters.
+   (%required-parameters :initform '()
+			 :initarg :required-parameters
+			 :reader required-parameters)
+   ;; A list of optional parameters.
+   (%optional-parameters :initform '()
+			 :initarg :optional-parameters
+			 :reader optional-parameters)
+   ;; A rest parameter or nil.
+   (%rest-parameter :initform nil
+		    :initarg :rest-parameter
+		    :reader rest-parameter)
+   ;; A list of key parameters.
+   (%key-parameters :initform '()
+		    :initarg :key-parameters
+		    :reader key-parameters)
+   ;; Either nil or t
+   (%allow-other-keys-parameter :initform nil
+				:initarg :allow-other-keys-parameter
+				:reader allow-other-keys-parameter)
+   ;; A list of aux parameters. 
+   (%aux-parameters :initform '()
+		    :initarg :aux-parameters
+		    :reader aux-parameters)))
+
+(define-condition ordinary-lambda-list-must-be-a-proper-list
+    (compilation-program-error)
+  ())
+
+(define-condition lambda-list-keyword-illegal-in-ordinary-lambda-list
+    (compilation-program-error)
+  ())
+
+(define-condition misplaced-lambda-list-keyword
     (compilation-program-error)
   ())
 
 (defun parse-ordinary-lambda-list (lambda-list-ast)
-  (let ((required '())
-	(optional '())
-	(rest nil)
-	(key '())
-	(allow-other-keys nil)
-	(aux '())
-	(children (children lambda-list-ast)))
-    ;; Parse required parameters.
-    (loop until (or (null children)
-		    (member (form (car children)) '(&optional &rest &key &aux)))
-	  do (let ((parameter (pop children)))
-	       (unless (symbolp (form parameter))
-		 (error 'malformed-rest-parameter
-			:ast parameter))
-	       (when (eql (char (symbol-name (form parameter)) 0) #\&)
-		 (warn 'parameter-starting-with-ampersand
-		       :ast parameter))
-	       (push parameter required)))
-    ;; Parse optional parameters
-    (when (eq (form (car children)) '&optional)
-      (pop children)
-      (loop until (or (null children)
-		      (member (form (car children)) '(&rest &key &aux)))
-	    do (let ((parameter (pop children)))
-		 (when (eq (form parameter) '&optional)
-		   (error 'misplaced-optional-in-lambda-list
-			  :ast parameter
-		 (cond ((symbolp (form parameter))
-			(when (eql (char (symbol-name (form parameter)) 0) #\&)
-			  (warn 'parameter-starting-with-ampersand
-				:ast parameter))
-			(push parameter optional))
-		       ((or (not (consp (form parameter)))
-			    (not (proper-list-p (form parameter)))
-			    (> (length (children parameter)) 3))
-			(error 'malformed-optional-parameter
-			       :ast parameter))
-		       (t
-			(push parameter optional))))))))
-    ;; Parse rest parameter
-    (when (eq (form (car children)) '&rest)
-      (pop children)
-      (let ((parameter (pop children)))
-	(when (eq (form parameter) '&optional)
-	  (error 'misplaced-optional-in-lambda-list
-		 :ast parameter
-	(when (eq (form parameter) '&rest)
-	  (error 'misplaced-rest-in-lambda-list
-		 :ast parameter))
-	(unless (symbolp (form parameter))
-	  (error 'malformed-rest-parameter
-		 :ast parameter))
-	(when (eql (char (symbol-name (form parameter)) 0) #\&)
-	  (warn 'parameter-starting-with-ampersand
-		:ast parameter))
-	(setf rest parameter)))))
-    ;; Parse key parameters
-    (make-instance 'ordinary-lambda-list
-		   :required-parameters (nreverse required)
-		   :optional-parameters (nreverse optional)
-		   :rest-parameter rest
-		   :key-parameters (nreverse key)
-		   :allow-other-keys-parameter allow-other-keys
-		   :aux-parameters (nreverse aux))))
+  (unless (or (null (form lambda-list-ast))
+	      (and (typep lambda-list-ast 'compound-ast)
+		   (proper-list-p (children lambda-list-ast))))
+    (error 'ordinary-lambda-list-must-be-a-proper-list
+	   :ast lambda-list-ast))
+  (flet ((check-for-illegal-lambda-list-keyword (ast)
+	   (when (not (member (form ast)
+			      '(&optional &rest &key &allow-other-keys &aux)))
+	     (error 'lambda-list-keyword-illegal-in-ordinary-lambda-list
+		    :ast ast))))
+    (if (null (form lambda-list-ast))
+	(make-instance 'ordinary-lambda-list)
+	(multiple-value-bind (required remaining)
+	    (parse-required (children lambda-list-ast) lambda-list-ast)
+	  (unless (null remaining)
+	    (check-for-illegal-lambda-list-keyword (car remaining)))
+	  (multiple-value-bind (optional remaining)
+	      (if (and (not (null remaining)) (eq (form (car remaining))
+						  '&optional))
+		  (parse-optional (cdr remaining) lambda-list-ast)
+		  (values '() remaining))
+	    (unless (null remaining)
+	      (check-for-illegal-lambda-list-keyword (car remaining))
+	      (when (member (form (car remaining))
+			    '(&optional &allow-other-keys))
+		(error 'misplaced-lambda-list-keyword
+		       :ast (car remaining))))
+	    (multiple-value-bind (rest remaining)
+		(if (and (not (null remaining)) (eq (form (car remaining))
+						    '&rest))
+		    (parse-rest (cdr remaining) lambda-list-ast)
+		    (values nil remaining))
+	      (unless (null remaining)
+		(check-for-illegal-lambda-list-keyword (car remaining))
+		(when (member (form (car remaining))
+			      '(&optional &rest &allow-other-keys))
+		  (error 'misplaced-lambda-list-keyword
+			 :ast (car remaining))))
+	      (let ((key-present (and (not (null remaining))
+				      (eq (form (car remaining)) '&key))))
+		(multiple-value-bind (key remaining)
+		    (if (and (not (null remaining)) (eq (form (car remaining))
+							'&key))
+			(parse-key (cdr remaining) lambda-list-ast)
+			(values nil remaining))
+		  (unless (null remaining)
+		    (check-for-illegal-lambda-list-keyword (car remaining))
+		    (when (or (member (form (car remaining))
+				      '(&optional &rest &key))
+			      (and (eq (form (car remaining)) '&allow-other-keys)
+				   (not key-present)))
+		      (error 'misplaced-lambda-list-keyword
+			     :ast (car remaining))))
+		  (multiple-value-bind (allow-other-keys remaining)
+		      (if (and (not (null remaining)) (eq (form (car remaining))
+							  '&allow-other-keys))
+			  (values t (cdr remaining))
+			  (values nil remaining))
+		    (unless (null remaining)
+		      (check-for-illegal-lambda-list-keyword (car remaining))
+		      (when (member (form (car remaining))
+				    '(&optional &rest &key &allow-other-keys))
+			(error 'misplaced-lambda-list-keyword
+			       :ast (car remaining))))
+		    (multiple-value-bind (aux remaining)
+			(if (and (not (null remaining)) (eq (form (car remaining))
+							    '&aux))
+			    (parse-aux (cdr remaining) lambda-list-ast)
+			    (values nil remaining))
+		      (unless (null remaining)
+			(check-for-illegal-lambda-list-keyword (car remaining))
+			(when (member (form (car remaining))
+				      '(&optional &rest &key &allow-other-keys &aux))
+			  (error 'misplaced-lambda-list-keyword
+				 :ast (car remaining))))
+		      (make-instance 'ordinary-lambda-list
+				     :required-parameters required
+				     :optional-parameters optional
+				     :rest-parameter rest
+				     :key-parameters  key
+				     :allow-other-keys-parameter allow-other-keys
+				     :aux-parameters aux)))))))))))
