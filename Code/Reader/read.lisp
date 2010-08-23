@@ -194,6 +194,10 @@
 	     "The ~a directive does not take a numeric parameter"
 	     (which-directive condition)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Sharpsign single quote
+
 (defun sharpsign-single-quote-function (stream char parameter)
   (declare (ignore char))
   (unless (null parameter)
@@ -201,6 +205,10 @@
 	   :which-directive "#'"
 	   :parameter parameter))
   (list 'function (read stream t nil t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Sharpsign backslash
 
 (defparameter *character-names*
   (let ((table (make-hash-table :test #'equal)))
@@ -248,6 +256,40 @@
 					(error 'unknown-character-name
 					       :name name))
 				      (return char))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Sharpsign left parenthesis
+
+(defun sharpsign-left-parenthesis (stream char parameter)
+  (if (null parameter)
+      ;; If no parameter is specified, we read a list
+      ;; of elements that we use as initialization for 
+      ;; the vector to create
+      (progn (unread-char char stream)
+	     (let ((contents (read stream t nil t)))
+	       (make-array (length contents) :initial-contents contents)))
+      (let ((vector (make-array parameter))
+	    (i -1))
+	(loop for expr = (handler-case
+			     (setf (aref vector (incf i))
+				   (read stream t nil t))
+			   (unmatched-right-parenthesis ()
+			     (loop-finish)))
+	      while (< i (1- parameter)))
+	(if (< -1 i (1- parameter))
+	    ;; We must copy the last element read
+	    (loop for j from (1+ i) below parameter
+		  do (setf (aref vector j) (aref vector i)))
+	    ;; Come here if we haven't seen the right
+	    ;; parenthesis yet.  Skip the remaining elements
+	    ;; which is allowed by the spec.
+	    (loop for expr = (handler-case
+				 (setf (aref vector (incf i))
+				       (read stream t nil t))
+			       (unmatched-right-parenthesis ()
+				 (loop-finish)))))
+	vector)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
