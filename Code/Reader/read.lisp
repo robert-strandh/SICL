@@ -525,6 +525,32 @@
 	     (char condition)
 	     (stream-error-stream condition)))))
 
+
+;;; The use of vector-push-extend makes it very slow to accumulate
+;;; tokens.  Instead, use a fixed buffer of significant size
+;;; consisting of a simple array, and then if the fixed buffer
+;;; overflows, move the contents somewhere else, and use a slower
+;;; method.  This method has the additional advantage of allocating
+;;; much less memory.
+
+(eval-when (:compile-toplevel)
+  (defparameter *buffer-size* 100))
+
+(defparameter *buffer* (make-array #.*buffer-size*
+				   :element-type 'character))
+
+;;; FIXME: A significant proportion of the time to read tokens is
+;;; spent in file-position, has-constituent-trait, and syntax-type.
+;;; For file-position, this is easily fixable.  Just check whether
+;;; read was called directly or from read-with-position, and only
+;;; record the file-positiion in the latter case.  For the others,
+;;; improve performance by associating each ASCII character with a
+;;; ready made code snippet that will have already eliminated the
+;;; calls to those functions.  Then start by checking that the char is
+;;; an ascii char and use the code snippet.  When someone modifies the
+;;; syntax of some character, this association needs to be modified as
+;;; well.
+
 (defun read (&optional
 	     input-stream
 	     (eof-error-p t)
@@ -535,7 +561,10 @@
 	      ((null input-stream) *standard-input*)
 	      (t input-stream)))
   (let ((table *readtable*)
+	(buffer *buffer*)
+	(index -1)
 	char syntax-type token start)
+    (declare (type (simple-string #.*buffer-size*) buffer))
     (tagbody
      1
        (setf start (file-position input-stream))
@@ -561,7 +590,6 @@
                                 (return-from read (first values)))))
                 (pop-expression-stack)))
              ((eq syntax-type 'single-escape)
-              ;; do this better by signaling a more specific condition.
               (setf char (read-char input-stream t nil t))
               (setf token (make-array 1
                                       :initial-element char
@@ -584,19 +612,32 @@
                                       :fill-pointer 1))
               (go 8)))
      8
+       ;; In this state, we are accumulating a token, and an even
+       ;; number of multiple escape characters have been seen.
+
+       ;; Check for buffer overflow
+       (when (= index #.(1- *buffer-size*))
+	 (setf token
+	       (make-array #.*buffer-size*
+			   :element-type 'character
+			   :adjustable t
+			   :fill-pointer #.*buffer-size*))
+	 (loop for i from 0 below #.*buffer-size*
+	       do (setf (aref token i) (schar buffer i)))
+	 (go 8bis))
        (setf char (read-char input-stream nil nil t))
        (if (null char)
            (go 10)
            (progn (setf syntax-type (syntax-type table char))
                   (cond ((or (eq syntax-type 'constituent)
                              (eq syntax-type 'non-terminating-macro-char))
-                         (vector-push-extend char token)
+			 (setf (schar buffer (incf index)) char)
                          (go 8))
                         ((eq syntax-type 'single-escape)
                          ;; do this better by signaling a	
                          ;; more specific condition.
                          (setf char (read-char input-stream t nil t))
-                         (vector-push-extend char token)
+			 (setf (schar buffer (incf index)) char)
                          (go 8))
                         ((eq syntax-type 'multiple-escape)
                          (go 9))
@@ -613,19 +654,30 @@
                          (unread-char char input-stream)
                          (go 10)))))
      9
-       ;; do this better by signaling a
-       ;; more specific condition.
+       ;; In this state, we are accumulating a token, and an odd
+       ;; number of multiple escape characters have been seen.
+
+       ;; Check for buffer overflow
+       (when (= index #.(1- *buffer-size*))
+	 (setf token
+	       (make-array #.*buffer-size*
+			   :element-type 'character
+			   :adjustable t
+			   :fill-pointer #.*buffer-size*))
+	 (loop for i from 0 below #.*buffer-size*
+	       do (setf (aref token i) (schar buffer i)))
+	 (go 9bis))
        (setf char (read-char input-stream t nil t))
        (setf syntax-type (syntax-type table char))
        (cond ((or (eq syntax-type 'constituent)
                   (eq syntax-type 'whitespace))
-              (vector-push-extend char token)
+	      (setf (schar buffer (incf index)) char)
               (go 9))
              ((eq syntax-type 'single-escape)
               ;; do this better by signaling a	
               ;; more specific condition.
               (setf char (read-char input-stream t nil t))
-              (vector-push-extend char token)
+	      (setf (schar buffer (incf index)) char)
               (go 9))
              ((eq syntax-type 'multiple-escape)
               (go 8))
@@ -635,11 +687,87 @@
               (error 'invalid-character
                      :stream input-stream :char char)))
      10
+       ;; We have seen a complete token.  
        (if (equal token ".")
            (error 'single-dot-token)
            ;; build the token here
-           nil
-           ))
+	   (progn (setf token (make-array (1+ index) :element-type 'character))
+		  (loop for i from 0 to index
+			do (setf (aref token i) (schar buffer i)))))
+     8bis
+       ;; In this state, we are accumulating a token, and an even
+       ;; number of multiple escape characters have been seen.
+       ;; This state is like state 8, except that
+       ;; the token we have seen has more characters
+       ;; than the fixed buffer, so we use the more 
+       ;; general method of an adjustable vector with
+       ;; fill pointer.
+       (setf char (read-char input-stream nil nil t))
+       (if (null char)
+           (go 10bis)
+           (progn (setf syntax-type (syntax-type table char))
+                  (cond ((or (eq syntax-type 'constituent)
+                             (eq syntax-type 'non-terminating-macro-char))
+                         (vector-push-extend char token)
+                         (go 8bis))
+                        ((eq syntax-type 'single-escape)
+                         ;; do this better by signaling a	
+                         ;; more specific condition.
+                         (setf char (read-char input-stream t nil t))
+                         (vector-push-extend char token)
+                         (go 8bis))
+                        ((eq syntax-type 'multiple-escape)
+                         (go 9bis))
+                        ((and (eq syntax-type 'constituent)
+                              (has-constituent-trait table char +invalid+))
+                         ;; do this better
+                         (error 'invalid-character
+                                :stream input-stream :char char))
+                        ((eq syntax-type 'terminating-macro-char)
+                         (unread-char char input-stream)
+                         (go 10bis))
+                        ((eq syntax-type 'whitespace)
+                         ;; check for preserving whitespace
+                         (unread-char char input-stream)
+                         (go 10bis)))))
+     9bis
+       ;; In this state, we are accumulating a token, and an odd
+       ;; number of multiple escape characters have been seen.
+       ;; This state is like state 9, except that
+       ;; the token we have seen has more characters
+       ;; than the fixed buffer, so we use the more 
+       ;; general method of an adjustable vector with
+       ;; fill pointer.
+       (setf char (read-char input-stream t nil t))
+       (setf syntax-type (syntax-type table char))
+       (cond ((or (eq syntax-type 'constituent)
+                  (eq syntax-type 'whitespace))
+              (vector-push-extend char token)
+              (go 9bis))
+             ((eq syntax-type 'single-escape)
+              ;; do this better by signaling a	
+              ;; more specific condition.
+              (setf char (read-char input-stream t nil t))
+              (vector-push-extend char token)
+              (go 9bis))
+             ((eq syntax-type 'multiple-escape)
+              (go 8bis))
+             ((and (eq syntax-type 'constituent)
+                   (has-constituent-trait table char +invalid+))
+              ;; do this better
+              (error 'invalid-character
+                     :stream input-stream :char char)))
+     10bis
+       ;; We have seen a complete token.  
+       ;; This state is like state 10, except that
+       ;; the token we have seen has more characters
+       ;; than the fixed buffer, so we use the more 
+       ;; general method of an adjustable vector with
+       ;; fill pointer.
+       (if (equal token ".")
+           (error 'single-dot-token)
+           ;; build the token here
+           nil))
     (push-expression-stack)
     (combine-expression-stack token start (file-position input-stream))
     (pop-expression-stack)
