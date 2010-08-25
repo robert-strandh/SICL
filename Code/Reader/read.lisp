@@ -471,7 +471,7 @@
 	(#\` . backquote-function)
 	(#\, . comma-function)))
 
-(set-macro-character #\# #'hash-function t *standard-readtable*)
+(set-macro-character #\# #'sharpsign-function t *standard-readtable*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
