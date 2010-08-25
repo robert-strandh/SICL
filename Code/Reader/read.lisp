@@ -568,7 +568,8 @@
 	(read-with-position *read-with-position*)
 	(index -1)
 	char syntax-type token start)
-    (declare (type (simple-string #.*buffer-size*) buffer))
+    (declare (type (simple-string #.*buffer-size*) buffer)
+	     (type (integer -1 #.*buffer-size*) index))
     (tagbody
      1
        (when read-with-position
@@ -599,26 +600,14 @@
 		  (pop-expression-stack))))
              ((eq syntax-type 'single-escape)
               (setf char (read-char input-stream t nil t))
-              (setf token (make-array 1
-                                      :initial-element char
-                                      :element-type 'character
-                                      :adjustable t
-                                      :fill-pointer 1))
+	      (setf (schar buffer (incf index)) char)
               (go 8))
              ((eq syntax-type 'multiple-escape)
-              (setf token (make-array 0
-                                      :element-type 'character
-                                      :adjustable t
-                                      :fill-pointer 0))
               (go 9))
              ((eq syntax-type 'constituent)
               ;; handle case conversion, etc
-              (setf token (make-array 1
-                                      :initial-element char
-                                      :element-type 'character
-                                      :adjustable t
-                                      :fill-pointer 1))
-              (go 8)))
+	      (setf (schar buffer (incf index)) char)
+	      (go 8)))
      8
        ;; In this state, we are accumulating a token, and an even
        ;; number of multiple escape characters have been seen.
@@ -696,7 +685,8 @@
                      :stream input-stream :char char)))
      10
        ;; We have seen a complete token.  
-       (if (equal token ".")
+       (if (and (= index 0)
+		(eql (schar buffer 0) #\.))
            (error 'single-dot-token)
            ;; build the token here
 	   (progn (setf token (make-array (1+ index) :element-type 'character))
