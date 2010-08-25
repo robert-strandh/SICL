@@ -512,6 +512,13 @@
                          (nreverse (car *expression-stack*)))
           (cadr *expression-stack*))))
 
+
+;;; This variable is set to true by read-with-position.
+;;; The read function checks this value to see whether
+;;; to call the expression-stack functions. 
+
+(defparameter *read-with-position* nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Reader algorithm
@@ -540,16 +547,12 @@
 				   :element-type 'character))
 
 ;;; FIXME: A significant proportion of the time to read tokens is
-;;; spent in file-position, has-constituent-trait, and syntax-type.
-;;; For file-position, this is easily fixable.  Just check whether
-;;; read was called directly or from read-with-position, and only
-;;; record the file-positiion in the latter case.  For the others,
-;;; improve performance by associating each ASCII character with a
-;;; ready made code snippet that will have already eliminated the
-;;; calls to those functions.  Then start by checking that the char is
-;;; an ascii char and use the code snippet.  When someone modifies the
-;;; syntax of some character, this association needs to be modified as
-;;; well.
+;;; spent in has-constituent-trait, and syntax-type.  Improve
+;;; performance by associating each ASCII character with a ready made
+;;; code snippet that will have already eliminated the calls to those
+;;; functions.  Then start by checking that the char is an ascii char
+;;; and use the code snippet.  When someone modifies the syntax of
+;;; some character, this association needs to be modified as well.
 
 (defun read (&optional
 	     input-stream
@@ -562,12 +565,14 @@
 	      (t input-stream)))
   (let ((table *readtable*)
 	(buffer *buffer*)
+	(read-with-position *read-with-position*)
 	(index -1)
 	char syntax-type token start)
     (declare (type (simple-string #.*buffer-size*) buffer))
     (tagbody
      1
-       (setf start (file-position input-stream))
+       (when read-with-position
+	 (setf start (file-position input-stream)))
        (setf char (read-char input-stream eof-error-p eof-value recursive-p))
        (setf syntax-type (syntax-type table char))
        (cond ((and (eq syntax-type 'constituent)
@@ -578,17 +583,20 @@
               (go 1))
              ((or (eq syntax-type 'terminating-macro-char)
                   (eq syntax-type 'non-terminating-macro-char))
-              (push-expression-stack)
+	      (when read-with-position
+		(push-expression-stack))
               (unwind-protect 
                    (let* ((fun (gethash char (macro-functions table)))
                           (values (multiple-value-list
                                       (funcall fun input-stream char))))
                      (if (null values)
                          (go 1)
-                         (progn (combine-expression-stack
-                                 (first values) start (file-position input-stream))
+                         (progn (when read-with-position
+				  (combine-expression-stack
+				   (first values) start (file-position input-stream)))
                                 (return-from read (first values)))))
-                (pop-expression-stack)))
+		(when read-with-position
+		  (pop-expression-stack))))
              ((eq syntax-type 'single-escape)
               (setf char (read-char input-stream t nil t))
               (setf token (make-array 1
@@ -768,9 +776,10 @@
            (error 'single-dot-token)
            ;; build the token here
            nil))
-    (push-expression-stack)
-    (combine-expression-stack token start (file-position input-stream))
-    (pop-expression-stack)
+    (when read-with-position
+      (push-expression-stack)
+      (combine-expression-stack token start (file-position input-stream))
+      (pop-expression-stack))
     token))
 
 (defun read-with-position (&optional
