@@ -296,20 +296,20 @@
 ;;; Readtable
 
 ;;; Constituent-traits
-(defparameter +invalid+                      #*00000000000001)
-(defparameter +alphabetic+                   #*00000000000010)
-(defparameter +alphadigit+                   #*00000000000100)
-(defparameter +package-marker+               #*00000000001000)
-(defparameter +plus-sign+                    #*00000000010000)
-(defparameter +minus-sign+                   #*00000000100000)
-(defparameter +dot+                          #*00000001000000)
-(defparameter +decimal-point+                #*00000010000000)
-(defparameter +ratio-marker+                 #*00000100000000)
-(defparameter +float-exponent-marker+        #*00001000000000)
-(defparameter +short-float-exponent-marker+  #*00010000000000)
-(defparameter +single-float-exponent-marker+ #*00100000000000)
-(defparameter +double-float-exponent-marker+ #*01000000000000)
-(defparameter +long-float-exponent-marker+   #*10000000000000)
+(defparameter +invalid+                       0)
+(defparameter +alphabetic+                    1)
+(defparameter +alphadigit+                    2)
+(defparameter +package-marker+                3)
+(defparameter +plus-sign+                     4)
+(defparameter +minus-sign+                    5)
+(defparameter +dot+                           6)
+(defparameter +decimal-point+                 7)
+(defparameter +ratio-marker+                  8)
+(defparameter +float-exponent-marker+         9)
+(defparameter +short-float-exponent-marker+  10)
+(defparameter +single-float-exponent-marker+ 11)
+(defparameter +double-float-exponent-marker+ 12)
+(defparameter +long-float-exponent-marker+   13)
 
 ;;; Return true if and only of the object is a readtable
 (defgeneric readtablep (object)
@@ -324,13 +324,38 @@
 (defgeneric (setf readtable-case) (new-case readtable))
 
 (defclass readtable ()
-  ((%case :initform :upcase :accessor readtable-case)
-   (%ascii-syntax-types :initform (make-array 128)
+  ((%case :initarg :case :accessor readtable-case)
+   ;; A vector of symbols, each symbol being the name
+   ;; of a syntax type: constituent, whitespace, 
+   ;; terminating-macro-char, non-terminating-macro-char,
+   ;; single-escape, or multiple-escape.
+   (%ascii-syntax-types :initarg :ascii-syntax-types
 			:reader ascii-syntax-types)
-   (%ascii-constituent-traits
-    :initform (make-array 128 :initial-element #*0000000000000)
-    :reader ascii-constituent-traits)
+   ;; A hash table of syntax types for characters other
+   ;; than ASCII.  By default, we assume that the
+   ;; syntax type is constituent, so that this hash table
+   ;; only contains entries for characters that aren't
+   ;; constituent. 
    (%other-syntax-types :initform (make-hash-table) :reader others)
+   ;; A vector of bit vectors.  Each bit vector has 14 element,
+   ;; each element corresponding to a constituent trait.  If
+   ;; the element is 1, then the character has the corresponding
+   ;; constituent trait.  Otherwise it does not.
+   (%ascii-constituent-traits :initarg :ascii-constituent-traits
+			      :reader ascii-constituent-traits)
+   ;; A bit vector of length 128 indicating whether an ASCII character
+   ;; is sure to indicate a symbol, should that character appear first
+   ;; in a token when the input radix is 10.  This provides a quick
+   ;; test for an important special case.  We exclude the package marker
+   ;; which we have to test for explicitly. 
+   (%decimal-letters :initarg :decimal-letters :reader decimal-letters)
+   ;; A bit vector of length 128 indicating whether an ASCII character
+   ;; is a decimal digit.
+   (%decimal-digits :initarg :decimal-digits :reader decimal-digits)
+   ;; A bit vector of length 128 indicating whether an ASCII character
+   ;; has whitespace syntax.
+   (%whitespace :initarg :whitespace :reader whitespace)
+   ;; A hash table associating characters with macro functions.
    (%macro-functions :initform (make-hash-table) :reader macro-functions)))
 
 (defun syntax-type (table char)
@@ -346,99 +371,151 @@
 (defmethod readtablep ((object readtable))
   t)
 
-;;; This function is not part of the visible Common Lisp API for
-;;; readtables.
-(defun make-readtable ()
-  (make-instance 'readtable))
+(defun has-constituent-trait-p (table char trait)
+  (let ((code (char-code char)))
+    (if (< code 128)
+	(= (aref (aref (ascii-constituent-traits table) code) trait) 1)
+	(= trait +alphabetic+))))
+
+(defparameter *standard-readtable*
+  (let ((ascii-syntax-types
+	 (let ((types (make-array 128 :initial-element 'constituent)))
+	   
+	   (loop for char in '(#\Backspace #\Newline #\Linefeed
+			       #\Page #\Return #\Space)
+		 do (setf (aref types (char-code char))
+			  'whitespace))
+	   (loop for char in '(#\" #\' #\( #\) #\, #\; #\`)
+		 do (setf (aref types (char-code char))
+			  'terminating-macro-char))
+	   (setf (aref types (char-code #\#))
+		 'non-terminating-macro-char)
+	   (setf (aref types (char-code #\\))
+		 'single-escape)
+	   (setf (aref types (char-code #\|))
+		 'multiple-escape)
+	   types))
+	(ascii-constituent-traits
+	 (let ((traits (make-array 128)))
+	   (flet ((add-char-trait (char trait)
+		    (setf (aref (aref traits (char-code char)) trait) 1))
+		  (add-code-trait (code trait)
+		    (setf (aref (aref traits code) trait) 1)))
+	     (loop for i from 0 below 128
+		   do (let ((bv (make-array 14 :element-type 'bit
+					    :initial-element 0)))
+			(setf (aref bv +invalid+) 1)
+			(setf (aref traits i) bv)))
+	     (loop for char in '(#\! #\" #\# #\$ #\% #\& #\' #\( #\) #\*
+				 #\, #\; #\< #\= #\> #\? #\@ #\[ #\\ #\]
+				 #\^ #\_ #\` #\| #\~ #\{ #\} #\+ #\- #\. #\/)
+		   do (add-char-trait char +alphabetic+))
+	     (loop for code from (char-code #\0) to (char-code #\9)
+		   do (add-code-trait code +alphadigit+))
+	     (loop for code from (char-code #\A) to (char-code #\Z)
+		   do (add-code-trait code +alphadigit+))
+	     (loop for code from (char-code #\a) to (char-code #\z)
+		   do (add-code-trait code +alphadigit+))
+	     (add-char-trait #\: +package-marker+)
+	     (add-char-trait #\+ +plus-sign+)
+	     (add-char-trait #\- +minus-sign+)
+	     (add-char-trait #\. +dot+)
+	     (add-char-trait #\. +decimal-point+)
+	     (add-char-trait #\/ +ratio-marker+)
+	     (add-char-trait #\D +double-float-exponent-marker+)
+	     (add-char-trait #\d +double-float-exponent-marker+)
+	     (add-char-trait #\E +float-exponent-marker+)
+	     (add-char-trait #\e +float-exponent-marker+)
+	     (add-char-trait #\F +single-float-exponent-marker+)
+	     (add-char-trait #\f +single-float-exponent-marker+)
+	     (add-char-trait #\L +long-float-exponent-marker+)
+	     (add-char-trait #\l +long-float-exponent-marker+)
+	     (add-char-trait #\S +short-float-exponent-marker+)
+	     (add-char-trait #\s +short-float-exponent-marker+))
+	   traits))
+	(decimal-letters
+	 (let ((letters (make-array 128 :element-type 'bit :initial-element 0)))
+	   (loop for code from (char-code #\A) to (char-code #\Z)
+		 do (setf (aref letters code) 1))
+	   (loop for code from (char-code #\a) to (char-code #\z)
+		 do (setf (aref letters code) 1))
+	   (loop for char in '(#\! #\$ #\% #\& #\* #\/ #\< #\= #\>
+			       #\? #\@ #\[ #\] #\^ #\_ #\{ #\} #\~)
+		 do (setf (aref letters (char-code char)) 1))
+	   letters))
+	(decimal-digits
+	 (let ((digits (make-array 128 :element-type 'bit :initial-element 0)))
+	   (loop for code from (char-code #\0) to (char-code #\9)
+		 do (setf (aref digits code) 1))
+	   digits))
+	(whitespace
+	 (let ((whitespace (make-array 128 :element-type 'bit :initial-element 0)))
+	   (loop for char in '(#\Backspace #\Tab #\Newline
+			       #\Linefeed #\Page #\Return #\Space)
+		 do (setf (aref whitespace (char-code char)) 1))
+	   whitespace)))
+    (make-instance 'readtable
+		   :case :upcase
+		   :ascii-syntax-types ascii-syntax-types
+		   :ascii-constituent-traits ascii-constituent-traits
+		   :decimal-letters decimal-letters
+		   :decimal-digits decimal-digits
+		   :whitespace whitespace)))
 
 ;;; Copy a readtable.  The default-value of the from-readtable
 ;;; optional argument is the current readtable.  The default value of
 ;;; to to-readtable argument is a fresh readtable.  If the value of the
 ;;; first argument is NIL, then restore the resulting readtable to
 ;;; standard syntax.
-(defun copy-readtable (&optional (from-readtable *readtable*)
-		       (to-readtable (make-readtable)))
-  (setf (readtable-case to-readtable) (readtable-case from-readtable))
-  (loop for i from 0 below 128
-	do (setf (aref (ascii-syntax-types to-readtable) i)
-		 (aref (ascii-syntax-types from-readtable) i))
-	   (setf (aref (ascii-constituent-traits to-readtable) i)
-		 (aref (ascii-constituent-traits from-readtable) i)))
-  ;; copy the hash-tables
-  (loop for key being each hash-key of (others from-readtable)
-	using (hash-value value)
-	do (setf (gethash key (others to-readtable)) value))
-  (loop for key being each hash-key of (macro-functions from-readtable)
-	using (hash-value value)
-	do (setf (gethash key (macro-functions to-readtable)) value))
-  to-readtable)
-
-(defun add-constituent-trait (table char trait)
-  (setf (aref (ascii-constituent-traits table) (char-code char))
-	(bit-ior (aref (ascii-constituent-traits table) (char-code char))
-		 trait)))
-
-(defun set-constituent-trait (table char trait)
-  (setf (aref (ascii-constituent-traits table) (char-code char))
-	trait))
-
-(defun has-constituent-trait (table char trait)
-  (let ((traits (if (< (char-code char) 128)
-		    (aref (ascii-constituent-traits table)
-			  (char-code char))
-		    +alphabetic+)))
-    (not (equal (bit-and trait traits) #*00000000000000))))
-
-(defparameter *standard-readtable*
-  (let ((table (make-readtable)))
-    ;; initialize all characters to be invalid constituent at first
-    (loop for i from 0 below 128
-	  do (setf (aref (ascii-syntax-types table) i)
-		   'constituent)
-	     (setf (aref (ascii-constituent-traits table) i)
-		   +invalid+))
-    ;; do the whitespace characters
-    (loop for char in '(#\Backspace #\Newline #\Linefeed
-			#\Page #\Return #\Space)
-	  do (setf (aref (ascii-syntax-types table) (char-code char))
-		   'whitespace))
-    (loop for char in '(#\" #\' #\( #\) #\, #\; #\`)
-	  do (setf (aref (ascii-syntax-types table) (char-code char))
-		   'terminating-macro-char))
-    (setf (aref (ascii-syntax-types table) (char-code #\#))
-	  'non-terminating-macro-char)
-    (setf (aref (ascii-syntax-types table) (char-code #\\))
-	  'single-escape)
-    (setf (aref (ascii-syntax-types table) (char-code #\|))
-	  'multiple-escape)
-    ;; diverse constituent characters
-    (loop for char in '(#\! #\" #\# #\$ #\% #\& #\' #\( #\) #\*
-			#\, #\; #\< #\= #\> #\? #\@ #\[ #\\ #\]
-			#\^ #\_ #\` #\| #\~ #\{ #\} #\+ #\- #\. #\/)
-	  do (set-constituent-trait table char +alphabetic+))
-    (loop for code from (char-code #\0) to (char-code #\9)
-	  do (set-constituent-trait table (code-char code) +alphadigit+))
-    (loop for code from (char-code #\A) to (char-code #\Z)
-	  do (set-constituent-trait table (code-char code) +alphadigit+))
-    (loop for code from (char-code #\a) to (char-code #\z)
-	  do (set-constituent-trait table (code-char code) +alphadigit+))
-    (set-constituent-trait table #\: +package-marker+)
-    (set-constituent-trait table #\+ +plus-sign+)
-    (set-constituent-trait table #\- +minus-sign+)
-    (set-constituent-trait table #\. +dot+)
-    (set-constituent-trait table #\. +decimal-point+)
-    (set-constituent-trait table #\/ +ratio-marker+)
-    (set-constituent-trait table #\D +double-float-exponent-marker+)
-    (set-constituent-trait table #\d +double-float-exponent-marker+)
-    (set-constituent-trait table #\E +float-exponent-marker+)
-    (set-constituent-trait table #\e +float-exponent-marker+)
-    (set-constituent-trait table #\F +single-float-exponent-marker+)
-    (set-constituent-trait table #\f +single-float-exponent-marker+)
-    (set-constituent-trait table #\L +long-float-exponent-marker+)
-    (set-constituent-trait table #\l +long-float-exponent-marker+)
-    (set-constituent-trait table #\S +short-float-exponent-marker+)
-    (set-constituent-trait table #\s +short-float-exponent-marker+)
-    table))
+(defun copy-readtable (&optional (from-readtable *readtable*) to-readtable)
+  (when (null from-readtable)
+    (setf from-readtable *standard-readtable*))
+  (flet ((copy-hashtables (from to)
+	   (clrhash (others from))
+	   (loop for key being each hash-key of (others from)
+		 using (hash-value value)
+		 do (setf (gethash key (others to)) value))
+	   (clrhash (macro-functions from))
+	   (loop for key being each hash-key of (macro-functions from)
+		 using (hash-value value)
+		 do (setf (gethash key (macro-functions to)) value))))
+    (if (null to-readtable)
+	(let* ((ascii-syntax-types
+		(copy-seq (ascii-syntax-types from-readtable)))
+	       (ascii-constituent-traits
+		(let ((copy (copy-seq (ascii-constituent-traits from-readtable))))
+		  (loop for i from 0 below 128
+			do (setf (aref copy i) (copy-seq (aref copy i))))
+		  copy))
+	       (decimal-letters
+		(copy-seq (decimal-letters from-readtable)))
+	       (decimal-digits
+		(copy-seq (decimal-digits from-readtable)))
+	       (whitespace
+		(copy-seq (whitespace from-readtable)))
+	       (new-readtable (make-instance 'readtable
+				:case (case (readtable-case from-readtable))
+				:ascii-syntax-types ascii-syntax-types
+				:ascii-constituent-traits ascii-constituent-traits
+				:decimal-letters decimal-letters
+				:decimal-digits decimal-digits
+				:whitespace whitespace)))
+	  (copy-hashtables from-readtable new-readtable)
+	  new-readtable)
+	(progn
+	  (loop for i from 0 to 128
+		do (setf (aref (ascii-syntax-types to-readtable) i)
+			 (aref (ascii-syntax-types from-readtable) i))
+		   (setf (aref (ascii-constituent-traits to-readtable) i)
+			 (copy-seq (aref (ascii-constituent-traits from-readtable) i)))
+		   (setf (sbit (decimal-letters to-readtable) i)
+			 (sbit (decimal-letters from-readtable) i))
+		   (setf (sbit (decimal-digits to-readtable) i)
+			 (sbit (decimal-digits from-readtable) i))
+		   (setf (sbit (whitespace to-readtable) i)
+			 (sbit (whitespace from-readtable) i)))
+	  (copy-hashtables from-readtable to-readtable)
+	  to-readtable))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -457,6 +534,9 @@
 	(if non-terminating-p
 	    'non-terminating-macro-char
 	    'terminating-macro-char))
+  ;; Make sure the character is no longer considered to be
+  ;; a symbol starter. 
+  (setf (aref (decimal-letters readtable) (char-code char)) 0)
   (setf (gethash char (macro-functions readtable)) new-function))
   
 (mapc (lambda (pair) (set-macro-character (car pair)
@@ -540,19 +620,449 @@
 ;;; method.  This method has the additional advantage of allocating
 ;;; much less memory.
 
-(eval-when (:compile-toplevel)
-  (defparameter *buffer-size* 100))
+(defparameter *buffer* (make-array 100 :element-type 'character))
 
-(defparameter *buffer* (make-array #.*buffer-size*
-				   :element-type 'character))
+;;; Upper-case versions of every ascii character.  For fast test.
+(defparameter *ascii-upcase*
+  (let ((vector (make-array 128 :element-type 'character)))
+    (loop for i from 0 below 128
+	  do (setf (aref vector i)
+		   (char-upcase (code-char i))))
+    vector))
 
-;;; FIXME: A significant proportion of the time to read tokens is
-;;; spent in has-constituent-trait, and syntax-type.  Improve
-;;; performance by associating each ASCII character with a ready made
-;;; code snippet that will have already eliminated the calls to those
-;;; functions.  Then start by checking that the char is an ascii char
-;;; and use the code snippet.  When someone modifies the syntax of
-;;; some character, this association needs to be modified as well.
+;;; A special version of the read function that assumes
+;;; that the input radix is 10 and that the readtable case
+;;; of the current readtable is :upcase. 
+(defun read-upcase-decimal (input-stream eof-error-p eof-value recursive-p)
+  (let* ((table *readtable*)
+	 (buffer *buffer*)
+	 (buffer-size (length buffer))
+	 (read-with-position *read-with-position*)
+	 (index 0)
+	 (whitespace (whitespace table))
+	 (decimal-letters (decimal-letters table))
+	 (decimal-digits (decimal-digits table))
+	 (ascii-upcase *ascii-upcase*)
+	 ;; for symbol accumulation
+	 (first-package-marker-position nil)
+	 (second-package-marker-position nil)
+	 ;; for number accumulation
+	 (sign 1)
+	 (numerator 0)
+	 (denominator 0)
+	 (scale 1)
+	 char
+	 code
+	 start)
+    (declare (type simple-string buffer)
+	     (type (simple-bit-vector 128)
+		   whitespace decimal-letters decimal-digits)
+	     (type (simple-string 128) ascii-upcase))
+    (flet ((increase-buffer ()
+	     (let ((new-buffer (make-array (* 2 buffer-size)
+					   :element-type 'character)))
+	       (setf (subseq new-buffer 0 buffer-size) buffer)
+	       (setf buffer new-buffer)
+	       (setf buffer-size (length new-buffer)))))
+      (tagbody
+	 ;; The initial state.
+	 (setf char (read-char input-stream eof-error-p eof-value recursive-p))
+	 (setf code (char-code char))
+	 ;; Skip whitespace.
+	 (loop while (and (< code 128)
+			  (= (sbit whitespace code) 1))
+	       do (setf char (read-char input-stream eof-error-p eof-value recursive-p))
+		  (setf code (char-code char)))
+	 (when read-with-position
+	   ;; It is not safe to add to or subtract from the file position,
+	   ;; so the only method that is portable is to undread the
+	   ;; character, determine the file position, and then read the
+	   ;; character again.
+	   (unread-char char input-stream)
+	   (setf start (file-position input-stream))
+	   (read-char input-stream eof-error-p eof-value recursive-p))
+	 ;; Come here when we know that we do not have an ASCII whitespace.
+	 (if (< code 128)
+	     ;; Then not only do we not have an ASCII whitespace, but
+	     ;; we have no whitespace at all.
+	     (progn 
+	       ;; We make a quick test to see if it must be a symbol.
+	       (when (= (sbit decimal-letters code) 1)
+		 (setf (schar buffer index) (schar ascii-upcase code))
+		 (incf index)
+		 (go symbol-even-escape-no-package-marker))
+	       ;; Another common case is that we have a digit
+	       (when (= (sbit decimal-digits code) 1)
+		 (setf (schar buffer index) char)
+		 (incf index)
+		 (setf numerator (- code #.(char-code #\0)))
+		 (go perhaps-integer)))
+	     (error "can't get here a"))
+       symbol-even-escape-no-package-marker
+	 ;; In this state, we are accumulating a token that must be a
+	 ;; symbol.  We have seen an even number of multiple escape
+	 ;; characters, so we must upcase the letters we accumulate.
+	 ;; We have seen no package marker yet.
+	 (setf char (read-char input-stream nil nil t))
+	 ;; Start by testing for end of file.
+	 ;; Until we do, we can't do anthing else useful.
+	 (when (not char)
+	   ;; Found end of file.
+	   (return-from read-upcase-decimal
+	     (intern (subseq buffer 0 index))))
+	 (when (and (< (setf code (char-code char)) 128)
+		    (= (sbit decimal-letters code) 1))
+	   (when (= index buffer-size)
+	     (increase-buffer))
+	   (setf (schar buffer index) (schar ascii-upcase code))
+	   (incf index)
+	   (go symbol-even-escape-no-package-marker))
+	 ;; We failed to detect a constituent the fast way.
+	 ;; Try the more general way.
+	 (ecase (syntax-type table char)
+	   (constituent
+	      (cond ((has-constituent-trait-p table char +package-marker+)
+		     ;; We found a package marker.  Remember its position
+		     ;; and change state to reflect our discovery.
+		     (setf first-package-marker-position index)
+		     (incf index)
+		     (go symbol-even-escape-one-package-marker))
+		    ((has-constituent-trait-p table char +invalid+)
+		     ;; FIXME: Do this better
+		     (error 'reader-error))
+		    (t
+		     ;; We found an ordinary constituent.  Save it and
+		     ;; reenter the same state. 
+		     (when (= index buffer-size)
+		       (increase-buffer))
+		     (setf (schar buffer index) (schar ascii-upcase code))
+		     (incf index)
+		     (go symbol-even-escape-no-package-marker))))
+	   (non-terminating-macro-char
+	      (when (= index buffer-size)
+		(increase-buffer))
+	      (setf (schar buffer index) (schar ascii-upcase code))
+	      (incf index)
+	      (go symbol-even-escape-no-package-marker))
+	   (terminating-macro-char
+	      (unread-char char input-stream)
+	      (return-from read-upcase-decimal
+		(intern (subseq buffer 0 index))))
+	   (single-escape
+	      (setf char (read-char input-stream nil nil t))
+	      (if (null char)
+		  (error 'reader-error)
+		  (progn (setf (schar buffer index) char)
+			 (incf index)
+			 (go symbol-even-escape-no-package-marker))))
+	   (multiple-escape
+	      (go symbol-odd-escape-no-package-marker))
+	   (whitespace
+	      ;; FIXME: handle `read-preserving-whitespace' here
+	      (unread-char char input-stream)
+	      (return-from read-upcase-decimal
+		(intern (subseq buffer 0 index)))))
+	 (error "can't get here b")
+       symbol-even-escape-one-package-marker
+	 ;; In this state, we are accumulating a token that must be a
+	 ;; symbol.  We have seen an even number of multiple escape
+	 ;; characters, so we must upcase the letters we accumulate.
+	 ;; We have seen no package marker yet.
+	 (setf char (read-char input-stream nil nil t))
+	 ;; Start by testing for end of file.
+	 ;; Until we do, we can't do anthing else useful.
+	 (flet ((return-or-error ()
+		  (let ((package (find-package
+				  (subseq buffer 0 first-package-marker-position))))
+		    (unless package
+		      (error "no package by that name exists"))
+		    (multiple-value-bind (symbol status)
+			(find-symbol (subseq buffer
+					     (1+ first-package-marker-position)
+					     index)
+				     package)
+		      (unless (eq status :external)
+			(error "symbol is not external"))
+		      (return-from read-upcase-decimal symbol)))))
+	   (when (not char)
+	   ;; Found end of file.
+	     (return-or-error))
+	   (when (and (< (setf code (char-code char)) 128)
+		      (= (sbit decimal-letters code) 1))
+	     (when (= index buffer-size)
+	       (increase-buffer))
+	     (setf (schar buffer index) (schar ascii-upcase code))
+	     (incf index)
+	     (go symbol-even-escape-one-package-marker))
+	   ;; We failed to detect a constituent the fast way.
+	   ;; Try the more general way.
+	   (ecase (syntax-type table char)
+	     (constituent
+		(cond ((has-constituent-trait-p table char +package-marker+)
+		       ;; We found a package marker.  Remember its position
+		       ;; and change state to reflect our discovery.
+		       (setf second-package-marker-position index)
+		       (incf index)
+		       (go symbol-even-escape-two-package-markers))
+		      ((has-constituent-trait-p table char +invalid+)
+		       ;; FIXME: Do this better
+		       (error 'reader-error))
+		      (t
+		       ;; We found an ordinary constituent.  Save it and
+		       ;; reenter the same state. 
+		       (when (= index buffer-size)
+			 (increase-buffer))
+		       (setf (schar buffer index) (schar ascii-upcase code))
+		       (incf index)
+		       (go symbol-even-escape-one-package-marker))))
+	     (non-terminating-macro-char
+		(when (= index buffer-size)
+		  (increase-buffer))
+		(setf (schar buffer index) (schar ascii-upcase code))
+		(incf index)
+		(go symbol-even-escape-one-package-marker))
+	     (terminating-macro-char
+		(unread-char char input-stream)
+		(return-or-error))
+	     (single-escape
+		(setf char (read-char input-stream nil nil t))
+		(if (null char)
+		    (error 'reader-error)
+		    (progn (setf (schar buffer index) char)
+			   (incf index)
+			   (go symbol-even-escape-one-package-marker))))
+	     (multiple-escape
+		(go symbol-odd-escape-one-package-marker))
+	     (whitespace
+		;; FIXME: handle `read-preserving-whitespace' here
+		(unread-char char input-stream)
+		(return-or-error))))
+	 (error "can't get here c")
+       symbol-even-escape-two-package-markers
+	 ;; In this state, we are accumulating a token that must be a
+	 ;; symbol.  We have seen an even number of multiple escape
+	 ;; characters, so we must upcase the letters we accumulate.
+	 ;; We have seen no package marker yet.
+	 (setf char (read-char input-stream nil nil t))
+	 ;; Start by testing for end of file.
+	 ;; Until we do, we can't do anthing else useful.
+	 (flet ((return-or-error ()
+		  (unless (= (1+ first-package-marker-position)
+			     second-package-marker-position)
+		    (error "the two package markers are not adjacent"))
+		  (when (= first-package-marker-position 1)
+		    (error "cannot have two package markers at beginning"))
+		  (when (= second-package-marker-position index)
+		    (error "cannot have two package markers at the end"))
+		  (let ((package (find-package
+				  (subseq buffer 0 first-package-marker-position))))
+		    (unless package
+		      (error "no package by that name exists"))
+		    (return-from read-upcase-decimal
+		      (intern (subseq buffer
+				      (1+ second-package-marker-position)
+				      index)
+			      package)))))
+	   (when (not char)
+	   ;; Found end of file.
+	     (return-or-error))
+	   (when (and (< (setf code (char-code char)) 128)
+		      (= (sbit decimal-letters code) 1))
+	     (when (= index buffer-size)
+	       (increase-buffer))
+	     (setf (schar buffer index) (schar ascii-upcase code))
+	     (incf index)
+	     (go symbol-even-escape-two-package-markers))
+	   ;; We failed to detect a constituent the fast way.
+	   ;; Try the more general way.
+	   (ecase (syntax-type table char)
+	     (constituent
+		(cond ((has-constituent-trait-p table char +package-marker+)
+		       ;; We found a package marker.  That's one too many.
+		       (error "more than two package markers in a token"))
+		      ((has-constituent-trait-p table char +invalid+)
+		       ;; FIXME: Do this better
+		       (error 'reader-error))
+		      (t
+		       ;; We found an ordinary constituent.  Save it and
+		       ;; reenter the same state. 
+		       (when (= index buffer-size)
+			 (increase-buffer))
+		       (setf (schar buffer index) (schar ascii-upcase code))
+		       (incf index)
+		       (go symbol-even-escape-two-package-markers))))
+	     (non-terminating-macro-char
+		(when (= index buffer-size)
+		  (increase-buffer))
+		(setf (schar buffer index) (schar ascii-upcase code))
+		(incf index)
+		(go symbol-even-escape-two-package-markers))
+	     (terminating-macro-char
+		(unread-char char input-stream)
+		(return-or-error))
+	     (single-escape
+		(setf char (read-char input-stream nil nil t))
+		(if (null char)
+		    (error 'reader-error)
+		    (progn (setf (schar buffer index) char)
+			   (incf index)
+			   (go symbol-even-escape-two-package-markers))))
+	     (multiple-escape
+		(go symbol-odd-escape-two-package-markers))
+	     (whitespace
+		;; FIXME: handle `read-preserving-whitespace' here
+		(unread-char char input-stream)
+		(return-or-error))))
+	 (error "can't get here d")
+       symbol-odd-escape-no-package-marker
+	 ;; In this state, we are accumulating a token that must be a
+	 ;; symbol.  We have seen an odd number of multiple escape
+	 ;; characters, so we do not upcase the letters we accumulate.
+	 (setf char (read-char input-stream nil nil t))
+	 (when (null char)
+	   (error 'reader-error))
+	 (ecase (syntax-type table char)
+	   ((constituent non-terminating-macro-char terminating-macro-char whitespace)
+	      (when (= index buffer-size)
+		(increase-buffer))
+	      (setf (schar buffer index) char)
+	      (incf index)
+	      (go symbol-odd-escape-no-package-marker))
+	   (single-escape
+	      (setf char (read-char input-stream nil nil t))
+	      (if (null char)
+		  (error 'reader-error)
+		  (progn (setf (schar buffer index) char)
+			 (incf index)
+			 (go symbol-odd-escape-no-package-marker))))
+	   (multiple-escape
+	      (go symbol-even-escape-no-package-marker)))
+	 (error "can't get here e")
+       symbol-odd-escape-one-package-marker
+	 ;; In this state, we are accumulating a token that must be a
+	 ;; symbol.  We have seen an odd number of multiple escape
+	 ;; characters, so we do not upcase the letters we accumulate.
+	 (setf char (read-char input-stream nil nil t))
+	 (when (null char)
+	   (error 'reader-error))
+	 (ecase (syntax-type table char)
+	   ((constituent non-terminating-macro-char terminating-macro-char whitespace)
+	      (when (= index buffer-size)
+		(increase-buffer))
+	      (setf (schar buffer index) char)
+	      (incf index)
+	      (go symbol-odd-escape-one-package-marker))
+	   (single-escape
+	      (setf char (read-char input-stream nil nil t))
+	      (if (null char)
+		  (error 'reader-error)
+		  (progn (setf (schar buffer index) char)
+			 (incf index)
+			 (go symbol-odd-escape-one-package-marker))))
+	   (multiple-escape
+	      (go symbol-even-escape-one-package-marker)))
+	 (error "can't get here f")
+       symbol-odd-escape-two-package-markers
+	 ;; In this state, we are accumulating a token that must be a
+	 ;; symbol.  We have seen an odd number of multiple escape
+	 ;; characters, so we do not upcase the letters we accumulate.
+	 (setf char (read-char input-stream nil nil t))
+	 (when (null char)
+	   (error 'reader-error))
+	 (ecase (syntax-type table char)
+	   ((constituent non-terminating-macro-char terminating-macro-char whitespace)
+	      (when (= index buffer-size)
+		(increase-buffer))
+	      (setf (schar buffer index) char)
+	      (incf index)
+	      (go symbol-odd-escape-two-package-markers))
+	   (single-escape
+	      (setf char (read-char input-stream nil nil t))
+	      (if (null char)
+		  (error 'reader-error)
+		  (progn (setf (schar buffer index) char)
+			 (incf index)
+			 (go symbol-odd-escape-two-package-markers))))
+	   (multiple-escape
+	      (go symbol-even-escape-two-package-markers)))
+	 (error "can't get here g")
+       perhaps-integer
+	 ;; We have seen the a sequence of digits, possibly preceded by
+	 ;; as sign.  
+	 (setf char (read-char input-stream nil nil t))
+	 ;; Start by testing for end of file.
+	 ;; Until we do, we can't do anthing else useful.
+	 (when (not char)
+	   ;; Found end of file.
+	   (return-from read-upcase-decimal (* sign numerator)))
+	     
+	 (when (and (< (setf code (char-code char)) 128)
+		    (= (sbit decimal-digits code) 1))
+	   (when (= index buffer-size)
+	     (increase-buffer))
+	   (setf (schar buffer index) char)
+	   (incf index)
+	   (setf numerator (+ (* 10 numerator) (- code #.(char-code #\0))))
+	   (go perhaps-integer))
+	 (if (eq (syntax-type table char) 'constituent)
+	     (cond ((has-constituent-trait-p table char +ratio-marker+)
+		    (setf char (read-char input-stream nil nil t))
+		    (cond ((null char)
+			   (return-from read-upcase-decimal
+			     (intern (subseq buffer 0 index))))
+			  ((and (< (setf code (char-code char)) 128)
+				(= (sbit decimal-digits code) 1))
+			   (when (= index buffer-size)
+			     (increase-buffer))
+			   (setf (schar buffer index) char)
+			   (incf index)
+			   (setf denominator (- code #.(char-code #\0)))
+			   (go perhaps-ratio))
+			  (t
+			   (when (= index buffer-size)
+			     (increase-buffer))
+			   (setf (schar buffer index) (char-upcase char))
+			   (incf index)
+			   (go symbol-even-escape-no-package-marker))))
+		   ((or (has-constituent-trait-p
+			 table char +decimal-point+)
+			(has-constituent-trait-p
+			 table char +short-float-exponent-marker+)
+			(has-constituent-trait-p
+			 table char +single-float-exponent-marker+)
+			(has-constituent-trait-p
+			 table char +double-float-exponent-marker+)
+			(has-constituent-trait-p
+			 table char +long-float-exponent-marker+))
+		    ;; not quite correct
+		    (go perhaps-float))
+		   (t
+		    (when (= index buffer-size)
+		      (increase-buffer))
+		    (setf (schar buffer index) (char-upcase char))
+		    (incf index)
+		    (go symbol-even-escape-no-package-marker)))
+	     (progn (unread-char char input-stream)
+		    (return-from read-upcase-decimal numerator)))
+	 (error "can't come here either")
+       perhaps-ratio
+	 ;; We have seen an integer, a slash, and at leat one more digit. 
+	 (setf char (read-char input-stream nil nil t))
+	 ;; Start by testing for end of file.
+	 ;; Until we do, we can't do anthing else useful.
+	 (when (not char)
+	   ;; Found end of file.
+	   (return-from read-upcase-decimal (/ (* sign numerator) denominator)))
+	 (when (and (< (setf code (char-code char)) 128)
+		    (= (sbit decimal-digits code) 1))
+	   (when (= index buffer-size)
+	     (increase-buffer))
+	   (setf (schar buffer index) char)
+	   (incf index)
+	   (setf denominator (+ (* 10 denominator) (- code #.(char-code #\0))))
+	   (go perhaps-ratio))
+       perhaps-float
+	 ))))
 
 (defun read (&optional
 	     input-stream
@@ -563,214 +1073,8 @@
 	(cond ((eq input-stream t) *terminal-io*)
 	      ((null input-stream) *standard-input*)
 	      (t input-stream)))
-  (let ((table *readtable*)
-	(buffer *buffer*)
-	(read-with-position *read-with-position*)
-	(index -1)
-	char syntax-type token start)
-    (declare (type (simple-string #.*buffer-size*) buffer)
-	     (type (integer -1 #.*buffer-size*) index))
-    (tagbody
-     1
-       (when read-with-position
-	 (setf start (file-position input-stream)))
-       (setf char (read-char input-stream eof-error-p eof-value recursive-p))
-       (setf syntax-type (syntax-type table char))
-       (cond ((and (eq syntax-type 'constituent)
-                   (has-constituent-trait table char +invalid+))
-              ;; do this better
-              (error 'invalid-character :stream input-stream :char char))
-             ((eq syntax-type 'whitespace)
-              (go 1))
-             ((or (eq syntax-type 'terminating-macro-char)
-                  (eq syntax-type 'non-terminating-macro-char))
-	      (when read-with-position
-		(push-expression-stack))
-              (unwind-protect 
-                   (let* ((fun (gethash char (macro-functions table)))
-                          (values (multiple-value-list
-                                      (funcall fun input-stream char))))
-                     (if (null values)
-                         (go 1)
-                         (progn (when read-with-position
-				  (combine-expression-stack
-				   (first values) start (file-position input-stream)))
-                                (return-from read (first values)))))
-		(when read-with-position
-		  (pop-expression-stack))))
-             ((eq syntax-type 'single-escape)
-              (setf char (read-char input-stream t nil t))
-	      (setf (schar buffer (incf index)) char)
-              (go 8))
-             ((eq syntax-type 'multiple-escape)
-              (go 9))
-             ((eq syntax-type 'constituent)
-              ;; handle case conversion, etc
-	      (setf (schar buffer (incf index)) char)
-	      (go 8)))
-     8
-       ;; In this state, we are accumulating a token, and an even
-       ;; number of multiple escape characters have been seen.
-
-       ;; Check for buffer overflow
-       (when (= index #.(1- *buffer-size*))
-	 (setf token
-	       (make-array #.*buffer-size*
-			   :element-type 'character
-			   :adjustable t
-			   :fill-pointer #.*buffer-size*))
-	 (loop for i from 0 below #.*buffer-size*
-	       do (setf (aref token i) (schar buffer i)))
-	 (go 8bis))
-       (setf char (read-char input-stream nil nil t))
-       (if (null char)
-           (go 10)
-           (progn (setf syntax-type (syntax-type table char))
-                  (cond ((or (eq syntax-type 'constituent)
-                             (eq syntax-type 'non-terminating-macro-char))
-			 (setf (schar buffer (incf index)) char)
-                         (go 8))
-                        ((eq syntax-type 'single-escape)
-                         ;; do this better by signaling a	
-                         ;; more specific condition.
-                         (setf char (read-char input-stream t nil t))
-			 (setf (schar buffer (incf index)) char)
-                         (go 8))
-                        ((eq syntax-type 'multiple-escape)
-                         (go 9))
-                        ((and (eq syntax-type 'constituent)
-                              (has-constituent-trait table char +invalid+))
-                         ;; do this better
-                         (error 'invalid-character
-                                :stream input-stream :char char))
-                        ((eq syntax-type 'terminating-macro-char)
-                         (unread-char char input-stream)
-                         (go 10))
-                        ((eq syntax-type 'whitespace)
-                         ;; check for preserving whitespace
-                         (unread-char char input-stream)
-                         (go 10)))))
-     9
-       ;; In this state, we are accumulating a token, and an odd
-       ;; number of multiple escape characters have been seen.
-
-       ;; Check for buffer overflow
-       (when (= index #.(1- *buffer-size*))
-	 (setf token
-	       (make-array #.*buffer-size*
-			   :element-type 'character
-			   :adjustable t
-			   :fill-pointer #.*buffer-size*))
-	 (loop for i from 0 below #.*buffer-size*
-	       do (setf (aref token i) (schar buffer i)))
-	 (go 9bis))
-       (setf char (read-char input-stream t nil t))
-       (setf syntax-type (syntax-type table char))
-       (cond ((or (eq syntax-type 'constituent)
-                  (eq syntax-type 'whitespace))
-	      (setf (schar buffer (incf index)) char)
-              (go 9))
-             ((eq syntax-type 'single-escape)
-              ;; do this better by signaling a	
-              ;; more specific condition.
-              (setf char (read-char input-stream t nil t))
-	      (setf (schar buffer (incf index)) char)
-              (go 9))
-             ((eq syntax-type 'multiple-escape)
-              (go 8))
-             ((and (eq syntax-type 'constituent)
-                   (has-constituent-trait table char +invalid+))
-              ;; do this better
-              (error 'invalid-character
-                     :stream input-stream :char char)))
-     10
-       ;; We have seen a complete token.  
-       (if (and (= index 0)
-		(eql (schar buffer 0) #\.))
-           (error 'single-dot-token)
-           ;; build the token here
-	   (progn (setf token (make-array (1+ index) :element-type 'character))
-		  (loop for i from 0 to index
-			do (setf (aref token i) (schar buffer i)))))
-     8bis
-       ;; In this state, we are accumulating a token, and an even
-       ;; number of multiple escape characters have been seen.
-       ;; This state is like state 8, except that
-       ;; the token we have seen has more characters
-       ;; than the fixed buffer, so we use the more 
-       ;; general method of an adjustable vector with
-       ;; fill pointer.
-       (setf char (read-char input-stream nil nil t))
-       (if (null char)
-           (go 10bis)
-           (progn (setf syntax-type (syntax-type table char))
-                  (cond ((or (eq syntax-type 'constituent)
-                             (eq syntax-type 'non-terminating-macro-char))
-                         (vector-push-extend char token)
-                         (go 8bis))
-                        ((eq syntax-type 'single-escape)
-                         ;; do this better by signaling a	
-                         ;; more specific condition.
-                         (setf char (read-char input-stream t nil t))
-                         (vector-push-extend char token)
-                         (go 8bis))
-                        ((eq syntax-type 'multiple-escape)
-                         (go 9bis))
-                        ((and (eq syntax-type 'constituent)
-                              (has-constituent-trait table char +invalid+))
-                         ;; do this better
-                         (error 'invalid-character
-                                :stream input-stream :char char))
-                        ((eq syntax-type 'terminating-macro-char)
-                         (unread-char char input-stream)
-                         (go 10bis))
-                        ((eq syntax-type 'whitespace)
-                         ;; check for preserving whitespace
-                         (unread-char char input-stream)
-                         (go 10bis)))))
-     9bis
-       ;; In this state, we are accumulating a token, and an odd
-       ;; number of multiple escape characters have been seen.
-       ;; This state is like state 9, except that
-       ;; the token we have seen has more characters
-       ;; than the fixed buffer, so we use the more 
-       ;; general method of an adjustable vector with
-       ;; fill pointer.
-       (setf char (read-char input-stream t nil t))
-       (setf syntax-type (syntax-type table char))
-       (cond ((or (eq syntax-type 'constituent)
-                  (eq syntax-type 'whitespace))
-              (vector-push-extend char token)
-              (go 9bis))
-             ((eq syntax-type 'single-escape)
-              ;; do this better by signaling a	
-              ;; more specific condition.
-              (setf char (read-char input-stream t nil t))
-              (vector-push-extend char token)
-              (go 9bis))
-             ((eq syntax-type 'multiple-escape)
-              (go 8bis))
-             ((and (eq syntax-type 'constituent)
-                   (has-constituent-trait table char +invalid+))
-              ;; do this better
-              (error 'invalid-character
-                     :stream input-stream :char char)))
-     10bis
-       ;; We have seen a complete token.  
-       ;; This state is like state 10, except that
-       ;; the token we have seen has more characters
-       ;; than the fixed buffer, so we use the more 
-       ;; general method of an adjustable vector with
-       ;; fill pointer.
-       (if (equal token ".")
-           (error 'single-dot-token)
-           ;; build the token here
-           nil))
-    (when read-with-position
-      (push-expression-stack)
-      (combine-expression-stack token start (file-position input-stream))
-      (pop-expression-stack))
-    token))
+  ;; For now.
+  (read-upcase-decimal input-stream eof-error-p eof-value recursive-p))
 
 (defun read-with-position (&optional
                            input-stream
