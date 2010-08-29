@@ -204,6 +204,63 @@
               Might signal an error of type ARITHMETIC-ERROR if~@
               unable to fulfill its contract."))
 
+(fundoc 'abort
+	(fmt "Lambda list: (&optional CONDITION).~@
+              Search for the most recently established restart named ABORT~@
+              and transfer control to that restart.~@
+              If no such restart exists, then an error of type CONTROL-ERROR~@
+              is signaled.~@
+              The argument CONDITION must be a condition object, or NIL.~@
+              When CONDITION is given, the restarts that are searched are~@
+              only the restarts that have CONDITION explicitly associated~@
+              with them, or restarts having no conditions associated with them.~@
+              When CONDITION is nil all restarts are searched."))            
+
+(fundoc 'continue
+	(fmt "Lambda list: (&optional CONDITION).~@
+              Search for the most recently established restart named CONTINUE~@
+              and transfer control to that restart.~@
+              If no such restart exists, NIL is returned.~@
+              The argument CONDITION must be a condition object, or NIL.~@
+              When CONDITION is given, the restarts that are searched are~@
+              only the restarts that have CONDITION explicitly associated~@
+              with them, or restarts having no conditions associated with them.~@
+              When CONDITION is nil all restarts are searched."))            
+
+(fundoc 'muffle-warnings
+	(fmt "Lambda list: (&optional CONDITION).~@
+              Search for the most recently established restart named MUFFLE-WARNINGS~@
+              and transfer control to that restart.~@
+              If no such restart exists, then an error of type CONTROL-ERROR~@
+              is signaled.~@
+              The argument CONDITION must be a condition object, or NIL.~@
+              When CONDITION is given, the restarts that are searched are~@
+              only the restarts that have CONDITION explicitly associated~@
+              with them, or restarts having no conditions associated with them.~@
+              When CONDITION is nil all restarts are searched."))            
+
+(fundoc 'store-value
+	(fmt "Lambda list: (&optional CONDITION).~@
+              Search for the most recently established restart named STORE-VALUE~@
+              and transfer control to that restart.~@
+              If no such restart exists, NIL is returned.~@
+              The argument CONDITION must be a condition object, or NIL.~@
+              When CONDITION is given, the restarts that are searched are~@
+              only the restarts that have CONDITION explicitly associated~@
+              with them, or restarts having no conditions associated with them.~@
+              When CONDITION is nil all restarts are searched."))            
+
+(fundoc 'use-value
+	(fmt "Lambda list: (&optional CONDITION).~@
+              Search for the most recently established restart named USE-VALUE~@
+              and transfer control to that restart.~@
+              If no such restart exists, NIL is returned.~@
+              The argument CONDITION must be a condition object, or NIL.~@
+              When CONDITION is given, the restarts that are searched are~@
+              only the restarts that have CONDITION explicitly associated~@
+              with them, or restarts having no conditions associated with them.~@
+              When CONDITION is nil all restarts are searched."))            
+
 (fundoc 'abs
         (fmt "Lambda list: (NUMBER).~@
               Return the absolute value of the number NUMBER.~@
