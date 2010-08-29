@@ -79,7 +79,7 @@
 
 (defun right-parenthesis-function (stream char)
   (declare (ignore stream char))
-  (error 'unmatched-right-parenthesis))
+  (error 'unmatched-right-parenthesis :stream stream))
 
 ;;; This condition is signaled when a token consisting
 ;;; only of (unescaped) dots was found.
@@ -134,7 +134,8 @@
        ;; turn signal the no-object-preceding-dot condition.
        (setf (cdr last-cons)
 	     (handler-case (list (read stream t nil t))
-	       (single-dot-token () (error 'no-object-preceding-dot))))
+	       (single-dot-token ()
+		 (error 'no-object-preceding-dot :stream stream))))
        ;; Come here when we successfully read the first subexpression
        ;; of the list. 
        (setf last-cons (cdr last-cons))
@@ -157,6 +158,7 @@
 				  ;; An expression was successfully
 				  ;; read, which shouldn't happen.
 				  (error 'multiple-objects-following-dot
+					 :stream stream
 					 :offending-expression exp))
 			      (unmatched-right-parenthesis ()
 				(return-from left-parenthesis-function
@@ -202,6 +204,7 @@
   (declare (ignore char))
   (unless (null parameter)
     (error 'no-parameter-allowed
+	   :stream stream
 	   :which-directive "#'"
 	   :parameter parameter))
   (list 'function (read stream t nil t)))
@@ -229,6 +232,7 @@
   (declare (ignore char))
   (unless (null parameter)
     (error 'no-parameter-allowed
+	   :stream stream
 	   :which-directive "#\\"
 	   :parameter parameter))
   (let ((char (read-char stream nil nil t)))
@@ -254,6 +258,7 @@
 							 *character-names*)))
 				      (when (null char)
 					(error 'unknown-character-name
+					       :stream stream
 					       :name name))
 				      (return char))))))))))
 
@@ -729,7 +734,7 @@
 		     (go symbol-even-escape-one-package-marker))
 		    ((has-constituent-trait-p table char +invalid+)
 		     ;; FIXME: Do this better
-		     (error 'reader-error))
+		     (error 'reader-error :stream input-stream))
 		    (t
 		     ;; We found an ordinary constituent.  Save it and
 		     ;; reenter the same state. 
@@ -751,7 +756,7 @@
 	   (single-escape
 	      (setf char (read-char input-stream nil nil t))
 	      (if (null char)
-		  (error 'reader-error)
+		  (error 'reader-error :stream input-stream)
 		  (progn (setf (schar buffer index) char)
 			 (incf index)
 			 (go symbol-even-escape-no-package-marker))))
@@ -806,7 +811,7 @@
 		       (go symbol-even-escape-two-package-markers))
 		      ((has-constituent-trait-p table char +invalid+)
 		       ;; FIXME: Do this better
-		       (error 'reader-error))
+		       (error 'reader-error :stream input-stream))
 		      (t
 		       ;; We found an ordinary constituent.  Save it and
 		       ;; reenter the same state. 
@@ -827,7 +832,7 @@
 	     (single-escape
 		(setf char (read-char input-stream nil nil t))
 		(if (null char)
-		    (error 'reader-error)
+		    (error 'reader-error :stream input-stream)
 		    (progn (setf (schar buffer index) char)
 			   (incf index)
 			   (go symbol-even-escape-one-package-marker))))
@@ -882,7 +887,7 @@
 		       (error "more than two package markers in a token"))
 		      ((has-constituent-trait-p table char +invalid+)
 		       ;; FIXME: Do this better
-		       (error 'reader-error))
+		       (error 'reader-error :stream input-stream))
 		      (t
 		       ;; We found an ordinary constituent.  Save it and
 		       ;; reenter the same state. 
@@ -903,7 +908,7 @@
 	     (single-escape
 		(setf char (read-char input-stream nil nil t))
 		(if (null char)
-		    (error 'reader-error)
+		    (error 'reader-error :stream input-stream)
 		    (progn (setf (schar buffer index) char)
 			   (incf index)
 			   (go symbol-even-escape-two-package-markers))))
@@ -920,7 +925,7 @@
 	 ;; characters, so we do not upcase the letters we accumulate.
 	 (setf char (read-char input-stream nil nil t))
 	 (when (null char)
-	   (error 'reader-error))
+	   (error 'reader-error :stream input-stream))
 	 (ecase (syntax-type table char)
 	   ((constituent non-terminating-macro-char terminating-macro-char whitespace)
 	      (when (= index buffer-size)
@@ -931,7 +936,7 @@
 	   (single-escape
 	      (setf char (read-char input-stream nil nil t))
 	      (if (null char)
-		  (error 'reader-error)
+		  (error 'reader-error :stream input-stream)
 		  (progn (setf (schar buffer index) char)
 			 (incf index)
 			 (go symbol-odd-escape-no-package-marker))))
@@ -944,7 +949,7 @@
 	 ;; characters, so we do not upcase the letters we accumulate.
 	 (setf char (read-char input-stream nil nil t))
 	 (when (null char)
-	   (error 'reader-error))
+	   (error 'reader-error :stream input-stream))
 	 (ecase (syntax-type table char)
 	   ((constituent non-terminating-macro-char terminating-macro-char whitespace)
 	      (when (= index buffer-size)
@@ -955,7 +960,7 @@
 	   (single-escape
 	      (setf char (read-char input-stream nil nil t))
 	      (if (null char)
-		  (error 'reader-error)
+		  (error 'reader-error :stream input-stream)
 		  (progn (setf (schar buffer index) char)
 			 (incf index)
 			 (go symbol-odd-escape-one-package-marker))))
@@ -968,7 +973,7 @@
 	 ;; characters, so we do not upcase the letters we accumulate.
 	 (setf char (read-char input-stream nil nil t))
 	 (when (null char)
-	   (error 'reader-error))
+	   (error 'reader-error :stream input-stream))
 	 (ecase (syntax-type table char)
 	   ((constituent non-terminating-macro-char terminating-macro-char whitespace)
 	      (when (= index buffer-size)
@@ -979,7 +984,7 @@
 	   (single-escape
 	      (setf char (read-char input-stream nil nil t))
 	      (if (null char)
-		  (error 'reader-error)
+		  (error 'reader-error :stream input-stream)
 		  (progn (setf (schar buffer index) char)
 			 (incf index)
 			 (go symbol-odd-escape-two-package-markers))))
