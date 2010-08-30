@@ -402,6 +402,53 @@
               (which includes the case where there is only one argument),~@
               then the last argument is returned.~@"))
 
+(fundoc 'array-dimension
+	(fmt "Lambda list: (ARRAY AXIS-NUMBER).~@
+              Return the dimension of the array for the given axis number.~@
+              AXIS-NUMBER is an integer greater than or equal to zero~@
+              and less than the rank of the array.~@
+              If the array has a fill pointer, then it is ignored." ))
+
+(fundoc 'array-dimensions
+	(fmt "Lambda list: (ARRAY).~@
+              Return a list of dimensions for the array.~@
+              If the array has a fill pointer, then it is ignored.~@
+              If ARRAY is not an array, then an error of type TYPE-ERROR~@
+              is signaled."))
+
+(fundoc 'array-displacement
+	(fmt "Lambda list: (ARRAY).~@
+              If ARRAY is displaced to another array, then~@
+              return the array that ARRAY is displaced to, and~@
+              displaced index offset of ARRAY.~@
+              If ARRAY is not displaced to another array, then the~@
+              values NIL and 0 are returned.~@
+              If ARRAY is not an array, then an error of type TYPE-ERROR~@
+              is signaled."))
+
+(fundoc 'array-element-type
+	(fmt "Lambda list: (ARRAY).~@
+              Return a type specifier representing the type of object~@
+              that ARRAY can hold.  This type specifier might be a supertype~@
+              of the one used when the array was created, because the~@
+              implementation may have upgraded the element type.
+              If ARRAY is not an array, then an error of type TYPE-ERROR~@
+              is signaled."))
+
+(fundoc 'array-has-fill-pointer-p
+	(fmt "Lambda list: (ARRAY).~@
+              Return true if and only if ARRAY has a fill pointer.~@
+              If ARRAY is not an array, then an error of type TYPE-ERROR~@
+              is signaled."))
+
+(fundoc 'array-in-bounds-p
+	(fmt "Lambda list: (ARRAY &rest SUBSCRIPTS).~@
+              Return true if and only if SUBSCRIPTS are valid subscripts~@
+              for ARRAY, i.e. if those subscripts can be used to access~@
+              an element of ARRAY.~@
+              The number of subscripts given must be equal to the rank~@
+              of ARRAY."))
+
 (fundoc 'atom
         (fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is an atom (i.e. anything other than~@
