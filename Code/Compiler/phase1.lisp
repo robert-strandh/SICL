@@ -872,7 +872,7 @@
 	     (when (eql (char (symbol-name (form parameter)) 0) #\&)
 	       (warn 'parameter-starting-with-ampersand
 		     :ast parameter))
-	     (push (form parameter) result))
+	     (push parameter result))
 	finally (return (values (nreverse result) asts))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
