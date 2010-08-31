@@ -449,6 +449,78 @@
               The number of subscripts given must be equal to the rank~@
               of ARRAY."))
 
+(fundoc 'array-rank
+	(fmt "Lambda list: (ARRAY).@
+              Return the rank of the array, which is a nonnegative integer~@
+              indicating the number of dimensions of the array.~@
+              When ARRAY is not an array, an error of type TYPE-ERROR~@
+              is signaled."))
+
+(fundoc 'array-row-major-index
+	(fmt "Lambda list: (ARRAY &rest SUBSCRIPTS).~@
+              Return a valid array row-major index for the array, i.e.~@
+              an index that indicates the position of an element of ARRAY ~@
+              having the indicated SUBSCRIPTS, and that can be used ~@
+              to access the corresponding element using ROW-MAJOR-AREF.~@
+              The the number of SUBSCRIPS must be the same as the rank~@
+              of ARRAY, and each one must be a nonnegative integer which~@
+              is less than the size of the corresponing dimension."))
+
+(fundoc 'array-total-size
+	(fmt "Lambda list: (ARRAY).~@
+              Return the total size of the array, which is a nonnegative~@
+              integer indicating the total number of elements of ARRAY.~@
+              Fill pointers are not taken into account.~@
+              When ARRAY is not an array, an error of type TYPE-ERROR~@
+              is signaled."))
+
+(fundoc 'arrayp
+	(fmt "Lambda list: (ARRAY).~@
+              Return true if ARRAY is of type array, and fals otherwise."))
+
+(fundoc 'assoc
+	(fmt "Lambda list: (ITEM ALIST &key KEY TEST TEST-NOT).~@
+              Return the first cons in ALIST that has a car that satisfies~@
+              the test.~@
+              When neither of KEY, TEST and TEST-NOT are given, the test is~@
+              satisfied when the car of the entry in alist is EQL to ITEM.~@
+              When TEST is given, it must be a designator for a function of~@
+              two arguments that is used in place of EQL to determine wheter~@
+              the test is satisified, i.e., if the function returns true when~@
+              applied to ITEM and the car of the entry of ALIST, then that~@
+              entry is returned. 
+              When TEST-NOT is given, it must be a designator for a function of~@
+              two arguments that is is applied to ITEM and the the car of the~@
+              entries of ALIST, and if the function then returns false for some~@
+              entry, then that entry is returned.~@
+              At most one of TEST and TEST-NOT may be given.~@
+              When KEY is given and not NIL, then it must be a designator for~@
+              a function of one argument.  It is then applied to the car of each~@
+              entry of ALIST before the test is applied.  When KEY is not given~@
+              or NIL, it is as if IDENTITY were used."))
+
+(fundoc 'assoc-if
+	(fmt "Lambda list: (PREDICATE ALIST &key KEY).~@
+              Return the first cons in ALIST that has a car that satisfies~@
+              the test.~@
+              PREDICATE is a designator for a function of one argument.~@
+              When KEY is not given, the test is satisified when PREDICATE~@
+              returns true when applied to the car of an entry of ALIST.~@
+              When KEY is given, and not NIL, it must be a designator for~@
+              a function of one argument, and it is then applied to the car~@
+              of the entry of ALIST before PREDICATE is applied."))
+
+(fundoc 'assoc-if-not
+	(fmt "Lambda list: (PREDICATE ALIST &key KEY).~@
+              Return the first cons in ALIST that has a car that satisfies~@
+              the test.~@
+              PREDICATE is a designator for a function of one argument.~@
+              When KEY is not given, the test is satisified when PREDICATE~@
+              returns false when applied to the car of an entry of ALIST.~@
+              When KEY is given, and not NIL, it must be a designator for~@
+              a function of one argument, and it is then applied to the car~@
+              of the entry of ALIST before PREDICATE is applied."))
+
 (fundoc 'atom
         (fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is an atom (i.e. anything other than~@
@@ -563,6 +635,13 @@
               elements of TREE do not correspond to a key of ALIST.~@
               At most one of TEST and TEST-NOT can be given.~@
               If neither TEST nor TEST-NOT is given, EQL is used."))
+
+(fundoc 'row-major-aref
+	(fmt "Lambda list (ARRAY INDEX).~@
+              Return the element of the array at the row-major index INDEX.~@
+              INDEX must be a valid array row-major index for ARRAY.~@
+              The row-major index is the position of the element of ARRAY~@
+              when the elements are stored in row-major order."))
 
 (fundoc 'rplaca
         (fmt "Lambda list: (CONS OBJECT).~@
