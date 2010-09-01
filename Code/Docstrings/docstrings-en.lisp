@@ -526,6 +526,165 @@
               Return true if OBJECT is an atom (i.e. anything other than~@
               a cons cell), otherwise false"))
 
+(fundoc 'bit-and
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical AND~@
+              of the bits in BIT-ARRAY-1 and those in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-eqv
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical complement~@
+              of the exclusive OR of the bits in BIT-ARRAY-1 and those~@
+              in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-ior
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical OR (inclusive)~@
+              of the bits in BIT-ARRAY-1 and those in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-xor
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical exclusive OR~@
+              of the bits in BIT-ARRAY-1 and those in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-nand
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical complement~@
+              of the logical AND of the bits in BIT-ARRAY-1 and those~@
+              in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-nor
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical complement~@
+              of the logical OR (inclusive) of the bits in BIT-ARRAY-1 and~@
+              those in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-andc1
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical AND~@
+              of the complement of the bits in BIT-ARRAY-1 and the~@
+              bits in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-andc2
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical AND~@
+              of the bits in BIT-ARRAY-1 and the complement of the~@
+              bits in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-orc1
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical OR~@
+              of the complement of the bits in BIT-ARRAY-1 and the~@
+              bits in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-orc2
+	(fmt "Lambda list: (BIT-ARRAY-1 BIT-ARRAY-2 &optional OPTIONAL).~@
+              Return a bit array that contains the logical OR~@
+              of the bits in BIT-ARRAY-1 and the complement of the~@
+              bits in BIT-ARRAY-2.~@
+              BIT-ARRAY-1 and BIT-ARRAY-2 have the same rank and~@
+              the same dimensions.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY-1 is replaced~@
+              by the result of the operation."))
+
+(fundoc 'bit-not
+	(fmt "Lambda list: (BIT-ARRAY &optional OPTIONAL).~@
+              Return a bit array that contains the logical complement~@
+              of the bits in BIT-ARRAY.~@
+              If OPTIONAL is NIL or not or omitted, a new array is~@
+              allocated and returned.~@
+              If OPTIONAL is a bit array, its contents is replaced by~@
+              the result of the operation, and this array is returned~@
+              as the value of the function.~@
+              If OPTIONAL is T, the contents of BIT-ARRAY is replaced~@
+              by the result of the operation."))
+
 (fundoc 'consp
         (fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is a cons cell, false otherwise."))
