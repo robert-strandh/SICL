@@ -685,6 +685,76 @@
               If OPTIONAL is T, the contents of BIT-ARRAY is replaced~@
               by the result of the operation."))
 
+;;; do something fancy with format to get a table.
+(fundoc 'boole
+	(fmt "Lambda list: (OPERATION INTEGER-1 INTEGER-2).~@
+              Return the result of applying the bitwise locical~@
+              operation indicated by OPERATION to INTEGER-1 and INTEGER-2.~@
+              The two integers are treated as if represented in binary~@
+              two's complement.  A nonnegative integer is considered starting~@
+              with an infinite number of 0s ans a negative integer is considered~@
+              starting with an infinite number of 1s.~@
+              The operation is given by the value of 16 constant variables:~@
+
+              boole-1      INTEGER-1 is returned, and INTEGER-2 is ignored.~@
+              boole-2      INTEGER-2 is returned, and INTEGER-1 is ignored.~@
+              boole-andc1  The AND of the complement of INTEGER-1 and of INTEGER-2@
+                           is returned.~@
+              boole-andc1  The AND of INTEGER-1 and the complement of INTEGER-2@
+                           is returned.~@
+              boole-and    The AND of INTEGER-1 and of INTEGER-2 is returned.~@
+              boole-c1     The complement of INTEGER-1 is returned.~@
+                           INTEGER-2 is ignored.~@
+              boole-c2     The complement of INTEGER-2 is returned.~@
+                           INTEGER-1 is ignored.~@
+              boole-clr    The integer 0 is returned.  Both INTEGER-1 and~@
+                           INTEGER-2 are ignored.~@
+              boole-eqv    The complement of the exclusive OR of INTEGER-1 and~@
+                           INTEGER-2 is returned.~@
+              boole-ior    The (inclusive) OR of INTEGER-1 and INTEGER-2 is returned.~@
+              boole-nand   The complement of the AND of INTEGER-1 and INTEGER-2~@
+                           is returned.~@
+              boole-nor    The complement of the (inclusive) OR of INTEGER-1 and~@
+                           INTEGER-2 is returned.~@
+              boole-orc1   The (inclusive) OR of the complement of INTEGER-1~@
+                           and of INTEGER-2 is returned.~@
+              boole-orc2   The (inclusive) OR of INTEGER-1 and of the complement of~@
+                           INTEGER-2 is returned.~@
+              boole-clr    The integer -1 is returned.  Both INTEGER-1 and~@
+                           INTEGER-2 are ignored.~@
+              boole-xor    The exclusive or of INTEGER-1 and of INTEGER-2 is returned.~@
+
+              An error of type TYPE-ERROR is signaled if OPERATION is not a 
+              bitwise logicial operation specifier as indicated above, or if
+              any of INTEGER-1 and INTEGER-2 is not an integer."))
+
+(fundoc 'both-case-p
+	(fmt "Lambda list: (CHARACTER).~@
+              Return true if CHARACTER is a character with case, i.e., if~@
+              CHARACTER exists in both an upper-case and a lower-case version.~@
+              An error of type TYPE-ERROR is signaled if CHARACTER is not a character."))
+
+(fundoc 'lower-case-p
+	(fmt "Lambda list: (CHARACTER).~@
+              Return true if CHARACTER is a lower-case character, i.e., if it is the~@
+              lower-case version of a character that has both upper and lower case~@
+              versions.
+              An error of type TYPE-ERROR is signaled if CHARACTER is not a character."))
+
+(fundoc 'upper-case-p
+	(fmt "Lambda list: (CHARACTER).~@
+              Return true if CHARACTER is a upper-case character, i.e., if it is the~@
+              upper-case version of a character that has both upper and lower case~@
+              versions.
+              An error of type TYPE-ERROR is signaled if CHARACTER is not a character."))
+
+(fundoc 'boundp
+	(fmt "Lambda list: (SYMBOL).~@
+              Return true if and only if SYMBOL is bound in the null lexical environment,~@
+              i.e., if it has a value as a value in the global environment.~@
+              Lexical bindings are not taken into account.~@
+              An error of type TYPE-ERROR is signaled if SYMBOL is not a symbol.~@"))
+
 (fundoc 'consp
         (fmt "Lambda list: (OBJECT).~@
               Return true if OBJECT is a cons cell, false otherwise."))
