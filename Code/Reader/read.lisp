@@ -709,17 +709,44 @@
 	     ;; Then not only do we not have an ASCII whitespace, but
 	     ;; we have no whitespace at all.
 	     (progn 
-	       ;; We make a quick test to see if it must be a symbol.
-	       (when (= (sbit decimal-letters code) 1)
-		 (setf (schar buffer index) (schar case-table code))
-		 (incf index)
-		 (go symbol-even-escape-no-package-marker))
-	       ;; Another common case is that we have a digit
-	       (when (= (sbit decimal-digits code) 1)
-		 (setf (schar buffer index) char)
-		 (incf index)
-		 (setf numerator (- code #.(char-code #\0)))
-		 (go perhaps-integer)))
+	       (cond (;; We make a quick test to see if it must be a symbol.
+		      (= (sbit decimal-letters code) 1)
+		      (setf (schar buffer index) (schar case-table code))
+		      (incf index)
+		      (go symbol-even-escape-no-package-marker))
+		     (;; Another common case is that we have a digit
+		      (= (sbit decimal-digits code) 1)
+		      (setf (schar buffer index) char)
+		      (incf index)
+		      (setf numerator (- code #.(char-code #\0)))
+		      (go perhaps-integer))
+	       
+		     (;; Probably the next-most common case is a minus sign
+		      (and (eq (syntax-type table char) 'constituent)
+			   (has-constituent-trait-p table char +minus-sign+))
+		      (setf sign -1)
+		      (setf (schar buffer index) char)
+		      (incf index)
+		      (go perhaps-integer))
+		     (;; Probably the next-most common case is a plus sign
+		      (and (eq (syntax-type table char) 'constituent)
+			   (has-constituent-trait-p table char +plus-sign+))
+		      (setf (schar buffer index) char)
+		      (incf index)
+		      (go perhaps-integer))
+		     (;; Or perhaps we have a single-escape
+		      (eq (syntax-type table char) 'single-escape)
+		      (setf char (read-char input-stream nil nil t))
+		      (if (null char)
+			  (error 'reader-error :stream input-stream)
+			  (progn (setf (schar buffer index) char)
+				 (incf index)
+				 (go symbol-even-escape-no-package-marker))))
+		     (;; Or perhaps a multiple-escape
+		      (eq (syntax-type table char) 'multiple-escape)
+		      (go symbol-odd-escape-no-package-marker))
+		     (t
+		      (error "don't know what this might be"))))
 	     (error "can't get here a"))
        symbol-even-escape-no-package-marker
 	 ;; In this state, we are accumulating a token that must be a
