@@ -78,7 +78,7 @@
      (format stream "Unmatched right parenthesis found."))))
 
 (defun right-parenthesis-function (stream char)
-  (declare (ignore stream char))
+  (declare (ignore char))
   (error 'unmatched-right-parenthesis :stream stream))
 
 ;;; This condition is signaled when a token consisting
@@ -499,7 +499,7 @@
 	       (whitespace
 		(copy-seq (whitespace from-readtable)))
 	       (new-readtable (make-instance 'readtable
-				:case (case (readtable-case from-readtable))
+				:case (readtable-case from-readtable)
 				:ascii-syntax-types ascii-syntax-types
 				:ascii-constituent-traits ascii-constituent-traits
 				:decimal-letters decimal-letters
@@ -519,6 +519,7 @@
 			 (sbit (decimal-digits from-readtable) i))
 		   (setf (sbit (whitespace to-readtable) i)
 			 (sbit (whitespace from-readtable) i)))
+	  (setf (readtable-case to-readtable) (readtable-case from-readtable))
 	  (copy-hashtables from-readtable to-readtable)
 	  to-readtable))))
 
@@ -635,10 +636,28 @@
 		   (char-upcase (code-char i))))
     vector))
 
-;;; A special version of the read function that assumes
-;;; that the input radix is 10 and that the readtable case
-;;; of the current readtable is :upcase. 
-(defun read-upcase-decimal (input-stream eof-error-p eof-value recursive-p)
+;;; Lower-case versions of every ascii character.  For fast test.
+(defparameter *ascii-downcase*
+  (let ((vector (make-array 128 :element-type 'character)))
+    (loop for i from 0 below 128
+	  do (setf (aref vector i)
+		   (char-downcase (code-char i))))
+    vector))
+
+;;; The identity mapping, so as to avoid special-casing this
+;;; (supposedly uncommon) case.
+(defparameter *ascii-preserve*
+  (let ((vector (make-array 128 :element-type 'character)))
+    (loop for i from 0 below 128
+	  do (setf (aref vector i)
+		   (code-char i)))
+    vector))
+
+;;; A special version of the read function that assumes that the input
+;;; radix is 10 and that the readtable case of the current readtable
+;;; is one of :upcase, :downcase, and :preserve.
+(defun read-upcase-downcase-preserve-decimal
+    (input-stream eof-error-p eof-value recursive-p case-table)
   (let* ((table *readtable*)
 	 (buffer *buffer*)
 	 (buffer-size (length buffer))
@@ -647,7 +666,6 @@
 	 (whitespace (whitespace table))
 	 (decimal-letters (decimal-letters table))
 	 (decimal-digits (decimal-digits table))
-	 (ascii-upcase *ascii-upcase*)
 	 ;; for symbol accumulation
 	 (first-package-marker-position nil)
 	 (second-package-marker-position nil)
@@ -662,7 +680,7 @@
     (declare (type simple-string buffer)
 	     (type (simple-bit-vector 128)
 		   whitespace decimal-letters decimal-digits)
-	     (type (simple-string 128) ascii-upcase))
+	     (type (simple-string 128) case-table))
     (flet ((increase-buffer ()
 	     (let ((new-buffer (make-array (* 2 buffer-size)
 					   :element-type 'character)))
@@ -693,7 +711,7 @@
 	     (progn 
 	       ;; We make a quick test to see if it must be a symbol.
 	       (when (= (sbit decimal-letters code) 1)
-		 (setf (schar buffer index) (schar ascii-upcase code))
+		 (setf (schar buffer index) (schar case-table code))
 		 (incf index)
 		 (go symbol-even-escape-no-package-marker))
 	       ;; Another common case is that we have a digit
@@ -713,13 +731,13 @@
 	 ;; Until we do, we can't do anthing else useful.
 	 (when (not char)
 	   ;; Found end of file.
-	   (return-from read-upcase-decimal
+	   (return-from read-upcase-downcase-preserve-decimal
 	     (intern (subseq buffer 0 index))))
 	 (when (and (< (setf code (char-code char)) 128)
 		    (= (sbit decimal-letters code) 1))
 	   (when (= index buffer-size)
 	     (increase-buffer))
-	   (setf (schar buffer index) (schar ascii-upcase code))
+	   (setf (schar buffer index) (schar case-table code))
 	   (incf index)
 	   (go symbol-even-escape-no-package-marker))
 	 ;; We failed to detect a constituent the fast way.
@@ -740,18 +758,18 @@
 		     ;; reenter the same state. 
 		     (when (= index buffer-size)
 		       (increase-buffer))
-		     (setf (schar buffer index) (schar ascii-upcase code))
+		     (setf (schar buffer index) (schar case-table code))
 		     (incf index)
 		     (go symbol-even-escape-no-package-marker))))
 	   (non-terminating-macro-char
 	      (when (= index buffer-size)
 		(increase-buffer))
-	      (setf (schar buffer index) (schar ascii-upcase code))
+	      (setf (schar buffer index) (schar case-table code))
 	      (incf index)
 	      (go symbol-even-escape-no-package-marker))
 	   (terminating-macro-char
 	      (unread-char char input-stream)
-	      (return-from read-upcase-decimal
+	      (return-from read-upcase-downcase-preserve-decimal
 		(intern (subseq buffer 0 index))))
 	   (single-escape
 	      (setf char (read-char input-stream nil nil t))
@@ -765,7 +783,7 @@
 	   (whitespace
 	      ;; FIXME: handle `read-preserving-whitespace' here
 	      (unread-char char input-stream)
-	      (return-from read-upcase-decimal
+	      (return-from read-upcase-downcase-preserve-decimal
 		(intern (subseq buffer 0 index)))))
 	 (error "can't get here b")
        symbol-even-escape-one-package-marker
@@ -788,7 +806,8 @@
 				     package)
 		      (unless (eq status :external)
 			(error "symbol is not external"))
-		      (return-from read-upcase-decimal symbol)))))
+		      (return-from read-upcase-downcase-preserve-decimal
+			symbol)))))
 	   (when (not char)
 	   ;; Found end of file.
 	     (return-or-error))
@@ -796,7 +815,7 @@
 		      (= (sbit decimal-letters code) 1))
 	     (when (= index buffer-size)
 	       (increase-buffer))
-	     (setf (schar buffer index) (schar ascii-upcase code))
+	     (setf (schar buffer index) (schar case-table code))
 	     (incf index)
 	     (go symbol-even-escape-one-package-marker))
 	   ;; We failed to detect a constituent the fast way.
@@ -817,13 +836,13 @@
 		       ;; reenter the same state. 
 		       (when (= index buffer-size)
 			 (increase-buffer))
-		       (setf (schar buffer index) (schar ascii-upcase code))
+		       (setf (schar buffer index) (schar case-table code))
 		       (incf index)
 		       (go symbol-even-escape-one-package-marker))))
 	     (non-terminating-macro-char
 		(when (= index buffer-size)
 		  (increase-buffer))
-		(setf (schar buffer index) (schar ascii-upcase code))
+		(setf (schar buffer index) (schar case-table code))
 		(incf index)
 		(go symbol-even-escape-one-package-marker))
 	     (terminating-macro-char
@@ -863,7 +882,7 @@
 				  (subseq buffer 0 first-package-marker-position))))
 		    (unless package
 		      (error "no package by that name exists"))
-		    (return-from read-upcase-decimal
+		    (return-from read-upcase-downcase-preserve-decimal
 		      (intern (subseq buffer
 				      (1+ second-package-marker-position)
 				      index)
@@ -875,7 +894,7 @@
 		      (= (sbit decimal-letters code) 1))
 	     (when (= index buffer-size)
 	       (increase-buffer))
-	     (setf (schar buffer index) (schar ascii-upcase code))
+	     (setf (schar buffer index) (schar case-table code))
 	     (incf index)
 	     (go symbol-even-escape-two-package-markers))
 	   ;; We failed to detect a constituent the fast way.
@@ -893,13 +912,13 @@
 		       ;; reenter the same state. 
 		       (when (= index buffer-size)
 			 (increase-buffer))
-		       (setf (schar buffer index) (schar ascii-upcase code))
+		       (setf (schar buffer index) (schar case-table code))
 		       (incf index)
 		       (go symbol-even-escape-two-package-markers))))
 	     (non-terminating-macro-char
 		(when (= index buffer-size)
 		  (increase-buffer))
-		(setf (schar buffer index) (schar ascii-upcase code))
+		(setf (schar buffer index) (schar case-table code))
 		(incf index)
 		(go symbol-even-escape-two-package-markers))
 	     (terminating-macro-char
@@ -999,8 +1018,8 @@
 	 ;; Until we do, we can't do anthing else useful.
 	 (when (not char)
 	   ;; Found end of file.
-	   (return-from read-upcase-decimal (* sign numerator)))
-	     
+	   (return-from read-upcase-downcase-preserve-decimal
+	     (* sign numerator)))
 	 (when (and (< (setf code (char-code char)) 128)
 		    (= (sbit decimal-digits code) 1))
 	   (when (= index buffer-size)
@@ -1013,7 +1032,7 @@
 	     (cond ((has-constituent-trait-p table char +ratio-marker+)
 		    (setf char (read-char input-stream nil nil t))
 		    (cond ((null char)
-			   (return-from read-upcase-decimal
+			   (return-from read-upcase-downcase-preserve-decimal
 			     (intern (subseq buffer 0 index))))
 			  ((and (< (setf code (char-code char)) 128)
 				(= (sbit decimal-digits code) 1))
@@ -1048,7 +1067,8 @@
 		    (incf index)
 		    (go symbol-even-escape-no-package-marker)))
 	     (progn (unread-char char input-stream)
-		    (return-from read-upcase-decimal numerator)))
+		    (return-from read-upcase-downcase-preserve-decimal
+		      numerator)))
 	 (error "can't come here either")
        perhaps-ratio
 	 ;; We have seen an integer, a slash, and at leat one more digit. 
@@ -1057,7 +1077,8 @@
 	 ;; Until we do, we can't do anthing else useful.
 	 (when (not char)
 	   ;; Found end of file.
-	   (return-from read-upcase-decimal (/ (* sign numerator) denominator)))
+	   (return-from read-upcase-downcase-preserve-decimal
+	     (/ (* sign numerator) denominator)))
 	 (when (and (< (setf code (char-code char)) 128)
 		    (= (sbit decimal-digits code) 1))
 	   (when (= index buffer-size)
@@ -1078,8 +1099,20 @@
 	(cond ((eq input-stream t) *terminal-io*)
 	      ((null input-stream) *standard-input*)
 	      (t input-stream)))
-  ;; For now.
-  (read-upcase-decimal input-stream eof-error-p eof-value recursive-p))
+  ;;; Test for the read-base as well
+  (case (readtable-case *readtable*)
+    (:upcase
+       (read-upcase-downcase-preserve-decimal
+	input-stream eof-error-p eof-value recursive-p *ascii-upcase*))
+    (:downcase
+       (read-upcase-downcase-preserve-decimal
+	input-stream eof-error-p eof-value recursive-p *ascii-downcase*))
+    (:preserve
+       (read-upcase-downcase-preserve-decimal
+	input-stream eof-error-p eof-value recursive-p *ascii-preserve*))
+    (:invert
+       (error "can't handle :invert readcase yet"))))
+  
 
 (defun read-with-position (&optional
                            input-stream
