@@ -14,7 +14,7 @@
 		  (symbol-name (with-input-from-string (stream "abc ")
 				 (read stream))))))
 
-(define-test read.symbol.followed.by.macro-character.upcase
+(define-test read.symbol.followed.by.macro.character.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (assert-equal "ABC"
@@ -57,21 +57,21 @@
      (symbol-name (with-input-from-string (stream "abc\\")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.at.the.beginning.upcase
+(define-test read.symbol.with.double.escape.at.the.beginning.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (assert-equal "aBC"
 		  (symbol-name (with-input-from-string (stream "|a|bc")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.in.the.middle.upcase
+(define-test read.symbol.with.double.escape.in.the.middle.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (assert-equal "AbC"
 		  (symbol-name (with-input-from-string (stream "a|b|c")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.at.the.end.upcase
+(define-test read.symbol.with.double.escape.at.the.end.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (assert-equal "ABc"
@@ -110,7 +110,7 @@
 		  (symbol-name (with-input-from-string (stream "ABC ")
 				 (read stream))))))
 
-(define-test read.symbol.followed.by.macro-character.downcase
+(define-test read.symbol.followed.by.macro.character.downcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :downcase)
@@ -159,7 +159,7 @@
      (symbol-name (with-input-from-string (stream "abc\\")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.at.the.beginning.downcase
+(define-test read.symbol.with.double.escape.at.the.beginning.downcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :downcase)
@@ -167,7 +167,7 @@
 		  (symbol-name (with-input-from-string (stream "|A|BC")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.in.the.middle.downcase
+(define-test read.symbol.with.double.escape.in.the.middle.downcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :downcase)
@@ -175,7 +175,7 @@
 		  (symbol-name (with-input-from-string (stream "A|B|C")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.at.the.end.downcase
+(define-test read.symbol.with.double.escape.at.the.end.downcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :downcase)
@@ -217,7 +217,7 @@
 		  (symbol-name (with-input-from-string (stream "AbC ")
 				 (read stream))))))
 
-(define-test read.symbol.followed.by.macro-character.preserve
+(define-test read.symbol.followed.by.macro.character.preserve
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :preserve)
@@ -266,15 +266,15 @@
      (symbol-name (with-input-from-string (stream "abc\\")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.at.the.beginning.preserve
+(define-test read.symbol.with.double.escape.at.the.beginning.preserve
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :preserve)
-    (assert-equal "aBC"
-		  (symbol-name (with-input-from-string (stream "|a|bc")
+    (assert-equal "aBc"
+		  (symbol-name (with-input-from-string (stream "|a|Bc")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.in.the.middle.preserve
+(define-test read.symbol.with.double.escape.in.the.middle.preserve
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :preserve)
@@ -282,7 +282,7 @@
 		  (symbol-name (with-input-from-string (stream "A|b|c")
 				 (read stream))))))
 
-(define-test read.symbol.with.double-escape.at.the.end.preserve
+(define-test read.symbol.with.double.escape.at.the.end.preserve
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :preserve)
