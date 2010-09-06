@@ -322,18 +322,60 @@
 		  (symbol-name (with-input-from-string (stream "123Ab ")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.ratio.end.of.file.upcase
+(define-test read.symbol.starting.as.ratio.end.of.file.upcase.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "12/AB"
+		  (symbol-name (with-input-from-string (stream "12/Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.end.of.file.upcase.2
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (assert-equal "12/3AB"
 		  (symbol-name (with-input-from-string (stream "12/3Ab")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.ratio.followed.by.whitespace.upcase
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.upcase.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "12/AB"
+		  (symbol-name (with-input-from-string (stream "12/Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.upcase.2
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (assert-equal "12/3AB"
 		  (symbol-name (with-input-from-string (stream "12/3Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.end.of.file.upcase.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "12.AB"
+		  (symbol-name (with-input-from-string (stream "12.Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.end.of.file.upcase.2
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "12.3AB"
+		  (symbol-name (with-input-from-string (stream "12.3Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.followed.by.whitespace.upcase.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "12.AB"
+		  (symbol-name (with-input-from-string (stream "12.Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.followed.by.whitespace.upcase.2
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "12.3AB"
+		  (symbol-name (with-input-from-string (stream "12.3Ab ")
 				 (read stream))))))
 
 (define-test read.symbol.starting.as.integer.end.of.file.downcase
@@ -352,7 +394,15 @@
 		  (symbol-name (with-input-from-string (stream "123Ab ")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.ratio.end.of.file.downcase
+(define-test read.symbol.starting.as.ratio.end.of.file.downcase.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "12/ab"
+		  (symbol-name (with-input-from-string (stream "12/Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.end.of.file.downcase.2
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :downcase)
@@ -360,12 +410,52 @@
 		  (symbol-name (with-input-from-string (stream "12/3Ab")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.ratio.followed.by.whitespace.downcase
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.downcase.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "12/ab"
+		  (symbol-name (with-input-from-string (stream "12/Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.downcase.2
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :downcase)
     (assert-equal "12/3ab"
 		  (symbol-name (with-input-from-string (stream "12/3Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.end.of.file.downcase.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "12.ab"
+		  (symbol-name (with-input-from-string (stream "12.Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.end.of.file.downcase.2
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "12.3ab"
+		  (symbol-name (with-input-from-string (stream "12.3Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.followed.by.whitespace.downcase.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "12.ab"
+		  (symbol-name (with-input-from-string (stream "12.Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.followed.by.whitespace.downcase.2
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "12.3ab"
+		  (symbol-name (with-input-from-string (stream "12.3Ab ")
 				 (read stream))))))
 
 (define-test read.symbol.starting.as.integer.end.of.file.preserve
@@ -384,7 +474,15 @@
 		  (symbol-name (with-input-from-string (stream "123Ab ")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.ratio.end.of.file.preserve
+(define-test read.symbol.starting.as.ratio.end.of.file.preserve.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "12/Ab"
+		  (symbol-name (with-input-from-string (stream "12/Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.end.of.file.preserve.2
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :preserve)
@@ -392,12 +490,52 @@
 		  (symbol-name (with-input-from-string (stream "12/3Ab")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.ratio.followed.by.whitespace.preserve
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.preserve.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "12/Ab"
+		  (symbol-name (with-input-from-string (stream "12/Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.preserve.2
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
     (setf (readtable-case *readtable*) :preserve)
     (assert-equal "12/3Ab"
 		  (symbol-name (with-input-from-string (stream "12/3Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.end.of.file.preserve.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "12.Ab"
+		  (symbol-name (with-input-from-string (stream "12.Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.end.of.file.preserve.2
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "12.3Ab"
+		  (symbol-name (with-input-from-string (stream "12.3Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.followed.by.whitespace.preserve.1
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "12.Ab"
+		  (symbol-name (with-input-from-string (stream "12.Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.float.followed.by.whitespace.preserve.2
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "12.3Ab"
+		  (symbol-name (with-input-from-string (stream "12.3Ab ")
 				 (read stream))))))
 
 (define-test read.integer.zero.no.sign.end.of.file
