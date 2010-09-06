@@ -1059,6 +1059,10 @@
 	   (go perhaps-integer))
 	 (if (eq (syntax-type table char) 'constituent)
 	     (cond ((has-constituent-trait-p table char +ratio-marker+)
+		    (when (= index buffer-size)
+		      (increase-buffer))
+		    (setf (schar buffer index) char)
+		    (incf index)
 		    (setf char (read-char input-stream nil nil t))
 		    (cond ((null char)
 			   (return-from read-upcase-downcase-preserve-decimal
@@ -1123,7 +1127,7 @@
 	   ((constituent non-terminating-macro-char)
 	      (when (= index buffer-size)
 		(increase-buffer))
-	      (setf (schar buffer index) char)
+	      (setf (schar buffer index) (char-upcase char))
 	      (incf index)
 	      (go symbol-even-escape-no-package-marker))
 	   (single-escape
@@ -1132,13 +1136,13 @@
 		  (error 'reader-error :stream input-stream)
 		  (progn (when (= index buffer-size)
 			   (increase-buffer))
-			 (setf (schar buffer index) char)
+			 (setf (schar buffer index) (char-upcase char))
 			 (incf index)
 			 (go symbol-odd-escape-two-package-markers))))
 	   (multiple-escape
 	      (go symbol-even-escape-two-package-markers))
 	   (terminating-macro-char
-	      (unread-char char stream)
+	      (unread-char char input-stream)
 	      (return-from read-upcase-downcase-preserve-decimal
 		(/ (* sign numerator) denominator))))
 	 (error "can't come here either")
