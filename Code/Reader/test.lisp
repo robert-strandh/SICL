@@ -308,32 +308,96 @@
      (symbol-name (with-input-from-string (stream "abc|")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.integer.end.of.file
+(define-test read.symbol.starting.as.integer.end.of.file.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
-    (assert-equal "123A"
-		  (symbol-name (with-input-from-string (stream "123a")
+    (assert-equal "123AB"
+		  (symbol-name (with-input-from-string (stream "123Ab")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.integer.followed.by.whitespace
+(define-test read.symbol.starting.as.integer.followed.by.whitespace.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
-    (assert-equal "123A"
-		  (symbol-name (with-input-from-string (stream "123a ")
+    (assert-equal "123AB"
+		  (symbol-name (with-input-from-string (stream "123Ab ")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.ratio.end.of.file
+(define-test read.symbol.starting.as.ratio.end.of.file.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
-    (assert-equal "12/3A"
-		  (symbol-name (with-input-from-string (stream "12/3a")
+    (assert-equal "12/3AB"
+		  (symbol-name (with-input-from-string (stream "12/3Ab")
 				 (read stream))))))
 
-(define-test read.symbol.starting.as.integer.followed.by.whitespace
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
-    (assert-equal "12/3A"
-		  (symbol-name (with-input-from-string (stream "12/3a ")
+    (assert-equal "12/3AB"
+		  (symbol-name (with-input-from-string (stream "12/3Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.integer.end.of.file.downcase
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "123ab"
+		  (symbol-name (with-input-from-string (stream "123Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.integer.followed.by.whitespace.downcase
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "123ab"
+		  (symbol-name (with-input-from-string (stream "123Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.end.of.file.downcase
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "12/3ab"
+		  (symbol-name (with-input-from-string (stream "12/3Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.downcase
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :downcase)
+    (assert-equal "12/3ab"
+		  (symbol-name (with-input-from-string (stream "12/3Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.integer.end.of.file.preserve
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "123Ab"
+		  (symbol-name (with-input-from-string (stream "123Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.integer.followed.by.whitespace.preserve
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "123Ab"
+		  (symbol-name (with-input-from-string (stream "123Ab ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.end.of.file.preserve
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "12/3Ab"
+		  (symbol-name (with-input-from-string (stream "12/3Ab")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.followed.by.whitespace.preserve
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (setf (readtable-case *readtable*) :preserve)
+    (assert-equal "12/3Ab"
+		  (symbol-name (with-input-from-string (stream "12/3Ab ")
 				 (read stream))))))
 
 (define-test read.integer.zero.no.sign.end.of.file
