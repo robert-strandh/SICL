@@ -1031,7 +1031,9 @@
 	      (setf char (read-char input-stream nil nil t))
 	      (if (null char)
 		  (error 'reader-error :stream input-stream)
-		  (progn (setf (schar buffer index) char)
+		  (progn (when (= index buffer-size)
+			   (increase-buffer))
+			 (setf (schar buffer index) char)
 			 (incf index)
 			 (go symbol-odd-escape-two-package-markers))))
 	   (multiple-escape
@@ -1114,6 +1116,32 @@
 	   (incf index)
 	   (setf denominator (+ (* 10 denominator) (- code #.(char-code #\0))))
 	   (go perhaps-ratio))
+	 (ecase (syntax-type table char)
+	   (whitespace
+	      (return-from read-upcase-downcase-preserve-decimal
+		(/ (* sign numerator) denominator)))
+	   ((constituent non-terminating-macro-char)
+	      (when (= index buffer-size)
+		(increase-buffer))
+	      (setf (schar buffer index) char)
+	      (incf index)
+	      (go symbol-even-escape-no-package-marker))
+	   (single-escape
+	      (setf char (read-char input-stream nil nil t))
+	      (if (null char)
+		  (error 'reader-error :stream input-stream)
+		  (progn (when (= index buffer-size)
+			   (increase-buffer))
+			 (setf (schar buffer index) char)
+			 (incf index)
+			 (go symbol-odd-escape-two-package-markers))))
+	   (multiple-escape
+	      (go symbol-even-escape-two-package-markers))
+	   (terminating-macro-char
+	      (unread-char char stream)
+	      (return-from read-upcase-downcase-preserve-decimal
+		(/ (* sign numerator) denominator))))
+	 (error "can't come here either")
        perhaps-float
 	 ))))
 
