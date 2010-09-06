@@ -308,6 +308,34 @@
      (symbol-name (with-input-from-string (stream "abc|")
 				 (read stream))))))
 
+(define-test read.symbol.starting.as.integer.end.of.file
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "123A"
+		  (symbol-name (with-input-from-string (stream "123a")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.integer.followed.by.whitespace
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "123A"
+		  (symbol-name (with-input-from-string (stream "123a ")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.ratio.end.of.file
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "12/3A"
+		  (symbol-name (with-input-from-string (stream "12/3a")
+				 (read stream))))))
+
+(define-test read.symbol.starting.as.integer.followed.by.whitespace
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal "12/3A"
+		  (symbol-name (with-input-from-string (stream "12/3a ")
+				 (read stream))))))
+
 (define-test read.integer.zero.no.sign.end.of.file
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
