@@ -657,7 +657,7 @@
 ;;; radix is 10 and that the readtable case of the current readtable
 ;;; is one of :upcase, :downcase, and :preserve.
 (defun read-upcase-downcase-preserve-decimal
-    (input-stream eof-error-p eof-value recursive-p case-table)
+    (input-stream eof-error-p eof-value recursive-p case-table case-function)
   (let* ((table *readtable*)
 	 (buffer *buffer*)
 	 (buffer-size (length buffer))
@@ -1078,7 +1078,7 @@
 			  (t
 			   (when (= index buffer-size)
 			     (increase-buffer))
-			   (setf (schar buffer index) (char-upcase char))
+			   (setf (schar buffer index) (funcall case-function char))
 			   (incf index)
 			   (go symbol-even-escape-no-package-marker))))
 		   ((or (has-constituent-trait-p
@@ -1096,7 +1096,7 @@
 		   (t
 		    (when (= index buffer-size)
 		      (increase-buffer))
-		    (setf (schar buffer index) (char-upcase char))
+		    (setf (schar buffer index) (funcall case-function char))
 		    (incf index)
 		    (go symbol-even-escape-no-package-marker)))
 	     (progn (unread-char char input-stream)
@@ -1127,7 +1127,7 @@
 	   ((constituent non-terminating-macro-char)
 	      (when (= index buffer-size)
 		(increase-buffer))
-	      (setf (schar buffer index) (char-upcase char))
+	      (setf (schar buffer index) (funcall case-function char))
 	      (incf index)
 	      (go symbol-even-escape-no-package-marker))
 	   (single-escape
@@ -1136,7 +1136,7 @@
 		  (error 'reader-error :stream input-stream)
 		  (progn (when (= index buffer-size)
 			   (increase-buffer))
-			 (setf (schar buffer index) (char-upcase char))
+			 (setf (schar buffer index) (funcall case-function char))
 			 (incf index)
 			 (go symbol-odd-escape-two-package-markers))))
 	   (multiple-escape
@@ -1162,13 +1162,13 @@
   (case (readtable-case *readtable*)
     (:upcase
        (read-upcase-downcase-preserve-decimal
-	input-stream eof-error-p eof-value recursive-p *ascii-upcase*))
+	input-stream eof-error-p eof-value recursive-p *ascii-upcase* #'char-upcase))
     (:downcase
        (read-upcase-downcase-preserve-decimal
-	input-stream eof-error-p eof-value recursive-p *ascii-downcase*))
+	input-stream eof-error-p eof-value recursive-p *ascii-downcase* #'char-downcase))
     (:preserve
        (read-upcase-downcase-preserve-decimal
-	input-stream eof-error-p eof-value recursive-p *ascii-preserve*))
+	input-stream eof-error-p eof-value recursive-p *ascii-preserve* #'identity))
     (:invert
        (error "can't handle :invert readcase yet"))))
   
