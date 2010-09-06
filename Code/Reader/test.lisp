@@ -356,3 +356,39 @@
     (assert-equal -123
 		  (with-input-from-string (stream "-123")
 				 (read stream)))))
+
+(define-test read.ratio.zero.no.sign.followed.by.end.of.file
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal 0
+		  (with-input-from-string (stream "0/1")
+				 (read stream)))))
+
+(define-test read.ratio.zero.no.sign.followed.by.space
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal 0
+		  (with-input-from-string (stream "0/1 ")
+				 (read stream)))))
+
+(define-test read.positive.ratio.no.sign.followed.by.end-of-file
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal 2/3
+		  (with-input-from-string (stream "2/3")
+				 (read stream)))))
+  
+(define-test read.positive.ratio.plus.sign.followed.by.end-of-file
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal 2/3
+		  (with-input-from-string (stream "+2/3")
+				 (read stream)))))
+  
+(define-test read.negative.ratio.followed.by.end-of-file
+  (let ((*read-base* 10)
+	(*readtable* (copy-readtable nil)))
+    (assert-equal -2/3
+		  (with-input-from-string (stream "-2/3")
+				 (read stream)))))
+  
