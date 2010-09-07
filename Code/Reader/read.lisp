@@ -403,8 +403,10 @@
 	(ascii-constituent-traits
 	 (let ((traits (make-array 128)))
 	   (flet ((add-char-trait (char trait)
+		    (setf (aref (aref traits (char-code char)) +invalid+) 0)
 		    (setf (aref (aref traits (char-code char)) trait) 1))
 		  (add-code-trait (code trait)
+		    (setf (aref (aref traits code) +invalid+) 0)
 		    (setf (aref (aref traits code) trait) 1)))
 	     (loop for i from 0 below 128
 		   do (let ((bv (make-array 14 :element-type 'bit
@@ -1082,17 +1084,17 @@
 		       table char +short-float-exponent-marker+)
 		      (push-char (funcall case-function char))
 		      (setf float-prototype 1s0)
-		      (go symbol-even-escape-no-package-marker))
+		      (go perhaps-float-with-exponent-marker))
 		     ((has-constituent-trait-p
 		       table char +single-float-exponent-marker+)
 		      (push-char (funcall case-function char))
 		      (setf float-prototype 1f0)
-		      (go symbol-even-escape-no-package-marker))
+		      (go perhaps-float-with-exponent-marker))
 		     ((has-constituent-trait-p
 		       table char +double-float-exponent-marker+)
 		      (push-char (funcall case-function char))
 		      (setf float-prototype 1d0)
-		      (go symbol-even-escape-no-package-marker))
+		      (go perhaps-float-with-exponent-marker))
 		     ((has-constituent-trait-p
 		       table char +long-float-exponent-marker+)
 		      (push-char (funcall case-function char))
