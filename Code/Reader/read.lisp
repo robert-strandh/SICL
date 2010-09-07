@@ -718,63 +718,103 @@
 	     (setf start (file-position input-stream))
 	     (read-char input-stream eof-error-p eof-value recursive-p))
 	   ;; Come here when we know that we do not have an ASCII whitespace.
+	   ;; The variable char contains the first character wich is not
+	   ;; an ASCII whitespace, and the variable `code' contains the
+	   ;; char-code of that character.
 	   (if (< code 128)
 	       ;; Then not only do we not have an ASCII whitespace, but
 	       ;; we have no whitespace at all.
 	       (progn 
 		 (cond (;; We make a quick test to see if it must be a symbol.
 			(= (sbit decimal-letters code) 1)
+			;; There is no point in testing whether the buffer
+			;; is full at this point, because we have only processed
+			;; a single character.
 			(setf (schar buffer index) (schar case-table code))
 			(incf index)
 			(go symbol-even-escape-no-package-marker))
 		       (;; Another common case is that we have a digit
 			(= (sbit decimal-digits code) 1)
+			;; There is no point in testing whether the buffer
+			;; is full at this point, because we have only processed
+			;; a single character.
 			(setf (schar buffer index) char)
 			(incf index)
 			(setf numerator (- code #.(char-code #\0)))
 			(go perhaps-integer))
-		       
 		       (;; Probably the next-most common case is a minus sign
 			(and (eq (syntax-type table char) 'constituent)
 			     (has-constituent-trait-p table char +minus-sign+))
 			(setf sign -1)
+			;; There is no point in testing whether the buffer
+			;; is full at this point, because we have only processed
+			;; a single character.
 			(setf (schar buffer index) char)
 			(incf index)
 			(go perhaps-integer))
 		       (;; Probably the next-most common case is a plus sign
 			(and (eq (syntax-type table char) 'constituent)
 			     (has-constituent-trait-p table char +plus-sign+))
+			;; There is no point in testing whether the buffer
+			;; is full at this point, because we have only processed
+			;; a single character.
 			(setf (schar buffer index) char)
 			(incf index)
 			(go perhaps-integer))
 		       (;; Or perhaps we have a single-escape
 			(eq (syntax-type table char) 'single-escape)
+			;; We do not accumulate single escapes.  Instead we read
+			;; the following character and accumulate it.
 			(setf char (read-char input-stream nil nil t))
 			(if (null char)
 			    (error 'reader-error :stream input-stream)
-			    (progn (setf (schar buffer index) char)
-				   (incf index)
-				   (go symbol-even-escape-no-package-marker))))
+			    (progn
+			      ;; There is no point in testing whether the buffer
+			      ;; is full at this point, because we have only processed
+			      ;; a single character.
+			      (setf (schar buffer index) char)
+			      (incf index)
+			      (go symbol-even-escape-no-package-marker))))
 		       (;; Or perhaps a multiple-escape
 			(eq (syntax-type table char) 'multiple-escape)
+			;; We do not accumulate multiple escapes either.
+			;; We just remember the parity by going to the
+			;; right state. 
 			(go symbol-odd-escape-no-package-marker))
 		       (t
+			;; add more tests here.  A number can start
+			;; with a decimal point for instance. 
 			(error "don't know what this might be"))))
 	       (error "can't get here a"))
 	 symbol-even-escape-no-package-marker
-	   ;; In this state, we are accumulating a token that must be a
-	   ;; symbol.  We have seen an even number of multiple escape
-	   ;; characters, so we must upcase the letters we accumulate.
-	   ;; We have seen no package marker yet.
+	   ;; In this state, we are accumulating a token that must be
+	   ;; a symbol.  We have seen an even number of multiple
+	   ;; escape characters, so we must change the case of the
+	   ;; letters we accumulate according to the current value of
+	   ;; readtable-case.
+	   ;; We have seen no package marker yet. 
+	   ;; The variable char has already been accumulated, so is no
+	   ;; longer useful.
 	   (setf char (read-char input-stream nil nil t))
 	   ;; Start by testing for end of file.
 	   ;; Until we do, we can't do anthing else useful.
 	   (when (not char)
-	     ;; Found end of file.
+	     ;; Found end of file. We have a complete symbol without
+	     ;; any package markers.  Intern it in the current package, and
+	     ;; return the result.
 	     (return-from read-upcase-downcase-preserve-decimal
 	       (intern (subseq buffer 0 index))))
+	   ;; Come here if we did not have an end of file.
+	   ;; The variable char contains the next character to process,
+	   ;; but the variable code has not been set yet.
+	   ;; We make a quick test to see if it is one of the character
+	   ;; that absolutely has to be part of a symbol.  Notice that
+	   ;; if this test fails, the character might still be a constituent,
+	   ;; but the test for that case is more expensive, so we get rid of
+	   ;; this important special case first.
 	   (when (and (< (setf code (char-code char)) 128)
 		      (= (sbit decimal-letters code) 1))
+	     ;; Accumulate the symbol and stay in the same state. 
 	     (push-char (schar case-table code))
 	     (go symbol-even-escape-no-package-marker))
 	   ;; We failed to detect a constituent the fast way.
@@ -785,43 +825,63 @@
 		       ;; We found a package marker.  Remember its position
 		       ;; and change state to reflect our discovery.
 		       (setf first-package-marker-position index)
-		       (incf index)
+		       ;; Technically, we don't need to accumulate the package
+		       ;; marker, but it could be nice for error reporting to
+		       ;; have it part of the buffer. 
+		       (push-char char)
 		       (go symbol-even-escape-one-package-marker))
 		      ((has-constituent-trait-p table char +invalid+)
-		       ;; FIXME: Do this better
+		       ;; FIXME: Do this better by signaling a more
+		       ;; specific condition containing the invalid character.
 		       (error 'reader-error :stream input-stream))
 		      (t
-		       ;; We found an ordinary constituent.  Save it and
+		       ;; We found an ordinary constituent.  Accumulate it and
 		       ;; reenter the same state. 
 		       (push-char (schar case-table code))
 		       (go symbol-even-escape-no-package-marker))))
 	     (non-terminating-macro-char
-		(push-char (schar case-table code))
+		;; It is non-terminating, so we consider it part of the
+		;; symbol we are accumulating. 
+		;; Here we cannot use the fast way of converting the
+		;; case of the character, because we are not sure it
+		;; has a code that is less than 128.
+		(push-char (funcall case-function char))
 		(go symbol-even-escape-no-package-marker))
 	     (terminating-macro-char
+		;; We have seen a complete symbol, and we must unread
+		;; the macro character so that it can be read the next
+		;; time read is called.
 		(unread-char char input-stream)
 		(return-from read-upcase-downcase-preserve-decimal
 		  (intern (subseq buffer 0 index))))
 	     (single-escape
+		;; We do not accumulate single escapes.  Instead we read
+		;; the following character and accumulate it.
 		(setf char (read-char input-stream nil nil t))
 		(if (null char)
 		    (error 'reader-error :stream input-stream)
-		    (progn (setf (schar buffer index) char)
-			   (incf index)
+		    (progn (push-char char)
 			   (go symbol-even-escape-no-package-marker))))
 	     (multiple-escape
+		;; We do not accumulate multiple escape characters.  
+		;; We just remember the parity by going to the corresponding state. 
 		(go symbol-odd-escape-no-package-marker))
 	     (whitespace
+		;; We have seen an even number of multiple escapes,
+		;; so a space terminates the symbol.
 		;; FIXME: handle `read-preserving-whitespace' here
 		(unread-char char input-stream)
 		(return-from read-upcase-downcase-preserve-decimal
 		  (intern (subseq buffer 0 index)))))
-	   (error "can't get here b")
+	   ;; We can't come here because of the preceding ecase.
 	 symbol-even-escape-one-package-marker
-	   ;; In this state, we are accumulating a token that must be a
-	   ;; symbol.  We have seen an even number of multiple escape
-	   ;; characters, so we must upcase the letters we accumulate.
-	   ;; We have seen no package marker yet.
+	   ;; In this state, we are accumulating a token that must be
+	   ;; a symbol.  We have seen an even number of multiple
+	   ;; escape characters, so we must adjust the case of the
+	   ;; letters we accumulate according to the current value of
+	   ;; readtable-case.
+	   ;; We have seen one package marker. 
+	   ;; The variable char has been processed, so it's value is useless now.
 	   (setf char (read-char input-stream nil nil t))
 	   ;; Start by testing for end of file.
 	   ;; Until we do, we can't do anthing else useful.
@@ -842,6 +902,14 @@
 	     (when (not char)
 	       ;; Found end of file.
 	       (return-or-error))
+	     ;; Come here if we did not have an end of file.
+	     ;; The variable char contains the next character to process,
+	     ;; but the variable code has not been set yet.
+	     ;; We make a quick test to see if it is one of the character
+	     ;; that absolutely has to be part of a symbol.  Notice that
+	     ;; if this test fails, the character might still be a constituent,
+	     ;; but the test for that case is more expensive, so we get rid of
+	     ;; this important special case first.
 	     (when (and (< (setf code (char-code char)) 128)
 			(= (sbit decimal-letters code) 1))
 	       (push-char (schar case-table code))
@@ -854,41 +922,63 @@
 			 ;; We found a package marker.  Remember its position
 			 ;; and change state to reflect our discovery.
 			 (setf second-package-marker-position index)
-			 (incf index)
+			 ;; Technically, we don't need to accumulate
+			 ;; the package marker, but it could be nice
+			 ;; for error reporting to have it part of the
+			 ;; buffer.
+			 (push-char char)
 			 (go symbol-even-escape-two-package-markers))
 			((has-constituent-trait-p table char +invalid+)
-			 ;; FIXME: Do this better
+			 ;; FIXME: Do this better by signaling a more
+			 ;; specific condition containing the invalid
+			 ;; character.
 			 (error 'reader-error :stream input-stream))
 			(t
-			 ;; We found an ordinary constituent.  Save it and
-			 ;; reenter the same state. 
+			 ;; We found an ordinary constituent.
+			 ;; Accumulate it and reenter the same state.
 			 (push-char (schar case-table code))
 			 (go symbol-even-escape-one-package-marker))))
 	       (non-terminating-macro-char
-		  (push-char (schar case-table code))
+		  ;; It is non-terminating, so we consider it part of the
+		  ;; symbol we are accumulating. 
+		  ;; Here we cannot use the fast way of converting the
+		  ;; case of the character, because we are not sure it
+		  ;; has a code that is less than 128.
+		  (push-char (funcall case-function char))
 		  (go symbol-even-escape-one-package-marker))
 	       (terminating-macro-char
+		  ;; We have seen a complete symbol, and we must unread
+		  ;; the macro character so that it can be read the next
+		  ;; time read is called.
 		  (unread-char char input-stream)
 		  (return-or-error))
 	       (single-escape
+		  ;; We do not accumulate single escapes.  Instead we read
+		  ;; the following character and accumulate it.
 		  (setf char (read-char input-stream nil nil t))
 		  (if (null char)
 		      (error 'reader-error :stream input-stream)
-		      (progn (setf (schar buffer index) char)
-			     (incf index)
-			     (go symbol-even-escape-one-package-marker))))
+		      (progn
+			(push-char char)
+			(go symbol-even-escape-one-package-marker))))
 	       (multiple-escape
+		  ;; We do not accumulate multiple escape characters.  
+		  ;; We just remember the parity by going to the corresponding state. 
 		  (go symbol-odd-escape-one-package-marker))
 	       (whitespace
 		  ;; FIXME: handle `read-preserving-whitespace' here
 		  (unread-char char input-stream)
 		  (return-or-error))))
-	   (error "can't get here c")
+	   ;; We can't come here because of the preceding ecase.
 	 symbol-even-escape-two-package-markers
-	   ;; In this state, we are accumulating a token that must be a
-	   ;; symbol.  We have seen an even number of multiple escape
-	   ;; characters, so we must upcase the letters we accumulate.
-	   ;; We have seen no package marker yet.
+	   ;; In this state, we are accumulating a token that must be
+	   ;; a symbol.  We have seen an even number of multiple
+	   ;; escape characters, so we must adjust the case of the
+	   ;; letters we accumulate according to the value of
+	   ;; readtable-case.
+	   ;; We have seen two package markers already.
+	   ;; The variable char has been processed, so it's value is
+	   ;; useless now.
 	   (setf char (read-char input-stream nil nil t))
 	   ;; Start by testing for end of file.
 	   ;; Until we do, we can't do anthing else useful.
@@ -912,6 +1002,11 @@
 	     (when (not char)
 	       ;; Found end of file.
 	       (return-or-error))
+	     ;; We make a quick test to see if it is one of the character
+	     ;; that absolutely has to be part of a symbol.  Notice that
+	     ;; if this test fails, the character might still be a constituent,
+	     ;; but the test for that case is more expensive, so we get rid of
+	     ;; this important special case first.
 	     (when (and (< (setf code (char-code char)) 128)
 			(= (sbit decimal-letters code) 1))
 	       (push-char (schar case-table code))
@@ -929,7 +1024,7 @@
 			(t
 			 ;; We found an ordinary constituent.  Save it and
 			 ;; reenter the same state. 
-			 (push-char (schar case-table code))
+			 (push-char (funcall case-function char))
 			 (go symbol-even-escape-two-package-markers))))
 	       (non-terminating-macro-char
 		  (push-char (schar case-table code))
@@ -941,8 +1036,7 @@
 		  (setf char (read-char input-stream nil nil t))
 		  (if (null char)
 		      (error 'reader-error :stream input-stream)
-		      (progn (setf (schar buffer index) char)
-			     (incf index)
+		      (progn (push-char char)
 			     (go symbol-even-escape-two-package-markers))))
 	       (multiple-escape
 		  (go symbol-odd-escape-two-package-markers))
@@ -950,11 +1044,12 @@
 		  ;; FIXME: handle `read-preserving-whitespace' here
 		  (unread-char char input-stream)
 		  (return-or-error))))
-	   (error "can't get here d")
+	   ;; We can't come here because of the preceding ecase.
 	 symbol-odd-escape-no-package-marker
-	   ;; In this state, we are accumulating a token that must be a
-	   ;; symbol.  We have seen an odd number of multiple escape
-	   ;; characters, so we do not upcase the letters we accumulate.
+	   ;; In this state, we are accumulating a token that must be
+	   ;; a symbol.  We have seen an odd number of multiple escape
+	   ;; characters, so we do not alter the case of the letters
+	   ;; we accumulate.
 	   (setf char (read-char input-stream nil nil t))
 	   (when (null char)
 	     (error 'reader-error :stream input-stream))
@@ -966,16 +1061,16 @@
 		(setf char (read-char input-stream nil nil t))
 		(if (null char)
 		    (error 'reader-error :stream input-stream)
-		    (progn (setf (schar buffer index) char)
-			   (incf index)
+		    (progn (push-char char)
 			   (go symbol-odd-escape-no-package-marker))))
 	     (multiple-escape
 		(go symbol-even-escape-no-package-marker)))
-	   (error "can't get here e")
+	   ;; We can't come here because of the preceding ecase.
 	 symbol-odd-escape-one-package-marker
-	   ;; In this state, we are accumulating a token that must be a
-	   ;; symbol.  We have seen an odd number of multiple escape
-	   ;; characters, so we do not upcase the letters we accumulate.
+	   ;; In this state, we are accumulating a token that must be
+	   ;; a symbol.  We have seen an odd number of multiple escape
+	   ;; characters, so we do not alter the case of the letters
+	   ;; we accumulate.
 	   (setf char (read-char input-stream nil nil t))
 	   (when (null char)
 	     (error 'reader-error :stream input-stream))
@@ -987,16 +1082,16 @@
 		(setf char (read-char input-stream nil nil t))
 		(if (null char)
 		    (error 'reader-error :stream input-stream)
-		    (progn (setf (schar buffer index) char)
-			   (incf index)
+		    (progn (push-char char)
 			   (go symbol-odd-escape-one-package-marker))))
 	     (multiple-escape
 		(go symbol-even-escape-one-package-marker)))
-	   (error "can't get here f")
+	   ;; We can't come here because of the preceding ecase.
 	 symbol-odd-escape-two-package-markers
-	   ;; In this state, we are accumulating a token that must be a
-	   ;; symbol.  We have seen an odd number of multiple escape
-	   ;; characters, so we do not upcase the letters we accumulate.
+	   ;; In this state, we are accumulating a token that must be
+	   ;; a symbol.  We have seen an odd number of multiple escape
+	   ;; characters, so we do not alter the case of the letters
+	   ;; we accumulate.
 	   (setf char (read-char input-stream nil nil t))
 	   (when (null char)
 	     (error 'reader-error :stream input-stream))
@@ -1012,7 +1107,7 @@
 			   (go symbol-odd-escape-two-package-markers))))
 	     (multiple-escape
 		(go symbol-even-escape-two-package-markers)))
-	   (error "can't get here g")
+	   ;; We can't come here because of the preceding ecase.
 	 perhaps-integer
 	   ;; We have seen the a sequence of digits, possibly preceded by
 	   ;; as sign.  
@@ -1146,7 +1241,7 @@
 		(unread-char char input-stream)
 		(return-from read-upcase-downcase-preserve-decimal
 		  (/ (* sign numerator) denominator))))
-	   (error "can't come here either")
+	   ;; We can't come here because of the preceding ecase.
 	 perhaps-float-with-decimal-point
 	   ;; We have seen an integer followed by a decimal point
 	   ;; followed by at least one more digit.
@@ -1215,7 +1310,7 @@
 		(unread-char char input-stream)
 		(return-from read-upcase-downcase-preserve-decimal
 		  (float (decimal-to-float sign numerator scale) float-prototype))))
-	   (error "if we come here, something is very wrong")
+	   ;; We can't come here because of the preceding ecase.
 	 pre-perhaps-float-with-exponent-marker
 	   ;; Come here when we have seen a mantissa followed by
 	   ;; an exponent marker
@@ -1248,6 +1343,7 @@
 		(unread-char char input-stream)
 		(return-from read-upcase-downcase-preserve-decimal
 		  (intern (subseq buffer 0 index)))))
+	   ;; We can't come here because of the preceding ecase.
 	 perhaps-float-with-exponent-marker
 	   ;; come here when we have seen a mantissa followed
 	   ;; by an exponent marker followed by at least one digit
@@ -1282,7 +1378,9 @@
 		(unread-char char input-stream)
 		(return-from read-upcase-downcase-preserve-decimal
 		  (float (decimal-to-float sign numerator (+ exponent scale))
-			 float-prototype)))))))))
+			 float-prototype))))
+	   ;; We can't come here because of the preceding ecase.
+	   )))))
 
 (defun read (&optional
 	     input-stream
