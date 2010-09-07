@@ -1,5 +1,9 @@
 (in-package #:sicl-read-test)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reading symbols
+
 (define-test read.symbol.followed.by.end.of.file.upcase
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
@@ -538,6 +542,10 @@
 		  (symbol-name (with-input-from-string (stream "12.3Ab ")
 				 (read stream))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reading integers
+
 (define-test read.integer.zero.no.sign.end.of.file
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
@@ -587,6 +595,10 @@
 		  (with-input-from-string (stream "-123")
 				 (read stream)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reading ratios
+
 (define-test read.ratio.zero.no.sign.followed.by.end.of.file
   (let ((*read-base* 10)
 	(*readtable* (copy-readtable nil)))
@@ -622,3 +634,62 @@
 		  (with-input-from-string (stream "-2/3")
 				 (read stream)))))
   
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reading floats
+
+(define-test read.positive.float.no.sign.no.exponent.marker.followed.by.end.of.file.1
+  (assert-true (let ((*read-base* 10)
+		     (*readtable* (copy-readtable nil))
+		     (*read-default-float-format* 'short-float))
+		 (let ((result (with-input-from-string (stream ".2")
+				 (read stream))))
+		   (and (typep result 'short-float)
+			(= (/ (float 2 1s0) (float 10 1s0))))))))
+
+(define-test read.positive.float.no.sign.no.exponent.marker.followed.by.end.of.file.2
+  (assert-true (let ((*read-base* 10)
+		     (*readtable* (copy-readtable nil))
+		     (*read-default-float-format* 'short-float))
+		 (let ((result (with-input-from-string (stream "0.2")
+				 (read stream))))
+		   (and (typep result 'short-float)
+			(= (/ (float 2 1s0) (float 10 1s0))))))))
+
+(define-test read.positive.float.plus.sign.no.exponent.marker.followed.by.end.of.file.1
+  (assert-true (let ((*read-base* 10)
+		     (*readtable* (copy-readtable nil))
+		     (*read-default-float-format* 'short-float))
+		 (let ((result (with-input-from-string (stream "+.2")
+				 (read stream))))
+		   (and (typep result 'short-float)
+			(= (/ (float 2 1s0) (float 10 1s0))))))))
+
+(define-test read.positive.float.plus.sign.no.exponent.marker.followed.by.end.of.file.2
+  (assert-true (let ((*read-base* 10)
+		     (*readtable* (copy-readtable nil))
+		     (*read-default-float-format* 'short-float))
+		 (let ((result (with-input-from-string (stream "+0.2")
+				 (read stream))))
+		   (and (typep result 'short-float)
+			(= (/ (float 2 1s0) (float 10 1s0))))))))
+
+(define-test read.negative.float.no.exponent.marker.followed.by.end.of.file.1
+  (assert-true (let ((*read-base* 10)
+		     (*readtable* (copy-readtable nil))
+		     (*read-default-float-format* 'short-float))
+		 (let ((result (with-input-from-string (stream "-.2")
+				 (read stream))))
+		   (and (typep result 'short-float)
+			(= (/ (float -2 1s0) (float 10 1s0))))))))
+
+(define-test read.negative.float.no.exponent.marker.followed.by.end.of.file.2
+  (assert-true (let ((*read-base* 10)
+		     (*readtable* (copy-readtable nil))
+		     (*read-default-float-format* 'short-float))
+		 (let ((result (with-input-from-string (stream "-0.2")
+				 (read stream))))
+		   (and (typep result 'short-float)
+			(= (/ (float -2 1s0) (float 10 1s0))))))))
+
+			      
