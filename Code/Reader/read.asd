@@ -3,7 +3,8 @@
 (asdf:defsystem :sicl-read
     :components
   ((:file "packages" :depends-on ())
-   (:file "read" :depends-on ("packages"))))
+   (:file "float" :depends-on ("packages"))
+   (:file "read" :depends-on ("packages" "float"))))
 
 (asdf:defsystem :sicl-read-test
   :depends-on (:lisp-unit :sicl-read)
