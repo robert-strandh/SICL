@@ -1,3 +1,5 @@
+(in-package :sicl-read)
+
 ;;; We need to discover at loadtime what the best floating-point
 ;;; type we are going to use for conversions from decimal to
 ;;; internal representation.  Implementations may want to alter the

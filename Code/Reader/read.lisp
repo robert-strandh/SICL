@@ -673,7 +673,12 @@
 	 (sign 1)
 	 (numerator 0)
 	 (denominator 0)
-	 (scale 1)
+	 (exponent 0)
+	 (float-prototype (case *read-default-float-format*
+			    (short-float 1s0)
+			    (single-float 1f0)
+			    (double-float 1d0)
+			    (long-float 1l0)))
 	 char
 	 code
 	 start)
@@ -1052,7 +1057,7 @@
 				 (= (sbit decimal-digits code) 1))
 			(push-char char)
 			(setf numerator (+ (* 10 numerator) (- code #.(char-code #\0))))
-			(setf scale 10)
+			(setf exponent -1)
 			(go perhaps-float-with-decimal-point))
 		      (ecase (syntax-type table char)
 			(whitespace
@@ -1073,15 +1078,25 @@
 			   (unread-char char input-stream)
 			   (return-from read-upcase-downcase-preserve-decimal
 			     (/ (* sign numerator) denominator)))))
-		     ((or (has-constituent-trait-p
-			   table char +short-float-exponent-marker+)
-			  (has-constituent-trait-p
-			   table char +single-float-exponent-marker+)
-			  (has-constituent-trait-p
-			   table char +double-float-exponent-marker+)
-			  (has-constituent-trait-p
-			   table char +long-float-exponent-marker+))
-		      ;; not quite correct
+		     ((has-constituent-trait-p
+		       table char +short-float-exponent-marker+)
+		      (push-char (funcall case-function char))
+		      (setf float-prototype 1s0)
+		      (go symbol-even-escape-no-package-marker))
+		     ((has-constituent-trait-p
+		       table char +single-float-exponent-marker+)
+		      (push-char (funcall case-function char))
+		      (setf float-prototype 1f0)
+		      (go symbol-even-escape-no-package-marker))
+		     ((has-constituent-trait-p
+		       table char +double-float-exponent-marker+)
+		      (push-char (funcall case-function char))
+		      (setf float-prototype 1d0)
+		      (go symbol-even-escape-no-package-marker))
+		     ((has-constituent-trait-p
+		       table char +long-float-exponent-marker+)
+		      (push-char (funcall case-function char))
+		      (setf float-prototype 1l0)
 		      (go perhaps-float-with-exponent-marker))
 		     (t
 		      (push-char (funcall case-function char))
@@ -1133,18 +1148,17 @@
 	   (when (not char)
 	     ;; Found end of file.
 	     (return-from read-upcase-downcase-preserve-decimal
-	       (float (/ (* sign numerator) (expt 10 scale)))))
+	       (float (decimal-to-float sign numerator exponent) float-prototype)))
 	   (when (and (< (setf code (char-code char)) 128)
 		      (= (sbit decimal-digits code) 1))
 	     (push-char char)
 	     (setf numerator (+ (* 10 numerator) (- code #.(char-code #\0))))
-	     (setf scale (* 10 scale))
+	     (decf exponent)
 	     (go perhaps-float-with-decimal-point))
 	   (ecase (syntax-type table char)
 	     (whitespace
 		(return-from read-upcase-downcase-preserve-decimal
-		  ;; This is not quite right. 
-		  (float (/ (* sign numerator) scale))))
+		  (float (decimal-to-float sign numerator exponent) float-prototype)))
 	     ((constituent non-terminating-macro-char)
 		(push-char (funcall case-function char))
 		(go symbol-even-escape-no-package-marker))
@@ -1162,7 +1176,38 @@
 		  (/ (* sign numerator) denominator))))
 	   (error "if we come here, something is very wrong")
 	 perhaps-float-with-exponent-marker
-	   )))))
+	   ;; Come here when we have seen a mantissa followed by
+	   ;; an exponent marker
+	   (setf char (read-char input-stream nil nil t))
+	   (when (null char)
+	     ;; End of file.  We have a symbol
+	     (return-from read-upcase-downcase-preserve-decimal
+	       (intern (subseq buffer 0 index))))
+	   (when (and (< (setf code (char-code char)) 128)
+		      (= (sbit decimal-digits code) 1))
+	     (push-char char)
+	     (setf numerator (+ (* 10 numerator) (- code #.(char-code #\0))))
+	     (decf exponent)
+	     (go perhaps-float-with-exponent-marker))
+	   (ecase (syntax-type table char)
+	     (whitespace
+		(return-from read-upcase-downcase-preserve-decimal
+		  (float (decimal-to-float sign numerator exponent) float-prototype)))
+	     ((constituent non-terminating-macro-char)
+		(push-char (funcall case-function char))
+		(go symbol-even-escape-no-package-marker))
+	     (single-escape
+		(setf char (read-char input-stream nil nil t))
+		(if (null char)
+		    (error 'reader-error :stream input-stream)
+		    (progn (push-char (funcall case-function char))
+			   (go symbol-odd-escape-two-package-markers))))
+	     (multiple-escape
+		(go symbol-even-escape-two-package-markers))
+	     (terminating-macro-char
+		(unread-char char input-stream)
+		(return-from read-upcase-downcase-preserve-decimal
+		  (/ (* sign numerator) denominator)))))))))
 
 (defun read (&optional
 	     input-stream
