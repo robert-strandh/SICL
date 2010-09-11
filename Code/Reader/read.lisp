@@ -797,14 +797,14 @@
 				    (push-char char)
 				    (if (and (has-constituent-trait-p 
 					      table
-					      (schar buffer (1- index))
+					      (schar buffer (- index 2))
 					      +decimal-point+)
 					     (< (setf code (char-code char)) 128)
 					     (= (sbit decimal-digits code) 1))
 					;; It might be the beginning of a float.
 					(progn (setf scale -1)
 					       (setf numerator
-						     (= code #.(char-code #\0)))
+						     (- code #.(char-code #\0)))
 					       (go perhaps-float-with-decimal-point))
 					;; It must be a symbol
 					(go symbol-even-escape-no-package-marker)))))
