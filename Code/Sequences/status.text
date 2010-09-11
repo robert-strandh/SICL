@@ -14,6 +14,8 @@ What is done:
 
   fill (function only).
 
+  remove (some special cases, only)
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.

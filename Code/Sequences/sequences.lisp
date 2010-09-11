@@ -4313,7 +4313,167 @@
            (fill-list-bounded sequence item start end)
            (fill-list-unbounded sequence item start)))))
 
-       
-           
-        
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function remove
+
+;;; It is not worth the effort to specialize for a start value of 0
+;;; because that only implies a single test at the beginning of the 
+;;; function, but it is worth specializing for an end value of nil.
+
+(defun |remove seq-type=list from-end=nil test=eql start=any end=nil count=nil key=identity|
+    (item list start)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop for element in list
+	  unless (eql item element)
+	    do (push element result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=eq start=any end=nil count=nil key=identity|
+    (item list start)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop for element in list
+	  unless (eq item element)
+	    do (push element result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=eql start=any end=nil count=nil key=other|
+    (item list start key)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop for element in list
+	  unless (eql item (funcall key element))
+	    do (push element result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=eq start=any end=nil count=nil key=other|
+    (item list start key)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop for element in list
+	  unless (eq item (funcall key element))
+	    do (push element result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=eql start=any end=other count=nil key=identity|
+    (item list start end)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop until (null list)
+	  repeat (- end start)
+	  for element = (car list)
+	  unless (eql item element)
+	    do (push element result))
+    (loop until (null list)
+	  do (push (pop list) result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=eq start=any end=other count=nil key=identity|
+    (item list start end)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop until (null list)
+	  repeat (- end start)
+	  for element = (car list)
+	  unless (eq item element)
+	    do (push element result))
+    (loop until (null list)
+	  do (push (pop list) result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=eql start=any end=other count=nil key=other|
+    (item list start end key)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop until (null list)
+	  repeat (- end start)
+	  for element = (car list)
+	  unless (eql item (funcall key element))
+	    do (push element result))
+    (loop until (null list)
+	  do (push (pop list) result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=eq start=any end=other count=nil key=other|
+    (item list start end key)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop until (null list)
+	  repeat (- end start)
+	  for element = (car list)
+	  unless (eq item (funcall key element))
+	    do (push element result))
+    (loop until (null list)
+	  do (push (pop list) result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=other start=any end=nil count=nil key=identity|
+    (item list test start)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop for element in list
+	  unless (funcall test item element)
+	    do (push element result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=other start=any end=nil count=nil key=other|
+    (item list test start key)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop for element in list
+	  unless (funcall test item (funcall key element))
+	    do (push element result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=other start=any end=other count=nil key=identity|
+    (item list test start end)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop until (null list)
+	  repeat (- end start)
+	  for element = (car list)
+	  unless (funcall test item element)
+	    do (push element result))
+    (loop until (null list)
+	  do (push (pop list) result))
+    (nreverse result)))
+
+(defun |remove seq-type=list from-end=nil test=other start=any end=other count=nil key=other|
+    (item list test start end key)
+  (let ((result '()))
+    (loop repeat start
+	  until (null list)
+	  do (push (pop list) result))
+    (loop until (null list)
+	  repeat (- end start)
+	  for element = (car list)
+	  unless (funcall test item (funcall key element))
+	    do (push element result))
+    (loop until (null list)
+	  do (push (pop list) result))
+    (nreverse result)))
 
