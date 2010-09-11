@@ -730,20 +730,68 @@
 			(incf index)
 			(setf numerator (- code #.(char-code #\0)))
 			(go perhaps-integer))
-		       
-		       (;; Probably the next-most common case is a minus sign
-			(and (eq (syntax-type table char) 'constituent)
-			     (has-constituent-trait-p table char +minus-sign+))
-			(setf sign -1)
-			(setf (schar buffer index) char)
-			(incf index)
-			(go perhaps-integer))
-		       (;; Probably the next-most common case is a plus sign
-			(and (eq (syntax-type table char) 'constituent)
-			     (has-constituent-trait-p table char +plus-sign+))
-			(setf (schar buffer index) char)
-			(incf index)
-			(go perhaps-integer))
+		       (;; Perhaps it is some other constituent
+			(eq (syntax-type table char) 'constituent)
+			(cond (;; Perhaps it is a minus sign
+			       (has-constituent-trait-p table char +minus-sign+)
+			       (setf sign -1)
+			       (setf (schar buffer index) char)
+			       (incf index)
+			       (go perhaps-integer))
+			      (;; Or perhaps a plus sign
+			       (has-constituent-trait-p table char +plus-sign+)
+			       (setf (schar buffer index) char)
+			       (incf index)
+			       (go perhaps-integer))
+			      (;; It might be a dot
+			       (has-constituent-trait-p table char +dot+)
+			       ;; Save it
+			       (setf (schar buffer index) (schar case-table code))
+			       (incf index)
+			       ;; Read the next character
+			       (setf char (read-char input-stream nil nil t))
+			       (when (null char)
+				 ;; We have a consing dot at end of file
+				 (error 'single-dot-token
+					:stream input-stream))
+			       ;; Come here if the dot is
+			       ;; followed by some other character
+			       (setf code (char-code char))
+			       (let ((type (syntax-type table char)))
+				 (ecase type
+				   (whitespace
+				      ;; handle read-preserving-whitespace
+				      (error 'single-dot-token
+					     :stream input-stream))
+				   ((single-escape multiple-escape)
+				      ;; We know this must be a symbol.
+				      ;; Rather than repeating the code for
+				      ;; such a case, go to the label that
+				      ;; can handle that.  This means repeating
+				      ;; a few tests.
+				      (unread-char char input-stream)
+				      (go symbol-even-escape-no-package-marker))
+				   (terminating-macro-char
+				      ;; Again we have a single dot.
+				      (unread-char char input-stream)
+				      (error 'single-dot-token
+					     :stream input-stream))
+				   (constituent
+				      ;; This is the complicated case, because
+				      ;; it can indeed be a dot followed by some
+				      ;; constituent that makes it a symbol, but
+				      ;; if the dot also has +decimal-point+
+				      ;; constituent traits, and it is followed
+				      ;; by a digit, then it might be a float.
+				      (if (and (has-constituent-trait-p
+						(schar buffer (1- index))
+						+decimal-point+)
+					       (< (setf code (char code char)) 128)
+					       (= (sbit decimal-digits code) 1))
+					  (progn (setf scale 
+						       
+
+			      (t nil)))
 		       (;; Or perhaps we have a single-escape
 			(eq (syntax-type table char) 'single-escape)
 			(setf char (read-char input-stream nil nil t))
@@ -756,6 +804,7 @@
 			(eq (syntax-type table char) 'multiple-escape)
 			(go symbol-odd-escape-no-package-marker))
 		       (t
+			;; handle macro characters here. 
 			(error "don't know what this might be"))))
 	       (error "can't get here a"))
 	 symbol-even-escape-no-package-marker
