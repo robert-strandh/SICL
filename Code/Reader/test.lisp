@@ -645,7 +645,8 @@
 		 (let ((result (with-input-from-string (stream ".2")
 				 (read stream))))
 		   (and (typep result 'short-float)
-			(= (/ (float 2 1s0) (float 10 1s0))))))))
+			(= result
+			   (/ (float 2 1s0) (float 10 1s0))))))))
 
 (define-test read.positive.float.no.sign.no.exponent.marker.followed.by.end.of.file.2
   (assert-true (let ((*read-base* 10)
@@ -654,7 +655,8 @@
 		 (let ((result (with-input-from-string (stream "0.2")
 				 (read stream))))
 		   (and (typep result 'short-float)
-			(= (/ (float 2 1s0) (float 10 1s0))))))))
+			(= result
+			   (/ (float 2 1s0) (float 10 1s0))))))))
 
 (define-test read.positive.float.plus.sign.no.exponent.marker.followed.by.end.of.file.1
   (assert-true (let ((*read-base* 10)
@@ -663,7 +665,8 @@
 		 (let ((result (with-input-from-string (stream "+.2")
 				 (read stream))))
 		   (and (typep result 'short-float)
-			(= (/ (float 2 1s0) (float 10 1s0))))))))
+			(= result
+			   (/ (float 2 1s0) (float 10 1s0))))))))
 
 (define-test read.positive.float.plus.sign.no.exponent.marker.followed.by.end.of.file.2
   (assert-true (let ((*read-base* 10)
@@ -672,7 +675,8 @@
 		 (let ((result (with-input-from-string (stream "+0.2")
 				 (read stream))))
 		   (and (typep result 'short-float)
-			(= (/ (float 2 1s0) (float 10 1s0))))))))
+			(= result
+			   (/ (float 2 1s0) (float 10 1s0))))))))
 
 (define-test read.negative.float.no.exponent.marker.followed.by.end.of.file.1
   (assert-true (let ((*read-base* 10)
@@ -681,7 +685,8 @@
 		 (let ((result (with-input-from-string (stream "-.2")
 				 (read stream))))
 		   (and (typep result 'short-float)
-			(= (/ (float -2 1s0) (float 10 1s0))))))))
+			(= result
+			   (/ (float -2 1s0) (float 10 1s0))))))))
 
 (define-test read.negative.float.no.exponent.marker.followed.by.end.of.file.2
   (assert-true (let ((*read-base* 10)
@@ -690,6 +695,7 @@
 		 (let ((result (with-input-from-string (stream "-0.2")
 				 (read stream))))
 		   (and (typep result 'short-float)
-			(= (/ (float -2 1s0) (float 10 1s0))))))))
+			(= result
+			   (/ (float -2 1s0) (float 10 1s0))))))))
 
 			      
