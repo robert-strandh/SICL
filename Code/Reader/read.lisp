@@ -795,15 +795,16 @@
 				    ;; constituent traits, and it is followed
 				    ;; by a digit, then it might be a float.
 				    (push-char char)
-				    (if (and (has-constituent-trait-p
+				    (if (and (has-constituent-trait-p 
+					      table
 					      (schar buffer (1- index))
 					      +decimal-point+)
-					     (< (setf code (char code char)) 128)
+					     (< (setf code (char-code char)) 128)
 					     (= (sbit decimal-digits code) 1))
 					;; It might be the beginning of a float.
 					(progn (setf scale -1)
 					       (setf numerator
-						     (= (code .#(char-code #\0))))
+						     (= code #.(char-code #\0)))
 					       (go perhaps-float-with-decimal-point))
 					;; It must be a symbol
 					(go symbol-even-escape-no-package-marker)))))
@@ -820,12 +821,12 @@
 			       ;; Not at end of file.  We might have
 			       ;; a symbol or the beginning of a float.
 			       (push-char char)
-			       (cond ((and (< (setf code (char code char)) 128)
+			       (cond ((and (< (setf code (char-code char)) 128)
 					   (= (sbit decimal-digits code) 1))
 				      ;; It might be the begginning of a float.
 				      (setf scale -1)
 				      (setf numerator
-					    (= (code .#(char-code #\0))))
+					    (= code #.(char-code #\0)))
 				      (go perhaps-float-with-decimal-point))
 				     ((eq (syntax-type table char) 'constituent)
 				      ;; It must be a symbol
@@ -854,7 +855,10 @@
 			;; We just remember the parity by going to the
 			;; right state. 
 			(go symbol-odd-escape-no-package-marker))
-		       ;; handle macro characters here. 
+		       ((let ((type (syntax-type table char)))
+			  (or (eq type 'terminating-macro-char)
+			      (eq type 'non-terminating-macro-char)))
+			(funcall (get-macro-character char)))
 		       (t
 			(error "don't know what this might be"))))
 	       (error "can't get here a"))
