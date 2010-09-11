@@ -5234,7 +5234,7 @@
 			      ;;       seq-type=list test=eq end=nil count=nil key=identity
 			      (|remove seq-type=list test=eq end=nil count=nil key=identity|
 			       item sequence start))))
-		  (if (or (eq test 'eql) (or (eq test #'eql)))
+		  (if (or (eq test 'eql) (eq test #'eql))
 		      ;; seq-type=list from-end=t test=eql
 		      (if end
 			  ;; seq-type=list from-end=t test=eql end=other
@@ -5273,80 +5273,118 @@
 				  ;;       seq-type=list test=eql end=nil count=nil key=identity
 				  (|remove seq-type=list test=eql end=nil count=nil key=identity|
 				   item sequence start))))
-		      (if test-not
-			  ;; seq-type=list from-end=t test-not=other
-			  (if end
-			      ;; seq-type=list from-end=t test-not=other end=other
-			      (if count
-				  ;; seq-type=list from-end=t test-not=other end=other count=other
-				  (if key
-				      ;;       seq-type=list from-end=t test-not=other end=other count=other key=other
-				      (|remove seq-type=list from-end=t test-not=other end=other count=other key=other|
-				       item sequence test-not start end count key)
-				      ;;       seq-type=list from-end=t test-not=other end=other count=other key=identity
-				      (|remove seq-type=list from-end=t test-not=other end=other count=other key=identity|
-				       item sequence test-not start end count))
-				  ;; seq-type=list from-end=t test-not=other end=other count=nil
-				  (if key
-				      ;;       seq-type=list test-not=other end=other count=nil key=other
-				      (|remove seq-type=list test-not=other end=other count=nil key=other|
-				       item sequence test-not start end key)
-				      ;;       seq-type=list test-not=other end=other count=nil key=identity
-				      (|remove seq-type=list test-not=other end=other count=nil key=identity|
-				       item sequence test-not start end)))
-			      ;; seq-type=list from-end=t test-not=other end=nil
-			      (if count
-				  ;; seq-type=list from-end=t test-not=other end=nil count=other
-				  (if key
-				      ;;       seq-type=list from-end=t test-not=other end=nil count=other key=other
-				      (|remove seq-type=list from-end=t test-not=other end=nil count=other key=other|
-				       item sequence test-not start count key)
-				      ;;       seq-type=list from-end=t test-not=other end=nil count=other key=identity
-				      (|remove seq-type=list from-end=t test-not=other end=nil count=other key=identity|
-				       item sequence test-not start count))
-				  (if key
-				      (|remove seq-type=list test-not=other end=other count=nil key=other|
-				       item sequence test-not start end key)
-				      (|remove seq-type=list test-not=other end=other count=nil key=identity|
-				       item sequence test-not start end))))
-			  ;; seq-type=list from-end=t test=eql
-			  (if end
-			      ;; seq-type=list from-end=t test=eql end=other
-			      (if count
-				  ;; seq-type=list from-end=t test=eql end=other count=other
-				  (if key
-				      ;;       seq-type=list from-end=t test=eql end=other count=other key=other
-				      (|remove seq-type=list from-end=t test=eql end=other count=other key=other|
-				       item sequence start end count key)
-				      ;;       seq-type=list from-end=t test=eql end=other count=other key=identity
-				      (|remove seq-type=list from-end=t test=eql end=other count=other key=identity|
-				       item sequence start end count))
-				  ;; seq-type=list from-end=t test=eql end=other count=nil
-				  (if key
-				      ;;       seq-type=list test=eql end=other count=nil key=other
-				      (|remove seq-type=list test=eql end=other count=nil key=other|
-				       item sequence start end key)
-				      ;;       seq-type=list test=eql end=other count=nil key=identity
-				      (|remove seq-type=list test=eql end=other count=nil key=identity|
-				       item sequence start end)))
-			      ;; seq-type=list from-end=t test=eql end=nil
-			      (if count
-				  ;; seq-type=list from-end=t test=eql end=nil count=other
-				  (if key
-				      ;;       seq-type=list from-end=t test=eql end=nil count=other key=other
-				      (|remove seq-type=list from-end=t test=eql end=nil count=other key=other|
-				       item sequence start count key)
-				      ;;       seq-type=list from-end=t test=eql end=nil count=other key=identity
-				      (|remove seq-type=list from-end=t test=eql end=nil count=other key=identity|
-				       item sequence start count))
-				  ;; seq-type=list from-end=t test=eql end=nil count=nil
-				  (if key
-				      ;;       seq-type=list test=eql end=nil count=nil key=other
-				      (|remove seq-type=list test=eql end=nil count=nil key=other|
-				       item sequence start key)
-				      ;;       seq-type=list test=eql end=nil count=nil key=identity
-				      (|remove seq-type=list test=eql end=nil count=nil key=identity|
-				       item sequence start))))))))
+		      ;; seq-type=list from-end=t test=other
+		      (if end
+			  ;; seq-type=list from-end=t test=other end=other
+			  (if count
+			      ;; seq-type=list from-end=t test=other end=other count=other
+			      (if key
+				  ;;       seq-type=list from-end=t test=other end=other count=other key=other
+				  (|remove seq-type=list from-end=t test=other end=other count=other key=other|
+				   item sequence test start end count key)
+				  ;;       seq-type=list from-end=t test=other end=other count=other key=identity
+				  (|remove seq-type=list from-end=t test=other end=other count=other key=identity|
+				   item sequence test start end count))
+			      ;; seq-type=list from-end=t test=other end=other count=nil
+			      (if key
+				  ;;       seq-type=list test=other end=other count=nil key=other
+				  (|remove seq-type=list test=other end=other count=nil key=other|
+				   item sequence test start end key)
+				  ;;       seq-type=list test=other end=other count=nil key=identity
+				  (|remove seq-type=list test=other end=other count=nil key=identity|
+				   item sequence test start end)))
+			  ;; seq-type=list from-end=t test=other end=nil
+			  (if count
+			      ;; seq-type=list from-end=t test=other end=nil count=other
+			      (if key
+				  ;;       seq-type=list from-end=t test=other end=nil count=other key=other
+				  (|remove seq-type=list from-end=t test=other end=nil count=other key=other|
+				   item sequence test start count key)
+				  ;;       seq-type=list from-end=t test=other end=nil count=other key=identity
+				  (|remove seq-type=list from-end=t test=other end=nil count=other key=identity|
+				   item sequence test start count))
+			      ;; seq-type=list from-end=t test=other end=nil count=nil
+			      (if key
+				  ;;       seq-type=list test=other end=nil count=nil key=other
+				  (|remove seq-type=list test=other end=nil count=nil key=other|
+				   item sequence test start key)
+				  ;;       seq-type=list test=other end=nil count=nil key=identity
+				  (|remove seq-type=list test=other end=nil count=nil key=identity|
+				   item sequence test start))))))
+	      (if test-not
+		  ;; seq-type=list from-end=t test-not=other
+		  (if end
+		      ;; seq-type=list from-end=t test-not=other end=other
+		      (if count
+			  ;; seq-type=list from-end=t test-not=other end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test-not=other end=other count=other key=other
+			      (|remove seq-type=list from-end=t test-not=other end=other count=other key=other|
+			       item sequence test-not start end count key)
+			      ;;       seq-type=list from-end=t test-not=other end=other count=other key=identity
+			      (|remove seq-type=list from-end=t test-not=other end=other count=other key=identity|
+			       item sequence test-not start end count))
+			  ;; seq-type=list from-end=t test-not=other end=other count=nil
+			  (if key
+			      ;;       seq-type=list test-not=other end=other count=nil key=other
+			      (|remove seq-type=list test-not=other end=other count=nil key=other|
+			       item sequence test-not start end key)
+			      ;;       seq-type=list test-not=other end=other count=nil key=identity
+			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
+			       item sequence test-not start end)))
+		      ;; seq-type=list from-end=t test-not=other end=nil
+		      (if count
+			  ;; seq-type=list from-end=t test-not=other end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test-not=other end=nil count=other key=other
+			      (|remove seq-type=list from-end=t test-not=other end=nil count=other key=other|
+			       item sequence test-not start count key)
+			      ;;       seq-type=list from-end=t test-not=other end=nil count=other key=identity
+			      (|remove seq-type=list from-end=t test-not=other end=nil count=other key=identity|
+			       item sequence test-not start count))
+			  (if key
+			      (|remove seq-type=list test-not=other end=other count=nil key=other|
+			       item sequence test-not start end key)
+			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
+			       item sequence test-not start end))))
+		  ;; seq-type=list from-end=t test=eql
+		  (if end
+		      ;; seq-type=list from-end=t test=eql end=other
+		      (if count
+			  ;; seq-type=list from-end=t test=eql end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test=eql end=other count=other key=other
+			      (|remove seq-type=list from-end=t test=eql end=other count=other key=other|
+			       item sequence start end count key)
+			      ;;       seq-type=list from-end=t test=eql end=other count=other key=identity
+			      (|remove seq-type=list from-end=t test=eql end=other count=other key=identity|
+			       item sequence start end count))
+			  ;; seq-type=list from-end=t test=eql end=other count=nil
+			  (if key
+			      ;;       seq-type=list test=eql end=other count=nil key=other
+			      (|remove seq-type=list test=eql end=other count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=list test=eql end=other count=nil key=identity
+			      (|remove seq-type=list test=eql end=other count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=list from-end=t test=eql end=nil
+		      (if count
+			  ;; seq-type=list from-end=t test=eql end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test=eql end=nil count=other key=other
+			      (|remove seq-type=list from-end=t test=eql end=nil count=other key=other|
+			       item sequence start count key)
+			      ;;       seq-type=list from-end=t test=eql end=nil count=other key=identity
+			      (|remove seq-type=list from-end=t test=eql end=nil count=other key=identity|
+			       item sequence start count))
+			  ;; seq-type=list from-end=t test=eql end=nil count=nil
+			  (if key
+			      ;;       seq-type=list test=eql end=nil count=nil key=other
+			      (|remove seq-type=list test=eql end=nil count=nil key=other|
+			       item sequence start key)
+			      ;;       seq-type=list test=eql end=nil count=nil key=identity
+			      (|remove seq-type=list test=eql end=nil count=nil key=identity|
+			       item sequence start))))))
 	  ;; seq-type=list from-end=nil
 	  (if test
 	      ;; seq-type=list from-end=nil test=?
@@ -5389,7 +5427,7 @@
 			      ;;       seq-type=list test=eq end=nil count=nil key=identity
 			      (|remove seq-type=list test=eq end=nil count=nil key=identity|
 			       item sequence start))))
-		  (if (or (eq test 'eql) (or (eq test #'eql)))
+		  (if (or (eq test 'eql) (eq test #'eql))
 		      ;; seq-type=list from-end=nil test=eql
 		      (if end
 			  ;; seq-type=list from-end=nil test=eql end=other
@@ -5427,81 +5465,118 @@
 				   item sequence start key)
 				  (|remove seq-type=list test=eql end=nil count=nil key=identity|
 				   item sequence start))))
-		      (if test-not
-			  ;; seq-type=list from-end=nil test-not=other
-			  (if end
-			      ;; seq-type=list from-end=nil test-not=other end=other
-			      (if count
-				  ;; seq-type=list from-end=nil test-not=other end=other count=other
-				  (if key
-				      ;;       seq-type=list from-end=nil test-not=other end=other count=other key=other
-				      (|remove seq-type=list from-end=nil test-not=other end=other count=other key=other|
-				       item sequence test-not start end count key)
-				      ;;       seq-type=list from-end=nil test-not=other end=other count=other key=identity
-				      (|remove seq-type=list from-end=nil test-not=other end=other count=other key=identity|
-				       item sequence test-not start end count))
-				  ;; seq-type=list from-end=nil test-not=other end=other count=nil
-				  (if key
-				      ;;       seq-type=list test-not=other end=other count=nil key=other
-				      (|remove seq-type=list test-not=other end=other count=nil key=other|
-				       item sequence test-not start end key)
-				      ;;       seq-type=list test-not=other end=other count=nil key=identity
-				      (|remove seq-type=list test-not=other end=other count=nil key=identity|
-				       item sequence test-not start end)))
-			      ;; seq-type=list from-end=nil test-not=other end=nil
-			      (if count
-				  ;; seq-type=list from-end=nil test-not=other end=nil count=other
-				  (if key
-				      ;;       seq-type=list test-not=other end=nil count=other key=other
-				      (|remove seq-type=list test-not=other end=nil count=other key=other|
-				       item sequence test-not start count key)
-				      ;;       seq-type=list test-not=other end=nil count=other key=identity
-				      (|remove seq-type=list test-not=other end=nil count=other key=identity|
-				       item sequence test-not start count))
-				  (if key
-				      (|remove seq-type=list test-not=other end=other count=nil key=other|
-				       item sequence test-not start end key)
-				      (|remove seq-type=list test-not=other end=other count=nil key=identity|
-				       item sequence test-not start end))))
-			  ;; seq-type=list from-end=nil test=eql
-			  (if end
-			      ;; seq-type=list from-end=nil test=eql end=other
-			      (if count
-				  ;; seq-type=list from-end=nil test=eql end=other count=other
-				  (if key
-				      ;;       seq-type=list from-end=nil test=eql end=other count=other key=other
-				      (|remove seq-type=list from-end=nil test=eql end=other count=other key=other|
-				       item sequence start end count key)
-				      ;;       seq-type=list from-end=nil test=eql end=other count=other key=identity
-				      (|remove seq-type=list from-end=nil test=eql end=other count=other key=identity|
-				       item sequence start end count))
-				  ;; seq-type=list from-end=nil test=eql end=other count=nil
-				  (if key
-				      ;;       seq-type=list test=eql end=other count=nil key=other
-				      (|remove seq-type=list test=eql end=other count=nil key=other|
-				       item sequence start end key)
-				      ;;       seq-type=list test=eql end=other count=nil key=identity
-				      (|remove seq-type=list test=eql end=other count=nil key=identity|
-				       item sequence start end)))
-			      ;; seq-type=list from-end=nil test=eql end=nil
-			      (if count
-				  ;; seq-type=list from-end=nil test=eql end=nil count=other
-				  (if key
-				      ;;       seq-type=list from-end=nil test=eql end=nil count=other key=other
-				      (|remove seq-type=list from-end=nil test=eql end=nil count=other key=other|
-				       item sequence start count key)
-				      ;;       seq-type=list from-end=nil test=eql end=nil count=other key=identity
-				      (|remove seq-type=list from-end=nil test=eql end=nil count=other key=identity|
-				       item sequence start count))
-				  ;; seq-type=list from-end=nil test=eql end=nil count=nil
-				  (if key
-				      ;;       seq-type=list test=eql end=nil count=nil key=other
-				      (|remove seq-type=list test=eql end=nil count=nil key=other|
-				       item sequence start key)
-				      ;;       seq-type=list test=eql end=nil count=nil key=identity
-				      (|remove seq-type=list test=eql end=nil count=nil key=identity|
-				       item sequence start)))))))))
-      ;; seq-type=list
-      (assert nil)))
+		      ;; seq-type=list from-end=nil test=other
+		      (if end
+			  ;; seq-type=list from-end=nil test=other end=other
+			  (if count
+			      ;; seq-type=list from-end=nil test=other end=other count=other
+			      (if key
+				  ;;       seq-type=list from-end=nil test=other end=other count=other key=other
+				  (|remove seq-type=list from-end=nil test=other end=other count=other key=other|
+				   item sequence test start end count key)
+				  ;;       seq-type=list from-end=nil test=other end=other count=other key=identity
+				  (|remove seq-type=list from-end=nil test=other end=other count=other key=identity|
+				   item sequence test start end count))
+			      ;; seq-type=list from-end=nil test=other end=other count=nil
+			      (if key
+				  ;;       seq-type=list test=other end=other count=nil key=other
+				  (|remove seq-type=list test=other end=other count=nil key=other|
+				   item sequence test start end key)
+				  ;;       seq-type=list test=other end=other count=nil key=identity
+				  (|remove seq-type=list test=other end=other count=nil key=identity|
+				   item sequence test start end)))
+			  ;; seq-type=list from-end=nil test=other end=nil
+			  (if count
+			      ;; seq-type=list from-end=nil test=other end=nil count=other
+			      (if key
+				  ;;       seq-type=list from-end=nil test=other end=nil count=other key=other
+				  (|remove seq-type=list from-end=nil test=other end=nil count=other key=other|
+				   item sequence test start count key)
+				  ;;       seq-type=list from-end=nil test=other end=nil count=other key=identity
+				  (|remove seq-type=list from-end=nil test=other end=nil count=other key=identity|
+				   item sequence test start count))
+			      ;; seq-type=list from-end=nil test=other end=nil count=nil
+			      (if key
+				  ;;       seq-type=list test=other end=nil count=nil key=other
+				  (|remove seq-type=list test=other end=nil count=nil key=other|
+				   item sequence test start key)
+				  (|remove seq-type=list test=other end=nil count=nil key=identity|
+				   item sequence test start))))))
+	      (if test-not
+		  ;; seq-type=list from-end=nil test-not=other
+		  (if end
+		      ;; seq-type=list from-end=nil test-not=other end=other
+		      (if count
+			  ;; seq-type=list from-end=nil test-not=other end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test-not=other end=other count=other key=other
+			      (|remove seq-type=list from-end=nil test-not=other end=other count=other key=other|
+			       item sequence test-not start end count key)
+			      ;;       seq-type=list from-end=nil test-not=other end=other count=other key=identity
+			      (|remove seq-type=list from-end=nil test-not=other end=other count=other key=identity|
+			       item sequence test-not start end count))
+			  ;; seq-type=list from-end=nil test-not=other end=other count=nil
+			  (if key
+			      ;;       seq-type=list test-not=other end=other count=nil key=other
+			      (|remove seq-type=list test-not=other end=other count=nil key=other|
+			       item sequence test-not start end key)
+			      ;;       seq-type=list test-not=other end=other count=nil key=identity
+			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
+			       item sequence test-not start end)))
+		      ;; seq-type=list from-end=nil test-not=other end=nil
+		      (if count
+			  ;; seq-type=list from-end=nil test-not=other end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test-not=other end=nil count=other key=other
+			      (|remove seq-type=list from-end=nil test-not=other end=nil count=other key=other|
+			       item sequence test-not start count key)
+			      ;;       seq-type=list from-end=nil test-not=other end=nil count=other key=identity
+			      (|remove seq-type=list from-end=nil test-not=other end=nil count=other key=identity|
+			       item sequence test-not start count))
+			  (if key
+			      (|remove seq-type=list test-not=other end=other count=nil key=other|
+			       item sequence test-not start end key)
+			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
+			       item sequence test-not start end))))
+		  ;; seq-type=list from-end=nil test=eql
+		  (if end
+		      ;; seq-type=list from-end=nil test=eql end=other
+		      (if count
+			  ;; seq-type=list from-end=nil test=eql end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test=eql end=other count=other key=other
+			      (|remove seq-type=list from-end=nil test=eql end=other count=other key=other|
+			       item sequence start end count key)
+			      ;;       seq-type=list from-end=nil test=eql end=other count=other key=identity
+			      (|remove seq-type=list from-end=nil test=eql end=other count=other key=identity|
+			       item sequence start end count))
+			  ;; seq-type=list from-end=nil test=eql end=other count=nil
+			  (if key
+			      ;;       seq-type=list test=eql end=other count=nil key=other
+			      (|remove seq-type=list test=eql end=other count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=list test=eql end=other count=nil key=identity
+			      (|remove seq-type=list test=eql end=other count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=list from-end=nil test=eql end=nil
+		      (if count
+			  ;; seq-type=list from-end=nil test=eql end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test=eql end=nil count=other key=other
+			      (|remove seq-type=list from-end=nil test=eql end=nil count=other key=other|
+			       item sequence start count key)
+			      ;;       seq-type=list from-end=nil test=eql end=nil count=other key=identity
+			      (|remove seq-type=list from-end=nil test=eql end=nil count=other key=identity|
+			       item sequence start count))
+			  ;; seq-type=list from-end=nil test=eql end=nil count=nil
+			  (if key
+			      ;;       seq-type=list test=eql end=nil count=nil key=other
+			      (|remove seq-type=list test=eql end=nil count=nil key=other|
+			       item sequence start key)
+			      ;;       seq-type=list test=eql end=nil count=nil key=identity
+			      (|remove seq-type=list test=eql end=nil count=nil key=identity|
+			       item sequence start)))))))
+	  ;; seq-type=list
+	  (assert nil)))
 
 
