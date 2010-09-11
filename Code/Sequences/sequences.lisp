@@ -4823,13 +4823,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=eq end=nil count=other key=identity|
     (item list start count)
@@ -4853,13 +4847,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=eql end=nil count=other key=other|
     (item list start count key)
@@ -4883,13 +4871,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=eq end=nil count=other key=other|
     (item list start count key)
@@ -4913,13 +4895,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=eql end=other count=other key=identity|
     (item list start end count)
@@ -4943,13 +4919,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=eq end=other count=other key=identity|
     (item list start end count)
@@ -4973,13 +4943,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=eql end=other count=other key=other|
     (item list start end count key)
@@ -5003,13 +4967,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=eq end=other count=other key=other|
     (item list start end count key)
@@ -5033,13 +4991,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=other end=nil count=other key=identity|
     (item list test start count)
@@ -5063,13 +5015,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=other end=nil count=other key=other|
     (item list test start count key)
@@ -5093,13 +5039,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=other end=other count=other key=identity|
     (item list test start end count)
@@ -5123,13 +5063,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test=other end=other count=other key=other|
     (item list test start end count key)
@@ -5153,13 +5087,7 @@
 		 (setf (cdr reversed-prefix) result
 		       result reversed-prefix
 		       reversed-prefix temp)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test-not=other end=nil count=other key=identity|
     (item list test-not start count)
@@ -5183,13 +5111,7 @@
 		       reversed-prefix temp))
 	  else
 	    do (progn (pop reversed-prefix) (decf count)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test-not=other end=nil count=other key=other|
     (item list test-not start count key)
@@ -5213,13 +5135,7 @@
 		       reversed-prefix temp))
 	  else
 	    do (progn (pop reversed-prefix) (decf count)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test-not=other end=other count=other key=identity|
     (item list test-not start end count)
@@ -5243,13 +5159,7 @@
 		       reversed-prefix temp))
 	  else
 	    do (progn (pop reversed-prefix) (decf count)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 (defun |remove seq-type=list from-end=t test-not=other end=other count=other key=other|
     (item list test-not start end count key)
@@ -5273,13 +5183,7 @@
 		       reversed-prefix temp))
 	  else
 	    do (progn (pop reversed-prefix) (decf count)))
-    ;; Finally put back the unprocessed remaining prefix
-    (loop repeat start
-	  do (let ((temp (cdr reversed-prefix)))
-	       (setf (cdr reversed-prefix) result
-		     result reversed-prefix
-		     reversed-prefix temp)))
-    result))
+    (nreconc reversed-prefix result)))
 
 ;;; Implement remove for vectors
 
