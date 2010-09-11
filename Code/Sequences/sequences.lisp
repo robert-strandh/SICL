@@ -4321,159 +4321,1283 @@
 ;;; because that only implies a single test at the beginning of the 
 ;;; function, but it is worth specializing for an end value of nil.
 
-(defun |remove seq-type=list from-end=nil test=eql start=any end=nil count=nil key=identity|
+(defun |remove seq-type=list test=eql end=nil count=nil key=identity|
     (item list start)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop for element in list
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  for element = (pop result)
 	  unless (eql item element)
-	    do (push element result))
-    (nreverse result)))
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=eq start=any end=nil count=nil key=identity|
+(defun |remove seq-type=list test=eq end=nil count=nil key=identity|
     (item list start)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop for element in list
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  for element = (pop result)
 	  unless (eq item element)
-	    do (push element result))
-    (nreverse result)))
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=eql start=any end=nil count=nil key=other|
+(defun |remove seq-type=list test=eql end=nil count=nil key=other|
     (item list start key)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop for element in list
-	  unless (eql item (funcall key element))
-	    do (push element result))
-    (nreverse result)))
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  for element = (pop result)
+	  unless (eql (funcall key item) element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=eq start=any end=nil count=nil key=other|
+(defun |remove seq-type=list test=eq end=nil count=nil key=other|
     (item list start key)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop for element in list
-	  unless (eq item (funcall key element))
-	    do (push element result))
-    (nreverse result)))
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  for element = (pop result)
+	  unless (eq (funcall key item) element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=eql start=any end=other count=nil key=identity|
+(defun |remove seq-type=list test=eql end=other count=nil key=identity|
     (item list start end)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop until (null list)
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
 	  repeat (- end start)
-	  for element = (car list)
+	  for element = (pop result)
 	  unless (eql item element)
-	    do (push element result))
-    (loop until (null list)
-	  do (push (pop list) result))
-    (nreverse result)))
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=eq start=any end=other count=nil key=identity|
+(defun |remove seq-type=list test=eq end=other count=nil key=identity|
     (item list start end)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop until (null list)
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
 	  repeat (- end start)
-	  for element = (car list)
+	  for element = (pop result)
 	  unless (eq item element)
-	    do (push element result))
-    (loop until (null list)
-	  do (push (pop list) result))
-    (nreverse result)))
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=eql start=any end=other count=nil key=other|
+(defun |remove seq-type=list test=eql end=other count=nil key=other|
     (item list start end key)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop until (null list)
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
 	  repeat (- end start)
-	  for element = (car list)
-	  unless (eql item (funcall key element))
-	    do (push element result))
-    (loop until (null list)
-	  do (push (pop list) result))
-    (nreverse result)))
+	  for element = (pop result)
+	  unless (eql (funcall key item) element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=eq start=any end=other count=nil key=other|
+(defun |remove seq-type=list test=eq end=other count=nil key=other|
     (item list start end key)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop until (null list)
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
 	  repeat (- end start)
-	  for element = (car list)
-	  unless (eq item (funcall key element))
-	    do (push element result))
-    (loop until (null list)
-	  do (push (pop list) result))
-    (nreverse result)))
+	  for element = (pop result)
+	  unless (eq (funcall key item) element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=other start=any end=nil count=nil key=identity|
+(defun |remove seq-type=list test=other end=nil count=nil key=identity|
     (item list test start)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop for element in list
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  for element = (pop result)
 	  unless (funcall test item element)
-	    do (push element result))
-    (nreverse result)))
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=other start=any end=nil count=nil key=other|
+(defun |remove seq-type=list test=other end=nil count=nil key=other|
     (item list test start key)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop for element in list
-	  unless (funcall test item (funcall key element))
-	    do (push element result))
-    (nreverse result)))
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  for element = (pop result)
+	  unless (funcall test (funcall key item) element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=other start=any end=other count=nil key=identity|
+(defun |remove seq-type=list test=other end=other count=nil key=identity|
     (item list test start end)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop until (null list)
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
 	  repeat (- end start)
-	  for element = (car list)
+	  for element = (pop result)
 	  unless (funcall test item element)
-	    do (push element result))
-    (loop until (null list)
-	  do (push (pop list) result))
-    (nreverse result)))
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
 
-(defun |remove seq-type=list from-end=nil test=other start=any end=other count=nil key=other|
+(defun |remove seq-type=list test=other end=other count=nil key=other|
     (item list test start end key)
-  (let ((result '()))
+  (let ((result list)
+	(reversed-prefix '()))
     (loop repeat start
-	  until (null list)
-	  do (push (pop list) result))
-    (loop until (null list)
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
 	  repeat (- end start)
-	  for element = (car list)
-	  unless (funcall test item (funcall key element))
-	    do (push element result))
-    (loop until (null list)
-	  do (push (pop list) result))
-    (nreverse result)))
+	  for element = (pop result)
+	  unless (funcall test (funcall key item) element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list test-not=other end=nil count=nil key=identity|
+    (item list test-not start)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  for element = (pop result)
+	  when (funcall test-not item element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list test-not=other end=nil count=nil key=other|
+    (item list test-not start key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  for element = (pop result)
+	  when (funcall test-not (funcall key item) element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list test-not=other end=other count=nil key=identity|
+    (item list test-not start end)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  for element = (pop result)
+	  when (funcall test-not item element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list test-not=other end=other count=nil key=other|
+    (item list test-not start end key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  for element = (pop result)
+	  when (funcall test-not (funcall key item) element)
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=eql end=nil count=other key=identity|
+    (item list start count)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (eql item element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=eq end=nil count=other key=identity|
+    (item list start count)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (eq item element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=eql end=nil count=other key=other|
+    (item list start count key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (eql (funcall key item) element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=eq end=nil count=other key=other|
+    (item list start count key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (eq (funcall key item) element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=eql end=other count=other key=identity|
+    (item list start end count)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (eql item element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=eq end=other count=other key=identity|
+    (item list start end count)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (eq item element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=eql end=other count=other key=other|
+    (item list start end count key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (eql (funcall key item) element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=eq end=other count=other key=other|
+    (item list start end count key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (eq (funcall key item) element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=other end=nil count=other key=identity|
+    (item list test start count)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (funcall test item element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=other end=nil count=other key=other|
+    (item list test start count key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (funcall test (funcall key item) element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=other end=other count=other key=identity|
+    (item list test start count end)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  repeat (- end start)
+	  for element = (pop result)
+	  if (funcall test item element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test=other end=other count=other key=other|
+    (item list test start end count key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (funcall test (funcall key item) element)
+	    do (decf count)
+	  else
+	    do (push element reversed-prefix))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test-not=other end=nil count=other key=identity|
+    (item list test-not start count)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (funcall test-not item element)
+	    do (push element reversed-prefix)
+	  else
+	    do (decf count))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test-not=other end=nil count=other key=other|
+    (item list test-not start count key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (funcall test-not (funcall key item) element)
+	    do (push element reversed-prefix)
+	  else
+	    do (decf count))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test-not=other end=other count=other key=identity|
+    (item list test-not start end count)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (funcall test-not item element)
+	    do (push element reversed-prefix)
+	  else
+	    do (decf count))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=nil test-not=other end=other count=other key=other|
+    (item list test-not start end count key)
+  (let ((result list)
+	(reversed-prefix '()))
+    (loop repeat start
+	  until (null result)
+	  do (push (pop result) reversed-prefix))
+    (loop until (null result)
+	  repeat (- end start)
+	  until (zerop count)
+	  for element = (pop result)
+	  if (funcall test-not (funcall key item) element)
+	    do (push element reversed-prefix)
+	  else
+	    do (decf count))
+    (nreconc reversed-prefix result)))
+
+(defun |remove seq-type=list from-end=t test=eql end=nil count=other key=identity|
+    (item list start count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (eql (car reversed-prefix) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=eq end=nil count=other key=identity|
+    (item list start count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (eq (car reversed-prefix) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=eql end=nil count=other key=other|
+    (item list start count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (eql (funcall key (car reversed-prefix)) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=eq end=nil count=other key=other|
+    (item list start count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (eq (funcall key (car reversed-prefix)) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=eql end=other count=other key=identity|
+    (item list start end count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (eql (car reversed-prefix) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=eq end=other count=other key=identity|
+    (item list start end count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (eq (car reversed-prefix) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=eql end=other count=other key=other|
+    (item list start end count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (eql (funcall key (car reversed-prefix)) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=eq end=other count=other key=other|
+    (item list start end count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (eq (funcall key (car reversed-prefix)) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=other end=nil count=other key=identity|
+    (item list test start count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test (car reversed-prefix) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=other end=nil count=other key=other|
+    (item list test start count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test (funcall key (car reversed-prefix)) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=other end=other count=other key=identity|
+    (item list test start end count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test (car reversed-prefix) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test=other end=other count=other key=other|
+    (item list test start end count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test (funcall key (car reversed-prefix)) item)
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test-not=other end=nil count=other key=identity|
+    (item list test-not start count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test-not (car reversed-prefix) item)
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp))
+	  else
+	    do (progn (pop reversed-prefix) (decf count)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test-not=other end=nil count=other key=other|
+    (item list test-not start count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test-not (funcall key (car reversed-prefix)) item)
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp))
+	  else
+	    do (progn (pop reversed-prefix) (decf count)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test-not=other end=other count=other key=identity|
+    (item list test-not start end count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test-not (car reversed-prefix) item)
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp))
+	  else
+	    do (progn (pop reversed-prefix) (decf count)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+(defun |remove seq-type=list from-end=t test-not=other end=other count=other key=other|
+    (item list test-not start end count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test-not (funcall key (car reversed-prefix)) item)
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp))
+	  else
+	    do (progn (pop reversed-prefix) (decf count)))
+    ;; Finally put back the unprocessed remaining prefix
+    (loop repeat start
+	  do (let ((temp (cdr reversed-prefix)))
+	       (setf (cdr reversed-prefix) result
+		     result reversed-prefix
+		     reversed-prefix temp)))
+    result))
+
+;;; Implement remove for vectors
+
+(defun remove (item sequence &key from-end test test-not (start 0) end count key)
+  (assert (or (null test) (null test-not)))
+  (if (consp sequence)
+      ;; seq-type=list
+      (if from-end
+	  ;; seq-type=list from-end=t
+	  (if test
+	      ;; seq-type=list from-end=t test=?
+	      (if (or (eq test 'eq) (eq test #'eq))
+		  ;; seq-type=list from-end=t test=eq
+		  (if end
+		      ;; seq-type=list from-end=t test=eq end=other
+		      (if count
+			  ;; seq-type=list from-end=t test=eq end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test=eq end=other count=other key=other
+			      (|remove seq-type=list from-end=t test=eq end=other count=other key=other|
+			       item sequence start end count key)
+			      ;;       seq-type=list from-end=t test=eq end=other count=other key=identity
+			      (|remove seq-type=list from-end=t test=eq end=other count=other key=identity|
+			       item sequence start end count))
+			  ;; seq-type=list from-end=t test=eq end=other count=nil
+			  (if key
+			      ;;       seq-type=list test=eq end=other count=nil key=other
+			      (|remove seq-type=list test=eq end=other count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=list test=eq end=other count=nil key=identity
+			      (|remove seq-type=list test=eq end=other count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=list from-end=t test=eq end=nil
+		      (if count
+			  ;; seq-type=list from-end=t test=eq end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test=eq end=nil count=other key=other
+			      (|remove seq-type=list from-end=t test=eq end=nil count=other key=other|
+			       item sequence start count key)
+			      ;;       seq-type=list from-end=t test=eq end=nil count=other key=identity
+			      (|remove seq-type=list from-end=t test=eq end=nil count=other key=identity|
+			       item sequence start count))
+			  ;; seq-type=list from-end=t test=eq end=nil count=nil
+			  (if key
+			      ;;       seq-type=list test=eq end=nil count=nil key=other
+			      (|remove seq-type=list test=eq end=nil count=nil key=other|
+			       item sequence start key)
+			      ;;       seq-type=list test=eq end=nil count=nil key=identity
+			      (|remove seq-type=list test=eq end=nil count=nil key=identity|
+			       item sequence start))))
+		  (if (or (eq test 'eql) (or (eq test #'eql)))
+		      ;; seq-type=list from-end=t test=eql
+		      (if end
+			  ;; seq-type=list from-end=t test=eql end=other
+			  (if count
+			      ;; seq-type=list from-end=t test=eql end=other count=other
+			      (if key
+				  ;;       seq-type=list from-end=t test=eql end=other count=other key=other
+				  (|remove seq-type=list from-end=t test=eql end=other count=other key=other|
+				   item sequence start end count key)
+				  ;;       seq-type=list from-end=t test=eql end=other count=other key=identity
+				  (|remove seq-type=list from-end=t test=eql end=other count=other key=identity|
+				   item sequence start end count))
+			      ;; seq-type=list from-end=t test=eql end=other count=nil
+			      (if key
+				  ;;       seq-type=list test=eql end=other count=nil key=other
+				  (|remove seq-type=list test=eql end=other count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=list test=eql end=other count=nil key=identity
+				  (|remove seq-type=list test=eql end=other count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=list from-end=t test=eql end=nil
+			  (if count
+			      ;; seq-type=list from-end=t test=eql end=nil count=other
+			      (if key
+				  ;;       seq-type=list from-end=t test=eql end=nil count=other key=other
+				  (|remove seq-type=list from-end=t test=eql end=nil count=other key=other|
+				   item sequence start count key)
+				  ;;       seq-type=list from-end=t test=eql end=nil count=other key=identity
+				  (|remove seq-type=list from-end=t test=eql end=nil count=other key=identity|
+				   item sequence start count))
+			      ;; seq-type=list from-end=t test=eql end=nil count=nil
+			      (if key
+				  ;;       seq-type=list test=eql end=nil count=nil key=other
+				  (|remove seq-type=list test=eql end=nil count=nil key=other|
+				   item sequence start key)
+				  ;;       seq-type=list test=eql end=nil count=nil key=identity
+				  (|remove seq-type=list test=eql end=nil count=nil key=identity|
+				   item sequence start))))
+		      (if test-not
+			  ;; seq-type=list from-end=t test-not=other
+			  (if end
+			      ;; seq-type=list from-end=t test-not=other end=other
+			      (if count
+				  ;; seq-type=list from-end=t test-not=other end=other count=other
+				  (if key
+				      ;;       seq-type=list from-end=t test-not=other end=other count=other key=other
+				      (|remove seq-type=list from-end=t test-not=other end=other count=other key=other|
+				       item sequence test-not start end count key)
+				      ;;       seq-type=list from-end=t test-not=other end=other count=other key=identity
+				      (|remove seq-type=list from-end=t test-not=other end=other count=other key=identity|
+				       item sequence test-not start end count))
+				  ;; seq-type=list from-end=t test-not=other end=other count=nil
+				  (if key
+				      ;;       seq-type=list test-not=other end=other count=nil key=other
+				      (|remove seq-type=list test-not=other end=other count=nil key=other|
+				       item sequence test-not start end key)
+				      ;;       seq-type=list test-not=other end=other count=nil key=identity
+				      (|remove seq-type=list test-not=other end=other count=nil key=identity|
+				       item sequence test-not start end)))
+			      ;; seq-type=list from-end=t test-not=other end=nil
+			      (if count
+				  ;; seq-type=list from-end=t test-not=other end=nil count=other
+				  (if key
+				      ;;       seq-type=list from-end=t test-not=other end=nil count=other key=other
+				      (|remove seq-type=list from-end=t test-not=other end=nil count=other key=other|
+				       item sequence test-not start count key)
+				      ;;       seq-type=list from-end=t test-not=other end=nil count=other key=identity
+				      (|remove seq-type=list from-end=t test-not=other end=nil count=other key=identity|
+				       item sequence test-not start count))
+				  (if key
+				      (|remove seq-type=list test-not=other end=other count=nil key=other|
+				       item sequence test-not start end key)
+				      (|remove seq-type=list test-not=other end=other count=nil key=identity|
+				       item sequence test-not start end))))
+			  ;; seq-type=list from-end=t test=eql
+			  (if end
+			      ;; seq-type=list from-end=t test=eql end=other
+			      (if count
+				  ;; seq-type=list from-end=t test=eql end=other count=other
+				  (if key
+				      ;;       seq-type=list from-end=t test=eql end=other count=other key=other
+				      (|remove seq-type=list from-end=t test=eql end=other count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=list from-end=t test=eql end=other count=other key=identity
+				      (|remove seq-type=list from-end=t test=eql end=other count=other key=identity|
+				       item sequence start end count))
+				  ;; seq-type=list from-end=t test=eql end=other count=nil
+				  (if key
+				      ;;       seq-type=list test=eql end=other count=nil key=other
+				      (|remove seq-type=list test=eql end=other count=nil key=other|
+				       item sequence start end key)
+				      ;;       seq-type=list test=eql end=other count=nil key=identity
+				      (|remove seq-type=list test=eql end=other count=nil key=identity|
+				       item sequence start end)))
+			      ;; seq-type=list from-end=t test=eql end=nil
+			      (if count
+				  ;; seq-type=list from-end=t test=eql end=nil count=other
+				  (if key
+				      ;;       seq-type=list from-end=t test=eql end=nil count=other key=other
+				      (|remove seq-type=list from-end=t test=eql end=nil count=other key=other|
+				       item sequence start count key)
+				      ;;       seq-type=list from-end=t test=eql end=nil count=other key=identity
+				      (|remove seq-type=list from-end=t test=eql end=nil count=other key=identity|
+				       item sequence start count))
+				  ;; seq-type=list from-end=t test=eql end=nil count=nil
+				  (if key
+				      ;;       seq-type=list test=eql end=nil count=nil key=other
+				      (|remove seq-type=list test=eql end=nil count=nil key=other|
+				       item sequence start key)
+				      ;;       seq-type=list test=eql end=nil count=nil key=identity
+				      (|remove seq-type=list test=eql end=nil count=nil key=identity|
+				       item sequence start))))))))
+	  ;; seq-type=list from-end=nil
+	  (if test
+	      ;; seq-type=list from-end=nil test=?
+	      (if (or (eq test 'eq) (eq test #'eq))
+		  ;; seq-type=list from-end=nil test=eq
+		  (if end
+		      ;; seq-type=list from-end=nil test=eq end=other
+		      (if count
+			  ;; seq-type=list from-end=nil test=eq end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test=eq end=other count=other key=other
+			      (|remove seq-type=list from-end=nil test=eq end=other count=other key=other|
+			       item sequence start end count key)
+			      ;;       seq-type=list from-end=nil test=eq end=other count=other key=identity
+			      (|remove seq-type=list from-end=nil test=eq end=other count=other key=identity|
+			       item sequence start end count))
+			  ;; seq-type=list from-end=nil test=eq end=other count=nil
+			  (if key
+			      ;;       seq-type=list test=eq end=other count=nil key=other
+			      (|remove seq-type=list test=eq end=other count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=list test=eq end=other count=nil key=identity
+			      (|remove seq-type=list test=eq end=other count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=list from-end=nil test=eq end=nil
+		      (if count
+			  ;; seq-type=list from-end=nil test=eq end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test=eq end=nil count=other key=other
+			      (|remove seq-type=list from-end=nil test=eq end=nil count=other key=other|
+			       item sequence start count key)
+			      ;;       seq-type=list from-end=nil test=eq end=nil count=other key=identity
+			      (|remove seq-type=list from-end=nil test=eq end=nil count=other key=identity|
+			       item sequence start count))
+			  ;; seq-type=list from-end=nil test=eq end=nil count=nil
+			  (if key
+			      ;;       seq-type=list test=eq end=nil count=nil key=other
+			      (|remove seq-type=list test=eq end=nil count=nil key=other|
+			       item sequence start key)
+			      ;;       seq-type=list test=eq end=nil count=nil key=identity
+			      (|remove seq-type=list test=eq end=nil count=nil key=identity|
+			       item sequence start))))
+		  (if (or (eq test 'eql) (or (eq test #'eql)))
+		      ;; seq-type=list from-end=nil test=eql
+		      (if end
+			  ;; seq-type=list from-end=nil test=eql end=other
+			  (if count
+			      ;; seq-type=list from-end=nil test=eql end=other count=other
+			      (if key
+				  ;;       seq-type=list from-end=nil test=eql end=other count=other key=other
+				  (|remove seq-type=list from-end=nil test=eql end=other count=other key=other|
+				   item sequence start end count key)
+				  ;;       seq-type=list from-end=nil test=eql end=other count=other key=identity
+				  (|remove seq-type=list from-end=nil test=eql end=other count=other key=identity|
+				   item sequence start end count))
+			      ;; seq-type=list from-end=nil test=eql end=other count=nil
+			      (if key
+				  ;;       seq-type=list test=eql end=other count=nil key=other
+				  (|remove seq-type=list test=eql end=other count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=list test=eql end=other count=nil key=identity
+				  (|remove seq-type=list test=eql end=other count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=list from-end=nil test=eql end=nil
+			  (if count
+			      ;; seq-type=list from-end=nil test=eql end=nil count=other
+			      (if key
+				  ;;       seq-type=list from-end=nil test=eql end=nil count=other key=other
+				  (|remove seq-type=list from-end=nil test=eql end=nil count=other key=other|
+				   item sequence start count key)
+				  ;;       seq-type=list from-end=nil test=eql end=nil count=other key=identity
+				  (|remove seq-type=list from-end=nil test=eql end=nil count=other key=identity|
+				   item sequence start count))
+			      ;; seq-type=list from-end=nil test=eql end=nil count=nil
+			      (if key
+				  ;;       seq-type=list test=eql end=nil count=nil key=other
+				  (|remove seq-type=list test=eql end=nil count=nil key=other|
+				   item sequence start key)
+				  (|remove seq-type=list test=eql end=nil count=nil key=identity|
+				   item sequence start))))
+		      (if test-not
+			  ;; seq-type=list from-end=nil test-not=other
+			  (if end
+			      ;; seq-type=list from-end=nil test-not=other end=other
+			      (if count
+				  ;; seq-type=list from-end=nil test-not=other end=other count=other
+				  (if key
+				      ;;       seq-type=list from-end=nil test-not=other end=other count=other key=other
+				      (|remove seq-type=list from-end=nil test-not=other end=other count=other key=other|
+				       item sequence test-not start end count key)
+				      ;;       seq-type=list from-end=nil test-not=other end=other count=other key=identity
+				      (|remove seq-type=list from-end=nil test-not=other end=other count=other key=identity|
+				       item sequence test-not start end count))
+				  ;; seq-type=list from-end=nil test-not=other end=other count=nil
+				  (if key
+				      ;;       seq-type=list test-not=other end=other count=nil key=other
+				      (|remove seq-type=list test-not=other end=other count=nil key=other|
+				       item sequence test-not start end key)
+				      ;;       seq-type=list test-not=other end=other count=nil key=identity
+				      (|remove seq-type=list test-not=other end=other count=nil key=identity|
+				       item sequence test-not start end)))
+			      ;; seq-type=list from-end=nil test-not=other end=nil
+			      (if count
+				  ;; seq-type=list from-end=nil test-not=other end=nil count=other
+				  (if key
+				      ;;       seq-type=list test-not=other end=nil count=other key=other
+				      (|remove seq-type=list test-not=other end=nil count=other key=other|
+				       item sequence test-not start count key)
+				      ;;       seq-type=list test-not=other end=nil count=other key=identity
+				      (|remove seq-type=list test-not=other end=nil count=other key=identity|
+				       item sequence test-not start count))
+				  (if key
+				      (|remove seq-type=list test-not=other end=other count=nil key=other|
+				       item sequence test-not start end key)
+				      (|remove seq-type=list test-not=other end=other count=nil key=identity|
+				       item sequence test-not start end))))
+			  ;; seq-type=list from-end=nil test=eql
+			  (if end
+			      ;; seq-type=list from-end=nil test=eql end=other
+			      (if count
+				  ;; seq-type=list from-end=nil test=eql end=other count=other
+				  (if key
+				      ;;       seq-type=list from-end=nil test=eql end=other count=other key=other
+				      (|remove seq-type=list from-end=nil test=eql end=other count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=list from-end=nil test=eql end=other count=other key=identity
+				      (|remove seq-type=list from-end=nil test=eql end=other count=other key=identity|
+				       item sequence start end count))
+				  ;; seq-type=list from-end=nil test=eql end=other count=nil
+				  (if key
+				      ;;       seq-type=list test=eql end=other count=nil key=other
+				      (|remove seq-type=list test=eql end=other count=nil key=other|
+				       item sequence start end key)
+				      ;;       seq-type=list test=eql end=other count=nil key=identity
+				      (|remove seq-type=list test=eql end=other count=nil key=identity|
+				       item sequence start end)))
+			      ;; seq-type=list from-end=nil test=eql end=nil
+			      (if count
+				  ;; seq-type=list from-end=nil test=eql end=nil count=other
+				  (if key
+				      ;;       seq-type=list from-end=nil test=eql end=nil count=other key=other
+				      (|remove seq-type=list from-end=nil test=eql end=nil count=other key=other|
+				       item sequence start count key)
+				      ;;       seq-type=list from-end=nil test=eql end=nil count=other key=identity
+				      (|remove seq-type=list from-end=nil test=eql end=nil count=other key=identity|
+				       item sequence start count))
+				  ;; seq-type=list from-end=nil test=eql end=nil count=nil
+				  (if key
+				      ;;       seq-type=list test=eql end=nil count=nil key=other
+				      (|remove seq-type=list test=eql end=nil count=nil key=other|
+				       item sequence start key)
+				      ;;       seq-type=list test=eql end=nil count=nil key=identity
+				      (|remove seq-type=list test=eql end=nil count=nil key=identity|
+				       item sequence start)))))))))
+      ;; seq-type=list
+      (assert nil)))
+
 
