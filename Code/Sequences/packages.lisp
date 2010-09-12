@@ -11,7 +11,8 @@
                  #:position #:position-if #:position-if-not
                  #:length
                  #:reduce
-                 #:fill))
+                 #:fill
+		 #:remove #:remove-if #:remove-if-not))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the
