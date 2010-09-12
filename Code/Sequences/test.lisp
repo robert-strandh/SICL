@@ -1534,7 +1534,7 @@
 (define-test test.remove.list.10
   (assert-equal
    '()
-   (remove '((a)) '(((a))) :test #'equal :key #'car)))
+   (remove '(a) '(((a))) :test #'equal :key #'car)))
 
 (define-test test.remove.list.11
   (assert-equal
