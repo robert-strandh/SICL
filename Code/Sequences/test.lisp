@@ -1482,3 +1482,62 @@
          unless (eql len 5)
            collect (list etype vec len))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test remove
+
+(define-test test.remove.list.1
+  (assert-equal
+   '()
+   (remove 0 '())))
+
+(define-test test.remove.list.2
+  (assert-equal
+   '()
+   (remove 0 '(0))))
+
+(define-test test.remove.list.3
+  (assert-equal
+   '()
+   (remove 0 '(0 0))))
+
+(define-test test.remove.list.4
+  (assert-equal
+   '(1)
+   (remove 0 '(1))))
+
+(define-test test.remove.list.5
+  (assert-equal
+   '(1)
+   (remove 0 '(0 1 0))))
+
+(define-test test.remove.list.6
+  (assert-equal
+   '()
+   (remove '(a) '() :test #'equal)))
+
+(define-test test.remove.list.7
+  (assert-equal
+   '()
+   (remove '(a) '((a)) :test #'equal)))
+
+(define-test test.remove.list.8
+  (assert-equal
+   '((b) (b))
+   (remove '(a) '((b) (a) (b)) :test #'equal)))
+
+(define-test test.remove.list.9
+  (assert-equal
+   '()
+   (remove '(a) '() :test #'equal :key #'car)))
+
+(define-test test.remove.list.10
+  (assert-equal
+   '()
+   (remove '((a)) '(((a))) :test #'equal :key #'car)))
+
+(define-test test.remove.list.11
+  (assert-equal
+   '(((b)) ((b)))
+   (remove '(a) '(((b)) ((a)) ((b))) :test #'equal :key #'car)))
+
