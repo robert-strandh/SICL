@@ -4793,7 +4793,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=eql end=nil count=other key=identity|
+(defun |remove seq-type=list from-end=nil test=eql end=nil count=other key=identity|
     (item list start count)
   (let* ((result (list nil))
 	 (last result)
@@ -4821,7 +4821,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=eq end=nil count=other key=identity|
+(defun |remove seq-type=list from-end=nil test=eq end=nil count=other key=identity|
     (item list start count)
   (let* ((result (list nil))
 	 (last result)
@@ -4849,7 +4849,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=eql end=nil count=other key=other|
+(defun |remove seq-type=list from-end=nil test=eql end=nil count=other key=other|
     (item list start count key)
   (let* ((result (list nil))
 	 (last result)
@@ -4877,7 +4877,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=eq end=nil count=other key=other|
+(defun |remove seq-type=list from-end=nil test=eq end=nil count=other key=other|
     (item list start count key)
   (let* ((result (list nil))
 	 (last result)
@@ -4905,7 +4905,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=eql end=other count=other key=identity|
+(defun |remove seq-type=list from-end=nil test=eql end=other count=other key=identity|
     (item list start end count)
   (let* ((result (list nil))
 	 (last result)
@@ -4940,7 +4940,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=eq end=other count=other key=identity|
+(defun |remove seq-type=list from-end=nil test=eq end=other count=other key=identity|
     (item list start end count)
   (let* ((result (list nil))
 	 (last result)
@@ -4975,7 +4975,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=eql end=other count=other key=other|
+(defun |remove seq-type=list from-end=nil test=eql end=other count=other key=other|
     (item list start end count key)
   (let* ((result (list nil))
 	 (last result)
@@ -5010,7 +5010,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=eq end=other count=other key=other|
+(defun |remove seq-type=list from-end=nil test=eq end=other count=other key=other|
     (item list start end count key)
   (let* ((result (list nil))
 	 (last result)
@@ -5045,7 +5045,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=other end=nil count=other key=identity|
+(defun |remove seq-type=list from-end=nil test=other end=nil count=other key=identity|
     (item list test count start)
   (let* ((result (list nil))
 	 (last result)
@@ -5073,7 +5073,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=other end=nil count=other key=other|
+(defun |remove seq-type=list from-end=nil test=other end=nil count=other key=other|
     (item list test start count key)
   (let* ((result (list nil))
 	 (last result)
@@ -5101,7 +5101,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=other end=other count=other key=identity|
+(defun |remove seq-type=list from-end=nil test=other end=other count=other key=identity|
     (item list test start end count)
   (let* ((result (list nil))
 	 (last result)
@@ -5136,7 +5136,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test=other end=other count=other key=other|
+(defun |remove seq-type=list from-end=nil test=other end=other count=other key=other|
     (item list test start end count key)
   (let* ((result (list nil))
 	 (last result)
@@ -5171,7 +5171,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test-not=other end=nil count=other key=identity|
+(defun |remove seq-type=list from-end=nil test-not=other end=nil count=other key=identity|
     (item list test-not start count)
   (let* ((result (list nil))
 	 (last result)
@@ -5199,7 +5199,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test-not=other end=nil count=other key=other|
+(defun |remove seq-type=list from-end=nil test-not=other end=nil count=other key=other|
     (item list test-not start count key)
   (let* ((result (list nil))
 	 (last result)
@@ -5227,7 +5227,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test-not=other end=other count=other key=identity|
+(defun |remove seq-type=list from-end=nil test-not=other end=other count=other key=identity|
     (item list test-not start end count)
   (let* ((result (list nil))
 	 (last result)
@@ -5262,7 +5262,7 @@
     (setf (cdr last) list)
     (cdr result)))
 
-(defun |remove seq-type=list test-not=other end=other count=other key=other|
+(defun |remove seq-type=list from-end=nil test-not=other end=other count=other key=other|
     (item list test-not start end count key)
   (let* ((result (list nil))
 	 (last result)
@@ -5717,7 +5717,7 @@
 	  unless (eql item (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector test=eq count=nil key=identity|
     (item vector start end)
@@ -5728,7 +5728,7 @@
 	  unless (eq item (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector test=eql count=nil key=other|
     (item vector start end key)
@@ -5739,7 +5739,7 @@
 	  unless (eql item (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector test=eq count=nil key=other|
     (item vector start end key)
@@ -5750,7 +5750,7 @@
 	  unless (eq item (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector test=other count=nil key=identity|
     (item vector test start end)
@@ -5761,7 +5761,7 @@
 	  unless (funcall test item (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector test=other count=nil key=other|
     (item vector test start end key)
@@ -5772,7 +5772,7 @@
 	  unless (funcall test item (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector test-not=other count=nil key=identity|
     (item vector test-not start end)
@@ -5783,7 +5783,7 @@
 	  when (funcall test-not item (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector test-not=other count=nil key=other|
     (item vector test-not start end key)
@@ -5794,7 +5794,7 @@
 	  when (funcall test-not item (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=nil test=eql count=other key=identity|
     (item vector start end count)
@@ -5808,7 +5808,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=nil test=eq count=other key=identity|
     (item vector start end count)
@@ -5822,7 +5822,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=nil test=eql count=other key=other|
     (item vector start end count key)
@@ -5836,7 +5836,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=nil test=eq count=other key=other|
     (item vector start end count key)
@@ -5850,7 +5850,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=nil test=other count=other key=identity|
     (item vector test start end count)
@@ -5864,7 +5864,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=nil test=other count=other key=other|
     (item vector test start end count key)
@@ -5878,7 +5878,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=nil test-not=other count=other key=identity|
     (item vector test-not start end count)
@@ -5892,7 +5892,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=nil test-not=other count=other key=other|
     (item vector test-not start end count key)
@@ -5906,7 +5906,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=t test=eql count=other key=identity|
     (item vector start end count)
@@ -5920,7 +5920,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=t test=eq count=other key=identity|
     (item vector start end count)
@@ -5934,7 +5934,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=t test=eql count=other key=other|
     (item vector start end count key)
@@ -5948,7 +5948,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=t test=eq count=other key=other|
     (item vector start end count key)
@@ -5962,7 +5962,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=t test=other count=other key=identity|
     (item vector test start end count)
@@ -5976,7 +5976,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=t test=other count=other key=other|
     (item vector test start end count key)
@@ -5990,7 +5990,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=t test-not=other count=other key=identity|
     (item vector test-not start end count)
@@ -6004,7 +6004,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=general-vector from-end=t test-not=other count=other key=other|
     (item vector test-not start end count key)
@@ -6018,7 +6018,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 ;;; For vectors, the technique used is to allocate a bitvector that
 ;;; has the length of the interval in which elements should be
@@ -6082,7 +6082,7 @@
 	  unless (eql item (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector test=eq count=nil key=identity|
     (item vector start end)
@@ -6095,7 +6095,7 @@
 	  unless (eq item (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector test=eql count=nil key=other|
     (item vector start end key)
@@ -6108,7 +6108,7 @@
 	  unless (eql item (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector test=eq count=nil key=other|
     (item vector start end key)
@@ -6121,7 +6121,7 @@
 	  unless (eq item (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector test=other count=nil key=identity|
     (item vector test start end)
@@ -6134,7 +6134,7 @@
 	  unless (funcall test item (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector test=other count=nil key=other|
     (item vector test start end key)
@@ -6147,7 +6147,7 @@
 	  unless (funcall test item (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector test-not=other count=nil key=identity|
     (item vector test-not start end)
@@ -6160,7 +6160,7 @@
 	  when (funcall test-not item (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector test-not=other count=nil key=other|
     (item vector test-not start end key)
@@ -6173,7 +6173,7 @@
 	  when (funcall test-not item (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=nil test=eql count=other key=identity|
     (item vector start end count)
@@ -6189,7 +6189,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=nil test=eq count=other key=identity|
     (item vector start end count)
@@ -6205,7 +6205,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=nil test=eql count=other key=other|
     (item vector start end count key)
@@ -6221,7 +6221,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=nil test=eq count=other key=other|
     (item vector start end count key)
@@ -6237,7 +6237,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=nil test=other count=other key=identity|
     (item vector test start end count)
@@ -6253,7 +6253,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=nil test=other count=other key=other|
     (item vector test start end count key)
@@ -6269,7 +6269,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=nil test-not=other count=other key=identity|
     (item vector test-not start end count)
@@ -6285,7 +6285,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=nil test-not=other count=other key=other|
     (item vector test-not start end count key)
@@ -6301,7 +6301,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=t test=eql count=other key=identity|
     (item vector start end count)
@@ -6317,7 +6317,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=t test=eq count=other key=identity|
     (item vector start end count)
@@ -6333,7 +6333,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=t test=eql count=other key=other|
     (item vector start end count key)
@@ -6349,7 +6349,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=t test=eq count=other key=other|
     (item vector start end count key)
@@ -6365,7 +6365,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=t test=other count=other key=identity|
     (item vector test start end count)
@@ -6381,7 +6381,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=t test=other count=other key=other|
     (item vector test start end count key)
@@ -6397,7 +6397,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=t test-not=other count=other key=identity|
     (item vector test-not start end count)
@@ -6413,7 +6413,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-vector from-end=t test-not=other count=other key=other|
     (item vector test-not start end count key)
@@ -6429,7 +6429,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 ;;; Helper function. 
 ;;; FIXME: try to explain what it does!
@@ -6470,7 +6470,7 @@
 	  unless (eql item (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string test=eq count=nil key=identity|
     (item vector start end)
@@ -6483,7 +6483,7 @@
 	  unless (eq item (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string test=eql count=nil key=other|
     (item vector start end key)
@@ -6496,7 +6496,7 @@
 	  unless (eql item (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string test=eq count=nil key=other|
     (item vector start end key)
@@ -6509,7 +6509,7 @@
 	  unless (eq item (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string test=other count=nil key=identity|
     (item vector test start end)
@@ -6522,7 +6522,7 @@
 	  unless (funcall test item (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string test=other count=nil key=other|
     (item vector test start end key)
@@ -6535,7 +6535,7 @@
 	  unless (funcall test item (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string test-not=other count=nil key=identity|
     (item vector test-not start end)
@@ -6548,7 +6548,7 @@
 	  when (funcall test-not item (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string test-not=other count=nil key=other|
     (item vector test-not start end key)
@@ -6561,7 +6561,7 @@
 	  when (funcall test-not item (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=nil test=eql count=other key=identity|
     (item vector start end count)
@@ -6577,7 +6577,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=nil test=eq count=other key=identity|
     (item vector start end count)
@@ -6593,7 +6593,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=nil test=eql count=other key=other|
     (item vector start end count key)
@@ -6609,7 +6609,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=nil test=eq count=other key=other|
     (item vector start end count key)
@@ -6625,7 +6625,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=nil test=other count=other key=identity|
     (item vector test start end count)
@@ -6641,7 +6641,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=nil test=other count=other key=other|
     (item vector test start end count key)
@@ -6657,7 +6657,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=nil test-not=other count=other key=identity|
     (item vector test-not start end count)
@@ -6673,7 +6673,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=nil test-not=other count=other key=other|
     (item vector test-not start end count key)
@@ -6689,7 +6689,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=t test=eql count=other key=identity|
     (item vector start end count)
@@ -6705,7 +6705,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=t test=eq count=other key=identity|
     (item vector start end count)
@@ -6721,7 +6721,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=t test=eql count=other key=other|
     (item vector start end count key)
@@ -6737,7 +6737,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=t test=eq count=other key=other|
     (item vector start end count key)
@@ -6753,7 +6753,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=t test=other count=other key=identity|
     (item vector test start end count)
@@ -6769,7 +6769,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=t test=other count=other key=other|
     (item vector test start end count key)
@@ -6785,7 +6785,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=t test-not=other count=other key=identity|
     (item vector test-not start end count)
@@ -6801,7 +6801,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove seq-type=simple-string from-end=t test-not=other count=other key=other|
     (item vector test-not start end count key)
@@ -6817,7 +6817,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun remove (item sequence &key from-end test test-not (start 0) end count key)
   (assert (or (null test) (null test-not)))
@@ -8479,7 +8479,7 @@
 	  unless (funcall test (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=general-vector count=nil key=other|
     (test vector start end key)
@@ -8490,7 +8490,7 @@
 	  unless (funcall test (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=general-vector from-end=nil count=other key=identity|
     (test vector start end count)
@@ -8504,7 +8504,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=general-vector from-end=nil count=other key=other|
     (test vector start end count key)
@@ -8518,7 +8518,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=general-vector from-end=t count=other key=identity|
     (test vector start end count)
@@ -8532,7 +8532,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=general-vector from-end=t count=other key=other|
     (test vector start end count key)
@@ -8546,7 +8546,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 ;;; For vectors, the technique used is to allocate a bitvector that
 ;;; has the length of the interval in which elements should be
@@ -8582,7 +8582,7 @@
 	  unless (funcall test (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-vector count=nil key=other|
     (test vector start end key)
@@ -8595,7 +8595,7 @@
 	  unless (funcall test (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-vector from-end=nil count=other key=identity|
     (test vector start end count)
@@ -8611,7 +8611,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-vector from-end=nil count=other key=other|
     (test vector start end count key)
@@ -8627,7 +8627,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-vector from-end=t count=other key=identity|
     (test vector start end count)
@@ -8643,7 +8643,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-vector from-end=t count=other key=other|
     (test vector start end count key)
@@ -8659,7 +8659,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-string count=nil key=identity|
     (test vector start end)
@@ -8672,7 +8672,7 @@
 	  unless (funcall test (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-string count=nil key=other|
     (test vector start end key)
@@ -8685,7 +8685,7 @@
 	  unless (funcall test (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-string from-end=nil count=other key=identity|
     (test vector start end count)
@@ -8701,7 +8701,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-string from-end=nil count=other key=other|
     (test vector start end count key)
@@ -8717,7 +8717,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-string from-end=t count=other key=identity|
     (test vector start end count)
@@ -8733,7 +8733,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if seq-type=simple-string from-end=t count=other key=other|
     (test vector start end count key)
@@ -8749,7 +8749,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun remove-if (test sequence &key from-end (start 0) end count key)
   ;; FIXME test if it is a sequence at all.
@@ -9367,7 +9367,7 @@
 	  when (funcall test-not (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=general-vector count=nil key=other|
     (test-not vector start end key)
@@ -9378,7 +9378,7 @@
 	  when (funcall test-not (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=general-vector from-end=nil count=other key=identity|
     (test-not vector start end count)
@@ -9392,7 +9392,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=general-vector from-end=nil count=other key=other|
     (test-not vector start end count key)
@@ -9406,7 +9406,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=general-vector from-end=t count=other key=identity|
     (test-not vector start end count)
@@ -9420,7 +9420,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=general-vector from-end=t count=other key=other|
     (test-not vector start end count key)
@@ -9434,7 +9434,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector items-to-keep)))
 
 ;;; For vectors, the technique used is to allocate a bitvector that
 ;;; has the length of the interval in which elements should be
@@ -9470,7 +9470,7 @@
 	  when (funcall test-not (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-vector count=nil key=other|
     (test-not vector start end key)
@@ -9483,7 +9483,7 @@
 	  when (funcall test-not (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-vector from-end=nil count=other key=identity|
     (test-not vector start end count)
@@ -9499,7 +9499,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-vector from-end=nil count=other key=other|
     (test-not vector start end count key)
@@ -9515,7 +9515,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-vector from-end=t count=other key=identity|
     (test-not vector start end count)
@@ -9531,7 +9531,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-vector from-end=t count=other key=other|
     (test-not vector start end count key)
@@ -9547,7 +9547,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-string count=nil key=identity|
     (test-not vector start end)
@@ -9560,7 +9560,7 @@
 	  when (funcall test-not (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-string count=nil key=other|
     (test-not vector start end key)
@@ -9573,7 +9573,7 @@
 	  when (funcall test-not (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
 	       (incf items-to-keep))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-string from-end=nil count=other key=identity|
     (test-not vector start end count)
@@ -9589,7 +9589,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-string from-end=nil count=other key=other|
     (test-not vector start end count key)
@@ -9605,7 +9605,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-string from-end=t count=other key=identity|
     (test-not vector start end count)
@@ -9621,7 +9621,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun |remove-if-not seq-type=simple-string from-end=t count=other key=other|
     (test-not vector start end count key)
@@ -9637,7 +9637,7 @@
 	       (incf items-to-keep)
 	  else
 	    do (decf count))
-    (copy-result vector start end bit-vector items-to-keep)))
+    (copy-result-simple-string vector start end bit-vector items-to-keep)))
 
 (defun remove-if-not (test-not sequence &key from-end (start 0) end count key)
   ;; FIXME test if it is a sequence at all.
@@ -9902,3 +9902,5037 @@
 			  (|remove-if-not seq-type=general-vector count=nil key=identity|
 			   test-not sequence start (length sequence)))))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function delete
+
+(defun |delete seq-type=list test=eql end=nil count=nil key=identity|
+    (item list start)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  when (eql item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list test=eq end=nil count=nil key=identity|
+    (item list start)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  when (eq item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list test=eql end=nil count=nil key=other|
+    (item list start key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  when (eql item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list test=eq end=nil count=nil key=other|
+    (item list start key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  when (eq item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list test=eql end=other count=nil key=identity|
+    (item list start end)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  when (eql item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list test=eq end=other count=nil key=identity|
+    (item list start end)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  when (eq item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list test=eql end=other count=nil key=other|
+    (item list start end key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  when (eql item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list test=eq end=other count=nil key=other|
+    (item list start end key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  when (eq item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list test=other end=nil count=nil key=identity|
+    (item list test start)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  when (funcall test item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list test=other end=nil count=nil key=other|
+    (item list test start key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  when (funcall test item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list test=other end=other count=nil key=identity|
+    (item list test start end)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  when (funcall test item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list test=other end=other count=nil key=other|
+    (item list test start end key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  when (funcall test item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list test-not=other end=nil count=nil key=identity|
+    (item list test-not start)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  unless (funcall test-not item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list test-not=other end=nil count=nil key=other|
+    (item list test-not start key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  unless (funcall test-not item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list test-not=other end=other count=nil key=identity|
+    (item list test-not start end)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  unless (funcall test-not item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list test-not=other end=other count=nil key=other|
+    (item list test-not start end key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  unless (funcall test-not item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=eql end=nil count=other key=identity|
+    (item list start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  when (eql item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=eq end=nil count=other key=identity|
+    (item list start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  when (eq item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=eql end=nil count=other key=other|
+    (item list start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  when (eql item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=eq end=nil count=other key=other|
+    (item list start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  when (eq item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=eql end=other count=other key=identity|
+    (item list start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  when (eql item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=eq end=other count=other key=identity|
+    (item list start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  when (eq item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=eql end=other count=other key=other|
+    (item list start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  when (eql item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=eq end=other count=other key=other|
+    (item list start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  when (eq item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=other end=nil count=other key=identity|
+    (item list test count start)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  when (funcall test item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=other end=nil count=other key=other|
+    (item list test start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  when (funcall test item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=other end=other count=other key=identity|
+    (item list test start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  when (funcall test item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test=other end=other count=other key=other|
+    (item list test start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  when (funcall test item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test-not=other end=nil count=other key=identity|
+    (item list test-not start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  unless (funcall test-not item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test-not=other end=nil count=other key=other|
+    (item list test-not start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  unless (funcall test-not item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test-not=other end=other count=other key=identity|
+    (item list test-not start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  unless (funcall test-not item (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=nil test-not=other end=other count=other key=other|
+    (item list test-not start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  unless (funcall test-not item (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=eql end=nil count=other key=identity|
+    (item list start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (eql item (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=eq end=nil count=other key=identity|
+    (item list start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (eq item (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=eql end=nil count=other key=other|
+    (item list start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (eql item (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=eq end=nil count=other key=other|
+    (item list start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (eq item (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=eql end=other count=other key=identity|
+    (item list start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (eql item (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=eq end=other count=other key=identity|
+    (item list start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (eq item (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=eql end=other count=other key=other|
+    (item list start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (eql item (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=eq end=other count=other key=other|
+    (item list start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (eq item (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=other end=nil count=other key=identity|
+    (item list test start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (funcall test item (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=other end=nil count=other key=other|
+    (item list test start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (funcall test item (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=other end=other count=other key=identity|
+    (item list test start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (funcall test item (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test=other end=other count=other key=other|
+    (item list test start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (funcall test item (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test-not=other end=nil count=other key=identity|
+    (item list test-not start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  when (funcall test-not item (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test-not=other end=nil count=other key=other|
+    (item list test-not start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  when (funcall test-not item (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test-not=other end=other count=other key=identity|
+    (item list test-not start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  when (funcall test-not item (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete seq-type=list from-end=t test-not=other end=other count=other key=other|
+    (item list test-not start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  when (funcall test-not item (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+;;; For now, use the corresponding remove functions on sequences
+
+(defun delete (item sequence &key from-end test test-not (start 0) end count key)
+  (assert (or (null test) (null test-not)))
+  ;; FIXME test if it is a sequence at all.
+  (if (listp sequence)
+      ;; seq-type=list
+      (if from-end
+	  ;; seq-type=list from-end=t
+	  (if test
+	      ;; seq-type=list from-end=t test=?
+	      (if (or (eq test 'eq) (eq test #'eq))
+		  ;; seq-type=list from-end=t test=eq
+		  (if end
+		      ;; seq-type=list from-end=t test=eq end=other
+		      (if count
+			  ;; seq-type=list from-end=t test=eq end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test=eq end=other count=other key=other
+			      (|delete seq-type=list from-end=t test=eq end=other count=other key=other|
+			       item sequence start end count key)
+			      ;;       seq-type=list from-end=t test=eq end=other count=other key=identity
+			      (|delete seq-type=list from-end=t test=eq end=other count=other key=identity|
+			       item sequence start end count))
+			  ;; seq-type=list from-end=t test=eq end=other count=nil
+			  (if key
+			      ;;       seq-type=list test=eq end=other count=nil key=other
+			      (|delete seq-type=list test=eq end=other count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=list test=eq end=other count=nil key=identity
+			      (|delete seq-type=list test=eq end=other count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=list from-end=t test=eq end=nil
+		      (if count
+			  ;; seq-type=list from-end=t test=eq end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test=eq end=nil count=other key=other
+			      (|delete seq-type=list from-end=t test=eq end=nil count=other key=other|
+			       item sequence start count key)
+			      ;;       seq-type=list from-end=t test=eq end=nil count=other key=identity
+			      (|delete seq-type=list from-end=t test=eq end=nil count=other key=identity|
+			       item sequence start count))
+			  ;; seq-type=list from-end=t test=eq end=nil count=nil
+			  (if key
+			      ;;       seq-type=list test=eq end=nil count=nil key=other
+			      (|delete seq-type=list test=eq end=nil count=nil key=other|
+			       item sequence start key)
+			      ;;       seq-type=list test=eq end=nil count=nil key=identity
+			      (|delete seq-type=list test=eq end=nil count=nil key=identity|
+			       item sequence start))))
+		  (if (or (eq test 'eql) (eq test #'eql))
+		      ;; seq-type=list from-end=t test=eql
+		      (if end
+			  ;; seq-type=list from-end=t test=eql end=other
+			  (if count
+			      ;; seq-type=list from-end=t test=eql end=other count=other
+			      (if key
+				  ;;       seq-type=list from-end=t test=eql end=other count=other key=other
+				  (|delete seq-type=list from-end=t test=eql end=other count=other key=other|
+				   item sequence start end count key)
+				  ;;       seq-type=list from-end=t test=eql end=other count=other key=identity
+				  (|delete seq-type=list from-end=t test=eql end=other count=other key=identity|
+				   item sequence start end count))
+			      ;; seq-type=list from-end=t test=eql end=other count=nil
+			      (if key
+				  ;;       seq-type=list test=eql end=other count=nil key=other
+				  (|delete seq-type=list test=eql end=other count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=list test=eql end=other count=nil key=identity
+				  (|delete seq-type=list test=eql end=other count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=list from-end=t test=eql end=nil
+			  (if count
+			      ;; seq-type=list from-end=t test=eql end=nil count=other
+			      (if key
+				  ;;       seq-type=list from-end=t test=eql end=nil count=other key=other
+				  (|delete seq-type=list from-end=t test=eql end=nil count=other key=other|
+				   item sequence start count key)
+				  ;;       seq-type=list from-end=t test=eql end=nil count=other key=identity
+				  (|delete seq-type=list from-end=t test=eql end=nil count=other key=identity|
+				   item sequence start count))
+			      ;; seq-type=list from-end=t test=eql end=nil count=nil
+			      (if key
+				  ;;       seq-type=list test=eql end=nil count=nil key=other
+				  (|delete seq-type=list test=eql end=nil count=nil key=other|
+				   item sequence start key)
+				  ;;       seq-type=list test=eql end=nil count=nil key=identity
+				  (|delete seq-type=list test=eql end=nil count=nil key=identity|
+				   item sequence start))))
+		      ;; seq-type=list from-end=t test=other
+		      (if end
+			  ;; seq-type=list from-end=t test=other end=other
+			  (if count
+			      ;; seq-type=list from-end=t test=other end=other count=other
+			      (if key
+				  ;;       seq-type=list from-end=t test=other end=other count=other key=other
+				  (|delete seq-type=list from-end=t test=other end=other count=other key=other|
+				   item sequence test start end count key)
+				  ;;       seq-type=list from-end=t test=other end=other count=other key=identity
+				  (|delete seq-type=list from-end=t test=other end=other count=other key=identity|
+				   item sequence test start end count))
+			      ;; seq-type=list from-end=t test=other end=other count=nil
+			      (if key
+				  ;;       seq-type=list test=other end=other count=nil key=other
+				  (|delete seq-type=list test=other end=other count=nil key=other|
+				   item sequence test start end key)
+				  ;;       seq-type=list test=other end=other count=nil key=identity
+				  (|delete seq-type=list test=other end=other count=nil key=identity|
+				   item sequence test start end)))
+			  ;; seq-type=list from-end=t test=other end=nil
+			  (if count
+			      ;; seq-type=list from-end=t test=other end=nil count=other
+			      (if key
+				  ;;       seq-type=list from-end=t test=other end=nil count=other key=other
+				  (|delete seq-type=list from-end=t test=other end=nil count=other key=other|
+				   item sequence test start count key)
+				  ;;       seq-type=list from-end=t test=other end=nil count=other key=identity
+				  (|delete seq-type=list from-end=t test=other end=nil count=other key=identity|
+				   item sequence test start count))
+			      ;; seq-type=list from-end=t test=other end=nil count=nil
+			      (if key
+				  ;;       seq-type=list test=other end=nil count=nil key=other
+				  (|delete seq-type=list test=other end=nil count=nil key=other|
+				   item sequence test start key)
+				  ;;       seq-type=list test=other end=nil count=nil key=identity
+				  (|delete seq-type=list test=other end=nil count=nil key=identity|
+				   item sequence test start))))))
+	      (if test-not
+		  ;; seq-type=list from-end=t test-not=other
+		  (if end
+		      ;; seq-type=list from-end=t test-not=other end=other
+		      (if count
+			  ;; seq-type=list from-end=t test-not=other end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test-not=other end=other count=other key=other
+			      (|delete seq-type=list from-end=t test-not=other end=other count=other key=other|
+			       item sequence test-not start end count key)
+			      ;;       seq-type=list from-end=t test-not=other end=other count=other key=identity
+			      (|delete seq-type=list from-end=t test-not=other end=other count=other key=identity|
+			       item sequence test-not start end count))
+			  ;; seq-type=list from-end=t test-not=other end=other count=nil
+			  (if key
+			      ;;       seq-type=list test-not=other end=other count=nil key=other
+			      (|delete seq-type=list test-not=other end=other count=nil key=other|
+			       item sequence test-not start end key)
+			      ;;       seq-type=list test-not=other end=other count=nil key=identity
+			      (|delete seq-type=list test-not=other end=other count=nil key=identity|
+			       item sequence test-not start end)))
+		      ;; seq-type=list from-end=t test-not=other end=nil
+		      (if count
+			  ;; seq-type=list from-end=t test-not=other end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test-not=other end=nil count=other key=other
+			      (|delete seq-type=list from-end=t test-not=other end=nil count=other key=other|
+			       item sequence test-not start count key)
+			      ;;       seq-type=list from-end=t test-not=other end=nil count=other key=identity
+			      (|delete seq-type=list from-end=t test-not=other end=nil count=other key=identity|
+			       item sequence test-not start count))
+			  (if key
+			      (|delete seq-type=list test-not=other end=other count=nil key=other|
+			       item sequence test-not start end key)
+			      (|delete seq-type=list test-not=other end=other count=nil key=identity|
+			       item sequence test-not start end))))
+		  ;; seq-type=list from-end=t test=eql
+		  (if end
+		      ;; seq-type=list from-end=t test=eql end=other
+		      (if count
+			  ;; seq-type=list from-end=t test=eql end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test=eql end=other count=other key=other
+			      (|delete seq-type=list from-end=t test=eql end=other count=other key=other|
+			       item sequence start end count key)
+			      ;;       seq-type=list from-end=t test=eql end=other count=other key=identity
+			      (|delete seq-type=list from-end=t test=eql end=other count=other key=identity|
+			       item sequence start end count))
+			  ;; seq-type=list from-end=t test=eql end=other count=nil
+			  (if key
+			      ;;       seq-type=list test=eql end=other count=nil key=other
+			      (|delete seq-type=list test=eql end=other count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=list test=eql end=other count=nil key=identity
+			      (|delete seq-type=list test=eql end=other count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=list from-end=t test=eql end=nil
+		      (if count
+			  ;; seq-type=list from-end=t test=eql end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=t test=eql end=nil count=other key=other
+			      (|delete seq-type=list from-end=t test=eql end=nil count=other key=other|
+			       item sequence start count key)
+			      ;;       seq-type=list from-end=t test=eql end=nil count=other key=identity
+			      (|delete seq-type=list from-end=t test=eql end=nil count=other key=identity|
+			       item sequence start count))
+			  ;; seq-type=list from-end=t test=eql end=nil count=nil
+			  (if key
+			      ;;       seq-type=list test=eql end=nil count=nil key=other
+			      (|delete seq-type=list test=eql end=nil count=nil key=other|
+			       item sequence start key)
+			      ;;       seq-type=list test=eql end=nil count=nil key=identity
+			      (|delete seq-type=list test=eql end=nil count=nil key=identity|
+			       item sequence start))))))
+	  ;; seq-type=list from-end=nil
+	  (if test
+	      ;; seq-type=list from-end=nil test=?
+	      (if (or (eq test 'eq) (eq test #'eq))
+		  ;; seq-type=list from-end=nil test=eq
+		  (if end
+		      ;; seq-type=list from-end=nil test=eq end=other
+		      (if count
+			  ;; seq-type=list from-end=nil test=eq end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test=eq end=other count=other key=other
+			      (|delete seq-type=list from-end=nil test=eq end=other count=other key=other|
+			       item sequence start end count key)
+			      ;;       seq-type=list from-end=nil test=eq end=other count=other key=identity
+			      (|delete seq-type=list from-end=nil test=eq end=other count=other key=identity|
+			       item sequence start end count))
+			  ;; seq-type=list from-end=nil test=eq end=other count=nil
+			  (if key
+			      ;;       seq-type=list test=eq end=other count=nil key=other
+			      (|delete seq-type=list test=eq end=other count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=list test=eq end=other count=nil key=identity
+			      (|delete seq-type=list test=eq end=other count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=list from-end=nil test=eq end=nil
+		      (if count
+			  ;; seq-type=list from-end=nil test=eq end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test=eq end=nil count=other key=other
+			      (|delete seq-type=list from-end=nil test=eq end=nil count=other key=other|
+			       item sequence start count key)
+			      ;;       seq-type=list from-end=nil test=eq end=nil count=other key=identity
+			      (|delete seq-type=list from-end=nil test=eq end=nil count=other key=identity|
+			       item sequence start count))
+			  ;; seq-type=list from-end=nil test=eq end=nil count=nil
+			  (if key
+			      ;;       seq-type=list test=eq end=nil count=nil key=other
+			      (|delete seq-type=list test=eq end=nil count=nil key=other|
+			       item sequence start key)
+			      ;;       seq-type=list test=eq end=nil count=nil key=identity
+			      (|delete seq-type=list test=eq end=nil count=nil key=identity|
+			       item sequence start))))
+		  (if (or (eq test 'eql) (eq test #'eql))
+		      ;; seq-type=list from-end=nil test=eql
+		      (if end
+			  ;; seq-type=list from-end=nil test=eql end=other
+			  (if count
+			      ;; seq-type=list from-end=nil test=eql end=other count=other
+			      (if key
+				  ;;       seq-type=list from-end=nil test=eql end=other count=other key=other
+				  (|delete seq-type=list from-end=nil test=eql end=other count=other key=other|
+				   item sequence start end count key)
+				  ;;       seq-type=list from-end=nil test=eql end=other count=other key=identity
+				  (|delete seq-type=list from-end=nil test=eql end=other count=other key=identity|
+				   item sequence start end count))
+			      ;; seq-type=list from-end=nil test=eql end=other count=nil
+			      (if key
+				  ;;       seq-type=list test=eql end=other count=nil key=other
+				  (|delete seq-type=list test=eql end=other count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=list test=eql end=other count=nil key=identity
+				  (|delete seq-type=list test=eql end=other count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=list from-end=nil test=eql end=nil
+			  (if count
+			      ;; seq-type=list from-end=nil test=eql end=nil count=other
+			      (if key
+				  ;;       seq-type=list from-end=nil test=eql end=nil count=other key=other
+				  (|delete seq-type=list from-end=nil test=eql end=nil count=other key=other|
+				   item sequence start count key)
+				  ;;       seq-type=list from-end=nil test=eql end=nil count=other key=identity
+				  (|delete seq-type=list from-end=nil test=eql end=nil count=other key=identity|
+				   item sequence start count))
+			      ;; seq-type=list from-end=nil test=eql end=nil count=nil
+			      (if key
+				  ;;       seq-type=list test=eql end=nil count=nil key=other
+				  (|delete seq-type=list test=eql end=nil count=nil key=other|
+				   item sequence start key)
+				  (|delete seq-type=list test=eql end=nil count=nil key=identity|
+				   item sequence start))))
+		      ;; seq-type=list from-end=nil test=other
+		      (if end
+			  ;; seq-type=list from-end=nil test=other end=other
+			  (if count
+			      ;; seq-type=list from-end=nil test=other end=other count=other
+			      (if key
+				  ;;       seq-type=list from-end=nil test=other end=other count=other key=other
+				  (|delete seq-type=list from-end=nil test=other end=other count=other key=other|
+				   item sequence test start end count key)
+				  ;;       seq-type=list from-end=nil test=other end=other count=other key=identity
+				  (|delete seq-type=list from-end=nil test=other end=other count=other key=identity|
+				   item sequence test start end count))
+			      ;; seq-type=list from-end=nil test=other end=other count=nil
+			      (if key
+				  ;;       seq-type=list test=other end=other count=nil key=other
+				  (|delete seq-type=list test=other end=other count=nil key=other|
+				   item sequence test start end key)
+				  ;;       seq-type=list test=other end=other count=nil key=identity
+				  (|delete seq-type=list test=other end=other count=nil key=identity|
+				   item sequence test start end)))
+			  ;; seq-type=list from-end=nil test=other end=nil
+			  (if count
+			      ;; seq-type=list from-end=nil test=other end=nil count=other
+			      (if key
+				  ;;       seq-type=list from-end=nil test=other end=nil count=other key=other
+				  (|delete seq-type=list from-end=nil test=other end=nil count=other key=other|
+				   item sequence test start count key)
+				  ;;       seq-type=list from-end=nil test=other end=nil count=other key=identity
+				  (|delete seq-type=list from-end=nil test=other end=nil count=other key=identity|
+				   item sequence test start count))
+			      ;; seq-type=list from-end=nil test=other end=nil count=nil
+			      (if key
+				  ;;       seq-type=list test=other end=nil count=nil key=other
+				  (|delete seq-type=list test=other end=nil count=nil key=other|
+				   item sequence test start key)
+				  (|delete seq-type=list test=other end=nil count=nil key=identity|
+				   item sequence test start))))))
+	      (if test-not
+		  ;; seq-type=list from-end=nil test-not=other
+		  (if end
+		      ;; seq-type=list from-end=nil test-not=other end=other
+		      (if count
+			  ;; seq-type=list from-end=nil test-not=other end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test-not=other end=other count=other key=other
+			      (|delete seq-type=list from-end=nil test-not=other end=other count=other key=other|
+			       item sequence test-not start end count key)
+			      ;;       seq-type=list from-end=nil test-not=other end=other count=other key=identity
+			      (|delete seq-type=list from-end=nil test-not=other end=other count=other key=identity|
+			       item sequence test-not start end count))
+			  ;; seq-type=list from-end=nil test-not=other end=other count=nil
+			  (if key
+			      ;;       seq-type=list test-not=other end=other count=nil key=other
+			      (|delete seq-type=list test-not=other end=other count=nil key=other|
+			       item sequence test-not start end key)
+			      ;;       seq-type=list test-not=other end=other count=nil key=identity
+			      (|delete seq-type=list test-not=other end=other count=nil key=identity|
+			       item sequence test-not start end)))
+		      ;; seq-type=list from-end=nil test-not=other end=nil
+		      (if count
+			  ;; seq-type=list from-end=nil test-not=other end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test-not=other end=nil count=other key=other
+			      (|delete seq-type=list from-end=nil test-not=other end=nil count=other key=other|
+			       item sequence test-not start count key)
+			      ;;       seq-type=list from-end=nil test-not=other end=nil count=other key=identity
+			      (|delete seq-type=list from-end=nil test-not=other end=nil count=other key=identity|
+			       item sequence test-not start count))
+			  (if key
+			      (|delete seq-type=list test-not=other end=other count=nil key=other|
+			       item sequence test-not start end key)
+			      (|delete seq-type=list test-not=other end=other count=nil key=identity|
+			       item sequence test-not start end))))
+		  ;; seq-type=list from-end=nil test=eql
+		  (if end
+		      ;; seq-type=list from-end=nil test=eql end=other
+		      (if count
+			  ;; seq-type=list from-end=nil test=eql end=other count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test=eql end=other count=other key=other
+			      (|delete seq-type=list from-end=nil test=eql end=other count=other key=other|
+			       item sequence start end count key)
+			      ;;       seq-type=list from-end=nil test=eql end=other count=other key=identity
+			      (|delete seq-type=list from-end=nil test=eql end=other count=other key=identity|
+			       item sequence start end count))
+			  ;; seq-type=list from-end=nil test=eql end=other count=nil
+			  (if key
+			      ;;       seq-type=list test=eql end=other count=nil key=other
+			      (|delete seq-type=list test=eql end=other count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=list test=eql end=other count=nil key=identity
+			      (|delete seq-type=list test=eql end=other count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=list from-end=nil test=eql end=nil
+		      (if count
+			  ;; seq-type=list from-end=nil test=eql end=nil count=other
+			  (if key
+			      ;;       seq-type=list from-end=nil test=eql end=nil count=other key=other
+			      (|delete seq-type=list from-end=nil test=eql end=nil count=other key=other|
+			       item sequence start count key)
+			      ;;       seq-type=list from-end=nil test=eql end=nil count=other key=identity
+			      (|delete seq-type=list from-end=nil test=eql end=nil count=other key=identity|
+			       item sequence start count))
+			  ;; seq-type=list from-end=nil test=eql end=nil count=nil
+			  (if key
+			      ;;       seq-type=list test=eql end=nil count=nil key=other
+			      (|delete seq-type=list test=eql end=nil count=nil key=other|
+			       item sequence start key)
+			      ;;       seq-type=list test=eql end=nil count=nil key=identity
+			      (|delete seq-type=list test=eql end=nil count=nil key=identity|
+			       item sequence start)))))))
+      (if (simple-string-p sequence)
+	  ;; seq-type=simple-string
+	  (if test
+	      ;; seq-type=simple-string test=given
+	      (if (or (eq test 'eq) (eq test #'eq))
+		  ;; seq-type=simple-string test=eq
+		  (if end
+		      ;; seq-type=simple-string test=eq end=other
+		      (if count
+			  ;; seq-type=simple-string test=eq count=other end=other
+			  (if from-end
+			      ;; seq-type=simple-string from-end=t test=eq count=other end=other
+			      (if key
+				  ;;       seq-type=simple-string from-end=t test=eq count=other key=other end=other 
+				  (|remove seq-type=simple-string from-end=t test=eq count=other key=other|
+				   item sequence start end count key)
+				  ;;       seq-type=simple-string from-end=t test=eq count=other key=identity end=other 
+				  (|remove seq-type=simple-string from-end=t test=eq count=other key=identity|
+				   item sequence start end count))
+			      ;; seq-type=simple-string from-end=nil test=eq count=other end=other
+			      (if key
+				  ;;       seq-type=simple-string from-end=nil test=eq count=other key=other end=other 
+				  (|remove seq-type=simple-string from-end=nil test=eq count=other key=other|
+				   item sequence start end count key)
+				  ;;       seq-type=simple-string from-end=nil test=eq count=other key=identity end=other 
+				  (|remove seq-type=simple-string from-end=nil test=eq count=other key=identity|
+				   item sequence start end count)))
+			  ;; seq-type=simple-string test=eq count=nil end=other
+			  ;; no need to test from-end
+			  (if key
+			      ;;       seq-type=simple-string test=eq count=nil key=other end=other 
+			      (|remove seq-type=simple-string test=eq count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=simple-string test=eq count=nil key=identity end=other 
+			      (|remove seq-type=simple-string test=eq count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=simple-string test=eq end=nil
+		      (if count
+			  ;; seq-type=simple-string test=eq count=other end=nil
+			  (if from-end
+			      ;; seq-type=simple-string from-end=t test=eq count=other end=nil
+			      (if key
+				  ;;       seq-type=simple-string from-end=t test=eq count=other key=other end=nil 
+				  (|remove seq-type=simple-string from-end=t test=eq count=other key=other|
+				   item sequence start (length sequence) count key)
+				  ;;       seq-type=simple-string from-end=t test=eq count=other key=identity end=nil 
+				  (|remove seq-type=simple-string from-end=t test=eq count=other key=identity|
+				   item sequence start (length sequence) count))
+			      ;; seq-type=simple-string from-end=nil test=eq count=other end=nil
+			      (if key
+				  ;;       seq-type=simple-string from-end=nil test=eq count=other key=other end=nil 
+				  (|remove seq-type=simple-string from-end=nil test=eq count=other key=other|
+				   item sequence start (length sequence) count key)
+				  ;;       seq-type=simple-string from-end=nil test=eq count=other key=identity end=nil 
+				  (|remove seq-type=simple-string from-end=nil test=eq count=other key=identity|
+				   item sequence start (length sequence) count)))
+			  ;; seq-type=simple-string test=eq count=nil end=nil
+			  ;; no need to test from-end
+			  (if key
+			      ;;       seq-type=simple-string test=eq count=nil key=other end=nil 
+			      (|remove seq-type=simple-string test=eq count=nil key=other|
+			       item sequence start (length sequence) key)
+			      ;;       seq-type=simple-string test=eq count=nil key=identity end=nil 
+			      (|remove seq-type=simple-string test=eq count=nil key=identity|
+			       item sequence start (length sequence)))))
+		  (if (or (eq test 'eql) (eq test #'eql))
+		      ;; seq-type=simple-string test=eql
+		      (if end
+			  ;; seq-type=simple-string test=eql end=other
+			  (if count
+			      ;; seq-type=simple-string test=eql count=other end=other
+			      (if from-end
+				  ;; seq-type=simple-string from-end=t test=eql count=other end=other
+				  (if key
+				      ;;       seq-type=simple-string from-end=t test=eql count=other key=other end=other 
+				      (|remove seq-type=simple-string from-end=t test=eql count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=simple-string from-end=t test=eql count=other key=identity end=other 
+				      (|remove seq-type=simple-string from-end=t test=eql count=other key=identity|
+				       item sequence start end count))
+				  ;; seq-type=simple-string from-end=nil test=eql count=other end=other
+				  (if key
+				      ;;       seq-type=simple-string from-end=nil test=eql count=other key=other end=other 
+				      (|remove seq-type=simple-string from-end=nil test=eql count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=simple-string from-end=nil test=eql count=other key=identity end=other 
+				      (|remove seq-type=simple-string from-end=nil test=eql count=other key=identity|
+				       item sequence start end count)))
+			      ;; seq-type=simple-string test=eql count=nil end=other
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-string test=eql count=nil key=other end=other 
+				  (|remove seq-type=simple-string test=eql count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=simple-string test=eql count=nil key=identity end=other 
+				  (|remove seq-type=simple-string test=eql count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=simple-string test=eql end=nil
+			  (if count
+			      ;; seq-type=simple-string test=eql count=other end=nil
+			      (if from-end
+				  ;; seq-type=simple-string from-end=t test=eql count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-string from-end=t test=eql count=other key=other end=nil 
+				      (|remove seq-type=simple-string from-end=t test=eql count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=simple-string from-end=t test=eql count=other key=identity end=nil 
+				      (|remove seq-type=simple-string from-end=t test=eql count=other key=identity|
+				       item sequence start (length sequence) count))
+				  ;; seq-type=simple-string from-end=nil test=eql count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-string from-end=nil test=eql count=other key=other end=nil 
+				      (|remove seq-type=simple-string from-end=nil test=eql count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=simple-string from-end=nil test=eql count=other key=identity end=nil 
+				      (|remove seq-type=simple-string from-end=nil test=eql count=other key=identity|
+				       item sequence start (length sequence) count)))
+			      ;; seq-type=simple-string test=eql count=nil end=nil
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-string test=eql count=nil key=other end=nil 
+				  (|remove seq-type=simple-string test=eql count=nil key=other|
+				   item sequence start (length sequence) key)
+				  ;;       seq-type=simple-string test=eql count=nil key=identity end=nil 
+				  (|remove seq-type=simple-string test=eql count=nil key=identity|
+				   item sequence start (length sequence)))))
+		      ;; seq-type=simple-string test=other
+		      (if end
+			  ;; seq-type=simple-string test=other end=other
+			  (if count
+			      ;; seq-type=simple-string test=other count=other end=other
+			      (if from-end
+				  ;; seq-type=simple-string from-end=t test=other count=other end=other
+				  (if key
+				      ;;       seq-type=simple-string from-end=t test=other count=other key=other end=other 
+				      (|remove seq-type=simple-string from-end=t test=other count=other key=other|
+				       item sequence test start end count key)
+				      ;;       seq-type=simple-string from-end=t test=other count=other key=identity end=other 
+				      (|remove seq-type=simple-string from-end=t test=other count=other key=identity|
+				       item sequence test start end count))
+				  ;; seq-type=simple-string from-end=nil test=other count=other end=other
+				  (if key
+				      ;;       seq-type=simple-string from-end=nil test=other count=other key=other end=other 
+				      (|remove seq-type=simple-string from-end=nil test=other count=other key=other|
+				       item sequence test start end count key)
+				      ;;       seq-type=simple-string from-end=nil test=other count=other key=identity end=other 
+				      (|remove seq-type=simple-string from-end=nil test=other count=other key=identity|
+				       item sequence test start end count)))
+			      ;; seq-type=simple-string test=other count=nil end=other
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-string test=other count=nil key=other end=other 
+				  (|remove seq-type=simple-string test=other count=nil key=other|
+				   item sequence test start end key)
+				  ;;       seq-type=simple-string test=other count=nil key=identity end=other 
+				  (|remove seq-type=simple-string test=other count=nil key=identity|
+				   item sequence test start end)))
+			  ;; seq-type=simple-string test=other end=nil
+			  (if count
+			      ;; seq-type=simple-string test=other count=other end=nil
+			      (if from-end
+				  ;; seq-type=simple-string from-end=t test=other count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-string from-end=t test=other count=other key=other end=nil 
+				      (|remove seq-type=simple-string from-end=t test=other count=other key=other|
+				       item sequence test start (length sequence) count key)
+				      ;;       seq-type=simple-string from-end=t test=other count=other key=identity end=nil 
+				      (|remove seq-type=simple-string from-end=t test=other count=other key=identity|
+				       item sequence test start (length sequence) count))
+				  ;; seq-type=simple-string from-end=nil test=other count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-string from-end=nil test=other count=other key=other end=nil 
+				      (|remove seq-type=simple-string from-end=nil test=other count=other key=other|
+				       item sequence test start (length sequence) count key)
+				      ;;       seq-type=simple-string from-end=nil test=other count=other key=identity end=nil 
+				      (|remove seq-type=simple-string from-end=nil test=other count=other key=identity|
+				       item sequence test start (length sequence) count)))
+			      ;; seq-type=simple-string test=other count=nil end=nil
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-string test=other count=nil key=other end=nil 
+				  (|remove seq-type=simple-string test=other count=nil key=other|
+				   item sequence test start (length sequence) key)
+				  ;;       seq-type=simple-string test=other count=nil key=identity end=nil 
+				  (|remove seq-type=simple-string test=other count=nil key=identity|
+				   item sequence test start (length sequence)))))))
+	      (if test-not
+		  ;; seq-type=simple-string test-not=other
+		  (if end
+		      ;; seq-type=simple-string test-not=other end=other
+		      (if count
+			  ;; seq-type=simple-string test-not=other count=other end=other
+			  (if from-end
+			      ;; seq-type=simple-string from-end=t test-not=other count=other end=other
+			      (if key
+				  ;;       seq-type=simple-string from-end=t test-not=other count=other key=other end=other
+				  (|remove seq-type=simple-string from-end=t test-not=other count=other key=other|
+				   item sequence test-not start end count key)
+				  ;;       seq-type=simple-string from-end=t test-not=other count=other key=identity end=other 
+				  (|remove seq-type=simple-string from-end=t test-not=other count=other key=identity|
+				   item sequence test-not start end count))
+			      ;; seqr-type=simple-string from-end=nil test-not=other count=other end=other
+			      (if key
+				  ;;       seq-type=simple-string from-end=nil test-not=other count=other key=other end=other
+				  (|remove seq-type=simple-string from-end=nil test-not=other count=other key=other|
+				   item sequence test-not start end count key)
+				  ;;       seq-type=simple-string from-end=nil test-not=other count=other key=identity end=other 
+				  (|remove seq-type=simple-string from-end=nil test-not=other count=other key=identity|
+				   item sequence test-not start end count)))
+			  ;; seq-type=simple-string test-not=other count=nil end=other
+			  ;; no need to test from-end
+			  (if key
+			      ;;       seq-type=simple-string test-not=other count=nil key=other end=other
+			      (|remove seq-type=simple-string test-not=other count=nil key=other|
+			       item sequence test-not start end key)
+			      ;;       seq-type=simple-string test-not=other count=nil key=identity end=other 
+			      (|remove seq-type=simple-string test-not=other count=nil key=identity|
+			       item sequence test-not start end)))
+		      ;; seq-type=simple-string test-not=other end=nil
+		      (if count
+			  ;; seq-type=simple-string test-not=other count=other end=nil
+			  (if from-end
+			      ;; seq-type=simple-string from-end=t test-not=other count=other end=nil
+			      (if key
+				  ;;       seq-type=simple-string from-end=t test-not=other count=other key=other end=nil
+				  (|remove seq-type=simple-string from-end=t test-not=other count=other key=other|
+				   item sequence test-not start (length sequence) count key)
+				  ;;       seq-type=simple-string from-end=t test-not=other count=other key=identity end=nil 
+				  (|remove seq-type=simple-string from-end=t test-not=other count=other key=identity|
+				   item sequence test-not start (length sequence) count))
+			      ;; seqr-type=simple-string from-end=nil test-not=other count=other end=nil
+			      (if key
+				  ;;       seq-type=simple-string from-end=nil test-not=other count=other key=other end=nil
+				  (|remove seq-type=simple-string from-end=nil test-not=other count=other key=other|
+				   item sequence test-not start (length sequence) count key)
+				  ;;       seq-type=simple-string from-end=nil test-not=other count=other key=identity end=nil 
+				  (|remove seq-type=simple-string from-end=nil test-not=other count=other key=identity|
+				   item sequence test-not start (length sequence) count)))
+			  ;; seq-type=simple-string test-not=other count=nil end=nil
+			  ;; no need to test from-end
+			  (if key
+			      ;;       seq-type=simple-string test-not=other count=nil key=other end=nil
+			      (|remove seq-type=simple-string test-not=other count=nil key=other|
+			       item sequence test-not start (length sequence) key)
+			      ;;       seq-type=simple-string test-not=other count=nil key=identity end=nil! 
+			      (|remove seq-type=simple-string test-not=other count=nil key=identity|
+			       item sequence test-not start (length sequence)))))
+		  ;; seq-type=simple-string test=eql
+		  (if end
+		      ;; seq-type=simple-string test=eql end=other
+		      (if count
+			  ;; seq-type=simple-string test=eql count=other end=other
+			  (if from-end
+			      ;; seq-type=simple-string from-end=t test=eql count=other end=other
+			      (if key
+				  ;;       seq-type=simple-string from-end=t test=eql count=other key=other end=other
+				  (|remove seq-type=simple-string from-end=t test=eql count=other key=other|
+				   item sequence start end count key)
+				  ;;       seq-type=simple-string from-end=t test=eql count=other key=identity end=other 
+				  (|remove seq-type=simple-string from-end=t test=eql count=other key=identity|
+				   item sequence start end count))
+			      ;; seqr-type=simple-string from-end=nil test=eql count=other end=other
+			      (if key
+				  ;;       seq-type=simple-string from-end=nil test=eql count=other key=other end=other
+				  (|remove seq-type=simple-string from-end=nil test=eql count=other key=other|
+				   item sequence start end count key)
+				  ;;       seq-type=simple-string from-end=nil test=eql count=other key=identity end=other 
+				  (|remove seq-type=simple-string from-end=nil test=eql count=other key=identity|
+				   item sequence start end count)))
+			  ;; seq-type=simple-string test=eql count=nil end=other
+			  ;; no need to test from-end
+			  (if key
+			      ;;       seq-type=simple-string test=eql count=nil key=other end=other
+			      (|remove seq-type=simple-string test=eql count=nil key=other|
+			       item sequence start end key)
+			      ;;       seq-type=simple-string test=eql count=nil key=identity end=other 
+			      (|remove seq-type=simple-string test=eql count=nil key=identity|
+			       item sequence start end)))
+		      ;; seq-type=simple-string test=eql end=nil
+		      (if count
+			  ;; seq-type=simple-string test=eql count=other end=nil
+			  (if from-end
+			      ;; seq-type=simple-string from-end=t test=eql count=other end=nil
+			      (if key
+				  ;;       seq-type=simple-string from-end=t test=eql count=other key=other end=nil
+				  (|remove seq-type=simple-string from-end=t test=eql count=other key=other|
+				   item sequence start (length sequence) count key)
+				  ;;       seq-type=simple-string from-end=t test=eql count=other key=identity end=nil 
+				  (|remove seq-type=simple-string from-end=t test=eql count=other key=identity|
+				   item sequence start (length sequence) count))
+			      ;; seqr-type=simple-string from-end=nil test=eql count=other end=nil
+			      (if key
+				  ;;       seq-type=simple-string from-end=nil test=eql count=other key=other end=nil
+				  (|remove seq-type=simple-string from-end=nil test=eql count=other key=other|
+				   item sequence start (length sequence) count key)
+				  ;;       seq-type=simple-string from-end=nil test=eql count=other key=identity end=nil 
+				  (|remove seq-type=simple-string from-end=nil test=eql count=other key=identity|
+				   item sequence start (length sequence) count)))
+			  ;; seq-type=simple-string test=eql count=nil end=nil
+			  ;; no need to test from-end
+			  (if key
+			      ;;       seq-type=simple-string test=eql count=nil key=other end=nil
+			      (|remove seq-type=simple-string test=eql count=nil key=other|
+			       item sequence start (length sequence) key)
+			      ;;       seq-type=simple-string test=eql count=nil key=identity end=nil! 
+			      (|remove seq-type=simple-string test=eql count=nil key=identity|
+			       item sequence start (length sequence)))))))
+	  (if (simple-vector-p sequence)
+	      ;; seq-type=simple-vector
+	      (if test
+		  ;; seq-type=simple-vector test=given
+		  (if (or (eq test 'eq) (eq test #'eq))
+		      ;; seq-type=simple-vector test=eq
+		      (if end
+			  ;; seq-type=simple-vector test=eq end=other
+			  (if count
+			      ;; seq-type=simple-vector test=eq count=other end=other
+			      (if from-end
+				  ;; seq-type=simple-vector from-end=t test=eq count=other end=other
+				  (if key
+				      ;;       seq-type=simple-vector from-end=t test=eq count=other key=other end=other 
+				      (|remove seq-type=simple-vector from-end=t test=eq count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=simple-vector from-end=t test=eq count=other key=identity end=other 
+				      (|remove seq-type=simple-vector from-end=t test=eq count=other key=identity|
+				       item sequence start end count))
+				  ;; seq-type=simple-vector from-end=nil test=eq count=other end=other
+				  (if key
+				      ;;       seq-type=simple-vector from-end=nil test=eq count=other key=other end=other 
+				      (|remove seq-type=simple-vector from-end=nil test=eq count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=simple-vector from-end=nil test=eq count=other key=identity end=other 
+				      (|remove seq-type=simple-vector from-end=nil test=eq count=other key=identity|
+				       item sequence start end count)))
+			      ;; seq-type=simple-vector test=eq count=nil end=other
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-vector test=eq count=nil key=other end=other 
+				  (|remove seq-type=simple-vector test=eq count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=simple-vector test=eq count=nil key=identity end=other 
+				  (|remove seq-type=simple-vector test=eq count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=simple-vector test=eq end=nil
+			  (if count
+			      ;; seq-type=simple-vector test=eq count=other end=nil
+			      (if from-end
+				  ;; seq-type=simple-vector from-end=t test=eq count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-vector from-end=t test=eq count=other key=other end=nil 
+				      (|remove seq-type=simple-vector from-end=t test=eq count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=simple-vector from-end=t test=eq count=other key=identity end=nil 
+				      (|remove seq-type=simple-vector from-end=t test=eq count=other key=identity|
+				       item sequence start (length sequence) count))
+				  ;; seq-type=simple-vector from-end=nil test=eq count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-vector from-end=nil test=eq count=other key=other end=nil 
+				      (|remove seq-type=simple-vector from-end=nil test=eq count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=simple-vector from-end=nil test=eq count=other key=identity end=nil 
+				      (|remove seq-type=simple-vector from-end=nil test=eq count=other key=identity|
+				       item sequence start (length sequence) count)))
+			      ;; seq-type=simple-vector test=eq count=nil end=nil
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-vector test=eq count=nil key=other end=nil 
+				  (|remove seq-type=simple-vector test=eq count=nil key=other|
+				   item sequence start (length sequence) key)
+				  ;;       seq-type=simple-vector test=eq count=nil key=identity end=nil 
+				  (|remove seq-type=simple-vector test=eq count=nil key=identity|
+				   item sequence start (length sequence)))))
+		      (if (or (eq test 'eql) (eq test #'eql))
+			  ;; seq-type=simple-vector test=eql
+			  (if end
+			      ;; seq-type=simple-vector test=eql end=other
+			      (if count
+				  ;; seq-type=simple-vector test=eql count=other end=other
+				  (if from-end
+				      ;; seq-type=simple-vector from-end=t test=eql count=other end=other
+				      (if key
+					  ;;       seq-type=simple-vector from-end=t test=eql count=other key=other end=other 
+					  (|remove seq-type=simple-vector from-end=t test=eql count=other key=other|
+					   item sequence start end count key)
+					  ;;       seq-type=simple-vector from-end=t test=eql count=other key=identity end=other 
+					  (|remove seq-type=simple-vector from-end=t test=eql count=other key=identity|
+					   item sequence start end count))
+				      ;; seq-type=simple-vector from-end=nil test=eql count=other end=other
+				      (if key
+					  ;;       seq-type=simple-vector from-end=nil test=eql count=other key=other end=other 
+					  (|remove seq-type=simple-vector from-end=nil test=eql count=other key=other|
+					   item sequence start end count key)
+					  ;;       seq-type=simple-vector from-end=nil test=eql count=other key=identity end=other 
+					  (|remove seq-type=simple-vector from-end=nil test=eql count=other key=identity|
+					   item sequence start end count)))
+				  ;; seq-type=simple-vector test=eql count=nil end=other
+				  ;; no need to test from-end
+				  (if key
+				      ;;       seq-type=simple-vector test=eql count=nil key=other end=other 
+				      (|remove seq-type=simple-vector test=eql count=nil key=other|
+				       item sequence start end key)
+				      ;;       seq-type=simple-vector test=eql count=nil key=identity end=other 
+				      (|remove seq-type=simple-vector test=eql count=nil key=identity|
+				       item sequence start end)))
+			      ;; seq-type=simple-vector test=eql end=nil
+			      (if count
+				  ;; seq-type=simple-vector test=eql count=other end=nil
+				  (if from-end
+				      ;; seq-type=simple-vector from-end=t test=eql count=other end=nil
+				      (if key
+					  ;;       seq-type=simple-vector from-end=t test=eql count=other key=other end=nil 
+					  (|remove seq-type=simple-vector from-end=t test=eql count=other key=other|
+					   item sequence start (length sequence) count key)
+					  ;;       seq-type=simple-vector from-end=t test=eql count=other key=identity end=nil 
+					  (|remove seq-type=simple-vector from-end=t test=eql count=other key=identity|
+					   item sequence start (length sequence) count))
+				      ;; seq-type=simple-vector from-end=nil test=eql count=other end=nil
+				      (if key
+					  ;;       seq-type=simple-vector from-end=nil test=eql count=other key=other end=nil 
+					  (|remove seq-type=simple-vector from-end=nil test=eql count=other key=other|
+					   item sequence start (length sequence) count key)
+					  ;;       seq-type=simple-vector from-end=nil test=eql count=other key=identity end=nil 
+					  (|remove seq-type=simple-vector from-end=nil test=eql count=other key=identity|
+					   item sequence start (length sequence) count)))
+				  ;; seq-type=simple-vector test=eql count=nil end=nil
+				  ;; no need to test from-end
+				  (if key
+				      ;;       seq-type=simple-vector test=eql count=nil key=other end=nil 
+				      (|remove seq-type=simple-vector test=eql count=nil key=other|
+				       item sequence start (length sequence) key)
+				      ;;       seq-type=simple-vector test=eql count=nil key=identity end=nil 
+				      (|remove seq-type=simple-vector test=eql count=nil key=identity|
+				       item sequence start (length sequence)))))
+			  ;; seq-type=simple-vector test=other
+			  (if end
+			      ;; seq-type=simple-vector test=other end=other
+			      (if count
+				  ;; seq-type=simple-vector test=other count=other end=other
+				  (if from-end
+				      ;; seq-type=simple-vector from-end=t test=other count=other end=other
+				      (if key
+					  ;;       seq-type=simple-vector from-end=t test=other count=other key=other end=other 
+					  (|remove seq-type=simple-vector from-end=t test=other count=other key=other|
+					   item sequence test start end count key)
+					  ;;       seq-type=simple-vector from-end=t test=other count=other key=identity end=other 
+					  (|remove seq-type=simple-vector from-end=t test=other count=other key=identity|
+					   item sequence test start end count))
+				      ;; seq-type=simple-vector from-end=nil test=other count=other end=other
+				      (if key
+					  ;;       seq-type=simple-vector from-end=nil test=other count=other key=other end=other 
+					  (|remove seq-type=simple-vector from-end=nil test=other count=other key=other|
+					   item sequence test start end count key)
+					  ;;       seq-type=simple-vector from-end=nil test=other count=other key=identity end=other 
+					  (|remove seq-type=simple-vector from-end=nil test=other count=other key=identity|
+					   item sequence test start end count)))
+				  ;; seq-type=simple-vector test=other count=nil end=other
+				  ;; no need to test from-end
+				  (if key
+				      ;;       seq-type=simple-vector test=other count=nil key=other end=other 
+				      (|remove seq-type=simple-vector test=other count=nil key=other|
+				       item sequence test start end key)
+				      ;;       seq-type=simple-vector test=other count=nil key=identity end=other 
+				      (|remove seq-type=simple-vector test=other count=nil key=identity|
+				       item sequence test start end)))
+			      ;; seq-type=simple-vector test=other end=nil
+			      (if count
+				  ;; seq-type=simple-vector test=other count=other end=nil
+				  (if from-end
+				      ;; seq-type=simple-vector from-end=t test=other count=other end=nil
+				      (if key
+					  ;;       seq-type=simple-vector from-end=t test=other count=other key=other end=nil 
+					  (|remove seq-type=simple-vector from-end=t test=other count=other key=other|
+					   item sequence test start (length sequence) count key)
+					  ;;       seq-type=simple-vector from-end=t test=other count=other key=identity end=nil 
+					  (|remove seq-type=simple-vector from-end=t test=other count=other key=identity|
+					   item sequence test start (length sequence) count))
+				      ;; seq-type=simple-vector from-end=nil test=other count=other end=nil
+				      (if key
+					  ;;       seq-type=simple-vector from-end=nil test=other count=other key=other end=nil 
+					  (|remove seq-type=simple-vector from-end=nil test=other count=other key=other|
+					   item sequence test start (length sequence) count key)
+					  ;;       seq-type=simple-vector from-end=nil test=other count=other key=identity end=nil 
+					  (|remove seq-type=simple-vector from-end=nil test=other count=other key=identity|
+					   item sequence test start (length sequence) count)))
+				  ;; seq-type=simple-vector test=other count=nil end=nil
+				  ;; no need to test from-end
+				  (if key
+				      ;;       seq-type=simple-vector test=other count=nil key=other end=nil 
+				      (|remove seq-type=simple-vector test=other count=nil key=other|
+				       item sequence test start (length sequence) key)
+				      ;;       seq-type=simple-vector test=other count=nil key=identity end=nil 
+				      (|remove seq-type=simple-vector test=other count=nil key=identity|
+				       item sequence test start (length sequence)))))))
+		  (if test-not
+		      ;; seq-type=simple-vector test-not=other
+		      (if end
+			  ;; seq-type=simple-vector test-not=other end=other
+			  (if count
+			      ;; seq-type=simple-vector test-not=other count=other end=other
+			      (if from-end
+				  ;; seq-type=simple-vector from-end=t test-not=other count=other end=other
+				  (if key
+				      ;;       seq-type=simple-vector from-end=t test-not=other count=other key=other end=other
+				      (|remove seq-type=simple-vector from-end=t test-not=other count=other key=other|
+				       item sequence test-not start end count key)
+				      ;;       seq-type=simple-vector from-end=t test-not=other count=other key=identity end=other 
+				      (|remove seq-type=simple-vector from-end=t test-not=other count=other key=identity|
+				       item sequence test-not start end count))
+				  ;; seqr-type=simple-vector from-end=nil test-not=other count=other end=other
+				  (if key
+				      ;;       seq-type=simple-vector from-end=nil test-not=other count=other key=other end=other
+				      (|remove seq-type=simple-vector from-end=nil test-not=other count=other key=other|
+				       item sequence test-not start end count key)
+				      ;;       seq-type=simple-vector from-end=nil test-not=other count=other key=identity end=other 
+				      (|remove seq-type=simple-vector from-end=nil test-not=other count=other key=identity|
+				       item sequence test-not start end count)))
+			      ;; seq-type=simple-vector test-not=other count=nil end=other
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-vector test-not=other count=nil key=other end=other
+				  (|remove seq-type=simple-vector test-not=other count=nil key=other|
+				   item sequence test-not start end key)
+				  ;;       seq-type=simple-vector test-not=other count=nil key=identity end=other 
+				  (|remove seq-type=simple-vector test-not=other count=nil key=identity|
+				   item sequence test-not start end)))
+			  ;; seq-type=simple-vector test-not=other end=nil
+			  (if count
+			      ;; seq-type=simple-vector test-not=other count=other end=nil
+			      (if from-end
+				  ;; seq-type=simple-vector from-end=t test-not=other count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-vector from-end=t test-not=other count=other key=other end=nil
+				      (|remove seq-type=simple-vector from-end=t test-not=other count=other key=other|
+				       item sequence test-not start (length sequence) count key)
+				      ;;       seq-type=simple-vector from-end=t test-not=other count=other key=identity end=nil 
+				      (|remove seq-type=simple-vector from-end=t test-not=other count=other key=identity|
+				       item sequence test-not start (length sequence) count))
+				  ;; seqr-type=simple-vector from-end=nil test-not=other count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-vector from-end=nil test-not=other count=other key=other end=nil
+				      (|remove seq-type=simple-vector from-end=nil test-not=other count=other key=other|
+				       item sequence test-not start (length sequence) count key)
+				      ;;       seq-type=simple-vector from-end=nil test-not=other count=other key=identity end=nil 
+				      (|remove seq-type=simple-vector from-end=nil test-not=other count=other key=identity|
+				       item sequence test-not start (length sequence) count)))
+			      ;; seq-type=simple-vector test-not=other count=nil end=nil
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-vector test-not=other count=nil key=other end=nil
+				  (|remove seq-type=simple-vector test-not=other count=nil key=other|
+				   item sequence test-not start (length sequence) key)
+				  ;;       seq-type=simple-vector test-not=other count=nil key=identity end=nil! 
+				  (|remove seq-type=simple-vector test-not=other count=nil key=identity|
+				   item sequence test-not start (length sequence)))))
+		      ;; seq-type=simple-vector test=eql
+		      (if end
+			  ;; seq-type=simple-vector test=eql end=other
+			  (if count
+			      ;; seq-type=simple-vector test=eql count=other end=other
+			      (if from-end
+				  ;; seq-type=simple-vector from-end=t test=eql count=other end=other
+				  (if key
+				      ;;       seq-type=simple-vector from-end=t test=eql count=other key=other end=other
+				      (|remove seq-type=simple-vector from-end=t test=eql count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=simple-vector from-end=t test=eql count=other key=identity end=other 
+				      (|remove seq-type=simple-vector from-end=t test=eql count=other key=identity|
+				       item sequence start end count))
+				  ;; seqr-type=simple-vector from-end=nil test=eql count=other end=other
+				  (if key
+				      ;;       seq-type=simple-vector from-end=nil test=eql count=other key=other end=other
+				      (|remove seq-type=simple-vector from-end=nil test=eql count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=simple-vector from-end=nil test=eql count=other key=identity end=other 
+				      (|remove seq-type=simple-vector from-end=nil test=eql count=other key=identity|
+				       item sequence start end count)))
+			      ;; seq-type=simple-vector test=eql count=nil end=other
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-vector test=eql count=nil key=other end=other
+				  (|remove seq-type=simple-vector test=eql count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=simple-vector test=eql count=nil key=identity end=other 
+				  (|remove seq-type=simple-vector test=eql count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=simple-vector test=eql end=nil
+			  (if count
+			      ;; seq-type=simple-vector test=eql count=other end=nil
+			      (if from-end
+				  ;; seq-type=simple-vector from-end=t test=eql count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-vector from-end=t test=eql count=other key=other end=nil
+				      (|remove seq-type=simple-vector from-end=t test=eql count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=simple-vector from-end=t test=eql count=other key=identity end=nil 
+				      (|remove seq-type=simple-vector from-end=t test=eql count=other key=identity|
+				       item sequence start (length sequence) count))
+				  ;; seqr-type=simple-vector from-end=nil test=eql count=other end=nil
+				  (if key
+				      ;;       seq-type=simple-vector from-end=nil test=eql count=other key=other end=nil
+				      (|remove seq-type=simple-vector from-end=nil test=eql count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=simple-vector from-end=nil test=eql count=other key=identity end=nil 
+				      (|remove seq-type=simple-vector from-end=nil test=eql count=other key=identity|
+				       item sequence start (length sequence) count)))
+			      ;; seq-type=simple-vector test=eql count=nil end=nil
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=simple-vector test=eql count=nil key=other end=nil
+				  (|remove seq-type=simple-vector test=eql count=nil key=other|
+				   item sequence start (length sequence) key)
+				  ;;       seq-type=simple-vector test=eql count=nil key=identity end=nil! 
+				  (|remove seq-type=simple-vector test=eql count=nil key=identity|
+				   item sequence start (length sequence)))))))
+	      ;; seq-type=general-vector
+	      (if test
+		  ;; seq-type=general-vector test=given
+		  (if (or (eq test 'eq) (eq test #'eq))
+		      ;; seq-type=general-vector test=eq
+		      (if end
+			  ;; seq-type=general-vector test=eq end=other
+			  (if count
+			      ;; seq-type=general-vector test=eq count=other end=other
+			      (if from-end
+				  ;; seq-type=general-vector from-end=t test=eq count=other end=other
+				  (if key
+				      ;;       seq-type=general-vector from-end=t test=eq count=other key=other end=other 
+				      (|remove seq-type=general-vector from-end=t test=eq count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=general-vector from-end=t test=eq count=other key=identity end=other 
+				      (|remove seq-type=general-vector from-end=t test=eq count=other key=identity|
+				       item sequence start end count))
+				  ;; seq-type=general-vector from-end=nil test=eq count=other end=other
+				  (if key
+				      ;;       seq-type=general-vector from-end=nil test=eq count=other key=other end=other 
+				      (|remove seq-type=general-vector from-end=nil test=eq count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=general-vector from-end=nil test=eq count=other key=identity end=other 
+				      (|remove seq-type=general-vector from-end=nil test=eq count=other key=identity|
+				       item sequence start end count)))
+			      ;; seq-type=general-vector test=eq count=nil end=other
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=general-vector test=eq count=nil key=other end=other 
+				  (|remove seq-type=general-vector test=eq count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=general-vector test=eq count=nil key=identity end=other 
+				  (|remove seq-type=general-vector test=eq count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=general-vector test=eq end=nil
+			  (if count
+			      ;; seq-type=general-vector test=eq count=other end=nil
+			      (if from-end
+				  ;; seq-type=general-vector from-end=t test=eq count=other end=nil
+				  (if key
+				      ;;       seq-type=general-vector from-end=t test=eq count=other key=other end=nil 
+				      (|remove seq-type=general-vector from-end=t test=eq count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=general-vector from-end=t test=eq count=other key=identity end=nil 
+				      (|remove seq-type=general-vector from-end=t test=eq count=other key=identity|
+				       item sequence start (length sequence) count))
+				  ;; seq-type=general-vector from-end=nil test=eq count=other end=nil
+				  (if key
+				      ;;       seq-type=general-vector from-end=nil test=eq count=other key=other end=nil 
+				      (|remove seq-type=general-vector from-end=nil test=eq count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=general-vector from-end=nil test=eq count=other key=identity end=nil 
+				      (|remove seq-type=general-vector from-end=nil test=eq count=other key=identity|
+				       item sequence start (length sequence) count)))
+			      ;; seq-type=general-vector test=eq count=nil end=nil
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=general-vector test=eq count=nil key=other end=nil 
+				  (|remove seq-type=general-vector test=eq count=nil key=other|
+				   item sequence start (length sequence) key)
+				  ;;       seq-type=general-vector test=eq count=nil key=identity end=nil 
+				  (|remove seq-type=general-vector test=eq count=nil key=identity|
+				   item sequence start (length sequence)))))
+		      (if (or (eq test 'eql) (eq test #'eql))
+			  ;; seq-type=general-vector test=eql
+			  (if end
+			      ;; seq-type=general-vector test=eql end=other
+			      (if count
+				  ;; seq-type=general-vector test=eql count=other end=other
+				  (if from-end
+				      ;; seq-type=general-vector from-end=t test=eql count=other end=other
+				      (if key
+					  ;;       seq-type=general-vector from-end=t test=eql count=other key=other end=other 
+					  (|remove seq-type=general-vector from-end=t test=eql count=other key=other|
+					   item sequence start end count key)
+					  ;;       seq-type=general-vector from-end=t test=eql count=other key=identity end=other 
+					  (|remove seq-type=general-vector from-end=t test=eql count=other key=identity|
+					   item sequence start end count))
+				      ;; seq-type=general-vector from-end=nil test=eql count=other end=other
+				      (if key
+					  ;;       seq-type=general-vector from-end=nil test=eql count=other key=other end=other 
+					  (|remove seq-type=general-vector from-end=nil test=eql count=other key=other|
+					   item sequence start end count key)
+					  ;;       seq-type=general-vector from-end=nil test=eql count=other key=identity end=other 
+					  (|remove seq-type=general-vector from-end=nil test=eql count=other key=identity|
+					   item sequence start end count)))
+				  ;; seq-type=general-vector test=eql count=nil end=other
+				  ;; no need to test from-end
+				  (if key
+				      ;;       seq-type=general-vector test=eql count=nil key=other end=other 
+				      (|remove seq-type=general-vector test=eql count=nil key=other|
+				       item sequence start end key)
+				      ;;       seq-type=general-vector test=eql count=nil key=identity end=other 
+				      (|remove seq-type=general-vector test=eql count=nil key=identity|
+				       item sequence start end)))
+			      ;; seq-type=general-vector test=eql end=nil
+			      (if count
+				  ;; seq-type=general-vector test=eql count=other end=nil
+				  (if from-end
+				      ;; seq-type=general-vector from-end=t test=eql count=other end=nil
+				      (if key
+					  ;;       seq-type=general-vector from-end=t test=eql count=other key=other end=nil 
+					  (|remove seq-type=general-vector from-end=t test=eql count=other key=other|
+					   item sequence start (length sequence) count key)
+					  ;;       seq-type=general-vector from-end=t test=eql count=other key=identity end=nil 
+					  (|remove seq-type=general-vector from-end=t test=eql count=other key=identity|
+					   item sequence start (length sequence) count))
+				      ;; seq-type=general-vector from-end=nil test=eql count=other end=nil
+				      (if key
+					  ;;       seq-type=general-vector from-end=nil test=eql count=other key=other end=nil 
+					  (|remove seq-type=general-vector from-end=nil test=eql count=other key=other|
+					   item sequence start (length sequence) count key)
+					  ;;       seq-type=general-vector from-end=nil test=eql count=other key=identity end=nil 
+					  (|remove seq-type=general-vector from-end=nil test=eql count=other key=identity|
+					   item sequence start (length sequence) count)))
+				  ;; seq-type=general-vector test=eql count=nil end=nil
+				  ;; no need to test from-end
+				  (if key
+				      ;;       seq-type=general-vector test=eql count=nil key=other end=nil 
+				      (|remove seq-type=general-vector test=eql count=nil key=other|
+				       item sequence start (length sequence) key)
+				      ;;       seq-type=general-vector test=eql count=nil key=identity end=nil 
+				      (|remove seq-type=general-vector test=eql count=nil key=identity|
+				       item sequence start (length sequence)))))
+			  ;; seq-type=general-vector test=other
+			  (if end
+			      ;; seq-type=general-vector test=other end=other
+			      (if count
+				  ;; seq-type=general-vector test=other count=other end=other
+				  (if from-end
+				      ;; seq-type=general-vector from-end=t test=other count=other end=other
+				      (if key
+					  ;;       seq-type=general-vector from-end=t test=other count=other key=other end=other 
+					  (|remove seq-type=general-vector from-end=t test=other count=other key=other|
+					   item sequence test start end count key)
+					  ;;       seq-type=general-vector from-end=t test=other count=other key=identity end=other 
+					  (|remove seq-type=general-vector from-end=t test=other count=other key=identity|
+					   item sequence test start end count))
+				      ;; seq-type=general-vector from-end=nil test=other count=other end=other
+				      (if key
+					  ;;       seq-type=general-vector from-end=nil test=other count=other key=other end=other 
+					  (|remove seq-type=general-vector from-end=nil test=other count=other key=other|
+					   item sequence test start end count key)
+					  ;;       seq-type=general-vector from-end=nil test=other count=other key=identity end=other 
+					  (|remove seq-type=general-vector from-end=nil test=other count=other key=identity|
+					   item sequence test start end count)))
+				  ;; seq-type=general-vector test=other count=nil end=other
+				  ;; no need to test from-end
+				  (if key
+				      ;;       seq-type=general-vector test=other count=nil key=other end=other 
+				      (|remove seq-type=general-vector test=other count=nil key=other|
+				       item sequence test start end key)
+				      ;;       seq-type=general-vector test=other count=nil key=identity end=other 
+				      (|remove seq-type=general-vector test=other count=nil key=identity|
+				       item sequence test start end)))
+			      ;; seq-type=general-vector test=other end=nil
+			      (if count
+				  ;; seq-type=general-vector test=other count=other end=nil
+				  (if from-end
+				      ;; seq-type=general-vector from-end=t test=other count=other end=nil
+				      (if key
+					  ;;       seq-type=general-vector from-end=t test=other count=other key=other end=nil 
+					  (|remove seq-type=general-vector from-end=t test=other count=other key=other|
+					   item sequence test start (length sequence) count key)
+					  ;;       seq-type=general-vector from-end=t test=other count=other key=identity end=nil 
+					  (|remove seq-type=general-vector from-end=t test=other count=other key=identity|
+					   item sequence test start (length sequence) count))
+				      ;; seq-type=general-vector from-end=nil test=other count=other end=nil
+				      (if key
+					  ;;       seq-type=general-vector from-end=nil test=other count=other key=other end=nil 
+					  (|remove seq-type=general-vector from-end=nil test=other count=other key=other|
+					   item sequence test start (length sequence) count key)
+					  ;;       seq-type=general-vector from-end=nil test=other count=other key=identity end=nil 
+					  (|remove seq-type=general-vector from-end=nil test=other count=other key=identity|
+					   item sequence test start (length sequence) count)))
+				  ;; seq-type=general-vector test=other count=nil end=nil
+				  ;; no need to test from-end
+				  (if key
+				      ;;       seq-type=general-vector test=other count=nil key=other end=nil 
+				      (|remove seq-type=general-vector test=other count=nil key=other|
+				       item sequence test start (length sequence) key)
+				      ;;       seq-type=general-vector test=other count=nil key=identity end=nil 
+				      (|remove seq-type=general-vector test=other count=nil key=identity|
+				       item sequence test start (length sequence)))))))
+		  (if test-not
+		      ;; seq-type=general-vector test-not=other
+		      (if end
+			  ;; seq-type=general-vector test-not=other end=other
+			  (if count
+			      ;; seq-type=general-vector test-not=other count=other end=other
+			      (if from-end
+				  ;; seq-type=general-vector from-end=t test-not=other count=other end=other
+				  (if key
+				      ;;       seq-type=general-vector from-end=t test-not=other count=other key=other end=other
+				      (|remove seq-type=general-vector from-end=t test-not=other count=other key=other|
+				       item sequence test-not start end count key)
+				      ;;       seq-type=general-vector from-end=t test-not=other count=other key=identity end=other 
+				      (|remove seq-type=general-vector from-end=t test-not=other count=other key=identity|
+				       item sequence test-not start end count))
+				  ;; seqr-type=general-vector from-end=nil test-not=other count=other end=other
+				  (if key
+				      ;;       seq-type=general-vector from-end=nil test-not=other count=other key=other end=other
+				      (|remove seq-type=general-vector from-end=nil test-not=other count=other key=other|
+				       item sequence test-not start end count key)
+				      ;;       seq-type=general-vector from-end=nil test-not=other count=other key=identity end=other 
+				      (|remove seq-type=general-vector from-end=nil test-not=other count=other key=identity|
+				       item sequence test-not start end count)))
+			      ;; seq-type=general-vector test-not=other count=nil end=other
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=general-vector test-not=other count=nil key=other end=other
+				  (|remove seq-type=general-vector test-not=other count=nil key=other|
+				   item sequence test-not start end key)
+				  ;;       seq-type=general-vector test-not=other count=nil key=identity end=other 
+				  (|remove seq-type=general-vector test-not=other count=nil key=identity|
+				   item sequence test-not start end)))
+			  ;; seq-type=general-vector test-not=other end=nil
+			  (if count
+			      ;; seq-type=general-vector test-not=other count=other end=nil
+			      (if from-end
+				  ;; seq-type=general-vector from-end=t test-not=other count=other end=nil
+				  (if key
+				      ;;       seq-type=general-vector from-end=t test-not=other count=other key=other end=nil
+				      (|remove seq-type=general-vector from-end=t test-not=other count=other key=other|
+				       item sequence test-not start (length sequence) count key)
+				      ;;       seq-type=general-vector from-end=t test-not=other count=other key=identity end=nil 
+				      (|remove seq-type=general-vector from-end=t test-not=other count=other key=identity|
+				       item sequence test-not start (length sequence) count))
+				  ;; seqr-type=general-vector from-end=nil test-not=other count=other end=nil
+				  (if key
+				      ;;       seq-type=general-vector from-end=nil test-not=other count=other key=other end=nil
+				      (|remove seq-type=general-vector from-end=nil test-not=other count=other key=other|
+				       item sequence test-not start (length sequence) count key)
+				      ;;       seq-type=general-vector from-end=nil test-not=other count=other key=identity end=nil 
+				      (|remove seq-type=general-vector from-end=nil test-not=other count=other key=identity|
+				       item sequence test-not start (length sequence) count)))
+			      ;; seq-type=general-vector test-not=other count=nil end=nil
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=general-vector test-not=other count=nil key=other end=nil
+				  (|remove seq-type=general-vector test-not=other count=nil key=other|
+				   item sequence test-not start (length sequence) key)
+				  ;;       seq-type=general-vector test-not=other count=nil key=identity end=nil! 
+				  (|remove seq-type=general-vector test-not=other count=nil key=identity|
+				   item sequence test-not start (length sequence)))))
+		      ;; seq-type=general-vector test=eql
+		      (if end
+			  ;; seq-type=general-vector test=eql end=other
+			  (if count
+			      ;; seq-type=general-vector test=eql count=other end=other
+			      (if from-end
+				  ;; seq-type=general-vector from-end=t test=eql count=other end=other
+				  (if key
+				      ;;       seq-type=general-vector from-end=t test=eql count=other key=other end=other
+				      (|remove seq-type=general-vector from-end=t test=eql count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=general-vector from-end=t test=eql count=other key=identity end=other 
+				      (|remove seq-type=general-vector from-end=t test=eql count=other key=identity|
+				       item sequence start end count))
+				  ;; seqr-type=general-vector from-end=nil test=eql count=other end=other
+				  (if key
+				      ;;       seq-type=general-vector from-end=nil test=eql count=other key=other end=other
+				      (|remove seq-type=general-vector from-end=nil test=eql count=other key=other|
+				       item sequence start end count key)
+				      ;;       seq-type=general-vector from-end=nil test=eql count=other key=identity end=other 
+				      (|remove seq-type=general-vector from-end=nil test=eql count=other key=identity|
+				       item sequence start end count)))
+			      ;; seq-type=general-vector test=eql count=nil end=other
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=general-vector test=eql count=nil key=other end=other
+				  (|remove seq-type=general-vector test=eql count=nil key=other|
+				   item sequence start end key)
+				  ;;       seq-type=general-vector test=eql count=nil key=identity end=other 
+				  (|remove seq-type=general-vector test=eql count=nil key=identity|
+				   item sequence start end)))
+			  ;; seq-type=general-vector test=eql end=nil
+			  (if count
+			      ;; seq-type=general-vector test=eql count=other end=nil
+			      (if from-end
+				  ;; seq-type=general-vector from-end=t test=eql count=other end=nil
+				  (if key
+				      ;;       seq-type=general-vector from-end=t test=eql count=other key=other end=nil
+				      (|remove seq-type=general-vector from-end=t test=eql count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=general-vector from-end=t test=eql count=other key=identity end=nil 
+				      (|remove seq-type=general-vector from-end=t test=eql count=other key=identity|
+				       item sequence start (length sequence) count))
+				  ;; seqr-type=general-vector from-end=nil test=eql count=other end=nil
+				  (if key
+				      ;;       seq-type=general-vector from-end=nil test=eql count=other key=other end=nil
+				      (|remove seq-type=general-vector from-end=nil test=eql count=other key=other|
+				       item sequence start (length sequence) count key)
+				      ;;       seq-type=general-vector from-end=nil test=eql count=other key=identity end=nil 
+				      (|remove seq-type=general-vector from-end=nil test=eql count=other key=identity|
+				       item sequence start (length sequence) count)))
+			      ;; seq-type=general-vector test=eql count=nil end=nil
+			      ;; no need to test from-end
+			      (if key
+				  ;;       seq-type=general-vector test=eql count=nil key=other end=nil
+				  (|remove seq-type=general-vector test=eql count=nil key=other|
+				   item sequence start (length sequence) key)
+				  ;;       seq-type=general-vector test=eql count=nil key=identity end=nil! 
+				  (|remove seq-type=general-vector test=eql count=nil key=identity|
+				   item sequence start (length sequence)))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function delete-if
+
+(defun |delete-if seq-type=list end=nil count=nil key=identity|
+    (test list start)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  when (funcall test (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete-if seq-type=list end=nil count=nil key=other|
+    (test list start key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  when (funcall test (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete-if seq-type=list end=other count=nil key=identity|
+    (test list start end)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  when (funcall test (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete-if seq-type=list end=other count=nil key=other|
+    (test list start end key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  when (funcall test (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete-if seq-type=list from-end=nil end=nil count=other key=identity|
+    (test list count start)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  when (funcall test (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete-if seq-type=list from-end=nil end=nil count=other key=other|
+    (test list start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  when (funcall test (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete-if seq-type=list from-end=nil end=other count=other key=identity|
+    (test list start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  when (funcall test (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete-if seq-type=list from-end=nil end=other count=other key=other|
+    (test list start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  when (funcall test (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete-if seq-type=list from-end=t end=nil count=other key=identity|
+    (test list start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (funcall test (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete-if seq-type=list from-end=t end=nil count=other key=other|
+    (test list start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (funcall test (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete-if seq-type=list from-end=t end=other count=other key=identity|
+    (test list start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (funcall test (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete-if seq-type=list from-end=t end=other count=other key=other|
+    (test list start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  unless (funcall test (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun delete-if (test sequence &key from-end (start 0) end count key)
+  ;; FIXME test if it is a sequence at all.
+  (if (listp sequence)
+      ;; seq-type=list
+      (if from-end
+	  ;; seq-type=list from-end=t
+	  (if end
+	      ;; seq-type=list from-end=t end=other
+	      (if count
+		  ;; seq-type=list from-end=t end=other count=other
+		  (if key
+		      ;;          seq-type=list from-end=t end=other count=other key=other
+		      (|delete-if seq-type=list from-end=t end=other count=other key=other|
+		       test sequence start end count key)
+		      ;;          seq-type=list from-end=t end=other count=other key=identity
+		      (|delete-if seq-type=list from-end=t end=other count=other key=identity|
+		       test sequence start end count))
+		  ;; seq-type=list from-end=t end=other count=nil
+		  (if key
+		      ;;          seq-type=list end=other count=nil key=other
+		      (|delete-if seq-type=list end=other count=nil key=other|
+		       test sequence start end key)
+		      ;;          seq-type=list end=other count=nil key=identity
+		      (|delete-if seq-type=list end=other count=nil key=identity|
+		       test sequence start end)))
+	      ;; seq-type=list from-end=t end=nil
+	      (if count
+		  ;; seq-type=list from-end=t end=nil count=other
+		  (if key
+		      ;;          seq-type=list from-end=t end=nil count=other key=other
+		      (|delete-if seq-type=list from-end=t end=nil count=other key=other|
+		       test sequence start count key)
+		      ;;          seq-type=list from-end=t end=nil count=other key=identity
+		      (|delete-if seq-type=list from-end=t end=nil count=other key=identity|
+		       test sequence start count))
+		  ;; seq-type=list from-end=t end=nil count=nil
+		  (if key
+		      ;;          seq-type=list end=nil count=nil key=other
+		      (|delete-if seq-type=list end=nil count=nil key=other|
+		       test sequence start key)
+		      ;;          seq-type=list end=nil count=nil key=identity
+		      (|delete-if seq-type=list end=nil count=nil key=identity|
+		       test sequence start))))
+	  ;; seq-type=list from-end=nil
+	  (if end
+	      ;; seq-type=list from-end=nil end=other
+	      (if count
+		  ;; seq-type=list from-end=nil end=other count=other
+		  (if key
+		      ;;          seq-type=list from-end=nil end=other count=other key=other
+		      (|delete-if seq-type=list from-end=nil end=other count=other key=other|
+		       test sequence start end count key)
+		      ;;          seq-type=list from-end=nil end=other count=other key=identity
+		      (|delete-if seq-type=list from-end=nil end=other count=other key=identity|
+		       test sequence start end count))
+		  ;; seq-type=list from-end=nil end=other count=nil
+		  (if key
+		      ;;          seq-type=list end=other count=nil key=other
+		      (|delete-if seq-type=list end=other count=nil key=other|
+		       test sequence start end key)
+		      ;;          seq-type=list end=other count=nil key=identity
+		      (|delete-if seq-type=list end=other count=nil key=identity|
+		       test sequence start end)))
+	      ;; seq-type=list from-end=nil end=nil
+	      (if count
+		  ;; seq-type=list from-end=nil end=nil count=other
+		  (if key
+		      ;;          seq-type=list from-end=nil end=nil count=other key=other
+		      (|delete-if seq-type=list from-end=nil end=nil count=other key=other|
+		       test sequence start count key)
+		      ;;          seq-type=list from-end=nil end=nil count=other key=identity
+		      (|delete-if seq-type=list from-end=nil end=nil count=other key=identity|
+		       test sequence start count))
+		  ;; seq-type=list from-end=nil end=nil count=nil
+		  (if key
+		      ;;          seq-type=list end=nil count=nil key=other
+		      (|delete-if seq-type=list end=nil count=nil key=other|
+		       test sequence start key)
+		      (|delete-if seq-type=list end=nil count=nil key=identity|
+		       test sequence start)))))
+      (if (simple-string-p sequence)
+	  ;; seq-type=simple-string
+	  ;; seq-type=simple-string test=given
+	  ;; seq-type=simple-string
+	  (if end
+	      ;; seq-type=simple-string end=other
+	      (if count
+		  ;; seq-type=simple-string count=other end=other
+		  (if from-end
+		      ;; seq-type=simple-string from-end=t count=other end=other
+		      (if key
+			  ;;          seq-type=simple-string from-end=t count=other key=other end=other 
+			  (|remove-if seq-type=simple-string from-end=t count=other key=other|
+			   test sequence start end count key)
+			  ;;          seq-type=simple-string from-end=t count=other key=identity end=other 
+			  (|remove-if seq-type=simple-string from-end=t count=other key=identity|
+			   test sequence start end count))
+		      ;; seq-type=simple-string from-end=nil count=other end=other
+		      (if key
+			  ;;          seq-type=simple-string from-end=nil count=other key=other end=other 
+			  (|remove-if seq-type=simple-string from-end=nil count=other key=other|
+			   test sequence start end count key)
+			  ;;          seq-type=simple-string from-end=nil count=other key=identity end=other 
+			  (|remove-if seq-type=simple-string from-end=nil count=other key=identity|
+			   test sequence start end count)))
+		  ;; seq-type=simple-string count=nil end=other
+		  ;; no need to test from-end
+		  (if key
+		      ;;          seq-type=simple-string count=nil key=other end=other 
+		      (|remove-if seq-type=simple-string count=nil key=other|
+		       test sequence start end key)
+		      ;;          seq-type=simple-string count=nil key=identity end=other 
+		      (|remove-if seq-type=simple-string count=nil key=identity|
+		       test sequence start end)))
+	      ;; seq-type=simple-string end=nil
+	      (if count
+		  ;; seq-type=simple-string count=other end=nil
+		  (if from-end
+		      ;; seq-type=simple-string from-end=t count=other end=nil
+		      (if key
+			  ;;          seq-type=simple-string from-end=t count=other key=other end=nil 
+			  (|remove-if seq-type=simple-string from-end=t count=other key=other|
+			   test sequence start (length sequence) count key)
+			  ;;          seq-type=simple-string from-end=t count=other key=identity end=nil 
+			  (|remove-if seq-type=simple-string from-end=t count=other key=identity|
+			   test sequence start (length sequence) count))
+		      ;; seq-type=simple-string from-end=nil count=other end=nil
+		      (if key
+			  ;;          seq-type=simple-string from-end=nil count=other key=other end=nil 
+			  (|remove-if seq-type=simple-string from-end=nil count=other key=other|
+			   test sequence start (length sequence) count key)
+			  ;;          seq-type=simple-string from-end=nil count=other key=identity end=nil 
+			  (|remove-if seq-type=simple-string from-end=nil count=other key=identity|
+			   test sequence start (length sequence) count)))
+		  ;; seq-type=simple-string count=nil end=nil
+		  ;; no need to test from-end
+		  (if key
+		      ;;          seq-type=simple-string count=nil key=other end=nil 
+		      (|remove-if seq-type=simple-string count=nil key=other|
+		       test sequence start (length sequence) key)
+		      ;;          seq-type=simple-string count=nil key=identity end=nil 
+		      (|remove-if seq-type=simple-string count=nil key=identity|
+		       test sequence start (length sequence)))))
+	  (if (simple-vector-p sequence)
+	      ;; seq-type=simple-vector
+	      ;; seq-type=simple-vector test=given
+	      ;; seq-type=simple-vector
+	      (if end
+		  ;; seq-type=simple-vector end=other
+		  (if count
+		      ;; seq-type=simple-vector count=other end=other
+		      (if from-end
+			  ;; seq-type=simple-vector from-end=t count=other end=other
+			  (if key
+			      ;;          seq-type=simple-vector from-end=t count=other key=other end=other 
+			      (|remove-if seq-type=simple-vector from-end=t count=other key=other|
+			       test sequence start end count key)
+			      ;;          seq-type=simple-vector from-end=t count=other key=identity end=other 
+			      (|remove-if seq-type=simple-vector from-end=t count=other key=identity|
+			       test sequence start end count))
+			  ;; seq-type=simple-vector from-end=nil count=other end=other
+			  (if key
+			      ;;          seq-type=simple-vector from-end=nil count=other key=other end=other 
+			      (|remove-if seq-type=simple-vector from-end=nil count=other key=other|
+			       test sequence start end count key)
+			      ;;          seq-type=simple-vector from-end=nil count=other key=identity end=other 
+			      (|remove-if seq-type=simple-vector from-end=nil count=other key=identity|
+			       test sequence start end count)))
+		      ;; seq-type=simple-vector count=nil end=other
+		      ;; no need to test from-end
+		      (if key
+			  ;;          seq-type=simple-vector count=nil key=other end=other 
+			  (|remove-if seq-type=simple-vector count=nil key=other|
+			   test sequence start end key)
+			  ;;          seq-type=simple-vector count=nil key=identity end=other 
+			  (|remove-if seq-type=simple-vector count=nil key=identity|
+			   test sequence start end)))
+		  ;; seq-type=simple-vector end=nil
+		  (if count
+		      ;; seq-type=simple-vector count=other end=nil
+		      (if from-end
+			  ;; seq-type=simple-vector from-end=t count=other end=nil
+			  (if key
+			      ;;          seq-type=simple-vector from-end=t count=other key=other end=nil 
+			      (|remove-if seq-type=simple-vector from-end=t count=other key=other|
+			       test sequence start (length sequence) count key)
+			      ;;          seq-type=simple-vector from-end=t count=other key=identity end=nil 
+			      (|remove-if seq-type=simple-vector from-end=t count=other key=identity|
+			       test sequence start (length sequence) count))
+			  ;; seq-type=simple-vector from-end=nil count=other end=nil
+			  (if key
+			      ;;          seq-type=simple-vector from-end=nil count=other key=other end=nil 
+			      (|remove-if seq-type=simple-vector from-end=nil count=other key=other|
+			       test sequence start (length sequence) count key)
+			      ;;          seq-type=simple-vector from-end=nil count=other key=identity end=nil 
+			      (|remove-if seq-type=simple-vector from-end=nil count=other key=identity|
+			       test sequence start (length sequence) count)))
+		      ;; seq-type=simple-vector count=nil end=nil
+		      ;; no need to test from-end
+		      (if key
+			  ;;          seq-type=simple-vector count=nil key=other end=nil 
+			  (|remove-if seq-type=simple-vector count=nil key=other|
+			   test sequence start (length sequence) key)
+			  ;;          seq-type=simple-vector count=nil key=identity end=nil 
+			  (|remove-if seq-type=simple-vector count=nil key=identity|
+			   test sequence start (length sequence)))))
+	      ;; seq-type=general-vector
+	      (if end
+		  ;; seq-type=general-vector end=other
+		  (if count
+		      ;; seq-type=general-vector count=other end=other
+		      (if from-end
+			  ;; seq-type=general-vector from-end=t count=other end=other
+			  (if key
+			      ;;          seq-type=general-vector from-end=t count=other key=other end=other 
+			      (|remove-if seq-type=general-vector from-end=t count=other key=other|
+			       test sequence start end count key)
+			      ;;          seq-type=general-vector from-end=t count=other key=identity end=other 
+			      (|remove-if seq-type=general-vector from-end=t count=other key=identity|
+			       test sequence start end count))
+			  ;; seq-type=general-vector from-end=nil count=other end=other
+			  (if key
+			      ;;          seq-type=general-vector from-end=nil count=other key=other end=other 
+			      (|remove-if seq-type=general-vector from-end=nil count=other key=other|
+			       test sequence start end count key)
+			      ;;          seq-type=general-vector from-end=nil count=other key=identity end=other 
+			      (|remove-if seq-type=general-vector from-end=nil count=other key=identity|
+			       test sequence start end count)))
+		      ;; seq-type=general-vector count=nil end=other
+		      ;; no need to test from-end
+		      (if key
+			  ;;          seq-type=general-vector count=nil key=other end=other 
+			  (|remove-if seq-type=general-vector count=nil key=other|
+			   test sequence start end key)
+			  ;;          seq-type=general-vector count=nil key=identity end=other 
+			  (|remove-if seq-type=general-vector count=nil key=identity|
+			   test sequence start end)))
+		  ;; seq-type=general-vector end=nil
+		  (if count
+		      ;; seq-type=general-vector count=other end=nil
+		      (if from-end
+			  ;; seq-type=general-vector from-end=t count=other end=nil
+			  (if key
+			      ;;          seq-type=general-vector from-end=t count=other key=other end=nil 
+			      (|remove-if seq-type=general-vector from-end=t count=other key=other|
+			       test sequence start (length sequence) count key)
+			      ;;          seq-type=general-vector from-end=t count=other key=identity end=nil 
+			      (|remove-if seq-type=general-vector from-end=t count=other key=identity|
+			       test sequence start (length sequence) count))
+			  ;; seq-type=general-vector from-end=nil count=other end=nil
+			  (if key
+			      ;;          seq-type=general-vector from-end=nil count=other key=other end=nil 
+			      (|remove-if seq-type=general-vector from-end=nil count=other key=other|
+			       test sequence start (length sequence) count key)
+			      ;;          seq-type=general-vector from-end=nil count=other key=identity end=nil 
+			      (|remove-if seq-type=general-vector from-end=nil count=other key=identity|
+			       test sequence start (length sequence) count)))
+		      ;; seq-type=general-vector count=nil end=nil
+		      ;; no need to test from-end
+		      (if key
+			  ;;          seq-type=general-vector count=nil key=other end=nil 
+			  (|remove-if seq-type=general-vector count=nil key=other|
+			   test sequence start (length sequence) key)
+			  ;;          seq-type=general-vector count=nil key=identity end=nil 
+			  (|remove-if seq-type=general-vector count=nil key=identity|
+			   test sequence start (length sequence)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function delete-if-not
+
+(defun |delete-if-not seq-type=list end=nil count=nil key=identity|
+    (test-not list start)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  unless (funcall test-not (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list end=nil count=nil key=other|
+    (test-not list start key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  unless (funcall test-not (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list end=other count=nil key=identity|
+    (test-not list start end)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  unless (funcall test-not (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list end=other count=nil key=other|
+    (test-not list start end key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop end-start)
+	  unless (funcall test-not (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list from-end=nil end=nil count=other key=identity|
+    (test-not list start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  unless (funcall test-not (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list from-end=nil end=nil count=other key=other|
+    (test-not list start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  unless (funcall test-not (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current)))
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list from-end=nil end=other count=other key=identity|
+    (test-not list start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  unless (funcall test-not (car current))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list from-end=nil end=other count=other key=other|
+    (test-not list start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Loop through the elements checking whether
+    ;; they pass the test.
+    ;; Loop invariant: trail points to the cell
+    ;; imidiately preceding that pointed to by current.
+    (loop until (null current)
+	  until (zerop count)
+	  until (zerop end-start)
+	  unless (funcall test-not (funcall key (car current)))
+	    do (setf current (cdr current))
+	       (setf (cdr trail) current)
+	       (decf count)
+	  else
+	    do (setf trail current)
+	       (setf current (cdr current))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list from-end=t end=nil count=other key=identity|
+    (test-not list start count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  when (funcall test-not (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list from-end=t end=nil count=other key=other|
+    (test-not list start count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '()))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp)))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  when (funcall test-not (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list from-end=t end=other count=other key=identity|
+    (test-not list start end count)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  when (funcall test-not (car reversed-middle))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun |delete-if-not seq-type=list from-end=t end=other count=other key=other|
+    (test-not list start end count key)
+  (let* ((result (cons nil list))
+	 (start-bis start)
+	 (trail result)
+	 (current list)
+	 (reversed-middle '())
+	 (end-start (- end start)))
+    ;; First skip a prefix indicated by start
+    (loop repeat start
+	  until (null current)
+	  do (setf trail current
+		   current (cdr current))
+	     (decf start-bis))
+    ;; If we reached the end of the list before start-bis
+    ;; became zero, then start is beyond the end of the
+    ;; list.
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    ;; Now, reverse the sublist between start and end
+    ;; and put the result in reversed-middle.
+    (loop until (null current)
+	  until (zerop end-start)
+	  do (let ((temp (cdr current)))
+	       (setf (cdr current) reversed-middle)
+	       (setf reversed-middle current)
+	       (setf current temp))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    ;; The variable current now points to a tail
+    ;; delimited by end, so we don't touch it.
+    ;; Loop through the elements of reversed middle
+    ;; skipping the ones to delete, and putting the others
+    ;; back in the original order on the front of the tail
+    ;; pointed to by current.
+    (loop until (null reversed-middle)
+	  until (zerop count)
+	  when (funcall test-not (funcall key (car reversed-middle)))
+	    do (let ((temp (cdr reversed-middle)))
+		 (setf (cdr reversed-middle) current)
+		 (setf current reversed-middle)
+		 (setf reversed-middle temp))
+	  else
+	    do (setf reversed-middle (cdr reversed-middle))
+	       (decf count))
+    ;; There might be remaining elements on reversed-middle
+    ;; that weren't deleted because we reached the count.
+    ;; Copy them as before but without testing.
+    (loop until (null reversed-middle)
+	  do (let ((temp (cdr reversed-middle)))
+	       (setf (cdr reversed-middle) current)
+	       (setf current reversed-middle)
+	       (setf reversed-middle temp)))
+    ;; Finally, we are ready to connect the prefix pointed to
+    ;; by trail to the remaining list pointed to by current.
+    (setf (cdr trail) current)
+    (cdr result)))
+
+(defun delete-if-not (test-not sequence &key from-end (start 0) end count key)
+  ;; FIXME test if it is a sequence at all.
+  (if (listp sequence)
+      ;; seq-type=list
+      (if from-end
+	  ;; seq-type=list from-end=t
+	  ;; seq-type=list from-end=t
+	  (if end
+	      ;; seq-type=list from-end=t end=other
+	      (if count
+		  ;; seq-type=list from-end=t end=other count=other
+		  (if key
+		      ;;              seq-type=list from-end=t end=other count=other key=other
+		      (|delete-if-not seq-type=list from-end=t end=other count=other key=other|
+		       test-not sequence start end count key)
+		      ;;              seq-type=list from-end=t end=other count=other key=identity
+		      (|delete-if-not seq-type=list from-end=t end=other count=other key=identity|
+		       test-not sequence start end count))
+		  ;; seq-type=list from-end=t end=other count=nil
+		  (if key
+		      ;;              seq-type=list end=other count=nil key=other
+		      (|delete-if-not seq-type=list end=other count=nil key=other|
+		       test-not sequence start end key)
+		      ;;              seq-type=list end=other count=nil key=identity
+		      (|delete-if-not seq-type=list end=other count=nil key=identity|
+		       test-not sequence start end)))
+	      ;; seq-type=list from-end=t end=nil
+	      (if count
+		  ;; seq-type=list from-end=t end=nil count=other
+		  (if key
+		      ;;              seq-type=list from-end=t end=nil count=other key=other
+		      (|delete-if-not seq-type=list from-end=t end=nil count=other key=other|
+		       test-not sequence start count key)
+		      ;;              seq-type=list from-end=t end=nil count=other key=identity
+		      (|delete-if-not seq-type=list from-end=t end=nil count=other key=identity|
+		       test-not sequence start count))
+		  (if key
+		      (|delete-if-not seq-type=list end=other count=nil key=other|
+		       test-not sequence start end key)
+		      (|delete-if-not seq-type=list end=other count=nil key=identity|
+		       test-not sequence start end))))
+	  ;; seq-type=list from-end=nil
+	  ;; seq-type=list from-end=nil
+	  (if end
+	      ;; seq-type=list from-end=nil end=other
+	      (if count
+		  ;; seq-type=list from-end=nil end=other count=other
+		  (if key
+		      ;;              seq-type=list from-end=nil end=other count=other key=other
+		      (|delete-if-not seq-type=list from-end=nil end=other count=other key=other|
+		       test-not sequence start end count key)
+		      ;;              seq-type=list from-end=nil end=other count=other key=identity
+		      (|delete-if-not seq-type=list from-end=nil end=other count=other key=identity|
+		       test-not sequence start end count))
+		  ;; seq-type=list from-end=nil end=other count=nil
+		  (if key
+		      ;;              seq-type=list end=other count=nil key=other
+		      (|delete-if-not seq-type=list end=other count=nil key=other|
+		       test-not sequence start end key)
+		      ;;              seq-type=list end=other count=nil key=identity
+		      (|delete-if-not seq-type=list end=other count=nil key=identity|
+		       test-not sequence start end)))
+	      ;; seq-type=list from-end=nil end=nil
+	      (if count
+		  ;; seq-type=list from-end=nil end=nil count=other
+		  (if key
+		      ;;              seq-type=list from-end=nil end=nil count=other key=other
+		      (|delete-if-not seq-type=list from-end=nil end=nil count=other key=other|
+		       test-not sequence start count key)
+		      ;;              seq-type=list from-end=nil end=nil count=other key=identity
+		      (|delete-if-not seq-type=list from-end=nil end=nil count=other key=identity|
+		       test-not sequence start count))
+		  (if key
+		      (|delete-if-not seq-type=list end=other count=nil key=other|
+		       test-not sequence start end key)
+		      (|delete-if-not seq-type=list end=other count=nil key=identity|
+		       test-not sequence start end)))))
+      (if (simple-string-p sequence)
+	  ;; seq-type=simple-string
+	  ;; seq-type=simple-string
+	  (if end
+	      ;; seq-type=simple-string end=other
+	      (if count
+		  ;; seq-type=simple-string count=other end=other
+		  (if from-end
+		      ;; seq-type=simple-string from-end=t count=other end=other
+		      (if key
+			  ;;              seq-type=simple-string from-end=t count=other key=other end=other
+			  (|remove-if-not seq-type=simple-string from-end=t count=other key=other|
+			   test-not sequence start end count key)
+			  ;;              seq-type=simple-string from-end=t count=other key=identity end=other 
+			  (|remove-if-not seq-type=simple-string from-end=t count=other key=identity|
+			   test-not sequence start end count))
+		      ;; seqr-type=simple-string from-end=nil count=other end=other
+		      (if key
+			  ;;              seq-type=simple-string from-end=nil count=other key=other end=other
+			  (|remove-if-not seq-type=simple-string from-end=nil count=other key=other|
+			   test-not sequence start end count key)
+			  ;;              seq-type=simple-string from-end=nil count=other key=identity end=other 
+			  (|remove-if-not seq-type=simple-string from-end=nil count=other key=identity|
+			   test-not sequence start end count)))
+		  ;; seq-type=simple-string count=nil end=other
+		  ;; no need to test from-end
+		  (if key
+		      ;;              seq-type=simple-string count=nil key=other end=other
+		      (|remove-if-not seq-type=simple-string count=nil key=other|
+		       test-not sequence start end key)
+		      ;;              seq-type=simple-string count=nil key=identity end=other 
+		      (|remove-if-not seq-type=simple-string count=nil key=identity|
+		       test-not sequence start end)))
+	      ;; seq-type=simple-string end=nil
+	      (if count
+		  ;; seq-type=simple-string count=other end=nil
+		  (if from-end
+		      ;; seq-type=simple-string from-end=t count=other end=nil
+		      (if key
+			  ;;              seq-type=simple-string from-end=t count=other key=other end=nil
+			  (|remove-if-not seq-type=simple-string from-end=t count=other key=other|
+			   test-not sequence start (length sequence) count key)
+			  ;;              seq-type=simple-string from-end=t count=other key=identity end=nil 
+			  (|remove-if-not seq-type=simple-string from-end=t count=other key=identity|
+			   test-not sequence start (length sequence) count))
+		      ;; seqr-type=simple-string from-end=nil count=other end=nil
+		      (if key
+			  ;;              seq-type=simple-string from-end=nil count=other key=other end=nil
+			  (|remove-if-not seq-type=simple-string from-end=nil count=other key=other|
+			   test-not sequence start (length sequence) count key)
+			  ;;              seq-type=simple-string from-end=nil count=other key=identity end=nil 
+			  (|remove-if-not seq-type=simple-string from-end=nil count=other key=identity|
+			   test-not sequence start (length sequence) count)))
+		  ;; seq-type=simple-string count=nil end=nil
+		  ;; no need to test from-end
+		  (if key
+		      ;;              seq-type=simple-string count=nil key=other end=nil
+		      (|remove-if-not seq-type=simple-string count=nil key=other|
+		       test-not sequence start (length sequence) key)
+		      ;;              seq-type=simple-string count=nil key=identity end=nil! 
+		      (|remove-if-not seq-type=simple-string count=nil key=identity|
+		       test-not sequence start (length sequence)))))
+	  (if (simple-vector-p sequence)
+	      ;; seq-type=simple-vector
+	      ;; seq-type=simple-vector
+	      (if end
+		  ;; seq-type=simple-vector end=other
+		  (if count
+		      ;; seq-type=simple-vector count=other end=other
+		      (if from-end
+			  ;; seq-type=simple-vector from-end=t count=other end=other
+			  (if key
+			      ;;              seq-type=simple-vector from-end=t count=other key=other end=other
+			      (|remove-if-not seq-type=simple-vector from-end=t count=other key=other|
+			       test-not sequence start end count key)
+			      ;;              seq-type=simple-vector from-end=t count=other key=identity end=other 
+			      (|remove-if-not seq-type=simple-vector from-end=t count=other key=identity|
+			       test-not sequence start end count))
+			  ;; seqr-type=simple-vector from-end=nil count=other end=other
+			  (if key
+			      ;;              seq-type=simple-vector from-end=nil count=other key=other end=other
+			      (|remove-if-not seq-type=simple-vector from-end=nil count=other key=other|
+			       test-not sequence start end count key)
+			      ;;              seq-type=simple-vector from-end=nil count=other key=identity end=other 
+			      (|remove-if-not seq-type=simple-vector from-end=nil count=other key=identity|
+			       test-not sequence start end count)))
+		      ;; seq-type=simple-vector count=nil end=other
+		      ;; no need to test from-end
+		      (if key
+			  ;;              seq-type=simple-vector count=nil key=other end=other
+			  (|remove-if-not seq-type=simple-vector count=nil key=other|
+			   test-not sequence start end key)
+			  ;;              seq-type=simple-vector count=nil key=identity end=other 
+			  (|remove-if-not seq-type=simple-vector count=nil key=identity|
+			   test-not sequence start end)))
+		  ;; seq-type=simple-vector end=nil
+		  (if count
+		      ;; seq-type=simple-vector count=other end=nil
+		      (if from-end
+			  ;; seq-type=simple-vector from-end=t count=other end=nil
+			  (if key
+			      ;;              seq-type=simple-vector from-end=t count=other key=other end=nil
+			      (|remove-if-not seq-type=simple-vector from-end=t count=other key=other|
+			       test-not sequence start (length sequence) count key)
+			      ;;              seq-type=simple-vector from-end=t count=other key=identity end=nil 
+			      (|remove-if-not seq-type=simple-vector from-end=t count=other key=identity|
+			       test-not sequence start (length sequence) count))
+			  ;; seqr-type=simple-vector from-end=nil count=other end=nil
+			  (if key
+			      ;;              seq-type=simple-vector from-end=nil count=other key=other end=nil
+			      (|remove-if-not seq-type=simple-vector from-end=nil count=other key=other|
+			       test-not sequence start (length sequence) count key)
+			      ;;              seq-type=simple-vector from-end=nil count=other key=identity end=nil 
+			      (|remove-if-not seq-type=simple-vector from-end=nil count=other key=identity|
+			       test-not sequence start (length sequence) count)))
+		      ;; seq-type=simple-vector count=nil end=nil
+		      ;; no need to test from-end
+		      (if key
+			  ;;              seq-type=simple-vector count=nil key=other end=nil
+			  (|remove-if-not seq-type=simple-vector count=nil key=other|
+			   test-not sequence start (length sequence) key)
+			  ;;              seq-type=simple-vector count=nil key=identity end=nil! 
+			  (|remove-if-not seq-type=simple-vector count=nil key=identity|
+			   test-not sequence start (length sequence)))))
+	      ;; seq-type=general-vector
+	      ;; seq-type=general-vector
+	      (if end
+		  ;; seq-type=general-vector end=other
+		  (if count
+		      ;; seq-type=general-vector count=other end=other
+		      (if from-end
+			  ;; seq-type=general-vector from-end=t count=other end=other
+			  (if key
+			      ;;              seq-type=general-vector from-end=t count=other key=other end=other
+			      (|remove-if-not seq-type=general-vector from-end=t count=other key=other|
+			       test-not sequence start end count key)
+			      ;;              seq-type=general-vector from-end=t count=other key=identity end=other 
+			      (|remove-if-not seq-type=general-vector from-end=t count=other key=identity|
+			       test-not sequence start end count))
+			  ;; seqr-type=general-vector from-end=nil count=other end=other
+			  (if key
+			      ;;              seq-type=general-vector from-end=nil count=other key=other end=other
+			      (|remove-if-not seq-type=general-vector from-end=nil count=other key=other|
+			       test-not sequence start end count key)
+			      ;;              seq-type=general-vector from-end=nil count=other key=identity end=other 
+			      (|remove-if-not seq-type=general-vector from-end=nil count=other key=identity|
+			       test-not sequence start end count)))
+		      ;; seq-type=general-vector count=nil end=other
+		      ;; no need to test from-end
+		      (if key
+			  ;;              seq-type=general-vector count=nil key=other end=other
+			  (|remove-if-not seq-type=general-vector count=nil key=other|
+			   test-not sequence start end key)
+			  ;;              seq-type=general-vector count=nil key=identity end=other 
+			  (|remove-if-not seq-type=general-vector count=nil key=identity|
+			   test-not sequence start end)))
+		  ;; seq-type=general-vector end=nil
+		  (if count
+		      ;; seq-type=general-vector count=other end=nil
+		      (if from-end
+			  ;; seq-type=general-vector from-end=t count=other end=nil
+			  (if key
+			      ;;              seq-type=general-vector from-end=t count=other key=other end=nil
+			      (|remove-if-not seq-type=general-vector from-end=t count=other key=other|
+			       test-not sequence start (length sequence) count key)
+			      ;;              seq-type=general-vector from-end=t count=other key=identity end=nil 
+			      (|remove-if-not seq-type=general-vector from-end=t count=other key=identity|
+			       test-not sequence start (length sequence) count))
+			  ;; seqr-type=general-vector from-end=nil count=other end=nil
+			  (if key
+			      ;;              seq-type=general-vector from-end=nil count=other key=other end=nil
+			      (|remove-if-not seq-type=general-vector from-end=nil count=other key=other|
+			       test-not sequence start (length sequence) count key)
+			      ;;              seq-type=general-vector from-end=nil count=other key=identity end=nil 
+			      (|remove-if-not seq-type=general-vector from-end=nil count=other key=identity|
+			       test-not sequence start (length sequence) count)))
+		      ;; seq-type=general-vector count=nil end=nil
+		      ;; no need to test from-end
+		      (if key
+			  ;;              seq-type=general-vector count=nil key=other end=nil
+			  (|remove-if-not seq-type=general-vector count=nil key=other|
+			   test-not sequence start (length sequence) key)
+			  ;;              seq-type=general-vector count=nil key=identity end=nil! 
+			  (|remove-if-not seq-type=general-vector count=nil key=identity|
+			   test-not sequence start (length sequence)))))))))
