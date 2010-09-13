@@ -4318,8 +4318,15 @@
 ;;; Function remove
 
 ;;; It is not worth the effort to specialize for a start value of 0
-;;; because that only implies a single test at the beginning of the 
-;;; function, but it is worth specializing for an end value of nil.
+;;; because that only implies a single test at the beginning of the
+;;; function, but it is worth specializing for an end value of nil
+;;; when the sequence is a list.
+
+;;; For lists, the technique is to allocate a single sentinel cons
+;;; cell that acts as a queue.  Then we fill up the end of the queue
+;;; with elements of the list that should be kept.  Finally we return
+;;; the cdr of the initial cons cell.  This technique avoids some
+;;; special cases at the cost of allocating another cons cell. 
 
 (define-condition invalid-bounding-index (error)
   ((%sequence-length :initarg :sequence-length :reader sequence-length)))
@@ -5703,6 +5710,7 @@
     (item vector start end)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eql item (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -5713,6 +5721,7 @@
     (item vector start end)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eq item (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -5723,6 +5732,7 @@
     (item vector start end key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eql item (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -5733,6 +5743,7 @@
     (item vector start end key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eq item (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -5743,6 +5754,7 @@
     (item vector test start end)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (funcall test item (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -5753,6 +5765,7 @@
     (item vector test start end key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (funcall test item (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -5763,6 +5776,7 @@
     (item vector test-not start end)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  when (funcall test-not item (aref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -5773,6 +5787,7 @@
     (item vector test-not start end key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  when (funcall test-not item (funcall key (aref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -5783,6 +5798,7 @@
     (item vector start end count)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eql item (aref vector i))
@@ -5796,6 +5812,7 @@
     (item vector start end count)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eq item (aref vector i))
@@ -5809,6 +5826,7 @@
     (item vector start end count key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eql item (funcall key (aref vector i)))
@@ -5822,6 +5840,7 @@
     (item vector start end count key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eq item (funcall key (aref vector i)))
@@ -5835,6 +5854,7 @@
     (item vector test start end count)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (funcall test item (aref vector i))
@@ -5848,6 +5868,7 @@
     (item vector test start end count key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (funcall test item (funcall key (aref vector i)))
@@ -5861,6 +5882,7 @@
     (item vector test-not start end count)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  when (funcall test-not item (aref vector i))
@@ -5874,6 +5896,7 @@
     (item vector test-not start end count key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  when (funcall test-not item (funcall key (aref vector i)))
@@ -5887,6 +5910,7 @@
     (item vector start end count)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eql item (aref vector i))
@@ -5900,6 +5924,7 @@
     (item vector start end count)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eq item (aref vector i))
@@ -5913,6 +5938,7 @@
     (item vector start end count key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eql item (funcall key (aref vector i)))
@@ -5926,6 +5952,7 @@
     (item vector start end count key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eq item (funcall key (aref vector i)))
@@ -5939,6 +5966,7 @@
     (item vector test start end count)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (funcall test item (aref vector i))
@@ -5952,6 +5980,7 @@
     (item vector test start end count key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (funcall test item (funcall key (aref vector i)))
@@ -5965,6 +5994,7 @@
     (item vector test-not start end count)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  when (funcall test-not item (aref vector i))
@@ -5978,6 +6008,7 @@
     (item vector test-not start end count key)
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  when (funcall test-not item (funcall key (aref vector i)))
@@ -5987,10 +6018,35 @@
 	    do (decf count))
     (copy-result vector start end bit-vector items-to-keep)))
 
+;;; For vectors, the technique used is to allocate a bitvector that
+;;; has the length of the interval in which elements should be
+;;; removed, i.e. end - start.  Elements to keep are then marked with
+;;; a 1 in that bitvector, and at the same time, we count the number
+;;; of 1s.  Finally, we allocate a vector of the correct size, copy
+;;; the prefix of the original vector (before start), the elements of
+;;; the original vector marked by a 1 in the bitvector in the interval
+;;; between start and end, and the suffix of the original vector
+;;; (after end).  This technique has the disadvantage that elements of
+;;; the original vector in the interval between start and end have to
+;;; be accessed twice; once in order to apply the test to see whether
+;;; to mark them in the bitvector, and once more to move them from the
+;;; original vector to the result vector.  And of course, the
+;;; bitvector has to be manipulated as well.  For very quick
+;;; combinations of tests and keys, for instance eq and identity, it
+;;; may be faster to apply the test twice; once by going through the
+;;; original vector and just counting the number of elements to keep,
+;;; and then once more in order to move from the original to the
+;;; resulting vector.  That method would save the bitvector
+;;; manipulation, but it would access *all* of the elements in the the
+;;; interval between start and end twice, not only those that are to
+;;; be kept.
+
 ;;; Helper function. 
 ;;; FIXME: try to explain what it does!
 (defun copy-result-simple (original-vector start end bit-vector count)
-  (declare (type simple-vector original-vector))
+  (declare (type simple-vector original-vector)
+	   (type simple-bit-vector bit-vector)
+	   (type fixnum start end count))
   (if (= count (- end start))
       original-vector
       (let* ((length (length original-vector))
@@ -6015,9 +6071,11 @@
 
 (defun |remove seq-type=simple-vector test=eql count=nil key=identity|
     (item vector start end)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eql item (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6026,9 +6084,11 @@
 
 (defun |remove seq-type=simple-vector test=eq count=nil key=identity|
     (item vector start end)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eq item (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6037,9 +6097,11 @@
 
 (defun |remove seq-type=simple-vector test=eql count=nil key=other|
     (item vector start end key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eql item (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6048,9 +6110,11 @@
 
 (defun |remove seq-type=simple-vector test=eq count=nil key=other|
     (item vector start end key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eq item (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6059,9 +6123,11 @@
 
 (defun |remove seq-type=simple-vector test=other count=nil key=identity|
     (item vector test start end)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (funcall test item (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6070,9 +6136,11 @@
 
 (defun |remove seq-type=simple-vector test=other count=nil key=other|
     (item vector test start end key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (funcall test item (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6081,9 +6149,11 @@
 
 (defun |remove seq-type=simple-vector test-not=other count=nil key=identity|
     (item vector test-not start end)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  when (funcall test-not item (svref vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6092,9 +6162,11 @@
 
 (defun |remove seq-type=simple-vector test-not=other count=nil key=other|
     (item vector test-not start end key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  when (funcall test-not item (funcall key (svref vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6103,9 +6175,11 @@
 
 (defun |remove seq-type=simple-vector from-end=nil test=eql count=other key=identity|
     (item vector start end count)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eql item (svref vector i))
@@ -6117,9 +6191,11 @@
 
 (defun |remove seq-type=simple-vector from-end=nil test=eq count=other key=identity|
     (item vector start end count)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eq item (svref vector i))
@@ -6131,9 +6207,11 @@
 
 (defun |remove seq-type=simple-vector from-end=nil test=eql count=other key=other|
     (item vector start end count key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eql item (funcall key (svref vector i)))
@@ -6145,9 +6223,11 @@
 
 (defun |remove seq-type=simple-vector from-end=nil test=eq count=other key=other|
     (item vector start end count key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eq item (funcall key (svref vector i)))
@@ -6159,9 +6239,11 @@
 
 (defun |remove seq-type=simple-vector from-end=nil test=other count=other key=identity|
     (item vector test start end count)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (funcall test item (svref vector i))
@@ -6173,9 +6255,11 @@
 
 (defun |remove seq-type=simple-vector from-end=nil test=other count=other key=other|
     (item vector test start end count key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (funcall test item (funcall key (svref vector i)))
@@ -6187,9 +6271,11 @@
 
 (defun |remove seq-type=simple-vector from-end=nil test-not=other count=other key=identity|
     (item vector test-not start end count)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  when (funcall test-not item (svref vector i))
@@ -6201,9 +6287,11 @@
 
 (defun |remove seq-type=simple-vector from-end=nil test-not=other count=other key=other|
     (item vector test-not start end count key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  when (funcall test-not item (funcall key (svref vector i)))
@@ -6215,9 +6303,11 @@
 
 (defun |remove seq-type=simple-vector from-end=t test=eql count=other key=identity|
     (item vector start end count)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eql item (svref vector i))
@@ -6229,9 +6319,11 @@
 
 (defun |remove seq-type=simple-vector from-end=t test=eq count=other key=identity|
     (item vector start end count)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eq item (svref vector i))
@@ -6243,9 +6335,11 @@
 
 (defun |remove seq-type=simple-vector from-end=t test=eql count=other key=other|
     (item vector start end count key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eql item (funcall key (svref vector i)))
@@ -6257,9 +6351,11 @@
 
 (defun |remove seq-type=simple-vector from-end=t test=eq count=other key=other|
     (item vector start end count key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eq item (funcall key (svref vector i)))
@@ -6271,9 +6367,11 @@
 
 (defun |remove seq-type=simple-vector from-end=t test=other count=other key=identity|
     (item vector test start end count)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (funcall test item (svref vector i))
@@ -6285,9 +6383,11 @@
 
 (defun |remove seq-type=simple-vector from-end=t test=other count=other key=other|
     (item vector test start end count key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (funcall test item (funcall key (svref vector i)))
@@ -6299,9 +6399,11 @@
 
 (defun |remove seq-type=simple-vector from-end=t test-not=other count=other key=identity|
     (item vector test-not start end count)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  when (funcall test-not item (svref vector i))
@@ -6313,9 +6415,11 @@
 
 (defun |remove seq-type=simple-vector from-end=t test-not=other count=other key=other|
     (item vector test-not start end count key)
-  (declare (type simple-vector vector))
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  when (funcall test-not item (funcall key (svref vector i)))
@@ -6353,9 +6457,11 @@
 
 (defun |remove seq-type=simple-string test=eql count=nil key=identity|
     (item vector start end)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eql item (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6364,9 +6470,11 @@
 
 (defun |remove seq-type=simple-string test=eq count=nil key=identity|
     (item vector start end)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eq item (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6375,9 +6483,11 @@
 
 (defun |remove seq-type=simple-string test=eql count=nil key=other|
     (item vector start end key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eql item (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6386,9 +6496,11 @@
 
 (defun |remove seq-type=simple-string test=eq count=nil key=other|
     (item vector start end key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (eq item (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6397,9 +6509,11 @@
 
 (defun |remove seq-type=simple-string test=other count=nil key=identity|
     (item vector test start end)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (funcall test item (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6408,9 +6522,11 @@
 
 (defun |remove seq-type=simple-string test=other count=nil key=other|
     (item vector test start end key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  unless (funcall test item (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6419,9 +6535,11 @@
 
 (defun |remove seq-type=simple-string test-not=other count=nil key=identity|
     (item vector test-not start end)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  when (funcall test-not item (schar vector i))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6430,9 +6548,11 @@
 
 (defun |remove seq-type=simple-string test-not=other count=nil key=other|
     (item vector test-not start end key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  when (funcall test-not item (funcall key (schar vector i)))
 	    do (setf (sbit bit-vector (- i start)) 1)
@@ -6441,9 +6561,11 @@
 
 (defun |remove seq-type=simple-string from-end=nil test=eql count=other key=identity|
     (item vector start end count)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eql item (schar vector i))
@@ -6455,9 +6577,11 @@
 
 (defun |remove seq-type=simple-string from-end=nil test=eq count=other key=identity|
     (item vector start end count)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eq item (schar vector i))
@@ -6469,9 +6593,11 @@
 
 (defun |remove seq-type=simple-string from-end=nil test=eql count=other key=other|
     (item vector start end count key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eql item (funcall key (schar vector i)))
@@ -6483,9 +6609,11 @@
 
 (defun |remove seq-type=simple-string from-end=nil test=eq count=other key=other|
     (item vector start end count key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (eq item (funcall key (schar vector i)))
@@ -6497,9 +6625,11 @@
 
 (defun |remove seq-type=simple-string from-end=nil test=other count=other key=identity|
     (item vector test start end count)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (funcall test item (schar vector i))
@@ -6511,9 +6641,11 @@
 
 (defun |remove seq-type=simple-string from-end=nil test=other count=other key=other|
     (item vector test start end count key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  unless (funcall test item (funcall key (schar vector i)))
@@ -6525,9 +6657,11 @@
 
 (defun |remove seq-type=simple-string from-end=nil test-not=other count=other key=identity|
     (item vector test-not start end count)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  when (funcall test-not item (schar vector i))
@@ -6539,9 +6673,11 @@
 
 (defun |remove seq-type=simple-string from-end=nil test-not=other count=other key=other|
     (item vector test-not start end count key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i from start below end
 	  until (zerop count)
 	  when (funcall test-not item (funcall key (schar vector i)))
@@ -6553,9 +6689,11 @@
 
 (defun |remove seq-type=simple-string from-end=t test=eql count=other key=identity|
     (item vector start end count)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eql item (schar vector i))
@@ -6567,9 +6705,11 @@
 
 (defun |remove seq-type=simple-string from-end=t test=eq count=other key=identity|
     (item vector start end count)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eq item (schar vector i))
@@ -6581,9 +6721,11 @@
 
 (defun |remove seq-type=simple-string from-end=t test=eql count=other key=other|
     (item vector start end count key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eql item (funcall key (schar vector i)))
@@ -6595,9 +6737,11 @@
 
 (defun |remove seq-type=simple-string from-end=t test=eq count=other key=other|
     (item vector start end count key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (eq item (funcall key (schar vector i)))
@@ -6609,9 +6753,11 @@
 
 (defun |remove seq-type=simple-string from-end=t test=other count=other key=identity|
     (item vector test start end count)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (funcall test item (schar vector i))
@@ -6623,9 +6769,11 @@
 
 (defun |remove seq-type=simple-string from-end=t test=other count=other key=other|
     (item vector test start end count key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  unless (funcall test item (funcall key (schar vector i)))
@@ -6637,9 +6785,11 @@
 
 (defun |remove seq-type=simple-string from-end=t test-not=other count=other key=identity|
     (item vector test-not start end count)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  when (funcall test-not item (schar vector i))
@@ -6651,9 +6801,11 @@
 
 (defun |remove seq-type=simple-string from-end=t test-not=other count=other key=other|
     (item vector test-not start end count key)
-  (declare (type simple-string vector))
+  (declare (type simple-string vector)
+	   (type fixnum start end))
   (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
 	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
 	  when (funcall test-not item (funcall key (schar vector i)))
