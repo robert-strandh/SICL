@@ -9,10 +9,12 @@
     (:use #:cl)
   (:shadow . #1=(#:find #:find-if #:find-if-not
                  #:position #:position-if #:position-if-not
-                 #:length
+                 #:length #:subseq
                  #:reduce
                  #:fill
-		 #:remove #:remove-if #:remove-if-not))
+		 #:remove #:remove-if #:remove-if-not
+		 #:delete #:delete-if #:delete-if-not
+		 #:copy-seq #:elt))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

@@ -18,6 +18,11 @@ What is done:
 
   delete, delete-if, delete-if-not (functions only).  No tests.
 
+  copy-seq.  No tests. 
+
+  elt.  No tests.
+
+  subseq.  No tests
 
 How to test it:
 
@@ -70,23 +75,13 @@ What remains to to:
       Write the compiler macro.
       Include the tests.
 
-    copy-seq
-
-      Nothing in particular here.  
-
-    elt
-
-      On a list, it is probably better to implement this using loop,
-      as opposed to calling nth, because we might want to check that
-      we have a proper list.
-
     make-sequence
 
       I don't know how to do this portably at the moment.  The problem
       is that it is implementation-dependent what a recognizable
       subtype of (say) a vector is. 
 
-    subseq
+    (setf subseq)
 
       Special version for the case where :end is not given or is nil. 
 
