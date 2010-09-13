@@ -5504,7 +5504,7 @@
     ;; The cons cells are ours, so we can reuse them.
     (loop repeat (- prefix-length start)
 	  until (zerop count)
-	  if (funcall test (car reversed-prefix) item)
+	  if (funcall test item (car reversed-prefix))
 	    do (progn (pop reversed-prefix) (decf count))
 	  else
 	    do (let ((temp (cdr reversed-prefix)))
@@ -5552,7 +5552,7 @@
     ;; The cons cells are ours, so we can reuse them.
     (loop repeat (- prefix-length start)
 	  until (zerop count)
-	  if (funcall test (car reversed-prefix) item)
+	  if (funcall test item (car reversed-prefix))
 	    do (progn (pop reversed-prefix) (decf count))
 	  else
 	    do (let ((temp (cdr reversed-prefix)))
@@ -8129,3 +8129,1776 @@
 				  ;;       seq-type=general-vector test=eql count=nil key=identity end=nil! 
 				  (|remove seq-type=general-vector test=eql count=nil key=identity|
 				   item sequence start (length sequence)))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function remove-if
+
+(defun |remove-if seq-type=list end=nil count=nil key=identity|
+    (test list start)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  for element = (pop list)
+	  unless (funcall test element)
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp)))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if seq-type=list end=nil count=nil key=other|
+    (test list start key)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  for element = (pop list)
+	  unless (funcall test (funcall key element))
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp)))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if seq-type=list end=other count=nil key=identity|
+    (test list start end)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start)
+	 (end-start (- end start)))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop end-start)
+	  for element = (pop list)
+	  unless (funcall test element)
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if seq-type=list end=other count=nil key=other|
+    (test list start end key)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start)
+	 (end-start (- end start)))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop end-start)
+	  for element = (pop list)
+	  unless (funcall test (funcall key element))
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if seq-type=list from-end=nil end=nil count=other key=identity|
+    (test list count start)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop count)
+	  for element = (pop list)
+	  unless (funcall test element)
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  else
+	    do (decf count))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if seq-type=list from-end=nil end=nil count=other key=other|
+    (test list start count key)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop count)
+	  for element = (pop list)
+	  unless (funcall test (funcall key element))
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  else
+	    do (decf count))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if seq-type=list from-end=nil end=other count=other key=identity|
+    (test list start end count)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start)
+	 (end-start (- end start)))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop count)
+	  until (zerop end-start)
+	  for element = (pop list)
+	  unless (funcall test element)
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  else
+	    do (decf count)
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if seq-type=list from-end=nil end=other count=other key=other|
+    (test list start end count key)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start)
+	 (end-start (- end start)))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop count)
+	  until (zerop end-start)
+	  for element = (pop list)
+	  unless (funcall test (funcall key element))
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  else
+	    do (decf count)
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if seq-type=list from-end=t end=nil count=other key=identity|
+    (test list start count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test (car reversed-prefix))
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    (nreconc reversed-prefix result)))
+
+(defun |remove-if seq-type=list from-end=t end=nil count=other key=other|
+    (test list start count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test (funcall key (car reversed-prefix)))
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    (nreconc reversed-prefix result)))
+
+(defun |remove-if seq-type=list from-end=t end=other count=other key=identity|
+    (test list start end count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test (car reversed-prefix))
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    (nreconc reversed-prefix result)))
+
+(defun |remove-if seq-type=list from-end=t end=other count=other key=other|
+    (test list start end count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test (funcall key (car reversed-prefix)))
+	    do (progn (pop reversed-prefix) (decf count))
+	  else
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp)))
+    (nreconc reversed-prefix result)))
+
+(defun |remove-if seq-type=general-vector count=nil key=identity|
+    (test vector start end)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  unless (funcall test (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=general-vector count=nil key=other|
+    (test vector start end key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  unless (funcall test (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=general-vector from-end=nil count=other key=identity|
+    (test vector start end count)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  unless (funcall test (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=general-vector from-end=nil count=other key=other|
+    (test vector start end count key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  unless (funcall test (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=general-vector from-end=t count=other key=identity|
+    (test vector start end count)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  unless (funcall test (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=general-vector from-end=t count=other key=other|
+    (test vector start end count key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  unless (funcall test (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+;;; For vectors, the technique used is to allocate a bitvector that
+;;; has the length of the interval in which elements should be
+;;; removed, i.e. end - start.  Elements to keep are then marked with
+;;; a 1 in that bitvector, and at the same time, we count the number
+;;; of 1s.  Finally, we allocate a vector of the correct size, copy
+;;; the prefix of the original vector (before start), the elements of
+;;; the original vector marked by a 1 in the bitvector in the interval
+;;; between start and end, and the suffix of the original vector
+;;; (after end).  This technique has the disadvantage that elements of
+;;; the original vector in the interval between start and end have to
+;;; be accessed twice; once in order to apply the test to see whether
+;;; to mark them in the bitvector, and once more to move them from the
+;;; original vector to the result vector.  And of course, the
+;;; bitvector has to be manipulated as well.  For very quick
+;;; combinations of tests and keys, for instance eq and identity, it
+;;; may be faster to apply the test twice; once by going through the
+;;; original vector and just counting the number of elements to keep,
+;;; and then once more in order to move from the original to the
+;;; resulting vector.  That method would save the bitvector
+;;; manipulation, but it would access *all* of the elements in the the
+;;; interval between start and end twice, not only those that are to
+;;; be kept.
+
+(defun |remove-if seq-type=simple-vector count=nil key=identity|
+    (test vector start end)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  unless (funcall test (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-vector count=nil key=other|
+    (test vector start end key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  unless (funcall test (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-vector from-end=nil count=other key=identity|
+    (test vector start end count)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  unless (funcall test (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-vector from-end=nil count=other key=other|
+    (test vector start end count key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  unless (funcall test (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-vector from-end=t count=other key=identity|
+    (test vector start end count)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  unless (funcall test (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-vector from-end=t count=other key=other|
+    (test vector start end count key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  unless (funcall test (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-string count=nil key=identity|
+    (test vector start end)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  unless (funcall test (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-string count=nil key=other|
+    (test vector start end key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  unless (funcall test (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-string from-end=nil count=other key=identity|
+    (test vector start end count)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  unless (funcall test (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-string from-end=nil count=other key=other|
+    (test vector start end count key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  unless (funcall test (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-string from-end=t count=other key=identity|
+    (test vector start end count)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  unless (funcall test (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if seq-type=simple-string from-end=t count=other key=other|
+    (test vector start end count key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  unless (funcall test (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun remove-if (test sequence &key from-end (start 0) end count key)
+  ;; FIXME test if it is a sequence at all.
+  (if (listp sequence)
+      ;; seq-type=list
+      (if from-end
+	  ;; seq-type=list from-end=t
+	  (if end
+	      ;; seq-type=list from-end=t end=other
+	      (if count
+		  ;; seq-type=list from-end=t end=other count=other
+		  (if key
+		      ;;          seq-type=list from-end=t end=other count=other key=other
+		      (|remove-if seq-type=list from-end=t end=other count=other key=other|
+		       test sequence start end count key)
+		      ;;          seq-type=list from-end=t end=other count=other key=identity
+		      (|remove-if seq-type=list from-end=t end=other count=other key=identity|
+		       test sequence start end count))
+		  ;; seq-type=list from-end=t end=other count=nil
+		  (if key
+		      ;;          seq-type=list end=other count=nil key=other
+		      (|remove-if seq-type=list end=other count=nil key=other|
+		       test sequence start end key)
+		      ;;          seq-type=list end=other count=nil key=identity
+		      (|remove-if seq-type=list end=other count=nil key=identity|
+		       test sequence start end)))
+	      ;; seq-type=list from-end=t end=nil
+	      (if count
+		  ;; seq-type=list from-end=t end=nil count=other
+		  (if key
+		      ;;          seq-type=list from-end=t end=nil count=other key=other
+		      (|remove-if seq-type=list from-end=t end=nil count=other key=other|
+		       test sequence start count key)
+		      ;;          seq-type=list from-end=t end=nil count=other key=identity
+		      (|remove-if seq-type=list from-end=t end=nil count=other key=identity|
+		       test sequence start count))
+		  ;; seq-type=list from-end=t end=nil count=nil
+		  (if key
+		      ;;          seq-type=list end=nil count=nil key=other
+		      (|remove-if seq-type=list end=nil count=nil key=other|
+		       test sequence start key)
+		      ;;          seq-type=list end=nil count=nil key=identity
+		      (|remove-if seq-type=list end=nil count=nil key=identity|
+		       test sequence start))))
+	  ;; seq-type=list from-end=nil
+	  (if end
+	      ;; seq-type=list from-end=nil end=other
+	      (if count
+		  ;; seq-type=list from-end=nil end=other count=other
+		  (if key
+		      ;;          seq-type=list from-end=nil end=other count=other key=other
+		      (|remove-if seq-type=list from-end=nil end=other count=other key=other|
+		       test sequence start end count key)
+		      ;;          seq-type=list from-end=nil end=other count=other key=identity
+		      (|remove-if seq-type=list from-end=nil end=other count=other key=identity|
+		       test sequence start end count))
+		  ;; seq-type=list from-end=nil end=other count=nil
+		  (if key
+		      ;;          seq-type=list end=other count=nil key=other
+		      (|remove-if seq-type=list end=other count=nil key=other|
+		       test sequence start end key)
+		      ;;          seq-type=list end=other count=nil key=identity
+		      (|remove-if seq-type=list end=other count=nil key=identity|
+		       test sequence start end)))
+	      ;; seq-type=list from-end=nil end=nil
+	      (if count
+		  ;; seq-type=list from-end=nil end=nil count=other
+		  (if key
+		      ;;          seq-type=list from-end=nil end=nil count=other key=other
+		      (|remove-if seq-type=list from-end=nil end=nil count=other key=other|
+		       test sequence start count key)
+		      ;;          seq-type=list from-end=nil end=nil count=other key=identity
+		      (|remove-if seq-type=list from-end=nil end=nil count=other key=identity|
+		       test sequence start count))
+		  ;; seq-type=list from-end=nil end=nil count=nil
+		  (if key
+		      ;;          seq-type=list end=nil count=nil key=other
+		      (|remove-if seq-type=list end=nil count=nil key=other|
+		       test sequence start key)
+		      (|remove-if seq-type=list end=nil count=nil key=identity|
+		       test sequence start)))))
+      (if (simple-string-p sequence)
+	  ;; seq-type=simple-string
+	  ;; seq-type=simple-string test=given
+	  ;; seq-type=simple-string
+	  (if end
+	      ;; seq-type=simple-string end=other
+	      (if count
+		  ;; seq-type=simple-string count=other end=other
+		  (if from-end
+		      ;; seq-type=simple-string from-end=t count=other end=other
+		      (if key
+			  ;;          seq-type=simple-string from-end=t count=other key=other end=other 
+			  (|remove-if seq-type=simple-string from-end=t count=other key=other|
+			   test sequence start end count key)
+			  ;;          seq-type=simple-string from-end=t count=other key=identity end=other 
+			  (|remove-if seq-type=simple-string from-end=t count=other key=identity|
+			   test sequence start end count))
+		      ;; seq-type=simple-string from-end=nil count=other end=other
+		      (if key
+			  ;;          seq-type=simple-string from-end=nil count=other key=other end=other 
+			  (|remove-if seq-type=simple-string from-end=nil count=other key=other|
+			   test sequence start end count key)
+			  ;;          seq-type=simple-string from-end=nil count=other key=identity end=other 
+			  (|remove-if seq-type=simple-string from-end=nil count=other key=identity|
+			   test sequence start end count)))
+		  ;; seq-type=simple-string count=nil end=other
+		  ;; no need to test from-end
+		  (if key
+		      ;;          seq-type=simple-string count=nil key=other end=other 
+		      (|remove-if seq-type=simple-string count=nil key=other|
+		       test sequence start end key)
+		      ;;          seq-type=simple-string count=nil key=identity end=other 
+		      (|remove-if seq-type=simple-string count=nil key=identity|
+		       test sequence start end)))
+	      ;; seq-type=simple-string end=nil
+	      (if count
+		  ;; seq-type=simple-string count=other end=nil
+		  (if from-end
+		      ;; seq-type=simple-string from-end=t count=other end=nil
+		      (if key
+			  ;;          seq-type=simple-string from-end=t count=other key=other end=nil 
+			  (|remove-if seq-type=simple-string from-end=t count=other key=other|
+			   test sequence start (length sequence) count key)
+			  ;;          seq-type=simple-string from-end=t count=other key=identity end=nil 
+			  (|remove-if seq-type=simple-string from-end=t count=other key=identity|
+			   test sequence start (length sequence) count))
+		      ;; seq-type=simple-string from-end=nil count=other end=nil
+		      (if key
+			  ;;          seq-type=simple-string from-end=nil count=other key=other end=nil 
+			  (|remove-if seq-type=simple-string from-end=nil count=other key=other|
+			   test sequence start (length sequence) count key)
+			  ;;          seq-type=simple-string from-end=nil count=other key=identity end=nil 
+			  (|remove-if seq-type=simple-string from-end=nil count=other key=identity|
+			   test sequence start (length sequence) count)))
+		  ;; seq-type=simple-string count=nil end=nil
+		  ;; no need to test from-end
+		  (if key
+		      ;;          seq-type=simple-string count=nil key=other end=nil 
+		      (|remove-if seq-type=simple-string count=nil key=other|
+		       test sequence start (length sequence) key)
+		      ;;          seq-type=simple-string count=nil key=identity end=nil 
+		      (|remove-if seq-type=simple-string count=nil key=identity|
+		       test sequence start (length sequence)))))
+	  (if (simple-vector-p sequence)
+	      ;; seq-type=simple-vector
+	      ;; seq-type=simple-vector test=given
+	      ;; seq-type=simple-vector
+	      (if end
+		  ;; seq-type=simple-vector end=other
+		  (if count
+		      ;; seq-type=simple-vector count=other end=other
+		      (if from-end
+			  ;; seq-type=simple-vector from-end=t count=other end=other
+			  (if key
+			      ;;          seq-type=simple-vector from-end=t count=other key=other end=other 
+			      (|remove-if seq-type=simple-vector from-end=t count=other key=other|
+			       test sequence start end count key)
+			      ;;          seq-type=simple-vector from-end=t count=other key=identity end=other 
+			      (|remove-if seq-type=simple-vector from-end=t count=other key=identity|
+			       test sequence start end count))
+			  ;; seq-type=simple-vector from-end=nil count=other end=other
+			  (if key
+			      ;;          seq-type=simple-vector from-end=nil count=other key=other end=other 
+			      (|remove-if seq-type=simple-vector from-end=nil count=other key=other|
+			       test sequence start end count key)
+			      ;;          seq-type=simple-vector from-end=nil count=other key=identity end=other 
+			      (|remove-if seq-type=simple-vector from-end=nil count=other key=identity|
+			       test sequence start end count)))
+		      ;; seq-type=simple-vector count=nil end=other
+		      ;; no need to test from-end
+		      (if key
+			  ;;          seq-type=simple-vector count=nil key=other end=other 
+			  (|remove-if seq-type=simple-vector count=nil key=other|
+			   test sequence start end key)
+			  ;;          seq-type=simple-vector count=nil key=identity end=other 
+			  (|remove-if seq-type=simple-vector count=nil key=identity|
+			   test sequence start end)))
+		  ;; seq-type=simple-vector end=nil
+		  (if count
+		      ;; seq-type=simple-vector count=other end=nil
+		      (if from-end
+			  ;; seq-type=simple-vector from-end=t count=other end=nil
+			  (if key
+			      ;;          seq-type=simple-vector from-end=t count=other key=other end=nil 
+			      (|remove-if seq-type=simple-vector from-end=t count=other key=other|
+			       test sequence start (length sequence) count key)
+			      ;;          seq-type=simple-vector from-end=t count=other key=identity end=nil 
+			      (|remove-if seq-type=simple-vector from-end=t count=other key=identity|
+			       test sequence start (length sequence) count))
+			  ;; seq-type=simple-vector from-end=nil count=other end=nil
+			  (if key
+			      ;;          seq-type=simple-vector from-end=nil count=other key=other end=nil 
+			      (|remove-if seq-type=simple-vector from-end=nil count=other key=other|
+			       test sequence start (length sequence) count key)
+			      ;;          seq-type=simple-vector from-end=nil count=other key=identity end=nil 
+			      (|remove-if seq-type=simple-vector from-end=nil count=other key=identity|
+			       test sequence start (length sequence) count)))
+		      ;; seq-type=simple-vector count=nil end=nil
+		      ;; no need to test from-end
+		      (if key
+			  ;;          seq-type=simple-vector count=nil key=other end=nil 
+			  (|remove-if seq-type=simple-vector count=nil key=other|
+			   test sequence start (length sequence) key)
+			  ;;          seq-type=simple-vector count=nil key=identity end=nil 
+			  (|remove-if seq-type=simple-vector count=nil key=identity|
+			   test sequence start (length sequence)))))
+	      ;; seq-type=general-vector
+	      (if end
+		  ;; seq-type=general-vector end=other
+		  (if count
+		      ;; seq-type=general-vector count=other end=other
+		      (if from-end
+			  ;; seq-type=general-vector from-end=t count=other end=other
+			  (if key
+			      ;;          seq-type=general-vector from-end=t count=other key=other end=other 
+			      (|remove-if seq-type=general-vector from-end=t count=other key=other|
+			       test sequence start end count key)
+			      ;;          seq-type=general-vector from-end=t count=other key=identity end=other 
+			      (|remove-if seq-type=general-vector from-end=t count=other key=identity|
+			       test sequence start end count))
+			  ;; seq-type=general-vector from-end=nil count=other end=other
+			  (if key
+			      ;;          seq-type=general-vector from-end=nil count=other key=other end=other 
+			      (|remove-if seq-type=general-vector from-end=nil count=other key=other|
+			       test sequence start end count key)
+			      ;;          seq-type=general-vector from-end=nil count=other key=identity end=other 
+			      (|remove-if seq-type=general-vector from-end=nil count=other key=identity|
+			       test sequence start end count)))
+		      ;; seq-type=general-vector count=nil end=other
+		      ;; no need to test from-end
+		      (if key
+			  ;;          seq-type=general-vector count=nil key=other end=other 
+			  (|remove-if seq-type=general-vector count=nil key=other|
+			   test sequence start end key)
+			  ;;          seq-type=general-vector count=nil key=identity end=other 
+			  (|remove-if seq-type=general-vector count=nil key=identity|
+			   test sequence start end)))
+		  ;; seq-type=general-vector end=nil
+		  (if count
+		      ;; seq-type=general-vector count=other end=nil
+		      (if from-end
+			  ;; seq-type=general-vector from-end=t count=other end=nil
+			  (if key
+			      ;;          seq-type=general-vector from-end=t count=other key=other end=nil 
+			      (|remove-if seq-type=general-vector from-end=t count=other key=other|
+			       test sequence start (length sequence) count key)
+			      ;;          seq-type=general-vector from-end=t count=other key=identity end=nil 
+			      (|remove-if seq-type=general-vector from-end=t count=other key=identity|
+			       test sequence start (length sequence) count))
+			  ;; seq-type=general-vector from-end=nil count=other end=nil
+			  (if key
+			      ;;          seq-type=general-vector from-end=nil count=other key=other end=nil 
+			      (|remove-if seq-type=general-vector from-end=nil count=other key=other|
+			       test sequence start (length sequence) count key)
+			      ;;          seq-type=general-vector from-end=nil count=other key=identity end=nil 
+			      (|remove-if seq-type=general-vector from-end=nil count=other key=identity|
+			       test sequence start (length sequence) count)))
+		      ;; seq-type=general-vector count=nil end=nil
+		      ;; no need to test from-end
+		      (if key
+			  ;;          seq-type=general-vector count=nil key=other end=nil 
+			  (|remove-if seq-type=general-vector count=nil key=other|
+			   test sequence start (length sequence) key)
+			  ;;          seq-type=general-vector count=nil key=identity end=nil 
+			  (|remove-if seq-type=general-vector count=nil key=identity|
+			   test sequence start (length sequence)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function remove-if-not
+
+(defun |remove-if-not seq-type=list end=nil count=nil key=identity|
+    (test-not list start)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  for element = (pop list)
+	  when (funcall test-not element)
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp)))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if-not seq-type=list end=nil count=nil key=other|
+    (test-not list start key)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  for element = (pop list)
+	  when (funcall test-not (funcall key element))
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp)))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if-not seq-type=list end=other count=nil key=identity|
+    (test-not list start end)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start)
+	 (end-start (- end start)))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop end-start)
+	  for element = (pop list)
+	  when (funcall test-not element)
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if-not seq-type=list end=other count=nil key=other|
+    (test-not list start end key)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start)
+	 (end-start (- end start)))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop end-start)
+	  for element = (pop list)
+	  when (funcall test-not (funcall key element))
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if-not seq-type=list from-end=nil end=nil count=other key=identity|
+    (test-not list start count)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop count)
+	  for element = (pop list)
+	  when (funcall test-not element)
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  else
+	    do (decf count))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if-not seq-type=list from-end=nil end=nil count=other key=other|
+    (test-not list start count key)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop count)
+	  for element = (pop list)
+	  when (funcall test-not (funcall key element))
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  else
+	    do (decf count))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if-not seq-type=list from-end=nil end=other count=other key=identity|
+    (test-not list start end count)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start)
+	 (end-start (- end start)))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop count)
+	  until (zerop end-start)
+	  for element = (pop list)
+	  when (funcall test-not element)
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  else
+	    do (decf count)
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if-not seq-type=list from-end=nil end=other count=other key=other|
+    (test-not list start end count key)
+  (let* ((result (list nil))
+	 (last result)
+	 (start-bis start)
+	 (end-start (- end start)))
+    (loop until (zerop start-bis)
+	  until (null list)
+	  do (let ((temp (list (car list))))
+	       (setf (cdr last) temp)
+	       (setf last temp)
+	       (setf list (cdr list))
+	       (decf start-bis)))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :start start
+	     :sequence-length (- start start-bis)))
+    (loop until (null list)
+	  until (zerop count)
+	  until (zerop end-start)
+	  for element = (pop list)
+	  when (funcall test-not (funcall key element))
+	    do (let ((temp (list element)))
+		 (setf (cdr last) temp)
+		 (setf last temp))
+	  else
+	    do (decf count)
+	  do (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :end end
+	     :sequence-length (+ start (- end end-start))))
+    (setf (cdr last) list)
+    (cdr result)))
+
+(defun |remove-if-not seq-type=list from-end=t end=nil count=other key=identity|
+    (test-not list start count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test-not (car reversed-prefix))
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp))
+	  else
+	    do (progn (pop reversed-prefix) (decf count)))
+    (nreconc reversed-prefix result)))
+
+(defun |remove-if-not seq-type=list from-end=t end=nil count=other key=other|
+    (test-not list start count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    ;; For end=nil, the prefix is the entire list.
+    (loop until (null result)
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test-not (funcall key (car reversed-prefix)))
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp))
+	  else
+	    do (progn (pop reversed-prefix) (decf count)))
+    (nreconc reversed-prefix result)))
+
+(defun |remove-if-not seq-type=list from-end=t end=other count=other key=identity|
+    (test-not list start end count)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test-not (car reversed-prefix))
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp))
+	  else
+	    do (progn (pop reversed-prefix) (decf count)))
+    (nreconc reversed-prefix result)))
+
+(defun |remove-if-not seq-type=list from-end=t end=other count=other key=other|
+    (test-not list start end count key)
+  (let ((result list)
+	(reversed-prefix '())
+	(prefix-length 0))
+    ;; Reverse a prefix and figure out its length.
+    (loop until (null result)
+	  repeat end
+	  do (push (pop result) reversed-prefix)
+	     (incf prefix-length))
+    ;; FIXME: Check here whether start is a valid index
+    ;; Go through the interval concerned and remove if the test is satisfied.
+    ;; The cons cells are ours, so we can reuse them.
+    (loop repeat (- prefix-length start)
+	  until (zerop count)
+	  if (funcall test-not (funcall key (car reversed-prefix)))
+	    do (let ((temp (cdr reversed-prefix)))
+		 (setf (cdr reversed-prefix) result
+		       result reversed-prefix
+		       reversed-prefix temp))
+	  else
+	    do (progn (pop reversed-prefix) (decf count)))
+    (nreconc reversed-prefix result)))
+
+(defun |remove-if-not seq-type=general-vector count=nil key=identity|
+    (test-not vector start end)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  when (funcall test-not (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=general-vector count=nil key=other|
+    (test-not vector start end key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  when (funcall test-not (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=general-vector from-end=nil count=other key=identity|
+    (test-not vector start end count)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  when (funcall test-not (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=general-vector from-end=nil count=other key=other|
+    (test-not vector start end count key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  when (funcall test-not (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=general-vector from-end=t count=other key=identity|
+    (test-not vector start end count)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  when (funcall test-not (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=general-vector from-end=t count=other key=other|
+    (test-not vector start end count key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  when (funcall test-not (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+;;; For vectors, the technique used is to allocate a bitvector that
+;;; has the length of the interval in which elements should be
+;;; removed, i.e. end - start.  Elements to keep are then marked with
+;;; a 1 in that bitvector, and at the same time, we count the number
+;;; of 1s.  Finally, we allocate a vector of the correct size, copy
+;;; the prefix of the original vector (before start), the elements of
+;;; the original vector marked by a 1 in the bitvector in the interval
+;;; between start and end, and the suffix of the original vector
+;;; (after end).  This technique has the disadvantage that elements of
+;;; the original vector in the interval between start and end have to
+;;; be accessed twice; once in order to apply the test to see whether
+;;; to mark them in the bitvector, and once more to move them from the
+;;; original vector to the result vector.  And of course, the
+;;; bitvector has to be manipulated as well.  For very quick
+;;; combinations of tests and keys, for instance eq and identity, it
+;;; may be faster to apply the test twice; once by going through the
+;;; original vector and just counting the number of elements to keep,
+;;; and then once more in order to move from the original to the
+;;; resulting vector.  That method would save the bitvector
+;;; manipulation, but it would access *all* of the elements in the the
+;;; interval between start and end twice, not only those that are to
+;;; be kept.
+
+(defun |remove-if-not seq-type=simple-vector count=nil key=identity|
+    (test-not vector start end)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  when (funcall test-not (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-vector count=nil key=other|
+    (test-not vector start end key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  when (funcall test-not (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-vector from-end=nil count=other key=identity|
+    (test-not vector start end count)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  when (funcall test-not (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-vector from-end=nil count=other key=other|
+    (test-not vector start end count key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  when (funcall test-not (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-vector from-end=t count=other key=identity|
+    (test-not vector start end count)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  when (funcall test-not (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-vector from-end=t count=other key=other|
+    (test-not vector start end count key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  when (funcall test-not (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-string count=nil key=identity|
+    (test-not vector start end)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  when (funcall test-not (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-string count=nil key=other|
+    (test-not vector start end key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  when (funcall test-not (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-string from-end=nil count=other key=identity|
+    (test-not vector start end count)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  when (funcall test-not (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-string from-end=nil count=other key=other|
+    (test-not vector start end count key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i from start below end
+	  until (zerop count)
+	  when (funcall test-not (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-string from-end=t count=other key=identity|
+    (test-not vector start end count)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  when (funcall test-not (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun |remove-if-not seq-type=simple-string from-end=t count=other key=other|
+    (test-not vector start end count key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
+	(items-to-keep 0))
+    (declare (type fixnum items-to-keep))
+    (loop for i downfrom (1- end) to start
+	  until (zerop count)
+	  when (funcall test-not (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 1)
+	       (incf items-to-keep)
+	  else
+	    do (decf count))
+    (copy-result vector start end bit-vector items-to-keep)))
+
+(defun remove-if-not (test-not sequence &key from-end (start 0) end count key)
+  ;; FIXME test if it is a sequence at all.
+  (if (listp sequence)
+      ;; seq-type=list
+      (if from-end
+	  ;; seq-type=list from-end=t
+	  ;; seq-type=list from-end=t
+	  (if end
+	      ;; seq-type=list from-end=t end=other
+	      (if count
+		  ;; seq-type=list from-end=t end=other count=other
+		  (if key
+		      ;;              seq-type=list from-end=t end=other count=other key=other
+		      (|remove-if-not seq-type=list from-end=t end=other count=other key=other|
+		       test-not sequence start end count key)
+		      ;;              seq-type=list from-end=t end=other count=other key=identity
+		      (|remove-if-not seq-type=list from-end=t end=other count=other key=identity|
+		       test-not sequence start end count))
+		  ;; seq-type=list from-end=t end=other count=nil
+		  (if key
+		      ;;              seq-type=list end=other count=nil key=other
+		      (|remove-if-not seq-type=list end=other count=nil key=other|
+		       test-not sequence start end key)
+		      ;;              seq-type=list end=other count=nil key=identity
+		      (|remove-if-not seq-type=list end=other count=nil key=identity|
+		       test-not sequence start end)))
+	      ;; seq-type=list from-end=t end=nil
+	      (if count
+		  ;; seq-type=list from-end=t end=nil count=other
+		  (if key
+		      ;;              seq-type=list from-end=t end=nil count=other key=other
+		      (|remove-if-not seq-type=list from-end=t end=nil count=other key=other|
+		       test-not sequence start count key)
+		      ;;              seq-type=list from-end=t end=nil count=other key=identity
+		      (|remove-if-not seq-type=list from-end=t end=nil count=other key=identity|
+		       test-not sequence start count))
+		  (if key
+		      (|remove-if-not seq-type=list end=other count=nil key=other|
+		       test-not sequence start end key)
+		      (|remove-if-not seq-type=list end=other count=nil key=identity|
+		       test-not sequence start end))))
+	  ;; seq-type=list from-end=nil
+	  ;; seq-type=list from-end=nil
+	  (if end
+	      ;; seq-type=list from-end=nil end=other
+	      (if count
+		  ;; seq-type=list from-end=nil end=other count=other
+		  (if key
+		      ;;              seq-type=list from-end=nil end=other count=other key=other
+		      (|remove-if-not seq-type=list from-end=nil end=other count=other key=other|
+		       test-not sequence start end count key)
+		      ;;              seq-type=list from-end=nil end=other count=other key=identity
+		      (|remove-if-not seq-type=list from-end=nil end=other count=other key=identity|
+		       test-not sequence start end count))
+		  ;; seq-type=list from-end=nil end=other count=nil
+		  (if key
+		      ;;              seq-type=list end=other count=nil key=other
+		      (|remove-if-not seq-type=list end=other count=nil key=other|
+		       test-not sequence start end key)
+		      ;;              seq-type=list end=other count=nil key=identity
+		      (|remove-if-not seq-type=list end=other count=nil key=identity|
+		       test-not sequence start end)))
+	      ;; seq-type=list from-end=nil end=nil
+	      (if count
+		  ;; seq-type=list from-end=nil end=nil count=other
+		  (if key
+		      ;;              seq-type=list from-end=nil end=nil count=other key=other
+		      (|remove-if-not seq-type=list from-end=nil end=nil count=other key=other|
+		       test-not sequence start count key)
+		      ;;              seq-type=list from-end=nil end=nil count=other key=identity
+		      (|remove-if-not seq-type=list from-end=nil end=nil count=other key=identity|
+		       test-not sequence start count))
+		  (if key
+		      (|remove-if-not seq-type=list end=other count=nil key=other|
+		       test-not sequence start end key)
+		      (|remove-if-not seq-type=list end=other count=nil key=identity|
+		       test-not sequence start end)))))
+      (if (simple-string-p sequence)
+	  ;; seq-type=simple-string
+	  ;; seq-type=simple-string
+	  (if end
+	      ;; seq-type=simple-string end=other
+	      (if count
+		  ;; seq-type=simple-string count=other end=other
+		  (if from-end
+		      ;; seq-type=simple-string from-end=t count=other end=other
+		      (if key
+			  ;;              seq-type=simple-string from-end=t count=other key=other end=other
+			  (|remove-if-not seq-type=simple-string from-end=t count=other key=other|
+			   test-not sequence start end count key)
+			  ;;              seq-type=simple-string from-end=t count=other key=identity end=other 
+			  (|remove-if-not seq-type=simple-string from-end=t count=other key=identity|
+			   test-not sequence start end count))
+		      ;; seqr-type=simple-string from-end=nil count=other end=other
+		      (if key
+			  ;;              seq-type=simple-string from-end=nil count=other key=other end=other
+			  (|remove-if-not seq-type=simple-string from-end=nil count=other key=other|
+			   test-not sequence start end count key)
+			  ;;              seq-type=simple-string from-end=nil count=other key=identity end=other 
+			  (|remove-if-not seq-type=simple-string from-end=nil count=other key=identity|
+			   test-not sequence start end count)))
+		  ;; seq-type=simple-string count=nil end=other
+		  ;; no need to test from-end
+		  (if key
+		      ;;              seq-type=simple-string count=nil key=other end=other
+		      (|remove-if-not seq-type=simple-string count=nil key=other|
+		       test-not sequence start end key)
+		      ;;              seq-type=simple-string count=nil key=identity end=other 
+		      (|remove-if-not seq-type=simple-string count=nil key=identity|
+		       test-not sequence start end)))
+	      ;; seq-type=simple-string end=nil
+	      (if count
+		  ;; seq-type=simple-string count=other end=nil
+		  (if from-end
+		      ;; seq-type=simple-string from-end=t count=other end=nil
+		      (if key
+			  ;;              seq-type=simple-string from-end=t count=other key=other end=nil
+			  (|remove-if-not seq-type=simple-string from-end=t count=other key=other|
+			   test-not sequence start (length sequence) count key)
+			  ;;              seq-type=simple-string from-end=t count=other key=identity end=nil 
+			  (|remove-if-not seq-type=simple-string from-end=t count=other key=identity|
+			   test-not sequence start (length sequence) count))
+		      ;; seqr-type=simple-string from-end=nil count=other end=nil
+		      (if key
+			  ;;              seq-type=simple-string from-end=nil count=other key=other end=nil
+			  (|remove-if-not seq-type=simple-string from-end=nil count=other key=other|
+			   test-not sequence start (length sequence) count key)
+			  ;;              seq-type=simple-string from-end=nil count=other key=identity end=nil 
+			  (|remove-if-not seq-type=simple-string from-end=nil count=other key=identity|
+			   test-not sequence start (length sequence) count)))
+		  ;; seq-type=simple-string count=nil end=nil
+		  ;; no need to test from-end
+		  (if key
+		      ;;              seq-type=simple-string count=nil key=other end=nil
+		      (|remove-if-not seq-type=simple-string count=nil key=other|
+		       test-not sequence start (length sequence) key)
+		      ;;              seq-type=simple-string count=nil key=identity end=nil! 
+		      (|remove-if-not seq-type=simple-string count=nil key=identity|
+		       test-not sequence start (length sequence)))))
+	  (if (simple-vector-p sequence)
+	      ;; seq-type=simple-vector
+	      ;; seq-type=simple-vector
+	      (if end
+		  ;; seq-type=simple-vector end=other
+		  (if count
+		      ;; seq-type=simple-vector count=other end=other
+		      (if from-end
+			  ;; seq-type=simple-vector from-end=t count=other end=other
+			  (if key
+			      ;;              seq-type=simple-vector from-end=t count=other key=other end=other
+			      (|remove-if-not seq-type=simple-vector from-end=t count=other key=other|
+			       test-not sequence start end count key)
+			      ;;              seq-type=simple-vector from-end=t count=other key=identity end=other 
+			      (|remove-if-not seq-type=simple-vector from-end=t count=other key=identity|
+			       test-not sequence start end count))
+			  ;; seqr-type=simple-vector from-end=nil count=other end=other
+			  (if key
+			      ;;              seq-type=simple-vector from-end=nil count=other key=other end=other
+			      (|remove-if-not seq-type=simple-vector from-end=nil count=other key=other|
+			       test-not sequence start end count key)
+			      ;;              seq-type=simple-vector from-end=nil count=other key=identity end=other 
+			      (|remove-if-not seq-type=simple-vector from-end=nil count=other key=identity|
+			       test-not sequence start end count)))
+		      ;; seq-type=simple-vector count=nil end=other
+		      ;; no need to test from-end
+		      (if key
+			  ;;              seq-type=simple-vector count=nil key=other end=other
+			  (|remove-if-not seq-type=simple-vector count=nil key=other|
+			   test-not sequence start end key)
+			  ;;              seq-type=simple-vector count=nil key=identity end=other 
+			  (|remove-if-not seq-type=simple-vector count=nil key=identity|
+			   test-not sequence start end)))
+		  ;; seq-type=simple-vector end=nil
+		  (if count
+		      ;; seq-type=simple-vector count=other end=nil
+		      (if from-end
+			  ;; seq-type=simple-vector from-end=t count=other end=nil
+			  (if key
+			      ;;              seq-type=simple-vector from-end=t count=other key=other end=nil
+			      (|remove-if-not seq-type=simple-vector from-end=t count=other key=other|
+			       test-not sequence start (length sequence) count key)
+			      ;;              seq-type=simple-vector from-end=t count=other key=identity end=nil 
+			      (|remove-if-not seq-type=simple-vector from-end=t count=other key=identity|
+			       test-not sequence start (length sequence) count))
+			  ;; seqr-type=simple-vector from-end=nil count=other end=nil
+			  (if key
+			      ;;              seq-type=simple-vector from-end=nil count=other key=other end=nil
+			      (|remove-if-not seq-type=simple-vector from-end=nil count=other key=other|
+			       test-not sequence start (length sequence) count key)
+			      ;;              seq-type=simple-vector from-end=nil count=other key=identity end=nil 
+			      (|remove-if-not seq-type=simple-vector from-end=nil count=other key=identity|
+			       test-not sequence start (length sequence) count)))
+		      ;; seq-type=simple-vector count=nil end=nil
+		      ;; no need to test from-end
+		      (if key
+			  ;;              seq-type=simple-vector count=nil key=other end=nil
+			  (|remove-if-not seq-type=simple-vector count=nil key=other|
+			   test-not sequence start (length sequence) key)
+			  ;;              seq-type=simple-vector count=nil key=identity end=nil! 
+			  (|remove-if-not seq-type=simple-vector count=nil key=identity|
+			   test-not sequence start (length sequence)))))
+	      ;; seq-type=general-vector
+	      ;; seq-type=general-vector
+	      (if end
+		  ;; seq-type=general-vector end=other
+		  (if count
+		      ;; seq-type=general-vector count=other end=other
+		      (if from-end
+			  ;; seq-type=general-vector from-end=t count=other end=other
+			  (if key
+			      ;;              seq-type=general-vector from-end=t count=other key=other end=other
+			      (|remove-if-not seq-type=general-vector from-end=t count=other key=other|
+			       test-not sequence start end count key)
+			      ;;              seq-type=general-vector from-end=t count=other key=identity end=other 
+			      (|remove-if-not seq-type=general-vector from-end=t count=other key=identity|
+			       test-not sequence start end count))
+			  ;; seqr-type=general-vector from-end=nil count=other end=other
+			  (if key
+			      ;;              seq-type=general-vector from-end=nil count=other key=other end=other
+			      (|remove-if-not seq-type=general-vector from-end=nil count=other key=other|
+			       test-not sequence start end count key)
+			      ;;              seq-type=general-vector from-end=nil count=other key=identity end=other 
+			      (|remove-if-not seq-type=general-vector from-end=nil count=other key=identity|
+			       test-not sequence start end count)))
+		      ;; seq-type=general-vector count=nil end=other
+		      ;; no need to test from-end
+		      (if key
+			  ;;              seq-type=general-vector count=nil key=other end=other
+			  (|remove-if-not seq-type=general-vector count=nil key=other|
+			   test-not sequence start end key)
+			  ;;              seq-type=general-vector count=nil key=identity end=other 
+			  (|remove-if-not seq-type=general-vector count=nil key=identity|
+			   test-not sequence start end)))
+		  ;; seq-type=general-vector end=nil
+		  (if count
+		      ;; seq-type=general-vector count=other end=nil
+		      (if from-end
+			  ;; seq-type=general-vector from-end=t count=other end=nil
+			  (if key
+			      ;;              seq-type=general-vector from-end=t count=other key=other end=nil
+			      (|remove-if-not seq-type=general-vector from-end=t count=other key=other|
+			       test-not sequence start (length sequence) count key)
+			      ;;              seq-type=general-vector from-end=t count=other key=identity end=nil 
+			      (|remove-if-not seq-type=general-vector from-end=t count=other key=identity|
+			       test-not sequence start (length sequence) count))
+			  ;; seqr-type=general-vector from-end=nil count=other end=nil
+			  (if key
+			      ;;              seq-type=general-vector from-end=nil count=other key=other end=nil
+			      (|remove-if-not seq-type=general-vector from-end=nil count=other key=other|
+			       test-not sequence start (length sequence) count key)
+			      ;;              seq-type=general-vector from-end=nil count=other key=identity end=nil 
+			      (|remove-if-not seq-type=general-vector from-end=nil count=other key=identity|
+			       test-not sequence start (length sequence) count)))
+		      ;; seq-type=general-vector count=nil end=nil
+		      ;; no need to test from-end
+		      (if key
+			  ;;              seq-type=general-vector count=nil key=other end=nil
+			  (|remove-if-not seq-type=general-vector count=nil key=other|
+			   test-not sequence start (length sequence) key)
+			  ;;              seq-type=general-vector count=nil key=identity end=nil! 
+			  (|remove-if-not seq-type=general-vector count=nil key=identity|
+			   test-not sequence start (length sequence)))))))))
+

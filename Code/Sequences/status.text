@@ -14,7 +14,7 @@ What is done:
 
   fill (function only).
 
-  remove (function only).  A few tests. 
+  remove, remove-if, remove-if-not (functions only).  A few tests. 
 
 How to test it:
 
@@ -52,10 +52,15 @@ What remains to to:
       Write the compiler macro.
       Include the tests.
 
-      remove-if, remove-if-not
+    remove, remove-if, remove-if-not
 
-      Special cases are as with find, find-if, and find-if-not plus
-      that special versions for a :count of nil should be provided. 
+      Write the compiler macro.
+      write more tests. 
+
+    fill
+
+      Write the compiler macro.
+      Include the tests.
 
     delete, delete-if, delete-if-not
 
@@ -81,11 +86,6 @@ What remains to to:
       On a list, it is probably better to implement this using loop,
       as opposed to calling nth, because we might want to check that
       we have a proper list.
-
-    fill
-
-      Write the compiler macro.
-      Include the tests.
 
     make-sequence
 
