@@ -16,6 +16,9 @@ What is done:
 
   remove, remove-if, remove-if-not (functions only).  A few tests. 
 
+  delete, delete-if, delete-if-not (functions only).  No tests.
+
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.
@@ -57,25 +60,15 @@ What remains to to:
       Write the compiler macro.
       write more tests. 
 
-    fill
+    delete, delete-if, delete-if-not
 
       Write the compiler macro.
       Include the tests.
 
-    delete, delete-if, delete-if-not
+    fill
 
-      Special cases are as with remove, remove-if, and remove-if not. 
-
-      To delete elements from a list, keep a pointer to the preceding
-      element, and bypass any cell containing an element to be
-      deleted. 
-
-      The difficult case is to delete from a list when :from-end is
-      true and :count is given.  We might just give up in this case,
-      and not modify the list at all. 
-
-      If the sequence is a vector, just do the same thing that remove
-      does. 
+      Write the compiler macro.
+      Include the tests.
 
     copy-seq
 
