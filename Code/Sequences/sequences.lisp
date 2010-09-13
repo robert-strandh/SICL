@@ -5684,6 +5684,8 @@
 ;;; Helper function. 
 ;;; FIXME: try to explain what it does!
 (defun copy-result-general (original-vector start end bit-vector count)
+  (declare (type simple-bit-vector bit-vector)
+	   (type fixnum start end count))
   (if (= count (- end start))
       original-vector
       (let* ((length (length original-vector))
@@ -6432,7 +6434,9 @@
 ;;; Helper function. 
 ;;; FIXME: try to explain what it does!
 (defun copy-result-simple-string (original-vector start end bit-vector count)
-  (declare (type simple-string original-vector))
+  (declare (type simple-string original-vector)
+	   (type simple-bit-vector bit-vector)
+	   (type fixnum start end count))
   (if (= count (- end start))
       original-vector
       (let* ((length (length original-vector))
