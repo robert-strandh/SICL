@@ -14,7 +14,7 @@ What is done:
 
   fill (function only).
 
-  remove (some special cases, only)
+  remove (function only).  A few tests. 
 
 How to test it:
 
@@ -52,15 +52,10 @@ What remains to to:
       Write the compiler macro.
       Include the tests.
 
-    remove, remove-if, remove-if-not
+      remove-if, remove-if-not
 
       Special cases are as with find, find-if, and find-if-not plus
       that special versions for a :count of nil should be provided. 
-
-      To remove things from a list when :from-end is t and :count is
-      provided copy the elements to a new list in the reverse order,
-      then traverse that list, while reversing the order and removing
-      the elements. 
 
     delete, delete-if, delete-if-not
 
@@ -167,4 +162,3 @@ What remains to to:
       Special versions when the test is one for which we can portably 
       create a hash table, because then we can determine by looking in
       the hash table whether we have seen the element before.
-
