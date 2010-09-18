@@ -25,62 +25,94 @@ A new Common Lisp system}
 
 \begin{abstract}
 \sysname{} (which doesn't mean anything in particular; pronounce it
-like ``sickle'') is a project with the purpose of creating a new
-Common Lisp system.  The plan is to write it in different layers.  The
-upper layers should be written entirely in Common Lisp so as to allow
-the code to be incorporated into different implementations without
-modifications.  The lower layers should use as few primitives as
+like ``sickle'') is a project with the purpose of creating a
+collection of highly-portable high-performance ``modules'' for
+developers of Common Lisp systems.  Such modules include ``standard
+libraries'' such as high-level functions that operate on lists,
+high-level functions that operate on sequences, the \texttt{format}
+function, the \texttt{loop} macro, the \texttt{read} function, the
+\emph{pretty printer}, etc.  Other possible modules include code that
+makes it easier to write compilers, such as parsers of lambda lists,
+modules for manipulating declarations, etc.  Other planned modules
+include a module that provides localized docstrings for all of Common
+Lisp. 
+
+Great care will be taken to make the modules as portable as possible,
+and to decrease interdependence as much as possible in order to make
+bootstrapping easier, and to allow for modules to serve as drop-in
+replacements in different implementations with as few modifications as
+possible.  The lower layers should use as few primitives as
 possible, without sacrificing performance.  We think it is important
 that the code of \sysname{} be of very high quality.  To that end, we
 would like for error messages to be as explicit as possible.  Macros,
 for instance, would have to do extensive syntax analysis so as to
 prevent error messages from being phrased in terms of expanded code.
 
-To gain wide acceptance, \sysname{} should be in the public domain.
+To gain wide acceptance, \sysname{} should be in the public domain, or
+be distributed according to a license that serves the same purpose in
+places where it is not possible for works to be explicitly placed in
+the public domain.
+
+Ultimately, this collection of modules might be used to produce a new
+implementation of Common Lisp.  
 \end{abstract}
 
 \section{Introduction}
 
-We think there is room for a new Common Lisp system, provided that it
-is different from existing systems in some crucial ways.
+We think it is possible to improve on existing open-source Common Lisp
+systems in several ways, and we hope \sysname{} will be able to
+accomplish that, provided that great care is taken to create code with
+a combination of characteristics:
 
-For one thing, we would like for \sysname{} to be \emph{layered}.  The
-upper layers will contain code that is not performance critical.  This
-code will be written entirely in Common Lisp.  To avoid circular
-references, we will specify what lower-level Common Lisp primitives
-can be used to write functions in the upper layer.  If done well, code
-in this layer could be used by all free Common Lisp implementations,
-which could save considerable maintenance effort.  Examples of
-functionality in this layer would be formatted output,
-pretty-printing, and macros that can expand to portable Common Lisp
-code. 
+\begin{itemize}
+\item The code should be layered, so that different Common Lisp
+  implementations can choose to include \sysname{} modules that
+  represent gaps in their system or improvement on their existing
+  code, without having to include parts for which they prefer their
+  own, implementation-specific code. 
 
-Intermediate layers will contain code that needs careful tuning to
-obtain performance, but where the tuning can be handled by writing
-different versions of the code for different cases.  For instance,
-functions that work on all kinds of sequences might have special
-versions for lists and vectors.  Similarly, such functions might have
-special versions for common values of the \texttt{:test} (such as
-the Common Lisp functions \texttt{\#:eq}, \texttt{\#:eql}, etc.)
-and \texttt{:key} arguments (such as \texttt{\#:identity},
-\texttt{\#:car}, etc).  These special cases should be handled by using
-compiler macros. 
+  Upper layers will contain code that is not performance critical.
+  This code will be written entirely in Common Lisp.  To avoid
+  circular references, we will specify what lower-level Common Lisp
+  primitives can be used to write functions in the upper layer.  If
+  done well, code in this layer could be used by all free Common Lisp
+  implementations, which could save considerable maintenance effort.
+  Examples of functionality in this layer would be formatted output,
+  pretty-printing, and macros that can expand to portable Common Lisp
+  code.
 
-Lower layers will have to rely more and more on
-implementation-specific details, and will have to introduce
-implementation-specific primitives to be used in implementations of
-standard Common Lisp constructs.  We might provide several different
-versions of code in this layer for different low-level assumptions.
+  Intermediate layers will contain code that needs careful tuning to
+  obtain performance, but where the tuning can be handled by writing
+  different versions of the code for different cases.  For instance,
+  functions that work on all kinds of sequences might have special
+  versions for lists and vectors.  Similarly, such functions might
+  have special versions for common values of the \texttt{:test} (such
+  as the Common Lisp functions \texttt{\#:eq}, \texttt{\#:eql}, etc.)
+  and \texttt{:key} arguments (such as \texttt{\#:identity},
+  \texttt{\#:car}, etc).  These special cases should be handled by
+  using compiler macros.
 
-A major goal of \sysname{} is to provide high-quality code.  By this,
-we do not only mean that it should be bug-free as much as possible,
-but also that it should have good documentation strings and clear
-comments when required.  Error messages should be as explicit as
-possible, and code should be written to capture as many exceptional
-situations as is possible without performance penalties.  Macro
-expansion code should do everything possible to capture as many errors
-as possible so that error reporting can be done in terms of code
-written by the programmer, as opposed to in terms of expanded code. 
+  Lower layers will have to rely more and more on
+  implementation-specific details, and will have to introduce
+  implementation-specific primitives to be used in implementations of
+  standard Common Lisp constructs.  We might provide several different
+  versions of code in this layer for different low-level assumptions.
+
+\item The code itself should have very high quality.  By this, we do
+  not only mean that it should be bug-free as much as possible, but
+  also that it should have good documentation strings and clear
+  comments when required.  Error messages should be as explicit as
+  possible, and code should be written to capture as many exceptional
+  situations as is possible without performance penalties.  We plan to
+  use very specific conditions that are subclasses of ones stipulated
+  by the Common Lisp HyperSpec for condition signaling, so as to allow
+  for implementations to take advantage of such specific conditions
+  for better error reporting.  Macro expansion code should do
+  everything possible to capture as many errors as possible so that
+  error reporting can be done in terms of code written by the
+  programmer, as opposed to in terms of expanded code.
+
+\end{itemize}
 
 \section{Coding style}
 
@@ -106,7 +138,295 @@ the reader is case-sensitive (and it looks strange that the designator
 has a different case from the way symbol that it designates is then
 used), and using keywords unnecessarily clutters the keyword package.
 
-\section{TYPECASE and CASE}
+\subsection{Docstrings}
+
+We believe that it is a bad idea for an implementation of a Lisp
+system to have docstrings in the same place as the definition of the
+language item that is documented, for several reasons.  First, to the
+person reading the code, the docstring is most often noise, because it
+is known from the standard what the language item is about.  Second,
+it often looks ugly with multiple lines starting in column 1 of the
+source file, and this fact often discourages the programmer from
+providing good docstring.  Third, it makes internationalization
+harder.
+
+For this reason, we will provide language-specific files containing
+all docstrings of Common Lisp in the form of calls to (SETF
+DOCUMENTATION). 
+
+\subsection{Naming and use of slots}
+
+In order to make the code as safe as possible, we typically do not
+want to export the name of a slot, whereas frequently, the reader or
+the accessor of that slot should be exported.  This restriction
+implies that a slot and its corresponding reader or accessor cannot
+have the same name.  Several solutions exist to this problem.  The one
+we are using for \sysname{} is to have slot names start with the
+percent character (`\%').  Traditionally, a percent character has been
+used to indicate some kind of danger, i.e. that the programmer should
+be very careful before directly using such a name.  Client code that
+attempts to use such a slot would have to write
+\texttt{package::\%name} which contains two indicators of danger,
+namely the double colon package marker and the percent character.
+
+Code should refer to slot names directly as little as possible.  Even
+code that is private to a package should use an internal protocol in
+the form of readers and accessors, and such protocols should be
+documented and exported whenever reasonable. 
+
+\subsection{Standard functions}
+
+Standard functions should always check the validity of their arguments
+and of any other aspect of the environment.  If such a function fails
+to accomplish its task, it should signal an appropriate condition.  In
+a previous version of this text, we wrote that the condition reporting
+should mention what function is concerned so as to give the most
+precise message to the user, but now we think that this is not a good
+idea.  The reason we do not think so is that such functions could be
+part of the runtime system, or could be introduced by standard macros,
+so that the error message is not relevant to the user code anyway.
+The current thinking is instead to use source tracking, so that the
+position of the original code can be found easily. 
+
+\subsection{Standard macros}
+
+Standard macros must do extensive syntax analysis on their input so as
+to avoid compilation errors that are phrased in terms of expanded
+code.  
+
+\subsection{Compiler macros}
+
+{\sysname} will make extensive use of compiler macros.  Compiler
+macros are part of the standard, so this mechanism must be part of a
+conforming compiler anyway.  In many cases, instead of encoding
+special knowledge in the compiler itself, we can use compiler macros.
+By doing it this way, we simplify the compiler, and we provide a set
+of completely portable macros that any implementation can use. 
+
+Compiler macros should be used whenever the exact shape of the call
+site might be used to improve performance of the callee.  For
+instance, when the callee uses keyword arguments, we can eliminate the
+overhead of keyword-value parsing at runtime and instead call a
+special version of the callee that does not have to do any such
+parsing.  
+
+Similarly, functions that take a \texttt{\&rest} argument can provide
+special cases for different common sizes of the \texttt{\&rest}
+argument.
+
+We propose using compiler macros at least for the following
+situations: 
+
+\begin{itemize}
+\item to convert calls to \texttt{list} and \texttt{list*} into nested
+  calls to \texttt{cons};
+\item to convert simple calls to some built-in functions that accept
+  \texttt{:test} and \texttt{:key} keyword arguments (such as
+  \texttt{find}, \texttt{member}, etc) into calls to
+  special versions of these procedures with particularly simple
+  functions for these keyword arguments (\texttt{identity},
+  \texttt{car}, \texttt{eq}, etc);
+\item to convert calls to some functions that accept optional
+  arguments such as \texttt{last} and \texttt{butlast} into calls to
+  special versions when the optional argument is not given.
+\end{itemize}
+
+Compiler macros should not be used in the place of inlining (see
+section \ref{section-inlining}).
+
+\subsection{Conditions and restarts}
+
+\sysname{} functions should signal conditions whenever this is
+required by the Lisp standard (of course) and whenever it is
+\emph{allowed} by the Lisp standard and reasonably efficient to do so.
+If the standard allows for subclasses of indicated signals (I think
+this is the case), then \sysname{} should generate as specific a
+conditions as possible, and the conditions should contain as much
+information as possible in order to make it as easy as possible to
+find out where the problem is located.
+
+\sysname{} function should also provide restarts whenever this is
+practical. 
+
+\subsection{Condition reporting}
+
+Condition reporting should be separate from the definition of the
+condition itself.  Separating the two will make it easier to customize
+condition reporting for different languages and for different
+systems.  An integrated development environment might provide
+different condition reporters from the normal ones, that in addition
+to reporting a condition, displays the source-code location of the
+problem. 
+
+Every \sysname{} module will supply a set of default condition
+reporters for all the specific conditions defined in that module.
+Those condition reporters will use plain English text. 
+
+\subsection{Internationalization}
+
+We would like for {\sysname} to have the ability to report messages in
+the local language if desired.  The way we would like to do that is to
+have it report conditions according to a \texttt{language} object.  To
+accomplish this, condition reporting trampolines to an
+implementation-specific function \texttt{sicl:report-condition} which
+takes the condition, a stream, and a language as arguments.
+
+The value of the special variable \texttt{sicl:*language*} is passed
+by the condition-reporting function to \texttt{sicl:report-condition}.
+
+In other words, the default \texttt{:report} function for conditions is:
+
+\begin{verbatim}
+   (lambda (condition stream) 
+     (sicl:report-condition condition stream sicl:*language*))
+\end{verbatim}
+
+Similarly, the Common Lisp function \texttt{documentation} should
+trampoline to a function that uses the value of
+\texttt{sicl:*language*} to determine which language to use to show
+the documentation. 
+
+\subsection{Package structure}
+
+{\sysname} has a main package containing and exporting all Common Lisp
+symbols.  It contains no other symbols.  A number of implementation
+packages import the symbols from this package, and might define
+internal symbols as well.  Implementation packages may export symbols
+to be used by other implementation packages.
+
+This package structure allows us to isolate implementation-dependent
+symbols in different packages.  
+
+\subsection{Assertions}
+
+\subsection{Threading and thread safety}
+
+Consider locking free.  We predict that a technique call ``speculative
+lock elision'' will soon be available in all main processors. 
+
+\section{Planned modules}
+
+\subsection{Reader}
+
+The reader can be implemented in an almost entirely portable way.  
+
+We are planning to provide a reader with a very fast tokenizer in the
+form of a state machine that builds up the token while it is being
+read.  
+
+We are also planning to include an entry point to the reader that,
+instead of creating ordinary Common Lisp objects, will create an
+abstract syntax tree that contains information about source-code
+position.  This information could then be used by a compiler for
+reporting compilation errors, or by the runtime system for reporting
+sources of errors. 
+
+The reader will use the method created by David Gay for accurate and
+fast reading of floating-point numbers. 
+
+The only problem as far as portability is concerned is with the reader
+macros \texttt{\#\#} and \texttt{\#=}.  When an object labeled with
+\texttt{\#=} is being read (and so has not been constructed yet) and a
+reference to it is being encountered (thus creating a circular
+structure), some temporary value must be put in until the object has
+been constructed.  Then the object must be scanned for that temporary
+value.  However scanning arbitrary objects for some substructure
+cannot be done portably.
+
+\subsection{Pretty printer}
+
+\subsection{Printer}
+
+A large part of the printer can be written portably without
+performance penalty.  We intend to supply standard methods for
+\texttt{print-object}, and code for functions such as \texttt{princ},
+\texttt{prin1}, and \texttt{print}. 
+
+We are planning to use the method created by Burger and Dybvig to
+print floating-point numbers so that they can be read back to the
+exact same number. 
+
+\subsection{Format}
+
+Again we are planning to use the method created by Burger and Dybvig
+for printing floating-point numbers. 
+
+\subsection{Loop}
+
+Our \texttt{loop} module will use all available Common Lisp functions
+for its analysis of syntax and semantics.  We believe this is not a
+problem, even though we assume the existence of \texttt{loop} for many
+other modules, because the code in this module will be executed during
+macro-expansion time, and for a new Common Lisp system, this would be
+another full Common Lisp implementation. 
+
+For systems without a full implementation of \texttt{loop} we are
+planning to provide macro-expanded versions of modules that would
+otherwise require \texttt{loop} in order to be compiled. 
+
+Our \texttt{loop} module will use only standard Common Lisp code in
+its expansion, so that macro-expanded uses of \texttt{loop} will not
+require any other \sysname{} module in order to work.  
+
+\subsection{High-level functions on lists}
+
+This module will implement high-level functions on lists, using
+essentially only \texttt{car}, \texttt{cdr}, and \texttt{cons}.  For
+its implementation, it will use the \texttt{loop} macro.  If any
+other functionality is required, it will supply special
+implementations of such functionality, so as to avoid dependencies on
+other modules. 
+
+High performance will be obtained by identifying important special
+cases such as the use of \texttt{:test} function \texttt{eq}, or
+\texttt{equal}, or the use of a \texttt{:key} of \texttt{identity}.
+
+Compiler macros will be supplied so as to avoid runtime dispatch
+whenever a special-case function can be determined by only looking at
+the call site.  This ensures high performance for short lists, where
+argument parsing would otherwise represent a significant fraction of
+the cost of the call.
+
+A macro-expanded version of this module will be supplied, which will
+not require and existing implementation of \texttt{loop} and will also
+not require any other \sysname{}-specific module. 
+
+\subsection{Sequence functions}
+
+This module will provide high-performance implementations of the
+functions in the ``sequences'' chapter of the HyperSpec.  High
+performance will be obtained by identifying important special cases
+such as the use of \texttt{:test} function \texttt{eq}, or
+\texttt{equal}, or the use of a \texttt{:key} of \texttt{identity}. 
+
+Compiler macros will be supplied so as to avoid runtime dispatch
+whenever a special-case function can be determined by only looking at
+the call site.  This ensures high performance for short sequences,
+where argument parsing would otherwise represent a significant
+fraction of the cost of the call.
+
+\subsection{Type declarations of standard Common Lisp functions}
+
+This module contains portable type declarations for all standard
+Common Lisp functions.  It could be used by implementers of Common
+Lisp compilers to accomplish error checking and type inferencing. 
+
+\subsection{Docstrings for all Common Lisp symbols}
+
+As mentioned elsewhere, we believe that docstrings should be separate
+from code, because they do not address the same audience.  In
+addition, separating the two allows us to distribute the docstrings as
+a separate module Many implementations have substandard docstrings, so
+this is an important module that can be used as a drop-in replacement
+for existing ones.
+
+We will provide the infrastructure for allowing internationalization
+of docstrings, but we probably will not provide different versions for
+different languages. 
+
+\section{Towards a complete Common Lisp implementation}
+
+\subsection{TYPECASE and CASE}
 
 The compiler should generate very fast code for TYPECASE, at least
 when the types tested are known to be mutually exclusive and typically
@@ -120,7 +440,7 @@ object that can be associated with such integers.
 Higher-level code should be able to rely on the fast implementation of
 these primitives. 
 
-\section{Low-level special operators}
+\subsection{Low-level special operators}
 
 (this section is contrary to what I wrote in the first version.  I am
 now convinced that modern optimization technology can handle arbitrary
@@ -136,7 +456,7 @@ The special operator LET* is considered as simple as possible.  The
 LET operator is expanded to LET* (using variable renaming).  **Is this
 really important?
 
-\section{Runtime information}
+\subsection{Runtime information}
 
 The compiler will generate runtime information available both to the
 debugger and to the garbage collector.  For each value of the program
@@ -202,7 +522,7 @@ known to the compiler so as to forbid any use of such a value in a
 context that requires a tagged Lisp value, and the compiler must
 apply enough type inference to detect such cases. 
 
-\section{Compiler}
+\subsection{Compiler}
 
 The compiler should be as portable as possible.  It should use
 portable Common Lisp for as many of the passes as possible.  
@@ -217,7 +537,7 @@ The compiler should do some extensive type inferencing.  It should be
 able to eliminate code for which the result of executing it is known
 as a result of the contents of the compilation environment.  
 
-\subsection{Phase 1}
+\subsubsection{Phase 1}
 
 In phase 1 of the compilation, each expression is first converted into
 a CLOS class (say this better; expressions are already instances of
@@ -267,66 +587,7 @@ forms as follows: \texttt{(let ((v1 e1) (v2 e2) ... (vn en)) body)}
 becomes \texttt{(progn (setq v1 e1) (setq v2 e2) ... (setq vn en)
   body)}.
 
-\section{Standard functions}
-
-Standard functions should always check the validity of their arguments
-and of any other aspect of the environment.  If such a function fails
-to accomplish its task, it should signal an appropriate condition, and
-that condition should refer to the name of the function, and should
-indicate as precisely as possible what the problem is.  So for
-instance if the function CDADR is given the following list as an
-argument: (1 2) it should signal an error with a message such as:
-``The function CDADR was given the list (1 2) whose CADR is neither
-NIL nor a CONS cell''.  This excludes implementing CDADR as a simple
-call to the CDR of the CADR.
-
-\section{Standard macros}
-
-Standard macros must do extensive syntax analysis on their input so as
-to avoid compilation errors that are phrased in terms of expanded
-code.  
-
-\section{Compiler macros}
-
-{\sysname} will make extensive use of compiler macros.  Compiler
-macros are part of the standard, so this mechanism must be part of a
-conforming compiler anyway.  In many cases, instead of encoding
-special knowledge in the compiler itself, we can use compiler macros.
-By doing it this way, we simplify the compiler, and we provide a set
-of completely portable macros that any implementation can use. 
-
-Compiler macros should be used whenever the exact shape of the call
-site might be used to improve performance of the callee.  For
-instance, when the callee uses keyword arguments, we can eliminate the
-overhead of keyword-value parsing at runtime and instead call a
-special version of the callee that does not have to do any such
-parsing.  
-
-Similarly, functions that take a \texttt{\&rest} argument can provide
-special cases for different common sizes of the \texttt{\&rest}
-argument.
-
-We propose using compiler macros at least for the following
-situations: 
-
-\begin{itemize}
-\item to convert calls to \texttt{list} and \texttt{list*} into nested
-  calls to \texttt{cons};
-\item to convert simple calls to some built-in functions that accept
-  \texttt{:test} and \texttt{:key} keyword arguments (such as
-  \texttt{find}, \texttt{member}, etc) into calls to
-  special versions of these procedures with particularly simple
-  functions for these keyword arguments (\texttt{identity},
-  \texttt{car}, \texttt{eq}, etc);
-\item to convert calls to some functions that accept optional
-  arguments such as \texttt{last} and \texttt{butlast} into calls to
-  special versions when the optional argument is not given.
-\end{itemize}
-
-Compiler macros should not be used in the place of inlining (see
-section \ref{section-inlining}).
-
-\section{Inlining}
+\subsection{Inlining}
 \label{section-inlining}
 
 The SICL compiler will use inlining in order to make type inferencing
@@ -335,70 +596,11 @@ SICL features other than the compiler can assume that inlining is done
 when it seems reasonable.  Therefore, even fairly low-level functions
 such as \texttt{aref} can be implemented as portable Lisp code. 
 
-\section{Conditions and restarts}
+\subsection{Generic-function dispatch}
 
-\sysname{} functions should signal conditions whenever this is
-required by the Lisp standard (of course) and whenever it is
-\emph{allowed} by the Lisp standard and reasonably efficient to do
-so.  If the standard allows for subclasses of indicated signals (I
-think this is the case), then \sysname{} should generate as specific a
-signal as possible, and the signal should contain as much information
-as possible in order to make it as easy as possible to find out where
-the problem is located. 
+\subsection{Garbage collection}
 
-\sysname{} function should also provide restarts whenever this is
-practical. 
-
-\section{Assertions}
-
-\section{Threading and thread safety}
-
-Consider locking free.  We predict that a technique call ``speculative
-lock elision'' will soon be available in all main processors. 
-
-\section{Generic-function dispatch}
-
-\section{Garbage collection}
-
-\section{Docstrings}
-
-We believe that it is a bad idea for an implementation of a Lisp
-system to have docstrings in the same place as the definition of the
-language item that is documented, for several reasons.  First, to the
-person reading the code, the docstring is most often noise, because it
-is known from the standard what the language item is about.  Second,
-it often looks ugly with multiple lines starting in column 1 of the
-source file.  Third, it makes internationalization harder.
-
-For this reason, we will provide language-specific files containing
-all docstrings of Common Lisp in the form of calls to (SETF
-DOCUMENTATION). 
-
-\section{Internationalization}
-
-We would like for {\sysname} to have the ability to report messages in
-the local language if desired.  The way we would like to do that is to
-have it report conditions according to a \texttt{language} object.  To
-accomplish this, condition reporting trampolines to an
-implementation-specific function \texttt{sicl:report-condition} which
-takes the condition, a stream, and a language as arguments.
-
-The value of the special variable \texttt{sicl:*language*} is passed
-by the condition-reporting function to \texttt{sicl:report-condition}.
-
-In other words, the default \texttt{:report} function for conditions is:
-
-\begin{verbatim}
-   (lambda (condition stream) 
-     (sicl:report-condition condition stream sicl:*language*))
-\end{verbatim}
-
-Similarly, the Common Lisp function \texttt{documentation} should
-trampoline to a function that uses the value of
-\texttt{sicl:*language*} to determine which language to use to show
-the documentation. 
-
-\section{Debugger}
+\subsection{Debugger}
 \label{section-debugging}
 
 Part of the reason for SICL is to have a system that provides
@@ -438,7 +640,7 @@ to registers or stack locations, information about liveness of
 registers and stack location, how a variable is stored in a location
 (immediate value, pointer, with or without type tag, etc). 
 
-\section{Source code tracking}
+\subsection{Source code tracking}
 
 The SICL reader provides an entry point that returns a second value
 which contains a syntax tree in which each expression is associated
@@ -450,25 +652,14 @@ expansion is traversed in the search of expressions that are eq to the
 arguments given to the macro expander.  Such expressions are
 associated with the source code location of the argument. 
 
-\section{Tracing}
+\subsection{Tracing}
 
 Tracing should not use the method used by some Common Lisp
 implementations to encapsulate the traced function inside a
 trace-reporting function.  Instead it could use the same mechanism as
 the one used for debugging (see section \ref{section-debugging}). 
 
-\section{Package structure}
-
-{\sysname} has a main package containing and exporting all Common Lisp
-symbols.  It contains no other symbols.  A number of implementation
-packages import the symbols from this package, and might define
-internal symbols as well.  Implementation packages may export symbols
-to be used by other implementation packages.
-
-This package structure allows us to isolate implementation-dependent
-symbols in different packages.  
-
-\section{Metering}
+\subsection{Metering}
 
 Just as was the case with the Multics system, we think it is important
 to be able to meter as many system functions as possible.  We suggest
