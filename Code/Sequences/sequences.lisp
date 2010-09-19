@@ -18505,3 +18505,108 @@
 		       predicate sequence start (or end (length sequence)) key)
 		      (|count-if-not seq-type=general-vector from-end=nil key=identity|
 		       predicate sequence start (or end (length sequence)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function merge
+
+(defun |merge seq-type-1=list seq-type-2=list result-type=list key=identity|
+    (l1 l2 predicate)
+  (cond ((null l1) l2)
+	((null l2) l1)
+	(t (let (head)
+	     (if (funcall predicate (car l2) (car l1))
+		 (let ((temp (cdr l2)))
+		   (setf head l2
+			 l2 temp))
+		 (let ((temp (cdr l1)))
+		   (setf head l1
+			 l1 temp)))
+	     (let ((tail head))
+	       (loop until (or (null l1) (null l2))
+		     do (if (funcall predicate (car l2) (car l1))
+			    (let ((temp (cdr l2)))
+			      (setf (cdr tail) l2
+				    l2 temp))
+			    (let ((temp (cdr l1)))
+			      (setf (cdr tail) l1
+				    l1 temp)))
+			(setf tail (cdr tail)))
+	       (setf (cdr tail)
+		     (if (null l1) l2 l1)))
+	     head))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function sort
+
+(defun |sort seq-type=list length=2| (list predicate)
+  (let ((temp (cdr list)))
+    (when (funcall predicate (car temp) (car list))
+      (rotatef (car temp) (car list))))
+  list)
+
+(defun |sort seq-type=list length=3| (list predicate)
+  (let* ((temp list)
+	 (a (pop temp))
+	 (b (pop temp))
+	 (c (pop temp)))
+    (if (funcall predicate a b)
+	(cond ((funcall predicate b c)
+	       nil)
+	       ;; already sorted
+	      ((funcall predicate c a)
+	       (setf temp list)
+	       (setf (car temp) c
+		     temp (cdr temp)
+		     (car temp) a
+		     temp (cdr temp)
+		     (car temp) b))
+	      (t
+	       (setf temp (cdr list))
+	       (setf (car temp) c
+		     temp (cdr temp)
+		     (car temp) b)))
+	(cond ((funcall predicate c b)
+	       (setf temp list)
+	       (setf (car temp) c
+		     temp (cddr temp)
+		     (car temp) a))
+	      ((funcall predicate a c)
+	       (setf temp list)
+	       (setf (car temp) b
+		     temp (cdr temp)
+		     (car temp) a))
+	      (t
+	       (setf temp list)
+	       (setf (car temp) b
+		     temp (cdr temp)
+		     (car temp) c
+		     temp (cdr temp)
+		     (car temp) a))))
+    list))
+
+(defun |sort seq-type=list key=identity|
+    (list predicate)
+  (labels ((sort-with-length (list length)
+	     (case length
+	       ((0 1) list)
+	       (2 (|sort seq-type=list length=2| list predicate))
+	       (3 (|sort seq-type=list length=3| list predicate))
+	       (t (let* ((l1 (floor length 2))
+			 (l2 (- length l1))
+			 (middle (nthcdr (1- l1) list))
+			 (second (cdr middle)))
+		    (setf (cdr middle) nil)
+		    (|merge seq-type-1=list seq-type-2=list result-type=list key=identity|
+		     (sort-with-length list l1)
+		     (sort-with-length second l2)
+		     predicate))))))
+    (sort-with-length list (length list))))
+
+(defun sort (sequence predicate &key key)
+  (if (listp sequence)
+      (if key
+	  nil
+	  (|sort seq-type=list key=identity| sequence predicate))))
+
