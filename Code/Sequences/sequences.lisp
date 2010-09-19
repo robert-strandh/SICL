@@ -17655,3 +17655,853 @@
 				       item sequence start (or end (length sequence)) test-not)))
                               (|count seq-type=general-vector from-end=nil key=identity test=eql|
 			       item sequence start (or end (length sequence)))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function count-if
+
+(defun |count-if seq-type=general-vector from-end=nil key=identity|
+    (predicate vector start end)
+  (declare (type vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (funcall predicate (aref vector i))))
+
+(defun |count-if seq-type=general-vector from-end=nil key=other|
+    (predicate vector start end key)
+  (declare (type vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (funcall predicate (funcall key (aref vector i)))))
+
+(defun |count-if seq-type=general-vector from-end=t key=identity|
+    (predicate vector start end)
+  (declare (type vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (funcall predicate (aref vector i))))
+
+(defun |count-if seq-type=general-vector from-end=t key=other|
+    (predicate vector start end key)
+  (declare (type vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (funcall predicate (funcall key (aref vector i)))))
+
+(defun |count-if seq-type=simple-vector from-end=nil key=identity|
+    (predicate vector start end)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (funcall predicate (svref vector i))))
+
+(defun |count-if seq-type=simple-vector from-end=nil key=other|
+    (predicate vector start end key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (funcall predicate (funcall key (svref vector i)))))
+
+(defun |count-if seq-type=simple-vector from-end=t key=identity|
+    (predicate vector start end)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (funcall predicate (svref vector i))))
+
+(defun |count-if seq-type=simple-vector from-end=t key=other|
+    (predicate vector start end key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (funcall predicate (funcall key (svref vector i)))))
+
+(defun |count-if seq-type=simple-string from-end=nil key=identity|
+    (predicate vector start end)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (funcall predicate (schar vector i))))
+
+(defun |count-if seq-type=simple-string from-end=nil key=other|
+    (predicate vector start end key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (funcall predicate (funcall key (schar vector i)))))
+
+(defun |count-if seq-type=simple-string from-end=t key=identity|
+    (predicate vector start end)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (funcall predicate (schar vector i))))
+
+(defun |count-if seq-type=simple-string from-end=t key=other|
+    (predicate vector start end key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (funcall predicate (funcall key (schar vector i)))))
+
+(defun |count-if seq-type=list from-end=nil end=nil key=identity|
+    (predicate list start)
+  (let ((remaining list)
+	(start-bis start))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  count (funcall predicate element))))
+
+(defun |count-if seq-type=list from-end=nil end=nil key=other|
+    (predicate list start key)
+  (let ((remaining list)
+	(start-bis start))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  count (funcall predicate (funcall key element)))))
+
+(defun |count-if seq-type=list from-end=nil end=other key=identity|
+    (predicate list start end)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  until (zerop end-start)
+	  count (funcall predicate element)
+	  do (decf end-start)
+	  finally (when (plusp end-start)
+		    (error 'invalid-end-index
+			   :datum end
+			   :expected-type `(integer 0 ,(- end end-start)))))))
+
+(defun |count-if seq-type=list from-end=nil end=other key=other|
+    (predicate list start end key)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  until (zerop end-start)
+	  count (funcall predicate (funcall key element))
+	  do (decf end-start)
+	  finally (when (plusp end-start)
+		    (error 'invalid-end-index
+			   :datum end
+			   :expected-type `(integer 0 ,(- end end-start)))))))
+
+(defun |count-if seq-type=list from-end=t end=nil key=identity|
+    (predicate list start)
+  (let ((remaining list)
+	(start-bis start))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  count (funcall predicate element))))
+
+(defun |count-if seq-type=list from-end=t end=nil key=other|
+    (predicate list start key)
+  (let ((remaining list)
+	(start-bis start))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  count (funcall predicate (funcall key element)))))
+
+(defun |count-if seq-type=list from-end=t end=other key=identity|
+    (predicate list start end)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  until (zerop end-start)
+	  count (funcall predicate element)
+	  do (decf end-start)
+	  finally (when (plusp end-start)
+		    (error 'invalid-end-index
+			   :datum end
+			   :expected-type `(integer 0 ,(- end end-start)))))))
+
+(defun |count-if seq-type=list from-end=t end=other key=other|
+    (predicate list start end key)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  until (zerop end-start)
+	  count (funcall predicate (funcall key element))
+	  do (decf end-start)
+	  finally (when (plusp end-start)
+		    (error 'invalid-end-index
+			   :datum end
+			   :expected-type `(integer 0 ,(- end end-start)))))))
+
+(defun count-if (predicate sequence &key from-end (start 0) end key)
+  (if (listp sequence)
+      (if from-end
+	  (if end
+	      (if key
+		  (|count-if seq-type=list from-end=t end=other key=other|
+		   predicate sequence start end key)
+		  (|count-if seq-type=list from-end=t end=other key=identity|
+		   predicate sequence start end))
+	      (if key
+		  (|count-if seq-type=list from-end=t end=nil key=other|
+		   predicate sequence start key)
+		  (|count-if seq-type=list from-end=t end=nil key=identity|
+		   predicate sequence start)))
+	  (if end
+	      (if key
+		  (|count-if seq-type=list from-end=nil end=other key=other|
+		   predicate sequence start end key)
+		  (|count-if seq-type=list from-end=nil end=other key=identity|
+		   predicate sequence start end))
+	      (if key
+		  (|count-if seq-type=list from-end=nil end=nil key=other|
+		   predicate sequence start key)
+		  (|count-if seq-type=list from-end=nil end=nil key=identity|
+		   predicate sequence start))))
+      (if (simple-string-p sequence)
+          (if from-end
+              (if key
+		  (|count-if seq-type=simple-string from-end=t key=other|
+		   predicate sequence start (or end (length sequence)) key)
+		  (|count-if seq-type=simple-string from-end=t key=identity|
+		   predicate sequence start (or end (length sequence))))
+              (if key
+		  (|count-if seq-type=simple-string from-end=nil key=other|
+		   predicate sequence start (or end (length sequence)) key)
+		  (|count-if seq-type=simple-string from-end=nil key=identity|
+		   predicate sequence start (or end (length sequence)))))
+          (if (simple-vector-p sequence)
+              (if from-end
+                  (if key
+		      (|count-if seq-type=simple-vector from-end=t key=other|
+		       predicate sequence start (or end (length sequence)) key)
+		      (|count-if seq-type=simple-vector from-end=t key=identity|
+		       predicate sequence start (or end (length sequence))))
+                  (if key
+		      (|count-if seq-type=simple-vector from-end=nil key=other|
+		       predicate sequence start (or end (length sequence)) key)
+		      (|count-if seq-type=simple-vector from-end=nil key=identity|
+		       predicate sequence start (or end (length sequence)))))
+              (if from-end
+                  (if key
+		      (|count-if seq-type=general-vector from-end=t key=other|
+		       predicate sequence start (or end (length sequence)) key)
+		      (|count-if seq-type=general-vector from-end=t key=identity|
+		       predicate sequence start (or end (length sequence))))
+                  (if key
+		      (|count-if seq-type=general-vector from-end=nil key=other|
+		       predicate sequence start (or end (length sequence)) key)
+		      (|count-if seq-type=general-vector from-end=nil key=identity|
+		       predicate sequence start (or end (length sequence)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function count-if-not
+
+(defun |count-if-not seq-type=general-vector from-end=nil key=identity|
+    (predicate vector start end)
+  (declare (type vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (not (funcall predicate (aref vector i)))))
+
+(defun |count-if-not seq-type=general-vector from-end=nil key=other|
+    (predicate vector start end key)
+  (declare (type vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (not (funcall predicate (funcall key (aref vector i))))))
+
+(defun |count-if-not seq-type=general-vector from-end=t key=identity|
+    (predicate vector start end)
+  (declare (type vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (not (funcall predicate (aref vector i)))))
+
+(defun |count-if-not seq-type=general-vector from-end=t key=other|
+    (predicate vector start end key)
+  (declare (type vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (not (funcall predicate (funcall key (aref vector i))))))
+
+(defun |count-if-not seq-type=simple-vector from-end=nil key=identity|
+    (predicate vector start end)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (not (funcall predicate (svref vector i)))))
+
+(defun |count-if-not seq-type=simple-vector from-end=nil key=other|
+    (predicate vector start end key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (not (funcall predicate (funcall key (svref vector i))))))
+
+(defun |count-if-not seq-type=simple-vector from-end=t key=identity|
+    (predicate vector start end)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (not (funcall predicate (svref vector i)))))
+
+(defun |count-if-not seq-type=simple-vector from-end=t key=other|
+    (predicate vector start end key)
+  (declare (type simple-vector vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (not (funcall predicate (funcall key (svref vector i))))))
+
+(defun |count-if-not seq-type=simple-string from-end=nil key=identity|
+    (predicate vector start end)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (not (funcall predicate (schar vector i)))))
+
+(defun |count-if-not seq-type=simple-string from-end=nil key=other|
+    (predicate vector start end key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i from start below end
+	count (not (funcall predicate (funcall key (schar vector i))))))
+
+(defun |count-if-not seq-type=simple-string from-end=t key=identity|
+    (predicate vector start end)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (not (funcall predicate (schar vector i)))))
+
+(defun |count-if-not seq-type=simple-string from-end=t key=other|
+    (predicate vector start end key)
+  (declare (type simple-string vector)
+	   (type fixnum start end))
+  (unless (<= 0 start (length vector))
+    (error 'invalid-start-index
+	   :datum start
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (unless (<= 0 end (length vector))
+    (error 'invalid-end-index
+	   :datum end
+	   :expected-type `(integer 0 ,(length vector))
+	   :in-sequence vector))
+  (loop for i downfrom (1- end) to start
+	count (not (funcall predicate (funcall key (schar vector i))))))
+
+(defun |count-if-not seq-type=list from-end=nil end=nil key=identity|
+    (predicate list start)
+  (let ((remaining list)
+	(start-bis start))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  count (not (funcall predicate element)))))
+
+(defun |count-if-not seq-type=list from-end=nil end=nil key=other|
+    (predicate list start key)
+  (let ((remaining list)
+	(start-bis start))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  count (not (funcall predicate (funcall key element))))))
+
+(defun |count-if-not seq-type=list from-end=nil end=other key=identity|
+    (predicate list start end)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  until (zerop end-start)
+	  count (not (funcall predicate element))
+	  do (decf end-start)
+	  finally (when (plusp end-start)
+		    (error 'invalid-end-index
+			   :datum end
+			   :expected-type `(integer 0 ,(- end end-start)))))))
+
+(defun |count-if-not seq-type=list from-end=nil end=other key=other|
+    (predicate list start end key)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  until (zerop end-start)
+	  count (not (funcall predicate (funcall key element)))
+	  do (decf end-start)
+	  finally (when (plusp end-start)
+		    (error 'invalid-end-index
+			   :datum end
+			   :expected-type `(integer 0 ,(- end end-start)))))))
+
+(defun |count-if-not seq-type=list from-end=t end=nil key=identity|
+    (predicate list start)
+  (let ((remaining list)
+	(start-bis start))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  count (not (funcall predicate element)))))
+
+(defun |count-if-not seq-type=list from-end=t end=nil key=other|
+    (predicate list start key)
+  (let ((remaining list)
+	(start-bis start))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  count (not (funcall predicate (funcall key element))))))
+
+(defun |count-if-not seq-type=list from-end=t end=other key=identity|
+    (predicate list start end)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  until (zerop end-start)
+	  count (not (funcall predicate element))
+	  do (decf end-start)
+	  finally (when (plusp end-start)
+		    (error 'invalid-end-index
+			   :datum end
+			   :expected-type `(integer 0 ,(- end end-start)))))))
+
+(defun |count-if-not seq-type=list from-end=t end=other key=other|
+    (predicate list start end key)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    (loop until (null remaining)
+	  until (zerop start-bis)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (loop for element in remaining
+	  until (zerop end-start)
+	  count (not (funcall predicate (funcall key element)))
+	  do (decf end-start)
+	  finally (when (plusp end-start)
+		    (error 'invalid-end-index
+			   :datum end
+			   :expected-type `(integer 0 ,(- end end-start)))))))
+
+(defun count-if-not (predicate sequence &key from-end (start 0) end key)
+  (if (listp sequence)
+      (if from-end
+	  (if end
+	      (if key
+		  (|count-if-not seq-type=list from-end=t end=other key=other|
+		   predicate sequence start end key)
+		  (|count-if-not seq-type=list from-end=t end=other key=identity|
+		   predicate sequence start end))
+	      (if key
+		  (|count-if-not seq-type=list from-end=t end=nil key=other|
+		   predicate sequence start key)
+		  (|count-if-not seq-type=list from-end=t end=nil key=identity|
+		   predicate sequence start)))
+	  (if end
+	      (if key
+		  (|count-if-not seq-type=list from-end=nil end=other key=other|
+		   predicate sequence start end key)
+		  (|count-if-not seq-type=list from-end=nil end=other key=identity|
+		   predicate sequence start end))
+	      (if key
+		  (|count-if-not seq-type=list from-end=nil end=nil key=other|
+		   predicate sequence start key)
+		  (|count-if-not seq-type=list from-end=nil end=nil key=identity|
+		   predicate sequence start))))
+      (if (simple-string-p sequence)
+          (if from-end
+              (if key
+		  (|count-if-not seq-type=simple-string from-end=t key=other|
+		   predicate sequence start (or end (length sequence)) key)
+		  (|count-if-not seq-type=simple-string from-end=t key=identity|
+		   predicate sequence start (or end (length sequence))))
+              (if key
+		  (|count-if-not seq-type=simple-string from-end=nil key=other|
+		   predicate sequence start (or end (length sequence)) key)
+		  (|count-if-not seq-type=simple-string from-end=nil key=identity|
+		   predicate sequence start (or end (length sequence)))))
+          (if (simple-vector-p sequence)
+              (if from-end
+                  (if key
+		      (|count-if-not seq-type=simple-vector from-end=t key=other|
+		       predicate sequence start (or end (length sequence)) key)
+		      (|count-if-not seq-type=simple-vector from-end=t key=identity|
+		       predicate sequence start (or end (length sequence))))
+                  (if key
+		      (|count-if-not seq-type=simple-vector from-end=nil key=other|
+		       predicate sequence start (or end (length sequence)) key)
+		      (|count-if-not seq-type=simple-vector from-end=nil key=identity|
+		       predicate sequence start (or end (length sequence)))))
+              (if from-end
+                  (if key
+		      (|count-if-not seq-type=general-vector from-end=t key=other|
+		       predicate sequence start (or end (length sequence)) key)
+		      (|count-if-not seq-type=general-vector from-end=t key=identity|
+		       predicate sequence start (or end (length sequence))))
+                  (if key
+		      (|count-if-not seq-type=general-vector from-end=nil key=other|
+		       predicate sequence start (or end (length sequence)) key)
+		      (|count-if-not seq-type=general-vector from-end=nil key=identity|
+		       predicate sequence start (or end (length sequence)))))))))

@@ -24,6 +24,8 @@ What is done:
 
   subseq.  No tests
 
+  count, count-if, count-if-not (functions only). No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.
@@ -97,9 +99,8 @@ What remains to to:
 
     count, count-if, count-if-not
 
-      This is the only sequence function where it is specified that if
-      :from-end is true, then the test must be applied from the end to
-      the beginning. 
+      Write the compiler macro.
+      Include the tests.
 
     reverse, nreverse 
 
