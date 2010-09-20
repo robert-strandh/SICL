@@ -15,6 +15,8 @@
 		 #:remove #:remove-if #:remove-if-not
 		 #:delete #:delete-if #:delete-if-not
 		 #:count #:count-if #:count-if-not
+		 #:substitute #:substitute-if #:substitute-if-not
+		 #:nsubstitute #:nsubstitute-if #:nsubstitute-if-not
 		 #:copy-seq #:elt
 		 #:merge #:sort))
   (:export . #1#))
