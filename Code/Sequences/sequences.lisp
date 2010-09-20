@@ -18553,8 +18553,8 @@
 	 (c (pop temp)))
     (if (funcall predicate a b)
 	(cond ((funcall predicate b c)
-	       nil)
 	       ;; already sorted
+	       nil)
 	      ((funcall predicate c a)
 	       (setf temp list)
 	       (setf (car temp) c
@@ -18586,12 +18586,42 @@
 		     (car temp) a))))
     list))
 
+(defun |sort seq-type=simple-vector length=3|
+    (vector predicate start)
+  (let* ((a (svref vector start))
+	 (b (svref vector (1+ start)))
+	 (c (svref vector (+ start 2))))
+    (if (funcall predicate a b)
+	(cond ((funcall predicate b c)
+	       ;; already sorted
+	       nil)
+	      ((funcall predicate c a)
+	       (setf (svref vector start) c
+		     (svref vector (1+ start)) a
+		     (svref vector (+ start 2)) b))
+	      (t
+	       (setf (svref vector (1+ start)) c
+		     (svref vector (+ start 2)) b)))
+	(cond ((funcall predicate c b)
+	       (setf (svref vector start) c
+		     (svref vector (+ start 2)) a))
+	      ((funcall predicate a c)
+	       (setf (svref vector start) b
+		     (svref vector (1+ start)) a))
+	      (t
+	       (setf (svref vector start) b
+		     (svref vector (1+ start)) c
+		     (svref vector (+ start 2)) a))))))
+
 (defun |sort seq-type=list key=identity|
     (list predicate)
   (labels ((sort-with-length (list length)
 	     (case length
 	       ((0 1) list)
-	       (2 (|sort seq-type=list length=2| list predicate))
+	       (2 (let ((temp (cdr list)))
+		    (when (funcall predicate (car temp) (car list))
+		      (rotatef (car temp) (car list))))
+		  list)
 	       (3 (|sort seq-type=list length=3| list predicate))
 	       (t (let* ((l1 (floor length 2))
 			 (l2 (- length l1))
@@ -18604,9 +18634,64 @@
 		     predicate))))))
     (sort-with-length list (length list))))
 
+(defun |sort seq-type=simple-vector key=identity|
+    (vector predicate)
+  (declare (type simple-vector vector))
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (labels ((sort-interval (start end)
+	     (declare (type fixnum start end))
+	     (case (- end start)
+	       ((0 1) nil)
+	       (2 (when (funcall predicate
+				 (svref vector (1+ start))
+				 (svref vector start))
+		    (rotatef (svref vector (1+ start))
+			     (svref vector start))))
+	       (3 (|sort seq-type=simple-vector length=3|
+		   vector predicate start))
+	       (t
+		  (let* ((middle (floor (+ start end) 2))
+			 (pivot (svref vector middle)))
+		    ;; Exclude the pivot element in order
+		    ;; to make sure each part is strictly
+		    ;; smaller than the whole. 
+		    (rotatef (svref vector middle)
+			     (svref vector (1- end)))
+		    (let ((i start)
+			  (j (- end 2)))
+		      (declare (type fixnum i j))
+		      (loop while (<= i j)
+			    do (loop while (and (<= i j)
+						(not (funcall predicate
+							      pivot
+							      (svref vector i))))
+				     do (incf i))
+			       (loop while (and (<= i j)
+						(not (funcall predicate
+							      (svref vector j)
+							      pivot)))
+				     do (decf j))
+			       (when (< i j)
+				 (rotatef (svref vector i) (svref vector j))
+				 (incf i)
+				 (decf j)))
+		      (setf (svref vector (1- end))
+			    (svref vector i))
+		      (setf (svref vector i) pivot)
+		      (sort-interval start i)
+		      (sort-interval (1+ i) end)))))
+	     nil))
+    (sort-interval 0 (length vector)))
+  vector)
+	     
 (defun sort (sequence predicate &key key)
   (if (listp sequence)
       (if key
 	  nil
-	  (|sort seq-type=list key=identity| sequence predicate))))
+	  (|sort seq-type=list key=identity| sequence predicate))
+      (if (simple-vector-p sequence)
+	  (if key
+	      nil
+	      (|sort seq-type=simple-vector key=identity| sequence predicate))
+	  nil)))
 
