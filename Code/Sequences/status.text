@@ -89,7 +89,22 @@ What remains to to:
 
     map
 
-      Same problem as make-sequence.
+      To get around the problem of not being able to expand
+      user-defined types, we get around it in the following way: 
+
+         Using subtypep, we check whether result-type is a subtype of
+	 list, in which case, we build a list out of the computed
+	 elements and count the number of elements.  Finally we check
+	 whether (list <length>) is a subtype of the supplied
+	 result-type. 
+
+	 If the result-type is not a subtype of list, then we compute
+	 the length of the sequence to return and call make-sequence
+	 on the supplied result-type and this length.  We then fill in
+	 the sequence using the computed values.
+
+      We should probably provide special versions for common
+      combinations of argument types and result types.
 
     map-into
 
@@ -139,12 +154,11 @@ What remains to to:
 
     concatenate
 
-      Same problem as make-sequence
+      See map.
 
     merge
 
-      Same problem as make-sequence
-
+      See map.
 
     remove-duplicates, delete-duplicates
 
