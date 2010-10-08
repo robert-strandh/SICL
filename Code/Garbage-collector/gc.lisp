@@ -67,6 +67,15 @@
       (setf (aref nursery (* 2 (1- length)))
 	    (+ total-free-space)))))
 
+(defun compute-cache (nursery-live cache)
+  (let ((first (position-if-not #'zeop nursery-live)))
+    (assert (not (null first)))
+    (loop for i from first below (length nursery-live)
+	  do (setf (aref cache i)
+		   (if (zerop (aref nursery-live i))
+		       (aref cache (1- i))
+		       i)))))
+
 ;;; Given an even index into the nursery of a live object, find the
 ;;; amount of free space that precedes that live object.  We do this
 ;;; by searching for the free block in the nursery with the largest
