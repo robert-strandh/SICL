@@ -76,6 +76,18 @@
 		       (aref cache (1- i))
 		       i)))))
 
+(defun find-free-position (nursery-live cache position)
+  (multiple-value-bind (quotient remainder)
+      (floor position +word-size+)
+    (let* ((cache-entry (aref cache quotient))
+	   (pos (integer-length (and (aref nursery-live cache-entry)
+				     (1- (ash 1 remainder))))))
+      (if (zerop pos)
+	  (let ((cache-entry (aref cache (1- quotient))))
+	    (+ (* cache-entry +word-size+)
+	       (integer-length (aref nursery-live cache-entry))))
+	  (+ (* cache-entry +word-size+) pos)))))
+
 ;;; Given an even index into the nursery of a live object, find the
 ;;; amount of free space that precedes that live object.  We do this
 ;;; by searching for the free block in the nursery with the largest
