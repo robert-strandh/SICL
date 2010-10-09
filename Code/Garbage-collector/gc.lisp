@@ -27,7 +27,7 @@
 ;;; the youngest generation objects.  An object takes up at least two
 ;;; words in the nursery, and objects are aligned on a double-word
 ;;; boundary.
-(defparameter *nursery* nil)
+(defvar *nursery*)
 
 ;;; In each thread, this variable gets bound to a vector of words.
 ;;; The length of the vector is (/ +nursery-size+ +word-size 2).  Each
@@ -68,7 +68,7 @@
 	    (+ total-free-space)))))
 
 (defun compute-cache (nursery-live cache)
-  (let ((first (position-if-not #'zeop nursery-live)))
+  (let ((first (position-if-not #'zerop nursery-live)))
     (assert (not (null first)))
     (loop for i from first below (length nursery-live)
 	  do (setf (aref cache i)
@@ -77,16 +77,20 @@
 		       i)))))
 
 (defun find-free-position (nursery-live cache position)
+  (declare (type fixnum position))
   (multiple-value-bind (quotient remainder)
       (floor position +word-size+)
-    (let* ((cache-entry (aref cache quotient))
-	   (pos (integer-length (and (aref nursery-live cache-entry)
-				     (1- (ash 1 remainder))))))
-      (if (zerop pos)
-	  (let ((cache-entry (aref cache (1- quotient))))
-	    (+ (* cache-entry +word-size+)
-	       (integer-length (aref nursery-live cache-entry))))
-	  (+ (* cache-entry +word-size+) pos)))))
+    (let* ((cache-entry (aref cache quotient)))
+      (if (= cache-entry quotient)
+	  (let ((len (integer-length (logand (aref nursery-live cache-entry)
+					     (1- (ash 1 remainder))))))
+	    (if (zerop len)
+		(let ((cache-entry (aref cache (1- quotient))))
+		  (+ (* cache-entry +word-size+)
+		     (1- (integer-length (aref nursery-live cache-entry)))))
+		(+ (* cache-entry +word-size+) (1- len))))
+	  (+ (* cache-entry +word-size+)
+	     (1- (integer-length (aref nursery-live cache-entry))))))))
 
 ;;; Given an even index into the nursery of a live object, find the
 ;;; amount of free space that precedes that live object.  We do this
@@ -117,5 +121,5 @@
 
 ;;; In each thread, this variable gets bound to the address of element
 ;;; zero of the nursery. 
-(defparameter *nursery-address*)
+(defvar *nursery-address*)
 
