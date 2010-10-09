@@ -10,14 +10,15 @@
 ;;; generation, we move A and its transitive closure to an older
 ;;; generation.
 
-;;; We trace the live objects and we obtain a bitvector (or
-;;; equivalent) of information about what words in the nursery are
-;;; live and what words are dead.  We want to compact the nursery by
-;;; "sliding" the live objects towards lower indexes of the nursery.
-;;; Since we are moving objects, any address that points to an object
-;;; in the nursery that is going to be moved needs to be modified to
-;;; reflect the motion.  The amount that an object is moved is
-;;; determined by the total free space before it in the nursery. 
+;;; We trace the live objects and we obtain a bitvector (though not
+;;; represented as a Common Lisp bitvector) of information about what
+;;; words in the nursery are live and what words are dead.  We want to
+;;; compact the nursery by "sliding" the live objects towards lower
+;;; indexes of the nursery.  Since we are moving objects, any address
+;;; that points to an object in the nursery that is going to be moved
+;;; needs to be modified to reflect the motion.  The amount that an
+;;; object is moved is determined by the total free space before it in
+;;; the nursery.
 
 (defconstant +word-size+ 64)
 
@@ -26,22 +27,26 @@
 (defconstant +nursery-size+ (* +word-size+ (expt 2 12)))
 
 ;;; In each thread, this variable gets bound to a vector that contains
-;;; the youngest generation objects.  An object takes up at least two
-;;; words in the nursery, and objects are aligned on a double-word
-;;; boundary.
+;;; the youngest generation objects (the nursery).  An object takes up
+;;; at least two words in the nursery, and objects are aligned on a
+;;; double-word boundary.
 (defvar *nursery*)
 
-;;; In each thread, this variable gets bound to a vector of words.
-;;; The length of the vector is (/ +nursery-size+ +word-size 2).  Each
-;;; word is an unsigned integer, but it represents a bitvector, that
-;;; contains liveness information of the objects in the nursery.  The
-;;; word at index i of the vector represents the objects at indexes
-;;; between (* 2 +word-size+ i)) and (1- (* 2 +word-size+ (1+ i))).
-;;; When the bit (ash 1 k) is set in word i, then the two consecutive
-;;; words at indexes m and m+1 in the nursery are free, where m can be
-;;; expressed as (* 2 (+ (* +word-size+ i) k)).  By doing it this way,
-;;; we can use integer-length to find the most significant bit that is
-;;; set in a word, and thus the corresponding free word with the
+;;; In each thread, this variable gets bound to a bitvector (though
+;;; not represented as a common Lisp bitvecto).  The representation is
+;;; as follows: we use a vector of words.  The length of the vector is
+;;; (/ +nursery-size+ +word-size 2), so to each bit in the bitvector
+;;; corresponds a pair of wrds in the nursery.  Each word if the
+;;; bitvector is a +word-size+ unsigned integer, representing liveness
+;;; information for +word-size+ consecutive double words in the
+;;; nursery.  The word at index i of the bitvector vector represents
+;;; the objects at indexes between (* 2 +word-size+ i)) and (1- (* 2
+;;; +word-size+ (1+ i))) in the nursery.  When the bit (ash 1 k) is
+;;; set in word i, then the two consecutive words at indexes m and m+1
+;;; in the nursery are free, where m can be expressed as (* 2 (+ (*
+;;; +word-size+ i) k)).  By doing it this way, we can use
+;;; integer-length to find the most significant bit that is set in a
+;;; word, and thus the corresponding free word in the nursery with the
 ;;; highest index.
 (defvar *nursery-live*)
 
@@ -69,28 +74,46 @@
       (setf (aref nursery (* 2 (1- length)))
 	    (+ total-free-space)))))
 
+;;; We compute a cache for the liveness bitvector.  The cache has the
+;;; same length as the vector representing the liveness bitvector.  At
+;;; index i of the cache is stored the largest k <= i such that the
+;;; vector representing the liveness bitvector has at least one `0' at
+;;; index k.  When there is no such k, we don't care what is stored in
+;;; index i, because it will never be used. 
 (defun compute-cache (nursery-live cache)
-  (let ((first (position-if-not #'zerop nursery-live)))
+  (let ((first (position-if-not #'zerop nursery-live))
+	(run-time (get-internal-run-time)))
     (assert (not (null first)))
     (loop for i from first below (length nursery-live)
 	  do (setf (aref cache i)
 		   (if (zerop (aref nursery-live i))
 		       (aref cache (1- i))
-		       i)))))
+		       i)))
+    (incf *nursery-cache-build-time* (- (get-internal-run-time) run-time))))
 
+;;; Find the largest position in the liveness bitvector less than the 
+;;; position given that contains a `1'. 
 (defun find-free-position (nursery-live cache position)
   (declare (type fixnum position))
   (multiple-value-bind (quotient remainder)
       (floor position +word-size+)
     (let* ((cache-entry (aref cache quotient)))
       (if (= cache-entry quotient)
+	  ;; The position we are looking for might be at index
+	  ;; cache-entry. 
 	  (let ((len (integer-length (logand (aref nursery-live cache-entry)
 					     (1- (ash 1 remainder))))))
 	    (if (zerop len)
+		;; False alarm.  The position we are looking for
+		;; is not at index cache-entry.  
 		(let ((cache-entry (aref cache (1- quotient))))
 		  (+ (* cache-entry +word-size+)
 		     (1- (integer-length (aref nursery-live cache-entry)))))
+		;; Found the position we are looking for at index
+		;;; cache-entry. 
 		(+ (* cache-entry +word-size+) (1- len))))
+	  ;; The position we are looking for is definitely not at index
+	  ;; cache-entry.  
 	  (+ (* cache-entry +word-size+)
 	     (1- (integer-length (aref nursery-live cache-entry))))))))
 
@@ -117,9 +140,6 @@
 			      (1+ i)
 			      i))))
     (aref nursery (- i size))))
-  
-	 
-	     
 
 ;;; In each thread, this variable gets bound to the address of element
 ;;; zero of the nursery. 
