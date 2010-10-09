@@ -1,3 +1,5 @@
+(in-package #:sicl-gc)
+
 ;;; Sliding garbage collector for the nursery.  We are assuming an
 ;;; invariant that says that the only references to an object in the
 ;;; nursery are from the roots or from other objects in the nursery.
@@ -122,4 +124,3 @@
 ;;; In each thread, this variable gets bound to the address of element
 ;;; zero of the nursery. 
 (defvar *nursery-address*)
-
