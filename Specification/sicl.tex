@@ -789,8 +789,9 @@ the strict order of oldest to youngest.
 
 Promotion could happen for reasons other than age.  Objects that are
 too large for the nursery would be allocated directly in the global
-allocator.  Objects with references from foreign-language code would
-be promoted to the global collector where they would no longer move.
+allocator.  Objects to which references from foreign-language code are
+about to be created would first be promoted to the global collector
+where they would no longer move.
 
 \subsection{Debugger}
 \label{section-debugging}
