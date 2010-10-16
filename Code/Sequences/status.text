@@ -26,6 +26,8 @@ What is done:
 
   count, count-if, count-if-not (functions only). No tests.
 
+  nsubstite, nsubstitute-if, nsubstitute-if-not (function only).  No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.
@@ -126,7 +128,11 @@ What remains to to:
       Use quicksort for sort and perhaps heapsort for stable-sort. 
 
     substite, substitute-if, substitute-if-not
+
     nsubstite, nsubstitute-if, nsubstitute-if-not
+
+      Write the copiler macro.
+      Write tests.
 
     search
 
