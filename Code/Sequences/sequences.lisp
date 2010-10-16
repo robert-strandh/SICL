@@ -22685,3 +22685,642 @@
 			     newitem olditem sequence start end key)
 			    (|nsubstitute seq-type=general-vector test=eql count=nil key=identity|
 			     newitem olditem sequence start end)))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nsubstitute-if
+
+(defun |nsubstitute-if seq-type=list end=nil count=nil key=identity|
+    (newitem predicate list start)
+  (let ((remaining list)
+	(start-bis start))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    ;; We can't use loop for ... on, becaue it uses atom for testing the end
+    (loop until (endp remaining)
+	  when (funcall predicate (car remaining))
+	    do (setf (car remaining) newitem)
+	  do (setf remaining (cdr remaining))))
+  list)
+
+(defun |nsubstitute-if seq-type=list end=nil count=nil key=other|
+    (newitem predicate list start key)
+  (let ((remaining list)
+	(start-bis start))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    ;; We can't use loop for ... on, becaue it uses atom for testing the end
+    (loop until (endp remaining)
+	  when (funcall predicate (funcall key (car remaining)))
+	    do (setf (car remaining) newitem)
+	  do (setf remaining (cdr remaining))))
+  list)
+
+(defun |nsubstitute-if seq-type=list from-end=nil end=nil count=other key=identity|
+    (newitem predicate list start count)
+  (let ((remaining list)
+	(start-bis start))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    ;; We can't use loop for ... on, becaue it uses atom for testing the end
+    (loop until (endp remaining)
+	  until (zerop count)
+	  when (funcall predicate (car remaining))
+	    do (setf (car remaining) newitem)
+	       (decf count)
+	  do (setf remaining (cdr remaining))))
+  list)
+
+(defun |nsubstitute-if seq-type=list from-end=nil end=nil count=other key=other|
+    (newitem predicate list start count key)
+  (let ((remaining list)
+	(start-bis start))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    ;; We can't use loop for ... on, becaue it uses atom for testing the end
+    (loop until (endp remaining)
+	  until (zerop count)
+	  when (funcall predicate (funcall key (car remaining)))
+	    do (setf (car remaining) newitem)
+	       (decf count)
+	  do (setf remaining (cdr remaining))))
+  list)
+
+(defun |nsubstitute-if seq-type=list end=other count=nil key=identity|
+    (newitem predicate list start end)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    ;; We can't use loop for ... on, becaue it uses atom for testing the end
+    (loop until (endp remaining)
+	  until (zerop end-start)
+	  when (funcall predicate (car remaining))
+	    do (setf (car remaining) newitem)
+	  do (setf remaining (cdr remaining))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :datum end
+	     :expected-type `(integer 0 ,(- end end-start))
+	     :in-sequence list)))
+  list)
+
+(defun |nsubstitute-if seq-type=list end=other count=nil key=other|
+    (newitem predicate list start end key)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    ;; We can't use loop for ... on, becaue it uses atom for testing the end
+    (loop until (endp remaining)
+	  until (zerop end-start)
+	  when (funcall predicate (funcall key (car remaining)))
+	    do (setf (car remaining) newitem)
+	  do (setf remaining (cdr remaining))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :datum end
+	     :expected-type `(integer 0 ,(- end end-start))
+	     :in-sequence list)))
+  list)
+
+(defun |nsubstitute-if seq-type=list from-end=nil end=other count=other key=identity|
+    (newitem predicate list start end count)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    ;; We can't use loop for ... on, becaue it uses atom for testing the end
+    (loop until (endp remaining)
+	  until (zerop end-start)
+	  until (zerop count)
+	  when (funcall predicate (car remaining))
+	    do (setf (car remaining) newitem)
+	       (decf count)
+	  do (setf remaining (cdr remaining))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :datum end
+	     :expected-type `(integer 0 ,(- end end-start))
+	     :in-sequence list)))
+  list)
+
+(defun |nsubstitute-if seq-type=list from-end=nil end=other count=other key=other|
+    (newitem predicate list start end count key)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    ;; We can't use loop for ... on, becaue it uses atom for testing the end
+    (loop until (endp remaining)
+	  until (zerop end-start)
+	  until (zerop count)
+	  when (funcall predicate (funcall key (car remaining)))
+	    do (setf (car remaining) newitem)
+	       (decf count)
+	  do (setf remaining (cdr remaining))
+	     (decf end-start))
+    (when (plusp end-start)
+      (error 'invalid-end-index
+	     :datum end
+	     :expected-type `(integer 0 ,(- end end-start))
+	     :in-sequence list)))
+  list)
+
+(defun |nsubstitute-if seq-type=list from-end=t end=nil count=other key=identity|
+    (newitem predicate list start count)
+  (let ((remaining list)
+	(start-bis start))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (let ((reversed '()))
+      ;; nreverse the remaining list
+      (loop until (endp remaining)
+	    do (let ((temp (cdr remaining)))
+		 (setf (cdr remaining) reversed)
+		 (setf reversed remaining)
+		 (setf remaining temp)))
+      ;; nreverse it again and count
+      (loop until (null reversed)
+	    while (plusp count)
+	    do (when (funcall predicate (car reversed))
+		 (setf (car reversed) newitem)
+		 (decf count))
+	       (let ((temp (cdr reversed)))
+		 (setf (cdr reversed) remaining)
+		 (setf remaining reversed)
+		 (setf reversed temp)))))
+  list)
+
+(defun |nsubstitute-if seq-type=list from-end=t end=nil count=other key=other|
+    (newitem predicate list start count key)
+  (let ((remaining list)
+	(start-bis start))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (let ((reversed '()))
+      ;; nreverse the remaining list
+      (loop until (endp remaining)
+	    do (let ((temp (cdr remaining)))
+		 (setf (cdr remaining) reversed)
+		 (setf reversed remaining)
+		 (setf remaining temp)))
+      ;; nreverse it again and count
+      (loop until (null reversed)
+	    while (plusp count)
+	    do (when (funcall predicate (funcall key (car reversed)))
+		 (setf (car reversed) newitem)
+		 (decf count))
+	       (let ((temp (cdr reversed)))
+		 (setf (cdr reversed) remaining)
+		 (setf remaining reversed)
+		 (setf reversed temp)))))
+  list)
+
+(defun |nsubstitute-if seq-type=list from-end=t end=other count=other key=identity|
+    (newitem predicate list start end count)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (let ((reversed '()))
+      ;; nreverse the remaining list
+      (loop until (endp remaining)
+	    while (plusp end-start)
+	    do (decf end-start)
+	       (let ((temp (cdr remaining)))
+		 (setf (cdr remaining) reversed)
+		 (setf reversed remaining)
+		 (setf remaining temp)))
+      (when (plusp end-start)
+	(error 'invalid-end-index
+	       :datum end
+	       :expected-type `(integer 0 ,(- end end-start))
+	       :in-sequence list))
+      ;; nreverse it again and count
+      (loop until (null reversed)
+	    while (plusp count)
+	    do (when (funcall predicate (car reversed))
+		 (setf (car reversed) newitem)
+		 (decf count))
+	       (let ((temp (cdr reversed)))
+		 (setf (cdr reversed) remaining)
+		 (setf remaining reversed)
+		 (setf reversed temp)))))
+  list)
+
+(defun |nsubstitute-if seq-type=list from-end=t end=other count=other key=other|
+    (newitem predicate list start end count key)
+  (let ((remaining list)
+	(start-bis start)
+	(end-start (- end start)))
+    ;; skip a prefix indicated by start
+    (loop until (zerop start-bis)
+	  until (endp remaining)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (unless (zerop start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    (let ((reversed '()))
+      ;; nreverse the remaining list
+      (loop until (endp remaining)
+	    while (plusp end-start)
+	    do (decf end-start)
+	       (let ((temp (cdr remaining)))
+		 (setf (cdr remaining) reversed)
+		 (setf reversed remaining)
+		 (setf remaining temp)))
+      (when (plusp end-start)
+	(error 'invalid-end-index
+	       :datum end
+	       :expected-type `(integer 0 ,(- end end-start))
+	       :in-sequence list))
+      (loop until (null reversed)
+	    while (plusp count)
+	    do (when (funcall predicate (funcall key (car reversed)))
+		 (setf (car reversed) newitem)
+		 (decf count))
+	       (let ((temp (cdr reversed)))
+		 (setf (cdr reversed) remaining)
+		 (setf remaining reversed)
+		 (setf reversed temp)))))
+  list)
+
+(defun |nsubstitute-if seq-type=general-vector count=nil key=identity|
+    (newitem predicate vector start end)
+  (loop for i from start below end
+	do (when (funcall predicate (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=general-vector count=nil key=other|
+    (newitem predicate vector start end key)
+  (loop for i from start below end
+	do (when (funcall predicate (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=general-vector from-end=nil count=other key=identity|
+    (newitem predicate vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=general-vector from-end=nil count=other key=other|
+    (newitem predicate vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=general-vector from-end=t count=other key=identity|
+    (newitem predicate vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=general-vector from-end=t count=other key=other|
+    (newitem predicate vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-vector count=nil key=identity|
+    (newitem predicate vector start end)
+  (loop for i from start below end
+	do (when (funcall predicate (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-vector count=nil key=other|
+    (newitem predicate vector start end key)
+  (loop for i from start below end
+	do (when (funcall predicate (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-vector from-end=nil count=other key=identity|
+    (newitem predicate vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-vector from-end=nil count=other key=other|
+    (newitem predicate vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-vector from-end=t count=other key=identity|
+    (newitem predicate vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-vector from-end=t count=other key=other|
+    (newitem predicate vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-string count=nil key=identity|
+    (newitem predicate vector start end)
+  (loop for i from start below end
+	do (when (funcall predicate (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-string count=nil key=other|
+    (newitem predicate vector start end key)
+  (loop for i from start below end
+	do (when (funcall predicate (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-string from-end=nil count=other key=identity|
+    (newitem predicate vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-string from-end=nil count=other key=other|
+    (newitem predicate vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-string from-end=t count=other key=identity|
+    (newitem predicate vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute-if seq-type=simple-string from-end=t count=other key=other|
+    (newitem predicate vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall predicate (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun nsubstitute-if
+    (newitem predicate sequence &key from-end (start 0) end count key)
+  (cond ((listp sequence)
+	 (if from-end
+	     (if end
+		 (if count
+		     (if key
+			 (|nsubstitute-if seq-type=list from-end=t end=other count=other key=other|
+			  newitem predicate sequence start end count key)
+			 (|nsubstitute-if seq-type=list from-end=t end=other count=other key=identity|
+			  newitem predicate sequence start end count))
+		     (if key
+			 (|nsubstitute-if seq-type=list end=other count=nil key=other|
+			  newitem predicate sequence start end key)
+			 (|nsubstitute-if seq-type=list end=other count=nil key=identity|
+			  newitem predicate sequence start end)))
+		 (if count
+		     (if key
+			 (|nsubstitute-if seq-type=list from-end=t end=nil count=other key=other|
+			  newitem predicate sequence start count key)
+			 (|nsubstitute-if seq-type=list from-end=t end=nil count=other key=identity|
+			  newitem predicate sequence start count))
+		     (if key
+			 (|nsubstitute-if seq-type=list end=nil count=nil key=other|
+			  newitem predicate sequence start key)
+			 (|nsubstitute-if seq-type=list end=nil count=nil key=identity|
+			  newitem predicate sequence start))))
+	     (if end
+		 (if count
+		     (if key
+			 (|nsubstitute-if seq-type=list from-end=nil end=other count=other key=other|
+			  newitem predicate sequence start end count key)
+			 (|nsubstitute-if seq-type=list from-end=nil end=other count=other key=identity|
+			  newitem predicate sequence start end count))
+		     (if key
+			 (|nsubstitute-if seq-type=list end=other count=nil key=other|
+			  newitem predicate sequence start end key)
+			 (|nsubstitute-if seq-type=list end=other count=nil key=identity|
+			  newitem predicate sequence start end)))
+		 (if count
+		     (if key
+			 (|nsubstitute-if seq-type=list from-end=nil end=nil count=other key=other|
+			  newitem predicate sequence start count key)
+			 (|nsubstitute-if seq-type=list from-end=nil end=nil count=other key=identity|
+			  newitem predicate sequence start count))
+		     (if key
+			 (|nsubstitute-if seq-type=list end=nil count=nil key=other|
+			  newitem predicate sequence start key)
+			 (|nsubstitute-if seq-type=list end=nil count=nil key=identity|
+			  newitem predicate sequence start))))))
+	((simple-string-p sequence)
+	 (when (null end)
+	   (setf end (length sequence)))
+	 (if from-end
+	     (if count
+		 (if key
+		     (|nsubstitute-if seq-type=simple-string from-end=t count=other key=other|
+		      newitem predicate sequence start end count key)
+		     (|nsubstitute-if seq-type=simple-string from-end=t count=other key=identity|
+		      newitem predicate sequence start end count))
+		 (if key
+		     (|nsubstitute-if seq-type=simple-string count=nil key=other|
+		      newitem predicate sequence start end key)
+		     (|nsubstitute-if seq-type=simple-string count=nil key=identity|
+		      newitem predicate sequence start end)))
+	     (if count
+		 (if key
+		     (|nsubstitute-if seq-type=simple-string from-end=nil count=other key=other|
+		      newitem predicate sequence start end count key)
+		     (|nsubstitute-if seq-type=simple-string from-end=nil count=other key=identity|
+		      newitem predicate sequence start end count))
+		 (if key
+		     (|nsubstitute-if seq-type=simple-string count=nil key=other|
+		      newitem predicate sequence start end key)
+		     (|nsubstitute-if seq-type=simple-string count=nil key=identity|
+		      newitem predicate sequence start end)))))
+	((simple-vector-p sequence)
+	 (when (null end)
+	   (setf end (length sequence)))
+	 (if from-end
+	     (if count
+		 (if key
+		     (|nsubstitute-if seq-type=simple-vector from-end=t count=other key=other|
+		      newitem predicate sequence start end count key)
+		     (|nsubstitute-if seq-type=simple-vector from-end=t count=other key=identity|
+		      newitem predicate sequence start end count))
+		 (if key
+		     (|nsubstitute-if seq-type=simple-vector count=nil key=other|
+		      newitem predicate sequence start end key)
+		     (|nsubstitute-if seq-type=simple-vector count=nil key=identity|
+		      newitem predicate sequence start end)))
+	     (if count
+		 (if key
+		     (|nsubstitute-if seq-type=simple-vector from-end=nil count=other key=other|
+		      newitem predicate sequence start end count key)
+		     (|nsubstitute-if seq-type=simple-vector from-end=nil count=other key=identity|
+		      newitem predicate sequence start end count))
+		 (if key
+		     (|nsubstitute-if seq-type=simple-vector count=nil key=other|
+		      newitem predicate sequence start end key)
+		     (|nsubstitute-if seq-type=simple-vector count=nil key=identity|
+		      newitem predicate sequence start end)))))
+	(t
+	 (when (null end)
+	   (setf end (length sequence)))
+	 (if from-end
+	     (if count
+		 (if key
+		     (|nsubstitute-if seq-type=general-vector from-end=t count=other key=other|
+		      newitem predicate sequence start end count key)
+		     (|nsubstitute-if seq-type=general-vector from-end=t count=other key=identity|
+		      newitem predicate sequence start end count))
+		 (if key
+		     (|nsubstitute-if seq-type=general-vector count=nil key=other|
+		      newitem predicate sequence start end key)
+		     (|nsubstitute-if seq-type=general-vector count=nil key=identity|
+		      newitem predicate sequence start end)))
+	     (if count
+		 (if key
+		     (|nsubstitute-if seq-type=general-vector from-end=nil count=other key=other|
+		      newitem predicate sequence start end count key)
+		     (|nsubstitute-if seq-type=general-vector from-end=nil count=other key=identity|
+		      newitem predicate sequence start end count))
+		 (if key
+		     (|nsubstitute-if seq-type=general-vector count=nil key=other|
+		      newitem predicate sequence start end key)
+		     (|nsubstitute-if seq-type=general-vector count=nil key=identity|
+		      newitem predicate sequence start end)))))))
+
