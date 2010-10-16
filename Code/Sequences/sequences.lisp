@@ -18966,7 +18966,7 @@
   list)
 
 (defun |nsubstitute seq-type=list end=nil test=other count=nil key=identity|
-    (newitem olditem list test start)
+    (newitem olditem list start test)
   (let ((remaining list)
 	(start-bis start))
     ;; skip a prefix indicated by start
@@ -18987,7 +18987,7 @@
   list)
 
 (defun |nsubstitute seq-type=list end=nil test=other count=nil key=other|
-    (newitem olditem list test start key)
+    (newitem olditem list start test key)
   (let ((remaining list)
 	(start-bis start))
     ;; skip a prefix indicated by start
@@ -19008,7 +19008,7 @@
   list)
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test=other count=other key=identity|
-    (newitem olditem list test start count)
+    (newitem olditem list start test count)
   (let ((remaining list)
 	(start-bis start))
     ;; skip a prefix indicated by start
@@ -19031,7 +19031,7 @@
   list)
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test=other count=other key=other|
-    (newitem olditem list test start count key)
+    (newitem olditem list start test count key)
   (let ((remaining list)
 	(start-bis start))
     ;; skip a prefix indicated by start
@@ -19230,7 +19230,7 @@
   list)
 
 (defun |nsubstitute seq-type=list end=nil test-not=other count=nil key=identity|
-    (newitem olditem list test-not start)
+    (newitem olditem list start test-not)
   (let ((remaining list)
 	(start-bis start))
     ;; skip a prefix indicated by start
@@ -19251,7 +19251,7 @@
   list)
 
 (defun |nsubstitute seq-type=list end=nil test-not=other count=nil key=other|
-    (newitem olditem list test-not start key)
+    (newitem olditem list start test-not key)
   (let ((remaining list)
 	(start-bis start))
     ;; skip a prefix indicated by start
@@ -19272,7 +19272,7 @@
   list)
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test-not=other count=other key=identity|
-    (newitem olditem list test-not start count)
+    (newitem olditem list start test-not count)
   (let ((remaining list)
 	(start-bis start))
     ;; skip a prefix indicated by start
@@ -19295,7 +19295,7 @@
   list)
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test-not=other count=other key=other|
-    (newitem olditem list test-not start count key)
+    (newitem olditem list start test-not count key)
   (let ((remaining list)
 	(start-bis start))
     ;; skip a prefix indicated by start
@@ -19558,7 +19558,7 @@
   list)
 
 (defun |nsubstitute seq-type=list end=other test=other count=nil key=identity|
-    (newitem olditem list test start end)
+    (newitem olditem list start end test)
   (let ((remaining list)
 	(start-bis start)
 	(end-start (- end start)))
@@ -19587,7 +19587,7 @@
   list)
 
 (defun |nsubstitute seq-type=list end=other test=other count=nil key=other|
-    (newitem olditem list test start end key)
+    (newitem olditem list start end test key)
   (let ((remaining list)
 	(start-bis start)
 	(end-start (- end start)))
@@ -19616,7 +19616,7 @@
   list)
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test=other count=other key=identity|
-    (newitem olditem list test start end count)
+    (newitem olditem list start end test count)
   (let ((remaining list)
 	(start-bis start)
 	(end-start (- end start)))
@@ -19647,7 +19647,7 @@
   list)
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test=other count=other key=other|
-    (newitem olditem list test start end count key)
+    (newitem olditem list start end test count key)
   (let ((remaining list)
 	(start-bis start)
 	(end-start (- end start)))
@@ -19918,7 +19918,7 @@
   list)
 
 (defun |nsubstitute seq-type=list end=other test-not=other count=nil key=identity|
-    (newitem olditem list test-not start end)
+    (newitem olditem list start end test-not)
   (let ((remaining list)
 	(start-bis start)
 	(end-start (- end start)))
@@ -19947,7 +19947,7 @@
   list)
 
 (defun |nsubstitute seq-type=list end=other test-not=other count=nil key=other|
-    (newitem olditem list test-not start end key)
+    (newitem olditem list start end test-not key)
   (let ((remaining list)
 	(start-bis start)
 	(end-start (- end start)))
@@ -19976,7 +19976,7 @@
   list)
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test-not=other count=other key=identity|
-    (newitem olditem list test-not start end count)
+    (newitem olditem list start end test-not count)
   (let ((remaining list)
 	(start-bis start)
 	(end-start (- end start)))
@@ -20007,7 +20007,7 @@
   list)
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test-not=other count=other key=other|
-    (newitem olditem list test-not start end count key)
+    (newitem olditem list start end test-not count key)
   (let ((remaining list)
 	(start-bis start)
 	(end-start (- end start)))
@@ -20061,7 +20061,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eql (car reversed) olditem)
+	    do (when (eql olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20094,7 +20094,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eql (funcall key (car reversed)) olditem)
+	    do (when (eql olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20127,7 +20127,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eq (car reversed) olditem)
+	    do (when (eq olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20160,7 +20160,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eq (funcall key (car reversed)) olditem)
+	    do (when (eq olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20193,7 +20193,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall test (car reversed) olditem)
+	    do (when (funcall test olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20226,7 +20226,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall test (funcall key (car reversed)) olditem)
+	    do (when (funcall test olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20259,7 +20259,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eql (car reversed) olditem)
+	    do (unless (eql olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20292,7 +20292,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eql (funcall key (car reversed)) olditem)
+	    do (unless (eql olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20325,7 +20325,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eq (car reversed) olditem)
+	    do (unless (eq olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20358,7 +20358,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eq (funcall key (car reversed)) olditem)
+	    do (unless (eq olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20391,7 +20391,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall test-not (car reversed) olditem)
+	    do (unless (funcall test-not olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20424,7 +20424,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall test-not (funcall key (car reversed)) olditem)
+	    do (unless (funcall test-not olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20433,7 +20433,6 @@
 		 (setf reversed temp)))))
   list)
 
-;; ++++++++++++++++++++++++++++++++++++++++++++++
 (defun |nsubstitute seq-type=list from-end=t end=other test=eql count=other key=identity|
     (newitem olditem list start end count)
   (let ((remaining list)
@@ -20466,7 +20465,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eql (car reversed) olditem)
+	    do (when (eql olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20506,7 +20505,7 @@
 	       :in-sequence list))
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eql (funcall key (car reversed)) olditem)
+	    do (when (eql olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20547,7 +20546,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eq (car reversed) olditem)
+	    do (when (eq olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20588,7 +20587,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eq (funcall key (car reversed)) olditem)
+	    do (when (eq olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20629,7 +20628,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall test (car reversed) olditem)
+	    do (when (funcall test olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20670,7 +20669,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall test (funcall key (car reversed)) olditem)
+	    do (when (funcall test olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20711,7 +20710,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eql (car reversed) olditem)
+	    do (unless (eql olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20752,7 +20751,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eql (funcall key (car reversed)) olditem)
+	    do (unless (eql olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20793,7 +20792,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eq (car reversed) olditem)
+	    do (unless (eq olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20834,7 +20833,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eq (funcall key (car reversed)) olditem)
+	    do (unless (eq olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20875,7 +20874,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall test-not (car reversed) olditem)
+	    do (unless (funcall test-not olditem (car reversed))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20916,7 +20915,7 @@
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall test-not (funcall key (car reversed)) olditem)
+	    do (unless (funcall test-not olditem (funcall key (car reversed)))
 		 (setf (car reversed) newitem)
 		 (decf count))
 	       (let ((temp (cdr reversed)))
@@ -20924,3 +20923,1765 @@
 		 (setf remaining reversed)
 		 (setf reversed temp)))))
   list)
+
+(defun |nsubstitute seq-type=general-vector test=eql count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (when (eql olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test=eql count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (when (eql olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test=eq count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (when (eq olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test=eq count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (when (eq olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test=other count=nil key=identity|
+    (newitem olditem vector start end test)
+  (loop for i from start below end
+	do (when (funcall test olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test=other count=nil key=other|
+    (newitem olditem vector start end test key)
+  (loop for i from start below end
+	do (when (funcall test olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test-not=eql count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (unless (eql olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test-not=eql count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (unless (eql olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test-not=eq count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (unless (eq olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test-not=eq count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (unless (eq olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test-not=other count=nil key=identity|
+    (newitem olditem vector start end test-not)
+  (loop for i from start below end
+	do (unless (funcall test-not olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector test-not=other count=nil key=other|
+    (newitem olditem vector start end test-not key)
+  (loop for i from start below end
+	do (unless (funcall test-not olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test=other count=other key=identity|
+    (newitem olditem vector start end test count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test=other count=other key=other|
+    (newitem olditem vector start end test count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test-not=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test-not=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test-not=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test-not=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test-not=other count=other key=identity|
+    (newitem olditem vector start end test-not count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=nil test-not=other count=other key=other|
+    (newitem olditem vector start end test-not count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test=other count=other key=identity|
+    (newitem olditem vector start end count test)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test=other count=other key=other|
+    (newitem olditem vector start end test count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test-not=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test-not=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test-not=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test-not=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test-not=other count=other key=identity|
+    (newitem olditem vector start end test-not count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (aref vector i))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=general-vector from-end=t test-not=other count=other key=other|
+    (newitem olditem vector start end test-not count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (funcall key (aref vector i)))
+	     (setf (aref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test=eql count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (when (eql olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test=eql count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (when (eql olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test=eq count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (when (eq olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test=eq count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (when (eq olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test=other count=nil key=identity|
+    (newitem olditem vector start end test)
+  (loop for i from start below end
+	do (when (funcall test olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test=other count=nil key=other|
+    (newitem olditem vector start end test key)
+  (loop for i from start below end
+	do (when (funcall test olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test-not=eql count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (unless (eql olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test-not=eql count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (unless (eql olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test-not=eq count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (unless (eq olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test-not=eq count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (unless (eq olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test-not=other count=nil key=identity|
+    (newitem olditem vector start end test-not)
+  (loop for i from start below end
+	do (unless (funcall test-not olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector test-not=other count=nil key=other|
+    (newitem olditem vector start end test-not key)
+  (loop for i from start below end
+	do (unless (funcall test-not olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test=other count=other key=identity|
+    (newitem olditem vector start end test count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test=other count=other key=other|
+    (newitem olditem vector start end test count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test-not=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test-not=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test-not=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test-not=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test-not=other count=other key=identity|
+    (newitem olditem vector start end test-not count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=nil test-not=other count=other key=other|
+    (newitem olditem vector start end test-not count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test=other count=other key=identity|
+    (newitem olditem vector start end test count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test=other count=other key=other|
+    (newitem olditem vector start end test count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test-not=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test-not=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test-not=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test-not=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test-not=other count=other key=identity|
+    (newitem olditem vector start end test-not count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (svref vector i))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-vector from-end=t test-not=other count=other key=other|
+    (newitem olditem vector start end test-not count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (funcall key (svref vector i)))
+	     (setf (svref vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test=eql count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (when (eql olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test=eql count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (when (eql olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test=eq count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (when (eq olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test=eq count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (when (eq olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test=other count=nil key=identity|
+    (newitem olditem vector start end test)
+  (loop for i from start below end
+	do (when (funcall test olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test=other count=nil key=other|
+    (newitem olditem vector start end test key)
+  (loop for i from start below end
+	do (when (funcall test olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test-not=eql count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (unless (eql olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test-not=eql count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (unless (eql olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test-not=eq count=nil key=identity|
+    (newitem olditem vector start end)
+  (loop for i from start below end
+	do (unless (eq olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test-not=eq count=nil key=other|
+    (newitem olditem vector start end key)
+  (loop for i from start below end
+	do (unless (eq olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test-not=other count=nil key=identity|
+    (newitem olditem vector start end test-not)
+  (loop for i from start below end
+	do (unless (funcall test-not olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string test-not=other count=nil key=other|
+    (newitem olditem vector start end test-not key)
+  (loop for i from start below end
+	do (unless (funcall test-not olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test=other count=other key=identity|
+    (newitem olditem vector start end test count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test=other count=other key=other|
+    (newitem olditem vector start end test count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test-not=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test-not=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test-not=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test-not=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test-not=other count=other key=identity|
+    (newitem olditem vector start end test-not count)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=nil test-not=other count=other key=other|
+    (newitem olditem vector start end test-not count key)
+  (loop for i from start below end
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eql olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (eq olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test=other count=other key=identity|
+    (newitem olditem vector start end test count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test=other count=other key=other|
+    (newitem olditem vector start end test count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (when (funcall test olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test-not=eql count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test-not=eql count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eql olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test-not=eq count=other key=identity|
+    (newitem olditem vector start end count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test-not=eq count=other key=other|
+    (newitem olditem vector start end count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (eq olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test-not=other count=other key=identity|
+    (newitem olditem vector start end test-not count)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (schar vector i))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun |nsubstitute seq-type=simple-string from-end=t test-not=other count=other key=other|
+    (newitem olditem vector start end test-not count key)
+  (loop for i downfrom (1- end) to start
+	while (plusp count)
+	do (decf count)
+	   (unless (funcall test-not olditem (funcall key (schar vector i)))
+	     (setf (schar vector i) newitem)))
+  vector)
+
+(defun nsubstitute
+    (newitem olditem sequence &key from-end test test-not (start 0) end count key)
+  (assert (or (null test) (null test-not)))
+  (cond ((listp sequence)
+	 (cond (test
+		(cond ((or (eq test #'eql) (eq test 'eql))
+		       (if from-end
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=other test=eql count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=t end=other test=eql count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test=eql count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test=eql count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=nil test=eql count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=t end=nil test=eql count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test=eql count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test=eql count=nil key=identity|
+					newitem olditem sequence start))))
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=other test=eql count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=nil end=other test=eql count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test=eql count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test=eql count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=nil test=eql count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=nil end=nil test=eql count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test=eql count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test=eql count=nil key=identity|
+					newitem olditem sequence start))))))
+		      ((or (eq test #'eq) (eq test 'eq))
+		       (if from-end
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=other test=eq count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=t end=other test=eq count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test=eq count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test=eq count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=nil test=eq count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=t end=nil test=eq count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test=eq count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test=eq count=nil key=identity|
+					newitem olditem sequence start))))
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=other test=eq count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=nil end=other test=eq count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test=eq count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test=eq count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=nil test=eq count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=nil end=nil test=eq count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test=eq count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test=eq count=nil key=identity|
+					newitem olditem sequence start))))))
+		      (t
+		       (if from-end
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=other test=other count=other key=other|
+					newitem olditem sequence start end test count key)
+				       (|nsubstitute seq-type=list from-end=t end=other test=other count=other key=identity|
+					newitem olditem sequence start end test count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test=other count=nil key=other|
+					newitem olditem sequence start end test key)
+				       (|nsubstitute seq-type=list end=other test=other count=nil key=identity|
+					newitem olditem sequence start end test)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=nil test=other count=other key=other|
+					newitem olditem sequence start test count key)
+				       (|nsubstitute seq-type=list from-end=t end=nil test=other count=other key=identity|
+					newitem olditem sequence start test count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test=other count=nil key=other|
+					newitem olditem sequence start test key)
+				       (|nsubstitute seq-type=list end=nil test=other count=nil key=identity|
+					newitem olditem sequence start test))))
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=other test=other count=other key=other|
+					newitem olditem sequence start end test count key)
+				       (|nsubstitute seq-type=list from-end=nil end=other test=other count=other key=identity|
+					newitem olditem sequence start end test count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test=other count=nil key=other|
+					newitem olditem sequence start end test key)
+				       (|nsubstitute seq-type=list end=other test=other count=nil key=identity|
+					newitem olditem sequence start test end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=nil test=other count=other key=other|
+					newitem olditem sequence start test count key)
+				       (|nsubstitute seq-type=list from-end=nil end=nil test=other count=other key=identity|
+					newitem olditem sequence start test count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test=other count=nil key=other|
+					newitem olditem sequence start test key)
+				       (|nsubstitute seq-type=list end=nil test=other count=nil key=identity|
+					newitem olditem sequence start test))))))))
+	       (test-not
+		(cond ((or (eq test-not #'eql) (eq test-not 'eql))
+		       (if from-end
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=other test-not=eql count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=t end=other test-not=eql count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test-not=eql count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test-not=eql count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=nil test-not=eql count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=t end=nil test-not=eql count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test-not=eql count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test-not=eql count=nil key=identity|
+					newitem olditem sequence start))))
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=other test-not=eql count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=nil end=other test-not=eql count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test-not=eql count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test-not=eql count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=nil test-not=eql count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=nil end=nil test-not=eql count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test-not=eql count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test-not=eql count=nil key=identity|
+					newitem olditem sequence start))))))
+		      ((or (eq test-not #'eq) (eq test-not 'eq))
+		       (if from-end
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=other test-not=eq count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=t end=other test-not=eq count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test-not=eq count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test-not=eq count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=nil test-not=eq count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=t end=nil test-not=eq count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test-not=eq count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test-not=eq count=nil key=identity|
+					newitem olditem sequence start))))
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=other test-not=eq count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=nil end=other test-not=eq count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test-not=eq count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test-not=eq count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=nil test-not=eq count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=nil end=nil test-not=eq count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test-not=eq count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test-not=eq count=nil key=identity|
+					newitem olditem sequence start))))))
+		      (t
+		       (if from-end
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=other test-not=other count=other key=other|
+					newitem olditem sequence start end test-not count key)
+				       (|nsubstitute seq-type=list from-end=t end=other test-not=other count=other key=identity|
+					newitem olditem sequence start end test-not count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test-not=other count=nil key=other|
+					newitem olditem sequence start end test-not key)
+				       (|nsubstitute seq-type=list end=other test-not=other count=nil key=identity|
+					newitem olditem sequence start end test-not)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=nil test-not=other count=other key=other|
+					newitem olditem sequence start test-not count key)
+				       (|nsubstitute seq-type=list from-end=t end=nil test-not=other count=other key=identity|
+					newitem olditem sequence start test-not count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test-not=other count=nil key=other|
+					newitem olditem sequence start test-not key)
+				       (|nsubstitute seq-type=list end=nil test-not=other count=nil key=identity|
+					newitem olditem sequence start test-not))))
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=other test-not=other count=other key=other|
+					newitem olditem sequence start end test-not count key)
+				       (|nsubstitute seq-type=list from-end=nil end=other test-not=other count=other key=identity|
+					newitem olditem sequence start end test-not count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test-not=other count=nil key=other|
+					newitem olditem sequence start end test-not key)
+				       (|nsubstitute seq-type=list end=other test-not=other count=nil key=identity|
+					newitem olditem sequence start test-not end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=nil test-not=other count=other key=other|
+					newitem olditem sequence start test-not count key)
+				       (|nsubstitute seq-type=list from-end=nil end=nil test-not=other count=other key=identity|
+					newitem olditem sequence start test-not count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test-not=other count=nil key=other|
+					newitem olditem sequence start test-not key)
+				       (|nsubstitute seq-type=list end=nil test-not=other count=nil key=identity|
+					newitem olditem sequence start test-not))))))))
+	       (t
+		(if from-end
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=other test=eql count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=t end=other test=eql count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test=eql count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test=eql count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=t end=nil test=eql count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=t end=nil test=eql count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test=eql count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test=eql count=nil key=identity|
+					newitem olditem sequence start))))
+			   (if end
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=other test=eql count=other key=other|
+					newitem olditem sequence start end count key)
+				       (|nsubstitute seq-type=list from-end=nil end=other test=eql count=other key=identity|
+					newitem olditem sequence start end count))
+				   (if key
+				       (|nsubstitute seq-type=list end=other test=eql count=nil key=other|
+					newitem olditem sequence start end key)
+				       (|nsubstitute seq-type=list end=other test=eql count=nil key=identity|
+					newitem olditem sequence start end)))
+			       (if count
+				   (if key
+				       (|nsubstitute seq-type=list from-end=nil end=nil test=eql count=other key=other|
+					newitem olditem sequence start count key)
+				       (|nsubstitute seq-type=list from-end=nil end=nil test=eql count=other key=identity|
+					newitem olditem sequence start count))
+				   (if key
+				       (|nsubstitute seq-type=list end=nil test=eql count=nil key=other|
+					newitem olditem sequence start key)
+				       (|nsubstitute seq-type=list end=nil test=eql count=nil key=identity|
+					newitem olditem sequence start))))))))
+	((simple-string-p sequence)
+	 (when (null end)
+	   (setf end (length sequence)))
+	 (cond (test
+		(cond ((or (eq test #'eql) (eq test 'eql))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=t test=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-string from-end=t test=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-string test=eql count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=nil test=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-string from-end=nil test=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-string test=eql count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      ((or (eq test #'eq) (eq test 'eq))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=t test=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-string from-end=t test=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-string test=eq count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=nil test=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-string from-end=nil test=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-string test=eq count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      (t
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=t test=other count=other key=other|
+				    newitem olditem sequence start end test count key)
+				   (|nsubstitute seq-type=simple-string from-end=t test=other count=other key=identity|
+				    newitem olditem sequence start end test count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test=other count=nil key=other|
+				    newitem olditem sequence start end test key)
+				   (|nsubstitute seq-type=simple-string test=other count=nil key=identity|
+				    newitem olditem sequence start test end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=nil test=other count=other key=other|
+				    newitem olditem sequence start end test count key)
+				   (|nsubstitute seq-type=simple-string from-end=nil test=other count=other key=identity|
+				    newitem olditem sequence start end test count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test=other count=nil key=other|
+				    newitem olditem sequence start end test key)
+				   (|nsubstitute seq-type=simple-string test=other count=nil key=identity|
+				    newitem olditem sequence start end test)))))))
+	       (test-not
+		(cond ((or (eq test-not #'eql) (eq test-not 'eql))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=t test-not=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-string from-end=t test-not=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test-not=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-string test-not=eql count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=nil test-not=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-string from-end=nil test-not=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test-not=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-string test-not=eql count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      ((or (eq test-not #'eq) (eq test-not 'eq))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=t test-not=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-string from-end=t test-not=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test-not=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-string test-not=eq count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=nil test-not=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-string from-end=nil test-not=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test-not=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-string test-not=eq count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      (t
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=t test-not=other count=other key=other|
+				    newitem olditem sequence start end test-not count key)
+				   (|nsubstitute seq-type=simple-string from-end=t test-not=other count=other key=identity|
+				    newitem olditem sequence start end test-not count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test-not=other count=nil key=other|
+				    newitem olditem sequence start end test-not key)
+				   (|nsubstitute seq-type=simple-string test-not=other count=nil key=identity|
+				    newitem olditem sequence start test-not end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-string from-end=nil test-not=other count=other key=other|
+				    newitem olditem sequence start end test-not count key)
+				   (|nsubstitute seq-type=simple-string from-end=nil test-not=other count=other key=identity|
+				    newitem olditem sequence start end test-not count))
+			       (if key
+				   (|nsubstitute seq-type=simple-string test-not=other count=nil key=other|
+				    newitem olditem sequence start end test-not key)
+				   (|nsubstitute seq-type=simple-string test-not=other count=nil key=identity|
+				    newitem olditem sequence start test-not end)))))))
+	       (t
+		(if from-end
+		    (if count
+			(if key
+			    (|nsubstitute seq-type=simple-string from-end=t test=eql count=other key=other|
+			     newitem olditem sequence start end count key)
+			    (|nsubstitute seq-type=simple-string from-end=t test=eql count=other key=identity|
+			     newitem olditem sequence start end count))
+			(if key
+			    (|nsubstitute seq-type=simple-string test=eql count=nil key=other|
+			     newitem olditem sequence start end key)
+			    (|nsubstitute seq-type=simple-string test=eql count=nil key=identity|
+			     newitem olditem sequence start end)))
+		    (if count
+			(if key
+			    (|nsubstitute seq-type=simple-string from-end=nil test=eql count=other key=other|
+			     newitem olditem sequence start end count key)
+			    (|nsubstitute seq-type=simple-string from-end=nil test=eql count=other key=identity|
+			     newitem olditem sequence start end count))
+			(if key
+			    (|nsubstitute seq-type=simple-string test=eql count=nil key=other|
+			     newitem olditem sequence start end key)
+			    (|nsubstitute seq-type=simple-string test=eql count=nil key=identity|
+			     newitem olditem sequence start end)))))))
+	((simple-vector-p sequence)
+	 (when (null end)
+	   (setf end (length sequence)))
+	 (cond (test
+		(cond ((or (eq test #'eql) (eq test 'eql))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=t test=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-vector from-end=t test=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-vector test=eql count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=nil test=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-vector from-end=nil test=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-vector test=eql count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      ((or (eq test #'eq) (eq test 'eq))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=t test=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-vector from-end=t test=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-vector test=eq count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=nil test=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-vector from-end=nil test=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-vector test=eq count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      (t
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=t test=other count=other key=other|
+				    newitem olditem sequence start end test count key)
+				   (|nsubstitute seq-type=simple-vector from-end=t test=other count=other key=identity|
+				    newitem olditem sequence start end test count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test=other count=nil key=other|
+				    newitem olditem sequence start end test key)
+				   (|nsubstitute seq-type=simple-vector test=other count=nil key=identity|
+				    newitem olditem sequence start end test)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=nil test=other count=other key=other|
+				    newitem olditem sequence start end test count key)
+				   (|nsubstitute seq-type=simple-vector from-end=nil test=other count=other key=identity|
+				    newitem olditem sequence start end test count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test=other count=nil key=other|
+				    newitem olditem sequence start end test key)
+				   (|nsubstitute seq-type=simple-vector test=other count=nil key=identity|
+				    newitem olditem sequence start end test)))))))
+	       (test-not
+		(cond ((or (eq test-not #'eql) (eq test-not 'eql))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=t test-not=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-vector from-end=t test-not=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test-not=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-vector test-not=eql count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=nil test-not=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-vector from-end=nil test-not=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test-not=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-vector test-not=eql count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      ((or (eq test-not #'eq) (eq test-not 'eq))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=t test-not=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-vector from-end=t test-not=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test-not=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-vector test-not=eq count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=nil test-not=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=simple-vector from-end=nil test-not=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test-not=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=simple-vector test-not=eq count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      (t
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=t test-not=other count=other key=other|
+				    newitem olditem sequence start end test-not count key)
+				   (|nsubstitute seq-type=simple-vector from-end=t test-not=other count=other key=identity|
+				    newitem olditem sequence start end test-not count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test-not=other count=nil key=other|
+				    newitem olditem sequence start end test-not key)
+				   (|nsubstitute seq-type=simple-vector test-not=other count=nil key=identity|
+				    newitem olditem sequence start end test-not)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=simple-vector from-end=nil test-not=other count=other key=other|
+				    newitem olditem sequence start end test-not count key)
+				   (|nsubstitute seq-type=simple-vector from-end=nil test-not=other count=other key=identity|
+				    newitem olditem sequence start end test-not count))
+			       (if key
+				   (|nsubstitute seq-type=simple-vector test-not=other count=nil key=other|
+				    newitem olditem sequence start end test-not key)
+				   (|nsubstitute seq-type=simple-vector test-not=other count=nil key=identity|
+				    newitem olditem sequence start end test-not)))))))
+	       (t
+		(if from-end
+		    (if count
+			(if key
+			    (|nsubstitute seq-type=simple-vector from-end=t test=eql count=other key=other|
+			     newitem olditem sequence start end count key)
+			    (|nsubstitute seq-type=simple-vector from-end=t test=eql count=other key=identity|
+			     newitem olditem sequence start end count))
+			(if key
+			    (|nsubstitute seq-type=simple-vector test=eql count=nil key=other|
+			     newitem olditem sequence start end key)
+			    (|nsubstitute seq-type=simple-vector test=eql count=nil key=identity|
+			     newitem olditem sequence start end)))
+		    (if count
+			(if key
+			    (|nsubstitute seq-type=simple-vector from-end=nil test=eql count=other key=other|
+			     newitem olditem sequence start end count key)
+			    (|nsubstitute seq-type=simple-vector from-end=nil test=eql count=other key=identity|
+			     newitem olditem sequence start end count))
+			(if key
+			    (|nsubstitute seq-type=simple-vector test=eql count=nil key=other|
+			     newitem olditem sequence start end key)
+			    (|nsubstitute seq-type=simple-vector test=eql count=nil key=identity|
+			     newitem olditem sequence start end)))))))
+	(t
+	 (when (null end)
+	   (setf end (length sequence)))
+	 (cond (test
+		(cond ((or (eq test #'eql) (eq test 'eql))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=t test=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=general-vector from-end=t test=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=general-vector test=eql count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=nil test=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=general-vector from-end=nil test=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=general-vector test=eql count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      ((or (eq test #'eq) (eq test 'eq))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=t test=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=general-vector from-end=t test=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=general-vector test=eq count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=nil test=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=general-vector from-end=nil test=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=general-vector test=eq count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      (t
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=t test=other count=other key=other|
+				    newitem olditem sequence start end test count key)
+				   (|nsubstitute seq-type=general-vector from-end=t test=other count=other key=identity|
+				    newitem olditem sequence start end test count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test=other count=nil key=other|
+				    newitem olditem sequence start end test key)
+				   (|nsubstitute seq-type=general-vector test=other count=nil key=identity|
+				    newitem olditem sequence start end test)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=nil test=other count=other key=other|
+				    newitem olditem sequence start end test count key)
+				   (|nsubstitute seq-type=general-vector from-end=nil test=other count=other key=identity|
+				    newitem olditem sequence start end test count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test=other count=nil key=other|
+				    newitem olditem sequence start end test key)
+				   (|nsubstitute seq-type=general-vector test=other count=nil key=identity|
+				    newitem olditem sequence start end test)))))))
+	       (test-not
+		(cond ((or (eq test-not #'eql) (eq test-not 'eql))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=t test-not=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=general-vector from-end=t test-not=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test-not=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=general-vector test-not=eql count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=nil test-not=eql count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=general-vector from-end=nil test-not=eql count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test-not=eql count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=general-vector test-not=eql count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      ((or (eq test-not #'eq) (eq test-not 'eq))
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=t test-not=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=general-vector from-end=t test-not=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test-not=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=general-vector test-not=eq count=nil key=identity|
+				    newitem olditem sequence start end)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=nil test-not=eq count=other key=other|
+				    newitem olditem sequence start end count key)
+				   (|nsubstitute seq-type=general-vector from-end=nil test-not=eq count=other key=identity|
+				    newitem olditem sequence start end count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test-not=eq count=nil key=other|
+				    newitem olditem sequence start end key)
+				   (|nsubstitute seq-type=general-vector test-not=eq count=nil key=identity|
+				    newitem olditem sequence start end)))))
+		      (t
+		       (if from-end
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=t test-not=other count=other key=other|
+				    newitem olditem sequence start end test-not count key)
+				   (|nsubstitute seq-type=general-vector from-end=t test-not=other count=other key=identity|
+				    newitem olditem sequence start end test-not count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test-not=other count=nil key=other|
+				    newitem olditem sequence start end test-not key)
+				   (|nsubstitute seq-type=general-vector test-not=other count=nil key=identity|
+				    newitem olditem sequence start end test-not)))
+			   (if count
+			       (if key
+				   (|nsubstitute seq-type=general-vector from-end=nil test-not=other count=other key=other|
+				    newitem olditem sequence start end test-not count key)
+				   (|nsubstitute seq-type=general-vector from-end=nil test-not=other count=other key=identity|
+				    newitem olditem sequence start end test-not count))
+			       (if key
+				   (|nsubstitute seq-type=general-vector test-not=other count=nil key=other|
+				    newitem olditem sequence start end test-not key)
+				   (|nsubstitute seq-type=general-vector test-not=other count=nil key=identity|
+				    newitem olditem sequence start end test-not)))))))
+	       (t
+		(if from-end
+		    (if count
+			(if key
+			    (|nsubstitute seq-type=general-vector from-end=t test=eql count=other key=other|
+			     newitem olditem sequence start end count key)
+			    (|nsubstitute seq-type=general-vector from-end=t test=eql count=other key=identity|
+			     newitem olditem sequence start end count))
+			(if key
+			    (|nsubstitute seq-type=general-vector test=eql count=nil key=other|
+			     newitem olditem sequence start end key)
+			    (|nsubstitute seq-type=general-vector test=eql count=nil key=identity|
+			     newitem olditem sequence start end)))
+		    (if count
+			(if key
+			    (|nsubstitute seq-type=general-vector from-end=nil test=eql count=other key=other|
+			     newitem olditem sequence start end count key)
+			    (|nsubstitute seq-type=general-vector from-end=nil test=eql count=other key=identity|
+			     newitem olditem sequence start end count))
+			(if key
+			    (|nsubstitute seq-type=general-vector test=eql count=nil key=other|
+			     newitem olditem sequence start end key)
+			    (|nsubstitute seq-type=general-vector test=eql count=nil key=identity|
+			     newitem olditem sequence start end)))))))))
