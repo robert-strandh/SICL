@@ -28,6 +28,8 @@ What is done:
 
   nsubstite, nsubstitute-if, nsubstitute-if-not (function only).  No tests.
 
+  substite, substitute-if, substitute-if-not (function only).  No tests.
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.
@@ -79,6 +81,21 @@ What remains to to:
       Write the compiler macro.
       Include the tests.
 
+    count, count-if, count-if-not
+
+      Write the compiler macro.
+      Include the tests.
+
+    substite, substitute-if, substitute-if-not
+
+      Write the copiler macro.
+      Write tests.
+
+    nsubstite, nsubstitute-if, nsubstitute-if-not
+
+      Write the copiler macro.
+      Write tests.
+
     make-sequence
 
       I don't know how to do this portably at the moment.  The problem
@@ -114,11 +131,6 @@ What remains to to:
       combinations of types of the sequences (including the resulting
       sequence). 
 
-    count, count-if, count-if-not
-
-      Write the compiler macro.
-      Include the tests.
-
     reverse, nreverse 
 
       Nothing special.
@@ -126,13 +138,6 @@ What remains to to:
     sort, stable-sort
 
       Use quicksort for sort and perhaps heapsort for stable-sort. 
-
-    substite, substitute-if, substitute-if-not
-
-    nsubstite, nsubstitute-if, nsubstitute-if-not
-
-      Write the copiler macro.
-      Write tests.
 
     search
 
