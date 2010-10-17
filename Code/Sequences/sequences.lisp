@@ -23987,8 +23987,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (eql olditem (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test=eql count=nil key=other|
@@ -24012,8 +24015,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (eql olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test=eql count=other key=identity|
@@ -24038,9 +24044,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (eql olditem (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test=eql count=other key=other|
@@ -24065,9 +24074,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (eql olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test=eq count=nil key=identity|
@@ -24091,8 +24103,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (eq olditem (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test=eq count=nil key=other|
@@ -24116,8 +24131,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (eq olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test=eq count=other key=identity|
@@ -24142,9 +24160,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (eq olditem (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test=eq count=other key=other|
@@ -24169,9 +24190,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (eq olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test=other count=nil key=identity|
@@ -24195,8 +24219,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (funcall test olditem (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test=other count=nil key=other|
@@ -24220,8 +24247,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (funcall test olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test=other count=other key=identity|
@@ -24246,9 +24276,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (funcall test olditem (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test=other count=other key=other|
@@ -24273,9 +24306,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (funcall test olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test-not=eql count=nil key=identity|
@@ -24299,8 +24335,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (eql olditem (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test-not=eql count=nil key=other|
@@ -24324,8 +24363,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (eql olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test-not=eql count=other key=identity|
@@ -24350,9 +24392,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (not (eql olditem (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test-not=eql count=other key=other|
@@ -24377,9 +24422,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (not (eql olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test-not=eq count=nil key=identity|
@@ -24403,8 +24451,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (eq olditem (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test-not=eq count=nil key=other|
@@ -24428,8 +24479,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (eq olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test-not=eq count=other key=identity|
@@ -24454,9 +24508,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (not (eq olditem (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test-not=eq count=other key=other|
@@ -24481,9 +24538,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (not (eq olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test-not=other count=nil key=identity|
@@ -24507,8 +24567,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (funcall test-not olditem (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=nil test-not=other count=nil key=other|
@@ -24532,8 +24595,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (funcall test-not olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test-not=other count=other key=identity|
@@ -24558,9 +24624,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (not (funcall test-not olditem (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=nil end=nil test-not=other count=other key=other|
@@ -24585,9 +24654,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (not (funcall test-not olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute seq-type=list end=other test=eql count=nil key=identity|
@@ -24613,8 +24685,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (eql olditem (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24646,8 +24721,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (eql olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24680,9 +24758,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (eql olditem (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24715,9 +24796,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (eql olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24749,8 +24833,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (eq olditem (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24782,8 +24869,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (eq olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24816,9 +24906,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (eq olditem (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24851,9 +24944,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (eq olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24885,8 +24981,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (funcall test olditem (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24918,8 +25017,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (funcall test olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24952,9 +25054,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (funcall test olditem (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -24987,9 +25092,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (funcall test olditem (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25021,8 +25129,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (not (eql olditem (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25054,8 +25165,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (not (eql olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25088,9 +25202,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (not (eql olditem (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25123,9 +25240,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (not (eql olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25157,8 +25277,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (not (eq olditem (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25190,8 +25313,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (not (eq olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25224,9 +25350,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (not (eq olditem (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25259,9 +25388,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (not (eq olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25293,8 +25425,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (not (funcall test-not olditem (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25326,8 +25461,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (not (funcall test-not olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25360,9 +25498,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (not (funcall test-not olditem (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25395,9 +25536,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (not (funcall test-not olditem (funcall key (car remaining))))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -25410,6 +25554,7 @@
     (newitem olditem list start count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25431,22 +25576,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eql olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eql olditem (car reversed))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test=eql count=other key=other|
     (newitem olditem list start count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25468,22 +25617,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eql olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eql olditem (funcall key (car reversed)))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test=eq count=other key=identity|
     (newitem olditem list start count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25505,22 +25658,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eq olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eq olditem (car reversed))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test=eq count=other key=other|
     (newitem olditem list start count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25542,22 +25699,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eq olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eq olditem (funcall key (car reversed)))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test=other count=other key=identity|
     (newitem olditem list start test count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25579,22 +25740,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall test olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall test olditem (car reversed))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test=other count=other key=other|
     (newitem olditem list start test count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25616,22 +25781,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall test olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall test olditem (funcall key (car reversed)))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test-not=eql count=other key=identity|
     (newitem olditem list start count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25653,22 +25822,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eql olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eql olditem (car reversed))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test-not=eql count=other key=other|
     (newitem olditem list start count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25690,22 +25863,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eql olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eql olditem (funcall key (car reversed)))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test-not=eq count=other key=identity|
     (newitem olditem list start count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25727,22 +25904,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eq olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eq olditem (car reversed))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test-not=eq count=other key=other|
     (newitem olditem list start count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25764,22 +25945,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eq olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eq olditem (funcall key (car reversed)))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test-not=other count=other key=identity|
     (newitem olditem list start test-not count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25801,22 +25986,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall test-not olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall test-not olditem (car reversed))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=nil test-not=other count=other key=other|
     (newitem olditem list start test-not count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -25838,22 +26027,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall test-not olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall test-not olditem (funcall key (car reversed)))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test=eql count=other key=identity|
     (newitem olditem list start end count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -25883,22 +26076,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eql olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eql olditem (car reversed))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test=eql count=other key=other|
     (newitem olditem list start end count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -25928,21 +26125,25 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eql olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eql olditem (funcall key (car reversed)))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test=eq count=other key=identity|
     (newitem olditem list start end count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -25972,22 +26173,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eq olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eq olditem (car reversed))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test=eq count=other key=other|
     (newitem olditem list start end count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26017,22 +26222,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (eq olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eq olditem (funcall key (car reversed)))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test=other count=other key=identity|
     (newitem olditem list start end test count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26062,22 +26271,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall test olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall test olditem (car reversed))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test=other count=other key=other|
     (newitem olditem list start end test count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26107,22 +26320,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall test olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall test olditem (funcall key (car reversed)))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test-not=eql count=other key=identity|
     (newitem olditem list start end count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26152,22 +26369,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eql olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eql olditem (car reversed))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test-not=eql count=other key=other|
     (newitem olditem list start end count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26197,22 +26418,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eql olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eql olditem (funcall key (car reversed)))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test-not=eq count=other key=identity|
     (newitem olditem list start end count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26242,22 +26467,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eq olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eq olditem (car reversed))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test-not=eq count=other key=other|
     (newitem olditem list start end count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26287,22 +26516,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (eq olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (eq olditem (funcall key (car reversed)))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test-not=other count=other key=identity|
     (newitem olditem list start end test-not count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26332,22 +26565,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall test-not olditem (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall test-not olditem (car reversed))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute seq-type=list from-end=t end=other test-not=other count=other key=other|
     (newitem olditem list start end test-not count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -26377,16 +26614,19 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall test-not olditem (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall test-not olditem (funcall key (car reversed)))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun substitute
@@ -26759,8 +26999,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (funcall predicate (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute-if seq-type=list end=nil count=nil key=other|
@@ -26784,8 +27027,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (funcall predicate (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute-if seq-type=list from-end=nil end=nil count=other key=identity|
@@ -26810,9 +27056,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (funcall predicate (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute-if seq-type=list from-end=nil end=nil count=other key=other|
@@ -26837,9 +27086,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  when (funcall predicate (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute-if seq-type=list end=other count=nil key=identity|
@@ -26865,8 +27117,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (funcall predicate (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -26898,8 +27153,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  when (funcall predicate (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -26932,9 +27190,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (funcall predicate (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -26967,9 +27228,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  when (funcall predicate (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -26982,6 +27246,7 @@
     (newitem predicate list start count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -27003,22 +27268,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall predicate (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall predicate (car reversed))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute-if seq-type=list from-end=t end=nil count=other key=other|
     (newitem predicate list start count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -27040,22 +27309,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall predicate (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall predicate (funcall key (car reversed)))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute-if seq-type=list from-end=t end=other count=other key=identity|
     (newitem predicate list start end count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -27085,22 +27358,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall predicate (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall predicate (car reversed))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute-if seq-type=list from-end=t end=other count=other key=other|
     (newitem predicate list start end count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -27130,15 +27407,18 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       (loop until (null reversed)
 	    while (plusp count)
-	    do (when (funcall predicate (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall predicate (funcall key (car reversed)))
+		   (progn (push newitem result-tail)
+			  (decf count))
+		   (push (car reversed) result-tail))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun substitute-if
@@ -27218,8 +27498,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  unless (funcall predicate (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute-if-not seq-type=list end=nil count=nil key=other|
@@ -27243,8 +27526,11 @@
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  unless (funcall predicate (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining)))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute-if-not seq-type=list from-end=nil end=nil count=other key=identity|
@@ -27269,9 +27555,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  unless (funcall predicate (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute-if-not seq-type=list from-end=nil end=nil count=other key=other|
@@ -27296,9 +27585,12 @@
     (loop until (endp remaining)
 	  until (zerop count)
 	  unless (funcall predicate (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining)))
     (cdr result)))
 
 (defun |substitute-if-not seq-type=list end=other count=nil key=identity|
@@ -27324,8 +27616,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  unless (funcall predicate (car remaining))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -27357,8 +27652,11 @@
     (loop until (endp remaining)
 	  until (zerop end-start)
 	  unless (funcall predicate (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
-	  do (setf remaining (cdr remaining))
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -27391,9 +27689,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  unless (funcall predicate (car remaining))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -27426,9 +27727,12 @@
 	  until (zerop end-start)
 	  until (zerop count)
 	  unless (funcall predicate (funcall key (car remaining)))
-	    do (setf (car remaining) newitem)
+	    do (setf (cdr last) (cons newitem (cdr remaining)))
 	       (decf count)
-	  do (setf remaining (cdr remaining))
+	  else
+	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
+	  do (setf last (cdr last))
+	     (setf remaining (cdr remaining))
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
@@ -27441,6 +27745,7 @@
     (newitem predicate list start count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -27462,22 +27767,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall predicate (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall predicate (car reversed))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute-if-not seq-type=list from-end=t end=nil count=other key=other|
     (newitem predicate list start count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start))
     ;; skip a prefix indicated by start
@@ -27499,22 +27808,26 @@
 		 (setf (cdr remaining) reversed)
 		 (setf reversed remaining)
 		 (setf remaining temp)))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall predicate (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall predicate (funcall key (car reversed)))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute-if-not seq-type=list from-end=t end=other count=other key=identity|
     (newitem predicate list start end count)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -27544,22 +27857,26 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       ;; nreverse it again and count
       (loop until (null reversed)
 	    while (plusp count)
-	    do (unless (funcall predicate (car reversed))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	    do (if (funcall predicate (car reversed))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun |substitute-if-not seq-type=list from-end=t end=other count=other key=other|
     (newitem predicate list start end count key)
   (let* ((remaining list)
 	 (result (list nil))
+	 (result-tail '())
 	 (last result)
 	 (start-bis start)
 	(end-start (- end start)))
@@ -27591,17 +27908,20 @@
 	       :datum end
 	       :expected-type `(integer 0 ,(- end end-start))
 	       :in-sequence list))
+      (setf result-tail remaining)
       (loop until (null reversed)
 	    while (plusp count)
 	    do (setf (cdr last) (cons (car remaining) (cdr remaining)))
 	       (setf last (cdr last))
-	       (unless (funcall predicate (funcall key (car reversed)))
-		 (setf (car reversed) newitem)
-		 (decf count))
+	       (if (funcall predicate (funcall key (car reversed)))
+		   (push (car reversed) result-tail)
+		   (progn (push newitem result-tail)
+			  (decf count)))
 	       (let ((temp (cdr reversed)))
 		 (setf (cdr reversed) remaining)
 		 (setf remaining reversed)
 		 (setf reversed temp))))
+    (setf (cdr last) result-tail)
     (cdr result)))
 
 (defun substitute-if-not
