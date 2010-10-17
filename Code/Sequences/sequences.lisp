@@ -61,14 +61,45 @@
 ;;;
 ;;; Conditions
 
-(define-condition invalid-bounding-index (error)
-  ((%sequence-length :initarg :sequence-length :reader sequence-length)))
+(define-condition invalid-sequence-index-type (type-error)
+  ())
+
+(define-condition invalid-sequence-index (type-error)
+  ((%in-sequence :initarg :in-sequence :reader in-sequence)))
+
+(define-condition invalid-bounding-index (invalid-sequence-index)
+  ())
 
 (define-condition invalid-start-index (invalid-bounding-index)
-  ((%start :initarg :start :reader start)))
+  ())
 
 (define-condition invalid-end-index (invalid-bounding-index)
-  ((%end :initarg :end :reader end)))
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Utilities
+
+;;; Skip a prefix of a list and signal an error if the list is too
+;;; short.  Also check that start is a nonnegative integer.
+(defun skip-to-start (list start)
+  (when (or (not (integerp start))
+	    (minusp start))
+    (error 'invalid-sequence-index-type
+	   :datum start
+	   :expected-type '(integer 0)))
+  (let ((start-bis start)
+	(remaining list))
+    (loop until (zerop start-bis)
+	  until (endp list)
+	  do (setf remaining (cdr remaining))
+	     (decf start-bis))
+    (when (plusp start-bis)
+      (error 'invalid-start-index
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))
+	     :in-sequence list))
+    remaining))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4392,8 +4423,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  unless (eql item element)
@@ -4417,8 +4448,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  unless (eq item element)
@@ -4442,8 +4473,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  unless (eql item (funcall key element))
@@ -4467,8 +4498,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  unless (eq item (funcall key element))
@@ -4493,8 +4524,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -4505,8 +4536,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -4526,8 +4557,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -4538,8 +4569,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -4559,8 +4590,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -4571,8 +4602,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -4592,8 +4623,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -4604,8 +4635,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -4624,8 +4655,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  unless (funcall test item element)
@@ -4649,8 +4680,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  unless (funcall test item (funcall key element))
@@ -4675,8 +4706,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -4687,8 +4718,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -4708,8 +4739,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -4720,8 +4751,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -4740,8 +4771,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  when (funcall test-not item element)
@@ -4765,8 +4796,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  when (funcall test-not item (funcall key element))
@@ -4791,8 +4822,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -4803,8 +4834,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -4824,8 +4855,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -4836,8 +4867,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -4856,8 +4887,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -4884,8 +4915,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -4912,8 +4943,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -4940,8 +4971,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -4969,8 +5000,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -4984,8 +5015,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -5005,8 +5036,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -5020,8 +5051,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -5041,8 +5072,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -5056,8 +5087,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -5077,8 +5108,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -5092,8 +5123,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -5112,8 +5143,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -5140,8 +5171,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -5169,8 +5200,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -5184,8 +5215,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -5205,8 +5236,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -5220,8 +5251,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -5240,8 +5271,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -5268,8 +5299,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -5297,8 +5328,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -5312,8 +5343,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -5333,8 +5364,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -5348,8 +5379,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -8205,8 +8236,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  unless (funcall test element)
@@ -8230,8 +8261,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  unless (funcall test (funcall key element))
@@ -8256,8 +8287,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -8268,8 +8299,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -8289,8 +8320,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -8301,8 +8332,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -8321,8 +8352,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -8349,8 +8380,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -8378,8 +8409,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -8393,8 +8424,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -8414,8 +8445,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -8429,8 +8460,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -9097,8 +9128,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  when (funcall test-not element)
@@ -9122,8 +9153,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  for element = (pop list)
 	  when (funcall test-not (funcall key element))
@@ -9148,8 +9179,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -9160,8 +9191,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -9181,8 +9212,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop end-start)
 	  for element = (pop list)
@@ -9193,8 +9224,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -9213,8 +9244,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -9241,8 +9272,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  for element = (pop list)
@@ -9270,8 +9301,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -9285,8 +9316,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -9306,8 +9337,8 @@
 	       (decf start-bis)))
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     (loop until (null list)
 	  until (zerop count)
 	  until (zerop end-start)
@@ -9321,8 +9352,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (setf (cdr last) list)
     (cdr result)))
@@ -9988,8 +10019,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10020,8 +10051,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10052,8 +10083,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10084,8 +10115,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10117,8 +10148,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10134,8 +10165,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10157,8 +10188,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10174,8 +10205,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10197,8 +10228,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10214,8 +10245,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10237,8 +10268,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10254,8 +10285,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10276,8 +10307,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10308,8 +10339,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10341,8 +10372,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10358,8 +10389,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10381,8 +10412,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10398,8 +10429,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10420,8 +10451,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10452,8 +10483,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10485,8 +10516,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10502,8 +10533,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10525,8 +10556,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10542,8 +10573,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10564,8 +10595,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10598,8 +10629,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10632,8 +10663,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10666,8 +10697,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10701,8 +10732,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10720,8 +10751,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10743,8 +10774,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10762,8 +10793,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10785,8 +10816,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10804,8 +10835,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10827,8 +10858,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10846,8 +10877,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10868,8 +10899,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10902,8 +10933,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10937,8 +10968,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10956,8 +10987,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -10979,8 +11010,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -10998,8 +11029,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -11020,8 +11051,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -11054,8 +11085,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -11089,8 +11120,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -11108,8 +11139,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -11131,8 +11162,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -11150,8 +11181,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -11173,8 +11204,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11229,8 +11260,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11285,8 +11316,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11341,8 +11372,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11398,8 +11429,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11411,8 +11442,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -11462,8 +11493,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11475,8 +11506,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -11526,8 +11557,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11539,8 +11570,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -11590,8 +11621,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11603,8 +11634,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -11653,8 +11684,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11709,8 +11740,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11766,8 +11797,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11779,8 +11810,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -11830,8 +11861,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11843,8 +11874,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -11893,8 +11924,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -11949,8 +11980,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -12006,8 +12037,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -12019,8 +12050,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -12070,8 +12101,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -12083,8 +12114,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -13449,8 +13480,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -13481,8 +13512,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -13514,8 +13545,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -13531,8 +13562,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -13554,8 +13585,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -13571,8 +13602,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -13593,8 +13624,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -13627,8 +13658,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -13662,8 +13693,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -13681,8 +13712,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -13704,8 +13735,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -13723,8 +13754,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -13746,8 +13777,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -13802,8 +13833,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -13859,8 +13890,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -13872,8 +13903,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -13923,8 +13954,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -13936,8 +13967,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -14256,8 +14287,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -14288,8 +14319,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -14321,8 +14352,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -14338,8 +14369,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -14361,8 +14392,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -14378,8 +14409,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -14400,8 +14431,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -14434,8 +14465,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -14469,8 +14500,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -14488,8 +14519,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -14511,8 +14542,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Loop through the elements checking whether
     ;; they pass the test.
     ;; Loop invariant: trail points to the cell
@@ -14530,8 +14561,8 @@
 	  do (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     (cdr result)))
 
@@ -14553,8 +14584,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -14609,8 +14640,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -14666,8 +14697,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -14679,8 +14710,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -14730,8 +14761,8 @@
     ;; list.
     (when (plusp start-bis)
       (error 'invalid-start-index
-	     :start start
-	     :sequence-length (- start start-bis)))
+	     :datum start
+	     :expected-type `(integer 0 ,(- start start-bis))))
     ;; Now, reverse the sublist between start and end
     ;; and put the result in reversed-middle.
     (loop until (null current)
@@ -14743,8 +14774,8 @@
 	     (decf end-start))
     (when (plusp end-start)
       (error 'invalid-end-index
-	     :end end
-	     :sequence-length (+ start (- end end-start))
+	     :datum end
+	     :expected-type `(integer 0 ,(+ start (- end end-start)))
 	     :in-sequence list))
     ;; The variable current now points to a tail
     ;; delimited by end, so we don't touch it.
@@ -15058,9 +15089,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Accessor elt
-
-(define-condition invalid-sequence-index (type-error)
-  ((%in-sequence :initarg :in-sequence :reader in-sequence)))
 
 (defun elt (sequence index)
   (unless (typep index 'unsigned-byte)
@@ -18791,18 +18819,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test=eql count=nil key=identity|
     (newitem olditem list start)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (eql olditem (car remaining))
@@ -18812,18 +18829,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test=eql count=nil key=other|
     (newitem olditem list start key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (eql olditem (funcall key (car remaining)))
@@ -18833,18 +18839,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test=eql count=other key=identity|
     (newitem olditem list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -18856,18 +18851,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test=eql count=other key=other|
     (newitem olditem list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -18879,18 +18863,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test=eq count=nil key=identity|
     (newitem olditem list start)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (eq olditem (car remaining))
@@ -18900,18 +18873,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test=eq count=nil key=other|
     (newitem olditem list start key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (eq olditem (funcall key (car remaining)))
@@ -18921,18 +18883,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test=eq count=other key=identity|
     (newitem olditem list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -18944,18 +18895,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test=eq count=other key=other|
     (newitem olditem list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -18967,18 +18907,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test=other count=nil key=identity|
     (newitem olditem list start test)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (funcall test olditem (car remaining))
@@ -18988,18 +18917,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test=other count=nil key=other|
     (newitem olditem list start test key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (funcall test olditem (funcall key (car remaining)))
@@ -19009,18 +18927,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test=other count=other key=identity|
     (newitem olditem list start test count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -19032,18 +18939,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test=other count=other key=other|
     (newitem olditem list start test count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -19055,18 +18951,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test-not=eql count=nil key=identity|
     (newitem olditem list start)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (eql olditem (car remaining)))
@@ -19076,18 +18961,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test-not=eql count=nil key=other|
     (newitem olditem list start key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (eql olditem (funcall key (car remaining))))
@@ -19097,18 +18971,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test-not=eql count=other key=identity|
     (newitem olditem list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -19120,18 +18983,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test-not=eql count=other key=other|
     (newitem olditem list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -19143,18 +18995,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test-not=eq count=nil key=identity|
     (newitem olditem list start)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (eq olditem (car remaining)))
@@ -19164,18 +19005,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test-not=eq count=nil key=other|
     (newitem olditem list start key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (eq olditem (funcall key (car remaining))))
@@ -19185,18 +19015,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test-not=eq count=other key=identity|
     (newitem olditem list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -19208,18 +19027,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test-not=eq count=other key=other|
     (newitem olditem list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -19231,18 +19039,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test-not=other count=nil key=identity|
     (newitem olditem list start test-not)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (funcall test-not olditem (car remaining)))
@@ -19252,18 +19049,7 @@
 
 (defun |nsubstitute seq-type=list end=nil test-not=other count=nil key=other|
     (newitem olditem list start test-not key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (not (funcall test-not olditem (funcall key (car remaining))))
@@ -19273,18 +19059,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test-not=other count=other key=identity|
     (newitem olditem list start test-not count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -19296,18 +19071,7 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=nil test-not=other count=other key=other|
     (newitem olditem list start test-not count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -19319,19 +19083,8 @@
 
 (defun |nsubstitute seq-type=list end=other test=eql count=nil key=identity|
     (newitem olditem list start end)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19348,19 +19101,8 @@
 
 (defun |nsubstitute seq-type=list end=other test=eql count=nil key=other|
     (newitem olditem list start end key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19377,19 +19119,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test=eql count=other key=identity|
     (newitem olditem list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19408,19 +19139,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test=eql count=other key=other|
     (newitem olditem list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19439,19 +19159,8 @@
 
 (defun |nsubstitute seq-type=list end=other test=eq count=nil key=identity|
     (newitem olditem list start end)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19468,19 +19177,8 @@
 
 (defun |nsubstitute seq-type=list end=other test=eq count=nil key=other|
     (newitem olditem list start end key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19497,19 +19195,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test=eq count=other key=identity|
     (newitem olditem list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19528,19 +19215,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test=eq count=other key=other|
     (newitem olditem list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19559,19 +19235,8 @@
 
 (defun |nsubstitute seq-type=list end=other test=other count=nil key=identity|
     (newitem olditem list start end test)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19588,19 +19253,8 @@
 
 (defun |nsubstitute seq-type=list end=other test=other count=nil key=other|
     (newitem olditem list start end test key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19617,19 +19271,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test=other count=other key=identity|
     (newitem olditem list start end test count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19648,19 +19291,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test=other count=other key=other|
     (newitem olditem list start end test count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19679,19 +19311,8 @@
 
 (defun |nsubstitute seq-type=list end=other test-not=eql count=nil key=identity|
     (newitem olditem list start end)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19708,19 +19329,8 @@
 
 (defun |nsubstitute seq-type=list end=other test-not=eql count=nil key=other|
     (newitem olditem list start end key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19737,19 +19347,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test-not=eql count=other key=identity|
     (newitem olditem list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19768,19 +19367,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test-not=eql count=other key=other|
     (newitem olditem list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19799,19 +19387,8 @@
 
 (defun |nsubstitute seq-type=list end=other test-not=eq count=nil key=identity|
     (newitem olditem list start end)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19828,19 +19405,8 @@
 
 (defun |nsubstitute seq-type=list end=other test-not=eq count=nil key=other|
     (newitem olditem list start end key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19857,19 +19423,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test-not=eq count=other key=identity|
     (newitem olditem list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19888,19 +19443,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test-not=eq count=other key=other|
     (newitem olditem list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19919,19 +19463,8 @@
 
 (defun |nsubstitute seq-type=list end=other test-not=other count=nil key=identity|
     (newitem olditem list start end test-not)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19948,19 +19481,8 @@
 
 (defun |nsubstitute seq-type=list end=other test-not=other count=nil key=other|
     (newitem olditem list start end test-not key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -19977,19 +19499,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test-not=other count=other key=identity|
     (newitem olditem list start end test-not count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -20008,19 +19519,8 @@
 
 (defun |nsubstitute seq-type=list from-end=nil end=other test-not=other count=other key=other|
     (newitem olditem list start end test-not count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -20039,18 +19539,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test=eql count=other key=identity|
     (newitem olditem list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20072,18 +19561,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test=eql count=other key=other|
     (newitem olditem list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20105,18 +19583,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test=eq count=other key=identity|
     (newitem olditem list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20138,18 +19605,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test=eq count=other key=other|
     (newitem olditem list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20171,18 +19627,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test=other count=other key=identity|
     (newitem olditem list start test count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20204,18 +19649,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test=other count=other key=other|
     (newitem olditem list start test count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20237,18 +19671,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test-not=eql count=other key=identity|
     (newitem olditem list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20270,18 +19693,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test-not=eql count=other key=other|
     (newitem olditem list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20303,18 +19715,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test-not=eq count=other key=identity|
     (newitem olditem list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20336,18 +19737,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test-not=eq count=other key=other|
     (newitem olditem list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20369,18 +19759,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test-not=other count=other key=identity|
     (newitem olditem list start test-not count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20402,18 +19781,7 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=nil test-not=other count=other key=other|
     (newitem olditem list start test-not count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20435,19 +19803,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test=eql count=other key=identity|
     (newitem olditem list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20476,19 +19833,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test=eql count=other key=other|
     (newitem olditem list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20516,19 +19862,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test=eq count=other key=identity|
     (newitem olditem list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20557,19 +19892,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test=eq count=other key=other|
     (newitem olditem list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20598,19 +19922,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test=other count=other key=identity|
     (newitem olditem list start end test count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20639,19 +19952,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test=other count=other key=other|
     (newitem olditem list start end test count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20680,19 +19982,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test-not=eql count=other key=identity|
     (newitem olditem list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20721,19 +20012,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test-not=eql count=other key=other|
     (newitem olditem list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20762,19 +20042,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test-not=eq count=other key=identity|
     (newitem olditem list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20803,19 +20072,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test-not=eq count=other key=other|
     (newitem olditem list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20844,19 +20102,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test-not=other count=other key=identity|
     (newitem olditem list start end test-not count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -20885,19 +20132,8 @@
 
 (defun |nsubstitute seq-type=list from-end=t end=other test-not=other count=other key=other|
     (newitem olditem list start end test-not count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -22692,18 +21928,7 @@
 
 (defun |nsubstitute-if seq-type=list end=nil count=nil key=identity|
     (newitem predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (funcall predicate (car remaining))
@@ -22713,18 +21938,7 @@
 
 (defun |nsubstitute-if seq-type=list end=nil count=nil key=other|
     (newitem predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  when (funcall predicate (funcall key (car remaining)))
@@ -22734,18 +21948,7 @@
 
 (defun |nsubstitute-if seq-type=list from-end=nil end=nil count=other key=identity|
     (newitem predicate list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -22757,18 +21960,7 @@
 
 (defun |nsubstitute-if seq-type=list from-end=nil end=nil count=other key=other|
     (newitem predicate list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -22780,19 +21972,8 @@
 
 (defun |nsubstitute-if seq-type=list end=other count=nil key=identity|
     (newitem predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -22809,19 +21990,8 @@
 
 (defun |nsubstitute-if seq-type=list end=other count=nil key=other|
     (newitem predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -22838,19 +22008,8 @@
 
 (defun |nsubstitute-if seq-type=list from-end=nil end=other count=other key=identity|
     (newitem predicate list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -22869,19 +22028,8 @@
 
 (defun |nsubstitute-if seq-type=list from-end=nil end=other count=other key=other|
     (newitem predicate list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -22900,18 +22048,7 @@
 
 (defun |nsubstitute-if seq-type=list from-end=t end=nil count=other key=identity|
     (newitem predicate list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -22933,18 +22070,7 @@
 
 (defun |nsubstitute-if seq-type=list from-end=t end=nil count=other key=other|
     (newitem predicate list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -22966,19 +22092,8 @@
 
 (defun |nsubstitute-if seq-type=list from-end=t end=other count=other key=identity|
     (newitem predicate list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -23007,19 +22122,8 @@
 
 (defun |nsubstitute-if seq-type=list from-end=t end=other count=other key=other|
     (newitem predicate list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -23330,18 +22434,7 @@
 
 (defun |nsubstitute-if-not seq-type=list end=nil count=nil key=identity|
     (newitem predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  unless (funcall predicate (car remaining))
@@ -23351,18 +22444,7 @@
 
 (defun |nsubstitute-if-not seq-type=list end=nil count=nil key=other|
     (newitem predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  unless (funcall predicate (funcall key (car remaining)))
@@ -23372,18 +22454,7 @@
 
 (defun |nsubstitute-if-not seq-type=list from-end=nil end=nil count=other key=identity|
     (newitem predicate list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -23395,18 +22466,7 @@
 
 (defun |nsubstitute-if-not seq-type=list from-end=nil end=nil count=other key=other|
     (newitem predicate list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop count)
@@ -23418,19 +22478,8 @@
 
 (defun |nsubstitute-if-not seq-type=list end=other count=nil key=identity|
     (newitem predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -23447,19 +22496,8 @@
 
 (defun |nsubstitute-if-not seq-type=list end=other count=nil key=other|
     (newitem predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -23476,19 +22514,8 @@
 
 (defun |nsubstitute-if-not seq-type=list from-end=nil end=other count=other key=identity|
     (newitem predicate list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -23507,19 +22534,8 @@
 
 (defun |nsubstitute-if-not seq-type=list from-end=nil end=other count=other key=other|
     (newitem predicate list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     ;; We can't use loop for ... on, becaue it uses atom for testing the end
     (loop until (endp remaining)
 	  until (zerop end-start)
@@ -23538,18 +22554,7 @@
 
 (defun |nsubstitute-if-not seq-type=list from-end=t end=nil count=other key=identity|
     (newitem predicate list start count)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -23571,18 +22576,7 @@
 
 (defun |nsubstitute-if-not seq-type=list from-end=t end=nil count=other key=other|
     (newitem predicate list start count key)
-  (let ((remaining list)
-	(start-bis start))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
+  (let ((remaining (skip-to-start list start)))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -23604,19 +22598,8 @@
 
 (defun |nsubstitute-if-not seq-type=list from-end=t end=other count=other key=identity|
     (newitem predicate list start end count)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
@@ -23645,19 +22628,8 @@
 
 (defun |nsubstitute-if-not seq-type=list from-end=t end=other count=other key=other|
     (newitem predicate list start end count key)
-  (let ((remaining list)
-	(start-bis start)
+  (let ((remaining (skip-to-start list start))
 	(end-start (- end start)))
-    ;; skip a prefix indicated by start
-    (loop until (zerop start-bis)
-	  until (endp remaining)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (unless (zerop start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
     (let ((reversed '()))
       ;; nreverse the remaining list
       (loop until (endp remaining)
