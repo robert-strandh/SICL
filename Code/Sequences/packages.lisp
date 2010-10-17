@@ -18,7 +18,8 @@
 		 #:substitute #:substitute-if #:substitute-if-not
 		 #:nsubstitute #:nsubstitute-if #:nsubstitute-if-not
 		 #:copy-seq #:elt
-		 #:merge #:sort))
+		 #:merge #:sort
+		 #:reverse #:nreverse))
   (:export . #1#))
 
 ;;; In the test package, we want to import all symbols of the

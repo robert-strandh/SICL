@@ -26949,3 +26949,93 @@
 	(t
 	 (apply #'nsubstitute-if-not newitem predicate (copy-seq sequence) args))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function reverse
+
+(defun |reverse seq-type=list|
+    (list)
+  (let ((result '())
+	(remaining list))
+    (loop until (endp remaining)
+	  do (push (car remaining) result))
+    result))
+
+(defun |reverse seq-type=general-vector|
+    (vector)
+  (let ((result (make-array (length vector)
+			    :element-type (array-element-type vector)))
+	(length (length vector)))
+    (loop for i from 0 below length
+	  do (setf (aref result i) (aref vector (- length i 1))))
+    result))
+
+(defun |reverse seq-type=simple-vector|
+    (vector)
+  (let ((result (make-array (length vector)
+			    :element-type (array-element-type vector)))
+	(length (length vector)))
+    (loop for i from 0 below length
+	  do (setf (svref result i) (svref vector (- length i 1))))
+    result))
+
+(defun |reverse seq-type=simple-string|
+    (string)
+  (let ((result (make-array (length string)
+			    :element-type (array-element-type string)))
+	(length (length string)))
+    (loop for i from 0 below length
+	  do (setf (schar result i) (schar string (- length i 1))))
+    result))
+
+(defun reverse (sequence)
+  (cond ((listp sequence)
+	 (|reverse seq-type=list| sequence))
+	((simple-string-p sequence)
+	 (|reverse seq-type=simple-string| sequence))
+	((simple-vector-p sequence)
+	 (|reverse seq-type=simple-vector| sequence))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nreverse
+
+(defun |nreverse seq-type=list|
+    (list)
+  (let ((result '())
+	(remaining list))
+    (loop until (endp remaining)
+	  do (let ((temp (cdr remaining)))
+	       (setf (cdr remaining) result)
+	       (setf result remaining)
+	       (setf remaining temp)))
+    result))
+
+(defun |nreverse seq-type=general-vector|
+    (vector)
+  (let ((length (length vector)))
+    (loop for i from 0 below (floor length 2)
+	  do (rotatef (aref vector i) (aref vector (- length i 1)))))
+  vector)
+
+(defun |nreverse seq-type=simple-vector|
+    (vector)
+  (let ((length (length vector)))
+    (loop for i from 0 below (floor length 2)
+	  do (rotatef (svref vector i) (svref vector (- length i 1)))))
+  vector)
+
+(defun |nreverse seq-type=simple-string|
+    (string)
+  (let ((length (length string)))
+    (loop for i from 0 below (floor length 2)
+	  do (rotatef (schar string i) (schar string (- length i 1)))))
+  string)
+
+(defun nreverse (sequence)
+  (cond ((listp sequence)
+	 (|nreverse seq-type=list| sequence))
+	((simple-string-p sequence)
+	 (|nreverse seq-type=simple-string| sequence))
+	((simple-vector-p sequence)
+	 (|nreverse seq-type=simple-vector| sequence))))

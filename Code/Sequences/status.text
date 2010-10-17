@@ -30,6 +30,8 @@ What is done:
 
   substite, substitute-if, substitute-if-not (function only).  No tests.
 
+  reverse, nreverse 
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.
@@ -96,6 +98,10 @@ What remains to to:
       Write the copiler macro.
       Write tests.
 
+    reverse, nreverse 
+
+      Write tests.
+
     make-sequence
 
       I don't know how to do this portably at the moment.  The problem
@@ -130,10 +136,6 @@ What remains to to:
       Provide special versions for 1 and 2 sequences, and for all 
       combinations of types of the sequences (including the resulting
       sequence). 
-
-    reverse, nreverse 
-
-      Nothing special.
 
     sort, stable-sort
 
