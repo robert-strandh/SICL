@@ -105,163 +105,163 @@
 ;;;
 ;;; Function find
 
-(defun find-list-from-start-unbounded-eq-identity
+(defun |find seq-type=list from-end=nil end=nil test=eq key=identity|
     (item list start)
   (loop for element in (nthcdr start list)
         when (eq item element)
           return element))  
 
-(defun find-list-from-start-unbounded-eq-key
+(defun |find seq-type=list from-end=nil end=nil test=eq key=other|
     (item list start key)
   (loop for element in (nthcdr start list)
         when (eq item (funcall key element))
           return element))  
 
-(defun find-list-from-start-unbounded-not-eq-identity
+(defun |find seq-type=list from-end=nil end=nil test-not=eq key=identity|
     (item list start)
   (loop for element in (nthcdr start list)
         when (not (eq item element))
           return element))  
 
-(defun find-list-from-start-unbounded-not-eq-key
+(defun |find seq-type=list from-end=nil end=nil test-not=eq key=other|
     (item list start key)
   (loop for element in (nthcdr start list)
         when (not (eq item (funcall key element)))
           return element))  
 
-(defun find-list-from-start-unbounded-eql-identity
+(defun |find seq-type=list from-end=nil end=nil test=eql key=identity|
     (item list start)
   (loop for element in (nthcdr start list)
         when (eql item element)
           return element))  
 
-(defun find-list-from-start-unbounded-eql-key
+(defun |find seq-type=list from-end=nil end=nil test=eql key=other|
     (item list start key)
   (loop for element in (nthcdr start list)
         when (eql item (funcall key element))
           return element))  
 
-(defun find-list-from-start-unbounded-not-eql-identity
+(defun |find seq-type=list from-end=nil end=nil test-not=eql key=identity|
     (item list start)
   (loop for element in (nthcdr start list)
         when (not (eql item element))
           return element))  
 
-(defun find-list-from-start-unbounded-not-eql-key
+(defun |find seq-type=list from-end=nil end=nil test-not=eql key=other|
     (item list start key)
   (loop for element in (nthcdr start list)
         when (not (eql item (funcall key element)))
           return element))  
 
-(defun find-list-from-start-unbounded-test-identity
+(defun |find seq-type=list from-end=nil end=nil test=other key=identity|
     (item list start test)
   (loop for element in (nthcdr start list)
         when (funcall test item element)
           return element))  
 
-(defun find-list-from-start-unbounded-test-key
+(defun |find seq-type=list from-end=nil end=nil test=other key=other|
     (item list start test key)
   (loop for element in (nthcdr start list)
         when (funcall test item (funcall key element))
           return element))
 
-(defun find-list-from-start-unbounded-test-not-identity
+(defun |find seq-type=list from-end=nil end=nil test-not=other key=identity|
     (item list start test)
   (loop for element in (nthcdr start list)
         when (not (funcall test item element))
           return element))
 
-(defun find-list-from-start-unbounded-test-not-key
+(defun |find seq-type=list from-end=nil end=nil test-not=other key=other|
     (item list start test key)
   (loop for element in (nthcdr start list)
         when (not (funcall test item (funcall key element)))
           return element))
 
-(defun find-list-from-start-bounded-eq-identity
+(defun |find seq-type=list from-end=nil end=other test=eq key=identity|
     (item list start end)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (eq item element)
           return element))  
 
-(defun find-list-from-start-bounded-eq-key
+(defun |find seq-type=list from-end=nil end=other test=eq key=other|
     (item list start end key)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (eq item (funcall key element))
           return element))  
 
-(defun find-list-from-start-bounded-not-eq-identity
+(defun |find seq-type=list from-end=nil end=other test-not=eq key=identity|
     (item list start end)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (not (eq item element))
           return element))  
 
-(defun find-list-from-start-bounded-not-eq-key
+(defun |find seq-type=list from-end=nil end=other test-not=eq key=other|
     (item list start end key)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (not (eq item (funcall key element)))
           return element))  
 
-(defun find-list-from-start-bounded-eql-identity
+(defun |find seq-type=list from-end=nil end=other test=eql key=identity|
     (item list start end)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (eql item element)
           return element))  
 
-(defun find-list-from-start-bounded-eql-key
+(defun |find seq-type=list from-end=nil end=other test=eql key=other|
     (item list start end key)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (eql item (funcall key element))
           return element))  
 
-(defun find-list-from-start-bounded-not-eql-identity
+(defun |find seq-type=list from-end=nil end=other test-not=eql key=identity|
     (item list start end)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (not (eql item element))
           return element))  
 
-(defun find-list-from-start-bounded-not-eql-key
+(defun |find seq-type=list from-end=nil end=other test-not=eql key=other|
     (item list start end key)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (not (eql item (funcall key element)))
           return element))  
 
-(defun find-list-from-start-bounded-test-identity
+(defun |find seq-type=list from-end=nil end=other test=other key=identity|
     (item list start end test)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (funcall test item element)
           return element))  
 
-(defun find-list-from-start-bounded-test-key
+(defun |find seq-type=list from-end=nil end=other test=other key=other|
     (item list start end test key)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (funcall test item (funcall key element))
           return element))
 
-(defun find-list-from-start-bounded-test-not-identity
+(defun |find seq-type=list from-end=nil end=other test-not=other key=identity|
     (item list start end test)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (not (funcall test item element))
           return element))
 
-(defun find-list-from-start-bounded-test-not-key
+(defun |find seq-type=list from-end=nil end=other test-not=other key=other|
     (item list start end test key)
   (loop for element in (nthcdr start list)
         repeat (- end start)
         when (not (funcall test item (funcall key element)))
           return element))
 
-(defun find-list-from-end-unbounded-eq-identity
+(defun |find seq-type=list from-end=t end=nil test=eq key=identity|
     (item list start)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -269,7 +269,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-eq-key
+(defun |find seq-type=list from-end=t end=nil test=eq key=other|
     (item list start key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -277,7 +277,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-not-eq-identity
+(defun |find seq-type=list from-end=t end=nil test-not=eq key=identity|
     (item list start)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -285,7 +285,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-not-eq-key
+(defun |find seq-type=list from-end=t end=nil test-not=eq key=other|
     (item list start key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -293,7 +293,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-eql-identity
+(defun |find seq-type=list from-end=t end=nil test=eql key=identity|
     (item list start)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -301,7 +301,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-eql-key
+(defun |find seq-type=list from-end=t end=nil test=eql key=other|
     (item list start key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -309,7 +309,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-not-eql-identity
+(defun |find seq-type=list from-end=t end=nil test-not=eql key=identity|
     (item list start)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -317,7 +317,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-not-eql-key
+(defun |find seq-type=list from-end=t end=nil test-not=eql key=other|
     (item list start key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -325,7 +325,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-test-identity
+(defun |find seq-type=list from-end=t end=nil test=other key=identity|
     (item list start test)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -333,7 +333,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-test-key
+(defun |find seq-type=list from-end=t end=nil test=other key=other|
     (item list start test key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -341,7 +341,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-test-not-identity
+(defun |find seq-type=list from-end=t end=nil test-not=other key=identity|
     (item list start test)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -349,7 +349,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-unbounded-test-not-key
+(defun |find seq-type=list from-end=t end=nil test-not=other key=other|
     (item list start test key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -357,7 +357,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-eq-identity
+(defun |find seq-type=list from-end=t end=other test=eq key=identity|
     (item list start end)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -366,7 +366,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-eq-key
+(defun |find seq-type=list from-end=t end=other test=eq key=other|
     (item list start end key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -375,7 +375,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-not-eq-identity
+(defun |find seq-type=list from-end=t end=other test-not=eq key=identity|
     (item list start end)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -384,7 +384,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-not-eq-key
+(defun |find seq-type=list from-end=t end=other test-not=eq key=other|
     (item list start end key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -393,7 +393,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-eql-identity
+(defun |find seq-type=list from-end=t end=other test=eql key=identity|
     (item list start end)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -402,7 +402,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-eql-key
+(defun |find seq-type=list from-end=t end=other test=eql key=other|
     (item list start end key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -411,7 +411,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-not-eql-identity
+(defun |find seq-type=list from-end=t end=other test-not=eql key=identity|
     (item list start end)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -420,7 +420,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-not-eql-key
+(defun |find seq-type=list from-end=t end=other test-not=eql key=other|
     (item list start end key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -429,7 +429,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-test-identity
+(defun |find seq-type=list from-end=t end=other test=other key=identity|
     (item list start end test)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -438,7 +438,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-test-key
+(defun |find seq-type=list from-end=t end=other test=other key=other|
     (item list start end test key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -447,7 +447,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-test-not-identity
+(defun |find seq-type=list from-end=t end=other test-not=other key=identity|
     (item list start end test)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -456,7 +456,7 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-list-from-end-bounded-test-not-key
+(defun |find seq-type=list from-end=t end=other test-not=other key=other|
     (item list start end test key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -465,628 +465,628 @@
           do (setf value element)
         finally (return value)))
 
-(defun find-vector-from-start-eq-identity
+(defun |find seq-type=vector from=end=nil test=eq key=identity|
     (item vector start end)
   (loop for index from start below end
         when (eq item (aref vector index))
           return (aref vector index)))
 
-(defun find-vector-from-start-eq-key
+(defun |find seq-type=vector from=end=nil test=eq key=other|
     (item vector start end key)
   (loop for index from start below end
         when (eq item (funcall key (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-start-not-eq-identity
+(defun |find seq-type=vector from=end=nil test-not=eq key=identity|
     (item vector start end)
   (loop for index from start below end
         when (not (eq item (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-start-not-eq-key
+(defun |find seq-type=vector from=end=nil test-not=eq key=other|
     (item vector start end key)
   (loop for index from start below end
         when (not (eq item (funcall key (aref vector index))))
           return (aref vector index)))
 
-(defun find-vector-from-start-eql-identity
+(defun |find seq-type=vector from=end=nil test=eql key=identity|
     (item vector start end)
   (loop for index from start below end
         when (eql item (aref vector index))
           return (aref vector index)))
 
-(defun find-vector-from-start-eql-key
+(defun |find seq-type=vector from=end=nil test=eql key=other|
     (item vector start end key)
   (loop for index from start below end
         when (eql item (funcall key (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-start-not-eql-identity
+(defun |find seq-type=vector from=end=nil test-not=eql key=identity|
     (item vector start end)
   (loop for index from start below end
         when (not (eql item (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-start-not-eql-key
+(defun |find seq-type=vector from=end=nil test-not=eql key=other|
     (item vector start end key)
   (loop for index from start below end
         when (not (eql item (funcall key (aref vector index))))
           return (aref vector index)))
 
-(defun find-vector-from-start-test-identity
+(defun |find seq-type=vector from=end=nil test=other key=identity|
     (item vector start end test)
   (loop for index from start below end
         when (funcall test item (aref vector index))
           return (aref vector index)))
 
-(defun find-vector-from-start-test-key
+(defun |find seq-type=vector from=end=nil test=other key=other|
     (item vector start end test key)
   (loop for index from start below end
         when (funcall test item (funcall key (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-start-test-not-identity
+(defun |find seq-type=vector from=end=nil test-not=other key=identity|
     (item vector start end test)
   (loop for index from start below end
         when (not (funcall test item (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-start-test-not-key
+(defun |find seq-type=vector from=end=nil test-not=other key=other|
     (item vector start end test key)
   (loop for index from start below end
         when (not (funcall test item (funcall key (aref vector index))))
           return (aref vector index)))
 
-(defun find-vector-from-end-eq-identity
+(defun |find seq-type=vector from-end=t test=eq key=identity|
     (item vector start end)
   (loop for index downfrom (1- end) to start
         when (eq item (aref vector index))
           return (aref vector index)))
 
-(defun find-vector-from-end-eq-key
+(defun |find seq-type=vector from-end=t test=eq key=other|
     (item vector start end key)
   (loop for index downfrom (1- end) to start
         when (eq item (funcall key (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-end-not-eq-identity
+(defun |find seq-type=vector from-end=t test-not=eq key=identity|
     (item vector start end)
   (loop for index downfrom (1- end) to start
         when (not (eq item (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-end-not-eq-key
+(defun |find seq-type=vector from-end=t test-not=eq key=other|
     (item vector start end key)
   (loop for index downfrom (1- end) to start
         when (not (eq item (funcall key (aref vector index))))
           return (aref vector index)))
 
-(defun find-vector-from-end-eql-identity
+(defun |find seq-type=vector from-end=t test=eql key=identity|
     (item vector start end)
   (loop for index downfrom (1- end) to start
         when (eql item (aref vector index))
           return (aref vector index)))
 
-(defun find-vector-from-end-eql-key
+(defun |find seq-type=vector from-end=t test=eql key=other|
     (item vector start end key)
   (loop for index downfrom (1- end) to start
         when (eql item (funcall key (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-end-not-eql-identity
+(defun |find seq-type=vector from-end=t test-not=eql key=identity|
     (item vector start end)
   (loop for index downfrom (1- end) to start
         when (not (eql item (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-end-not-eql-key
+(defun |find seq-type=vector from-end=t test-not=eql key=other|
     (item vector start end key)
   (loop for index downfrom (1- end) to start
         when (not (eql item (funcall key (aref vector index))))
           return (aref vector index)))
 
-(defun find-vector-from-end-test-identity
+(defun |find seq-type=vector from-end=t test=other key=identity|
     (item vector start end test)
   (loop for index downfrom (1- end) to start
         when (funcall test item (aref vector index))
           return (aref vector index)))
 
-(defun find-vector-from-end-test-key
+(defun |find seq-type=vector from-end=t test=other key=other|
     (item vector start end test key)
   (loop for index downfrom (1- end) to start
         when (funcall test item (funcall key (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-end-test-not-identity
+(defun |find seq-type=vector from-end=t test-not=other key=identity|
     (item vector start end test)
   (loop for index downfrom (1- end) to start
         when (not (funcall test item (aref vector index)))
           return (aref vector index)))
 
-(defun find-vector-from-end-test-not-key
+(defun |find seq-type=vector from-end=t test-not=other key=other|
     (item vector start end test key)
   (loop for index downfrom (1- end) to start
         when (not (funcall test item (funcall key (aref vector index))))
           return (aref vector index)))
 
-(defun find-from-start-unbounded-eq-identity
+(defun |find from-end=nil end=nil test=eq key=identity|
     (item sequence start)
   (etypecase sequence
     (vector
-       (find-vector-from-start-eq-identity
+       (|find seq-type=vector from=end=nil test=eq key=identity|
         item sequence start (length sequence)))
     (list
-       (find-list-from-start-unbounded-eq-identity
+       (|find seq-type=list from-end=nil end=nil test=eq key=identity|
         item sequence start))))
 
-(defun find-from-start-unbounded-eq-key
+(defun |find from-end=nil end=nil test=eq key=other|
     (item sequence start key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-eq-key
+       (|find seq-type=vector from=end=nil test=eq key=other|
         item sequence start (length sequence) key))
     (list
-       (find-list-from-start-unbounded-eq-key
+       (|find seq-type=list from-end=nil end=nil test=eq key=other|
         item sequence start key))))
 
-(defun find-from-start-unbounded-not-eq-identity
+(defun |find from-end=nil end=nil test-not=eq key=identity|
     (item sequence start)
   (etypecase sequence
     (vector
-       (find-vector-from-start-not-eq-identity
+       (|find seq-type=vector from=end=nil test-not=eq key=identity|
         item sequence start (length sequence)))
     (list
-       (find-list-from-start-unbounded-not-eq-identity
+       (|find seq-type=list from-end=nil end=nil test-not=eq key=identity|
         item sequence start))))
 
-(defun find-from-start-unbounded-not-eq-key
+(defun |find from-end=nil end=nil test-not=eq key=other|
     (item sequence start key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-not-eq-key
+       (|find seq-type=vector from=end=nil test-not=eq key=other|
         item sequence start (length sequence) key))
     (list
-       (find-list-from-start-unbounded-not-eq-key
+       (|find seq-type=list from-end=nil end=nil test-not=eq key=other|
         item sequence start key))))
 
-(defun find-from-start-unbounded-eql-identity
+(defun |find from-end=nil end=nil test=eql key=identity|
     (item sequence start)
   (etypecase sequence
     (vector
-       (find-vector-from-start-eql-identity
+       (|find seq-type=vector from=end=nil test=eql key=identity|
         item sequence start (length sequence)))
     (list
-       (find-list-from-start-unbounded-eql-identity
+       (|find seq-type=list from-end=nil end=nil test=eql key=identity|
         item sequence start))))
 
-(defun find-from-start-unbounded-eql-key
+(defun |find from-end=nil end=nil test=eql key=other|
     (item sequence start key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-eql-key
+       (|find seq-type=vector from=end=nil test=eql key=other|
         item sequence start (length sequence) key))
     (list
-       (find-list-from-start-unbounded-eql-key
+       (|find seq-type=list from-end=nil end=nil test=eql key=other|
         item sequence start key))))
 
-(defun find-from-start-unbounded-not-eql-identity
+(defun |find from-end=nil end=nil test-not=eql key=identity|
     (item sequence start)
   (etypecase sequence
     (vector
-       (find-vector-from-start-not-eql-identity
+       (|find seq-type=vector from=end=nil test-not=eql key=identity|
         item sequence start (length sequence)))
     (list
-       (find-list-from-start-unbounded-not-eql-identity
+       (|find seq-type=list from-end=nil end=nil test-not=eql key=identity|
         item sequence start))))
 
-(defun find-from-start-unbounded-not-eql-key
+(defun |find from-end=nil end=nil test-not=eql key=other|
     (item sequence start key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-not-eql-key
+       (|find seq-type=vector from=end=nil test-not=eql key=other|
         item sequence start (length sequence) key))
     (list
-       (find-list-from-start-unbounded-not-eql-key
+       (|find seq-type=list from-end=nil end=nil test-not=eql key=other|
         item sequence start key))))
 
-(defun find-from-start-unbounded-test-identity
+(defun |find from-end=nil end=nil test=other key=identity|
     (item sequence start test)
   (etypecase sequence
     (vector
-       (find-vector-from-start-test-identity
+       (|find seq-type=vector from=end=nil test=other key=identity|
         item sequence start (length sequence) test))
     (list
-       (find-list-from-start-unbounded-test-identity
+       (|find seq-type=list from-end=nil end=nil test=other key=identity|
         item sequence start test))))
 
-(defun find-from-start-unbounded-test-key
+(defun |find from-end=nil end=nil test=other key=other|
     (item sequence start test key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-test-key
+       (|find seq-type=vector from=end=nil test=other key=other|
         item sequence start (length sequence) test key))
     (list
-       (find-list-from-start-unbounded-test-key
+       (|find seq-type=list from-end=nil end=nil test=other key=other|
         item sequence start test key))))
 
-(defun find-from-start-unbounded-test-not-identity
+(defun |find from-end=nil end=nil test-not=other key=identity|
     (item sequence start test)
   (etypecase sequence
     (vector
-       (find-vector-from-start-test-not-identity
+       (|find seq-type=vector from=end=nil test-not=other key=identity|
         item sequence start (length sequence) test))
     (list
-       (find-list-from-start-unbounded-test-not-identity
+       (|find seq-type=list from-end=nil end=nil test-not=other key=identity|
         item sequence start test))))
 
-(defun find-from-start-unbounded-test-not-key
+(defun |find from-end=nil end=nil test-not=other key=other|
     (item sequence start test key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-test-not-key
+       (|find seq-type=vector from=end=nil test-not=other key=other|
         item sequence start (length sequence) test key))
     (list
-       (find-list-from-start-unbounded-test-not-key
+       (|find seq-type=list from-end=nil end=nil test-not=other key=other|
         item sequence start test key))))
 
-(defun find-from-start-bounded-eq-identity
+(defun |find from-end=nil end=other test=eq key=identity|
     (item sequence start end)
   (etypecase sequence
     (vector
-       (find-vector-from-start-eq-identity
+       (|find seq-type=vector from=end=nil test=eq key=identity|
         item sequence start end))
     (list
-       (find-list-from-start-bounded-eq-identity
+       (|find seq-type=list from-end=nil end=other test=eq key=identity|
         item sequence start end))))
 
-(defun find-from-start-bounded-eq-key
+(defun |find from-end=nil end=other test=eq key=other|
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-eq-key
+       (|find seq-type=vector from=end=nil test=eq key=other|
         item sequence start end key))
     (list
-       (find-list-from-start-bounded-eq-key
+       (|find seq-type=list from-end=nil end=other test=eq key=other|
         item sequence start end key))))
 
-(defun find-from-start-bounded-not-eq-identity
+(defun |find from-end=nil end=other test-not=eq key=identity|
     (item sequence start end)
   (etypecase sequence
     (vector
-       (find-vector-from-start-not-eq-identity
+       (|find seq-type=vector from=end=nil test-not=eq key=identity|
         item sequence start end))
     (list
-       (find-list-from-start-bounded-not-eq-identity
+       (|find seq-type=list from-end=nil end=other test-not=eq key=identity|
         item sequence start end))))
 
-(defun find-from-start-bounded-not-eq-key
+(defun |find from-end=nil end=other test-not=eq key=other|
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-not-eq-key
+       (|find seq-type=vector from=end=nil test-not=eq key=other|
         item sequence start end key))
     (list
-       (find-list-from-start-bounded-not-eq-key
+       (|find seq-type=list from-end=nil end=other test-not=eq key=other|
         item sequence start end key))))
 
-(defun find-from-start-bounded-eql-identity
+(defun |find from-end=nil end=other test=eql key=identity|
     (item sequence start end)
   (etypecase sequence
     (vector
-       (find-vector-from-start-eql-identity
+       (|find seq-type=vector from=end=nil test=eql key=identity|
         item sequence start end))
     (list
-       (find-list-from-start-bounded-eql-identity
+       (|find seq-type=list from-end=nil end=other test=eql key=identity|
         item sequence start end))))
 
-(defun find-from-start-bounded-eql-key
+(defun |find from-end=nil end=other test=eql key=other|
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-eql-key
+       (|find seq-type=vector from=end=nil test=eql key=other|
         item sequence start end key))
     (list
-       (find-list-from-start-bounded-eql-key
+       (|find seq-type=list from-end=nil end=other test=eql key=other|
         item sequence start end key))))
 
-(defun find-from-start-bounded-not-eql-identity
+(defun |find from-end=nil end=other test-not=eql key=identity|
     (item sequence start end)
   (etypecase sequence
     (vector
-       (find-vector-from-start-not-eql-identity
+       (|find seq-type=vector from=end=nil test-not=eql key=identity|
         item sequence start end))
     (list
-       (find-list-from-start-bounded-not-eql-identity
+       (|find seq-type=list from-end=nil end=other test-not=eql key=identity|
         item sequence start end))))
 
-(defun find-from-start-bounded-not-eql-key
+(defun |find from-end=nil end=other test-not=eql key=other|
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-not-eql-key
+       (|find seq-type=vector from=end=nil test-not=eql key=other|
         item sequence start end key))
     (list
-       (find-list-from-start-bounded-not-eql-key
+       (|find seq-type=list from-end=nil end=other test-not=eql key=other|
         item sequence start end key))))
 
-(defun find-from-start-bounded-test-identity
+(defun |find from-end=nil end=other test=other key=identity|
     (item sequence start end test)
   (etypecase sequence
     (vector
-       (find-vector-from-start-test-identity
+       (|find seq-type=vector from=end=nil test=other key=identity|
         item sequence start end test))
     (list
-       (find-list-from-start-bounded-test-identity
+       (|find seq-type=list from-end=nil end=other test=other key=identity|
         item sequence start end test))))
 
-(defun find-from-start-bounded-test-key
+(defun |find from-end=nil end=other test=other key=other|
     (item sequence start end test key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-test-key
+       (|find seq-type=vector from=end=nil test=other key=other|
         item sequence start end test key))
     (list
-       (find-list-from-start-bounded-test-key
+       (|find seq-type=list from-end=nil end=other test=other key=other|
         item sequence start end test key))))
 
-(defun find-from-start-bounded-test-not-identity
+(defun |find from-end=nil end=other test-not=other key=identity|
     (item sequence start end test)
   (etypecase sequence
     (vector
-       (find-vector-from-start-test-not-identity
+       (|find seq-type=vector from=end=nil test-not=other key=identity|
         item sequence start end test))
     (list
-       (find-list-from-start-bounded-test-not-identity
+       (|find seq-type=list from-end=nil end=other test-not=other key=identity|
         item sequence start end test))))
 
-(defun find-from-start-bounded-test-not-key
+(defun |find from-end=nil end=other test-not=other key=other|
     (item sequence start end test key)
   (etypecase sequence
     (vector
-       (find-vector-from-start-test-not-key
+       (|find seq-type=vector from=end=nil test-not=other key=other|
         item sequence start end test key))
     (list
-       (find-list-from-start-bounded-test-not-key
+       (|find seq-type=list from-end=nil end=other test-not=other key=other|
         item sequence start end test key))))
 
-(defun find-from-end-unbounded-eq-identity
+(defun |find from-end=t end=nil test=eq key=identity|
     (item sequence start)
   (etypecase sequence
     (vector
-       (find-vector-from-end-eq-identity
+       (|find seq-type=vector from-end=t test=eq key=identity|
         item sequence start (length sequence)))
     (list
-       (find-list-from-end-unbounded-eq-identity
+       (|find seq-type=list from-end=t end=nil test=eq key=identity|
         item sequence start))))
 
-(defun find-from-end-unbounded-eq-key
+(defun |find from-end=t end=nil test=eq key=other|
     (item sequence start key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-eq-key
+       (|find seq-type=vector from-end=t test=eq key=other|
         item sequence start (length sequence) key))
     (list
-       (find-list-from-end-unbounded-eq-key
+       (|find seq-type=list from-end=t end=nil test=eq key=other|
         item sequence start key))))
 
-(defun find-from-end-unbounded-not-eq-identity
+(defun |find from-end=t end=nil test-not=eq key=identity|
     (item sequence start)
   (etypecase sequence
     (vector
-       (find-vector-from-end-not-eq-identity
+       (|find seq-type=vector from-end=t test-not=eq key=identity|
         item sequence start (length sequence)))
     (list
-       (find-list-from-end-unbounded-not-eq-identity
+       (|find seq-type=list from-end=t end=nil test-not=eq key=identity|
         item sequence start))))
 
-(defun find-from-end-unbounded-not-eq-key
+(defun |find from-end=t end=nil test-not=eq key=other|
     (item sequence start key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-not-eq-key
+       (|find seq-type=vector from-end=t test-not=eq key=other|
         item sequence start (length sequence) key))
     (list
-       (find-list-from-end-unbounded-not-eq-key
+       (|find seq-type=list from-end=t end=nil test-not=eq key=other|
         item sequence start key))))
 
-(defun find-from-end-unbounded-eql-identity
+(defun |find from-end=t end=nil test=eql key=identity|
     (item sequence start)
   (etypecase sequence
     (vector
-       (find-vector-from-end-eql-identity
+       (|find seq-type=vector from-end=t test=eql key=identity|
         item sequence start (length sequence)))
     (list
-       (find-list-from-end-unbounded-eql-identity
+       (|find seq-type=list from-end=t end=nil test=eql key=identity|
         item sequence start))))
 
-(defun find-from-end-unbounded-eql-key
+(defun |find from-end=t end=nil test=eql key=other|
     (item sequence start key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-eql-key
+       (|find seq-type=vector from-end=t test=eql key=other|
         item sequence start (length sequence) key))
     (list
-       (find-list-from-end-unbounded-eql-key
+       (|find seq-type=list from-end=t end=nil test=eql key=other|
         item sequence start key))))
 
-(defun find-from-end-unbounded-not-eql-identity
+(defun |find from-end=t end=nil test-not=eql key=identity|
     (item sequence start)
   (etypecase sequence
     (vector
-       (find-vector-from-end-not-eql-identity
+       (|find seq-type=vector from-end=t test-not=eql key=identity|
         item sequence start (length sequence)))
     (list
-       (find-list-from-end-unbounded-not-eql-identity
+       (|find seq-type=list from-end=t end=nil test-not=eql key=identity|
         item sequence start))))
 
-(defun find-from-end-unbounded-not-eql-key
+(defun |find from-end=t end=nil test-not=eql key=other|
     (item sequence start key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-not-eql-key
+       (|find seq-type=vector from-end=t test-not=eql key=other|
         item sequence start (length sequence) key))
     (list
-       (find-list-from-end-unbounded-not-eql-key
+       (|find seq-type=list from-end=t end=nil test-not=eql key=other|
         item sequence start key))))
 
-(defun find-from-end-unbounded-test-identity
+(defun |find from-end=t end=nil test=other key=identity|
     (item sequence start test)
   (etypecase sequence
     (vector
-       (find-vector-from-end-test-identity
+       (|find seq-type=vector from-end=t test=other key=identity|
         item sequence start (length sequence) test))
     (list
-       (find-list-from-end-unbounded-test-identity
+       (|find seq-type=list from-end=t end=nil test=other key=identity|
         item sequence start test))))
 
-(defun find-from-end-unbounded-test-key
+(defun |find from-end=t end=nil test=other key=other|
     (item sequence start test key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-test-key
+       (|find seq-type=vector from-end=t test=other key=other|
         item sequence start (length sequence) test key))
     (list
-       (find-list-from-end-unbounded-test-key
+       (|find seq-type=list from-end=t end=nil test=other key=other|
         item sequence start test key))))
 
-(defun find-from-end-unbounded-test-not-identity
+(defun |find from-end=t end=nil test-not=other key=identity|
     (item sequence start test)
   (etypecase sequence
     (vector
-       (find-vector-from-end-test-not-identity
+       (|find seq-type=vector from-end=t test-not=other key=identity|
         item sequence start (length sequence) test))
     (list
-       (find-list-from-end-unbounded-test-not-identity
+       (|find seq-type=list from-end=t end=nil test-not=other key=identity|
         item sequence start test))))
 
-(defun find-from-end-unbounded-test-not-key
+(defun |find from-end=t end=nil test-not=other key=other|
     (item sequence start test key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-test-not-key
+       (|find seq-type=vector from-end=t test-not=other key=other|
         item sequence start (length sequence) test key))
     (list
-       (find-list-from-end-unbounded-test-not-key
+       (|find seq-type=list from-end=t end=nil test-not=other key=other|
         item sequence start test key))))
 
-(defun find-from-end-bounded-eq-identity
+(defun |find from-end=t end=other test=eq key=identity|
     (item sequence start end)
   (etypecase sequence
     (vector
-       (find-vector-from-end-eq-identity
+       (|find seq-type=vector from-end=t test=eq key=identity|
         item sequence start end))
     (list
-       (find-list-from-end-bounded-eq-identity
+       (|find seq-type=list from-end=t end=other test=eq key=identity|
         item sequence start end))))
 
-(defun find-from-end-bounded-eq-key
+(defun |find from-end=t end=other test=eq key=other|
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-eq-key
+       (|find seq-type=vector from-end=t test=eq key=other|
         item sequence start end key))
     (list
-       (find-list-from-end-bounded-eq-key
+       (|find seq-type=list from-end=t end=other test=eq key=other|
         item sequence start end key))))
 
-(defun find-from-end-bounded-not-eq-identity
+(defun |find from-end=t end=other test-not=eq key=identity|
     (item sequence start end)
   (etypecase sequence
     (vector
-       (find-vector-from-end-not-eq-identity
+       (|find seq-type=vector from-end=t test-not=eq key=identity|
         item sequence start end))
     (list
-       (find-list-from-end-bounded-not-eq-identity
+       (|find seq-type=list from-end=t end=other test-not=eq key=identity|
         item sequence start end))))
 
-(defun find-from-end-bounded-not-eq-key
+(defun |find from-end=t end=other test-not=eq key=other|
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-not-eq-key
+       (|find seq-type=vector from-end=t test-not=eq key=other|
         item sequence start end key))
     (list
-       (find-list-from-end-bounded-not-eq-key
+       (|find seq-type=list from-end=t end=other test-not=eq key=other|
         item sequence start end key))))
 
-(defun find-from-end-bounded-eql-identity
+(defun |find from-end=t end=other test=eql key=identity|
     (item sequence start end)
   (etypecase sequence
     (vector
-       (find-vector-from-end-eql-identity
+       (|find seq-type=vector from-end=t test=eql key=identity|
         item sequence start end))
     (list
-       (find-list-from-end-bounded-eql-identity
+       (|find seq-type=list from-end=t end=other test=eql key=identity|
         item sequence start end))))
 
-(defun find-from-end-bounded-eql-key
+(defun |find from-end=t end=other test=eql key=other|
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-eql-key
+       (|find seq-type=vector from-end=t test=eql key=other|
         item sequence start end key))
     (list
-       (find-list-from-end-bounded-eql-key
+       (|find seq-type=list from-end=t end=other test=eql key=other|
         item sequence start end key))))
 
-(defun find-from-end-bounded-not-eql-identity
+(defun |find from-end=t end=other test-not=eql key=identity|
     (item sequence start end)
   (etypecase sequence
     (vector
-       (find-vector-from-end-not-eql-identity
+       (|find seq-type=vector from-end=t test-not=eql key=identity|
         item sequence start end))
     (list
-       (find-list-from-end-bounded-not-eql-identity
+       (|find seq-type=list from-end=t end=other test-not=eql key=identity|
         item sequence start end))))
 
-(defun find-from-end-bounded-not-eql-key
+(defun |find from-end=t end=other test-not=eql key=other|
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-not-eql-key
+       (|find seq-type=vector from-end=t test-not=eql key=other|
         item sequence start end key))
     (list
-       (find-list-from-end-bounded-not-eql-key
+       (|find seq-type=list from-end=t end=other test-not=eql key=other|
         item sequence start end key))))
 
-(defun find-from-end-bounded-test-identity
+(defun |find from-end=t end=other test=other key=identity|
     (item sequence start end test)
   (etypecase sequence
     (vector
-       (find-vector-from-end-test-identity
+       (|find seq-type=vector from-end=t test=other key=identity|
         item sequence start end test))
     (list
-       (find-list-from-end-bounded-test-identity
+       (|find seq-type=list from-end=t end=other test=other key=identity|
         item sequence start end test))))
 
-(defun find-from-end-bounded-test-key
+(defun |find from-end=t end=other test=other key=other|
     (item sequence start end test key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-test-key
+       (|find seq-type=vector from-end=t test=other key=other|
         item sequence start end test key))
     (list
-       (find-list-from-end-bounded-test-key
+       (|find seq-type=list from-end=t end=other test=other key=other|
         item sequence start end test key))))
 
-(defun find-from-end-bounded-test-not-identity
+(defun |find from-end=t end=other test-not=other key=identity|
     (item sequence start end test)
   (etypecase sequence
     (vector
-       (find-vector-from-end-test-not-identity
+       (|find seq-type=vector from-end=t test-not=other key=identity|
         item sequence start end test))
     (list
-       (find-list-from-end-bounded-test-not-identity
+       (|find seq-type=list from-end=t end=other test-not=other key=identity|
         item sequence start end test))))
 
-(defun find-from-end-bounded-test-not-key
+(defun |find from-end=t end=other test-not=other key=other|
     (item sequence start end test key)
   (etypecase sequence
     (vector
-       (find-vector-from-end-test-not-key
+       (|find seq-type=vector from-end=t test-not=other key=other|
         item sequence start end test key))
     (list
-       (find-list-from-end-bounded-test-not-key
+       (|find seq-type=list from-end=t end=other test-not=other key=other|
         item sequence start end test key))))
 
 (defun find (item sequence
@@ -1105,167 +1105,167 @@
           (if end
               (if test
                   (if (eq test #'eql)
-                      (find-from-end-bounded-eql-key
+                      (|find from-end=t end=other test=eql key=other|
                        item sequence start end key)
                       (if (eq test #'eq)
-                          (find-from-end-bounded-eq-key
+                          (|find from-end=t end=other test=eq key=other|
                            item sequence start end key)
-                          (find-from-end-bounded-test-key
+                          (|find from-end=t end=other test=other key=other|
                            item sequence start end test key)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (find-from-end-bounded-not-eql-key
+                          (|find from-end=t end=other test-not=eql key=other|
                            item sequence start end key)
                           (if (eq test-not #'eq)
-                              (find-from-end-bounded-not-eq-key
+                              (|find from-end=t end=other test-not=eq key=other|
                                item sequence start end key)
-                              (find-from-end-bounded-test-not-key
+                              (|find from-end=t end=other test-not=other key=other|
                                item sequence start end test-not key)))
-                      (find-from-end-bounded-eql-key
+                      (|find from-end=t end=other test=eql key=other|
                        item sequence start end key)))
               (if test
                   (if (eq test #'eql)
-                      (find-from-end-unbounded-eql-key
+                      (|find from-end=t end=nil test=eql key=other|
                        item sequence start key)
                       (if (eq test #'eq)
-                          (find-from-end-unbounded-eq-key
+                          (|find from-end=t end=nil test=eq key=other|
                            item sequence start key)
-                          (find-from-end-unbounded-test-key
+                          (|find from-end=t end=nil test=other key=other|
                            item sequence start test key)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (find-from-end-unbounded-not-eql-key
+                          (|find from-end=t end=nil test-not=eql key=other|
                            item sequence start key)
                           (if (eq test-not #'eq)
-                              (find-from-end-unbounded-not-eq-key
+                              (|find from-end=t end=nil test-not=eq key=other|
                                item sequence start key)
-                              (find-from-end-unbounded-test-not-key
+                              (|find from-end=t end=nil test-not=other key=other|
                                item sequence start test-not key)))
-                      (find-from-end-unbounded-eql-key
+                      (|find from-end=t end=nil test=eql key=other|
                        item sequence start key))))
           (if end
               (if test
                   (if (eq test #'eql)
-                      (find-from-end-bounded-eql-identity
+                      (|find from-end=t end=other test=eql key=identity|
                        item sequence start end)
                       (if (eq test #'eq)
-                          (find-from-end-bounded-eq-identity
+                          (|find from-end=t end=other test=eq key=identity|
                            item sequence start end)
-                          (find-from-end-bounded-test-identity
+                          (|find from-end=t end=other test=other key=identity|
                            item sequence start end test)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (find-from-end-bounded-not-eql-identity
+                          (|find from-end=t end=other test-not=eql key=identity|
                            item sequence start end)
                           (if (eq test-not #'eq)
-                              (find-from-end-bounded-not-eq-identity
+                              (|find from-end=t end=other test-not=eq key=identity|
                                item sequence start end)
-                              (find-from-end-bounded-test-not-identity
+                              (|find from-end=t end=other test-not=other key=identity|
                                item sequence start end test)))
-                      (find-from-end-bounded-eql-identity
+                      (|find from-end=t end=other test=eql key=identity|
                        item sequence start end)))
               (if test
                   (if (eq test #'eql)
-                      (find-from-end-unbounded-eql-identity
+                      (|find from-end=t end=nil test=eql key=identity|
                        item sequence start)
                       (if (eq test #'eq)
-                          (find-from-end-unbounded-eq-identity
+                          (|find from-end=t end=nil test=eq key=identity|
                            item sequence start)
-                          (find-from-end-unbounded-test-identity
+                          (|find from-end=t end=nil test=other key=identity|
                            item sequence start test)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (find-from-end-unbounded-not-eql-identity
+                          (|find from-end=t end=nil test-not=eql key=identity|
                            item sequence start)
                           (if (eq test-not #'eq)
-                              (find-from-end-unbounded-not-eq-identity
+                              (|find from-end=t end=nil test-not=eq key=identity|
                                item sequence start)
-                              (find-from-end-unbounded-test-not-identity
+                              (|find from-end=t end=nil test-not=other key=identity|
                                item sequence start test)))
-                      (find-from-end-unbounded-eql-identity
+                      (|find from-end=t end=nil test=eql key=identity|
                        item sequence start)))))
       (if key
           (if end
               (if test
                   (if (eq test #'eql)
-                      (find-from-start-bounded-eql-key
+                      (|find from-end=nil end=other test=eql key=other|
                        item sequence start end key)
                       (if (eq test #'eq)
-                          (find-from-start-bounded-eq-key
+                          (|find from-end=nil end=other test=eq key=other|
                            item sequence start end key)
-                          (find-from-start-bounded-test-key
+                          (|find from-end=nil end=other test=other key=other|
                            item sequence start end test key)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (find-from-start-bounded-not-eql-key
+                          (|find from-end=nil end=other test-not=eql key=other|
                            item sequence start end key)
                           (if (eq test-not #'eq)
-                              (find-from-start-bounded-not-eq-key
+                              (|find from-end=nil end=other test-not=eq key=other|
                                item sequence start end key)
-                              (find-from-start-bounded-test-not-key
+                              (|find from-end=nil end=other test-not=other key=other|
                                item sequence start end test-not key)))
-                      (find-from-start-bounded-eql-key
+                      (|find from-end=nil end=other test=eql key=other|
                        item sequence start end key)))
               (if test
                   (if (eq test #'eql)
-                      (find-from-start-unbounded-eql-key
+                      (|find from-end=nil end=nil test=eql key=other|
                        item sequence start key)
                       (if (eq test #'eq)
-                          (find-from-start-unbounded-eq-key
+                          (|find from-end=nil end=nil test=eq key=other|
                            item sequence start key)
-                          (find-from-start-unbounded-test-key
+                          (|find from-end=nil end=nil test=other key=other|
                            item sequence start test key)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (find-from-start-unbounded-not-eql-key
+                          (|find from-end=nil end=nil test-not=eql key=other|
                            item sequence start key)
                           (if (eq test-not #'eq)
-                              (find-from-start-unbounded-not-eq-key
+                              (|find from-end=nil end=nil test-not=eq key=other|
                                item sequence start key)
-                              (find-from-start-unbounded-test-not-key
+                              (|find from-end=nil end=nil test-not=other key=other|
                                item sequence start test-not key)))
-                      (find-from-start-unbounded-eql-key
+                      (|find from-end=nil end=nil test=eql key=other|
                        item sequence start key))))
           (if end
               (if test
                   (if (eq test #'eql)
-                      (find-from-start-bounded-eql-identity
+                      (|find from-end=nil end=other test=eql key=identity|
                        item sequence start end)
                       (if (eq test #'eq)
-                          (find-from-start-bounded-eq-identity
+                          (|find from-end=nil end=other test=eq key=identity|
                            item sequence start end)
-                          (find-from-start-bounded-test-identity
+                          (|find from-end=nil end=other test=other key=identity|
                            item sequence start end test)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (find-from-start-bounded-not-eql-identity
+                          (|find from-end=nil end=other test-not=eql key=identity|
                            item sequence start end)
                           (if (eq test-not #'eq)
-                              (find-from-start-bounded-not-eq-identity
+                              (|find from-end=nil end=other test-not=eq key=identity|
                                item sequence start end)
-                              (find-from-start-bounded-test-not-identity
+                              (|find from-end=nil end=other test-not=other key=identity|
                                item sequence start end test)))
-                      (find-from-start-bounded-eql-identity
+                      (|find from-end=nil end=other test=eql key=identity|
                        item sequence start end)))
               (if test
                   (if (eq test #'eql)
-                      (find-from-start-unbounded-eql-identity
+                      (|find from-end=nil end=nil test=eql key=identity|
                        item sequence start)
                       (if (eq test #'eq)
-                          (find-from-start-unbounded-eq-identity
+                          (|find from-end=nil end=nil test=eq key=identity|
                            item sequence start)
-                          (find-from-start-unbounded-test-identity
+                          (|find from-end=nil end=nil test=other key=identity|
                            item sequence start test)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (find-from-start-unbounded-not-eql-identity
+                          (|find from-end=nil end=nil test-not=eql key=identity|
                            item sequence start)
                           (if (eq test-not #'eq)
-                              (find-from-start-unbounded-not-eq-identity
+                              (|find from-end=nil end=nil test-not=eq key=identity|
                                item sequence start)
-                              (find-from-start-unbounded-test-not-identity
+                              (|find from-end=nil end=nil test-not=other key=identity|
                                item sequence start test)))
-                      (find-from-start-unbounded-eql-identity
+                      (|find from-end=nil end=nil test=eql key=identity|
                        item sequence start)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1299,24 +1299,24 @@
 ;;; in the loop that checks when the end has been reached.
 ;;;
 ;;; When there is no key function, we avoid funcalling the 
-;;; identity function. 
+;;; key=identity function. 
 
 ;;; Version on lists, from start, no end, no key
-(defun find-if-list-from-start-unbounded-identity
+(defun |find-if-list from-end=nil unbounded-identity|
     (predicate list start)
   (loop for element in (nthcdr start list)
         when (funcall predicate element)
           return element))
 
 ;;; Version on lists, from start, no end, key
-(defun find-if-list-from-start-unbounded-key
+(defun |find-if-list from-end=nil unbounded-key|
     (predicate list start key)
   (loop for element in (nthcdr start list)
         when (funcall predicate (funcall key element))
           return element))
 
 ;;; Version on lists, from start, end, no key
-(defun find-if-list-from-start-bounded-identity
+(defun |find-if-list from-end=nil bounded-identity|
     (predicate list start end)
   (loop for element in (nthcdr start list)
         repeat (- end start)
@@ -1324,7 +1324,7 @@
           return element))
 
 ;;; Version on lists, from start, end, key
-(defun find-if-list-from-start-bounded-key
+(defun |find-if-list from-end=nil bounded-key|
     (predicate list start end key)
   (loop for element in (nthcdr start list)
         repeat (- end start)
@@ -1332,7 +1332,7 @@
           return element))
 
 ;;; Version on lists, from end, no end, no key
-(defun find-if-list-from-end-unbounded-identity
+(defun |find-if-list from-end=t unbounded-identity|
     (predicate list start)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -1341,7 +1341,7 @@
         finally (return value)))
 
 ;;; Version on lists, from end, no end, key
-(defun find-if-list-from-end-unbounded-key
+(defun |find-if-list from-end=t unbounded-key|
     (predicate list start key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -1350,7 +1350,7 @@
         finally (return value)))
   
 ;;; Version on lists, from end, end, no key
-(defun find-if-list-from-end-bounded-identity
+(defun |find-if-list from-end=t bounded-identity|
     (predicate list start end)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -1360,7 +1360,7 @@
         finally (return value)))
 
 ;;; Version on lists, from end, end, key
-(defun find-if-list-from-end-bounded-key
+(defun |find-if-list from-end=t bounded-key|
     (predicate list start end key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -1385,31 +1385,31 @@
 ;;; to lower, otherwise from lower to higher.
 ;;;
 ;;; When there is no key function, we avoid a funcall of
-;;; identity, just as with lists. 
+;;; key=identity, just as with lists. 
 
 ;;; Version on vectors, from start, no key
-(defun find-if-vector-from-start-identity
+(defun |find-if-vector from-end=nil key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (aref vector index))
           return (aref vector index)))
 
 ;;; Version on vectors, from start, key
-(defun find-if-vector-from-start-key
+(defun |find-if-vector from-end=nil key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (funcall key (aref vector index)))
           return (aref vector index)))
 
 ;;; Version on vectors, from end, no key
-(defun find-if-vector-from-end-identity
+(defun |find-if-vector from-end=t identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         when (funcall predicate (aref vector index))
           return (aref vector index)))
 
 ;;; Version on vectors, from end, key
-(defun find-if-vector-from-end-key
+(defun |find-if-vector from-end=t key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
         when (funcall predicate (funcall key (aref vector index)))
@@ -1426,83 +1426,83 @@
 ;;; time.
 
 ;;; Version on any sequence, from start, no end, no key
-(defun find-if-from-start-unbounded-identity (predicate sequence start)
+(defun |find-if from-end=nil unbounded-identity| (predicate sequence start)
   (etypecase sequence
     (vector
-       (find-if-vector-from-start-identity
+       (|find-if-vector from-end=nil key=identity|
         predicate sequence start (length sequence)))
     (list
-       (find-if-list-from-start-unbounded-identity
+       (|find-if-list from-end=nil unbounded-identity|
         predicate sequence start))))
 
 ;;; Version on any sequence, from start, no end, key
-(defun find-if-from-start-unbounded-key (predicate sequence start key)
+(defun |find-if from-end=nil unbounded-key| (predicate sequence start key)
   (etypecase sequence
     (vector
-       (find-if-vector-from-start-key
+       (|find-if-vector from-end=nil key=other|
         predicate sequence start (length sequence) key))
     (list
-       (find-if-list-from-start-unbounded-key
+       (|find-if-list from-end=nil unbounded-key|
         predicate sequence start key))))
 
 ;;; Version on any sequence, from start, end, no key
-(defun find-if-from-start-bounded-identity (predicate sequence start end)
+(defun |find-if from-end=nil bounded-identity| (predicate sequence start end)
   (etypecase sequence
     (vector
-       (find-if-vector-from-start-identity
+       (|find-if-vector from-end=nil key=identity|
         predicate sequence start end))
     (list
-       (find-if-list-from-start-bounded-identity
+       (|find-if-list from-end=nil bounded-identity|
         predicate sequence start end))))
 
 ;;; Version on any sequence, from start, end, key
-(defun find-if-from-start-bounded-key (predicate sequence start end key)
+(defun |find-if from-end=nil bounded-key| (predicate sequence start end key)
   (etypecase sequence
     (vector
-       (find-if-vector-from-start-key
+       (|find-if-vector from-end=nil key=other|
         predicate sequence start end key))
     (list
-       (find-if-list-from-start-bounded-key
+       (|find-if-list from-end=nil bounded-key|
         predicate sequence start end key))))
 
 ;;; Version on any sequence, from end, no end, no key
-(defun find-if-from-end-unbounded-identity (predicate sequence start)
+(defun |find-if from-end=t unbounded-identity| (predicate sequence start)
   (etypecase sequence
     (vector
-       (find-if-vector-from-end-identity
+       (|find-if-vector from-end=t identity|
         predicate sequence start (length sequence)))
     (list
-       (find-if-list-from-end-unbounded-identity
+       (|find-if-list from-end=t unbounded-identity|
         predicate sequence start))))
 
 ;;; Version on any sequence, from end, no end, key
-(defun find-if-from-end-unbounded-key (predicate sequence start key)
+(defun |find-if from-end=t unbounded-key| (predicate sequence start key)
   (etypecase sequence
     (vector
-       (find-if-vector-from-end-key
+       (|find-if-vector from-end=t key=other|
         predicate sequence start (length sequence) key))
     (list
-       (find-if-list-from-end-unbounded-key
+       (|find-if-list from-end=t unbounded-key|
         predicate sequence start key))))
 
 ;;; Version on any sequence, from end, end, no key
-(defun find-if-from-end-bounded-identity (predicate sequence start end)
+(defun |find-if from-end=t bounded-identity| (predicate sequence start end)
   (etypecase sequence
     (vector
-       (find-if-vector-from-end-identity
+       (|find-if-vector from-end=t identity|
         predicate sequence start end))
     (list
-       (find-if-list-from-end-bounded-identity
+       (|find-if-list from-end=t bounded-identity|
         predicate sequence start end))))
 
 ;;; Version on any sequence, from end, end, key
-(defun find-if-from-end-bounded-key (predicate sequence start end key)
+(defun |find-if from-end=t bounded-key| (predicate sequence start end key)
   (etypecase sequence
     (vector
-       (find-if-vector-from-end-key
+       (|find-if-vector from-end=t key=other|
         predicate sequence start end key))
     (list
-       (find-if-list-from-end-bounded-key
+       (|find-if-list from-end=t bounded-key|
         predicate sequence start end key))))
 
 ;;; This is the main function.  It first checks what type of
@@ -1526,25 +1526,25 @@
   (if from-end
       (if key
           (if end
-              (find-if-from-end-bounded-key
+              (|find-if from-end=t bounded-key|
                predicate sequence start end key)
-              (find-if-from-end-unbounded-key
+              (|find-if from-end=t unbounded-key|
                predicate sequence start key))
           (if end
-              (find-if-from-end-bounded-identity
+              (|find-if from-end=t bounded-identity|
                predicate sequence start end)
-              (find-if-from-end-unbounded-identity
+              (|find-if from-end=t unbounded-identity|
                predicate sequence start)))
       (if key
           (if end
-              (find-if-from-start-bounded-key
+              (|find-if from-end=nil bounded-key|
                predicate sequence start end key)
-              (find-if-from-start-unbounded-key
+              (|find-if from-end=nil unbounded-key|
                predicate sequence start key))
           (if end
-              (find-if-from-start-bounded-identity
+              (|find-if from-end=nil bounded-identity|
                predicate sequence start end)
-              (find-if-from-start-unbounded-identity
+              (|find-if from-end=nil unbounded-identity|
                predicate sequence start)))))
 
 (define-compiler-macro find-if (&whole form &rest args)
@@ -1576,48 +1576,48 @@
                     (if (and keyp (not (null key)))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(find-if-from-end-bounded-key
+                                `(|find-if from-end=t bounded-key|
                                   predicate sequence start end key)
                                 `(if from-end
-                                     (find-if-from-end-bounded-key
+                                     (|find-if from-end=t bounded-key|
                                       predicate sequence start end key)
-                                     (find-if-from-start-bounded-key
+                                     (|find-if from-end=nil bounded-key|
                                       predicate sequence start end key)))
-                            `(find-if-from-start-bounded-key
+                            `(|find-if from-end=nil bounded-key|
                               predicate sequence start end key))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(find-if-from-end-bounded-identity
+                                `(|find-if from-end=t bounded-identity|
                                   predicate sequence start end)
                                 `(if from-end
-                                     (find-if-from-end-bounded-identity
+                                     (|find-if from-end=t bounded-identity|
                                       predicate sequence start end)
-                                     (find-if-from-start-bounded-identity
+                                     (|find-if from-end=nil bounded-identity|
                                       predicate sequence start end)))
-                            `(find-if-from-start-bounded-identity
+                            `(|find-if from-end=nil bounded-identity|
                               predicate sequence start end)))
                     (if (and keyp (not (null key)))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(find-if-from-end-unbounded-key
+                                `(|find-if from-end=t unbounded-key|
                                   predicate sequence start key)
                                 `(if from-end
-                                     (find-if-from-end-unbounded-key
+                                     (|find-if from-end=t unbounded-key|
                                       predicate sequence start key)
-                                     (find-if-from-start-unbounded-key
+                                     (|find-if from-end=nil unbounded-key|
                                       predicate sequence start key)))
-                            `(find-if-from-start-unbounded-key
+                            `(|find-if from-end=nil unbounded-key|
                               predicate sequence start key))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(find-if-from-end-unbounded-identity
+                                `(|find-if from-end=t unbounded-identity|
                                   predicate sequence start)
                                 `(if from-end
-                                     (find-if-from-end-unbounded-identity
+                                     (|find-if from-end=t unbounded-identity|
                                       predicate sequence start)
-                                     (find-if-from-start-unbounded-identity
+                                     (|find-if from-end=nil unbounded-identity|
                                       predicate sequence start)))
-                            `(find-if-from-start-unbounded-identity
+                            `(|find-if from-end=nil unbounded-identity|
                               predicate sequence start))))))))
     (error () form)))
 
@@ -1652,24 +1652,24 @@
 ;;; in the loop that checks when the end has been reached.
 ;;;
 ;;; When there is no key function, we avoid funcalling the 
-;;; identity function. 
+;;; key=identity function. 
 
 ;;; Version on lists, from start, no end, no key
-(defun find-if-not-list-from-start-unbounded-identity
+(defun |find-if-not-list from-end=nil unbounded-identity|
     (predicate list start)
   (loop for element in (nthcdr start list)
         unless (funcall predicate element)
           return element))
 
 ;;; Version on lists, from start, no end, key
-(defun find-if-not-list-from-start-unbounded-key
+(defun |find-if-not-list from-end=nil unbounded-key|
     (predicate list start key)
   (loop for element in (nthcdr start list)
         unless (funcall predicate (funcall key element))
           return element))
 
 ;;; Version on lists, from start, end, no key
-(defun find-if-not-list-from-start-bounded-identity
+(defun |find-if-not-list from-end=nil bounded-identity|
     (predicate list start end)
   (loop for element in (nthcdr start list)
         repeat (- end start)
@@ -1677,7 +1677,7 @@
           return element))
 
 ;;; Version on lists, from start, end, key
-(defun find-if-not-list-from-start-bounded-key
+(defun |find-if-not-list from-end=nil bounded-key|
     (predicate list start end key)
   (loop for element in (nthcdr start list)
         repeat (- end start)
@@ -1685,7 +1685,7 @@
           return element))
 
 ;;; Version on lists, from end, no end, no key
-(defun find-if-not-list-from-end-unbounded-identity
+(defun |find-if-not-list from-end=t unbounded-identity|
     (predicate list start)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -1694,7 +1694,7 @@
         finally (return value)))
 
 ;;; Version on lists, from end, no end, key
-(defun find-if-not-list-from-end-unbounded-key
+(defun |find-if-not-list from-end=t unbounded-key|
     (predicate list start key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -1703,7 +1703,7 @@
         finally (return value)))
   
 ;;; Version on lists, from end, end, no key
-(defun find-if-not-list-from-end-bounded-identity
+(defun |find-if-not-list from-end=t bounded-identity|
     (predicate list start end)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -1713,7 +1713,7 @@
         finally (return value)))
 
 ;;; Version on lists, from end, end, key
-(defun find-if-not-list-from-end-bounded-key
+(defun |find-if-not-list from-end=t bounded-key|
     (predicate list start end key)
   (loop with value = nil
         for element in (nthcdr start list)
@@ -1738,31 +1738,31 @@
 ;;; to lower, otherwise from lower to higher.
 ;;;
 ;;; When there is no key function, we avoid a funcall of
-;;; identity, just as with lists. 
+;;; key=identity, just as with lists. 
 
 ;;; Version on vectors, from start, no key
-(defun find-if-not-vector-from-start-identity
+(defun |find-if-not-vector from-end=nil key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (aref vector index))
           return (aref vector index)))
 
 ;;; Version on vectors, from start, key
-(defun find-if-not-vector-from-start-key
+(defun |find-if-not-vector from-end=nil key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (funcall key (aref vector index)))
           return (aref vector index)))
 
 ;;; Version on vectors, from end, no key
-(defun find-if-not-vector-from-end-identity
+(defun |find-if-not-vector from-end=t identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         unless (funcall predicate (aref vector index))
           return (aref vector index)))
 
 ;;; Version on vectors, from end, key
-(defun find-if-not-vector-from-end-key
+(defun |find-if-not-vector from-end=t key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
         unless (funcall predicate (funcall key (aref vector index)))
@@ -1779,83 +1779,83 @@
 ;;; time.
 
 ;;; Version on any sequence, from start, no end, no key
-(defun find-if-not-from-start-unbounded-identity (predicate sequence start)
+(defun |find-if-not from-end=nil unbounded-identity| (predicate sequence start)
   (etypecase sequence
     (vector
-       (find-if-not-vector-from-start-identity
+       (|find-if-not-vector from-end=nil key=identity|
         predicate sequence start (length sequence)))
     (list
-       (find-if-not-list-from-start-unbounded-identity
+       (|find-if-not-list from-end=nil unbounded-identity|
         predicate sequence start))))
 
 ;;; Version on any sequence, from start, no end, key
-(defun find-if-not-from-start-unbounded-key (predicate sequence start key)
+(defun |find-if-not from-end=nil unbounded-key| (predicate sequence start key)
   (etypecase sequence
     (vector
-       (find-if-not-vector-from-start-key
+       (|find-if-not-vector from-end=nil key=other|
         predicate sequence start (length sequence) key))
     (list
-       (find-if-not-list-from-start-unbounded-key
+       (|find-if-not-list from-end=nil unbounded-key|
         predicate sequence start key))))
 
 ;;; Version on any sequence, from start, end, no key
-(defun find-if-not-from-start-bounded-identity (predicate sequence start end)
+(defun |find-if-not from-end=nil bounded-identity| (predicate sequence start end)
   (etypecase sequence
     (vector
-       (find-if-not-vector-from-start-identity
+       (|find-if-not-vector from-end=nil key=identity|
         predicate sequence start end))
     (list
-       (find-if-not-list-from-start-bounded-identity
+       (|find-if-not-list from-end=nil bounded-identity|
         predicate sequence start end))))
 
 ;;; Version on any sequence, from start, end, key
-(defun find-if-not-from-start-bounded-key (predicate sequence start end key)
+(defun |find-if-not from-end=nil bounded-key| (predicate sequence start end key)
   (etypecase sequence
     (vector
-       (find-if-not-vector-from-start-key
+       (|find-if-not-vector from-end=nil key=other|
         predicate sequence start end key))
     (list
-       (find-if-not-list-from-start-bounded-key
+       (|find-if-not-list from-end=nil bounded-key|
         predicate sequence start end key))))
 
 ;;; Version on any sequence, from end, no end, no key
-(defun find-if-not-from-end-unbounded-identity (predicate sequence start)
+(defun |find-if-not from-end=t unbounded-identity| (predicate sequence start)
   (etypecase sequence
     (vector
-       (find-if-not-vector-from-end-identity
+       (|find-if-not-vector from-end=t identity|
         predicate sequence start (length sequence)))
     (list
-       (find-if-not-list-from-end-unbounded-identity
+       (|find-if-not-list from-end=t unbounded-identity|
         predicate sequence start))))
 
 ;;; Version on any sequence, from end, no end, key
-(defun find-if-not-from-end-unbounded-key (predicate sequence start key)
+(defun |find-if-not from-end=t unbounded-key| (predicate sequence start key)
   (etypecase sequence
     (vector
-       (find-if-not-vector-from-end-key
+       (|find-if-not-vector from-end=t key=other|
         predicate sequence start (length sequence) key))
     (list
-       (find-if-not-list-from-end-unbounded-key
+       (|find-if-not-list from-end=t unbounded-key|
         predicate sequence start key))))
 
 ;;; Version on any sequence, from end, end, no key
-(defun find-if-not-from-end-bounded-identity (predicate sequence start end)
+(defun |find-if-not from-end=t bounded-identity| (predicate sequence start end)
   (etypecase sequence
     (vector
-       (find-if-not-vector-from-end-identity
+       (|find-if-not-vector from-end=t identity|
         predicate sequence start end))
     (list
-       (find-if-not-list-from-end-bounded-identity
+       (|find-if-not-list from-end=t bounded-identity|
         predicate sequence start end))))
 
 ;;; Version on any sequence, from end, end, key
-(defun find-if-not-from-end-bounded-key (predicate sequence start end key)
+(defun |find-if-not from-end=t bounded-key| (predicate sequence start end key)
   (etypecase sequence
     (vector
-       (find-if-not-vector-from-end-key
+       (|find-if-not-vector from-end=t key=other|
         predicate sequence start end key))
     (list
-       (find-if-not-list-from-end-bounded-key
+       (|find-if-not-list from-end=t bounded-key|
         predicate sequence start end key))))
 
 ;;; This is the main function.  It first checks what type of
@@ -1879,25 +1879,25 @@
   (if from-end
       (if key
           (if end
-              (find-if-not-from-end-bounded-key
+              (|find-if-not from-end=t bounded-key|
                predicate sequence start end key)
-              (find-if-not-from-end-unbounded-key
+              (|find-if-not from-end=t unbounded-key|
                predicate sequence start key))
           (if end
-              (find-if-not-from-end-bounded-identity
+              (|find-if-not from-end=t bounded-identity|
                predicate sequence start end)
-              (find-if-not-from-end-unbounded-identity
+              (|find-if-not from-end=t unbounded-identity|
                predicate sequence start)))
       (if key
           (if end
-              (find-if-not-from-start-bounded-key
+              (|find-if-not from-end=nil bounded-key|
                predicate sequence start end key)
-              (find-if-not-from-start-unbounded-key
+              (|find-if-not from-end=nil unbounded-key|
                predicate sequence start key))
           (if end
-              (find-if-not-from-start-bounded-identity
+              (|find-if-not from-end=nil bounded-identity|
                predicate sequence start end)
-              (find-if-not-from-start-unbounded-identity
+              (|find-if-not from-end=nil unbounded-identity|
                predicate sequence start)))))
 
 (define-compiler-macro find-if-not (&whole form &rest args)
@@ -1929,48 +1929,48 @@
                     (if (and keyp (not (null key)))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(find-if-not-from-end-bounded-key
+                                `(|find-if-not from-end=t bounded-key|
                                   predicate sequence start end key)
                                 `(if from-end
-                                     (find-if-not-from-end-bounded-key
+                                     (|find-if-not from-end=t bounded-key|
                                       predicate sequence start end key)
-                                     (find-if-not-from-start-bounded-key
+                                     (|find-if-not from-end=nil bounded-key|
                                       predicate sequence start end key)))
-                            `(find-if-not-from-start-bounded-key
+                            `(|find-if-not from-end=nil bounded-key|
                               predicate sequence start end key))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(find-if-not-from-end-bounded-identity
+                                `(|find-if-not from-end=t bounded-identity|
                                   predicate sequence start end)
                                 `(if from-end
-                                     (find-if-not-from-end-bounded-identity
+                                     (|find-if-not from-end=t bounded-identity|
                                       predicate sequence start end)
-                                     (find-if-not-from-start-bounded-identity
+                                     (|find-if-not from-end=nil bounded-identity|
                                       predicate sequence start end)))
-                            `(find-if-not-from-start-bounded-identity
+                            `(|find-if-not from-end=nil bounded-identity|
                               predicate sequence start end)))
                     (if (and keyp (not (null key)))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(find-if-not-from-end-unbounded-key
+                                `(|find-if-not from-end=t unbounded-key|
                                   predicate sequence start key)
                                 `(if from-end
-                                     (find-if-not-from-end-unbounded-key
+                                     (|find-if-not from-end=t unbounded-key|
                                       predicate sequence start key)
-                                     (find-if-not-from-start-unbounded-key
+                                     (|find-if-not from-end=nil unbounded-key|
                                       predicate sequence start key)))
-                            `(find-if-not-from-start-unbounded-key
+                            `(|find-if-not from-end=nil unbounded-key|
                               predicate sequence start key))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(find-if-not-from-end-unbounded-identity
+                                `(|find-if-not from-end=t unbounded-identity|
                                   predicate sequence start)
                                 `(if from-end
-                                     (find-if-not-from-end-unbounded-identity
+                                     (|find-if-not from-end=t unbounded-identity|
                                       predicate sequence start)
-                                     (find-if-not-from-start-unbounded-identity
+                                     (|find-if-not from-end=nil unbounded-identity|
                                       predicate sequence start)))
-                            `(find-if-not-from-start-unbounded-identity
+                            `(|find-if-not from-end=nil unbounded-identity|
                               predicate sequence start))))))))
     (error () form)))
 
