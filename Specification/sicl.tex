@@ -178,21 +178,47 @@ documented and exported whenever reasonable.
 
 Standard functions should always check the validity of their arguments
 and of any other aspect of the environment.  If such a function fails
-to accomplish its task, it should signal an appropriate condition.  In
-a previous version of this text, we wrote that the condition reporting
-should mention what function is concerned so as to give the most
-precise message to the user, but now we think that this is not a good
-idea.  The reason we do not think so is that such functions could be
-part of the runtime system, or could be introduced by standard macros,
-so that the error message is not relevant to the user code anyway.
-The current thinking is instead to use source tracking, so that the
-position of the original code can be found easily. 
+to accomplish its task, it should signal an appropriate condition.  
+
+We would like error messages to be phrased in terms of the code that
+was directly invoked by user code, as opposed to in terms of code that
+was indirectly invoked by system code.  As an example, consider a
+sequence function such as \texttt{substitute}.  If it is detected that
+a dotted list has been passed to this function, it should not be
+reported by \texttt{endp} or any other system function that was not
+directly called by user code, but instead it should be reported by
+\texttt{substitute} in terms of the sequence that was originally
+passed as an argument.  On the other hand, if substitute invokes a
+user-supplied test that fails, we would like the error message to be
+reported in terms of that user-supplied code rather than by
+\texttt{substitute}.  This is how we are currently imagining solving
+this problem:
+
+\begin{itemize}
+\item Standard functions do not call any other standard functions
+  directly, but instead special versions of those functions that
+  signal more specific conditions than are dictated by the Common Lisp
+  HyperSpec. 
+\item If acceptable in terms of performance, a standard function that
+  calls other functions that may signal an error handles such errors
+  by signaling an error that is directly related to the standard
+  function. 
+\item Error reporting is done in terms of the name and arguments to
+  the standard function. 
+\end{itemize}
 
 \subsection{Standard macros}
 
 Standard macros must do extensive syntax analysis on their input so as
 to avoid compilation errors that are phrased in terms of expanded
 code.  
+
+As with standard functions, standard macros that expand into other
+system code that may signal an error should not use other standard
+functions or other standard macros directly, but instead special
+versions that signal more specific conditions.  The expanded code
+should then contain a handler for such errors, which signals an error
+in terms of the name and the arguments of the macro. 
 
 \subsection{Compiler macros}
 
