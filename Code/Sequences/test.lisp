@@ -2,6 +2,52 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function find
+
+(define-test |find seq-type=list start=nil from-end=nil test=eq key=identity 1|
+  (let ((element '(a)))
+    (assert-eq
+     nil
+     (find element '() :test #'eq))))
+
+(define-test |find seq-type=list start=nil from-end=nil test=eq key=identity 2|
+  (let ((element '(a)))
+    (assert-eq
+     nil
+     (find element (list (list 'a)) :test #'eq))))
+
+(define-test |find seq-type=list start=nil from-end=nil test=eq key=identity 3|
+  (let ((element '(a)))
+    (assert-eq
+     element
+     (find element (list (list 'a) element (list 'a)) :test #'eq))))
+
+(define-test |find seq-type=list start=nil from-end=nil test=eq key=identity 4|
+  (let ((element '(a)))
+    (assert-error
+     'type-error
+     (find element (list* (list 'a) (list 'a) (list 'a) 'b) :test #'eq))))
+
+(define-test |find seq-type=list start=other from-end=nil test=eq key=identity 1|
+  (let ((element '(a)))
+    (assert-eq
+     element
+     (find element (list (list 'a) element (list 'a)) :test #'eq :start 1))))
+
+(define-test |find seq-type=list start=other from-end=nil test=eq key=identity 2|
+  (let ((element '(a)))
+    (assert-eq
+     element
+     (find element (list (list 'a) element (list 'a)) :test #'eq :start 1))))
+
+(define-test |find seq-type=list start=other from-end=nil test=eq key=identity 3|
+  (let ((element '(a)))
+    (assert-error
+     'type-error
+     (find element (list* (list 'a) element (list 'a)  'b) :test #'eq :start 2))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function find-if
 
 (define-test find-if-list.1
