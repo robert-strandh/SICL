@@ -1615,3 +1615,103 @@
    'type-error
    (substitute 1 2 '(2 0 . 3) :test #'eql)))
 
+(define-test |substitute seq-type=list start=other end=nil test=eql count=nil key=identity 1|
+  (assert-equal
+   '(2 2)
+   (substitute 1 2 '(2 2) :start 2)))
+
+(define-test |substitute seq-type=list start=other end=nil test=eql count=nil key=identity 2|
+  (assert-equal
+   '(2 1)
+   (substitute 1 2 '(2 2) :start 1)))
+
+(define-test |substitute seq-type=list start=other end=nil test=eql count=nil key=identity 3|
+  (assert-error
+   'type-error
+   (substitute 1 2 '(2 2) :start 3)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 1|
+  (assert-equal
+   '((0) (0))
+   (substitute 1 2 '((0) (0)) :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 2|
+  (assert-equal
+   '(1)
+   (substitute 1 2 '((2)) :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 3|
+  (assert-equal
+   '((1))
+   (substitute 1 2 '((1)) :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 4|
+  (assert-equal
+   '((0) 1)
+   (substitute 1 2 '((0) (2)) :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 5|
+  (assert-equal
+   '((0) 1 (3) 1)
+   (substitute 1 2 '((0) (2) (3) (2)) :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 6|
+  (assert-error 
+   'type-error
+   (substitute 1 2 'a :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 7|
+  (assert-error
+   'type-error
+   (substitute 1 2 '((2) (0) . 3) :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 8|
+  (assert-equal
+   '((0) (0))
+   (substitute 1 2 '((0) (0)) :test #'eql :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 9|
+  (assert-equal
+   '(1)
+   (substitute 1 2 '((2)) :test #'eql :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 10|
+  (assert-equal
+   '((1))
+   (substitute 1 2 '((1)) :test #'eql :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 11|
+  (assert-equal
+   '((0) 1)
+   (substitute 1 2 '((0) (2)) :test #'eql :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 12|
+  (assert-equal
+   '((0) 1 (3) 1)
+   (substitute 1 2 '((0) (2) (3) (2)) :test #'eql :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 13|
+  (assert-error 
+   'type-error
+   (substitute 1 2 'a :test #'eql :key #'car)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=other 14|
+  (assert-error
+   'type-error
+   (substitute 1 2 '((2) (0) . 3) :test #'eql :key #'car)))
+
+(define-test |substitute seq-type=list start=other end=nil test=eql count=nil key=other 1|
+  (assert-equal
+   '((2) (2))
+   (substitute 1 2 '((2) (2)) :start 2 :key #'car)))
+
+(define-test |substitute seq-type=list start=other end=nil test=eql count=nil key=other 2|
+  (assert-equal
+   '((2) 1)
+   (substitute 1 2 '((2) (2)) :start 1 :key #'car)))
+
+(define-test |substitute seq-type=list start=other end=nil test=eql count=nil key=other 3|
+  (assert-error
+   'type-error
+   (substitute 1 2 '((2) (2)) :start 3 :key #'car)))
+
