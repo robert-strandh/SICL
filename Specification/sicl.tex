@@ -196,15 +196,18 @@ this problem:
 
 \begin{itemize}
 \item Standard functions do not call any other standard functions
-  directly, but instead special versions of those functions that
-  signal more specific conditions than are dictated by the Common Lisp
-  HyperSpec. 
-\item If acceptable in terms of performance, a standard function that
-  calls other functions that may signal an error handles such errors
-  by signaling an error that is directly related to the standard
-  function. 
+  directly, other than if it is known that no error will be signaled.
+  When a call from a standard function $f$ to a standard function $g$
+  might result in an error being signaled by $g$, that call is
+  replaced by a call to a special version of the standard function,
+  say $h$ that signals a more specific condition than is dictated by
+  the Common Lisp HyperSpec.
+\item If acceptable in terms of performance, a standard function such
+  as $f$ that calls other functions that may signal an error, handles
+  such errors by signaling an error that is directly related to $f$. 
 \item Error reporting is done in terms of the name and arguments to
-  the standard function. 
+  $f$. 
+  
 \end{itemize}
 
 \subsection{Standard macros}
