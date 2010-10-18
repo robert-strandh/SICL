@@ -1,6 +1,6 @@
 (in-package #:sicl-sequences-test)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function find-if
 
@@ -617,7 +617,7 @@
                )
       i a b c d e f))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function find-if-not
 
@@ -1278,7 +1278,7 @@
       i a b c d e f))))
 
   
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test length
 
@@ -1482,7 +1482,7 @@
          unless (eql len 5)
            collect (list etype vec len))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test remove
 
@@ -1540,4 +1540,78 @@
   (assert-equal
    '(((b)) ((b)))
    (remove '(a) '(((b)) ((a)) ((b))) :test #'equal :key #'car)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; 
+;;; Function substitute
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 1|
+  (assert-equal
+   '(0 0)
+   (substitute 1 2 '(0 0))))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 2|
+  (assert-equal
+   '(1)
+   (substitute 1 2 '(2))))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 3|
+  (assert-equal
+   '(1)
+   (substitute 1 2 '(1))))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 4|
+  (assert-equal
+   '(0 1)
+   (substitute 1 2 '(0 2))))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 5|
+  (assert-equal
+   '(0 1 3 1)
+   (substitute 1 2 '(0 2 3 2))))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 6|
+  (assert-error 
+   'type-error
+   (substitute 1 2 'a)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 7|
+  (assert-error
+   'type-error
+   (substitute 1 2 '(2 0 . 3))))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 8|
+  (assert-equal
+   '(0 0)
+   (substitute 1 2 '(0 0) :test #'eql)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 9|
+  (assert-equal
+   '(1)
+   (substitute 1 2 '(2) :test #'eql)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 10|
+  (assert-equal
+   '(1)
+   (substitute 1 2 '(1) :test #'eql)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 11|
+  (assert-equal
+   '(0 1)
+   (substitute 1 2 '(0 2) :test #'eql)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 12|
+  (assert-equal
+   '(0 1 3 1)
+   (substitute 1 2 '(0 2 3 2) :test #'eql)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 13|
+  (assert-error 
+   'type-error
+   (substitute 1 2 'a :test #'eql)))
+
+(define-test |substitute seq-type=list start=nil end=nil test=eql count=nil key=identity 14|
+  (assert-error
+   'type-error
+   (substitute 1 2 '(2 0 . 3) :test #'eql)))
 
