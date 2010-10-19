@@ -46,6 +46,27 @@
      'type-error
      (find element (list* (list 'a) element (list 'a)  'b) :test #'eq :start 2))))
 
+(define-test |find seq-type=list start=other from-end=nil test=eq key=other 1|
+  (let ((element '(a)))
+    (assert-eq
+     element
+     (car (find element (list (list (list 'a)) (list element) (list (list 'a)))
+		:test #'eq :start 1 :key #'car)))))
+
+(define-test |find seq-type=list start=other from-end=nil test=eq key=other 2|
+  (let ((element '(a)))
+    (assert-eq
+     element
+     (car (find element (list (list (list 'a)) (list element) (list (list 'a)))
+		:test #'eq :start 1 :key #'car)))))
+
+(define-test |find seq-type=list start=other from-end=nil test=eq key=other 3|
+  (let ((element '(a)))
+    (assert-error
+     'type-error
+     (car (find element (list* (list (list 'a)) (list element) (list (list 'a)) 'b)
+		:test #'eq :start 2 :key #'car)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function find-if
