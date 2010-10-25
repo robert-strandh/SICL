@@ -2063,6 +2063,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the setf expander for rest
+
+(define-test setf.rest.1
+  (let ((list (copy-list '(0))))
+    (assert-equal 1 (setf (rest list) 1))
+    (assert-equal '(0 . 1) list)))
+
+(define-test setf.rest.error.1
+  (let ((list 1))
+    (assert-error 'type-error
+		  (setf (rest list) 1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the list function
 
 (define-test list.1
@@ -2155,6 +2169,10 @@
   (assert-equal '(1 2 . 3)
                 (apply (cadr (list 1 #'list*)) (list 1 2 3))))
 
+(define-test list*.error.1
+  (assert-error 'error
+		(list*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the last function 
@@ -2213,6 +2231,48 @@
 
 (define-test copy-list.error
   (assert-error 'type-error (copy-list 1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the list-length function
+
+(define-test list-length.1
+  (assert-equal 0
+		(list-length '())))
+		
+(define-test list-length.2
+  (assert-equal 2
+		(list-length '(0 0))))
+
+(define-test list-length.3
+  (let ((list (list 0)))
+    (setf (cdr list) list)
+    (assert-equal nil
+		  (list-length list))))
+
+(define-test list-length.error.1
+  (assert-error 'type-error
+		(list-length 0)))
+
+(define-test list-length.error.2
+  (assert-error 'type-error
+		(list-length '(0 . 0))))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the make-list function
+
+(define-test make-list.1
+  (assert-equal '() (make-list 0)))
+
+(define-test make-list.2
+  (assert-equal 1 (length (make-list 1))))
+
+(define-test make-list.3
+  (assert-equal '(3 3) (make-list 2 :initial-element 3)))
+
+(define-test make-list.error.1
+  (assert-error 'type-error (make-list 'a)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
