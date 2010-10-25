@@ -2332,6 +2332,9 @@
 (define-test mapcar.error.4
   (assert-error 'type-error (mapcar #'1+ "1")))
 
+(define-test mapcar.error.5
+  (assert-error 'error (mapcar #'1+)))
+
 (define-test mapcar.order.1
   (let ((i 0)
         (funs (vector #'1+ #'1-))
@@ -2379,6 +2382,9 @@
 (define-test mapc.error.4
   (assert-error 'type-error (mapc #'1+ "1")))
 
+(define-test mapc.error.5
+  (assert-error 'error (mapc #'1+)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the maplist function
@@ -2400,6 +2406,9 @@
 
 (define-test maplist.error.4
   (assert-error 'type-error (maplist #'car "1")))
+
+(define-test maplist.error.5
+  (assert-error 'error (maplist #'car)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2429,6 +2438,9 @@
 
 (define-test mapl.error.4
   (assert-error 'type-error (mapl #'car "1")))
+
+(define-test mapl.error.5
+  (assert-error 'error (mapl #'car)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2468,6 +2480,9 @@
 
 (define-test mapcan.error.4
   (assert-error 'type-error (mapcan #'car "1")))
+
+(define-test mapcan.error.5
+  (assert-error 'error (mapcan #'car)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
