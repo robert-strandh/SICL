@@ -2157,6 +2157,65 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the last function 
+
+(define-test last.1
+  (assert-equal '() (last '())))
+
+(define-test last.2
+  (assert-equal '(1) (last '(1))))
+
+(define-test last.3
+  (assert-equal '(2) (last '(1 2))))
+
+(define-test last.4
+  (assert-equal '(1 . 2) (last '(1 . 2))))
+
+(define-test last.5
+  (assert-equal '(2 3) (last '(1 2 3) 2)))
+
+(define-test last.6
+  (assert-equal '(1 2 . 3) (last '(1 2 . 3) 2)))
+
+(define-test last.7
+  (assert-equal '(2 3 . 4) (last '(1 2 3 . 4) 2)))
+
+(define-test last.8
+  (assert-equal '(1 2 3) (last '(1 2 3) 3)))
+
+(define-test last.9
+  (assert-equal '(1 2 3) (last '(1 2 3) 4)))
+
+(define-test last.error.1
+  (assert-error 'type-error
+		(last 1)))
+
+(define-test last.error.2
+  (assert-error 'type-error
+		(last '(1) 'a)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the copy-list function 
+
+(define-test copy-list.1
+  (assert-equal '() (copy-list '())))
+
+(define-test copy-list.2
+  (assert-equal '(1) (copy-list '(1))))
+
+(define-test copy-list.3
+  (let ((thing '(a b)))
+    (assert-equal thing (car (copy-list (list thing 1 2))))))
+
+(define-test copy-list.4
+  (assert-equal '(1 . 2) (copy-list '(1 . 2))))
+
+(define-test copy-list.error
+  (assert-error 'type-error (copy-list 1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the copy-tree function
 
 (define-test copy-tree.1
