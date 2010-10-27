@@ -258,7 +258,7 @@
 (define-setf-c*r-function cdddar "DDDA")
 (define-setf-c*r-function cddddr "DDDD")
 
-;; (define-setf-c*r-function first   "A")
+(define-setf-c*r-function first   "A")
 (define-setf-c*r-function second  "AD")
 (define-setf-c*r-function third   "ADD")
 (define-setf-c*r-function fourth  "ADDD")
