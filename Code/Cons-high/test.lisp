@@ -2,6 +2,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Helper function to defeat the type inferencing of the 
+;;; compiler so there are no warnings
+
+;;; this function always returns true when given a list.
+(defun twisted (list)
+  (if (null list)
+      t
+      (twisted (cdr list))))
+
+(declaim (notinline twisted))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the caar function 
 
 (define-test caar.1
@@ -2399,16 +2412,16 @@
   (assert-equal '(2 4) (mapcar #'+ '(1 2) '(1 2 3 4 5))))
 
 (define-test mapcar.error.1
-  (assert-error 'type-error (mapcar #'1+ 1)))
+  (assert-error 'type-error (mapcar #'1+ (if (twisted '(a b c)) 1 '(a b c)))))
 
 (define-test mapcar.error.2
-  (assert-error 'type-error (mapcar #'1+ #(1 2 3))))
+  (assert-error 'type-error (mapcar #'1+ (if (twisted '(a b c)) #(1 2 3) '(a b c)))))
 
 (define-test mapcar.error.3
   (assert-error 'type-error (mapcar #'1+ '(1 2 . 3))))
 
 (define-test mapcar.error.4
-  (assert-error 'type-error (mapcar #'1+ "1")))
+  (assert-error 'type-error (mapcar #'1+ (if (twisted '(a b c)) "1" '(a b c)))))
 
 (define-test mapcar.error.5
   (assert-error 'error (mapcar #'1+)))
@@ -2432,7 +2445,7 @@
 ;;; Tests for the mapc function
 
 (define-test mapc.1
-  (assert-equal '() (mapcar #'1+ '())))
+  (assert-equal '() (mapc #'1+ '())))
 
 (define-test mapc.2
   (let ((i 0))
@@ -2448,17 +2461,26 @@
                                 '(1 2 3))
                           (list i)))))
 
+(define-test mapc.apply.1
+  (let ((i 0))
+    (assert-equal '(1 2 3 12)
+                  (append (apply (cadr (list 'a #'mapc))
+				 (list (lambda (x y) (incf i (+ x y)))
+				       '(1 2 3)
+				       '(1 2 3)))
+                          (list i)))))
+
 (define-test mapc.error.1
-  (assert-error 'type-error (mapc #'1+ 1)))
+  (assert-error 'type-error (mapc #'1+ (if (twisted '(a b c)) 1 '(1 2 3)))))
 
 (define-test mapc.error.2
-  (assert-error 'type-error (mapc #'1+ #(1 2 3))))
+  (assert-error 'type-error (mapc #'1+ (if (twisted '(a b c)) #(1 2 3) '(1 2 3)))))
 
 (define-test mapc.error.3
   (assert-error 'type-error (mapc #'1+ '(1 2 . 3))))
 
 (define-test mapc.error.4
-  (assert-error 'type-error (mapc #'1+ "1")))
+  (assert-error 'type-error (mapc #'1+ (if (twisted '(a b c)) "1" '(1 2 3)))))
 
 (define-test mapc.error.5
   (assert-error 'error (mapc #'1+)))
@@ -2470,20 +2492,25 @@
 (define-test maplist.1
   (assert-equal '() (maplist #'car '())))
 
-(define-test maplist.1
+(define-test maplist.2
   (assert-equal '(1 2 3) (maplist #'car '(1 2 3))))
 
+(define-test maplist.apply.1
+  (assert-equal '(1 2 3)
+		(apply (cadr (list 'a #'maplist))
+		       (list #'car '(1 2 3)))))
+
 (define-test maplist.error.1
-  (assert-error 'type-error (maplist #'car 1)))
+  (assert-error 'type-error (maplist #'car (if (twisted '(a b c)) 1 '(a b c)))))
 
 (define-test maplist.error.2
-  (assert-error 'type-error (maplist #'car #(1 2 3))))
+  (assert-error 'type-error (maplist #'car (if (twisted '(a b c)) #(1 2 3) '(a b c)))))
 
 (define-test maplist.error.3
   (assert-error 'type-error (maplist #'car '(1 2 . 3))))
 
 (define-test maplist.error.4
-  (assert-error 'type-error (maplist #'car "1")))
+  (assert-error 'type-error (maplist #'car (if (twisted '(a b c)) "1" '(a b c)))))
 
 (define-test maplist.error.5
   (assert-error 'error (maplist #'car)))
@@ -2505,17 +2532,25 @@
                                '(1 2 3))
                          i))))
 
+(define-test mapl.apply.1
+  (let ((i 0))
+    (assert-equal 6
+                  (progn (apply (cadr (list 'a #'mapl))
+				(list (mapl (lambda (sublist) (incf i (car sublist)))
+					    '(1 2 3))))
+                         i))))
+
 (define-test mapl.error.1
-  (assert-error 'type-error (mapl #'car 1)))
+  (assert-error 'type-error (mapl #'car (if (twisted '(a b c)) 1 '(a b c)))))
 
 (define-test mapl.error.2
-  (assert-error 'type-error (mapl #'car #(1 2 3))))
+  (assert-error 'type-error (mapl #'car (if (twisted '(a b c)) #(1 2 3) '(a b c)))))
 
 (define-test mapl.error.3
   (assert-error 'type-error (mapl #'car '(1 2 . 3))))
 
 (define-test mapl.error.4
-  (assert-error 'type-error (mapl #'car "1")))
+  (assert-error 'type-error (mapl #'car (if (twisted '(a b c)) "1" '(a b c)))))
 
 (define-test mapl.error.5
   (assert-error 'error (mapl #'car)))
@@ -2547,17 +2582,28 @@
   (assert-equal '()
 		(mapcan #'identity '())))
 
+(define-test mapcan.apply.1
+  (let ((a (list 'a))
+	(b (list 'b))
+	(c (list 'c)))
+    (assert-eq c
+	       (cddr (apply (cadr (list 'a #'mapcan))
+			    (list #'identity (list a b c)))))))
+
 (define-test mapcan.error.1
-  (assert-error 'type-error (mapcan #'car 1)))
+  (assert-error 'type-error
+		(mapcan #'car (if (twisted '(a b c)) 1 '((a) (b) (c))))))
 
 (define-test mapcan.error.2
-  (assert-error 'type-error (mapcan #'car #(1 2 3))))
+  (assert-error 'type-error
+		(mapcan #'car (if (twisted '(a b c)) #(1 2 3) '((a) (b) (c))))))
 
 (define-test mapcan.error.3
   (assert-error 'type-error (mapcan #'car '(1 2 . 3))))
 
 (define-test mapcan.error.4
-  (assert-error 'type-error (mapcan #'car "1")))
+  (assert-error 'type-error
+		(mapcan #'car (if (twisted '(a b c)) "1" '((a) (b) (c))))))
 
 (define-test mapcan.error.5
   (assert-error 'error (mapcan #'car)))
