@@ -2826,6 +2826,63 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the butlast function
+
+(define-test butlast.1
+  (assert-equal '() (butlast '())))
+
+(define-test butlast.2
+  (assert-equal '() (butlast '(0))))
+
+(define-test butlast.3
+  (assert-equal '(0) (butlast '(0 1))))
+
+(define-test butlast.4
+  (assert-equal '() (butlast '(0 . 1))))
+
+(define-test butlast.5
+  (assert-equal '(0) (butlast '(0 1 . 2))))
+
+(define-test butlast.6
+  (assert-equal '() (butlast '() 0)))
+
+(define-test butlast.7
+  (assert-equal '() (butlast '() 1)))
+
+(define-test butlast.8
+  (assert-equal '() (butlast '() 2)))
+
+(define-test butlast.9
+  (assert-equal '(0) (butlast '(0) 0)))
+
+(define-test butlast.10
+  (assert-equal '(0 1) (butlast '(0 1) 0)))
+
+(define-test butlast.11
+  (assert-equal '(0) (butlast '(0 . 1) 0)))
+
+(define-test butlast.12
+  (assert-equal '(0) (butlast '(0 1 2) 2)))
+
+(define-test butlast.13
+  (assert-equal '() (butlast '(0 1 2) 3)))
+
+(define-test butlast.13
+  (assert-equal '() (butlast '(0 1 2) 4)))
+
+(define-test butlast.error.1
+  (assert-error 'type-error
+		(butlast '(0 1 2) (if (twisted '(1 2 3)) -1 1))))
+
+(define-test butlast.error.2
+  (assert-error 'type-error
+		(butlast '(0 1 2) (if (twisted '(1 2 3)) 'a 1))))
+
+;;; FIXME test for circular lists.  We can't do that right now
+;;; because we would go into an infinite loop.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the null function
 
 (define-test null.1
