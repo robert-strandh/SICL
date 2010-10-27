@@ -2999,6 +2999,71 @@
   (assert-error 'error
 		(subst 0 1 2 :test #'= :test-not #'=)))
 
+;;; old one left over.  Is it still needed?
+(define-test subst.1
+  (assert-equal '(a (c))
+		(subst 'c '(b) '(a ((b))) :test-not (complement #'equal))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the subst-if function
+
+(define-test |subst-if key=identity 1|
+  (assert-equal '()
+		(subst-if 'a
+			  (lambda (y) (and (numberp y) (zerop (1- y))))
+			  '())))
+
+(define-test |subst-if key=identity 2|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst-if 'a
+			  (lambda (y) (and (numberp y) (zerop y)))
+			  '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+
+(define-test |subst-if key=other 1|
+  (assert-equal '()
+		(subst-if 'a
+			  (lambda (y) (and (numberp y) (zerop (1- y))))
+			  '()
+			  :key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |subst-if key=other 2|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst-if 'a
+			  (lambda (y) (and (numberp y) (zerop (1- y))))
+			  '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+			  :key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the subst-if-not function
+
+(define-test |subst-if-not key=identity 1|
+  (assert-equal '()
+		(subst-if-not 'a
+			      (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+			      '())))
+
+(define-test |subst-if-not key=identity 2|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst-if-not 'a
+			      (lambda (y) (not (and (numberp y) (zerop y))))
+			      '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+
+(define-test |subst-if-not key=other 1|
+  (assert-equal '()
+		(subst-if-not 'a
+			      (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+			      '()
+			      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |subst-if-not key=other 2|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst-if-not 'a
+			      (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+			      '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+			      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the null function
@@ -4099,15 +4164,6 @@
 		  (pop (car list)))
     (assert-equal '((2))
 		  list)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Tests for the subst function
-
-(define-test subst.1
-  (assert-equal '(a (c))
-		(subst 'c '(b) '(a ((b))) :test-not (complement #'equal))))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
