@@ -713,6 +713,9 @@
 ;;; This implementation works according to the HyperSpec note
 ;;; when n is 0.
 
+;;; FIXME: The HyperSpec says that we must signal a type-error
+;;; for circular lists, but we currently don't. 
+
 (defun butlast (list &optional (n 1))
   (check-type list list "a list")
   (check-type n (integer 0) "a nonnegative integer")
@@ -736,6 +739,9 @@
 ;;; the list be traversed several times, and since list traversal
 ;;; dominates the time here, this is a win.
 
+;;; FIXME: The HyperSpec says that we must signal a type-error
+;;; for circular lists, but we currently don't. 
+
 (defun nbutlast-1 (list)
   (check-type list list "a list")
   (if (atom (cdr list))
@@ -753,6 +759,9 @@
                        c (cdr c)))
         (setf (cdr a) nil)
         list)))
+
+;;; FIXME: The HyperSpec says that we must signal a type-error
+;;; for circular lists, but we currently don't. 
 
 (defun nbutlast (list &optional (n 1))
   (check-type list list "a list")
@@ -825,41 +834,38 @@
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
 
-;;; Special version if test-not is eq and key is identity.
+;;; We do not provide special versions for when the key is identity and
+;;; the test-not is either eq or eql.  Here is why:
+;;;
+;;; Let's start with eq, and let's suppose the old item is an atom.
+;;; Then either the old item is eq to the tree or not eq to the tree.
+;;; If the old item is eq to the tree, then the tree too is an atom,
+;;; and it is returned, because no substitutions are made, and we
+;;; reached a leaf of the tree.  If the old item is not eq to the
+;;; tree, then we make a substitution and return the new item.  In
+;;; other words, this operation is the same as:
+;;; (if (eq old-item tree) old-item new-item)
+;;;
+;;; Now suppose the old item is not an atom, and thus a cons.  Then
+;;; the old item is either eq to the tree or not.  If the old item is
+;;; not eq to the tree, then we return the new item and stop.  If the
+;;; old item is eq to the tree, consider the two immediate subtrees
+;;; (car and cdr) of the tree.  If none of them is eq to the the old
+;;; item, then we return a cons where the car and cdr both contain the
+;;; new item.  Now let's say that the car of the tree is eq to the old
+;;; item.  Then it is also eq to the tree itself (beacuase we are
+;;; handling the case where the old item and the tree are eq).  Then
+;;; we have a circular structure, and it is undefined (the Hyperspec
+;;; actually doesn't say that, but the Notes on the relevant page
+;;; suggest it) what happens.  It is therefore very unlikely that
+;;; someone would use this special case, so we have decided not to
+;;; include it.
+;;;
+;;; A similar argument can be made for eql. 
 
-(defun subst-not-eq-identity (new old tree)
-  (labels ((traverse (tree)
-             (cond ((not (eq tree old)) new)
-                   ((atom tree) tree)
-                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
-    (traverse tree)))
-
-;;; Special version if test-not is eql and key is identity.
-
-(defun subst-not-eql-identity (new old tree)
-  (labels ((traverse (tree)
-             (cond ((not (eql tree old)) new)
-                   ((atom tree) tree)
-                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
-    (traverse tree)))
-
-;;; Special version if test-not is eq and key is given.
-
-(defun subst-not-eq-key (new old tree key)
-  (labels ((traverse (tree)
-             (cond ((not (eq (funcall key tree) old)) new)
-                   ((atom tree) tree)
-                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
-    (traverse tree)))
-
-;;; Special version if test-not is eql and key is given.
-
-(defun subst-not-eql-key (new old tree key)
-  (labels ((traverse (tree)
-             (cond ((not (eql (funcall key tree) old)) new)
-                   ((atom tree) tree)
-                   (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
-    (traverse tree)))
+;;; While it is possible that a test-not of eq or eql could be useful
+;;; in combination with a key argument that is not identity, we do not
+;;; think that case is very common either, so we omit it too. 
 
 ;;; Special version if test-not is given and key is identity.
 
@@ -888,26 +894,18 @@
               (subst-eq-key new old tree key)
               (if (or (eq test #'eql) (eq test 'eql))
                   (subst-eql-key new old tree key)
-                  (subst-test-key  new old tree test key)))
+                  (subst-test-key new old tree test key)))
           (if test-not
-              (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (subst-not-eq-key new old tree key)
-                  (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (subst-not-eql-key new old tree key)
-                      (subst-test-not-key  new old tree test-not key)))
+	      (subst-test-not-key new old tree test-not key)
               (subst-eql-key new old tree key)))
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
               (subst-eq-identity new old tree)
               (if (or (eq test #'eql) (eq test 'eql))
                   (subst-eql-identity new old tree)
-                  (subst-test-identity  new old tree test)))
+                  (subst-test-identity new old tree test)))
           (if test-not
-              (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (subst-not-eq-identity new old tree)
-                  (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (subst-not-eql-identity new old tree)
-                      (subst-test-not-identity  new old tree test-not)))
+	      (subst-test-not-identity new old tree test-not)
               (subst-eql-identity new old tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
