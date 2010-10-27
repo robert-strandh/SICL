@@ -2311,6 +2311,24 @@
   (assert-false (tree-equal '(1) '(2))))
 
 (define-test tree-equal.7
+  (assert-true (tree-equal 'a 'a :test #'eq)))
+
+(define-test tree-equal.8
+  (assert-false (tree-equal 'a 'b :test #'eq)))
+
+(define-test tree-equal.9
+  (assert-true (tree-equal 'a 'b :test-not #'eq)))
+
+(define-test tree-equal.10
+  (assert-false (tree-equal 'a 'a :test-not #'eq)))
+
+(define-test tree-equal.11
+  (assert-true (tree-equal '(a) '(a) :test #'eq)))
+
+(define-test tree-equal.12
+  (assert-false (tree-equal '(a) '(a) :test-not #'eq)))
+
+(define-test tree-equal.13
   (assert-true (tree-equal '(1) '(2)
                            :test (lambda (x y)
                                    (or (eql x y)
@@ -2318,7 +2336,7 @@
                                             (numberp y)
                                             (<= (abs (- x y)) 1)))))))
 
-(define-test tree-equal.8
+(define-test tree-equal.14
   (assert-false (tree-equal '(1) '(2) :test-not #'eql)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
