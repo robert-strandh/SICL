@@ -2536,8 +2536,8 @@
   (let ((i 0))
     (assert-equal 6
                   (progn (apply (cadr (list 'a #'mapl))
-				(list (mapl (lambda (sublist) (incf i (car sublist)))
-					    '(1 2 3))))
+				(list (lambda (sublist) (incf i (car sublist)))
+				      '(1 2 3)))
                          i))))
 
 (define-test mapl.error.1
@@ -2880,6 +2880,124 @@
 
 ;;; FIXME test for circular lists.  We can't do that right now
 ;;; because we would go into an infinite loop.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the subst function
+
+(define-test |subst test=eql key=identity 1a|
+  (assert-equal '()
+		(subst 'a 0 '())))
+
+(define-test |subst test=eql key=identity 1b|
+  (assert-equal '()
+		(subst 'a 0 '() :test #'eql)))
+
+(define-test |subst test=eql key=identity 1c|
+  (assert-equal '()
+		(subst 'a 0 '() :test 'eql)))
+
+(define-test |subst test=eql key=identity 2a|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+
+(define-test |subst test=eql key=identity 2b|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		       :test #'eql)))
+
+(define-test |subst test=eql key=identity 2c|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		       :test 'eql)))
+
+(define-test |subst test=eq key=identity 1|
+  (assert-equal '()
+		(subst 'a 'b '()
+		       :test #'eq)))
+
+(define-test |subst test=eq key=identity 2|
+  (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
+		(subst 'a 'b '(((b . c) . (f . b)) . ((b . d) . (e . b)))
+		       :test #'eq)))
+
+(define-test |subst test=other key=identity 1|
+  (assert-equal '()
+		(subst 'a 0 '()
+		       :test (lambda (x y) (and (numberp y) (= x (1- y)))))))
+
+(define-test |subst test=other key=identity 2|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		        :test (lambda (x y) (and (numberp y) (= x y))))))
+
+(define-test |subst test=eql key=other 1a|
+  (assert-equal '()
+		(subst 'a 0 '()
+		       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |subst test=eql key=other 1b|
+  (assert-equal '()
+		(subst 'a 0 '()
+		       :key (lambda (x) (if (numberp x) (1+ x) x))
+		       :test #'eql)))
+
+(define-test |subst test=eql key=other 1c|
+  (assert-equal '()
+		(subst 'a 0 '()
+		       :key (lambda (x) (if (numberp x) (1+ x) x))
+		       :test 'eql)))
+
+(define-test |subst test=eql key=other 2a|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |subst test=eql key=other 2b|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		       :key (lambda (x) (if (numberp x) (1+ x) x))
+		       :test #'eql)))
+
+(define-test |subst test=eql key=other 2c|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 1 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		       :key (lambda (x) (if (numberp x) (1+ x) x))
+		       :test 'eql)))
+
+(define-test |subst test=eq key=other 1|
+  (assert-equal '()
+		(subst 'a 'bb '()
+		       :test #'eq
+		       :key (lambda (x) (if (eq x 'b) 'bb x)))))
+
+(define-test |subst test=eq key=other 2|
+  (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
+		(subst 'a 'bb '(((b . c) . (f . b)) . ((b . d) . (e . b)))
+		       :test #'eq
+		       :key (lambda (x) (if (eq x 'b) 'bb x)))))
+
+(define-test |subst test=other key=other 1|
+  (assert-equal '()
+		(subst 'a 0 '()
+		       :test (lambda (x y) (and (numberp y) (= x (1- y))))
+		       :key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |subst test=other key=other 2|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		        :test (lambda (x y) (and (numberp y) (= x (1- y))))
+			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |subst test-not=any key=other 2|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |subst test=other test-not=other|
+  (assert-error 'error
+		(subst 0 1 2 :test #'= :test-not #'=)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
