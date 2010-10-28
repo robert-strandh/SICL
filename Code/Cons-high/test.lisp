@@ -3066,6 +3066,215 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the nsubst function
+
+(define-test |nsubst test=eql key=identity 1a|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree))))
+
+(define-test |nsubst test=eql key=identity 1b|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree :test #'eql))))
+
+(define-test |nsubst test=eql key=identity 1c|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree :test 'eql))))
+
+(define-test |nsubst test=eql key=identity 2a|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 0 tree))))
+
+(define-test |nsubst test=eql key=identity 2b|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 0 tree :test #'eql))))
+
+(define-test |nsubst test=eql key=identity 2c|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 0 tree :test 'eql))))
+
+(define-test |nsubst test=eq key=identity 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 'b tree :test #'eq))))
+
+(define-test |nsubst test=eq key=identity 2|
+  (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b))))))
+    (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
+		  (nsubst 'a 'b tree :test #'eq))))
+
+(define-test |nsubst test=other key=identity 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree
+			  :test (lambda (x y) (and (numberp y) (= x (1- y))))))))
+
+(define-test |nsubst test=other key=identity 2|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 0 tree
+			  :test (lambda (x y) (and (numberp y) (= x y)))))))
+
+(define-test |nsubst test=eql key=other 1a|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree
+			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+(define-test |nsubst test=eql key=other 1b|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree
+			  :key (lambda (x) (if (numberp x) (1+ x) x))
+			  :test #'eql))))
+
+(define-test |nsubst test=eql key=other 1c|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree
+			  :key (lambda (x) (if (numberp x) (1+ x) x))
+			  :test 'eql))))
+
+(define-test |nsubst test=eql key=other 2a|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 1 tree
+			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+(define-test |nsubst test=eql key=other 2b|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 1 tree
+			  :key (lambda (x) (if (numberp x) (1+ x) x))
+			  :test #'eql))))
+
+(define-test |nsubst test=eql key=other 2c|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 1 tree
+			  :key (lambda (x) (if (numberp x) (1+ x) x))
+			  :test 'eql))))
+
+(define-test |nsubst test=eq key=other 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 'bb tree
+			  :test #'eq
+			  :key (lambda (x) (if (eq x 'b) 'bb x))))))
+
+(define-test |nsubst test=eq key=other 2|
+  (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b))))))
+    (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
+		  (nsubst 'a 'bb tree
+			  :test #'eq
+			  :key (lambda (x) (if (eq x 'b) 'bb x))))))
+
+(define-test |nsubst test=other key=other 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree
+			  :test (lambda (x y) (and (numberp y) (= x (1- y))))
+			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+(define-test |nsubst test=other key=other 2|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 0 tree
+			  :test (lambda (x y) (and (numberp y) (= x (1- y))))
+			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+(define-test |nsubst test-not=any key=other 2|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst 'a 0 tree
+			  :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+(define-test |nsubst test=other test-not=other|
+  (assert-error 'error
+		(nsubst 0 1 2 :test #'= :test-not #'=)))
+
+;;; old one left over.  Is it still needed?
+(define-test nsubst.1
+  (let ((tree (copy-tree '(a ((b))))))
+    (assert-equal '(a (c))
+		  (nsubst 'c '(b) tree :test-not (complement #'equal)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nsubst-if function
+
+(define-test |nsubst-if key=identity 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst-if 'a
+			     (lambda (y) (and (numberp y) (zerop (1- y))))
+			     tree))))
+
+(define-test |nsubst-if key=identity 2|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst-if 'a
+			     (lambda (y) (and (numberp y) (zerop y)))
+			     tree))))
+
+(define-test |nsubst-if key=other 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst-if 'a
+			     (lambda (y) (and (numberp y) (zerop (1- y))))
+			     tree
+			     :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+(define-test |nsubst-if key=other 2|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst-if 'a
+			     (lambda (y) (and (numberp y) (zerop (1- y))))
+			     tree
+			     :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nsubst-if-not function
+
+(define-test |nsubst-if-not key=identity 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst-if-not 'a
+				 (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+				 tree))))
+
+(define-test |nsubst-if-not key=identity 2|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst-if-not 'a
+				 (lambda (y) (not (and (numberp y) (zerop y))))
+				 tree))))
+
+(define-test |nsubst-if-not key=other 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst-if-not 'a
+				 (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+				 tree
+				 :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+(define-test |nsubst-if-not key=other 2|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (nsubst-if-not 'a
+				 (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+				 tree
+				 :key (lambda (x) (if (numberp x) (1+ x) x))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the null function
 
 (define-test null.1
