@@ -1096,85 +1096,8 @@
           ((atom tree) tree)
           (t (traverse tree) tree))))
 
-;;; Special version if test-not is eq and key is identity.
-
-(defun nsubst-not-eq-identity (new old tree)
-  (labels ((traverse (tree)
-             (cond ((not (eq (car tree) old))
-                    (setf (car tree) new))
-                   ((atom (car tree))
-                    nil)
-                   (t
-                    (traverse (car tree))))
-             (cond ((not (eq (cdr tree) old))
-                    (setf (cdr tree) new))
-                   ((atom (cdr tree))
-                    nil)
-                   (t
-                    (traverse (cdr tree))))))
-    (cond ((not (eq tree old)) new)
-          ((atom tree) tree)
-          (t (traverse tree) tree))))
-
-;;; Special version if test-not is eql and key is identity.
-
-(defun nsubst-not-eql-identity (new old tree)
-  (labels ((traverse (tree)
-             (cond ((not (eql (car tree) old))
-                    (setf (car tree) new))
-                   ((atom (car tree))
-                    nil)
-                   (t
-                    (traverse (car tree))))
-             (cond ((not (eql (cdr tree) old))
-                    (setf (cdr tree) new))
-                   ((atom (cdr tree))
-                    nil)
-                   (t
-                    (traverse (cdr tree))))))
-    (cond ((not (eql tree old)) new)
-          ((atom tree) tree)
-          (t (traverse tree) tree))))
-
-;;; Special version if test-not is eq and key is given.
-
-(defun nsubst-not-eq-key (new old tree key)
-  (labels ((traverse (tree)
-             (cond ((eq (funcall key (car tree)) old)
-                    (setf (car tree) new))
-                   ((atom (car tree))
-                    nil)
-                   (t
-                    (traverse (car tree))))
-             (cond ((eq (funcall key (cdr tree)) old)
-                    (setf (cdr tree) new))
-                   ((atom (cdr tree))
-                    nil)
-                   (t
-                    (traverse (cdr tree))))))
-    (cond ((eq (funcall key tree) old) new)
-          ((atom tree) tree)
-          (t (traverse tree) tree))))
-
-;;; Special version if test-not is eql and key is given.
-
-(defun nsubst-not-eql-key (new old tree key)
-  (labels ((traverse (tree)
-             (cond ((not (eql (funcall key (car tree)) old))
-                    (setf (car tree) new))
-                   ((atom (car tree))
-                    nil)
-                   (t
-                    (traverse (car tree))))
-             (cond ((not (eql (funcall key (cdr tree)) old))
-                    (setf (cdr tree) new))
-                   ((atom (cdr tree))
-                    nil)
-                   (t
-                    (traverse (cdr tree))))))
-    (cond ((not (eql (funcall key tree) old)) new)
-          ((atom tree) tree)
-          (t (traverse tree) tree))))
+;;; As with subst, we do not provide special versions for a :test-not
+;;; of eq or eql.  See comment above for an explanation.
 
 ;;; Special version if test-not is given and key is identity.
 
@@ -1227,11 +1150,7 @@
                   (nsubst-eql-key new old tree key)
                   (nsubst-test-key  new old tree test key)))
           (if test-not
-              (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (nsubst-not-eq-key new old tree key)
-                  (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (nsubst-not-eql-key new old tree key)
-                      (nsubst-test-not-key  new old tree test-not key)))
+	      (nsubst-test-not-key  new old tree test-not key)
               (nsubst-eql-key new old tree key)))
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -1240,11 +1159,7 @@
                   (nsubst-eql-identity new old tree)
                   (nsubst-test-identity  new old tree test)))
           (if test-not
-              (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (nsubst-not-eq-identity new old tree)
-                  (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (nsubst-not-eql-identity new old tree)
-                      (nsubst-test-not-identity  new old tree test-not)))
+	      (nsubst-test-not-identity  new old tree test-not)
               (nsubst-eql-identity new old tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
