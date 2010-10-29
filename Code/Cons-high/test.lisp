@@ -3084,19 +3084,25 @@
 		  (nsubst 'a 0 tree :test 'eql))))
 
 (define-test |nsubst test=eql key=identity 2a|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 0 tree))))
+		  (setf tree2 (nsubst 'a 0 tree)))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=identity 2b|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 0 tree :test #'eql))))
+		  (setf tree2 (nsubst 'a 0 tree :test #'eql)))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=identity 2c|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 0 tree :test 'eql))))
+		  (setf tree2 (nsubst 'a 0 tree :test 'eql)))
+    (assert-eq tree tree2)))    
 
 (define-test |nsubst test=eq key=identity 1|
   (let ((tree (copy-tree '())))
@@ -3104,9 +3110,11 @@
 		  (nsubst 'a 'b tree :test #'eq))))
 
 (define-test |nsubst test=eq key=identity 2|
-  (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b))))))
+  (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
+	(tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		  (nsubst 'a 'b tree :test #'eq))))
+		  (setf tree2 (nsubst 'a 'b tree :test #'eq)))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=other key=identity 1|
   (let ((tree (copy-tree '())))
@@ -3115,10 +3123,12 @@
 			  :test (lambda (x y) (and (numberp y) (= x (1- y))))))))
 
 (define-test |nsubst test=other key=identity 2|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 0 tree
-			  :test (lambda (x y) (and (numberp y) (= x y)))))))
+		  (setf tree2 (nsubst 'a 0 tree
+				      :test (lambda (x y) (and (numberp y) (= x y))))))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=other 1a|
   (let ((tree (copy-tree '())))
@@ -3141,24 +3151,30 @@
 			  :test 'eql))))
 
 (define-test |nsubst test=eql key=other 2a|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 1 tree
-			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+		  (setf tree2 (nsubst 'a 1 tree
+				      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=other 2b|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 1 tree
-			  :key (lambda (x) (if (numberp x) (1+ x) x))
-			  :test #'eql))))
+		  (setf tree2 (nsubst 'a 1 tree
+				      :key (lambda (x) (if (numberp x) (1+ x) x))
+				      :test #'eql)))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=eql key=other 2c|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 1 tree
-			  :key (lambda (x) (if (numberp x) (1+ x) x))
-			  :test 'eql))))
+		  (setf tree2 (nsubst 'a 1 tree
+				      :key (lambda (x) (if (numberp x) (1+ x) x))
+				      :test 'eql)))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=eq key=other 1|
   (let ((tree (copy-tree '())))
@@ -3168,11 +3184,13 @@
 			  :key (lambda (x) (if (eq x 'b) 'bb x))))))
 
 (define-test |nsubst test=eq key=other 2|
-  (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b))))))
+  (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
+	(tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
-		  (nsubst 'a 'bb tree
-			  :test #'eq
-			  :key (lambda (x) (if (eq x 'b) 'bb x))))))
+		  (setf tree2 (nsubst 'a 'bb tree
+				      :test #'eq
+				      :key (lambda (x) (if (eq x 'b) 'bb x)))))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=other key=other 1|
   (let ((tree (copy-tree '())))
@@ -3182,18 +3200,22 @@
 			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsubst test=other key=other 2|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 0 tree
-			  :test (lambda (x y) (and (numberp y) (= x (1- y))))
-			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+		  (setf tree2 (nsubst 'a 0 tree
+				      :test (lambda (x y) (and (numberp y) (= x (1- y))))
+				      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test-not=any key=other 2|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst 'a 0 tree
-			  :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
-			  :key (lambda (x) (if (numberp x) (1+ x) x))))))
+		  (setf tree2 (nsubst 'a 0 tree
+				      :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+				      :key (lambda (x) (if (numberp x) (1+ x) x)))))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst test=other test-not=other|
   (assert-error 'error
@@ -3217,11 +3239,13 @@
 			     tree))))
 
 (define-test |nsubst-if key=identity 2|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst-if 'a
-			     (lambda (y) (and (numberp y) (zerop y)))
-			     tree))))
+		  (setf tree2 (nsubst-if 'a
+					 (lambda (y) (and (numberp y) (zerop y)))
+					 tree)))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst-if key=other 1|
   (let ((tree (copy-tree '())))
@@ -3232,12 +3256,14 @@
 			     :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsubst-if key=other 2|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst-if 'a
-			     (lambda (y) (and (numberp y) (zerop (1- y))))
-			     tree
-			     :key (lambda (x) (if (numberp x) (1+ x) x))))))
+		  (setf tree2 (nsubst-if 'a
+					 (lambda (y) (and (numberp y) (zerop (1- y))))
+					 tree
+					 :key (lambda (x) (if (numberp x) (1+ x) x)))))
+    (assert-eq tree tree2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3251,11 +3277,13 @@
 				 tree))))
 
 (define-test |nsubst-if-not key=identity 2|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst-if-not 'a
-				 (lambda (y) (not (and (numberp y) (zerop y))))
-				 tree))))
+		  (setf tree2 (nsubst-if-not 'a
+					     (lambda (y) (not (and (numberp y) (zerop y))))
+					     tree)))
+    (assert-eq tree tree2)))
 
 (define-test |nsubst-if-not key=other 1|
   (let ((tree (copy-tree '())))
@@ -3266,12 +3294,14 @@
 				 :key (lambda (x) (if (numberp x) (1+ x) x))))))
 
 (define-test |nsubst-if-not key=other 2|
-  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))))
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
     (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
-		  (nsubst-if-not 'a
-				 (lambda (y) (not (and (numberp y) (zerop (1- y)))))
-				 tree
-				 :key (lambda (x) (if (numberp x) (1+ x) x))))))
+		  (setf tree2 (nsubst-if-not 'a
+					     (lambda (y) (not (and (numberp y) (zerop (1- y)))))
+					     tree
+					     :key (lambda (x) (if (numberp x) (1+ x) x)))))
+    (assert-eq tree tree2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3374,41 +3404,193 @@
 ;;;
 ;;; Tests for the assoc function
 
-(define-test assoc.1
+(define-test |assoc test=eql key=identity 1a|
   (assert-equal '(a . b)
 		(assoc 'a '((b) nil (a . b) (a . c)))))
 
-(define-test assoc.2
+(define-test |assoc test=eql key=identity 1b|
+  (assert-equal '(a . b)
+		(assoc 'a '((b) nil (a . b) (a . c))
+		       :test #'eql)))
+
+(define-test |assoc test=eql key=identity 1c|
+  (assert-equal '(a . b)
+		(assoc 'a '((b) nil (a . b) (a . c))
+		       :test 'eql)))
+
+(define-test |assoc test=eql key=identity 2a|
   (assert-equal nil
 		(assoc 'c '((b) nil (a . b) (a . c)))))
 
-(define-test assoc.3
+(define-test |assoc test=eql key=identity 2b|
+  (assert-equal nil
+		(assoc 'c '((b) nil (a . b) (a . c))
+		       :test #'eql)))
+
+(define-test |assoc test=eql key=identity 2c|
+  (assert-equal nil
+		(assoc 'c '((b) nil (a . b) (a . c))
+		       :test 'eql)))
+
+(define-test |assoc test=eql key=identity 3a|
   (assert-equal '(nil . c)
 		(assoc 'nil '((b) nil (a . b) (nil . c)))))
 
-(define-test assoc.4
+(define-test |assoc test=eql key=identity 3b|
+  (assert-equal '(nil . c)
+		(assoc 'nil '((b) nil (a . b) (nil . c))
+		       :test #'eql)))
+
+(define-test |assoc test=eql key=identity 3c|
+  (assert-equal '(nil . c)
+		(assoc 'nil '((b) nil (a . b) (nil . c))
+		       :test 'eql)))
+
+(define-test |assoc test=eql key=identity 4a|
   (assert-equal '(123 . b)
 		(assoc 123 '((b) nil (123 . b) (nil . c)))))
 
-(define-test assoc.5
+(define-test |assoc test=eql key=identity 4b|
+  (assert-equal '(123 . b)
+		(assoc 123 '((b) nil (123 . b) (nil . c))
+		       :test #'eql)))
+
+(define-test |assoc test=eql key=identity 4c|
+  (assert-equal '(123 . b)
+		(assoc 123 '((b) nil (123 . b) (nil . c))
+		       :test 'eql)))
+
+(define-test |assoc test=eql key=identity 5a|
   (assert-equal '(#\a . b)
 		(assoc #\a '((b) nil (#\a . b) (nil . c)))))
 
-(define-test assoc.6
+(define-test |assoc test=eql key=identity 5b|
+  (assert-equal '(#\a . b)
+		(assoc #\a '((b) nil (#\a . b) (nil . c))
+		       :test #'eql)))
+
+(define-test |assoc test=eql key=identity 5c|
+  (assert-equal '(#\a . b)
+		(assoc #\a '((b) nil (#\a . b) (nil . c))
+		       :test 'eql)))
+
+(define-test |assoc test=eq key=identity 1a|
+  (assert-equal '(a . b)
+		(assoc 'a '((b) nil (a . b) (a . c))
+		       :test #'eq)))
+
+(define-test |assoc test=eq key=identity 1b|
+  (assert-equal '(a . b)
+		(assoc 'a '((b) nil (a . b) (a . c))
+		       :test 'eq)))
+
+(define-test |assoc test=eq key=identity 2a|
+  (assert-equal nil
+		(assoc 'c '((b) nil (a . b) (a . c))
+		       :test #'eq)))
+
+(define-test |assoc test=eq key=identity 2b|
+  (assert-equal nil
+		(assoc 'c '((b) nil (a . b) (a . c))
+		       :test 'eq)))
+
+(define-test |assoc test=eq key=identity 3a|
+  (assert-equal '(nil . c)
+		(assoc 'nil '((b) nil (a . b) (nil . c))
+		       :test #'eq)))
+
+(define-test |assoc test=eq key=identity 3b|
+  (assert-equal '(nil . c)
+		(assoc 'nil '((b) nil (a . b) (nil . c))
+		       :test 'eq)))
+
+(define-test |assoc test=other key=identity 1|
   (assert-equal '((a b) c)
 		(assoc '(a b) '((a . b) nil ((a b) c) (d e))
 		       :test #'equal)))
 
-(define-test assoc.7
+(define-test |assoc test-not=other key=identity 1|
   (assert-equal '((a b) c)
 		(assoc '(a b) '((a . b) nil ((a b) c) (d e))
 		       :test-not (complement #'equal))))
 
-(define-test assoc.8
+(define-test |assoc test=eql key=other 1|
   (assert-equal '((a b) c)
 		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
 		       :key #'car)))
 
+(define-test |assoc test=eq key=other 1|
+  (assert-equal '((a b) c)
+		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+		       :test #'eq
+		       :key #'car)))
+
+(define-test |assoc test=other key=other 1|
+  (assert-equal '((a b) c)
+		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+		       :test (lambda (x y) (eq x y))
+		       :key #'car)))
+
+(define-test |assoc test-not=eql key=identity 1a|
+  (assert-equal '(345 b)
+		(assoc '234 '((234 a) (345 b) (234 c))
+		       :test-not #'eql)))
+		 
+(define-test |assoc test-not=eql key=identity 1b|
+  (assert-equal '(345 b)
+		(assoc '234 '((234 a) (345 b) (234 c))
+		       :test-not 'eql)))
+		 
+(define-test |assoc test-not=eq key=identity 1a|
+  (assert-equal '(y b)
+		(assoc 'x '((x a) (y b) (x c))
+		       :test-not #'eq)))
+		 
+(define-test |assoc test-not=eq key=identity 1b|
+  (assert-equal '(y b)
+		(assoc 'x '((x a) (y b) (x c))
+		       :test-not 'eq)))
+		 
+(define-test assoc.error.1
+  (assert-error 'type-error
+		(assoc 'a '((b . c) nil d (a b)))))
+
+(define-test |assoc test-not=eql key=other 1a|
+  (assert-equal '(345 b)
+		(assoc '235 '((234 a) (345 b) (234 c))
+		       :test-not #'eql
+		       :key #'1+)))
+		 
+(define-test |assoc test-not=eql key=other 1b|
+  (assert-equal '(345 b)
+		(assoc '235 '((234 a) (345 b) (234 c))
+		       :test-not 'eql
+		       :key #'1+)))
+		 
+(define-test |assoc test-not=eq key=other 1a|
+  (assert-equal '((y) b)
+		(assoc 'x '(((x) a) ((y) b) ((x) c))
+		       :test-not #'eq
+		       :key #'car)))
+		 
+(define-test |assoc test-not=eq key=other 1b|
+  (assert-equal '((y) b)
+		(assoc 'x '(((x) a) ((y) b) ((x) c))
+		       :test-not 'eq
+		       :key #'car)))
+		 
+(define-test |assoc test-not=other key=other 1a|
+  (assert-equal '(345 b)
+		(assoc '234 '((234 a) (345 b) (234 c))
+		       :test-not (lambda (x y) (eql (1+ x) y))
+		       :key #'1+)))
+		 
+(define-test |assoc test-not=other key=other 1b|
+  (assert-equal '(345 b)
+		(assoc '234 '((234 a) (345 b) (234 c))
+		       :test-not (lambda (x y) (eql (1+ x) y))
+		       :key #'1+)))
+		 
 (define-test assoc.error.1
   (assert-error 'type-error
 		(assoc 'a '((b . c) nil d (a b)))))
