@@ -1279,7 +1279,7 @@
 (defun assoc-eq-identity (item alist)
   (loop for element in alist
         when (and (not (null element))
-		  (eq (car element) item))
+		  (eq item (car element)))
           return element))
 
 ;;; Special version when test is eql and key is identity.
@@ -1287,7 +1287,7 @@
 (defun assoc-eql-identity (item alist)
   (loop for element in alist
         when (and (not (null element))
-		  (eql (car element) item))
+		  (eql item (car element)))
           return element))
         
 ;;; Special version when test is eq and key is given.
@@ -1295,7 +1295,7 @@
 (defun assoc-eq-key (item alist key)
   (loop for element in alist
         when (and (not (null element))
-		  (eq (funcall key (car element)) item))
+		  (eq item (funcall key (car element))))
           return element))
   
 ;;; Special version when test is eql and key is given.
@@ -1303,7 +1303,7 @@
 (defun assoc-eql-key (item alist key)
   (loop for element in alist
         when (and (not (null element))
-		  (eql (funcall key (car element)) item))
+		  (eql item (funcall key (car element))))
           return element))
 
 ;;; Special version when test is given and key is identity.
@@ -1311,7 +1311,7 @@
 (defun assoc-test-identity (item alist test)
   (loop for element in alist
         when (and (not (null element))
-		  (funcall test (car element) item))
+		  (funcall test item (car element)))
           return element))
 
 ;;; Special version when test and key are both given.
@@ -1319,7 +1319,7 @@
 (defun assoc-test-key (item alist test key)
   (loop for element in alist
         when (and (not (null element))
-		  (funcall test (funcall key (car element)) item))
+		  (funcall test item (funcall key (car element))))
           return element))
   
 ;;; Special version when test-not is eq and key is identity.
@@ -1327,7 +1327,7 @@
 (defun assoc-not-eq-identity (item alist)
   (loop for element in alist
         when (and (not (null element))
-		  (not (eq (car element) item)))
+		  (not (eq item (car element))))
           return element))
 
 ;;; Special version when test-not is eql and key is identity.
@@ -1335,7 +1335,7 @@
 (defun assoc-not-eql-identity (item alist)
   (loop for element in alist
         when (and (not (null element))
-		  (not (eql (car element) item)))
+		  (not (eql item (car element))))
           return element))
         
 ;;; Special version when test-not is eq and key is given.
@@ -1343,7 +1343,7 @@
 (defun assoc-not-eq-key (item alist key)
   (loop for element in alist
         when (and (not (null element))
-		  (not (eq (funcall key (car element)) item)))
+		  (not (eq item (funcall key (car element)))))
           return element))
   
 ;;; Special version when test-not is eql and key is given.
@@ -1351,7 +1351,7 @@
 (defun assoc-not-eql-key (item alist key)
   (loop for element in alist
         when (and (not (null element))
-		  (not (eql (funcall key (car element)) item)))
+		  (not (eql item (funcall key (car element)))))
           return element))
 
 ;;; Special version when test-not is given and key is identity.
@@ -1359,7 +1359,7 @@
 (defun assoc-test-not-identity (item alist test)
   (loop for element in alist
         when (and (not (null element))
-		  (not (funcall test (car element) item)))
+		  (not (funcall test item (car element))))
           return element))
 
 ;;; Special version when test-not and key are both given.
@@ -1367,7 +1367,7 @@
 (defun assoc-test-not-key (item alist test key)
   (loop for element in alist
         when (and (not (null element))
-		  (not (funcall test (funcall key (car element)) item)))
+		  (not (funcall test item (funcall key (car element)))))
           return element))
   
 (defun assoc (item alist &key key test test-not)
@@ -1460,7 +1460,7 @@
 (defun rassoc-eq-identity (item alist)
   (loop for element in alist
         when (and (not (null element))
-		  (eq (cdr element) item))
+		  (eq item (cdr element)))
           return element))
 
 ;;; Special version when test is eql and key is identity.
@@ -1468,7 +1468,7 @@
 (defun rassoc-eql-identity (item alist)
   (loop for element in alist
         when (and (not (null element))
-		  (eql (cdr element) item))
+		  (eql item (cdr element)))
           return element))
         
 ;;; Special version when test is eq and key is given.
@@ -1476,7 +1476,7 @@
 (defun rassoc-eq-key (item alist key)
   (loop for element in alist
         when (and (not (null element))
-		  (eq (funcall key (cdr element)) item))
+		  (eq item (funcall key (cdr element))))
           return element))
   
 ;;; Special version when test is eql and key is given.
@@ -1484,7 +1484,7 @@
 (defun rassoc-eql-key (item alist key)
   (loop for element in alist
         when (and (not (null element))
-		  (eql (funcall key (cdr element)) item))
+		  (eql item (funcall key (cdr element))))
           return element))
 
 ;;; Special version when test is given and key is identity.
@@ -1492,7 +1492,7 @@
 (defun rassoc-test-identity (item alist test)
   (loop for element in alist
         when (and (not (null element))
-		  (funcall test (cdr element) item))
+		  (funcall test item (cdr element)))
           return element))
 
 ;;; Special version when test and key are both given.
@@ -1500,7 +1500,7 @@
 (defun rassoc-test-key (item alist test key)
   (loop for element in alist
         when (and (not (null element))
-		  (funcall test (funcall key (cdr element)) item))
+		  (funcall test item (funcall key (cdr element))))
           return element))
   
 ;;; Special version when test-not is eq and key is identity.
@@ -1508,7 +1508,7 @@
 (defun rassoc-not-eq-identity (item alist)
   (loop for element in alist
         when (and (not (null element))
-		  (not (eq (cdr element) item)))
+		  (not (eq item (cdr element))))
           return element))
 
 ;;; Special version when test-not is eql and key is identity.
@@ -1516,7 +1516,7 @@
 (defun rassoc-not-eql-identity (item alist)
   (loop for element in alist
         when (and (not (null element))
-		  (not (eql (cdr element) item)))
+		  (not (eql item (cdr element))))
           return element))
         
 ;;; Special version when test-not is eq and key is given.
@@ -1524,7 +1524,7 @@
 (defun rassoc-not-eq-key (item alist key)
   (loop for element in alist
         when (and (not (null element))
-		  (not (eq (funcall key (cdr element)) item)))
+		  (not (eq item (funcall key (cdr element)))))
           return element))
   
 ;;; Special version when test-not is eql and key is given.
@@ -1532,7 +1532,7 @@
 (defun rassoc-not-eql-key (item alist key)
   (loop for element in alist
         when (and (not (null element))
-		  (not (eql (funcall key (cdr element)) item)))
+		  (not (eql item (funcall key (cdr element)))))
           return element))
 
 ;;; Special version when test-not is given and key is identity.
@@ -1540,7 +1540,7 @@
 (defun rassoc-test-not-identity (item alist test)
   (loop for element in alist
         when (and (not (null element))
-		  (not (funcall test (cdr element) item)))
+		  (not (funcall test item (cdr element))))
           return element))
 
 ;;; Special version when test-not and key are both given.
@@ -1548,7 +1548,7 @@
 (defun rassoc-test-not-key (item alist test key)
   (loop for element in alist
         when (and (not (null element))
-		  (not (funcall test (funcall key (cdr element)) item)))
+		  (not (funcall test item (funcall key (cdr element)))))
           return element))
   
 (defun rassoc (item alist &key key test test-not)
