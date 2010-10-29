@@ -3753,44 +3753,270 @@
 ;;;
 ;;; Tests for the rassoc function
 
-(define-test rassoc.1
-  (assert-equal '(a . b)
-		(rassoc 'b '((b) nil (a . b) (a . c)))))
+(define-test |rassoc test=eql key=identity 1a|
+  (assert-equal '(b . a)
+		(rassoc 'a '((b) nil (b . a) (c . a)))))
 
-(define-test rassoc.2
+(define-test |rassoc test=eql key=identity 1b|
+  (assert-equal '(b . a)
+		(rassoc 'a '((b) nil (b . a) (c . a))
+		       :test #'eql)))
+
+(define-test |rassoc test=eql key=identity 1c|
+  (assert-equal '(b . a)
+		(rassoc 'a '((b) nil (b . a) (c . a))
+		       :test 'eql)))
+
+(define-test |rassoc test=eql key=identity 2a|
   (assert-equal nil
-		(rassoc 'd '((b) nil (a . b) (a . c)))))
+		(rassoc 'c '((b) nil (b . a) (c . a)))))
 
-(define-test rassoc.3
-  (assert-equal '(b)
-		(rassoc 'nil '((b) nil (a . b) (nil . c)))))
+(define-test |rassoc test=eql key=identity 2b|
+  (assert-equal nil
+		(rassoc 'c '((b) nil (b . a) (c . a))
+		       :test #'eql)))
 
-(define-test rassoc.4
+(define-test |rassoc test=eql key=identity 2c|
+  (assert-equal nil
+		(rassoc 'c '((b) nil (b . a) (c . a))
+		       :test 'eql)))
+
+(define-test |rassoc test=eql key=identity 3a|
+  (assert-equal '(c . nil)
+		(rassoc 'nil '((b . x) nil (b . a) (c . nil)))))
+
+(define-test |rassoc test=eql key=identity 3b|
+  (assert-equal '(c . nil)
+		(rassoc 'nil '((x . b) nil (b . a) (c . nil))
+		       :test #'eql)))
+
+(define-test |rassoc test=eql key=identity 3c|
+  (assert-equal '(c . nil)
+		(rassoc 'nil '((b . x) nil (b . a) (c . nil))
+		       :test 'eql)))
+
+(define-test |rassoc test=eql key=identity 4a|
   (assert-equal '(b . 123)
-		(rassoc 123 '((b) nil (b . 123) (nil . c)))))
+		(rassoc 123 '((b . x) nil (b . 123) (c . nil)))))
 
-(define-test rassoc.5
+(define-test |rassoc test=eql key=identity 4b|
+  (assert-equal '(b . 123)
+		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
+		       :test #'eql)))
+
+(define-test |rassoc test=eql key=identity 4c|
+  (assert-equal '(b . 123)
+		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
+		       :test 'eql)))
+
+(define-test |rassoc test=eql key=identity 5a|
   (assert-equal '(b . #\a)
-		(rassoc #\a '((b) nil (b . #\a) (nil . c)))))
+		(rassoc #\a '((b . x) nil (b . #\a) (c . nil)))))
 
-(define-test rassoc.6
-  (assert-equal '((a b) c)
-		(rassoc '(c) '((a . b) nil ((a b) c) (d e))
-			:test #'equal)))
+(define-test |rassoc test=eql key=identity 5b|
+  (assert-equal '(b . #\a)
+		(rassoc #\a '((b . x) nil (b . #\a) (c . nil))
+		       :test #'eql)))
 
-(define-test rassoc.7
-  (assert-equal '((a b) c)
-		(rassoc '(c) '((a . b) nil ((a b) c) (d e))
+(define-test |rassoc test=eql key=identity 5c|
+  (assert-equal '(b . #\a)
+		(rassoc #\a '((b . x) nil (b . #\a) (c . nil))
+		       :test 'eql)))
+
+(define-test |rassoc test=eq key=identity 1a|
+  (assert-equal '(b . a)
+		(rassoc 'a '((b . x) nil (b . a) (c . a))
+		       :test #'eq)))
+
+(define-test |rassoc test=eq key=identity 1b|
+  (assert-equal '(b . a)
+		(rassoc 'a '((b . x) nil (b . a) (c . a))
+		       :test 'eq)))
+
+(define-test |rassoc test=eq key=identity 2a|
+  (assert-equal nil
+		(rassoc 'c '((b . x) nil (b . a) (c . a))
+		       :test #'eq)))
+
+(define-test |rassoc test=eq key=identity 2b|
+  (assert-equal nil
+		(rassoc 'c '((b . x) nil (b . a) (c . a))
+		       :test 'eq)))
+
+(define-test |rassoc test=eq key=identity 3a|
+  (assert-equal '(c . nil)
+		(rassoc 'nil '((b . x) nil (b . a) (c . nil))
+		       :test #'eq)))
+
+(define-test |rassoc test=eq key=identity 3b|
+  (assert-equal '(c . nil)
+		(rassoc 'nil '((b . x) nil (b . a) (c . nil))
+		       :test 'eq)))
+
+(define-test |rassoc test=other key=identity 1|
+  (assert-equal '(c . (a b))
+		(rassoc '(a b) '((b . a) nil (c . (a b)) (e . d))
+		       :test #'equal)))
+
+(define-test |rassoc test-not=other key=identity 1|
+  (assert-equal '(c . (a b))
+		(rassoc '(a b) '((b . a) nil (c . (a b)) (e . d))
 		       :test-not (complement #'equal))))
 
-(define-test rassoc.8
-  (assert-equal '((a b) c)
-		(rassoc 'c '(((b a) b) nil ((a b) c) ((d) e))
+(define-test |rassoc test=eql key=other 1a|
+  (assert-equal '(c . (a b))
+		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
 		       :key #'car)))
 
+(define-test |rassoc test=eql key=other 1b|
+  (assert-equal '(c . (a b))
+		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+		       :test #'eql
+		       :key #'car)))
+
+(define-test |rassoc test=eql key=other 1c|
+  (assert-equal '(c . (a b))
+		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+		       :test 'eql
+		       :key #'car)))
+
+(define-test |rassoc test=eq key=other 1|
+  (assert-equal '(c . (a b))
+		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+		       :test #'eq
+		       :key #'car)))
+
+(define-test |rassoc test=other key=other 1|
+  (assert-equal '(c . (a b))
+		(rassoc 'a '((b . (b a)) nil (c . (a b)) (e . (d)))
+		       :test (lambda (x y) (eq x y))
+		       :key #'car)))
+
+(define-test |rassoc test-not=eql key=identity 1a|
+  (assert-equal '(b . 345)
+		(rassoc '234 '((a . 234) (b . 345) (c . 234))
+		       :test-not #'eql)))
+		 
+(define-test |rassoc test-not=eql key=identity 1b|
+  (assert-equal '(b . 345)
+		(rassoc '234 '((a . 234) (b . 345) (c . 234))
+		       :test-not 'eql)))
+		 
+(define-test |rassoc test-not=eql key=identity 2|
+  (assert-equal nil
+		(rassoc '234 '((a . 234) (b . 234) (c . 234))
+		       :test-not #'eql)))
+		 
+(define-test |rassoc test-not=eql key=identity 3|
+  (assert-equal '(b . 345)
+		(rassoc '234 '((a . 234) nil (b . 345) (c . 234))
+		       :test-not #'eql)))
+		 
+(define-test |rassoc test-not=eq key=identity 1a|
+  (assert-equal '(b . y)
+		(rassoc 'x '((a . x) (b . y) (c . x))
+		       :test-not #'eq)))
+		 
+(define-test |rassoc test-not=eq key=identity 1b|
+  (assert-equal '(b . y)
+		(rassoc 'x '((a . x) (b . y) (c . x))
+		       :test-not 'eq)))
+		 
+(define-test |rassoc test-not=eq key=identity 2|
+  (assert-equal nil
+		(rassoc 'x '((a . x) (b . x) (c . x))
+		       :test-not #'eq)))
+		 
+(define-test |rassoc test-not=eq key=identity 3|
+  (assert-equal '(b . y)
+		(rassoc 'x '((a . x) nil (b . y) (c . x))
+		       :test-not #'eq)))
+		 
 (define-test rassoc.error.1
   (assert-error 'type-error
 		(rassoc 'a '((b . c) nil d (a b)))))
+
+(define-test |rassoc test-not=eql key=other 1a|
+  (assert-equal '(b . 345)
+		(rassoc '235 '((a . 234) (b . 345) (c . 234))
+		       :test-not #'eql
+		       :key #'1+)))
+		 
+(define-test |rassoc test-not=eql key=other 1b|
+  (assert-equal '(b . 345)
+		(rassoc '235 '((a . 234) (b . 345) (c . 234))
+		       :test-not 'eql
+		       :key #'1+)))
+		 
+(define-test |rassoc test-not=eql key=other 2|
+  (assert-equal nil
+		(rassoc '235 '((a . 234) (b . 234) (c . 234))
+		       :test-not #'eql
+		       :key #'1+)))
+		 
+(define-test |rassoc test-not=eql key=other 3|
+  (assert-equal '(b . 345)
+		(rassoc '235 '((a . 234) nil (b . 345) (c . 234))
+		       :test-not #'eql
+		       :key #'1+)))
+		 
+(define-test |rassoc test-not=eq key=other 1a|
+  (assert-equal '(b . (y))
+		(rassoc 'x '((a . (x)) (b . (y)) (c . (x)))
+		       :test-not #'eq
+		       :key #'car)))
+		 
+(define-test |rassoc test-not=eq key=other 1b|
+  (assert-equal '(b . (y))
+		(rassoc 'x '((a . (x)) (b . (y)) (c . (x)))
+		       :test-not 'eq
+		       :key #'car)))
+		 
+(define-test |rassoc test-not=eq key=other 2|
+  (assert-equal nil
+		(rassoc 'x '((a . (x)) (b . (x)) (c . (x)))
+		       :test-not #'eq
+		       :key #'car)))
+		 
+(define-test |rassoc test-not=eq key=other 3|
+  (assert-equal '(b . (y))
+		(rassoc 'x '((a . (x)) nil (b . (y)) (c . (x)))
+		       :test-not #'eq
+		       :key #'car)))
+		 
+(define-test |rassoc test-not=other key=other 1a|
+  (assert-equal '(b . 345)
+		(rassoc '234 '((a . 234) (b . 345) (c . 234))
+		       :test-not (lambda (x y) (eql (1+ x) y))
+		       :key #'1+)))
+		 
+(define-test |rassoc test-not=other key=other 1b|
+  (assert-equal '(b . 345)
+		(rassoc '234 '((a . 234) (b . 345) (c . 234))
+		       :test-not (lambda (x y) (eql (1+ x) y))
+		       :key #'1+)))
+		 
+(define-test |rassoc test-not=other key=other 2|
+  (assert-equal nil
+		(rassoc '234 '((a . 234) (b . 234) (c . 234))
+		       :test-not (lambda (x y) (eql (1+ x) y))
+		       :key #'1+)))
+		 
+(define-test |rassoc test-not=other key=other 3|
+  (assert-equal '(b . 345)
+		(rassoc '234 '((a . 234) nil (b . 345) (c . 234))
+		       :test-not (lambda (x y) (eql (1+ x) y))
+		       :key #'1+)))
+		 
+(define-test |rassoc error 1|
+  (assert-error 'type-error
+		(rassoc 'a '((b . c) nil d (a b)))))
+
+(define-test |rassoc error 2|
+  (assert-error 'error
+		(rassoc 'a '((b . c) nil d (a b))
+		       :test #'eq
+		       :test-not #'eq)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3822,9 +4048,9 @@
 			  '((b) nil (b . #\a) (nil . c)))))
 
 (define-test rassoc-if.6
-  (assert-equal '((a b) c)
+  (assert-equal '((a b) . c)
 		(rassoc-if (lambda (x) (eq x 'c))
-			  '(((b a) b) nil ((a b) c) ((d) e))
+			  '(((b a) b) nil ((a b) . c) ((d) . e))
 			  :key #'car)))
 
 (define-test rassoc-if.error.1
