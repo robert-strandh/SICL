@@ -3347,40 +3347,161 @@
 ;;;
 ;;; Tests for the member function
 
-(define-test member.1
+(define-test |member test=eql key=identity 1|
   (assert-equal nil
 		(member 234 '())))
 
-(define-test member.2
+(define-test |member test=eql key=identity 2a|
   (assert-equal '(123 b c)
 		(member 123 '(a b 123 b c))))
 
-(define-test member.3
+(define-test |member test=eql key=identity 2b|
+  (assert-equal '(123 b c)
+		(member 123 '(a b 123 b c) :test #'eql)))
+
+(define-test |member test=eql key=identity 2c|
+  (assert-equal '(123 b c)
+		(member 123 '(a b 123 b c) :test 'eql)))
+
+(define-test |member test=eql key=identity 3|
+  (assert-equal nil
+		(member 123 '(a b c d e))))
+
+(define-test |member test=eql key=other 1|
+  (assert-equal '(123 b c)
+		(member 124 '(a b 123 b c)
+			:key (lambda (x) (if (numberp x) (1+ x) x))
+			:test 'eql)))
+
+(define-test |member test=eq key=identity 1|
+  (assert-equal '(d e)
+		(member 'd '(a b c d e)
+			:test #'eq)))
+
+(define-test |member test=eq key=identity 2|
+  (assert-equal nil
+		(member 'f '(a b c d e)
+			:test #'eq)))
+
+(define-test |member test=eq key=other 1|
+  (assert-equal '((d) (e))
+		(member 'd '((a) (b) (c) (d) (e))
+			:key #'car
+			:test #'eq)))
+
+(define-test |member test=eq key=other 2|
+  (assert-equal nil
+		(member 'f '((a) (b) (c) (d) (e))
+			:key #'car
+			:test #'eq)))
+
+(define-test |member test-not=eql key=identity 1|
+  (assert-equal '(3 4 5 2)
+		(member 2 '(2 2 2 3 4 5 2)
+			:test-not #'eql)))
+
+(define-test |member test-not=eql key=identity 2|
+  (assert-equal nil
+		(member 2 '(2 2 2)
+			:test-not #'eql)))
+
+(define-test |member test-not=eql key=other 1|
+  (assert-equal '(3 4 5 2)
+		(member 3 '(2 2 2 3 4 5 2)
+			:key #'1+
+			:test-not #'eql)))
+
+(define-test |member test-not=eql key=other 2|
+  (assert-equal nil
+		(member 3 '(2 2 2)
+			:key #'1+
+			:test-not #'eql)))
+
+(define-test |member test-not=eq key=identity 1|
+  (assert-equal '(3 4 5 a)
+		(member 'a '(a a a 3 4 5 a)
+			:test-not #'eq)))
+
+(define-test |member test-not=eq key=identity 2|
+  (assert-equal nil
+		(member 'a '(a a a)
+			:test-not #'eq)))
+
+(define-test |member test-not=eq key=other 1|
+  (assert-equal '((3) 4 5 a)
+		(member 'a '((a) (a) (a) (3) 4 5 a)
+			:key #'car
+			:test-not #'eq)))
+
+(define-test |member test-not=eq key=other 2|
+  (assert-equal nil
+		(member 'a '((a) (a) (a))
+			:key #'car
+			:test-not #'eq)))
+
+(define-test |member test=other key=identity 1|
   (assert-equal '((123) b c)
 		(member '(123) '(a b (123) b c)
 			:test #'equal)))
 
-(define-test member.4
-  (assert-equal nil
-		(member 123 '(a b c d e))))
+(define-test |member test=other key=other 1|
+  (assert-equal '(3 4 5)
+		(member 5 '(1 2 3 4 5)
+			:key #'1+
+			:test (lambda (x y) (= x (1+ y))))))
 
-(define-test member.error.1
+(define-test |member test=other key=other 2|
+  (assert-equal nil
+		(member 10 '(1 2 3 4 5)
+			:key #'1+
+			:test (lambda (x y) (= x (1+ y))))))
+
+(define-test |member test-not=other key=other 1|
+  (assert-equal '(3 4 5)
+		(member 4 '(1 2 3 4 5)
+			:key #'1+
+			:test-not (lambda (x y) (not (zerop (mod y x)))))))
+
+(define-test |member test-not=other key=other 2|
+  (assert-equal nil
+		(member 10 '(1 2 3 4 5)
+			:key #'1+
+			:test-not (lambda (x y) (not (zerop (mod y x)))))))
+
+(define-test |member error 1|
   (assert-error 'type-error
 		(member 123 '(a b . 123))))
+
+(define-test |member error 2|
+  (assert-error 'error
+		(member 123 '(1 2 3)
+			:test #'eql
+			:test-not #'eq)))
+			
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the member-if function
 
-(define-test member-if.1
+(define-test |member-if key=identity 1|
   (assert-equal nil
 		(member-if #'oddp '(2 4 6))))
 
-(define-test member-if.2
+(define-test |member-if key=identity 2|
   (assert-equal '(3 4)
 		(member-if #'oddp '(2 6 3 4))))
 
-(define-test member-if.error.1
+(define-test |member-if key=other 1|
+  (assert-equal '(3 4)
+		(member-if #'evenp '(2 6 3 4)
+			   :key #'1+)))
+
+(define-test |member-if key=other 2|
+  (assert-equal nil
+		(member-if #'evenp '(2 6 4)
+			   :key #'1+)))
+
+(define-test |member-if error 1|
   (assert-error 'type-error
 		(member-if #'oddp '(2 4 6 . 7))))
 
@@ -3388,13 +3509,23 @@
 ;;;
 ;;; Tests for the member-if-not function
 
-(define-test member-if-not.1
+(define-test |member-if-not key=identity 1|
   (assert-equal nil
 		(member-if-not #'evenp '(2 4 6))))
 
-(define-test member-if-not.2
+(define-test |member-if-not key=identity 2|
   (assert-equal '(3 4)
 		(member-if-not #'evenp '(2 6 3 4))))
+
+(define-test |member-if-not key=other 1|
+  (assert-equal nil
+		(member-if-not #'oddp '(2 4 6)
+			       :key #'1+)))
+
+(define-test |member-if-not key=other 2|
+  (assert-equal '(3 4)
+		(member-if-not #'oddp '(2 6 3 4)
+			       :key #'1+)))
 
 (define-test member-if-not.error.1
   (assert-error 'type-error
