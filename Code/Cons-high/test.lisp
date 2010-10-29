@@ -3514,9 +3514,21 @@
 		(assoc '(a b) '((a . b) nil ((a b) c) (d e))
 		       :test-not (complement #'equal))))
 
-(define-test |assoc test=eql key=other 1|
+(define-test |assoc test=eql key=other 1a|
   (assert-equal '((a b) c)
 		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+		       :key #'car)))
+
+(define-test |assoc test=eql key=other 1b|
+  (assert-equal '((a b) c)
+		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+		       :test #'eql
+		       :key #'car)))
+
+(define-test |assoc test=eql key=other 1c|
+  (assert-equal '((a b) c)
+		(assoc 'a '(((b a) . b) nil ((a b) c) ((d) e))
+		       :test 'eql
 		       :key #'car)))
 
 (define-test |assoc test=eq key=other 1|
@@ -3541,6 +3553,16 @@
 		(assoc '234 '((234 a) (345 b) (234 c))
 		       :test-not 'eql)))
 		 
+(define-test |assoc test-not=eql key=identity 2|
+  (assert-equal nil
+		(assoc '234 '((234 a) (234 b) (234 c))
+		       :test-not #'eql)))
+		 
+(define-test |assoc test-not=eql key=identity 3|
+  (assert-equal '(345 b)
+		(assoc '234 '((234 a) nil (345 b) (234 c))
+		       :test-not #'eql)))
+		 
 (define-test |assoc test-not=eq key=identity 1a|
   (assert-equal '(y b)
 		(assoc 'x '((x a) (y b) (x c))
@@ -3550,6 +3572,16 @@
   (assert-equal '(y b)
 		(assoc 'x '((x a) (y b) (x c))
 		       :test-not 'eq)))
+		 
+(define-test |assoc test-not=eq key=identity 2|
+  (assert-equal nil
+		(assoc 'x '((x a) (x b) (x c))
+		       :test-not #'eq)))
+		 
+(define-test |assoc test-not=eq key=identity 3|
+  (assert-equal '(y b)
+		(assoc 'x '((x a) nil (y b) (x c))
+		       :test-not #'eq)))
 		 
 (define-test assoc.error.1
   (assert-error 'type-error
@@ -3567,6 +3599,18 @@
 		       :test-not 'eql
 		       :key #'1+)))
 		 
+(define-test |assoc test-not=eql key=other 2|
+  (assert-equal nil
+		(assoc '235 '((234 a) (234 b) (234 c))
+		       :test-not #'eql
+		       :key #'1+)))
+		 
+(define-test |assoc test-not=eql key=other 3|
+  (assert-equal '(345 b)
+		(assoc '235 '((234 a) nil (345 b) (234 c))
+		       :test-not #'eql
+		       :key #'1+)))
+		 
 (define-test |assoc test-not=eq key=other 1a|
   (assert-equal '((y) b)
 		(assoc 'x '(((x) a) ((y) b) ((x) c))
@@ -3577,6 +3621,18 @@
   (assert-equal '((y) b)
 		(assoc 'x '(((x) a) ((y) b) ((x) c))
 		       :test-not 'eq
+		       :key #'car)))
+		 
+(define-test |assoc test-not=eq key=other 2|
+  (assert-equal nil
+		(assoc 'x '(((x) a) ((x) b) ((x) c))
+		       :test-not #'eq
+		       :key #'car)))
+		 
+(define-test |assoc test-not=eq key=other 3|
+  (assert-equal '((y) b)
+		(assoc 'x '(((x) a) nil ((y) b) ((x) c))
+		       :test-not #'eq
 		       :key #'car)))
 		 
 (define-test |assoc test-not=other key=other 1a|
@@ -3591,46 +3647,64 @@
 		       :test-not (lambda (x y) (eql (1+ x) y))
 		       :key #'1+)))
 		 
-(define-test assoc.error.1
+(define-test |assoc test-not=other key=other 2|
+  (assert-equal nil
+		(assoc '234 '((234 a) (234 b) (234 c))
+		       :test-not (lambda (x y) (eql (1+ x) y))
+		       :key #'1+)))
+		 
+(define-test |assoc test-not=other key=other 3|
+  (assert-equal '(345 b)
+		(assoc '234 '((234 a) nil (345 b) (234 c))
+		       :test-not (lambda (x y) (eql (1+ x) y))
+		       :key #'1+)))
+		 
+(define-test |assoc error 1|
   (assert-error 'type-error
 		(assoc 'a '((b . c) nil d (a b)))))
+
+(define-test |assoc error 2|
+  (assert-error 'error
+		(assoc 'a '((b . c) nil d (a b))
+		       :test #'eq
+		       :test-not #'eq)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the assoc-if function
 
-(define-test assoc-if.1
+(define-test |assoc-if key=identity 1|
   (assert-equal '(a . b)
 		(assoc-if (lambda (x) (eq x 'a))
 			  '((b) nil (a . b) (a . c)))))
 
-(define-test assoc-if.2
+(define-test |assoc-if key=identity 2|
   (assert-equal nil
 		(assoc-if (lambda (x) (eq x 'c))
 			  '((b) nil (a . b) (a . c)))))
 
-(define-test assoc-if.3
+(define-test |assoc-if key=identity 3|
   (assert-equal '(nil . c)
 		(assoc-if #'null
 			  '((b) nil (a . b) (nil . c)))))
 
-(define-test assoc-if.4
+(define-test |assoc-if key=identity 4|
   (assert-equal '(123 . b)
 		(assoc-if (lambda (x) (eql x 123))
 			  '((b) nil (123 . b) (nil . c)))))
 
-(define-test assoc-if.5
+(define-test |assoc-if key=identity 5|
   (assert-equal '(#\a . b)
 		(assoc-if (lambda (x) (eql x #\a))
 			  '((b) nil (#\a . b) (nil . c)))))
 
-(define-test assoc-if.6
+(define-test |assoc-if key=other 1|
   (assert-equal '((a b) c)
 		(assoc-if (lambda (x) (eq x 'a))
 			  '(((b a) . b) nil ((a b) c) ((d) e))
 			  :key #'car)))
 
-(define-test assoc-if.error.1
+(define-test |assoc-if.error 1|
   (assert-error 'type-error
 		(assoc-if (lambda (x) (eq x 'a))
 			  '((b . c) nil d (a b)))))
@@ -3639,38 +3713,38 @@
 ;;;
 ;;; Tests for the assoc-if-not function
 
-(define-test assoc-if-not.1
+(define-test |assoc-if-not key=identity 1|
   (assert-equal '(a . b)
 		(assoc-if-not (complement (lambda (x) (eq x 'a)))
 			      '((b) nil (a . b) (a . c)))))
 
-(define-test assoc-if-not.2
+(define-test |assoc-if-not key=identity 2|
   (assert-equal nil
 		(assoc-if-not (complement (lambda (x) (eq x 'c)))
 			      '((b) nil (a . b) (a . c)))))
 
-(define-test assoc-if-not.3
+(define-test |assoc-if-not key=identity 3|
   (assert-equal '(nil . c)
 		(assoc-if-not (complement #'null)
 			      '((b) nil (a . b) (nil . c)))))
 
-(define-test assoc-if-not.4
+(define-test |assoc-if-not key=identity 4|
   (assert-equal '(123 . b)
 		(assoc-if-not (complement (lambda (x) (eql x 123)))
 			      '((b) nil (123 . b) (nil . c)))))
 
-(define-test assoc-if-not.5
+(define-test |assoc-if-not key=identity 5|
   (assert-equal '(#\a . b)
 		(assoc-if-not (complement (lambda (x) (eql x #\a)))
 			      '((b) nil (#\a . b) (nil . c)))))
 
-(define-test assoc-if-not.6
+(define-test |assoc-if-not key=other 6|
   (assert-equal '((a b) c)
 		(assoc-if-not (complement (lambda (x) (eq x 'a)))
 			      '(((b a) . b) nil ((a b) c) ((d) e))
 			      :key #'car)))
 
-(define-test assoc-if-not.error.1
+(define-test |assoc-if-not.error 1|
   (assert-error 'type-error
 		(assoc-if-not (complement (lambda (x) (eq x 'a)))
 			      '((b . c) nil d (a b)))))
