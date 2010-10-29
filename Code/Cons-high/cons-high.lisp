@@ -1728,68 +1728,6 @@
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
 
-;;; Special case when test-not is eq and key is identity
-
-(defun sublis-not-eq-identity (alist tree)
-  (let ((substitution-p nil))
-    (labels ((traverse (tree)
-	       (let ((entry (assoc-not-eq-identity tree alist)))
-		 (cond ((not (null entry))
-			(setf substitution-p t)
-			(cdr entry))
-		       ((atom tree) tree)
-		       (t (cons (traverse (car tree))
-				(traverse (cdr tree))))))))
-      (let ((new-tree (traverse tree)))
-	(if substitution-p new-tree tree)))))
-  
-;;; Special case when test-not is eql and key is identity
-
-(defun sublis-not-eql-identity (alist tree)
-  (let ((substitution-p nil))
-    (labels ((traverse (tree)
-	       (let ((entry (assoc-not-eql-identity tree alist)))
-		 (cond ((not (null entry))
-			(setf substitution-p t)
-			(cdr entry))
-		       ((atom tree) tree)
-		       (t (cons (traverse (car tree))
-				(traverse (cdr tree))))))))
-      (let ((new-tree (traverse tree)))
-	(if substitution-p new-tree tree)))))
-  
-;;; Special case when test-not is eq and key is given.
-
-(defun sublis-not-eq-key (alist tree key)
-  (let ((substitution-p nil))
-    (labels ((traverse (tree)
-	       (let ((entry (assoc-not-eq-identity (funcall key tree)
-						   alist)))
-		 (cond ((not (null entry))
-			(setf substitution-p t)
-			(cdr entry))
-		       ((atom tree) tree)
-		       (t (cons (traverse (car tree))
-				(traverse (cdr tree))))))))
-      (let ((new-tree (traverse tree)))
-	(if substitution-p new-tree tree)))))
-
-;;; Special case when test-not is eql and key is given.
-
-(defun sublis-not-eql-key (alist tree key)
-  (let ((substitution-p nil))
-    (labels ((traverse (tree)
-	       (let ((entry (assoc-not-eql-identity (funcall key tree)
-						    alist)))
-		 (cond ((not (null entry))
-			(setf substitution-p t)
-			(cdr entry))
-		       ((atom tree) tree)
-		       (t (cons (traverse (car tree))
-				(traverse (cdr tree))))))))
-      (let ((new-tree (traverse tree)))
-	(if substitution-p new-tree tree)))))
-
 ;;; Special case when test-not is given and key is identity.
 
 (defun sublis-test-not-identity (alist tree test)
@@ -1833,11 +1771,7 @@
                   (sublis-eql-key alist tree key)
                   (sublis-test-key alist tree test key)))
           (if test-not
-              (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (sublis-not-eq-key alist tree key)
-                  (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (sublis-not-eql-key alist tree key)
-                      (sublis-test-not-key alist tree test-not key)))
+	      (sublis-test-not-key alist tree test-not key)
               (sublis-eql-key alist tree key)))
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -1846,11 +1780,7 @@
                   (sublis-eql-identity alist tree)
                   (sublis-test-identity alist tree test)))
           (if test-not
-              (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (sublis-not-eq-identity alist tree)
-                  (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (sublis-not-eql-identity alist tree)
-                      (sublis-test-not-identity alist tree test-not)))
+	      (sublis-test-not-identity alist tree test-not)
               (sublis-eql-identity alist tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1967,80 +1897,6 @@
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
 
-;;; Special case when test-not is eq and key is identity
-
-(defun nsublis-not-eq-identity (alist tree)
-  (labels ((traverse (tree)
-             (let ((entry (assoc-not-eq-identity (car tree) alist)))
-               (cond ((not (null entry)) (setf (car tree) (cdr entry)))
-                     ((atom (car tree)) nil)
-                     (t (traverse (car tree)))))
-	     (let ((entry (assoc-not-eq-identity (cdr tree) alist)))
-               (cond ((not (null entry)) (setf (cdr tree) (cdr entry)))
-                     ((atom (cdr tree)) nil)
-                     (t (traverse (cdr tree)))))))
-    (let ((entry (assoc-not-eq-identity tree alist)))
-      (cond ((not (null entry)) (cdr entry))
-	    ((atom tree) tree)
-	    (t (traverse tree) tree)))))
-
-;;; Special case when test-not is eql and key is identity
-
-(defun nsublis-not-eql-identity (alist tree)
-  (labels ((traverse (tree)
-             (let ((entry (assoc-not-eql-identity (car tree) alist)))
-               (cond ((not (null entry)) (setf (car tree) (cdr entry)))
-                     ((atom (car tree)) nil)
-                     (t (traverse (car tree)))))
-	     (let ((entry (assoc-not-eql-identity (cdr tree) alist)))
-               (cond ((not (null entry)) (setf (cdr tree) (cdr entry)))
-                     ((atom (cdr tree)) nil)
-                     (t (traverse (cdr tree)))))))
-    (let ((entry (assoc-not-eql-identity tree alist)))
-      (cond ((not (null entry)) (cdr entry))
-	    ((atom tree) tree)
-	    (t (traverse tree) tree)))))
-
-;;; Special case when test-not is eq and key is given.
-
-(defun nsublis-not-eq-key (alist tree key)
-  (labels ((traverse (tree)
-             (let ((entry (assoc-not-eq-identity (funcall key (car tree))
-						 alist)))
-               (cond ((not (null entry)) (setf (car tree) (cdr entry)))
-                     ((atom (car tree)) nil)
-                     (t (traverse (car tree)))))
-	     (let ((entry (assoc-not-eq-identity (funcall key (cdr tree))
-						 alist)))
-               (cond ((not (null entry)) (setf (cdr tree) (cdr entry)))
-                     ((atom (cdr tree)) nil)
-                     (t (traverse (cdr tree)))))))
-    (let ((entry (assoc-not-eq-identity (funcall key tree) alist)))
-      (cond ((not (null entry)) (cdr entry))
-	    ((atom tree) tree)
-	    (t (traverse tree) tree)))))
-
-;;; Special case when test-not is eql and key is given.
-
-(defun nsublis-not-eql-key (alist tree key)
-  (labels ((traverse (tree)
-             (let ((entry (assoc-not-eql-identity (funcall key (car tree))
-						  alist)))
-               (cond ((not (null entry)) (setf (car tree) (cdr entry)))
-                     ((atom (car tree)) nil)
-                     (t (traverse (car tree)))))
-	     (let ((entry (assoc-not-eql-identity (funcall key (cdr tree))
-						  alist)))
-               (cond ((not (null entry)) (setf (cdr tree) (cdr entry)))
-                     ((atom (cdr tree)) nil)
-                     (t (traverse (cdr tree)))))))
-    (let ((entry (assoc-not-eql-identity (funcall key tree) alist)))
-      (cond ((not (null entry)) (cdr entry))
-	    ((atom tree) tree)
-	    (t (traverse tree) tree)))))
-
-;;; Special case when test-not is given and key is identity.
-
 (defun nsublis-test-not-identity (alist tree test)
   (labels ((traverse (tree)
              (let ((entry (assoc-test-not-identity (car tree) alist (lambda (x y) (funcall test y x)))))
@@ -2088,11 +1944,7 @@
                   (nsublis-eql-key alist tree key)
                   (nsublis-test-key alist tree test key)))
           (if test-not
-              (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (nsublis-not-eq-key alist tree key)
-                  (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (nsublis-not-eql-key alist tree key)
-                      (nsublis-test-not-key alist tree test-not key)))
+	      (nsublis-test-not-key alist tree test-not key)
               (nsublis-eql-key alist tree key)))
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -2101,11 +1953,7 @@
                   (nsublis-eql-identity alist tree)
                   (nsublis-test-identity alist tree test)))
           (if test-not
-              (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (nsublis-not-eq-identity alist tree)
-                  (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (nsublis-not-eql-identity alist tree)
-                      (nsublis-test-not-identity alist tree test-not)))
+	      (nsublis-test-not-identity alist tree test-not)
               (nsublis-eql-identity alist tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
