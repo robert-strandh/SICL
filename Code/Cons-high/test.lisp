@@ -6099,11 +6099,627 @@
 				  (copy-list l2)
 				  :test-not #'<=))))
 
+(define-test |set-difference test=eql key=other 1a|
+  (assert-equal '()
+		(set-difference '()
+				'()
+				:key #'car)))
+
+(define-test |set-difference test=eql key=other 1b|
+  (assert-equal '()
+		(set-difference '()
+				'()
+				:key #'car
+				:test #'eql)))
+
+(define-test |set-difference test=eql key=other 1c|
+  (assert-equal '()
+		(set-difference '()
+				'()
+				:key #'car
+				:test 'eql)))
+
+(define-test |set-difference test=eql key=other 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key #'car))))
+
+(define-test |set-difference test=eql key=other 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key #'car
+				  :test #'eql))))
+
+(define-test |set-difference test=eql key=other 2c|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key #'car
+				  :test 'eql))))
+
+(define-test |set-difference test=eql key=other 3a|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal '((1))
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key #'car))))
+
+(define-test |set-difference test=eql key=other 3b|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal '((1))
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key #'car
+				  :test #'eql))))
+
+(define-test |set-difference test=eql key=other 3c|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal '((1))
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key #'car
+				  :test 'eql))))
+
+(define-test |set-difference test=eq key=other 1|
+  (assert-equal '()
+		(set-difference '()
+				'()
+				:key #'car
+				:test #'eq)))
+
+(define-test |set-difference test=eq key=other 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+    (assert-equal 1
+		  (length (set-difference (copy-list l1)
+					  (copy-list (append (mapcar #'copy-list (cdr l1))
+							     l2))
+					  :key #'car
+					  :test #'eq)))
+    (assert-eq (car l1)
+	       (car (set-difference (copy-list l1)
+				    (copy-list (append (mapcar #'copy-list (cdr l1))
+						       l2))
+				    :key #'car
+				    :test #'eq)))))
+
+(define-test |set-difference test=eq key=other 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal 1
+		  (length (set-difference (copy-list l1)
+					  (copy-list (append (mapcar #'copy-list (cdr l1))
+							     l2))
+					  :key #'car
+					  :test 'eq)))
+    (assert-eq (car l1)
+	       (car (set-difference (copy-list l1)
+				    (copy-list (append (mapcar #'copy-list (cdr l1))
+						       l2))
+				    :key #'car
+				    :test 'eq)))))
+
+(define-test |set-difference test=eq key=other 3|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal 1
+		  (length (set-difference (copy-list l1)
+					  (copy-list (append (mapcar #'copy-list (cdr l1))
+							     l2))
+					  :key #'car
+					  :test #'eq)))
+    (assert-eq (car l1)
+	       (car (set-difference (copy-list l1)
+				    (copy-list (append (mapcar #'copy-list (cdr l1))
+						       l2))
+				    :key #'car
+				    :test #'eq)))))
+
+(define-test |set-difference test=equal key=other 1|
+  (assert-equal '()
+		(set-difference '()
+				'()
+				:key #'car
+				:test #'equal)))
+
+(define-test |set-difference test=equal key=other 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+    (assert-equal '(((1)))
+		  (set-difference (copy-list l1)
+				  (copy-list (append (cdr l1) l2))
+				  :key #'car
+				  :test #'equal))))
+
+(define-test |set-difference test=equal key=other 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+    (assert-equal '(((1)))
+		  (set-difference (copy-list l1)
+				  (copy-list (append (cdr l1) l2))
+				  :key #'car
+				  :test 'equal))))
+
+(define-test |set-difference test=equal key=other 3|
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 200 collect (list (list i)))))
+    (assert-equal '(((1)))
+		  (set-difference (copy-list l1)
+				  (copy-list (append (cdr l1) l2))
+				  :key #'car
+				  :test #'equal))))
+
+(define-test |set-difference test=equalp key=other 1|
+  (assert-equal '()
+		(set-difference '()
+				'()
+				:key #'car
+				:test #'equalp)))
+
+(define-test |set-difference test=equalp key=other 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+    (assert-equalp '((#(1)))
+		   (set-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :key #'car
+				   :test #'equalp))))
+
+(define-test |set-difference test=equalp key=other 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+    (assert-equalp '((#(1)))
+		   (set-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :key #'car
+				   :test 'equalp))))
+
+(define-test |set-difference test=equalp key=other 3|
+  (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+    (assert-equalp '((#(1)))
+		   (set-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :key #'car
+				   :test #'equalp))))
+
+(define-test |set-difference test=other key=other 1|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 1 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key #'car
+				  :test #'>))))
+
+(define-test |set-difference test-not=other key=other 1|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 1 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key #'car
+				  :test-not #'<=))))
+
 (define-test |set-difference test=other test-not=other 1|
   (assert-error 'error
 		(set-difference '(1 2 3) '(2 3 4)
 				:test #'eql
 				:test-not #'eql)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nset-difference function
+
+(define-test |nset-difference test=eql key=identity 1a|
+  (assert-equal '()
+		(nset-difference '() '())))
+
+(define-test |nset-difference test=eql key=identity 1b|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :test #'eql)))
+
+(define-test |nset-difference test=eql key=identity 1c|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :test 'eql)))
+
+(define-test |nset-difference test=eql key=identity 2a|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)))))
+
+(define-test |nset-difference test=eql key=identity 2b|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :test #'eql))))
+
+(define-test |nset-difference test=eql key=identity 2c|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :test 'eql))))
+
+(define-test |nset-difference test=eql key=identity 3a|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 200 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)))))
+
+(define-test |nset-difference test=eql key=identity 3b|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 200 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :test #'eql))))
+
+(define-test |nset-difference test=eql key=identity 3c|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 200 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :test 'eql))))
+
+(define-test |nset-difference test=eq key=identity 1|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :test #'eq)))
+
+(define-test |nset-difference test=eq key=identity 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal 1
+		  (length (nset-difference (copy-list l1)
+					   (copy-list (append (cdr l1) l2))
+					   :test #'eq)))
+    (assert-eq (car l1)
+	       (car (nset-difference (copy-list l1)
+				     (copy-list (append (cdr l1) l2))
+				     :test #'eq)))))
+
+(define-test |nset-difference test=eq key=identity 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal 1
+		  (length (nset-difference (copy-list l1)
+					   (copy-list (append (cdr l1) l2))
+					   :test 'eq)))
+    (assert-eq (car l1)
+	       (car (nset-difference (copy-list l1)
+				     (copy-list (append (cdr l1) l2))
+				     :test 'eq)))))
+
+(define-test |nset-difference test=eq key=identity 3|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal 1
+		  (length (nset-difference (copy-list l1)
+					   (copy-list (append (cdr l1) l2))
+					   :test #'eq)))
+    (assert-eq (car l1)
+	       (car (nset-difference (copy-list l1)
+				     (copy-list (append (cdr l1) l2))
+				     :test #'eq)))))
+
+(define-test |nset-difference test=equal key=identity 1|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :test #'equal)))
+
+(define-test |nset-difference test=equal key=identity 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :test #'equal))))
+
+(define-test |nset-difference test=equal key=identity 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :test 'equal))))
+
+(define-test |nset-difference test=equal key=identity 3|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :test #'equal))))
+
+(define-test |nset-difference test=equalp key=identity 1|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :test #'equalp)))
+
+(define-test |nset-difference test=equalp key=identity 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
+    (assert-equalp '(#(1))
+		   (nset-difference (copy-list l1)
+				    (copy-list (append (cdr l1) l2))
+				    :test #'equalp))))
+
+(define-test |nset-difference test=equalp key=identity 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
+    (assert-equalp '(#(1))
+		   (nset-difference (copy-list l1)
+				    (copy-list (append (cdr l1) l2))
+				    :test 'equalp))))
+
+(define-test |nset-difference test=equalp key=identity 3|
+  (let ((l1 (loop for i from 1 below 10 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i from 2 below 20 collect (make-array 1 :initial-element i))))
+    (assert-equalp '(#(1))
+		   (nset-difference (copy-list l1)
+				    (copy-list (append (cdr l1) l2))
+				    :test #'equalp))))
+
+(define-test |nset-difference test=other key=identity 1|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 1 below 20 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :test #'>))))
+
+(define-test |nset-difference test-not=other key=identity 1|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 1 below 20 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :test-not #'<=))))
+
+(define-test |nset-difference test=eql key=other 1a|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :key #'car)))
+
+(define-test |nset-difference test=eql key=other 1b|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :key #'car
+				 :test #'eql)))
+
+(define-test |nset-difference test=eql key=other 1c|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :key #'car
+				 :test 'eql)))
+
+(define-test |nset-difference test=eql key=other 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key #'car))))
+
+(define-test |nset-difference test=eql key=other 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key #'car
+				   :test #'eql))))
+
+(define-test |nset-difference test=eql key=other 2c|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key #'car
+				   :test 'eql))))
+
+(define-test |nset-difference test=eql key=other 3a|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key #'car))))
+
+(define-test |nset-difference test=eql key=other 3b|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key #'car
+				   :test #'eql))))
+
+(define-test |nset-difference test=eql key=other 3c|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key #'car
+				   :test 'eql))))
+
+(define-test |nset-difference test=eq key=other 1|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :key #'car
+				 :test #'eq)))
+
+(define-test |nset-difference test=eq key=other 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+    (assert-equal 1
+		  (length (nset-difference (copy-list l1)
+					   (copy-list (append (mapcar #'copy-list (cdr l1))
+							      l2))
+					   :key #'car
+					   :test #'eq)))
+    (assert-eq (car l1)
+	       (car (nset-difference (copy-list l1)
+				     (copy-list (append (mapcar #'copy-list (cdr l1))
+							l2))
+				     :key #'car
+				     :test #'eq)))))
+
+(define-test |nset-difference test=eq key=other 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 20 collect (list i))))
+    (assert-equal 1
+		  (length (nset-difference (copy-list l1)
+					   (copy-list (append (mapcar #'copy-list (cdr l1))
+							      l2))
+					   :key #'car
+					   :test 'eq)))
+    (assert-eq (car l1)
+	       (car (nset-difference (copy-list l1)
+				     (copy-list (append (mapcar #'copy-list (cdr l1))
+							l2))
+				     :key #'car
+				     :test 'eq)))))
+
+(define-test |nset-difference test=eq key=other 3|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 2 below 200 collect (list i))))
+    (assert-equal 1
+		  (length (nset-difference (copy-list l1)
+					   (copy-list (append (mapcar #'copy-list (cdr l1))
+							      l2))
+					   :key #'car
+					   :test #'eq)))
+    (assert-eq (car l1)
+	       (car (nset-difference (copy-list l1)
+				     (copy-list (append (mapcar #'copy-list (cdr l1))
+							l2))
+				     :key #'car
+				     :test #'eq)))))
+
+(define-test |nset-difference test=equal key=other 1|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :key #'car
+				 :test #'equal)))
+
+(define-test |nset-difference test=equal key=other 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+    (assert-equal '(((1)))
+		  (nset-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :key #'car
+				   :test #'equal))))
+
+(define-test |nset-difference test=equal key=other 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 20 collect (list (list i)))))
+    (assert-equal '(((1)))
+		  (nset-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :key #'car
+				   :test 'equal))))
+
+(define-test |nset-difference test=equal key=other 3|
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 200 collect (list (list i)))))
+    (assert-equal '(((1)))
+		  (nset-difference (copy-list l1)
+				   (copy-list (append (cdr l1) l2))
+				   :key #'car
+				   :test #'equal))))
+
+(define-test |nset-difference test=equalp key=other 1|
+  (assert-equal '()
+		(nset-difference '()
+				 '()
+				 :key #'car
+				 :test #'equalp)))
+
+(define-test |nset-difference test=equalp key=other 2a|
+  (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+    (assert-equalp '((#(1)))
+		   (nset-difference (copy-list l1)
+				    (copy-list (append (cdr l1) l2))
+				    :key #'car
+				    :test #'equalp))))
+
+(define-test |nset-difference test=equalp key=other 2b|
+  (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+    (assert-equalp '((#(1)))
+		   (nset-difference (copy-list l1)
+				    (copy-list (append (cdr l1) l2))
+				    :key #'car
+				    :test 'equalp))))
+
+(define-test |nset-difference test=equalp key=other 3|
+  (let ((l1 (loop for i from 1 below 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 2 below 20 collect (list (make-array 1 :initial-element i)))))
+    (assert-equalp '((#(1)))
+		   (nset-difference (copy-list l1)
+				    (copy-list (append (cdr l1) l2))
+				    :key #'car
+				    :test #'equalp))))
+
+(define-test |nset-difference test=other key=other 1|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 1 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key #'car
+				   :test #'>))))
+
+(define-test |nset-difference test-not=other key=other 1|
+  (let ((l1 (loop for i from 1 below 10 collect (list i)))
+	(l2 (loop for i from 1 below 20 collect (list i))))
+    (assert-equal '((1))
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key #'car
+				   :test-not #'<=))))
+
+(define-test |nset-difference test=other test-not=other 1|
+  (assert-error 'error
+		(nset-difference '(1 2 3) '(2 3 4)
+				 :test #'eql
+				 :test-not #'eql)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
