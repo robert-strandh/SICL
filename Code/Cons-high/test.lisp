@@ -4667,10 +4667,54 @@
   (assert-equal '()
 		(union '() '() :test #'eql)))
 
-(define-test |union test=eql key=identity 2|
+(define-test |union test=eql key=identity 1c|
+  (assert-equal '()
+		(union '() '() :test 'eql)))
+
+(define-test |union test=eql key=identity 2a|
   (assert-equal '()
 		(set-difference (union '(1 2 3) '(3 4 5))
 				'(1 2 3 4 5))))
+
+(define-test |union test=eql key=identity 2b|
+  (assert-equal '()
+		(set-difference (union '(1 2 3) '(3 4 5) :test #'eql)
+				'(1 2 3 4 5))))
+
+(define-test |union test=eql key=identity 2|
+  (assert-equal '()
+		(set-difference (union '(1 2 3) '(3 4 5) :test 'eql)
+				'(1 2 3 4 5))))
+
+(define-test |union test=eql key=identity 3a|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (union (append l1 l2) (append l2 l3))
+				  (append l1 l2 l3)))))
+
+(define-test |union test=eql key=identity 3b|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (union (append l1 l2)
+					 (append l2 l3)
+					 :test #'eql)
+				  (append l1 l2 l3)
+				  :test #'eql))))
+
+(define-test |union test=eql key=identity 3c|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (union (append l1 l2)
+					 (append l2 l3)
+					 :test 'eql)
+				  (append l1 l2 l3)
+				  :test 'eql))))
 
 (define-test |union test=eq key=identity 1|
   (assert-equal '()
@@ -4683,6 +4727,17 @@
 				'(abc def ghi)
 				:test #'eq)))
 
+(define-test |union test=eq key=identity 3|
+  (let ((l1 (loop for code from 30 below 40 collect (string (code-char code))))
+	(l2 (loop for code from 40 below 100 collect (string (code-char code))))
+	(l3 (loop for code from 100 below 110 collect (string (code-char code)))))
+    (assert-equal '()
+		  (set-difference (union (append l1 l2)
+					 (append l2 l3)
+					 :test #'eq)
+				  (append l1 l2 l3)
+				  :test #'eq))))
+
 (define-test |union test=equal key=identity 1|
   (assert-equal '()
 		(union '() '() :test #'equal)))
@@ -4694,21 +4749,95 @@
 				'("abc" "def" "ghi")
 				:test #'equal)))
 
+(define-test |union test=equal key=identity 3|
+  (let ((l1 (loop for code from 30 below 100 collect (string (code-char code))))
+	(l2 (loop for code from 40 below 110 collect (string (code-char code))))
+	(l3 (loop for code from 30 below 110 collect (string (code-char code)))))
+    (assert-equal '()
+		  (set-difference (union l1 l2 :test #'equal)
+				  l3
+				  :test #'equal))))
+
 (define-test |union test=equalp key=identity 1|
   (assert-equal '()
 		(union '() '() :test #'equalp)))
+
+(define-test |union test=equalp key=identity 3|
+  (let ((l1 (loop for i from 30 below 100
+		  collect (make-array 1 :initial-element i)))
+	(l2 (loop for i from 40 below 110
+		  collect (make-array 1 :initial-element i)))
+	(l3 (loop for i from 30 below 110
+		  collect (make-array 1 :initial-element i))))
+    (assert-equal '()
+		  (set-difference (union l1 l2 :test #'equalp)
+				  l3
+				  :test #'equalp))))
 
 (define-test |union test=other key=identity 1|
   (assert-equal '()
 		(union '() '() :test #'<)))
 
-(define-test |union test=eql key=other 1|
+(define-test |union test=eql key=other 1a|
   (assert-equal 1
                 (length (union '(1) '(3) :key #'oddp))))
 
-(define-test |union test=eql key=other 2|
+(define-test |union test=eql key=other 1b|
+  (assert-equal 1
+                (length (union '(1) '(3) :key #'oddp :test #'eql))))
+
+(define-test |union test=eql key=other 1c|
+  (assert-equal 1
+                (length (union '(1) '(3) :key #'oddp :test 'eql))))
+
+(define-test |union test=eql key=other 2a|
   (assert-equal 2
                 (length (union '(4 1) '(3) :key #'oddp))))
+
+(define-test |union test=eql key=other 2b|
+  (assert-equal 2
+                (length (union '(4 1) '(3) :key #'oddp :test #'eql))))
+
+(define-test |union test=eql key=other 2c|
+  (assert-equal 2
+                (length (union '(4 1) '(3) :key #'oddp :test 'eql))))
+
+(define-test |union test=eql key=other 3|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (union (append l1 l2)
+					 (append l2 l3)
+					 :key #'car)
+				  (append l1 l2 l3)
+				  :key #'car))))
+
+(define-test |union test=eql key=other 4|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (union (append l1 l2)
+					 (append l2 l3)
+					 :test #'eql
+					 :key #'car)
+				  (append l1 l2 l3)
+				  :test #'eql
+				  :key #'car))))
+
+(define-test |union test=eql key=other 5|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (union (append l1 l2)
+					 (append l2 l3)
+					 :test 'eql
+					 :key #'car)
+				  (append l1 l2 l3)
+				  :test 'eql
+				  :key #'car))))
 
 (define-test |union test=eq key=other 1|
   (assert-equal '()
@@ -4717,9 +4846,69 @@
 			'((b) (c) (d))
 			:key #'car
 			:test #'eq)
-		 '((a) (b) (c) (c))
+		 '((a) (b) (c) (d))
 		 :key #'car
 		 :test #'eq)))
+
+(define-test |union test=eq key=other 3|
+  (let ((l1 (loop for code from 30 below 40 collect (list (string (code-char code)))))
+	(l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
+	(l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
+    (assert-equal '()
+		  (set-difference (union (append l1 l2)
+					 (append l2 l3)
+					 :key #'car
+					 :test #'eq)
+				  (append l1 l2 l3)
+				  :test #'eq
+				  :key #'car))))
+
+(define-test |union test=equal key=other 1|
+  (assert-equal '()
+		(union '() '() :test #'equal :key #'car)))
+
+(define-test |union test=equal key=other 2|
+  (assert-equal '()
+		(set-difference (union '(("abc") ("def")) '(("abc") ("ghi"))
+				       :key #'car
+				       :test #'equal)
+				'(("abc") ("def") ("ghi"))
+				:key #'car
+				:test #'equal)))
+
+(define-test |union test=equal key=other 3|
+  (let ((l1 (loop for code from 30 below 100 collect (list (string (code-char code)))))
+	(l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
+	(l3 (loop for code from 30 below 110 collect (list (string (code-char code))))))
+    (assert-equal '()
+		  (set-difference (union l1 l2 :test #'equal :key #'car)
+				  l3
+				  :test #'equal :key #'car))))
+
+(define-test |union test=equalp key=other 1|
+  (assert-equal '()
+		(union '() '() :test #'equalp :key #'car)))
+
+(define-test |union test=equalp key=other 2|
+  (assert-equal '()
+		(set-difference (union '((#(1)) (#(2))) '((#(1)) (#(3)))
+				       :key #'car
+				       :test #'equalp)
+				'((#(1)) (#(2)) (#(3)))
+				:key #'car
+				:test #'equalp)))
+
+(define-test |union test=equalp key=other 3|
+  (let ((l1 (loop for i from 30 below 100
+		  collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 40 below 110
+		  collect (list (make-array 1 :initial-element i))))
+	(l3 (loop for i from 30 below 110
+		  collect (list (make-array 1 :initial-element i)))))
+    (assert-equal '()
+		  (set-difference (union l1 l2 :test #'equalp :key #'car)
+				  l3
+				  :test #'equalp :key #'car))))
 
 (define-test |union test=other key=other 1|
   (assert-equal '()
@@ -4729,6 +4918,27 @@
 			:key (lambda (x) (mod x 5))
 			:test #'=)
 		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+
+(define-test |union test-not=other key=identity 1|
+  (assert-equal '()
+		(set-difference
+		 (union '(1 2 3 4)
+			'(3 4 5 6)
+			:test-not #'/=)
+		 '(1 2 3 4 5 6))))
+
+(define-test |union test-not=other key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (union '(1 3 5 7)
+			'(2 4 10 3)
+			:key (lambda (x) (mod x 5))
+			:test-not #'/=)
+		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+
+(define-test |union test=other test-not=other 1|
+  (assert-error 'error
+		(union '(1 2 3) '(2 3 4) :test #'eql :test-not #'eql)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
