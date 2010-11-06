@@ -5109,7 +5109,10 @@
 
 (define-test |nunion test=eql key=other 2c|
   (assert-equal 2
-                (length (nunion '(4 1) '(3) :key #'oddp :test 'eql))))
+                (length (nunion (copy-list '(4 1))
+				(copy-list '(3))
+				:key #'oddp
+				:test 'eql))))
 
 (define-test |nunion test=eql key=other 3|
   (let ((l1 (loop for i from 30 below 40 collect (list i)))
@@ -5264,121 +5267,655 @@
 ;;;
 ;;; Tests for the intersection function
 
-(define-test intersection.1
+(define-test |intersection test=eql key=identity 1a|
   (assert-equal '()
-                (intersection '() '())))
+		(intersection '() '())))
 
-(define-test intersection.2
+(define-test |intersection test=eql key=identity 1b|
   (assert-equal '()
-                (intersection '() '() :test #'eq)))
+		(intersection '() '() :test #'eql)))
 
-(define-test intersection.3
+(define-test |intersection test=eql key=identity 1c|
   (assert-equal '()
-                (intersection '() '() :test #'equal)))
+		(intersection '() '() :test 'eql)))
 
-(define-test intersection.4
+(define-test |intersection test=eql key=identity 2a|
   (assert-equal '()
-                (intersection '() '() :test #'equalp)))
+		(set-difference (intersection (copy-list '(1 2 3 4))
+					      (copy-list '(2 3 4 5)))
+				'(2 3 4))))
 
-(define-test intersection.5
+(define-test |intersection test=eql key=identity 2b|
   (assert-equal '()
-                (intersection '(a b) '())))
+		(set-difference (intersection (copy-list '(1 2 3 4))
+					      (copy-list '(2 3 4 5))
+					      :test #'eql)
+				'(2 3 4))))
 
-(define-test intersection.6
+(define-test |intersection test=eql key=identity 2|
   (assert-equal '()
-                (intersection '(a b) '() :test #'eq)))
+		(set-difference (intersection (copy-list '(1 2 3 4))
+					      (copy-list '(2 3 4 5))
+					      :test 'eql)
+				'(2 3 4))))
 
-(define-test intersection.7
+(define-test |intersection test=eql key=identity 3a|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3)))
+				  l2))))
+
+(define-test |intersection test=eql key=identity 3b|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:test #'eql)
+				  l2
+				  :test #'eql))))
+
+(define-test |intersection test=eql key=identity 3c|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:test 'eql)
+				  l2
+				  :test 'eql))))
+
+(define-test |intersection test=eq key=identity 1|
   (assert-equal '()
-                (intersection '(a b) '() :test #'equal)))
+		(intersection '() '() :test #'eq)))
 
-(define-test intersection.8
+(define-test |intersection test=eq key=identity 2|
   (assert-equal '()
-                (intersection '(a b) '() :test #'equalp)))
+		(set-difference (intersection '(abc def) '(abc ghi)
+					      :test #'eq)
+				'(abc)
+				:test #'eq)))
 
-(define-test intersection.9
+(define-test |intersection test=eq key=identity 3|
+  (let ((l1 (loop for code from 30 below 40 collect (string (code-char code))))
+	(l2 (loop for code from 40 below 100 collect (string (code-char code))))
+	(l3 (loop for code from 100 below 110 collect (string (code-char code)))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:test #'eq)
+				  l2
+				  :test #'eq))))
+
+(define-test |intersection test=equal key=identity 1|
   (assert-equal '()
-                (intersection '() '(a b))))
+		(intersection '() '() :test #'equal)))
 
-(define-test intersection.10
+(define-test |intersection test=equal key=identity 2|
   (assert-equal '()
-                (intersection '() '(a b) :test #'eq)))
+		(set-difference (intersection (copy-list '("abc" "def"))
+					      (copy-list '("abc" "ghi"))
+					      :test #'equal)
+				'("abc")
+				:test #'equal)))
 
-(define-test intersection.11
+(define-test |intersection test=equal key=identity 3|
+  (let ((l1 (loop for code from 30 below 100 collect (string (code-char code))))
+	(l2 (loop for code from 40 below 110 collect (string (code-char code))))
+	(l3 (loop for code from 40 below 100 collect (string (code-char code)))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list l1)
+						(copy-list l2)
+						:test #'equal)
+				  l3
+				  :test #'equal))))
+
+(define-test |intersection test=equalp key=identity 1|
   (assert-equal '()
-                (intersection '() '(a b) :test #'equal)))
+		(intersection '() '() :test #'equalp)))
 
-(define-test intersection.12
+(define-test |intersection test=equalp key=identity 3|
+  (let ((l1 (loop for i from 30 below 100
+		  collect (make-array 1 :initial-element i)))
+	(l2 (loop for i from 40 below 110
+		  collect (make-array 1 :initial-element i)))
+	(l3 (loop for i from 40 below 100
+		  collect (make-array 1 :initial-element i))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list l1)
+						(copy-list l2)
+						:test #'equalp)
+				  l3
+				  :test #'equalp))))
+
+(define-test |intersection test=other key=identity 1|
   (assert-equal '()
-                (intersection '() '(a b) :test #'equalp)))
+		(intersection '() '() :test #'<)))
 
-(define-test intersection.13
+(define-test |intersection test=eql key=other 1a|
   (assert-equal 1
-                (length (intersection '(1) '(3) :key #'oddp))))
+                (length (intersection (copy-list '(1))
+				      (copy-list '(3))
+				      :key #'oddp))))
 
-(define-test intersection.14
-  (assert-equal 0
-                (length (intersection '(1) '(4) :key #'oddp))))
+(define-test |intersection test=eql key=other 1b|
+  (assert-equal 1
+                (length (intersection (copy-list '(1))
+				      (copy-list '(3))
+				      :key #'oddp
+				      :test #'eql))))
+
+(define-test |intersection test=eql key=other 1c|
+  (assert-equal 1
+                (length (intersection (copy-list '(1))
+				      (copy-list '(3))
+				      :key #'oddp
+				      :test 'eql))))
+
+(define-test |intersection test=eql key=other 2a|
+  (assert-equal 1
+                (length (intersection (copy-list '(4 1))
+				      (copy-list '(3))
+				      :key #'oddp))))
+
+(define-test |intersection test=eql key=other 2b|
+  (assert-equal 1
+                (length (intersection (copy-list '(4 1))
+				      (copy-list '(3))
+				      :key #'oddp
+				      :test #'eql))))
+
+(define-test |intersection test=eql key=other 2c|
+  (assert-equal 1
+                (length (intersection (copy-list '(4 1))
+				      (copy-list '(3))
+				      :key #'oddp
+				      :test 'eql))))
+
+(define-test |intersection test=eql key=other 3|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:key #'car)
+				  l2
+				  :key #'car))))
+
+(define-test |intersection test=eql key=other 4|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:test #'eql
+						:key #'car)
+				  l2
+				  :test #'eql
+				  :key #'car))))
+
+(define-test |intersection test=eql key=other 5|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:test 'eql
+						:key #'car)
+				  l2
+				  :test 'eql
+				  :key #'car))))
+
+(define-test |intersection test=eq key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (intersection (copy-list '((a) (b) (c)))
+			       (copy-list '((b) (c) (d)))
+			       :key #'car
+			       :test #'eq)
+		 '((b) (c))
+		 :key #'car
+		 :test #'eq)))
+
+(define-test |intersection test=eq key=other 3|
+  (let ((l1 (loop for code from 30 below 40 collect (list (string (code-char code)))))
+	(l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
+	(l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:key #'car
+						:test #'eq)
+				  l2
+				  :test #'eq
+				  :key #'car))))
+
+(define-test |intersection test=equal key=other 1|
+  (assert-equal '()
+		(intersection '()
+			      '()
+			      :test #'equal
+			      :key #'car)))
+
+(define-test |intersection test=equal key=other 2|
+  (assert-equal '()
+		(set-difference (intersection (copy-list '(("abc") ("def")))
+					      (copy-list '(("abc") ("ghi")))
+					      :key #'car
+					      :test #'equal)
+				'(("abc"))
+				:key #'car
+				:test #'equal)))
+
+(define-test |intersection test=equal key=other 3|
+  (let ((l1 (loop for code from 30 below 100 collect (list (string (code-char code)))))
+	(l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
+	(l3 (loop for code from 40 below 100 collect (list (string (code-char code))))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list l1)
+						(copy-list l2)
+						:test #'equal
+						:key #'car)
+				  l3
+				  :test #'equal :key #'car))))
+
+(define-test |intersection test=equalp key=other 1|
+  (assert-equal '()
+		(intersection '() '() :test #'equalp :key #'car)))
+
+(define-test |intersection test=equalp key=other 2|
+  (assert-equal '()
+		(set-difference (intersection (copy-list '((#(1)) (#(2))))
+					      (copy-list '((#(1)) (#(3))))
+					      :key #'car
+					      :test #'equalp)
+				'((#(1)))
+				:key #'car
+				:test #'equalp)))
+
+(define-test |intersection test=equalp key=other 3|
+  (let ((l1 (loop for i from 30 below 100
+		  collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 40 below 110
+		  collect (list (make-array 1 :initial-element i))))
+	(l3 (loop for i from 40 below 100
+		  collect (list (make-array 1 :initial-element i)))))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list l1)
+						(copy-list l2)
+						:test #'equalp
+						:key #'car)
+				  l3
+				  :test #'equalp :key #'car))))
+
+(define-test |intersection test=other key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (intersection (copy-list '(1 3 5 7))
+			       (copy-list '(2 4 10 3))
+			       :key (lambda (x) (mod x 5))
+			       :test #'=)
+		 '(3 5 7) :key (lambda (x) (mod x 5)))))
+
+(define-test |intersection test-not=other key=identity 1|
+  (assert-equal '()
+		(set-difference
+		 (intersection (copy-list '(1 2 3 4))
+			       (copy-list '(3 4 5 6))
+			       :test-not #'/=)
+		 '(3 4))))
+
+(define-test |intersection test-not=other key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (intersection (copy-list '(1 3 5 7))
+			       (copy-list '(2 4 10 3))
+			       :key (lambda (x) (mod x 5))
+			       :test-not #'/=)
+		 '(3 5 7) :key (lambda (x) (mod x 5)))))
+
+(define-test |intersection test=other test-not=other 1|
+  (assert-error 'error
+		(intersection (copy-list '(1 2 3))
+			      (copy-list '(2 3 4))
+			      :test #'eql
+			      :test-not #'eql)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the nintersection function
+;;; Tests for the intersection function
 
-(define-test nintersection.1
+(define-test |nintersection test=eql key=identity 1a|
   (assert-equal '()
-                (nintersection '() '())))
+		(nintersection '() '())))
 
-(define-test nintersection.2
+(define-test |nintersection test=eql key=identity 1b|
   (assert-equal '()
-                (nintersection '() '() :test #'eq)))
+		(nintersection '() '() :test #'eql)))
 
-(define-test nintersection.3
+(define-test |nintersection test=eql key=identity 1c|
   (assert-equal '()
-                (nintersection '() '() :test #'equal)))
+		(nintersection '() '() :test 'eql)))
 
-(define-test nintersection.4
+(define-test |nintersection test=eql key=identity 2a|
   (assert-equal '()
-                (nintersection '() '() :test #'equalp)))
+		(set-difference (nintersection (copy-list '(1 2 3 4))
+					       (copy-list '(2 3 4 5)))
+				'(2 3 4))))
 
-(define-test nintersection.5
+(define-test |nintersection test=eql key=identity 2b|
   (assert-equal '()
-                (nintersection (list 'a 'b) '())))
+		(set-difference (nintersection (copy-list '(1 2 3 4))
+					       (copy-list '(2 3 4 5))
+					       :test #'eql)
+				'(2 3 4))))
 
-(define-test nintersection.6
+(define-test |nintersection test=eql key=identity 2|
   (assert-equal '()
-                (nintersection (list 'a 'b) '() :test #'eq)))
+		(set-difference (nintersection (copy-list '(1 2 3 4))
+					       (copy-list '(2 3 4 5))
+					       :test 'eql)
+				'(2 3 4))))
 
-(define-test nintersection.7
+(define-test |nintersection test=eql key=identity 3a|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3)))
+				  l2))))
+
+(define-test |nintersection test=eql key=identity 3b|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :test #'eql)
+				  l2
+				  :test #'eql))))
+
+(define-test |nintersection test=eql key=identity 3c|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :test 'eql)
+				  l2
+				  :test 'eql))))
+
+(define-test |nintersection test=eq key=identity 1|
   (assert-equal '()
-                (nintersection (list 'a 'b) '() :test #'equal)))
+		(nintersection '() '() :test #'eq)))
 
-(define-test nintersection.8
+(define-test |nintersection test=eq key=identity 2|
   (assert-equal '()
-                (nintersection (list 'a 'b) '() :test #'equalp)))
+		(set-difference (nintersection '(abc def) '(abc ghi)
+					       :test #'eq)
+				'(abc)
+				:test #'eq)))
 
-(define-test nintersection.9
+(define-test |nintersection test=eq key=identity 3|
+  (let ((l1 (loop for code from 30 below 40 collect (string (code-char code))))
+	(l2 (loop for code from 40 below 100 collect (string (code-char code))))
+	(l3 (loop for code from 100 below 110 collect (string (code-char code)))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :test #'eq)
+				  l2
+				  :test #'eq))))
+
+(define-test |nintersection test=equal key=identity 1|
   (assert-equal '()
-                (nintersection '() (list 'a 'b))))
+		(nintersection '() '() :test #'equal)))
 
-(define-test nintersection.10
+(define-test |nintersection test=equal key=identity 2|
   (assert-equal '()
-                (nintersection '() (list 'a 'b) :test #'eq)))
+		(set-difference (nintersection (copy-list '("abc" "def"))
+					       (copy-list '("abc" "ghi"))
+					       :test #'equal)
+				'("abc")
+				:test #'equal)))
 
-(define-test nintersection.11
+(define-test |nintersection test=equal key=identity 3|
+  (let ((l1 (loop for code from 30 below 100 collect (string (code-char code))))
+	(l2 (loop for code from 40 below 110 collect (string (code-char code))))
+	(l3 (loop for code from 40 below 100 collect (string (code-char code)))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list l1)
+						 (copy-list l2)
+						 :test #'equal)
+				  l3
+				  :test #'equal))))
+
+(define-test |nintersection test=equalp key=identity 1|
   (assert-equal '()
-                (nintersection '() (list 'a 'b) :test #'equal)))
+		(nintersection '() '() :test #'equalp)))
 
-(define-test nintersection.12
+(define-test |nintersection test=equalp key=identity 3|
+  (let ((l1 (loop for i from 30 below 100
+		  collect (make-array 1 :initial-element i)))
+	(l2 (loop for i from 40 below 110
+		  collect (make-array 1 :initial-element i)))
+	(l3 (loop for i from 40 below 100
+		  collect (make-array 1 :initial-element i))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list l1)
+						 (copy-list l2)
+						 :test #'equalp)
+				  l3
+				  :test #'equalp))))
+
+(define-test |nintersection test=other key=identity 1|
   (assert-equal '()
-                (nintersection '() (list 'a 'b) :test #'equalp)))
+		(nintersection '() '() :test #'<)))
 
-(define-test nintersection.13
+(define-test |nintersection test=eql key=other 1a|
   (assert-equal 1
-                (length (nintersection (list 1) (list 3) :key #'oddp))))
+                (length (nintersection (copy-list '(1))
+				       (copy-list '(3))
+				       :key #'oddp))))
 
-(define-test nintersection.14
-  (assert-equal 0
-                (length (nintersection (list 1) (list 4) :key #'oddp))))
+(define-test |nintersection test=eql key=other 1b|
+  (assert-equal 1
+                (length (nintersection (copy-list '(1))
+				       (copy-list '(3))
+				       :key #'oddp
+				       :test #'eql))))
+
+(define-test |nintersection test=eql key=other 1c|
+  (assert-equal 1
+                (length (nintersection (copy-list '(1))
+				       (copy-list '(3))
+				       :key #'oddp
+				       :test 'eql))))
+
+(define-test |nintersection test=eql key=other 2a|
+  (assert-equal 1
+                (length (nintersection (copy-list '(4 1))
+				       (copy-list '(3))
+				       :key #'oddp))))
+
+(define-test |nintersection test=eql key=other 2b|
+  (assert-equal 1
+                (length (nintersection (copy-list '(4 1))
+				       (copy-list '(3))
+				       :key #'oddp
+				       :test #'eql))))
+
+(define-test |nintersection test=eql key=other 2c|
+  (assert-equal 1
+                (length (nintersection (copy-list '(4 1))
+				       (copy-list '(3))
+				       :key #'oddp
+				       :test 'eql))))
+
+(define-test |nintersection test=eql key=other 3|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :key #'car)
+				  l2
+				  :key #'car))))
+
+(define-test |nintersection test=eql key=other 4|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :test #'eql
+						 :key #'car)
+				  l2
+				  :test #'eql
+				  :key #'car))))
+
+(define-test |nintersection test=eql key=other 5|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :test 'eql
+						 :key #'car)
+				  l2
+				  :test 'eql
+				  :key #'car))))
+
+(define-test |nintersection test=eq key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (nintersection (copy-list '((a) (b) (c)))
+				(copy-list '((b) (c) (d)))
+				:key #'car
+				:test #'eq)
+		 '((b) (c))
+		 :key #'car
+		 :test #'eq)))
+
+(define-test |nintersection test=eq key=other 3|
+  (let ((l1 (loop for code from 30 below 40 collect (list (string (code-char code)))))
+	(l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
+	(l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :key #'car
+						 :test #'eq)
+				  l2
+				  :test #'eq
+				  :key #'car))))
+
+(define-test |nintersection test=equal key=other 1|
+  (assert-equal '()
+		(nintersection '()
+			       '()
+			       :test #'equal
+			       :key #'car)))
+
+(define-test |nintersection test=equal key=other 2|
+  (assert-equal '()
+		(set-difference (nintersection (copy-list '(("abc") ("def")))
+					       (copy-list '(("abc") ("ghi")))
+					       :key #'car
+					       :test #'equal)
+				'(("abc"))
+				:key #'car
+				:test #'equal)))
+
+(define-test |nintersection test=equal key=other 3|
+  (let ((l1 (loop for code from 30 below 100 collect (list (string (code-char code)))))
+	(l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
+	(l3 (loop for code from 40 below 100 collect (list (string (code-char code))))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list l1)
+						 (copy-list l2)
+						 :test #'equal
+						 :key #'car)
+				  l3
+				  :test #'equal :key #'car))))
+
+(define-test |nintersection test=equalp key=other 1|
+  (assert-equal '()
+		(nintersection '() '() :test #'equalp :key #'car)))
+
+(define-test |nintersection test=equalp key=other 2|
+  (assert-equal '()
+		(set-difference (nintersection (copy-list '((#(1)) (#(2))))
+					       (copy-list '((#(1)) (#(3))))
+					       :key #'car
+					       :test #'equalp)
+				'((#(1)))
+				:key #'car
+				:test #'equalp)))
+
+(define-test |nintersection test=equalp key=other 3|
+  (let ((l1 (loop for i from 30 below 100
+		  collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 40 below 110
+		  collect (list (make-array 1 :initial-element i))))
+	(l3 (loop for i from 40 below 100
+		  collect (list (make-array 1 :initial-element i)))))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list l1)
+						 (copy-list l2)
+						 :test #'equalp
+						 :key #'car)
+				  l3
+				  :test #'equalp :key #'car))))
+
+(define-test |nintersection test=other key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (nintersection (copy-list '(1 3 5 7))
+				(copy-list '(2 4 10 3))
+				:key (lambda (x) (mod x 5))
+				:test #'=)
+		 '(3 5 7) :key (lambda (x) (mod x 5)))))
+
+(define-test |nintersection test-not=other key=identity 1|
+  (assert-equal '()
+		(set-difference
+		 (nintersection (copy-list '(1 2 3 4))
+				(copy-list '(3 4 5 6))
+				:test-not #'/=)
+		 '(3 4))))
+
+(define-test |nintersection test-not=other key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (nintersection (copy-list '(1 3 5 7))
+				(copy-list '(2 4 10 3))
+				:key (lambda (x) (mod x 5))
+				:test-not #'/=)
+		 '(3 5 7) :key (lambda (x) (mod x 5)))))
+
+(define-test |nintersection test=other test-not=other 1|
+  (assert-error 'error
+		(nintersection (copy-list '(1 2 3))
+			       (copy-list '(2 3 4))
+			       :test #'eql
+			       :test-not #'eql)))
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
