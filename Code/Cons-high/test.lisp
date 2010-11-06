@@ -4944,55 +4944,321 @@
 ;;;
 ;;; Tests for the nunion function
 
-(define-test nunion.1
+(define-test |nunion test=eql key=identity 1a|
   (assert-equal '()
 		(nunion '() '())))
 
-(define-test nunion.2
-  (assert-equal '()
-		(nunion '() '() :test #'eq)))
-
-(define-test nunion.3
+(define-test |nunion test=eql key=identity 1b|
   (assert-equal '()
 		(nunion '() '() :test #'eql)))
 
-(define-test nunion.4
+(define-test |nunion test=eql key=identity 1c|
+  (assert-equal '()
+		(nunion '() '() :test 'eql)))
+
+(define-test |nunion test=eql key=identity 2a|
+  (assert-equal '()
+		(set-difference (nunion (copy-list '(1 2 3))
+					(copy-list '(3 4 5)))
+				'(1 2 3 4 5))))
+
+(define-test |nunion test=eql key=identity 2b|
+  (assert-equal '()
+		(set-difference (nunion (copy-list '(1 2 3))
+					(copy-list '(3 4 5))
+					:test #'eql)
+				'(1 2 3 4 5))))
+
+(define-test |nunion test=eql key=identity 2|
+  (assert-equal '()
+		(set-difference (nunion (copy-list '(1 2 3))
+					(copy-list '(3 4 5))
+					:test 'eql)
+				'(1 2 3 4 5))))
+
+(define-test |nunion test=eql key=identity 3a|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list (append l1 l2))
+					  (copy-list (append l2 l3)))
+				  (append l1 l2 l3)))))
+
+(define-test |nunion test=eql key=identity 3b|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list (append l1 l2))
+					  (copy-list (append l2 l3))
+					  :test #'eql)
+				  (append l1 l2 l3)
+				  :test #'eql))))
+
+(define-test |nunion test=eql key=identity 3c|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list (append l1 l2))
+					  (copy-list (append l2 l3))
+					  :test 'eql)
+				  (append l1 l2 l3)
+				  :test 'eql))))
+
+(define-test |nunion test=eq key=identity 1|
+  (assert-equal '()
+		(nunion '() '() :test #'eq)))
+
+(define-test |nunion test=eq key=identity 2|
+  (assert-equal '()
+		(set-difference (nunion '(abc def) '(abc ghi)
+				       :test #'eq)
+				'(abc def ghi)
+				:test #'eq)))
+
+(define-test |nunion test=eq key=identity 3|
+  (let ((l1 (loop for code from 30 below 40 collect (string (code-char code))))
+	(l2 (loop for code from 40 below 100 collect (string (code-char code))))
+	(l3 (loop for code from 100 below 110 collect (string (code-char code)))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list (append l1 l2))
+					  (copy-list (append l2 l3))
+					  :test #'eq)
+				  (append l1 l2 l3)
+				  :test #'eq))))
+
+(define-test |nunion test=equal key=identity 1|
   (assert-equal '()
 		(nunion '() '() :test #'equal)))
 
-(define-test nunion.5
+(define-test |nunion test=equal key=identity 2|
   (assert-equal '()
-		(nunion '() '() :test #'equalp)))
-
-(define-test nunion.6
-  (assert-equal '()
-		(nunion '() '() :test #'<)))
-
-(define-test nunion.7
-  (assert-equal '()
-		(set-difference (nunion (list 1 2 3) (list 3 4 5))
-				'(1 2 3 4 5))))
-
-(define-test nunion.8
-  (assert-equal '()
-		(set-difference (nunion (list 'abc 'def) (list 'abc 'ghi)
-					:test #'eq)
-				'(abc def ghi)
-				:test #'eq)))
-(define-test nunion.9
-  (assert-equal '()
-		(set-difference (nunion (list "abc" "def") (list "abc" "ghi")
+		(set-difference (nunion (copy-list '("abc" "def"))
+					(copy-list '("abc" "ghi"))
 					:test #'equal)
 				'("abc" "def" "ghi")
 				:test #'equal)))
 
-(define-test nunion.10
-  (assert-equal 1
-                (length (nunion (list 1) (list 3) :key #'oddp))))
+(define-test |nunion test=equal key=identity 3|
+  (let ((l1 (loop for code from 30 below 100 collect (string (code-char code))))
+	(l2 (loop for code from 40 below 110 collect (string (code-char code))))
+	(l3 (loop for code from 30 below 110 collect (string (code-char code)))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list l1)
+					  (copy-list l2)
+					  :test #'equal)
+				  l3
+				  :test #'equal))))
 
-(define-test nunion.11
+(define-test |nunion test=equalp key=identity 1|
+  (assert-equal '()
+		(nunion '() '() :test #'equalp)))
+
+(define-test |nunion test=equalp key=identity 3|
+  (let ((l1 (loop for i from 30 below 100
+		  collect (make-array 1 :initial-element i)))
+	(l2 (loop for i from 40 below 110
+		  collect (make-array 1 :initial-element i)))
+	(l3 (loop for i from 30 below 110
+		  collect (make-array 1 :initial-element i))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list l1)
+					  (copy-list l2)
+					  :test #'equalp)
+				  l3
+				  :test #'equalp))))
+
+(define-test |nunion test=other key=identity 1|
+  (assert-equal '()
+		(nunion '() '() :test #'<)))
+
+(define-test |nunion test=eql key=other 1a|
+  (assert-equal 1
+                (length (nunion (copy-list '(1))
+				(copy-list '(3))
+				:key #'oddp))))
+
+(define-test |nunion test=eql key=other 1b|
+  (assert-equal 1
+                (length (nunion (copy-list '(1))
+				(copy-list '(3))
+				:key #'oddp
+				:test #'eql))))
+
+(define-test |nunion test=eql key=other 1c|
+  (assert-equal 1
+                (length (nunion (copy-list '(1))
+				(copy-list '(3))
+				:key #'oddp
+				:test 'eql))))
+
+(define-test |nunion test=eql key=other 2a|
   (assert-equal 2
-                (length (nunion (list 4 1) (list 3) :key #'oddp))))
+                (length (nunion (copy-list '(4 1))
+				(copy-list '(3))
+				:key #'oddp))))
+
+(define-test |nunion test=eql key=other 2b|
+  (assert-equal 2
+                (length (nunion (copy-list '(4 1))
+				(copy-list '(3))
+				:key #'oddp
+				:test #'eql))))
+
+(define-test |nunion test=eql key=other 2c|
+  (assert-equal 2
+                (length (nunion '(4 1) '(3) :key #'oddp :test 'eql))))
+
+(define-test |nunion test=eql key=other 3|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list (append l1 l2))
+					  (copy-list (append l2 l3))
+					  :key #'car)
+				  (append l1 l2 l3)
+				  :key #'car))))
+
+(define-test |nunion test=eql key=other 4|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list (append l1 l2))
+					  (copy-list (append l2 l3))
+					  :test #'eql
+					  :key #'car)
+				  (append l1 l2 l3)
+				  :test #'eql
+				  :key #'car))))
+
+(define-test |nunion test=eql key=other 5|
+  (let ((l1 (loop for i from 30 below 40 collect (list i)))
+	(l2 (loop for i from 40 below 100 collect (list i)))
+	(l3 (loop for i from 100 below 110 collect (list i))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list (append l1 l2))
+					  (copy-list (append l2 l3))
+					  :test 'eql
+					  :key #'car)
+				  (append l1 l2 l3)
+				  :test 'eql
+				  :key #'car))))
+
+(define-test |nunion test=eq key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (nunion (copy-list '((a) (b) (c)))
+			 (copy-list '((b) (c) (d)))
+			 :key #'car
+			 :test #'eq)
+		 '((a) (b) (c) (d))
+		 :key #'car
+		 :test #'eq)))
+
+(define-test |nunion test=eq key=other 3|
+  (let ((l1 (loop for code from 30 below 40 collect (list (string (code-char code)))))
+	(l2 (loop for code from 40 below 100 collect (list (string (code-char code)))))
+	(l3 (loop for code from 100 below 110 collect (list (string (code-char code))))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list (append l1 l2))
+					  (copy-list (append l2 l3))
+					  :key #'car
+					  :test #'eq)
+				  (append l1 l2 l3)
+				  :test #'eq
+				  :key #'car))))
+
+(define-test |nunion test=equal key=other 1|
+  (assert-equal '()
+		(nunion '() '() :test #'equal :key #'car)))
+
+(define-test |nunion test=equal key=other 2|
+  (assert-equal '()
+		(set-difference (nunion (copy-list '(("abc") ("def")))
+					(copy-list '(("abc") ("ghi")))
+					:key #'car
+					:test #'equal)
+				'(("abc") ("def") ("ghi"))
+				:key #'car
+				:test #'equal)))
+
+(define-test |nunion test=equal key=other 3|
+  (let ((l1 (loop for code from 30 below 100 collect (list (string (code-char code)))))
+	(l2 (loop for code from 40 below 110 collect (list (string (code-char code)))))
+	(l3 (loop for code from 30 below 110 collect (list (string (code-char code))))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list l1)
+					  (copy-list l2)
+					  :test #'equal
+					  :key #'car)
+				  l3
+				  :test #'equal :key #'car))))
+
+(define-test |nunion test=equalp key=other 1|
+  (assert-equal '()
+		(nunion '() '() :test #'equalp :key #'car)))
+
+(define-test |nunion test=equalp key=other 2|
+  (assert-equal '()
+		(set-difference (nunion (copy-list '((#(1)) (#(2))))
+					(copy-list '((#(1)) (#(3))))
+					:key #'car
+					:test #'equalp)
+				'((#(1)) (#(2)) (#(3)))
+				:key #'car
+				:test #'equalp)))
+
+(define-test |nunion test=equalp key=other 3|
+  (let ((l1 (loop for i from 30 below 100
+		  collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i from 40 below 110
+		  collect (list (make-array 1 :initial-element i))))
+	(l3 (loop for i from 30 below 110
+		  collect (list (make-array 1 :initial-element i)))))
+    (assert-equal '()
+		  (set-difference (nunion (copy-list l1)
+					  (copy-list l2)
+					  :test #'equalp
+					  :key #'car)
+				  l3
+				  :test #'equalp :key #'car))))
+
+(define-test |nunion test=other key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (nunion (copy-list '(1 3 5 7))
+			 (copy-list '(2 4 10 3))
+			 :key (lambda (x) (mod x 5))
+			 :test #'=)
+		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+
+(define-test |nunion test-not=other key=identity 1|
+  (assert-equal '()
+		(set-difference
+		 (nunion (copy-list '(1 2 3 4))
+			 (copy-list '(3 4 5 6))
+			 :test-not #'/=)
+		 '(1 2 3 4 5 6))))
+
+(define-test |nunion test-not=other key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (nunion (copy-list '(1 3 5 7))
+			 (copy-list '(2 4 10 3))
+			 :key (lambda (x) (mod x 5))
+			 :test-not #'/=)
+		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+
+(define-test |nunion test=other test-not=other 1|
+  (assert-error 'error
+		(nunion (copy-list '(1 2 3))
+			(copy-list '(2 3 4))
+			:test #'eql
+			:test-not #'eql)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
