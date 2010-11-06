@@ -4659,55 +4659,76 @@
 ;;;
 ;;; Tests for the union function
 
-(define-test union.1
+(define-test |union test=eql key=identity 1a|
   (assert-equal '()
 		(union '() '())))
 
-(define-test union.2
-  (assert-equal '()
-		(union '() '() :test #'eq)))
-
-(define-test union.3
+(define-test |union test=eql key=identity 1b|
   (assert-equal '()
 		(union '() '() :test #'eql)))
 
-(define-test union.4
-  (assert-equal '()
-		(union '() '() :test #'equal)))
-
-(define-test union.5
-  (assert-equal '()
-		(union '() '() :test #'equalp)))
-
-(define-test union.6
-  (assert-equal '()
-		(union '() '() :test #'<)))
-
-(define-test union.7
+(define-test |union test=eql key=identity 2|
   (assert-equal '()
 		(set-difference (union '(1 2 3) '(3 4 5))
 				'(1 2 3 4 5))))
 
-(define-test union.8
+(define-test |union test=eq key=identity 1|
+  (assert-equal '()
+		(union '() '() :test #'eq)))
+
+(define-test |union test=eq key=identity 2|
   (assert-equal '()
 		(set-difference (union '(abc def) '(abc ghi)
 				       :test #'eq)
 				'(abc def ghi)
 				:test #'eq)))
-(define-test union.9
+
+(define-test |union test=equal key=identity 1|
+  (assert-equal '()
+		(union '() '() :test #'equal)))
+
+(define-test |union test=equal key=identity 2|
   (assert-equal '()
 		(set-difference (union '("abc" "def") '("abc" "ghi")
 				       :test #'equal)
 				'("abc" "def" "ghi")
 				:test #'equal)))
 
-(define-test union.10
+(define-test |union test=equalp key=identity 1|
+  (assert-equal '()
+		(union '() '() :test #'equalp)))
+
+(define-test |union test=other key=identity 1|
+  (assert-equal '()
+		(union '() '() :test #'<)))
+
+(define-test |union test=eql key=other 1|
   (assert-equal 1
                 (length (union '(1) '(3) :key #'oddp))))
 
-(define-test union.11
+(define-test |union test=eql key=other 2|
   (assert-equal 2
                 (length (union '(4 1) '(3) :key #'oddp))))
+
+(define-test |union test=eq key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (union '((a) (b) (c))
+			'((b) (c) (d))
+			:key #'car
+			:test #'eq)
+		 '((a) (b) (c) (c))
+		 :key #'car
+		 :test #'eq)))
+
+(define-test |union test=other key=other 1|
+  (assert-equal '()
+                (set-difference
+		 (union '(1 3 5 7)
+			'(2 4 10 3)
+			:key (lambda (x) (mod x 5))
+			:test #'=)
+		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
