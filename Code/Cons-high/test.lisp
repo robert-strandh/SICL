@@ -6882,6 +6882,982 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the set-exclusiv-or function
+
+(define-test |set-exclusive-or test=eql key=identity 1|
+  (assert-equal '()
+		(set-exclusive-or '() '())))
+
+(define-test |set-exclusive-or test=eql key=identity 2a|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))))
+	   #'<))))
+
+(define-test |set-exclusive-or test=eql key=identity 2b|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test #'eql))
+	   #'<))))
+
+(define-test |set-exclusive-or test=eql key=identity 2c|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test 'eql))
+	   #'<))))
+
+(define-test |set-exclusive-or test=eql key=identity 3a|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))))
+	   #'<))))
+
+(define-test |set-exclusive-or test=eql key=identity 3b|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test #'eql))
+	   #'<))))
+
+(define-test |set-exclusive-or test=eql key=identity 3c|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test 'eql))
+	   #'<))))
+
+(define-test |set-exclusive-or test=eq key=identity 2a|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:test #'eq))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eq key=identity 2b|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:test 'eq))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eq key=identity 3a|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:test #'eq))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eq key=identity 3b|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:test 'eq))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equal key=identity 2a|
+  (let ((l1 (loop for i from 2 to 10 collect (list i)))
+	(l2 (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:test #'equal))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equal key=identity 2b|
+  (let ((l1 (loop for i from 2 to 10 collect (list i)))
+	(l2 (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:test 'equal))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equal key=identity 3a|
+  (let ((l1 (loop for i from 2 to 50 collect (list i)))
+	(l2 (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:test #'equal))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equal key=identity 3b|
+  (let ((l1 (loop for i from 2 to 50 collect (list i)))
+	(l2 (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:test 'equal))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equalp key=identity 2a|
+  (let ((l1 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1)))
+	(l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:test #'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equalp key=identity 2b|
+  (let ((l1 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1)))
+	(l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:test 'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equalp key=identity 3a|
+  (let ((l1 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1)))
+	(l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:test #'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equalp key=identity 3b|
+  (let ((l1 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1)))
+	(l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:test 'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=other key=identity 1|
+  (assert-equal '()
+		(set-exclusive-or '() '() :test #'=)))
+
+(define-test |set-exclusive-or test=other key=identity 2|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test '=))
+	   #'<))))
+
+(define-test |set-exclusive-or test=other key=identity 3|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test '=))
+	   #'<))))
+
+(define-test |set-exclusive-or test-not=other key=identity 2|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test-not '/=))
+	   #'<))))
+
+(define-test |set-exclusive-or test-not=other key=identity 3|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test-not '/=))
+	   #'<))))
+
+(define-test |set-exclusive-or test=eql key=other 1|
+  (assert-equal '()
+		(set-exclusive-or '() '() :key #'car)))
+
+(define-test |set-exclusive-or test=eql key=other 2a|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eql key=other 2b|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car
+					:test #'eql))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eql key=other 2c|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car
+					:test 'eql))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eql key=other 3a|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eql key=other 3b|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car
+					:test #'eql))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eql key=other 3c|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car
+					:test 'eql))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=eq key=other 2a|
+  (let ((l (loop for i from 2 to 10 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (set-exclusive-or (cons '((0)) l)
+					(append l (list (list (list 1))))
+					:key #'car
+					:test #'eq))
+	   #'<
+	   :key #'caar))))
+
+(define-test |set-exclusive-or test=eq key=other 2b|
+  (let ((l (loop for i from 2 to 10 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (set-exclusive-or (cons '((0)) l)
+					(append l (list (list (list 1))))
+					:key #'car
+					:test 'eq))
+	   #'<
+	   :key #'caar))))
+
+(define-test |set-exclusive-or test=eq key=other 3a|
+  (let ((l (loop for i from 2 to 50 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (set-exclusive-or (cons '((0)) l)
+					(append l (list (list (list 1))))
+					:key #'car
+					:test #'eq))
+	   #'<
+	   :key #'caar))))
+
+(define-test |set-exclusive-or test=eq key=other 3b|
+  (let ((l (loop for i from 2 to 50 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (set-exclusive-or (cons '((0)) l)
+					(append l (list (list (list 1))))
+					:key #'car
+					:test 'eq))
+	   #'<
+	   :key #'caar))))
+
+(define-test |set-exclusive-or test=equal key=other 2a|
+  (let ((l1 (loop for i from 2 to 10 collect (list (list i))))
+	(l2 (loop for i from 2 to 10 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (set-exclusive-or (cons '((0)) l1)
+					(append l2 (list (list (list 1))))
+					:key #'car
+					:test #'equal))
+	   #'<
+	   :key #'caar))))
+
+(define-test |set-exclusive-or test=equal key=other 2b|
+  (let ((l1 (loop for i from 2 to 10 collect (list (list i))))
+	(l2 (loop for i from 2 to 10 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (set-exclusive-or (cons '((0)) l1)
+					(append l2 (list (list (list 1))))
+					:key #'car
+					:test 'equal))
+	   #'<
+	   :key #'caar))))
+
+(define-test |set-exclusive-or test=equal key=other 3a|
+  (let ((l1 (loop for i from 2 to 50 collect (list (list i))))
+	(l2 (loop for i from 2 to 50 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (set-exclusive-or (cons '((0)) l1)
+					(append l2 (list (list (list 1))))
+					:key #'car
+					:test #'equal))
+	   #'<
+	   :key #'caar))))
+
+(define-test |set-exclusive-or test=equal key=other 3b|
+  (let ((l1 (loop for i from 2 to 50 collect (list (list i))))
+	(l2 (loop for i from 2 to 50 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (set-exclusive-or (cons '((0)) l1)
+					(append l2 (list (list (list 1))))
+					:key #'car
+					:test 'equal))
+	   #'<
+	   :key #'caar))))
+
+(define-test |set-exclusive-or test=equalp key=other 2a|
+  (let ((l1 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1))))
+	(l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:key #'car
+					:test #'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equalp key=other 2b|
+  (let ((l1 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1))))
+	(l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:key #'car
+					:test 'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equalp key=other 3a|
+  (let ((l1 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1))))
+	(l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:key #'car
+					:test #'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=equalp key=other 3b|
+  (let ((l1 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1))))
+	(l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l1)
+					(append l2 (list (list 1)))
+					:key #'car
+					:test 'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=other key=other 1|
+  (assert-equal '()
+		(set-exclusive-or '() '() :test #'= :key #'car)))
+
+(define-test |set-exclusive-or test=other key=other 2|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car
+					:test '=))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=other key=other 3|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car
+					:test '=))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test-not=other key=other 2|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car
+					:test-not '/=))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test-not=other key=other 3|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (set-exclusive-or (cons '(0) l)
+					(append l (list (list 1)))
+					:key #'car
+					:test-not '/=))
+	   #'<
+	   :key #'car))))
+
+(define-test |set-exclusive-or test=other test-not=other 1|
+  (assert-error 'error
+		(set-exclusive-or '() '() :test #'eql :test-not #'eql)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nset-exclusiv-or function
+
+(define-test |nset-exclusive-or test=eql key=identity 1|
+  (assert-equal '()
+		(nset-exclusive-or '() '())))
+
+(define-test |nset-exclusive-or test=eql key=identity 2a|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=eql key=identity 2b|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test #'eql))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=eql key=identity 2c|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test 'eql))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=eql key=identity 3a|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=eql key=identity 3b|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test #'eql))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=eql key=identity 3c|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test 'eql))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=eq key=identity 2a|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :test #'eq))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eq key=identity 2b|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :test 'eq))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eq key=identity 3a|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :test #'eq))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eq key=identity 3b|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :test 'eq))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equal key=identity 2a|
+  (let ((l1 (loop for i from 2 to 10 collect (list i)))
+	(l2 (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :test #'equal))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equal key=identity 2b|
+  (let ((l1 (loop for i from 2 to 10 collect (list i)))
+	(l2 (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :test 'equal))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equal key=identity 3a|
+  (let ((l1 (loop for i from 2 to 50 collect (list i)))
+	(l2 (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :test #'equal))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equal key=identity 3b|
+  (let ((l1 (loop for i from 2 to 50 collect (list i)))
+	(l2 (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :test 'equal))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equalp key=identity 2a|
+  (let ((l1 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1)))
+	(l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :test #'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equalp key=identity 2b|
+  (let ((l1 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1)))
+	(l2 (loop for i from 2 to 10 collect (make-array 1 :initial-element 1))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :test 'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equalp key=identity 3a|
+  (let ((l1 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1)))
+	(l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :test #'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equalp key=identity 3b|
+  (let ((l1 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1)))
+	(l2 (loop for i from 2 to 50 collect (make-array 1 :initial-element 1))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :test 'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=other key=identity 1|
+  (assert-equal '()
+		(nset-exclusive-or '() '() :test #'=)))
+
+(define-test |nset-exclusive-or test=other key=identity 2|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test '=))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=other key=identity 3|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test '=))
+	   #'<))))
+
+(define-test |nset-exclusive-or test-not=other key=identity 2|
+  (let ((l (loop for i from 2 to 10 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test-not '/=))
+	   #'<))))
+
+(define-test |nset-exclusive-or test-not=other key=identity 3|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test-not '/=))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=eql key=other 1|
+  (assert-equal '()
+		(nset-exclusive-or '() '() :key #'car)))
+
+(define-test |nset-exclusive-or test=eql key=other 2a|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eql key=other 2b|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car
+					 :test #'eql))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eql key=other 2c|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car
+					 :test 'eql))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eql key=other 3a|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eql key=other 3b|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car
+					 :test #'eql))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eql key=other 3c|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car
+					 :test 'eql))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=eq key=other 2a|
+  (let ((l (loop for i from 2 to 10 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l))
+					 (copy-list (append l (list (list (list 1)))))
+					 :key #'car
+					 :test #'eq))
+	   #'<
+	   :key #'caar))))
+
+(define-test |nset-exclusive-or test=eq key=other 2b|
+  (let ((l (loop for i from 2 to 10 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l))
+					 (copy-list (append l (list (list (list 1)))))
+					 :key #'car
+					 :test 'eq))
+	   #'<
+	   :key #'caar))))
+
+(define-test |nset-exclusive-or test=eq key=other 3a|
+  (let ((l (loop for i from 2 to 50 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l))
+					 (copy-list (append l (list (list (list 1)))))
+					 :key #'car
+					 :test #'eq))
+	   #'<
+	   :key #'caar))))
+
+(define-test |nset-exclusive-or test=eq key=other 3b|
+  (let ((l (loop for i from 2 to 50 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l))
+					 (copy-list (append l (list (list (list 1)))))
+					 :key #'car
+					 :test 'eq))
+	   #'<
+	   :key #'caar))))
+
+(define-test |nset-exclusive-or test=equal key=other 2a|
+  (let ((l1 (loop for i from 2 to 10 collect (list (list i))))
+	(l2 (loop for i from 2 to 10 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l1))
+					 (copy-list (append l2 (list (list (list 1)))))
+					 :key #'car
+					 :test #'equal))
+	   #'<
+	   :key #'caar))))
+
+(define-test |nset-exclusive-or test=equal key=other 2b|
+  (let ((l1 (loop for i from 2 to 10 collect (list (list i))))
+	(l2 (loop for i from 2 to 10 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l1))
+					 (copy-list (append l2 (list (list (list 1)))))
+					 :key #'car
+					 :test 'equal))
+	   #'<
+	   :key #'caar))))
+
+(define-test |nset-exclusive-or test=equal key=other 3a|
+  (let ((l1 (loop for i from 2 to 50 collect (list (list i))))
+	(l2 (loop for i from 2 to 50 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l1))
+					 (copy-list (append l2 (list (list (list 1)))))
+					 :key #'car
+					 :test #'equal))
+	   #'<
+	   :key #'caar))))
+
+(define-test |nset-exclusive-or test=equal key=other 3b|
+  (let ((l1 (loop for i from 2 to 50 collect (list (list i))))
+	(l2 (loop for i from 2 to 50 collect (list (list i)))))
+    (assert-equal
+     '(((0)) ((1)))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '((0)) l1))
+					 (copy-list (append l2 (list (list (list 1)))))
+					 :key #'car
+					 :test 'equal))
+	   #'<
+	   :key #'caar))))
+
+(define-test |nset-exclusive-or test=equalp key=other 2a|
+  (let ((l1 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1))))
+	(l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :key #'car
+					 :test #'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equalp key=other 2b|
+  (let ((l1 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1))))
+	(l2 (loop for i from 2 to 10 collect (list (make-array 1 :initial-element 1)))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :key #'car
+					 :test 'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equalp key=other 3a|
+  (let ((l1 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1))))
+	(l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :key #'car
+					 :test #'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=equalp key=other 3b|
+  (let ((l1 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1))))
+	(l2 (loop for i from 2 to 50 collect (list (make-array 1 :initial-element 1)))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l1))
+					 (copy-list (append l2 (list (list 1))))
+					 :key #'car
+					 :test 'equalp))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=other key=other 1|
+  (assert-equal '()
+		(nset-exclusive-or '() '() :test #'= :key #'car)))
+
+(define-test |nset-exclusive-or test=other key=other 2|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car
+					 :test '=))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=other key=other 3|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car
+					 :test '=))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test-not=other key=other 2|
+  (let ((l (loop for i from 2 to 10 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car
+					 :test-not '/=))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test-not=other key=other 3|
+  (let ((l (loop for i from 2 to 50 collect (list i))))
+    (assert-equal
+     '((0) (1))
+     (sort (copy-list (nset-exclusive-or (copy-list (cons '(0) l))
+					 (copy-list (append l (list (list 1))))
+					 :key #'car
+					 :test-not '/=))
+	   #'<
+	   :key #'car))))
+
+(define-test |nset-exclusive-or test=other test-not=other 1|
+  (assert-error 'error
+		(nset-exclusive-or '() '() :test #'eql :test-not #'eql)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the pushnew macro
 
 (define-test pushnew.1
