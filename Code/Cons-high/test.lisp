@@ -6725,109 +6725,160 @@
 ;;;
 ;;; Tests for the adjoin function
 
-(define-test adjoin.1
+(define-test |adjoin test=eql key=identity 1a|
   (assert-equal '(1)
 		(adjoin 1 '())))
 
-(define-test adjoin.2
-  (assert-equal '(1 2)
-		(adjoin 1 '(2))))
-
-(define-test adjoin.3
-  (assert-equal '(2 1)
-		(adjoin 1 '(2 1))))
-
-(define-test adjoin.4
+(define-test |adjoin test=eql key=identity 1b|
   (assert-equal '(1)
 		(adjoin 1 '() :test #'eql)))
 
-(define-test adjoin.5
-  (assert-equal '(1 2)
-		(adjoin 1 '(2) :test #'eql)))
-
-(define-test adjoin.6
-  (assert-equal '(2 1)
-		(adjoin 1 '(2 1) :test #'eql)))
-
-(define-test adjoin.7
+(define-test |adjoin test=eql key=identity 1c|
   (assert-equal '(1)
 		(adjoin 1 '() :test 'eql)))
 
-(define-test adjoin.8
+(define-test |adjoin test=eql key=identity 2a|
+  (assert-equal '(1 2)
+		(adjoin 1 '(2))))
+
+(define-test |adjoin test=eql key=identity 2b|
+  (assert-equal '(1 2)
+		(adjoin 1 '(2) :test #'eql)))
+
+(define-test |adjoin test=eql key=identity 2c|
   (assert-equal '(1 2)
 		(adjoin 1 '(2) :test 'eql)))
 
-(define-test adjoin.9
+(define-test |adjoin test=eql key=identity 3a|
+  (assert-equal '(2 1)
+		(adjoin 1 '(2 1))))
+
+(define-test |adjoin test=eql key=identity 3b|
+  (assert-equal '(2 1)
+		(adjoin 1 '(2 1) :test #'eql)))
+
+(define-test |adjoin test=eql key=identity 3c|
   (assert-equal '(2 1)
 		(adjoin 1 '(2 1) :test 'eql)))
 
-(define-test adjoin.10
+(define-test |adjoin test=eq key=identity 1a|
   (assert-equal '(a)
 		(adjoin 'a '() :test #'eq)))
 
-(define-test adjoin.11
-  (assert-equal '(a b)
-		(adjoin 'a '(b) :test #'eq)))
-
-(define-test adjoin.12
-  (assert-equal '(b a)
-		(adjoin 'a '(b a) :test #'eq)))
-
-(define-test adjoin.13
+(define-test |adjoin test=eq key=identity 1b|
   (assert-equal '(a)
 		(adjoin 'a '() :test 'eq)))
 
-(define-test adjoin.14
+(define-test |adjoin test=eq key=identity 2a|
+  (assert-equal '(a b)
+		(adjoin 'a '(b) :test #'eq)))
+
+(define-test |adjoin test=eq key=identity 2b|
   (assert-equal '(a b)
 		(adjoin 'a '(b) :test 'eq)))
 
-(define-test adjoin.15
+(define-test |adjoin test=eq key=identity 3a|
+  (assert-equal '(b a)
+		(adjoin 'a '(b a) :test #'eq)))
+
+(define-test |adjoin test=eq key=identity 3b|
   (assert-equal '(b a)
 		(adjoin 'a '(b a) :test 'eq)))
 
-(define-test adjoin.16
-  (assert-equal '(1)
-		(adjoin 1 '() :test-not #'eql)))
+(define-test |adjoin test=other key=identity 1|
+  (assert-equal '(1 2)
+		(adjoin 1 '(2) :test #'=)))
 
-(define-test adjoin.17
-  (assert-equal '(2)
-		(adjoin 1 '(2) :test-not #'eql)))
+(define-test |adjoin test=other key=identity 2|
+  (assert-equal '(2 1)
+		(adjoin 1 '(2 1) :test #'=)))
 
-(define-test adjoin.18
-  (assert-equal '(1 1)
-		(adjoin 1 '(1) :test-not #'eql)))
+(define-test |adjoin test-not=other key=identity 1|
+  (assert-equal '(1 2)
+		(adjoin 1 '(2) :test-not #'/=)))
 
-(define-test adjoin.19
-  (assert-equal '(1)
-		(adjoin 1 '() :test-not 'eql)))
+(define-test |adjoin test-not=other key=identity 2|
+  (assert-equal '(2 1)
+		(adjoin 1 '(2 1) :test-not #'/=)))
 
-(define-test adjoin.20
-  (assert-equal '(2)
-		(adjoin 1 '(2) :test-not 'eql)))
+(define-test |adjoin test=eql key=other 1a|
+  (assert-equal '((1))
+		(adjoin '(1) '() :key #'car)))
 
-(define-test adjoin.21
-  (assert-equal '(1 1)
-		(adjoin 1 '(1) :test-not 'eql)))
+(define-test |adjoin test=eql key=other 1b|
+  (assert-equal '((1))
+		(adjoin '(1) '() :key #'car :test #'eql)))
 
-(define-test adjoin.22
-  (assert-equal '((1 2) (3 4))
-		(adjoin '(1 2) '((3 4)) :test #'equal)))
+(define-test |adjoin test=eql key=other 1c|
+  (assert-equal '((1))
+		(adjoin '(1) '() :key #'car :test 'eql)))
 
-(define-test adjoin.22
-  (assert-equal '((3 4) (1 2))
-		(adjoin '(1 2) '((3 4) (1 2)) :test #'equal)))
+(define-test |adjoin test=eql key=other 2a|
+  (assert-equal '((1) (2))
+		(adjoin '(1) '((2)) :key #'car)))
 
-(define-test adjoin.23
-  (assert-equal '((3 4))
-		(adjoin '(1 2) '((3 4)) :test-not #'equal)))
+(define-test |adjoin test=eql key=other 2b|
+  (assert-equal '((1) (2))
+		(adjoin '(1) '((2)) :key #'car :test #'eql)))
 
-(define-test adjoin.24
-  (assert-equal '((1 2) (1 2))
-		(adjoin '(1 2) '((1 2)) :test-not #'equal)))
+(define-test |adjoin test=eql key=other 2c|
+  (assert-equal '((1) (2))
+		(adjoin '(1) '((2)) :key #'car :test 'eql)))
 
-(define-test adjoin.25
-  (assert-equal '((3 4) (1 2))
-		(adjoin '(1 2) '((3 4) (1 2)) :key #'car)))
+(define-test |adjoin test=eql key=other 3a|
+  (assert-equal '((2) (1))
+		(adjoin '(1) '((2) (1)) :key #'car)))
+
+(define-test |adjoin test=eql key=other 3b|
+  (assert-equal '((2) (1))
+		(adjoin '(1) '((2) (1)) :key #'car :test #'eql)))
+
+(define-test |adjoin test=eql key=other 3c|
+  (assert-equal '((2) (1))
+		(adjoin '(1) '((2) (1)) :key #'car :test 'eql)))
+
+(define-test |adjoin test=eq key=other 1a|
+  (assert-equal '((a))
+		(adjoin '(a) '() :key #'car :test #'eq)))
+
+(define-test |adjoin test=eq key=other 1b|
+  (assert-equal '((a))
+		(adjoin '(a) '() :key #'car :test 'eq)))
+
+(define-test |adjoin test=eq key=other 2a|
+  (assert-equal '((a) (b))
+		(adjoin '(a) '((b)) :key #'car :test #'eq)))
+
+(define-test |adjoin test=eq key=other 2b|
+  (assert-equal '((a) (b))
+		(adjoin '(a) '((b)) :key #'car :test 'eq)))
+
+(define-test |adjoin test=eq key=other 3a|
+  (assert-equal '((b) (a))
+		(adjoin '(a) '((b) (a)) :key #'car :test #'eq)))
+
+(define-test |adjoin test=eq key=other 3b|
+  (assert-equal '((b) (a))
+		(adjoin '(a) '((b) (a)) :key #'car :test 'eq)))
+
+(define-test |adjoin test=other key=other 1|
+  (assert-equal '((1) (2))
+		(adjoin '(1) '((2)) :key #'car :test #'=)))
+
+(define-test |adjoin test=other key=other 2|
+  (assert-equal '((2) (1))
+		(adjoin '(1) '((2) (1)) :key #'car :test #'=)))
+
+(define-test |adjoin test-not=other key=other 1|
+  (assert-equal '((1) (2))
+		(adjoin '(1) '((2)) :key #'car :test-not #'/=)))
+
+(define-test |adjoin test-not=other key=other 2|
+  (assert-equal '((2) (1))
+		(adjoin '(1) '((2) (1)) :key #'car :test-not #'/=)))
+
+(define-test |adjoin test=other test-not=other 1|
+  (assert-error 'error (adjoin 1 '() :test #'eql :test-not #'eql)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
