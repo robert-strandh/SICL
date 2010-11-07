@@ -7858,6 +7858,681 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the subsetp function
+
+(define-test |subsetp test=eql key=identity 1a|
+  (assert-true (subsetp '()
+			'())))
+
+(define-test |subsetp test=eql key=identity 1b|
+  (assert-true (subsetp '()
+			'()
+			:test #'eql)))
+
+(define-test |subsetp test=eql key=identity 1c|
+  (assert-true (subsetp '()
+			'()
+			:test 'eql)))
+
+(define-test |subsetp test=eql key=identity 2a|
+  (let ((l1 (loop for i from 1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2))))
+
+(define-test |subsetp test=eql key=identity 2b|
+  (let ((l1 (loop for i from 1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :test #'eql))))
+
+(define-test |subsetp test=eql key=identity 2c|
+  (let ((l1 (loop for i from 1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :test 'eql))))
+
+(define-test |subsetp test=eql key=identity 3a|
+  (let ((l1 (loop for i from 1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2))))
+
+(define-test |subsetp test=eql key=identity 3b|
+  (let ((l1 (loop for i from 1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :test #'eql))))
+
+(define-test |subsetp test=eql key=identity 3c|
+  (let ((l1 (loop for i from 1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :test 'eql))))
+
+(define-test |subsetp test=eql key=identity 4a|
+  (let ((l1 (loop for i from -1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2))))
+
+(define-test |subsetp test=eql key=identity 4b|
+  (let ((l1 (loop for i from -1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2
+			   :test #'eql))))
+
+(define-test |subsetp test=eql key=identity 4c|
+  (let ((l1 (loop for i from -1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2
+			   :test 'eql))))
+
+(define-test |subsetp test=eql key=identity 5a|
+  (let ((l1 (loop for i from -1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2))))
+
+(define-test |subsetp test=eql key=identity 5b|
+  (let ((l1 (loop for i from -1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2
+			   :test #'eql))))
+
+(define-test |subsetp test=eql key=identity 5c|
+  (let ((l1 (loop for i from -1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2
+			   :test 'eql))))
+
+(define-test |subsetp test=eq key=identity 2a|
+  (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
+    (assert-true (subsetp (reverse (cdr (butlast l)))
+			  l
+			  :test #'eq))))
+
+(define-test |subsetp test=eq key=identity 2b|
+  (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
+    (assert-true (subsetp (reverse (cdr (butlast l)))
+			  l
+			  :test 'eq))))
+
+(define-test |subsetp test=eq key=identity 3a|
+  (let ((l (loop repeat 50 collect (make-array 1 :initial-element 1))))
+    (assert-true (subsetp (reverse (cdr (butlast l)))
+			  l
+			  :test #'eq))))
+
+(define-test |subsetp test=eq key=identity 3b|
+  (let ((l (loop repeat 50 collect (make-array 1 :initial-element 1))))
+    (assert-true (subsetp (reverse (cdr (butlast l)))
+			  l
+			  :test 'eq))))
+
+(define-test |subsetp test=eq key=identity 4a|
+  (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
+    (assert-false (subsetp l
+			   (reverse (cdr (butlast l)))
+			   :test #'eq))))
+
+(define-test |subsetp test=eq key=identity 4b|
+  (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
+    (assert-false (subsetp l
+			   (reverse (cdr (butlast l)))
+			   :test 'eq))))
+
+(define-test |subsetp test=eq key=identity 5a|
+  (let ((l (loop repeat 50 collect (make-array 1 :initial-element 1))))
+    (assert-false (subsetp l
+			   (reverse (cdr (butlast l)))
+			   :test #'eq))))
+
+(define-test |subsetp test=eq key=identity 5b|
+  (let ((l (loop repeat 50 collect (make-array 1 :initial-element 1))))
+    (assert-false (subsetp l
+			   (reverse (cdr (butlast l)))
+			   :test 'eq))))
+
+(define-test |subsetp test=equal key=identity 2a|
+  (let ((l1 (loop for i from 1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :test #'equal))))
+
+(define-test |subsetp test=equal key=identity 2b|
+  (let ((l1 (loop for i from 1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :test 'equal))))
+
+(define-test |subsetp test=equal key=identity 3a|
+  (let ((l1 (loop for i from 1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :test #'equal))))
+
+(define-test |subsetp test=equal key=identity 3b|
+  (let ((l1 (loop for i from 1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :test 'equal))))
+
+(define-test |subsetp test=equal key=identity 4a|
+  (let ((l1 (loop for i from -1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :test #'equal))))
+
+(define-test |subsetp test=equal key=identity 4b|
+  (let ((l1 (loop for i from -1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :test 'equal))))
+
+(define-test |subsetp test=equal key=identity 5a|
+  (let ((l1 (loop for i from -1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :test #'equal))))
+
+(define-test |subsetp test=equal key=identity 5b|
+  (let ((l1 (loop for i from -1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :test 'equal))))
+
+(define-test |subsetp test=equalp key=identity 2a|
+  (let ((l1 (loop for i from 1 to 10 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
+    (assert-true (subsetp l1
+			  l2
+			  :test #'equalp))))
+
+(define-test |subsetp test=equalp key=identity 2b|
+  (let ((l1 (loop for i from 1 to 10 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
+    (assert-true (subsetp l1
+			  l2
+			  :test 'equalp))))
+
+(define-test |subsetp test=equalp key=identity 3a|
+  (let ((l1 (loop for i from 1 to 50 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
+    (assert-true (subsetp l1
+			  l2
+			  :test #'equalp))))
+
+(define-test |subsetp test=equalp key=identity 3b|
+  (let ((l1 (loop for i from 1 to 50 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
+    (assert-true (subsetp l1
+			  l2
+			  :test 'equalp))))
+
+(define-test |subsetp test=equalp key=identity 4a|
+  (let ((l1 (loop for i from -1 to 10 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
+    (assert-false (subsetp l1
+			   l2
+			   :test #'equalp))))
+
+(define-test |subsetp test=equalp key=identity 4b|
+  (let ((l1 (loop for i from -1 to 10 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i downfrom 10 to 0 collect (make-array 1 :initial-element i))))
+    (assert-false (subsetp l1
+			   l2
+			   :test 'equalp))))
+
+(define-test |subsetp test=equalp key=identity 5a|
+  (let ((l1 (loop for i from -1 to 50 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
+    (assert-false (subsetp l1
+			   l2
+			   :test #'equalp))))
+
+(define-test |subsetp test=equalp key=identity 5b|
+  (let ((l1 (loop for i from -1 to 50 collect (make-array 1 :initial-element i)))
+	(l2 (loop for i downfrom 50 to 0 collect (make-array 1 :initial-element i))))
+    (assert-false (subsetp l1
+			   l2
+			   :test 'equalp))))
+
+(define-test |subsetp test=other key=identity 2b|
+  (let ((l1 (loop for i from 1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :test #'=))))
+
+(define-test |subsetp test=other key=identity 3b|
+  (let ((l1 (loop for i from 1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :test #'=))))
+
+(define-test |subsetp test=other key=identity 4b|
+  (let ((l1 (loop for i from -1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2
+			   :test #'=))))
+
+(define-test |subsetp test=other key=identity 5b|
+  (let ((l1 (loop for i from -1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2
+			   :test #'=))))
+
+(define-test |subsetp test-not=other key=identity 2b|
+  (let ((l1 (loop for i from 1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :test-not #'/=))))
+
+(define-test |subsetp test-not=other key=identity 3b|
+  (let ((l1 (loop for i from 1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :test-not #'/=))))
+
+(define-test |subsetp test-not=other key=identity 4b|
+  (let ((l1 (loop for i from -1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2
+			   :test-not #'/=))))
+
+(define-test |subsetp test-not=other key=identity 5b|
+  (let ((l1 (loop for i from -1 to 50 collect i))
+	(l2 (loop for i downfrom 50 to 0 collect i)))
+    (assert-false (subsetp l1
+			   l2
+			   :test-not #'/=))))
+
+(define-test |subsetp test=eql key=other 1a|
+  (assert-true (subsetp '()
+			'()
+			:key #'car)))
+
+(define-test |subsetp test=eql key=other 1b|
+  (assert-true (subsetp '()
+			'()
+			:key #'car
+			:test #'eql)))
+
+(define-test |subsetp test=eql key=other 1c|
+  (assert-true (subsetp '()
+			'()
+			:key #'car
+			:test 'eql)))
+
+(define-test |subsetp test=eql key=other 2a|
+  (let ((l1 (loop for i from 1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car))))
+
+(define-test |subsetp test=eql key=other 2b|
+  (let ((l1 (loop for i from 1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test #'eql))))
+
+(define-test |subsetp test=eql key=other 2c|
+  (let ((l1 (loop for i from 1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test 'eql))))
+
+(define-test |subsetp test=eql key=other 3a|
+  (let ((l1 (loop for i from 1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car))))
+
+(define-test |subsetp test=eql key=other 3b|
+  (let ((l1 (loop for i from 1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test #'eql))))
+
+(define-test |subsetp test=eql key=other 3c|
+  (let ((l1 (loop for i from 1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test 'eql))))
+
+(define-test |subsetp test=eql key=other 4a|
+  (let ((l1 (loop for i from -1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car))))
+
+(define-test |subsetp test=eql key=other 4b|
+  (let ((l1 (loop for i from -1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test #'eql))))
+
+(define-test |subsetp test=eql key=other 4c|
+  (let ((l1 (loop for i from -1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test 'eql))))
+
+(define-test |subsetp test=eql key=other 5a|
+  (let ((l1 (loop for i from -1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car))))
+
+(define-test |subsetp test=eql key=other 5b|
+  (let ((l1 (loop for i from -1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test #'eql))))
+
+(define-test |subsetp test=eql key=other 5c|
+  (let ((l1 (loop for i from -1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test 'eql))))
+
+(define-test |subsetp test=eq key=other 2a|
+  (let ((l (loop repeat 10 collect (list (make-array 1 :initial-element 1)))))
+    (assert-true (subsetp (reverse (cdr (butlast l)))
+			  l
+			  :key #'car
+			  :test #'eq))))
+
+(define-test |subsetp test=eq key=other 2b|
+  (let ((l (loop repeat 10 collect (list (make-array 1 :initial-element 1)))))
+    (assert-true (subsetp (reverse (cdr (butlast l)))
+			  l
+			  :key #'car
+			  :test 'eq))))
+
+(define-test |subsetp test=eq key=other 3a|
+  (let ((l (loop repeat 50 collect (list (make-array 1 :initial-element 1)))))
+    (assert-true (subsetp (reverse (cdr (butlast l)))
+			  l
+			  :key #'car
+			  :test #'eq))))
+
+(define-test |subsetp test=eq key=other 3b|
+  (let ((l (loop repeat 50 collect (list (make-array 1 :initial-element 1)))))
+    (assert-true (subsetp (reverse (cdr (butlast l)))
+			  l
+			  :key #'car
+			  :test 'eq))))
+
+(define-test |subsetp test=eq key=other 4a|
+  (let ((l (loop repeat 10 collect (list (make-array 1 :initial-element 1)))))
+    (assert-false (subsetp l
+			   (reverse (cdr (butlast l)))
+			   :key #'car
+			   :test #'eq))))
+
+(define-test |subsetp test=eq key=other 4b|
+  (let ((l (loop repeat 10 collect (list (make-array 1 :initial-element 1)))))
+    (assert-false (subsetp l
+			   (reverse (cdr (butlast l)))
+			   :key #'car
+			   :test 'eq))))
+
+(define-test |subsetp test=eq key=other 5a|
+  (let ((l (loop repeat 50 collect (list (make-array 1 :initial-element 1)))))
+    (assert-false (subsetp l
+			   (reverse (cdr (butlast l)))
+			   :key #'car
+			   :test #'eq))))
+
+(define-test |subsetp test=eq key=other 5b|
+  (let ((l (loop repeat 50 collect (list (make-array 1 :initial-element 1)))))
+    (assert-false (subsetp l
+			   (reverse (cdr (butlast l)))
+			   :key #'car
+			   :test 'eq))))
+
+(define-test |subsetp test=equal key=other 2a|
+  (let ((l1 (loop for i from 1 to 10 collect (list (list i))))
+	(l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test #'equal))))
+
+(define-test |subsetp test=equal key=other 2b|
+  (let ((l1 (loop for i from 1 to 10 collect (list (list i))))
+	(l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test 'equal))))
+
+(define-test |subsetp test=equal key=other 3a|
+  (let ((l1 (loop for i from 1 to 50 collect (list (list i))))
+	(l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test #'equal))))
+
+(define-test |subsetp test=equal key=other 3b|
+  (let ((l1 (loop for i from 1 to 50 collect (list (list i))))
+	(l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test 'equal))))
+
+(define-test |subsetp test=equal key=other 4a|
+  (let ((l1 (loop for i from -1 to 10 collect (list (list i))))
+	(l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test #'equal))))
+
+(define-test |subsetp test=equal key=other 4b|
+  (let ((l1 (loop for i from -1 to 10 collect (list (list i))))
+	(l2 (loop for i downfrom 10 to 0 collect (list (list i)))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test 'equal))))
+
+(define-test |subsetp test=equal key=other 5a|
+  (let ((l1 (loop for i from -1 to 50 collect (list (list i))))
+	(l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test #'equal))))
+
+(define-test |subsetp test=equal key=other 5b|
+  (let ((l1 (loop for i from -1 to 50 collect (list (list i))))
+	(l2 (loop for i downfrom 50 to 0 collect (list (list i)))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test 'equal))))
+
+(define-test |subsetp test=equalp key=other 2a|
+  (let ((l1 (loop for i from 1 to 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test #'equalp))))
+
+(define-test |subsetp test=equalp key=other 2b|
+  (let ((l1 (loop for i from 1 to 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test 'equalp))))
+
+(define-test |subsetp test=equalp key=other 3a|
+  (let ((l1 (loop for i from 1 to 50 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test #'equalp))))
+
+(define-test |subsetp test=equalp key=other 3b|
+  (let ((l1 (loop for i from 1 to 50 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test 'equalp))))
+
+(define-test |subsetp test=equalp key=other 4a|
+  (let ((l1 (loop for i from -1 to 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test #'equalp))))
+
+(define-test |subsetp test=equalp key=other 4b|
+  (let ((l1 (loop for i from -1 to 10 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i downfrom 10 to 0 collect (list (make-array 1 :initial-element i)))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test 'equalp))))
+
+(define-test |subsetp test=equalp key=other 5a|
+  (let ((l1 (loop for i from -1 to 50 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test #'equalp))))
+
+(define-test |subsetp test=equalp key=other 5b|
+  (let ((l1 (loop for i from -1 to 50 collect (list (make-array 1 :initial-element i))))
+	(l2 (loop for i downfrom 50 to 0 collect (list (make-array 1 :initial-element i)))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test 'equalp))))
+
+(define-test |subsetp test=other key=other 2b|
+  (let ((l1 (loop for i from 1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test #'=))))
+
+(define-test |subsetp test=other key=other 3b|
+  (let ((l1 (loop for i from 1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test #'=))))
+
+(define-test |subsetp test=other key=other 4b|
+  (let ((l1 (loop for i from -1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test #'=))))
+
+(define-test |subsetp test=other key=other 5b|
+  (let ((l1 (loop for i from -1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test #'=))))
+
+(define-test |subsetp test-not=other key=other 2b|
+  (let ((l1 (loop for i from 1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test-not #'/=))))
+
+(define-test |subsetp test-not=other key=other 3b|
+  (let ((l1 (loop for i from 1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-true (subsetp l1
+			  l2
+			  :key #'car
+			  :test-not #'/=))))
+
+(define-test |subsetp test-not=other key=other 4b|
+  (let ((l1 (loop for i from -1 to 10 collect (list i)))
+	(l2 (loop for i downfrom 10 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test-not #'/=))))
+
+(define-test |subsetp test-not=other key=other 5b|
+  (let ((l1 (loop for i from -1 to 50 collect (list i)))
+	(l2 (loop for i downfrom 50 to 0 collect (list i))))
+    (assert-false (subsetp l1
+			   l2
+			   :key #'car
+			   :test-not #'/=))))
+
+(define-test |subsetp test=other test-not=other 1|
+  (assert-error 'error
+		(subsetp '() '() :test #'eql :test-not #'eql)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the pushnew macro
 
 (define-test pushnew.1
