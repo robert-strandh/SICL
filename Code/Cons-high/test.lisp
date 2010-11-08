@@ -8849,6 +8849,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the setf expander for getf
+
+(define-test |(setf getf) 1|
+  (let ((list (copy-list '(:a 0 :c 1 :e 2 :c 3))))
+    (assert-equal 4
+		  (setf (getf list :c) 4))
+    (assert-equal '(:a 0 :c 4 :e 2 :c 3)
+		  list)))
+
+(define-test |(setf getf) 2|
+  (let ((list (copy-list '(:a 0 :c 1 :e 2 :c 3)))
+	(thing 0))
+    (assert-equal 4
+		  (setf (getf list :d (incf thing)) 4))
+    (assert-equal 4
+		  (getf list :d))
+    (assert-equal 1 thing)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the remf macro
 
 (define-test remf.1
