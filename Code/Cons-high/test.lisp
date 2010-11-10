@@ -4720,9 +4720,15 @@
 			  '((b) nil (b . #\a) (nil . c)))))
 
 (define-test rassoc-if.6
-  (assert-equal '((a b) . c)
+  (assert-equal '((a b) c)
 		(rassoc-if (lambda (x) (eq x 'c))
-			  '(((b a) b) nil ((a b) . c) ((d) . e))
+			  '(((b a) b) ((a b) . (c)) ((d) . e))
+			  :key #'car)))
+
+(define-test rassoc-if.7
+  (assert-equal '((a b) c)
+		(rassoc-if (lambda (x) (eq x 'c))
+			  '(((b a) b) nil ((a b) . (c)) ((d) . e))
 			  :key #'car)))
 
 (define-test rassoc-if.error.1
