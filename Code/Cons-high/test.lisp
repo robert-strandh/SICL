@@ -2263,6 +2263,10 @@
     (assert-equal nil
 		  (list-length list))))
 
+(define-test list-length.4
+  (assert-equal 5
+		(list-length '(0 0 0 0 0))))
+
 (define-test list-length.error.1
   (assert-error 'type-error
 		(list-length 0)))
@@ -2289,6 +2293,52 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the nthcdr function
+
+(define-test |nthcdr 1|
+  (assert-equal '()
+		(nthcdr 0 '())))
+
+(define-test |nthcdr 2|
+  (assert-equal '()
+		(nthcdr 1 '())))
+
+(define-test |nthcdr 3|
+  (assert-equal '(0 0)
+		(nthcdr 1 '(0 0 0))))
+
+(define-test |nthcdr error 1|
+  (assert-error 'type-error
+		(nthcdr 'a '(0 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the (setf nth) function
+
+(define-test |setf-nth 1|
+  (let ((list (copy-list '(0 0 0))))
+    (assert-equal 1
+		  (setf (nth 0 list) 1))
+    (assert-equal '(1 0 0)
+		  list)))
+
+(define-test |setf-nth 1|
+  (let ((list (copy-list '(0 0 0))))
+    (assert-equal 1
+		  (setf (nth 2 list) 1))
+    (assert-equal '(0 0 1)
+		  list)))
+
+(define-test |setf-nth error 1|
+  (assert-error 'error
+		(setf (nth 0 '()) 1)))
+
+(define-test |setf-nth error 2|
+  (assert-error 'error
+		(setf (nth 1 (copy-list '(0))) 1)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the copy-tree function
 
 (define-test copy-tree.1
@@ -2305,43 +2355,163 @@
 ;;;
 ;;; Tests for the tree-equal function
 
-(define-test tree-equal.1
+(define-test |tree-equal test=eql 1a|
   (assert-true (tree-equal nil nil)))
 
-(define-test tree-equal.2
+(define-test |tree-equal test=eql 1b|
+  (assert-true (tree-equal nil nil :test #'eql)))
+
+(define-test |tree-equal test=eql 1c|
+  (assert-true (tree-equal nil nil :test 'eql)))
+
+(define-test |tree-equal test=eql 2a|
   (assert-true (tree-equal 1 1)))
 
-(define-test tree-equal.3
+(define-test |tree-equal test=eql 2b|
+  (assert-true (tree-equal 1 1 :test #'eql)))
+
+(define-test |tree-equal test=eql 2c|
+  (assert-true (tree-equal 1 1 :test 'eql)))
+
+(define-test |tree-equal test=eql 3a|
   (assert-true (tree-equal '(1) '(1))))
 
-(define-test tree-equal.4
+(define-test |tree-equal test=eql 3b|
+  (assert-true (tree-equal '(1) '(1) :test #'eql)))
+
+(define-test |tree-equal test=eql 3c|
+  (assert-true (tree-equal '(1) '(1) :test 'eql)))
+
+(define-test |tree-equal test=eql 4a|
   (assert-true (tree-equal '(1 . 2) '(1 . 2))))
 
-(define-test tree-equal.5
+(define-test |tree-equal test=eql 4b|
+  (assert-true (tree-equal '(1 . 2) '(1 . 2) :test #'eql)))
+
+(define-test |tree-equal test=eql 4c|
+  (assert-true (tree-equal '(1 . 2) '(1 . 2) :test 'eql)))
+
+(define-test |tree-equal test=eql 5a|
   (assert-false (tree-equal 1 2)))
 
-(define-test tree-equal.6
+(define-test |tree-equal test=eql 5b|
+  (assert-false (tree-equal 1 2 :test #'eql)))
+
+(define-test |tree-equal test=eql 5c|
+  (assert-false (tree-equal 1 2 :test 'eql)))
+
+(define-test |tree-equal test=eql 6a|
   (assert-false (tree-equal '(1) '(2))))
 
-(define-test tree-equal.7
+(define-test |tree-equal test=eql 6b|
+  (assert-false (tree-equal '(1) '(2) :test #'eql)))
+
+(define-test |tree-equal test=eql 6c|
+  (assert-false (tree-equal '(1) '(2) :test 'eql)))
+
+(define-test |tree-equal test=eql 7a|
+  (assert-false (tree-equal '(1) '((1)))))
+
+(define-test |tree-equal test=eql 7b|
+  (assert-false (tree-equal '(1) '((1)) :test #'eql)))
+
+(define-test |tree-equal test=eql 7c|
+  (assert-false (tree-equal '(1) '((1)) :test 'eql)))
+
+(define-test |tree-equal test=eql 8a|
+  (assert-false (tree-equal '((1)) '(1))))
+
+(define-test |tree-equal test=eql 8b|
+  (assert-false (tree-equal '((1)) '(1) :test #'eql)))
+
+(define-test |tree-equal test=eql 8c|
+  (assert-false (tree-equal '((1)) '(1) :test 'eql)))
+
+(define-test |tree-equal test=eq 1a|
   (assert-true (tree-equal 'a 'a :test #'eq)))
 
-(define-test tree-equal.8
+(define-test |tree-equal test=eq 1b|
+  (assert-true (tree-equal 'a 'a :test 'eq)))
+
+(define-test |tree-equal test=eq 2a|
   (assert-false (tree-equal 'a 'b :test #'eq)))
 
-(define-test tree-equal.9
-  (assert-true (tree-equal 'a 'b :test-not #'eq)))
+(define-test |tree-equal test=eq 2b|
+  (assert-false (tree-equal 'a 'b :test 'eq)))
 
-(define-test tree-equal.10
-  (assert-false (tree-equal 'a 'a :test-not #'eq)))
-
-(define-test tree-equal.11
+(define-test |tree-equal test=eq 3a|
   (assert-true (tree-equal '(a) '(a) :test #'eq)))
 
-(define-test tree-equal.12
+(define-test |tree-equal test=eq 3b|
+  (assert-true (tree-equal '(a) '(a) :test 'eq)))
+
+(define-test |tree-equal test=eq 4a|
+  (assert-false (tree-equal '(a) '((a)) :test #'eq)))
+
+(define-test |tree-equal test=eq 4b|
+  (assert-false (tree-equal '(a) '((a)) :test 'eq)))
+
+(define-test |tree-equal test=eq 5a|
+  (assert-false (tree-equal '((a)) '(a) :test #'eq)))
+
+(define-test |tree-equal test=eq 5b|
+  (assert-false (tree-equal '((a)) '(a) :test 'eq)))
+
+(define-test |tree-equal test-not=eql 1a|
+  (assert-false (tree-equal '(1) '(2) :test-not #'eql)))
+
+(define-test |tree-equal test-not=eql 1b|
+  (assert-false (tree-equal '(1) '(2) :test-not 'eql)))
+
+(define-test |tree-equal test-not=eql 2a|
+  (assert-false (tree-equal '(1) '((1)) :test-not #'eql)))
+
+(define-test |tree-equal test-not=eql 2b|
+  (assert-false (tree-equal '(1) '((1)) :test-not 'eql)))
+
+(define-test |tree-equal test-not=eql 3a|
+  (assert-false (tree-equal '((1)) '(1) :test-not #'eql)))
+
+(define-test |tree-equal test-not=eql 3b|
+  (assert-false (tree-equal '((1)) '(1) :test-not 'eql)))
+
+(define-test |tree-equal test-not=eq 1a|
+  (assert-true (tree-equal 'a 'b :test-not #'eq)))
+
+(define-test |tree-equal test-not=eq 1b|
+  (assert-true (tree-equal 'a 'b :test-not 'eq)))
+
+(define-test |tree-equal test-not=eq 2a|
+  (assert-false (tree-equal 'a 'a :test-not #'eq)))
+
+(define-test |tree-equal test-not=eq 2b|
+  (assert-false (tree-equal 'a 'a :test-not 'eq)))
+
+(define-test |tree-equal test-not=eq 3a|
   (assert-false (tree-equal '(a) '(a) :test-not #'eq)))
 
-(define-test tree-equal.13
+(define-test |tree-equal test-not=eq 3b|
+  (assert-false (tree-equal '(a) '(a) :test-not 'eq)))
+
+(define-test |tree-equal test-not=eq 4a|
+  (assert-false (tree-equal '(a) '((a)) :test-not #'eq)))
+
+(define-test |tree-equal test-not=eq 4b|
+  (assert-false (tree-equal '(a) '((a)) :test-not 'eq)))
+
+(define-test |tree-equal test-not=eq 5a|
+  (assert-false (tree-equal '((a)) '(a) :test-not #'eq)))
+
+(define-test |tree-equal test-not=eq 5b|
+  (assert-false (tree-equal '((a)) '(a) :test-not #'eq)))
+
+(define-test |tree-equal test-not=eq 6a|
+  (assert-false (tree-equal '(a) '(b) :test-not #'eq)))
+
+(define-test |tree-equal test-not=eq 6b|
+  (assert-false (tree-equal '(a) '(b) :test-not 'eq)))
+
+(define-test |tree-equal test=other 1|
   (assert-true (tree-equal '(1) '(2)
                            :test (lambda (x y)
                                    (or (eql x y)
@@ -2349,8 +2519,65 @@
                                             (numberp y)
                                             (<= (abs (- x y)) 1)))))))
 
-(define-test tree-equal.14
-  (assert-false (tree-equal '(1) '(2) :test-not #'eql)))
+(define-test |tree-equal test=other 2|
+  (assert-false (tree-equal '(1) '(3)
+			    :test (lambda (x y)
+				    (or (eql x y)
+					(and (numberp x)
+					     (numberp y)
+					     (<= (abs (- x y)) 1)))))))
+
+(define-test |tree-equal test=other 3|
+  (assert-false (tree-equal '(1) '((3))
+			    :test (lambda (x y)
+				    (or (eql x y)
+					(and (numberp x)
+					     (numberp y)
+					     (<= (abs (- x y)) 1)))))))
+
+(define-test |tree-equal test=other 4|
+  (assert-false (tree-equal '((1)) '(3)
+			    :test (lambda (x y)
+				    (or (eql x y)
+					(and (numberp x)
+					     (numberp y)
+					     (<= (abs (- x y)) 1)))))))
+
+(define-test |tree-equal test-not=other 1|
+  (assert-true (tree-equal '(1) '(2)
+                           :test-not (lambda (x y)
+				       (not (or (eql x y)
+						(and (numberp x)
+						     (numberp y)
+						     (<= (abs (- x y)) 1))))))))
+
+(define-test |tree-equal test-not=other 2|
+  (assert-false (tree-equal '(1) '(3)
+			    :test-not (lambda (x y)
+					(not (or (eql x y)
+						 (and (numberp x)
+						      (numberp y)
+						      (<= (abs (- x y)) 1))))))))
+
+(define-test |tree-equal test-not=other 3|
+  (assert-false (tree-equal '(1) '((3))
+			    :test-not (lambda (x y)
+					(not (or (eql x y)
+						 (and (numberp x)
+						      (numberp y)
+						      (<= (abs (- x y)) 1))))))))
+
+(define-test |tree-equal test-not=other 4|
+  (assert-false (tree-equal '((1)) '(3)
+			    :test-not (lambda (x y)
+					(not (or (eql x y)
+						 (and (numberp x)
+						      (numberp y)
+						      (<= (abs (- x y)) 1))))))))
+
+(define-test |tree-equal test=other test-not=other 1|
+  (assert-error 'error
+		(tree-equal '() '() :test #'eql :test-not #'eql)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
