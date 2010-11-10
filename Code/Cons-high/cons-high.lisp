@@ -668,9 +668,12 @@
       (let ((funvar (gensym))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       ,@(apply #'append (loop for var in vars
-				       for list in lists
-				       collect `(for ,var on ,list)))
+	       ,@(loop for var in vars
+		       for list in lists
+		       append `(for ,var = ,list then (cdr ,var)))
+	       ,@(loop for var in vars
+		       for list in lists
+		       append `(until (endp ,var)))
 	       nconc (funcall ,funvar ,@vars)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1115,7 +1118,7 @@
                     nil)
                    (t
                     (traverse (cdr tree))))))
-    (cond ((not (funcall test tree old)) new)
+    (cond ((not (funcall test old tree)) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
 
@@ -1207,7 +1210,7 @@
                     nil)
                    (t
                     (traverse (cdr tree))))))
-    (cond ((funcall predicate tree) new)
+    (cond ((funcall predicate (funcall key tree)) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
 
@@ -1261,7 +1264,7 @@
                     nil)
                    (t
                     (traverse (cdr tree))))))
-    (cond ((not (funcall predicate tree)) new)
+    (cond ((not (funcall predicate (funcall key tree))) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
 
