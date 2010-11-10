@@ -3142,6 +3142,138 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the nbutlast function
+
+(define-test |nbutlast n=1 1a|
+  (assert-equal '()
+		(nbutlast '())))
+
+(define-test |nbutlast n=1 1b|
+  (assert-equal '()
+		(nbutlast '() 1)))
+
+(define-test |nbutlast n=1 2a|
+  (let ((list (copy-list '(1))))
+    (assert-equal '()
+		  (nbutlast list))))
+
+(define-test |nbutlast n=1 2b|
+  (let ((list (copy-list '(1))))
+    (assert-equal '()
+		  (nbutlast list 1))))
+
+(define-test |nbutlast n=1 3a|
+  (let ((list (copy-list '(1 2))))
+    (assert-equal '(1)
+		  (nbutlast list))
+    (assert-equal '(1)
+		  list)))
+
+(define-test |nbutlast n=1 3b|
+  (let ((list (copy-list '(1 2))))
+    (assert-equal '(1)
+		  (nbutlast list 1))
+    (assert-equal '(1)
+		  list)))
+
+(define-test |nbutlast n=1 4a|
+  (let ((list (copy-list '(1 . 2))))
+    (assert-equal '()
+		  (nbutlast list))))
+
+(define-test |nbutlast n=1 4b|
+  (let ((list (copy-list '(1 . 2))))
+    (assert-equal '()
+		  (nbutlast list 1))))
+
+(define-test |nbutlast n=1 5a|
+  (let ((list (copy-list '(1 2 . 3))))
+    (assert-equal '(1)
+		  (nbutlast list))
+    (assert-equal '(1)
+		  list)))
+
+(define-test |nbutlast n=1 5b|
+  (let ((list (copy-list '(1 2 . 3))))
+    (assert-equal '(1)
+		  (nbutlast list 1))
+    (assert-equal '(1)
+		  list)))
+
+(define-test |nbutlast n=1 6a|
+  (let ((list (copy-list '(1 2 3 . 4))))
+    (assert-equal '(1 2)
+		  (nbutlast list))
+    (assert-equal '(1 2)
+		  list)))
+
+(define-test |nbutlast n=1 6b|
+  (let ((list (copy-list '(1 2 3 . 4))))
+    (assert-equal '(1 2)
+		  (nbutlast list 1))
+    (assert-equal '(1 2)
+		  list)))
+
+(define-test |nbutlast n=1 7a|
+  (let ((list (copy-list '(1 2 3 4))))
+    (assert-equal '(1 2 3)
+		  (nbutlast list))
+    (assert-equal '(1 2 3)
+		  list)))
+
+(define-test |nbutlast n=1 7b|
+  (let ((list (copy-list '(1 2 3 4))))
+    (assert-equal '(1 2 3)
+		  (nbutlast list 1))
+    (assert-equal '(1 2 3)
+		  list)))
+
+(define-test |nbutlast n=other 1|
+  (assert-equal '()
+		(nbutlast '() 2)))
+
+(define-test |nbutlast n=other 2|
+  (let ((list (copy-list '(1))))
+    (assert-equal '()
+		  (nbutlast list 2))))
+
+(define-test |nbutlast n=other 3|
+  (let ((list (copy-list '(1 2))))
+    (assert-equal '()
+		  (nbutlast list 2))))
+
+(define-test |nbutlast n=other 4|
+  (let ((list (copy-list '(1 2 3))))
+    (assert-equal '(1)
+		  (nbutlast list 2))
+    (assert-equal '(1)
+		  list)))
+
+(define-test |nbutlast n=other 5|
+  (let ((list (copy-list '(1 2 . 3))))
+    (assert-equal '()
+		  (nbutlast list 2))))
+
+(define-test |nbutlast n=other 6|
+  (let ((list (copy-list '(1 2 3 . 4))))
+    (assert-equal '(1)
+		  (nbutlast list 2))
+    (assert-equal '(1)
+		  list)))
+
+(define-test |nbutlast error 1|
+  (assert-error 'type-error
+		(nbutlast 1)))
+
+(define-test |nbutlast error 1|
+  (assert-error 'type-error
+		(nbutlast '() 'a)))
+
+;;; FIXME test for circular lists.  We can't do that right now
+;;; because we would go into an infinite loop.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the subst function
 
 (define-test |subst test=eql key=identity 1a|
@@ -3363,17 +3495,49 @@
 		  (setf tree2 (nsubst 'a 0 tree :test 'eql)))
     (assert-eq tree tree2)))    
 
-(define-test |nsubst test=eq key=identity 1|
+(define-test |nsubst test=eql key=identity 3a|
+  (assert-equal 2
+		(nsubst 2 1 1)))
+
+(define-test |nsubst test=eql key=identity 3b|
+  (assert-equal 2
+		(nsubst 2 1 1 :test #'eql)))
+
+(define-test |nsubst test=eql key=identity 3c|
+  (assert-equal 2
+		(nsubst 2 1 1 :test 'eql)))
+
+(define-test |nsubst test=eq key=identity 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
 		  (nsubst 'a 'b tree :test #'eq))))
 
-(define-test |nsubst test=eq key=identity 2|
+(define-test |nsubst test=eq key=identity 1b|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 'b tree :test 'eq))))
+
+(define-test |nsubst test=eq key=identity 2a|
   (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
 	(tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
 		  (setf tree2 (nsubst 'a 'b tree :test #'eq)))
     (assert-eq tree tree2)))
+
+(define-test |nsubst test=eq key=identity 2a|
+  (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
+	(tree2))
+    (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
+		  (setf tree2 (nsubst 'a 'b tree :test 'eq)))
+    (assert-eq tree tree2)))
+
+(define-test |nsubst test=eq key=identity 3a|
+  (assert-equal 'b
+		(nsubst 'b 'a 'a :test #'eq)))
+
+(define-test |nsubst test=eq key=identity 3b|
+  (assert-equal 'b
+		(nsubst 'b 'a 'a :test 'eq)))
 
 (define-test |nsubst test=other key=identity 1|
   (let ((tree (copy-tree '())))
@@ -3388,6 +3552,13 @@
 		  (setf tree2 (nsubst 'a 0 tree
 				      :test (lambda (x y) (and (numberp y) (= x y))))))
     (assert-eq tree tree2)))
+
+(define-test |nsubst test=other key=identity 3|
+  (assert-equal 2
+		(nsubst 2 1 0 :test (lambda (x y)
+				      (and (numberp x)
+					   (numberp y)
+					   (<= (abs (- x y)) 1))))))
 
 (define-test |nsubst test=eql key=other 1a|
   (let ((tree (copy-tree '())))
@@ -3435,14 +3606,33 @@
 				      :test 'eql)))
     (assert-eq tree tree2)))
 
-(define-test |nsubst test=eq key=other 1|
+(define-test |nsubst test=eql key=other 3a|
+  (assert-equal 2
+		(nsubst 2 1 0 :key #'1+)))
+
+(define-test |nsubst test=eql key=other 3b|
+  (assert-equal 2
+		(nsubst 2 1 0 :key #'1+ :test #'eql)))
+
+(define-test |nsubst test=eql key=other 3c|
+  (assert-equal 2
+		(nsubst 2 1 0 :key #'1+ :test 'eql)))
+
+(define-test |nsubst test=eq key=other 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
 		  (nsubst 'a 'bb tree
 			  :test #'eq
 			  :key (lambda (x) (if (eq x 'b) 'bb x))))))
 
-(define-test |nsubst test=eq key=other 2|
+(define-test |nsubst test=eq key=other 1b|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 'bb tree
+			  :test #'eq
+			  :key (lambda (x) (if (eq x 'b) 'bb x))))))
+
+(define-test |nsubst test=eq key=other 2a|
   (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
 	(tree2))
     (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
@@ -3450,6 +3640,27 @@
 				      :test #'eq
 				      :key (lambda (x) (if (eq x 'b) 'bb x)))))
     (assert-eq tree tree2)))
+
+(define-test |nsubst test=eq key=other 2b|
+  (let ((tree (copy-tree '(((b . c) . (f . b)) . ((b . d) . (e . b)))))
+	(tree2))
+    (assert-equal '(((a . c) . (f . a)) . ((a . d) . (e . a)))
+		  (setf tree2 (nsubst 'a 'bb tree
+				      :test 'eq
+				      :key (lambda (x) (if (eq x 'b) 'bb x)))))
+    (assert-eq tree tree2)))
+
+(define-test |nsubst test=eq key=other 3a|
+  (assert-equal 'b
+		(nsubst 'b 'a 'c
+			:test #'eq
+			:key (lambda (x) (if (eq x 'c) 'a x)))))
+
+(define-test |nsubst test=eq key=other 3b|
+  (assert-equal 'b
+		(nsubst 'b 'a 'c
+			:test 'eq
+			:key (lambda (x) (if (eq x 'c) 'a x)))))
 
 (define-test |nsubst test=other key=other 1|
   (let ((tree (copy-tree '())))
@@ -3467,6 +3678,39 @@
 				      :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
+(define-test |nsubst test=other key=other 3|
+  (assert-equal 2
+		(nsubst 2 1 -1
+			:test (lambda (x y)
+				(and (numberp x)
+				     (numberp y)
+				     (<= (abs (- x y)) 1)))
+			:key #'1+)))
+
+(define-test |nsubst test-not=other key=identity 1|
+  (let ((tree (copy-tree '())))
+    (assert-equal '()
+		  (nsubst 'a 0 tree
+			  :test-not (lambda (x y)
+				      (not (and (numberp y) (= x (1- y)))))))))
+
+(define-test |nsubst test-not=other key=identity 2|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (setf tree2 (nsubst 'a 0 tree
+				      :test-not (lambda (x y)
+						  (not (and (numberp y) (= x y)))))))
+    (assert-eq tree tree2)))
+
+(define-test |nsubst test-not=other key=identity 3|
+  (assert-equal 2
+		(nsubst 2 1 0
+			:test-not (lambda (x y)
+				    (not (and (numberp x)
+					      (numberp y)
+					      (<= (abs (- x y)) 1)))))))
+
 (define-test |nsubst test-not=any key=other 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
 	(tree2))
@@ -3475,6 +3719,24 @@
 				      :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
 				      :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
+
+(define-test |nsubst test-not=other key=other 3|
+  (assert-equal 2
+		(nsubst 2 1 -1
+			:test-not (lambda (x y)
+				    (not (and (numberp x)
+					      (numberp y)
+					      (<= (abs (- x y)) 1))))
+			:key #'1+)))
+
+(define-test |nsubst test-not=other key=other 4|
+  (assert-equal -1
+		(nsubst 2 1 -1
+			:test-not (lambda (x y)
+				    (not (and (numberp x)
+					      (numberp y)
+					      (<= (abs (- x y)) 1))))
+			:key #'1-)))
 
 (define-test |nsubst test=other test-not=other|
   (assert-error 'error
@@ -3506,6 +3768,14 @@
 					 tree)))
     (assert-eq tree tree2)))
 
+(define-test |nsubst-if key=identity 3|
+  (assert-equal 2
+		(nsubst-if 2 #'zerop 0)))
+
+(define-test |nsubst-if key=identity 4|
+  (assert-equal 1
+		(nsubst-if 2 #'zerop 1)))
+
 (define-test |nsubst-if key=other 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
@@ -3523,6 +3793,10 @@
 					 tree
 					 :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
+
+(define-test |nsubst-if key=other 3|
+  (assert-equal 2
+		(nsubst-if 2 #'zerop 1 :key #'1-)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3544,6 +3818,10 @@
 					     tree)))
     (assert-eq tree tree2)))
 
+(define-test |nsubst-if-not key=identity 3|
+  (assert-equal 2
+		(nsubst-if-not 2 #'zerop 1)))
+
 (define-test |nsubst-if-not key=other 1|
   (let ((tree (copy-tree '())))
     (assert-equal '()
@@ -3561,6 +3839,10 @@
 					     tree
 					     :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
+
+(define-test |nsubst-if-not key=other 3|
+  (assert-equal 2
+		(nsubst-if-not 2 #'zerop 0 :key #'1+)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
