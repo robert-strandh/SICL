@@ -4905,6 +4905,12 @@
 		        :test (lambda (x y) (and (numberp y) (= x (1- y))))
 			:key (lambda (x) (if (numberp x) (1+ x) x)))))
 
+(define-test |sublis test-not=any key=identity 2|
+  (assert-equal '(((a . 5) . (2 . a)) . ((a . 3) . (4 . a)))
+		(sublis '((10 . xx) (0 . a))
+			'(((1 . 5) . (2 . 1)) . ((1 . 3) . (4 . 1)))
+		        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
+
 (define-test |sublis test-not=any key=other 2|
   (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
 		(sublis '((10 . xx) (0 . a))
