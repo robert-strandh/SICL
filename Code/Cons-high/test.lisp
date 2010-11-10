@@ -2837,6 +2837,38 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Tests for the mapcon function
+
+(define-test |macon 1|
+  (assert-equal nil
+		(mapcon #'identity '())))
+
+(define-test |mapcon 2|
+  (assert-equal '(1 2 2)
+		(mapcon #'copy-list '(1 2))))
+
+(define-test |mapcon 3|
+  (assert-equal '((1 2) (3 4) (2) (4))
+		(mapcon #'list '(1 2) '(3 4))))
+
+(define-test |mapcon apply 1|
+  (assert-equal '((1 2) (3 4) (2) (4))
+		(apply #'mapcon #'list '(1 2) '(3 4) '())))
+
+(define-test |mapcon error 1|
+  (assert-error 'type-error
+		(mapcon #'copy-list '(1 . 2))))
+
+(define-test |mapcon error 2|
+  (assert-error 'type-error
+		(mapcon #'car (if (twisted '(a b c)) "1" '((a) (b) (c))))))
+
+(define-test |mapcon error 3|
+  (assert-error 'error
+		(mapcon #'car)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for the append function
 
 (define-test append.1
