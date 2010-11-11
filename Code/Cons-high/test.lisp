@@ -5037,6 +5037,12 @@
 				       :test (lambda (x y) (and (numberp y) (= x y))))))
     (assert-eq tree tree2)))
 
+(define-test |nsublis test=other key=identity 3|
+  (assert-equal 'a
+		(nsublis '((10 . xx) (0 . a))
+			 1
+			 :test (lambda (x y) (and (numberp y) (= x (1- y)))))))
+
 (define-test |nsublis test=eql key=other 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
@@ -5139,11 +5145,12 @@
 				       :key (lambda (x) (if (numberp x) (1+ x) x)))))
     (assert-eq tree tree2)))
 
-(define-test |nsublis test=other key=identity 2|
+(define-test |nsublis test=other key=other 3|
   (assert-equal 'a
 		(nsublis '((10 . xx) (0 . a))
-			 1
-			 :test (lambda (x y) (and (numberp y) (= x (1- y)))))))
+			 0
+			 :test (lambda (x y) (and (numberp y) (= x (1- y))))
+			 :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
 (define-test |nsublis test-not=any key=identity 2|
   (let ((tree (copy-tree '(((1 . 5) . (2 . 1)) . ((1 . 3) . (4 . 1)))))
@@ -5160,6 +5167,12 @@
 			 1
 			 :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
 
+(define-test |nsublis test-not=any key=identity 4|
+  (assert-equal 123
+		(nsublis '((10 . xx) (0 . a))
+			 123
+			 :test-not (lambda (x y) (not (and (numberp y) (= x (1- y))))))))
+
 (define-test |nsublis test-not=any key=other 2|
   (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
 	(tree2))
@@ -5174,6 +5187,13 @@
   (assert-equal 'a
 		(nsublis '((10 . xx) (0 . a))
 			 0
+			 :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
+			 :key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |nsublis test-not=any key=other 4|
+  (assert-equal 123
+		(nsublis '((10 . xx) (0 . a))
+			 123
 			 :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
 			 :key (lambda (x) (if (numberp x) (1+ x) x)))))
 
