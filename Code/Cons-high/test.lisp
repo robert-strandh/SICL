@@ -9509,21 +9509,68 @@
 ;;;
 ;;; Tests for the getf function
 
-(define-test getf.1
+(define-test |getf 1|
   (assert-equal nil
 		(getf '() 'a)))
 
-(define-test getf.2
+(define-test |getf 2|
   (assert-equal 1
 		(getf '(a 1) 'a)))
 
-(define-test getf.3
+(define-test |getf 3|
   (assert-equal 1
 		(getf '(b 2 a 1) 'a)))
 
-(define-test getf.3
+(define-test |getf 4|
   (assert-equal nil
 		(getf '(b 2 a 1) 'c)))
+
+(define-test |getf error 1|
+  (assert-error 'error
+		(getf '(b 2 a) 'c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the get-properties function
+
+(define-test |get-properties 1|
+  (multiple-value-bind (indicator value tail)
+      (get-properties '() '(a))
+    (assert-equal nil indicator)
+    (assert-equal nil value)
+    (assert-equal nil tail)))
+
+(define-test |get-properties 2|
+  (multiple-value-bind (indicator value tail)
+      (get-properties '(a 1) '(b a))
+    (assert-equal 'a indicator)
+    (assert-equal 1 value)
+    (assert-equal '(a 1) tail)))
+
+(define-test |get-properties 3|
+  (multiple-value-bind (indicator value tail)
+      (get-properties '(b 2 a 1) '(c a d))
+    (assert-equal 'a indicator)
+    (assert-equal 1 value)
+    (assert-equal '(a 1) tail)))
+
+(define-test |get-properties 4|
+  (multiple-value-bind (indicator value tail)
+      (get-properties '(b 2 a 1) '(c d e))
+    (assert-equal nil indicator)
+    (assert-equal nil value)
+    (assert-equal nil tail)))
+
+(define-test |get-properties 5|
+  (multiple-value-bind (indicator value tail)
+      (get-properties '(b 2 a 1 e 10) '(c a d))
+    (assert-equal 'a indicator)
+    (assert-equal 1 value)
+    (assert-equal '(a 1 e 10) tail)))
+
+(define-test |get-properties error 1|
+  (assert-error 'error
+		(get-properties '(b 2 a) '(c d e))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
