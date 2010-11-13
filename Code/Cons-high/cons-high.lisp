@@ -10,21 +10,33 @@
 (define-condition name-mixin ()
   ((%name :initarg :name :reader name)))
 
-;;; This condition is used by functions and macros that requre
+;;; This condition is used by functions an macros that require 
+;;; some argument to be a nonnegative integer. 
+(define-condition must-be-nonnegative-integer (type-error name-mixin)
+  ()
+  (:default-initargs :expected-type '(integer 0)))
+
+;;; This condition is used by functions and macros that require
 ;;; some argument to be a list (a cons or nil).
 (define-condition must-be-list (type-error name-mixin)
   ()
   (:default-initargs :expected-type 'list))
 
-;;; This condition is used by functions and macros that requre
+;;; This condition is used by functions and macros that require
 ;;; some list to be a proper list.  
 (define-condition must-be-proper-list (type-error name-mixin)
   ()
   (:default-initargs :expected-type 'list))
 
-;;; This condition is used by functions and macros that requre
+;;; This condition is used by functions and macros that require
 ;;; some list to be either a proper list or a circular list.
 (define-condition must-be-proper-or-circular-list (type-error name-mixin)
+  ()
+  (:default-initargs :expected-type 'list))
+
+;;; This condition is used by functions and macros that require
+;;; some argument to be a propterty list.
+(define-condition must-be-property-list (type-error name-mixin)
   ()
   (:default-initargs :expected-type 'list))
 
@@ -392,8 +404,14 @@
 ;;; Function last
 
 (defun last (list &optional (n 1))
-  (check-type list list "a list")
-  (check-type n (integer 0) "a nonnegative integer")
+  (unless (typep list 'list)
+    (error 'must-be-list
+	   :datum list
+	   :name 'last))
+  (unless (typep n '(integer 0))
+    (error 'must-be-nonnegative-integer
+	   :datum n
+	   :name 'last))
   (let ((remaining list))
     (loop repeat n
 	  until (atom remaining)
@@ -406,7 +424,10 @@
 ;;; special version of last used when the second argument to
 ;;; last is 1. 
 (defun last-1 (list)
-  (check-type list list "a list")
+  (unless (typep list 'list)
+    (error 'must-be-list
+	   :datum list
+	   :name 'last))
   (loop for rest on list
 	do (setf list rest))
   list)
@@ -417,7 +438,10 @@
       form))
 
 (defun copy-list (list)
-  (check-type list list "a list")
+  (unless (typep list 'list)
+    (error 'must-be-list
+	   :datum list
+	   :name 'copy-list))
   (if (null list)
       nil
       (let* ((result (list (car list)))
@@ -521,13 +545,19 @@
 		:name 'list-length))))
 
 (defun make-list (length &key (initial-element nil))
-  (check-type length (integer 0) "a nonnegative integer")
+  (unless (typep length '(integer 0))
+    (error 'must-be-nonnegative-integer
+	   :datum length
+	   :name 'make-list))
   (loop repeat length
 	collect initial-element))
 
 ;;; FIXME: Check at each iteration that we have a list. 
 (defun nthcdr (n list)
-  (check-type n (integer 0) "a nonnegative integer")
+  (unless (typep n '(integer 0))
+    (error 'must-be-nonnegative-integer
+	   :datum n
+	   :name 'nthcdr))
   (loop repeat n
 	until (null list)
 	do (setf list (cdr list)))
@@ -630,7 +660,10 @@
 ;;; Function endp
 
 (defun endp (list)
-  (check-type list list "a list")
+  (unless (typep list 'list)
+    (error 'must-be-list
+	   :datum list
+	   :name 'endp))
   (null list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -862,8 +895,14 @@
 ;;; for circular lists, but we currently don't. 
 
 (defun butlast (list &optional (n 1))
-  (check-type list list "a list")
-  (check-type n (integer 0) "a nonnegative integer")
+  (unless (typep list 'list)
+    (error 'must-be-list
+	   :datum list
+	   :name 'butlast))
+  (unless (typep n '(integer 0))
+    (error 'must-be-nonnegative-integer
+	   :datum n
+	   :name 'butlast))
   (let ((remaining list))
     (loop repeat n
 	  until (atom remaining)
@@ -888,7 +927,10 @@
 ;;; for circular lists, but we currently don't. 
 
 (defun nbutlast-1 (list)
-  (check-type list list "a list")
+  (unless (typep list 'list)
+    (error 'must-be-list
+	   :datum list
+	   :name 'nbutlast))
   (if (atom (cdr list))
       nil
       ;; The compiler probably isn't smart enough to eliminate
@@ -909,8 +951,14 @@
 ;;; for circular lists, but we currently don't. 
 
 (defun nbutlast (list &optional (n 1))
-  (check-type list list "a list")
-  (check-type n (integer 0) "a nonnegative integer")
+  (unless (typep list 'list)
+    (error 'must-be-list
+	   :datum list
+	   :name 'nbutlast))
+  (unless (typep n '(integer 0))
+    (error 'must-be-nonnegative-integer
+	   :datum n
+	   :name 'nbutlast))
   (if (= n 1)
       (nbutlast-1 list)
       (let ((length (loop for conses = list then (cdr conses)
@@ -3575,7 +3623,10 @@
 ;;; Function getf
 
 (defun getf (plist indicator &optional default)
-  (check-type plist list)
+  (unless (typep plist 'list)
+    (error 'must-be-property-list
+	   :datum plist
+	   :name 'getf))
   (loop for rest on plist by #'cddr
 	;; FIXME do this better
 	do (assert (consp (cdr rest)))
@@ -3611,7 +3662,10 @@
 ;;; Function get-properties
 
 (defun get-properties (plist indicator-list)
-  (check-type plist list)
+  (unless (typep plist 'list)
+    (error 'must-be-property-list
+	   :datum plist
+	   :name 'getf))
   (loop for rest on plist by #'cddr
 	;; FIXME do this better
 	do (assert (consp (cdr rest)))
