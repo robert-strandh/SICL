@@ -2249,32 +2249,74 @@
 ;;;
 ;;; Tests for the list-length function
 
-(define-test list-length.1
+(define-test |list-length proper-list 1|
   (assert-equal 0
 		(list-length '())))
 		
-(define-test list-length.2
+(define-test |list-length proper-list 2|
+  (assert-equal 1
+		(list-length '(0))))
+
+(define-test |list-length proper-list 3|
   (assert-equal 2
 		(list-length '(0 0))))
 
-(define-test list-length.3
-  (let ((list (list 0)))
-    (setf (cdr list) list)
-    (assert-equal nil
-		  (list-length list))))
+(define-test |list-length proper-list 4|
+  (assert-equal 3
+		(list-length '(0 0 0))))
 
-(define-test list-length.4
+(define-test |list-length proper-list 5|
+  (assert-equal 4
+		(list-length '(0 0 0 0))))
+
+(define-test |list-length proper-list 6|
   (assert-equal 5
 		(list-length '(0 0 0 0 0))))
 
-(define-test list-length.error.1
+(define-test |list-length circular-list 1|
+  (assert-equal nil
+		(list-length '#1=(0 . #1#))))
+
+(define-test |list-length circular-list 2|
+  (assert-equal nil
+		(list-length '#1=(0 0 . #1#))))
+
+(define-test |list-length circular-list 3|
+  (assert-equal nil
+		(list-length '#1=(0 0 0 . #1#))))
+
+(define-test |list-length circular-list 4|
+  (assert-equal nil
+		(list-length '#1=(0 0 0 0 . #1#))))
+
+(define-test |list-length dotted-list 1|
+  (assert-error 'type-error
+		(list-length '(0 . 0))))
+
+(define-test |list-length dotted-list 2|
+  (assert-error 'type-error
+		(list-length '(0 0 . 0))))
+
+(define-test |list-length dotted-list 3|
+  (assert-error 'type-error
+		(list-length '(0 0 0 . 0))))
+
+(define-test |list-length dotted-list 4|
+  (assert-error 'type-error
+		(list-length '(0 0 0 0 . 0))))
+
+(define-test |list-length not-a-list 1|
   (assert-error 'type-error
 		(list-length 0)))
 
-(define-test list-length.error.2
+(define-test |list-length not-a-list 2|
   (assert-error 'type-error
-		(list-length '(0 . 0))))
-  
+		(list-length 'a)))
+
+(define-test |list-length not-a-list 3|
+  (assert-error 'type-error
+		(list-length #(a))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the make-list function
