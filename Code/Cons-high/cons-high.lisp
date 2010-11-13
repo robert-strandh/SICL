@@ -70,25 +70,46 @@
 ;;; a buggy loop to still use this module without first replacing
 ;;; loop by ours. 
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defun append (&rest lists)
-    (let ((result nil)
-          (frontier nil))
-      (loop for list in lists
-            do (if (null result)
-                   (setf result list)
-                   (progn (when (null frontier)
-                            (setf result (cons (car result) (cdr result))
-                                  frontier result))
-                          (let ((next (cdr frontier)))
-                            (loop until (atom next)
-                                  do (setf next (cons (car next) (cdr next)))
-                                     (setf (cdr frontier) next)
-                                     (setf frontier next)
-                                     (setf next (cdr next)))
-                            (check-type next null "nil"))
-                          (setf (cdr frontier) list))))
-      result)))
+    (if (null lists)
+	;; The standard doesn't say explicity that calling append with
+	;; zero arguments is allowed and returns nil, but one of the
+	;; examples on the HyperSpec page for append suggests that. 
+	'()
+	;; We need to copy every list except the last one.  Also,
+	;; every list except the last one must be a proper list.  In
+	;; order to avoid making a test in each iteration of the loop,
+	;; we use a sentinel, which is a cons cell whose cdr contains
+	;; the real result that we return in the end. 
+	(let* ((sentinel (list nil))
+	       ;; The variable last points to the last cons cell of the
+	       ;; resulting list to be accumulated. 
+	       (last sentinel))
+	  (loop until (null (cdr lists))
+		do (loop with list = (car lists)
+			 do (cond ((consp list)
+				   ;; There are more cells, copy the first one.
+				   (setf (cdr last) (list (car list)))
+				   (setf last (cdr last))
+				   (setf list (cdr list)))
+				  ((null list)
+				   ;; The list is a proper list and we reached the
+				   ;; end of it.
+				   (loop-finish))
+				  (t
+				   ;; The list is a dotted list
+				   (error 'must-be-proper-list
+					  :datum (car lists)
+					  :name 'append))))
+		   ;; We are through with the first list in lists
+		   (setf lists (cdr lists)))
+	  ;; When we get here, there is only one list left in lists.
+	  ;; And in fact, it doesn't have to be a list at all. 
+	  ;; Attach it to the end of what we have accumulated so far.
+	  (setf (cdr last) (car lists))
+	  ;; Skip the sentinel and return the rest. 
+	  (cdr sentinel)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
