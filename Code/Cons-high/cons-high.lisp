@@ -221,19 +221,53 @@
 ;;; loop by ours. 
 
 (defun nconc (&rest lists)
-  (let ((result nil)
-        (frontier nil))
-    (loop for list in lists
-          do (if (null result)
-                 (setf result list)
-                 (progn (when (null frontier)
-                          (setf frontier result))
-                        (let ((next (cdr frontier)))
-                          (loop until (atom next)
-                                do (setf frontier next)
-                                   (setf next (cdr next))))
-                        (setf (cdr frontier) list))))
-    result))
+  (if (null lists)
+      nil
+      ;; As with append, we use a sentinel to avoid a test in a loop. 
+      (let* ((sentinel (list nil))
+	     ;; The variable last is a pointer to the last cell of the
+	     ;; accumulated list. 
+	     (last sentinel))
+	(loop for remaining = lists then (cdr remaining)
+	      ;; Stop when we have processed every list except the last
+	      ;; (which may be any object). 
+	      until (null (cdr remaining))
+	      do (let ((list (car remaining)))
+		   (cond ((consp list)
+			  ;; This is the normal case, the list has at
+			  ;; least one cons cell, but may be proper or
+			  ;; dotted. 
+			  ;; 
+			  ;; Hook it up to the end of the accumulated
+			  ;; list.
+			  (setf (cdr last) list)
+			  ;; And move to the next item, making sure
+			  ;; that last is right behind list. 
+			  (setf last list)
+			  (setf list (cdr list))
+			  ;; Continue this process until list reaches
+			  ;; an atom.  What that happens, last points
+			  ;; to the last cons cell of the list, which
+			  ;; is exactly what we need for next
+			  ;; iteration.
+			  (loop while (consp list)
+				do (setf last list)
+				   (setf list (cdr list))))
+			 ((null list)
+			  ;; If the list is nil, we just skip it. 
+			  nil)
+			 (t
+			  ;; It is neither a cons nor nil, so we
+			  ;; signal an error. 
+			  (error 'must-be-list
+				 :datum (car remaining)
+				 :name 'nconc))))
+	      finally (progn
+			;; Hook up the last list to the end
+			;; of what we have accumulated
+			(setf (cdr last) (car remaining))))
+	;; Skip the sentinel and return the rest. 
+	(cdr sentinel))))
 
 (defmacro define-c*r-function (function-name letters)
   (flet ((primitive (letter)
