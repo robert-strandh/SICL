@@ -16,6 +16,18 @@
 	  (name c)
 	  (package-name (symbol-package (name c)))))
 
+(defmethod report-condition ((c must-be-nonnegative-integer)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (a symbol of the ~a package):~@
+           A nonnegative integer was required,~@
+           but the following was given:~@
+           ~s"
+	  (name c)
+	  (package-name (symbol-package (name c)))
+	  (type-error-datum c)))
+
 (defmethod report-condition ((c must-be-list)
 			     stream
 			     (language (eql 'en-us)))
@@ -46,6 +58,18 @@
   (format stream
 	  "In ~a (a symbol of the ~a package):~@
            A proper or circular list was required,~@
+           but the following was given:~@
+           ~s"
+	  (name c)
+	  (package-name (symbol-package (name c)))
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c must-be-property-list)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (a symbol of the ~a package):~@
+           A property list was required,~@
            but the following was given:~@
            ~s"
 	  (name c)
