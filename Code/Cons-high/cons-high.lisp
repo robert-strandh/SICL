@@ -411,7 +411,14 @@
 ;;; Function rest
 
 (defun rest (list)
-  (cdr list))
+  (cond ((consp list)
+	 (cdr list))
+	((null list)
+	 nil)
+	(t
+	 (error 'must-be-list
+		:datum list
+		:name 'rest))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -423,7 +430,13 @@
     (values (list subform-temp)
 	    (list x)
 	    (list store-temp)
-	    `(progn (rplacd ,subform-temp ,store-temp) ,store-temp)
+	    `(if (consp ,subform-temp)
+		 (progn 
+		   (rplacd ,subform-temp ,store-temp)
+		   ,store-temp)
+		 (error 'must-be-cons
+			:datum ,subform-temp
+			:name '(setf rest)))
 	    `(cdr ,subform-temp))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
