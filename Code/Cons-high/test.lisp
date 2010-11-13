@@ -2913,32 +2913,30 @@
 ;;;
 ;;; Tests for the append function
 
-(define-test append.1
+(define-test |append 1|
   (assert-equal nil (append)))
 
-(define-test append.2
+(define-test |append 2|
   (assert-equal 'x (append 'x)))
 
-(define-test append.4
+(define-test |append 4|
   (assert-equal
    '(a b c d e f g . h)
    (append (list 'a) (list 'b) (list 'c)
            (list 'd) (list 'e) (list 'f)
            (list 'g) 'h)))
 
-(define-test append.5
+(define-test |append 5|
   (assert-equal 'a (append nil nil nil nil nil nil nil nil 'a)))
 
 ;;; Test suggested by Peter Graves
-(define-test append.7
-  (assert-equal
-   nil
-   (let ((x (list 'a 'b 'c 'd)))
-     (eq (append x nil) x))))
+(define-test |append 7|
+  (let ((x (list 'a 'b 'c 'd)))
+    (assert-false (eq (append x nil) x))))
 
 ;;; Order of evaluation tests
 
-(define-test append.order.1
+(define-test |append order 1|
   (assert-equal
    '((a b c d e f g h i) 3 1 2 3)
    (let ((i 0) x y z)
@@ -2948,26 +2946,25 @@
                (progn (setf z (incf i)) (copy-list '(g h i))))
        i x y z))))
 
-(define-test append.order.2
+(define-test |append order 2|
   (assert-equal '(1 1) (let ((i 0)) (append (list (incf i)) (list i)))))
 
 ;;; Error tests
 
-(define-test append.error.1
+(define-test |append error 1|
   (assert-error 'type-error (append '(a . b) '(z))))
 
-(define-test append.error.2
+(define-test |append error 2|
   (assert-error 'type-error (append '(x y z) '(a . b) '(z))))
 
 ;;; This test verifies that append preserves the structure of
 ;;; the last list.
-
-(define-test append.sharing.1
+(define-test |append sharing 1|
   (let ((list1 '(1 2))
         (list2 '(3 4)))
     (assert-eq (cddr (append list1 list2)) list2)))
 
-(define-test append.apply.1
+(define-test |append apply 1|
   (let ((list1 '(1 2))
         (list2 '(3 4)))
     (assert-equal '(1 2 3 4)
