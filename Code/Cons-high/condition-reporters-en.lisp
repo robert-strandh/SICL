@@ -2,6 +2,10 @@
 
 (defparameter *language* 'en-us)
 
+(defun name-package (name)
+  (let ((real-name (if (symbolp name) name (cadr name))))
+    (package-name (symbol-package real-name))))
+
 (defgeneric report-condition (condition stream language))
 
 (defmethod print-object ((c name-mixin) stream)
@@ -11,88 +15,100 @@
 			      stream
 			      (language (eql 'en-us)))
   (format stream
-	  "In ~a (a symbol of the ~a package):~@
+	  "In ~a (in the ~a package):~@
            Both keyword arguments :test and :test-not were given."
 	  (name c)
-	  (package-name (symbol-package (name c)))))
+	  (name-package (name c))))
 
 (defmethod report-condition ((c must-be-nonnegative-integer)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
-	  "In ~a (a symbol of the ~a package):~@
+	  "In ~a (in the ~a package):~@
            A nonnegative integer was required,~@
            but the following was given:~@
            ~s"
 	  (name c)
-	  (package-name (symbol-package (name c)))
+	  (name-package (name c))
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c must-be-cons)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (in the ~a package):~@
+           A cons cell was required,~@
+           but the following was given:~@
+           ~s"
+	  (name c)
+	  (name-package (name c))
 	  (type-error-datum c)))
 
 (defmethod report-condition ((c must-be-list)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
-	  "In ~a (a symbol of the ~a package):~@
+	  "In ~a (in the ~a package):~@
            A list (a cons or nil) was required,~@
            but the following was given:~@
            ~s"
 	  (name c)
-	  (package-name (symbol-package (name c)))
+	  (name-package (name c))
 	  (type-error-datum c)))
 
 (defmethod report-condition ((c must-be-proper-list)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
-	  "In ~a (a symbol of the ~a package):~@
+	  "In ~a (in the ~a package):~@
            A proper list was required,~@
            but the following was given:~@
            ~s"
 	  (name c)
-	  (package-name (symbol-package (name c)))
+	  (name-package (name c))
 	  (type-error-datum c)))
 
 (defmethod report-condition ((c must-be-proper-or-circular-list)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
-	  "In ~a (a symbol of the ~a package):~@
+	  "In ~a (in the ~a package):~@
            A proper or circular list was required,~@
            but the following was given:~@
            ~s"
 	  (name c)
-	  (package-name (symbol-package (name c)))
+	  (name-package (name c))
 	  (type-error-datum c)))
 
 (defmethod report-condition ((c must-be-property-list)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
-	  "In ~a (a symbol of the ~a package):~@
+	  "In ~a (in the ~a package):~@
            A property list was required,~@
            but the following was given:~@
            ~s"
 	  (name c)
-	  (package-name (symbol-package (name c)))
+	  (name-package (name c))
 	  (type-error-datum c)))
 
 (defmethod report-condition ((c at-least-one-list-required)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
-	  "In ~a (a symbol of the ~a package):~@
+	  "In ~a (in the ~a package):~@
            At least one list argument is required,~@
            but none was given."
 	  (name c)
-	  (package-name (symbol-package (name c)))))
+	  (name-package (name c))))
 	  
 (defmethod report-condition ((c at-least-one-argument-required)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
-	  "In ~a (a symbol of the ~a package):~@
+	  "In ~a (in the ~a package):~@
            At least one argument is required,~@
            but none was given."
 	  (name c)
-	  (package-name (symbol-package (name c)))))
+	  (name-package (name c))))
 	  

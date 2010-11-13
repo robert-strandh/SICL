@@ -17,6 +17,12 @@
   (:default-initargs :expected-type '(integer 0)))
 
 ;;; This condition is used by functions and macros that require
+;;; some argument to be a cons cell.
+(define-condition must-be-cons (type-error name-mixin)
+  ()
+  (:default-initargs :expected-type 'cons))
+
+;;; This condition is used by functions and macros that require
 ;;; some argument to be a list (a cons or nil).
 (define-condition must-be-list (type-error name-mixin)
   ()
@@ -333,16 +339,22 @@
     (flet ((primitive (letter)
              (if (eql letter #\A) 'car 'cdr)))
       (flet ((one-iteration (letter)
-               `(progn (check-type remaining cons "a cons cell")
-                       (setf remaining
-                             (,(primitive letter) remaining)))))
+               `(progn (if (consp remaining)
+			   (setf remaining
+				 (,(primitive letter) remaining))
+			   (error 'must-be-cons
+				  :datum remaining
+				  :name '(setf ,function-name))))))
         `(defun (setf ,function-name) (new-object list)
            (let ((remaining list))
              ,@(append (loop for letter across (reverse (subseq letters 1))
 			     collect (one-iteration letter))
-		       `((check-type remaining cons "a cons cell")
-                         (setf (,(primitive (aref letters 0)) remaining)
-                               new-object)))))))))
+		       `((if (consp remaining)
+			     (setf (,(primitive (aref letters 0)) remaining)
+				   new-object)
+			     (error 'must-be-cons
+				    :datum remaining
+				    :name '(setf ,function-name)))))))))))
 
 ;;; These are commented out for now because they
 ;;; trip the package lock of the CL package.
