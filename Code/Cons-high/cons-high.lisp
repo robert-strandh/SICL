@@ -273,11 +273,15 @@
   (flet ((primitive (letter)
            (if (eql letter #\A) 'car 'cdr)))
     (flet ((one-iteration (letter)
-             `(progn (check-type remaining list "a list")
-                     (if (null remaining)
-                         (return-from ,function-name nil)
-			 (setf remaining
-			       (,(primitive letter) remaining))))))
+             `(progn (cond ((consp remaining)
+			    (setf remaining
+				  (,(primitive letter) remaining)))
+			   ((null remaining)
+			    (return-from ,function-name nil))
+			   (t
+			    (error 'must-be-list
+				   :datum remaining
+				   :name ',function-name))))))
       `(defun ,function-name (list)
          (let ((remaining list))
            ,@(loop for letter across (reverse letters)
