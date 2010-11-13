@@ -11,6 +11,12 @@
   ((%name :initarg :name :reader name)))
 
 ;;; This condition is used by functions and macros that requre
+;;; some argument to be a list (a cons or nil).
+(define-condition must-be-list (type-error name-mixin)
+  ()
+  (:default-initargs :expected-type 'list))
+
+;;; This condition is used by functions and macros that requre
 ;;; some list to be a proper list.  
 (define-condition must-be-proper-list (type-error name-mixin)
   ()
@@ -176,9 +182,13 @@
       (get-setf-expansion place env)
     `(let* (,@(mapcar #'list vars vals)
 	    (,(car store-vars) ,reader-form))
-       (prog1 (car ,(car store-vars))
-	 (setq ,(car store-vars) (cdr ,(car store-vars)))
-	 ,writer-form))))
+       (if (listp ,(car store-vars))
+	   (prog1 (car ,(car store-vars))
+	     (setq ,(car store-vars) (cdr ,(car store-vars)))
+	     ,writer-form)
+	   (error 'must-be-list
+		  :datum ,(car store-vars)
+		  :name 'pop)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -387,10 +397,10 @@
   (let ((remaining list))
     (loop repeat n
 	  until (atom remaining)
-	  do (pop remaining))
+	  do (setf remaining (cdr remaining)))
     (loop until (atom remaining)
-	  do (pop list)
-	  do (pop remaining))
+	  do (setf list (cdr list))
+	  do (setf remaining (cdr remaining)))
     list))
 
 ;;; special version of last used when the second argument to
@@ -412,12 +422,12 @@
       nil
       (let* ((result (list (car list)))
 	     (trailer result))
-	(loop do (pop list)
+	(loop do (setf list (cdr list))
 	      until (atom list)
 	      ;; list is not an atom, allocate a new cell
 	      ;; at the end of the result list
 	      do (setf (cdr trailer) (list (car list)))
-	      do (pop trailer))
+	      do (setf trailer (cdr trailer)))
 	;; when we come here, list is an atom,
 	;; either NIL because the list was a proper list
 	;; or some other atom because it was not a proper list
@@ -520,7 +530,7 @@
   (check-type n (integer 0) "a nonnegative integer")
   (loop repeat n
 	until (null list)
-	do (pop list))
+	do (setf list (cdr list)))
   list)
 
 ;;; FIXME: Iterate and check at each iteration that we have a list. 
@@ -857,10 +867,10 @@
   (let ((remaining list))
     (loop repeat n
 	  until (atom remaining)
-	  do (pop remaining))
+	  do (setf remaining (cdr remaining)))
     (loop until (atom remaining)
-          do (pop remaining)
-          collect (pop list))))
+          do (setf remaining (cdr remaining))
+          collect (prog1 (car list) (setf list (cdr list))))))
 
 ;;; There is probably no point in making a special version of 
 ;;; butlast for n = 1, because the time is going to be dominated
@@ -2288,8 +2298,8 @@
              (remaining (cdr list)))
         (loop until (or (eql remaining object) (atom remaining))
               do (setf (cdr current) (list (car remaining)))
-                 (pop current)
-                 (pop remaining))
+                 (setf current (cdr current))
+                 (setf remaining (cdr remaining)))
         (if (eql remaining object)
             result
             (progn (setf (cdr current) remaining)

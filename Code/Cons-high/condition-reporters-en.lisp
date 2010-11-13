@@ -16,6 +16,18 @@
 	  (name c)
 	  (package-name (symbol-package (name c)))))
 
+(defmethod report-condition ((c must-be-list)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (a symbol of the ~a package):~@
+           A list (a cons or nil) was required,~@
+           but the following was given:~@
+           ~s"
+	  (name c)
+	  (package-name (symbol-package (name c)))
+	  (type-error-datum c)))
+
 (defmethod report-condition ((c must-be-proper-list)
 			     stream
 			     (language (eql 'en-us)))
