@@ -2,6 +2,44 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Externally visible conditions
+
+;;; This condition is used to mix into other conditions that
+;;; will report the construct (function, macro, etc) in which 
+;;; the condition was signaled. 
+(define-condition name-mixin ()
+  ((%name :initarg :name :reader name)))
+
+;;; This condition is used by functions and macros that requre
+;;; some list to be a proper list.  
+(define-condition must-be-proper-list (type-error name-mixin)
+  ()
+  (:default-initargs :expected-type 'list))
+
+;;; This condition is used by functions and macros that requre
+;;; some list to be either a proper list or a circular list.
+(define-condition must-be-proper-or-circular-list (type-error name-mixin)
+  ()
+  (:default-initargs :expected-type 'list))
+
+;;; This condition is used by functions that take :test and :test-not
+;;; keyword arguments, and is signaled when both of those are given.
+(define-condition both-test-and-test-not-given (error name-mixin)
+  ())
+
+;;; This condition is used by the map* family functions when no lists
+;;; were given, since those functions require at least one list
+;;; argument.
+(define-condition at-least-one-list-required (error name-mixin)
+  ())
+
+;;; This condition is used by the list* function when no arguments
+;;; were given, since that function requires at least one argument.
+(define-condition at-least-one-argument-required (error name-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Type null
 
 (deftype null () 'cl:null)
@@ -81,8 +119,8 @@
 
 (eval-when (:compile-toplevel :load-toplevel)
   (defun mapcar (function &rest lists)
-    ;; FIXME: do this better
-    (assert (not (null lists)))
+    (when (null lists)
+      (error 'at-least-one-list-required :name 'mapcar))
     (loop for remaining = lists
 	    then (loop for list in remaining collect (cdr list))
 	  until (loop for list in remaining thereis (null list))
@@ -302,9 +340,9 @@
 ;;; this implementation assumes that there is no 
 ;;; structure sharing between the &rest argument
 ;;; and the last argument to apply
-;;; FIXME: fix the assert to signal a particular condition
 (defun list* (&rest elements)
-  (assert (not (null elements)))
+  (when (null elements)
+    (error 'at-least-one-argument-required :name 'list*))
   (if (null (cdr elements))
       (car elements)
       (loop for remaining on elements
@@ -465,8 +503,9 @@
                    &key
                    (test nil testp)
                    (test-not nil test-not-p))
-  ;; FIXME Do this better
-  (assert (or (null testp) (null test-not-p)))
+  (when (and testp test-not-p)
+    (error 'both-test-and-test-not-given
+	   :name 'tree-equal))
   (if testp
       (if (eq test #'eq)
           (tree-equal-eq tree1 tree2)
@@ -517,8 +556,8 @@
 ;;; Function mapc
 
 (defun mapc (function &rest lists)
-  ;; FIXME: do this better
-  (assert (not (null lists)))
+  (when (null lists)
+    (error 'at-least-one-list-required :name 'mapc))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
 	until (loop for list in remaining thereis (null list))
@@ -550,11 +589,9 @@
 ;;;
 ;;; Function maplist
 
-
-
 (defun maplist (function &rest lists)
-  ;; FIXME: do this better
-  (assert (not (null lists)))
+  (when (null lists)
+    (error 'at-least-one-list-required :name 'maplist))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
 	until (loop for list in remaining thereis (null list))
@@ -584,8 +621,8 @@
 ;;; Function mapl
 
 (defun mapl (function &rest lists)
-  ;; FIXME: do this better
-  (assert (not (null lists)))
+  (when (null lists)
+    (error 'at-least-one-list-required :name 'mapl))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
 	until (loop for list in remaining thereis (null list))
@@ -621,8 +658,8 @@
 ;;; Function mapcan
 
 (defun mapcan (function &rest lists)
-  ;; FIXME: do this better
-  (assert (not (null lists)))
+  (when (null lists)
+    (error 'at-least-one-list-required :name 'mapcan))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
 	until (loop for list in remaining thereis (null list))
@@ -650,8 +687,8 @@
 ;;; Function mapcon
 
 (defun mapcon (function &rest lists)
-  ;; FIXME: do this better
-  (assert (not (null lists)))
+  (when (null lists)
+    (error 'at-least-one-list-required :name 'mapcon))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
 	until (loop for list in remaining thereis (null list))
@@ -889,8 +926,8 @@
     (traverse tree)))
 
 (defun subst (new old tree &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'subst))
   (if key
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -1143,8 +1180,8 @@
           (t (traverse tree) tree))))
 
 (defun nsubst (new old tree &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'nsubst))
   (if key
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -1374,8 +1411,8 @@
           return element))
   
 (defun assoc (item alist &key key test test-not)
-  ;; FIXME: do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'assoc))
   (if key
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -1555,8 +1592,8 @@
           return element))
   
 (defun rassoc (item alist &key key test test-not)
-  ;; FIXME: do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'rassoc))
   (if key
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -1764,8 +1801,8 @@
 	(if substitution-p new-tree tree)))))
 
 (defun sublis (alist tree &key key test test-not)
-  ;; FIXME: do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'sublis))
   (if key
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -1937,8 +1974,8 @@
 	    (t (traverse tree) tree)))))
 
 (defun nsublis (alist tree &key key test test-not)
-  ;; FIXME: do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'nsublis))
   (if key
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -2036,8 +2073,8 @@
           return rest))
 
 (defun member (item list &key key test test-not)
-  ;; FIXME: do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'member))
   (if key
       (if test
           (if (or (eq test #'eq) (eq test 'eq))
@@ -2296,8 +2333,8 @@
 	  collect element)))
 
 (defun union (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'union))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -2357,8 +2394,8 @@
 ;;; require this function to have any side effects. 
 
 (defun nunion (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'nunion))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -2519,8 +2556,8 @@
 	    collect element)))
 
 (defun intersection (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'intersection))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -2580,8 +2617,8 @@
 ;;; require this function to have any side effects. 
 
 (defun nintersection (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'nintersection))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -2742,8 +2779,8 @@
 	    collect element)))
 
 (defun set-difference (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'set-difference))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -2803,8 +2840,8 @@
 ;;; require this function to have any side effects. 
 
 (defun nset-difference (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'nset-difference))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -2901,8 +2938,8 @@
       (cons item list)))
 
 (defun adjoin (item list &key key test test-not)
-  ;; FIXME: do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'adjoin))
   (if key
       (if test
 	  (if (or (eq test #'eq) (eq test 'eq))
@@ -3168,8 +3205,8 @@
     result))
 
 (defun set-exclusive-or (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'set-exclusive-or))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -3229,8 +3266,8 @@
 ;;; require this function to have any side effects. 
 
 (defun nset-exclusive-or (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'nset-exclusive-or))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -3375,8 +3412,8 @@
 	  always (gethash (funcall key element) table))))
 
 (defun subsetp (list1 list2 &key key test test-not)
-  ;; FIXME do this better
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'subsetp))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
 	(if test
@@ -3547,7 +3584,8 @@
 		   (key nil key-p)
 		   (test nil test-p)
 		   (test-not nil test-not-p))
-  (assert (or (null test) (null test-not)))
+  (when (and (not (null test)) (not (null test-not)))
+    (error 'both-test-and-test-not-given :name 'pushnew))
   (let ((item-var (gensym)))
     (multiple-value-bind (vars vals store-vars writer-form reader-form)
 	(get-setf-expansion place env)
