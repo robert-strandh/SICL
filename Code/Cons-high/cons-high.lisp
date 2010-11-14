@@ -808,9 +808,15 @@
     (error 'at-least-one-list-required :name 'mapc))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
-	until (loop for list in remaining thereis (null list))
+	until (loop for list in remaining thereis (atom list))
 	do (apply function
-		  (loop for list in remaining collect (car list))))
+		  (loop for list in remaining collect (car list)))
+	finally (loop for rem in remaining
+		      for list in lists
+		      do (when (not (listp rem))
+			   (error 'must-be-proper-list
+				  :datum list
+				  :name 'mapc))))
   ;; The mapc function returns the first list
   (car lists))
 
@@ -823,15 +829,26 @@
   (if (null lists)
       form
       (let ((funvar (gensym))
-	    (firstlist (gensym))
+	    (listvars (loop for var in lists collect (gensym)))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       with ,firstlist = ,(car lists)
+	       ,@(apply #'append (loop for listvar in listvars
+				       for list in lists
+				       collect `(with ,listvar = ,list)))
 	       ,@(apply #'append (loop for var in vars
-				       for list in (cons firstlist (cdr lists))
-				       collect `(for ,var in ,list)))
-	       do (funcall ,funvar ,@vars)
-	       finally (return ,firstlist)))))
+				       for listvar in listvars
+				       collect `(for ,var = ,listvar then (cdr ,var))))
+	       ,@(apply #'append (loop for var in vars
+				       collect `(until (atom ,var))))
+	       do (funcall ,funvar ,@(loop for var in vars
+					   collect `(car ,var)))
+	       finally (progn ,@(loop for var in vars
+				      for listvar in listvars
+				      collect `(unless (listp ,var)
+						 (error 'must-be-proper-list
+							:datum ,listvar
+							:name 'map)))
+			      (return ,(car listvars)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
