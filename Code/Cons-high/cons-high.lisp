@@ -1045,9 +1045,14 @@
 
 (defun revappend (list tail)
   (loop with result = tail
-        for element in list
-        do (push element result)
-        finally (return result)))
+	for remaining = list then (cdr remaining)
+	until (atom remaining)
+        do (push (car remaining) result)
+        finally (unless (null remaining)
+		  (error 'must-be-proper-list
+			 :datum list
+			 :name 'revappend))
+		(return result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1056,12 +1061,16 @@
 (defun nreconc (list tail)
   (loop with remaining = list
         with result = tail
-        until (null remaining)
+        until (atom remaining)
         do (let ((temp (cdr remaining)))
              (setf (cdr remaining) result
                    result remaining
                    remaining temp))
-        finally (return result)))
+        finally (unless (null remaining)
+		  (error 'must-be-proper-list
+			 :datum list
+			 :name 'nreconc))
+		(return result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
