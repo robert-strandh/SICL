@@ -847,7 +847,7 @@
 				      collect `(unless (listp ,var)
 						 (error 'must-be-proper-list
 							:datum ,listvar
-							:name 'map)))
+							:name 'mapc)))
 			      (return ,(car listvars)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -859,8 +859,14 @@
     (error 'at-least-one-list-required :name 'maplist))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
-	until (loop for list in remaining thereis (null list))
-	collect (apply function remaining)))
+	until (loop for list in remaining thereis (atom list))
+	collect (apply function remaining)
+	finally (loop for rem in remaining
+		      for list in lists
+		      do (when (not (listp rem))
+			   (error 'must-be-proper-list
+				  :datum list
+				  :name 'maplist)))))
 
 ;;; The compiler macro for maplist generates code to loop
 ;;; individually over each list given, and thus avoids having
@@ -871,15 +877,24 @@
   (if (null lists)
       form
       (let ((funvar (gensym))
+	    (listvars (loop for var in lists collect (gensym)))
 	    (vars (loop for var in lists collect (gensym))))
-        `(loop with ,funvar = ,function
-              ,@(loop for var in vars
-                   for list in lists
-                   append `(for ,var = ,list then (cdr ,var)))
-              ,@(loop for var in vars
-                   for list in lists
-                   append `(until (endp ,var)))
-            collect (funcall ,funvar ,@vars)))))
+	`(loop with ,funvar = ,function
+	       ,@(apply #'append (loop for listvar in listvars
+				       for list in lists
+				       collect `(with ,listvar = ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for listvar in listvars
+				       collect `(for ,var = ,listvar then (cdr ,var))))
+	       ,@(apply #'append (loop for var in vars
+				       collect `(until (atom ,var))))
+	       collect (funcall ,funvar ,@vars)
+	       finally (progn ,@(loop for var in vars
+				      for listvar in listvars
+				      collect `(unless (listp ,var)
+						 (error 'must-be-proper-list
+							:datum ,listvar
+							:name 'maplist))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -890,8 +905,14 @@
     (error 'at-least-one-list-required :name 'mapl))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
-	until (loop for list in remaining thereis (null list))
-	do (apply function remaining))
+	until (loop for list in remaining thereis (atom list))
+	do (apply function remaining)
+	finally (loop for rem in remaining
+		      for list in lists
+		      do (when (not (listp rem))
+			   (error 'must-be-proper-list
+				  :datum list
+				  :name 'mapl))))
   ;; The mapl function returns the first list
   (car lists))
 
@@ -904,19 +925,25 @@
   (if (null lists)
       form
       (let ((funvar (gensym))
-	    (firstlist (gensym))
+	    (listvars (loop for var in lists collect (gensym)))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-            with ,firstlist = ,(car lists)
-            ,@ (loop for var in vars
-                  for list in (cons firstlist (cdr lists))
-                  append `(for ,var = ,list
-                               then (cdr ,var)))
-            ,@ (loop for var in vars
-                  for list in (cons firstlist (cdr lists))
-                  append `(until (endp ,var)))
-            do (funcall ,funvar ,@vars)
-            finally (return ,firstlist)))))
+	       ,@(apply #'append (loop for listvar in listvars
+				       for list in lists
+				       collect `(with ,listvar = ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for listvar in listvars
+				       collect `(for ,var = ,listvar then (cdr ,var))))
+	       ,@(apply #'append (loop for var in vars
+				       collect `(until (atom ,var))))
+	       do (funcall ,funvar ,@vars)
+	       finally (progn ,@(loop for var in vars
+				      for listvar in listvars
+				      collect `(unless (listp ,var)
+						 (error 'must-be-proper-list
+							:datum ,listvar
+							:name 'mapl)))
+			      (return ,(car listvars)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -927,9 +954,15 @@
     (error 'at-least-one-list-required :name 'mapcan))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
-	until (loop for list in remaining thereis (null list))
+	until (loop for list in remaining thereis (atom list))
 	nconc (apply function
-		     (loop for list in remaining collect (car list)))))
+		     (loop for list in remaining collect (car list)))
+	finally (loop for rem in remaining
+		      for list in lists
+		      do (when (not (listp rem))
+			   (error 'must-be-proper-list
+				  :datum list
+				  :name 'mapcan)))))
 
 ;;; The compiler macro for mapcan generates code to loop
 ;;; individually over each list given, and thus avoids having
@@ -940,12 +973,25 @@
   (if (null lists)
       form
       (let ((funvar (gensym))
+	    (listvars (loop for var in lists collect (gensym)))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       ,@(apply #'append (loop for var in vars
+	       ,@(apply #'append (loop for listvar in listvars
 				       for list in lists
-				       collect `(for ,var in ,list)))
-	       nconc (funcall ,funvar ,@vars)))))
+				       collect `(with ,listvar = ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for listvar in listvars
+				       collect `(for ,var = ,listvar then (cdr ,var))))
+	       ,@(apply #'append (loop for var in vars
+				       collect `(until (atom ,var))))
+	       nconc (funcall ,funvar ,@(loop for var in vars
+					      collect `(car ,var)))
+	       finally (progn ,@(loop for var in vars
+				      for listvar in listvars
+				      collect `(unless (listp ,var)
+						 (error 'must-be-proper-list
+							:datum ,listvar
+							:name 'mapcan))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -956,8 +1002,14 @@
     (error 'at-least-one-list-required :name 'mapcon))
   (loop for remaining = lists
 	  then (loop for list in remaining collect (cdr list))
-	until (loop for list in remaining thereis (null list))
-	nconc (apply function remaining)))
+	until (loop for list in remaining thereis (atom list))
+	nconc (apply function remaining)
+	finally (loop for rem in remaining
+		      for list in lists
+		      do (when (not (listp rem))
+			   (error 'must-be-proper-list
+				  :datum list
+				  :name 'mapcon)))))
 
 ;;; The compiler macro for mapcon generates code to loop
 ;;; individually over each list given, and thus avoids having
@@ -968,15 +1020,24 @@
   (if (null lists)
       form
       (let ((funvar (gensym))
+	    (listvars (loop for var in lists collect (gensym)))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       ,@(loop for var in vars
-		       for list in lists
-		       append `(for ,var = ,list then (cdr ,var)))
-	       ,@(loop for var in vars
-		       for list in lists
-		       append `(until (endp ,var)))
-	       nconc (funcall ,funvar ,@vars)))))
+	       ,@(apply #'append (loop for listvar in listvars
+				       for list in lists
+				       collect `(with ,listvar = ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for listvar in listvars
+				       collect `(for ,var = ,listvar then (cdr ,var))))
+	       ,@(apply #'append (loop for var in vars
+				       collect `(until (atom ,var))))
+	       nconc (funcall ,funvar ,@vars)
+	       finally (progn ,@(loop for var in vars
+				      for listvar in listvars
+				      collect `(unless (listp ,var)
+						 (error 'must-be-proper-list
+							:datum ,listvar
+							:name 'mapcon))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
