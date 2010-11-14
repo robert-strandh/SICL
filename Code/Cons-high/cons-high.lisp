@@ -497,6 +497,8 @@
     (error 'must-be-list
 	   :datum list
 	   :name 'last))
+  ;; We can use for ... on, because it uses atom to test for
+  ;; the end of the list. 
   (loop for rest on list
 	do (setf list rest))
   list)
@@ -621,24 +623,50 @@
   (loop repeat length
 	collect initial-element))
 
-;;; FIXME: Check at each iteration that we have a list. 
 (defun nthcdr (n list)
   (unless (typep n '(integer 0))
     (error 'must-be-nonnegative-integer
 	   :datum n
 	   :name 'nthcdr))
-  (loop repeat n
-	until (null list)
+  (loop until (zerop n)
+	until (atom list)
+	do (decf n)
 	do (setf list (cdr list)))
+  (when (and (plusp n) (not (null list)))
+    (error 'must-be-cons
+	   :datum list
+	   :name 'nthcdr))
   list)
 
-;;; FIXME: Iterate and check at each iteration that we have a list. 
 (defun nth (n list)
-  (car (nthcdr n list)))
+  (unless (typep n '(integer 0))
+    (error 'must-be-nonnegative-integer
+	   :datum n
+	   :name 'nthcdr))
+  (loop until (zerop n)
+	until (atom list)
+	do (decf n)
+	do (setf list (cdr list)))
+  (when (not (listp list))
+    (error 'must-be-list
+	   :datum list
+	   :name 'nth))
+  (car list))
 
-;;; FIXME: Iterate and check at each iteration that we have a list. 
 (defun (setf nth) (object n list)
-  (setf (car (nthcdr n list)) object))
+  (unless (typep n '(integer 0))
+    (error 'must-be-nonnegative-integer
+	   :datum n
+	   :name 'nthcdr))
+  (loop until (zerop n)
+	until (atom list)
+	do (decf n)
+	do (setf list (cdr list)))
+  (when (not (consp list))
+    (error 'must-be-cons
+	   :datum list
+	   :name '(setf nth)))
+  (setf (car list) object))
 
 (defun copy-tree (tree)
   (if (atom tree)
