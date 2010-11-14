@@ -2427,77 +2427,75 @@
 ;;;
 ;;; Function member
 
+(defmacro with-proper-list-rests ((rest-var list function-name) &body body)
+  (let ((list-var (gensym)))
+    `(loop with ,list-var = ,list
+	   for ,rest-var on ,list-var
+	   do ,@body
+	   finally (unless (null ,rest-var)
+		     (error 'must-be-proper-list
+			    :datum ,list-var
+			    :name ',function-name)))))
+
 (defun member-eq-identity (item list)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (eq item (car rest))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (eq item (car rest))
+      (return rest))))
 
 (defun member-eq-key (item list key)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (eq item (funcall key (car rest)))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (eq item (funcall key (car rest)))
+      (return rest))))
 
 (defun member-not-eq-identity (item list)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (not (eq item (car rest)))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (not (eq item (car rest)))
+      (return rest))))
 
 (defun member-not-eq-key (item list key)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (not (eq item (funcall key (car rest))))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (not (eq item (funcall key (car rest))))
+      (return rest))))
 
 (defun member-eql-identity (item list)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (eql item (car rest))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (eql item (car rest))
+      (return rest))))
 
 (defun member-eql-key (item list key)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (eql item (funcall key (car rest)))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (eql item (funcall key (car rest)))
+      (return rest))))
 
 (defun member-not-eql-identity (item list)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (not (eql item (car rest)))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (not (eql item (car rest)))
+      (return rest))))
 
 (defun member-not-eql-key (item list key)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (not (eql item (funcall key (car rest))))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (not (eql item (funcall key (car rest))))
+      (return rest))))
 
 (defun member-test-identity (item list test)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (funcall test item (car rest))
-          return rest))  
+  (with-proper-list-rests (rest list member)
+    (when (funcall test item (car rest))
+      (return rest))))
 
 (defun member-test-key (item list test key)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (funcall test item (funcall key (car rest)))
-          return rest))
+  (with-proper-list-rests (rest list member)
+    (when (funcall test item (funcall key (car rest)))
+      (return rest))))
 
 (defun member-test-not-identity (item list test)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (not (funcall test item (car rest)))
-          return rest))
+  (with-proper-list-rests (rest list member)
+    (when (not (funcall test item (car rest)))
+      (return rest))))
 
 (defun member-test-not-key (item list test key)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-        when (not (funcall test item (funcall key (car rest))))
-          return rest))
+  (with-proper-list-rests (rest list member)
+    (when (not (funcall test item (funcall key (car rest))))
+      (return rest))))
 
 (defun member (item list &key key test test-not)
   (when (and (not (null test)) (not (null test-not)))
@@ -2535,16 +2533,14 @@
 ;;; Function member-if
 
 (defun member-if-identity (predicate list)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-	when (funcall predicate (car rest))
-	  return rest))
+  (with-proper-list-rests (rest list member-if)
+    (when (funcall predicate (car rest))
+      (return rest))))
 
 (defun member-if-key (predicate list key)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-	when (funcall predicate (funcall key (car rest)))
-	  return rest))
+  (with-proper-list-rests (rest list member-if)
+    (when (funcall predicate (funcall key (car rest)))
+      (return rest))))
 
 (defun member-if (predicate list &key key)
   (if key
@@ -2556,16 +2552,14 @@
 ;;; Function member-if-not
 
 (defun member-if-not-identity (predicate list)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-	unless (funcall predicate (car rest))
-	  return rest))
+  (with-proper-list-rests (rest list member-if-not)
+    (unless (funcall predicate (car rest))
+      (return rest))))
 
 (defun member-if-not-key (predicate list key)
-  (loop for rest = list then (cdr rest)
-	until (null rest)
-	unless (funcall predicate (funcall key (car rest)))
-	  return rest))
+  (with-proper-list-rests (rest list member-if-not)
+    (unless (funcall predicate (funcall key (car rest)))
+      (return rest))))
 
 (defun member-if-not (predicate list &key key)
   (if key
