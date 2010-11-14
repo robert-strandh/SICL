@@ -40,6 +40,13 @@
   ()
   (:default-initargs :expected-type 'list))
 
+;;; This condition is used by functions and macros that require some
+;;; list to be either a proper list or a dotted list (but not a
+;;; circular list). 
+(define-condition must-be-proper-or-dotted-list (type-error name-mixin)
+  ()
+  (:default-initargs :expected-type 'list))
+
 ;;; This condition is used by functions and macros that require
 ;;; some argument to be a propterty list.
 (define-condition must-be-property-list (type-error name-mixin)
@@ -1088,9 +1095,6 @@
 ;;; This implementation works according to the HyperSpec note
 ;;; when n is 0.
 
-;;; FIXME: The HyperSpec says that we must signal a type-error
-;;; for circular lists, but we currently don't. 
-
 (defun butlast (list &optional (n 1))
   (unless (typep list 'list)
     (error 'must-be-list
@@ -1104,9 +1108,18 @@
     (loop repeat n
 	  until (atom remaining)
 	  do (setf remaining (cdr remaining)))
-    (loop until (atom remaining)
+    (loop for slow on remaining
+	  until (atom remaining)
           do (setf remaining (cdr remaining))
-          collect (prog1 (car list) (setf list (cdr list))))))
+          collect (prog1 (car list) (setf list (cdr list)))
+	  until (atom remaining)
+          do (setf remaining (cdr remaining))
+          collect (prog1 (car list) (setf list (cdr list)))
+	  do (when (eq slow remaining)
+	       ;; we have a circular list
+	       (error 'must-be-proper-or-dotted-list
+		      :datum list
+		      :name 'butlast)))))
 
 ;;; There is probably no point in making a special version of 
 ;;; butlast for n = 1, because the time is going to be dominated
@@ -1137,11 +1150,21 @@
       (let ((a list)
             (b (cdr list))
             (c (cddr list)))
-        (loop until (atom c)
+        (loop for slow on list
+	      until (atom c)
               do (setf a b
                        b c
-                       c (cdr c)))
-        (setf (cdr a) nil)
+                       c (cdr c))
+	      until (atom c)
+              do (setf a b
+                       b c
+                       c (cdr c))
+	      do (when (eq slow c)
+		   ;; we have a circular list
+		   (error 'must-be-proper-or-dotted-list
+			  :datum list
+			  :name 'nbutlast)))
+	(setf (cdr a) nil)
         list)))
 
 ;;; FIXME: The HyperSpec says that we must signal a type-error
@@ -1158,9 +1181,19 @@
 	   :name 'nbutlast))
   (if (= n 1)
       (nbutlast-1 list)
-      (let ((length (loop for conses = list then (cdr conses)
+      (let ((length (loop for slow on list
+			  with conses = list
                           until (atom conses)
-                          count t)))
+                          count t
+			  do (setf conses (cdr conses))
+                          until (atom conses)
+                          count t
+			  do (setf conses (cdr conses))
+			  do (when (eq slow conses)
+			       ;; we have a circular list
+			       (error 'must-be-proper-or-dotted-list
+				      :datum list
+				      :name 'nbutlast)))))
         (if (<= length n)
             nil
             (progn (setf (cdr (nthcdr (- length (1+ n)) list)) nil)
