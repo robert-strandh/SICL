@@ -3240,8 +3240,9 @@
   (assert-error 'type-error
 		(butlast '(0 1 2) (if (twisted '(1 2 3)) 'a 1))))
 
-;;; FIXME test for circular lists.  We can't do that right now
-;;; because we would go into an infinite loop.
+(define-test butlast.error.3
+  (assert-error 'type-error
+		(butlast '#1=(0 . #1#))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3368,12 +3369,27 @@
   (assert-error 'type-error
 		(nbutlast 1)))
 
-(define-test |nbutlast error 1|
+(define-test |nbutlast error 2|
   (assert-error 'type-error
 		(nbutlast '() 'a)))
 
-;;; FIXME test for circular lists.  We can't do that right now
-;;; because we would go into an infinite loop.
+(define-test |nbutlast error 3|
+  (let ((list (copy-list '(0))))
+    (setf (cdr list) list)
+    (assert-error 'type-error
+		  (nbutlast list 1))))
+
+(define-test |nbutlast error 4|
+  (let ((list (copy-list '(0))))
+    (setf (cdr list) list)
+    (assert-error 'type-error
+		  (nbutlast list 2))))
+
+(define-test |nbutlast error 5|
+  (let ((list (copy-list '(0))))
+    (setf (cdr list) list)
+    (assert-error 'type-error
+		  (nbutlast list 3))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
