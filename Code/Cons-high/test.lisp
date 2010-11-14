@@ -2353,6 +2353,50 @@
   (assert-error 'type-error
 		(nthcdr 'a '(0 0))))
 
+(define-test |nthcdr error 2|
+  (assert-error 'type-error
+		(nthcdr '-1 '(0 0))))
+
+(define-test |nthcdr error 3|
+  (assert-error 'type-error
+		(nthcdr 2 '(0 . 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for the nth function
+
+(define-test |nth 1|
+  (assert-equal '()
+		(nth 0 '())))
+
+(define-test |nth 2|
+  (assert-equal '()
+		(nth 1 '())))
+
+(define-test |nth 3|
+  (assert-equal 1
+		(nth 0 '(1 2))))
+
+(define-test |nth 4|
+  (assert-equal 2
+		(nth 1 '(1 2))))
+
+(define-test |nth 5|
+  (assert-equal '()
+		(nth 3 '(1 2))))
+
+(define-test |nth error 1|
+  (assert-error 'type-error
+		(nth 3 '(1 2 . 0))))
+
+(define-test |nth error 2|
+  (assert-error 'type-error
+		(nth -1 '(1))))
+
+(define-test |nth error 2|
+  (assert-error 'type-error
+		(nth 'a '(1))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf nth) function
@@ -2378,6 +2422,18 @@
 (define-test |setf-nth error 2|
   (assert-error 'error
 		(setf (nth 1 (copy-list '(0))) 1)))
+
+(define-test |setf-nth error 3|
+  (assert-error 'error
+		(setf (nth 2 (copy-list '(0))) 1)))
+
+(define-test |setf-nth error 4|
+  (assert-error 'error
+		(setf (nth -1 (copy-list '(0))) 1)))
+
+(define-test |setf-nth error 5|
+  (assert-error 'error
+		(setf (nth 'a (copy-list '(0))) 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
