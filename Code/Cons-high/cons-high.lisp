@@ -779,13 +779,26 @@
   (if (null lists)
       form
       (let ((funvar (gensym))
+	    (listvars (loop for var in lists collect (gensym)))
 	    (vars (loop for var in lists collect (gensym))))
 	`(loop with ,funvar = ,function
-	       ,@(apply #'append (loop for var in vars
+	       ,@(apply #'append (loop for listvar in listvars
 				       for list in lists
-				       collect `(for ,var in ,list)))
-	       collect (funcall ,funvar ,@vars)))))
-
+				       collect `(with ,listvar = ,list)))
+	       ,@(apply #'append (loop for var in vars
+				       for listvar in listvars
+				       collect `(for ,var = ,listvar then (cdr ,var))))
+	       ,@(apply #'append (loop for var in vars
+				       collect `(until (atom ,var))))
+	       collect (funcall ,funvar ,@(loop for var in vars
+						collect `(car ,var)))
+	       finally (progn ,@(loop for var in vars
+				      for listvar in listvars
+				      collect `(unless (listp ,var)
+						 (error 'must-be-proper-list
+							:datum ,listvar
+							:name 'mapcar))))))))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function mapc
