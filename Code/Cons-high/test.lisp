@@ -2715,53 +2715,61 @@
 ;;;
 ;;; Tests for the mapcar function
 
-(define-test mapcar.1
+(define-test |mapcar 1|
   (assert-equal '() (mapcar #'1+ '())))
 
-(define-test mapcar.2
+(define-test |mapcar 2|
   (assert-equal '(1) (mapcar #'1+ '(0))))
 
-(define-test mapcar.3
+(define-test |mapcar 3|
   (assert-equal '(-1 -2 -3) (mapcar #'- '(1 2 3))))
 
-(define-test mapcar.4
+(define-test |mapcar 4|
   (assert-equal '(2 4 6) (mapcar #'+ '(1 2 3) '(1 2 3))))
 
-(define-test mapcar.5
+(define-test |mapcar 5|
   (assert-equal '(3 6 9) (mapcar #'+ '(1 2 3) '(1 2 3) '(1 2 3))))
 
-(define-test mapcar.6
+(define-test |mapcar 6|
   (assert-equal '(2 4) (mapcar #'+ '(1 2 3 4 5) '(1 2))))
 
-(define-test mapcar.7
+(define-test |mapcar 7|
   (assert-equal '(2 4) (mapcar #'+ '(1 2) '(1 2 3 4 5))))
 
-(define-test mapcar.error.1
+(define-test |mapcar error 1|
   (assert-error 'type-error (mapcar #'1+ (if (twisted '(a b c)) 1 '(a b c)))))
 
-(define-test mapcar.error.2
+(define-test |mapcar error 2|
   (assert-error 'type-error (mapcar #'1+ (if (twisted '(a b c)) #(1 2 3) '(a b c)))))
 
-(define-test mapcar.error.3
+(define-test |mapcar error 3|
   (assert-error 'type-error (mapcar #'1+ '(1 2 . 3))))
 
-(define-test mapcar.error.4
+(define-test |mapcar error 4|
   (assert-error 'type-error (mapcar #'1+ (if (twisted '(a b c)) "1" '(a b c)))))
 
-(define-test mapcar.error.5
+(define-test |mapcar error 5|
   (assert-error 'error (mapcar #'1+)))
 
-(define-test mapcar.order.1
+(define-test |mapcar error 6|
+  (assert-error 'type-error
+		(mapcar #'list '(a b c) '(d e . f))))
+
+(define-test |mapcar order 1|
   (let ((i 0)
         (funs (vector #'1+ #'1-))
         (lists '((1 2) (3 4) (5 6))))
     (assert-equal '(4 5) (mapcar (aref funs (incf i)) (nth (incf i) lists)))))
 
-(define-test mapcar.apply.error.1
+(define-test |mapcar apply error 1|
   (assert-error 'error
 		(apply (cadr (list 'a #'mapcar)) #'car '())))
 
-(define-test mapcar.apply.1
+(define-test |mapcar apply error 2|
+  (assert-error 'type-error
+		(apply (cadr (list 'a #'mapcar)) #'list '((a b c) (d e . f)))))
+
+(define-test |mapcar apply 1|
   (assert-equal '(a b c)
 		(apply (cadr (list 'a #'mapcar)) #'car '(((a) (b) (c))))))
 
