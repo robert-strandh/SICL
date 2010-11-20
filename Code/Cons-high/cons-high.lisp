@@ -3866,93 +3866,125 @@
 ;;;
 ;;; Function subsetp
 
-(defun subsetp-identity-eql (list1 list2)
-  (loop for element in list1
-	always (member element list2)))
+(defun subsetp-identity-eql (name list1 list2)
+  (with-proper-list-elements (element list1 name)
+    (unless (|member test=eql key=identity| name element list2)
+      (return-from subsetp-identity-eql nil)))
+  t)
 
-(defun subsetp-identity-eq (list1 list2)
-  (loop for element in list1
-	always (member element list2 :test #'eq)))
+(defun subsetp-identity-eq (name list1 list2)
+  (with-proper-list-elements (element list1 name)
+    (unless (|member test=eq key=identity| name element list2)
+      (return-from subsetp-identity-eq nil)))
+  t)
 
-(defun subsetp-key-eql (list1 list2 key)
-  (loop for element in list1
-	always (member (funcall key element) list2 :key key)))
+(defun subsetp-key-eql (name list1 list2 key)
+  (with-proper-list-elements (element list1 name)
+    (unless (|member test=eql key=other| name (funcall key element) list2 key)
+      (return-from subsetp-key-eql nil)))
+  t)
 
-(defun subsetp-key-eq (list1 list2 key)
-  (loop for element in list1
-	always (member (funcall key element) list2 :test #'eq :key key)))
+(defun subsetp-key-eq (name list1 list2 key)
+  (with-proper-list-elements (element list1 name)
+    (unless (|member test=eq key=other| name (funcall key element) list2 key)
+      (return-from subsetp-key-eq nil)))
+  t)
 
-(defun subsetp-identity-test (list1 list2 test)
-  (loop for element in list1
-	always (member element list2 :test test)))
+(defun subsetp-identity-test (name list1 list2 test)
+  (with-proper-list-elements (element list1 name)
+    (unless (|member test=other key=identity| name element list2 test)
+      (return-from subsetp-identity-test nil)))
+  t)
 
-(defun subsetp-key-test (list1 list2 key test)
-  (loop for element in list1
-	always (member (funcall key element) list2 :test test :key key)))
+(defun subsetp-key-test (name list1 list2 key test)
+  (with-proper-list-elements (element list1 name)
+    (unless (|member test=other key=other| name (funcall key element) list2 test key)
+      (return-from subsetp-key-test nil)))
+  t)
 
-(defun subsetp-identity-test-not (list1 list2 test-not)
-  (loop for element in list1
-	always (member element list2 :test-not test-not)))
+(defun subsetp-identity-test-not (name list1 list2 test-not)
+  (with-proper-list-elements (element list1 name)
+    (unless (|member test-not=other key=identity| name  element list2 test-not)
+      (return-from subsetp-identity-test-not nil)))
+  t)
 
-(defun subsetp-key-test-not (list1 list2 key test-not)
-  (loop for element in list1
-	always (member (funcall key element) list2 :test-not test-not :key key)))
+(defun subsetp-key-test-not (name list1 list2 key test-not)
+  (with-proper-list-elements (element list1 name)
+    (unless (|member test-not=other key=other| name (funcall key element) list2 test-not key)
+      (return-from subsetp-key-test-not nil)))
+  t)
 
-(defun subsetp-identity-eq-hash (list1 list2)
+(defun subsetp-identity-eq-hash (name list1 list2)
   (let ((table (make-hash-table :test #'eq)))
-    (loop for element in list2
-	  do (setf (gethash element table) t))
-    (loop for element in list1
-	  always (gethash element table))))
+    (with-proper-list-elements (element list2 name)
+      (setf (gethash element table) t))
+    (with-proper-list-elements (element list1 name)
+      (unless (gethash element table)
+	(return-from subsetp-identity-eq-hash nil))))
+  t)
 
-(defun subsetp-identity-eql-hash (list1 list2)
+(defun subsetp-identity-eql-hash (name list1 list2)
   (let ((table (make-hash-table :test #'eql)))
-    (loop for element in list2
-	  do (setf (gethash element table) t))
-    (loop for element in list1
-	  always (gethash element table))))
+    (with-proper-list-elements (element list2 name)
+      (setf (gethash element table) t))
+    (with-proper-list-elements (element list1 name)
+      (unless (gethash element table)
+	(return-from subsetp-identity-eql-hash nil))))
+  t)
 
-(defun subsetp-identity-equal-hash (list1 list2)
+(defun subsetp-identity-equal-hash (name list1 list2)
   (let ((table (make-hash-table :test #'equal)))
-    (loop for element in list2
-	  do (setf (gethash element table) t))
-    (loop for element in list1
-	  always (gethash element table))))
+    (with-proper-list-elements (element list2 name)
+      (setf (gethash element table) t))
+    (with-proper-list-elements (element list1 name)
+      (unless (gethash element table)
+	(return-from subsetp-identity-equal-hash nil))))
+  t)
 
-(defun subsetp-identity-equalp-hash (list1 list2)
+(defun subsetp-identity-equalp-hash (name list1 list2)
   (let ((table (make-hash-table :test #'equalp)))
-    (loop for element in list2
-	  do (setf (gethash element table) t))
-    (loop for element in list1
-	  always (gethash element table))))
+    (with-proper-list-elements (element list2 name)
+      (setf (gethash element table) t))
+    (with-proper-list-elements (element list1 name)
+      (unless (gethash element table)
+	(return-from subsetp-identity-equalp-hash nil))))
+  t)
 
-(defun subsetp-key-eq-hash (list1 list2 key)
+(defun subsetp-key-eq-hash (name list1 list2 key)
   (let ((table (make-hash-table :test #'eq)))
-    (loop for element in list2
-	  do (setf (gethash (funcall key element) table) t))
-    (loop for element in list1
-	  always (gethash (funcall key element) table))))
+    (with-proper-list-elements (element list2 name)
+      (setf (gethash (funcall key element) table) t))
+    (with-proper-list-elements (element list1 name)
+      (unless (gethash (funcall key element) table)
+	(return-from subsetp-key-eq-hash nil))))
+  t)
 
-(defun subsetp-key-eql-hash (list1 list2 key)
+(defun subsetp-key-eql-hash (name list1 list2 key)
   (let ((table (make-hash-table :test #'eql)))
-    (loop for element in list2
-	  do (setf (gethash (funcall key element) table) t))
-    (loop for element in list1
-	  always (gethash (funcall key element) table))))
+    (with-proper-list-elements (element list2 name)
+      (setf (gethash (funcall key element) table) t))
+    (with-proper-list-elements (element list1 name)
+      (unless (gethash (funcall key element) table)
+	(return-from subsetp-key-eql-hash nil))))
+  t)
 
-(defun subsetp-key-equal-hash (list1 list2 key)
+(defun subsetp-key-equal-hash (name list1 list2 key)
   (let ((table (make-hash-table :test #'equal)))
-    (loop for element in list2
-	  do (setf (gethash (funcall key element) table) t))
-    (loop for element in list1
-	  always (gethash (funcall key element) table))))
+    (with-proper-list-elements (element list2 name)
+      (setf (gethash (funcall key element) table) t))
+    (with-proper-list-elements (element list1 name)
+      (unless (gethash (funcall key element) table)
+	(return-from subsetp-key-equal-hash nil))))
+  t)
 
-(defun subsetp-key-equalp-hash (list1 list2 key)
+(defun subsetp-key-equalp-hash (name list1 list2 key)
   (let ((table (make-hash-table :test #'equalp)))
-    (loop for element in list2
-	  do (setf (gethash (funcall key element) table) t))
-    (loop for element in list1
-	  always (gethash (funcall key element) table))))
+    (with-proper-list-elements (element list2 name)
+      (setf (gethash (funcall key element) table) t))
+    (with-proper-list-elements (element list1 name)
+      (unless (gethash (funcall key element) table)
+	(return-from subsetp-key-equalp-hash nil))))
+  t)
 
 (defun subsetp (list1 list2 &key key test test-not)
   (when (and (not (null test)) (not (null test-not)))
@@ -3962,51 +3994,51 @@
 	(if test
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (subsetp-key-eq-hash list1 list2 key)
-		       (subsetp-key-eq list1 list2 key)))
+		       (subsetp-key-eq-hash 'subsetp list1 list2 key)
+		       (subsetp-key-eq 'subsetp list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (subsetp-key-eql-hash list1 list2 key)
-		       (subsetp-key-eql list1 list2 key)))
+		       (subsetp-key-eql-hash 'subsetp list1 list2 key)
+		       (subsetp-key-eql 'subsetp list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (subsetp-key-equal-hash list1 list2 key)
-		       (subsetp-key-test list1 list2 key #'equal)))
+		       (subsetp-key-equal-hash 'subsetp list1 list2 key)
+		       (subsetp-key-test 'subsetp list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (subsetp-key-equalp-hash list1 list2 key)
-		       (subsetp-key-test list1 list2 key #'equalp)))
+		       (subsetp-key-equalp-hash 'subsetp list1 list2 key)
+		       (subsetp-key-test 'subsetp list1 list2 key #'equalp)))
 		  (t
-		   (subsetp-key-test list1 list2 key test)))
+		   (subsetp-key-test 'subsetp list1 list2 key test)))
 	    (if test-not
-		(subsetp-key-test-not list1 list2 key test-not)
+		(subsetp-key-test-not 'subsetp list1 list2 key test-not)
 		(if use-hash
-		    (subsetp-key-eql-hash list1 list2 key)
-		    (subsetp-key-eql list1 list2 key))))
+		    (subsetp-key-eql-hash 'subsetp list1 list2 key)
+		    (subsetp-key-eql 'subsetp list1 list2 key))))
 	(if test
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (subsetp-identity-eq-hash list1 list2)
-		       (subsetp-identity-eq list1 list2)))
+		       (subsetp-identity-eq-hash 'subsetp list1 list2)
+		       (subsetp-identity-eq 'subsetp list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (subsetp-identity-eql-hash list1 list2)
-		       (subsetp-identity-eql list1 list2)))
+		       (subsetp-identity-eql-hash 'subsetp list1 list2)
+		       (subsetp-identity-eql 'subsetp list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (subsetp-identity-equal-hash list1 list2)
-		       (subsetp-identity-test list1 list2 #'equal)))
+		       (subsetp-identity-equal-hash 'subsetp list1 list2)
+		       (subsetp-identity-test 'subsetp list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (subsetp-identity-equalp-hash list1 list2)
-		       (subsetp-identity-test list1 list2 #'equalp)))
+		       (subsetp-identity-equalp-hash 'subsetp list1 list2)
+		       (subsetp-identity-test 'subsetp list1 list2 #'equalp)))
 		  (t
-		   (subsetp-identity-test list1 list2 test)))
+		   (subsetp-identity-test 'subsetp list1 list2 test)))
 	    (if test-not
-		(subsetp-identity-test-not list1 list2 test-not)
+		(subsetp-identity-test-not 'subsetp list1 list2 test-not)
 		(if use-hash
-		    (subsetp-identity-eql-hash list1 list2)
-		    (subsetp-identity-eql list1 list2)))))))
+		    (subsetp-identity-eql-hash 'subsetp list1 list2)
+		    (subsetp-identity-eql 'subsetp list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4018,11 +4050,17 @@
 	   :datum plist
 	   :name 'getf))
   (loop for rest on plist by #'cddr
-	;; FIXME do this better
-	do (assert (consp (cdr rest)))
+	do (unless (consp (cdr rest))
+	     (error 'must-be-property-list
+		    :datum plist
+		    'getf))
 	when (eq (car rest) indicator)
 	  return (cadr rest)
-	finally (return default)))
+	finally (unless (null rest)
+		  (error 'must-be-property-list
+		    :datum plist
+		    'getf))
+		(return default)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4057,12 +4095,18 @@
 	   :datum plist
 	   :name 'getf))
   (loop for rest on plist by #'cddr
-	;; FIXME do this better
-	do (assert (consp (cdr rest)))
+	do (unless (consp (cdr rest))
+	     (error 'must-be-property-list
+		    :datum plist
+		    :name 'getf))
 	   (let ((temp (member (car rest) indicator-list :test #'eq)))
 	     (unless (null temp)
 	       (return-from get-properties (values (car temp) (cadr rest) rest))))
-	finally (return (values nil nil nil))))
+	finally (unless (null rest)
+		  (error 'must-be-property-list
+			 :datum plist
+			 :name 'getf))
+		(return (values nil nil nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
