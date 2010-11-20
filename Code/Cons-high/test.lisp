@@ -5357,26 +5357,30 @@
 ;;;
 ;;; Tests for the copy-alist function
 
-(define-test copy-alist.1
+(define-test |copy-alist 1|
   (assert-equal '()
 		(copy-alist '())))
 
-(define-test copy-alist.2
+(define-test |copy-alist 2|
   (assert-equal '((a) (b))
 		(copy-alist '((a) (b)))))
 
-(define-test copy-alist.3
+(define-test |copy-alist 3|
   (assert-false (let ((alist '((a) (b))))
 		  (eq (car alist)
 		      (car (copy-alist alist))))))
 
-(define-test copy-alist.error.1
-  (assert-error 'type-error
-		(copy-alist '(a))))
+(define-test |copy-alist 4|
+  (assert-equal '((a b) c (d e))
+		(copy-alist '((a b) c (d e)))))
 
-(define-test copy-alist.error.2
+(define-test |copy-alist 5|
+  (assert-equal '((a b) nil (d e))
+		(copy-alist '((a b) nil (d e)))))
+
+(define-test |copy-alist error 2|
   (assert-error 'type-error
-		(copy-alist '((a) .b))))
+		(copy-alist '((a) . b))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
