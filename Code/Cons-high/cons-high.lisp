@@ -3445,43 +3445,43 @@
 ;;;
 ;;; Function adjoin
 
-(defun adjoin-identity-eq (item list)
-  (if (member item list :test #'eq)
+(defun adjoin-identity-eq (name item list)
+  (if (member-eq-identity name item list)
       list
       (cons item list)))
 
-(defun adjoin-identity-eql (item list)
-  (if (member item list)
+(defun adjoin-identity-eql (name item list)
+  (if (member-eql-identity name item list)
       list
       (cons item list)))
 
-(defun adjoin-identity-test (item list test)
-  (if (member item list :test test)
+(defun adjoin-identity-test (name item list test)
+  (if (member-test-identity name item list test)
       list
       (cons item list)))
 
-(defun adjoin-identity-test-not (item list test-not)
-  (if (member item list :test-not test-not)
+(defun adjoin-identity-test-not (name item list test-not)
+  (if (member-test-not-identity name item list test-not)
       list
       (cons item list)))
 
-(defun adjoin-key-eq (item list key)
-  (if (member (funcall key item) list :key key :test #'eq)
+(defun adjoin-key-eq (name item list key)
+  (if (member-eq-key name (funcall key item) list key)
       list
       (cons item list)))
 
-(defun adjoin-key-eql (item list key)
-  (if (member (funcall key item) list :key key)
+(defun adjoin-key-eql (name item list key)
+  (if (member-eql-key name (funcall key item) list key)
       list
       (cons item list)))
 
-(defun adjoin-key-test (item list key test)
-  (if (member (funcall key item) list :key key :test test)
+(defun adjoin-key-test (name item list key test)
+  (if (member-test-key name (funcall key item) list test key)
       list
       (cons item list)))
 
-(defun adjoin-key-test-not (item list key test-not)
-  (if (member (funcall key item) list :key key :test-not test-not)
+(defun adjoin-key-test-not (name item list key test-not)
+  (if (member-test-not-key name (funcall key item) list test-not key)
       list
       (cons item list)))
 
@@ -3491,22 +3491,22 @@
   (if key
       (if test
 	  (if (or (eq test #'eq) (eq test 'eq))
-	      (adjoin-key-eq item list key)
+	      (adjoin-key-eq 'adjoin item list key)
 	      (if (or (eq test #'eql) (eq test 'eql))
-		  (adjoin-key-eql item list key)
-		  (adjoin-key-test item list key test)))
+		  (adjoin-key-eql 'adjoin item list key)
+		  (adjoin-key-test 'adjoin item list key test)))
 	  (if test-not
-	      (adjoin-key-test-not item list key test-not)
-	      (adjoin-key-eql item list key)))
+	      (adjoin-key-test-not 'adjoin item list key test-not)
+	      (adjoin-key-eql 'adjoin item list key)))
       (if test
 	  (if (or (eq test #'eq) (eq test 'eq))
-	      (adjoin-identity-eq item list)
+	      (adjoin-identity-eq 'adjoin item list)
 	      (if (or (eq test #'eql) (eq test 'eql))
-		  (adjoin-identity-eql item list)
-		  (adjoin-identity-test item list test)))
+		  (adjoin-identity-eql 'adjoin item list)
+		  (adjoin-identity-test 'adjoin item list test)))
 	  (if test-not
-	      (adjoin-identity-test-not item list test-not)
-	      (adjoin-identity-eql item list)))))
+	      (adjoin-identity-test-not 'adjoin item list test-not)
+	      (adjoin-identity-eql 'adjoin item list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
