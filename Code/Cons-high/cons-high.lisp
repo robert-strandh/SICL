@@ -4131,10 +4131,17 @@
 		   (loop for rest on (cdr ,(car store-vars)) by #'cddr
 			 when (null (cdr rest))
 			   return nil
-			 do (assert (consp (cddr rest)))
+			 do (unless (consp (cddr rest))
+			      (error 'must-be-property-list
+				     :datum plist
+				     :name 'getf))
 			 when (eq (cadr rest) ,indicator-var)
 			   do (setf (cdr rest) (cdddr rest))
-			      (return t)))))))))
+			      (return t)
+			 finally (unless (null rest)
+				   (error 'must-be-property-list
+					  :datum plist
+					  :name 'getf))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4189,25 +4196,45 @@
 	 (let ((,(car store-vars) ,reader-form))
 	   ,(if key
 		(if test-p
-		    `(unless (member (funcall key ,item-var) ,(car store-vars)
-				     :test test :key key)
+		    `(unless (|member test=other key=other|
+			      'pushnew
+			      (funcall key ,item-var)
+			      ,(car store-vars)
+			      test
+			      key)
 		       (push ,item-var ,(car store-vars)))
 		    (if test-not-p
-			`(unless (member (funcall key ,item-var) ,(car store-vars)
-					 :test-not test-not :key key)
+			`(unless (|member test-not=other key=other|
+				  'pushnew
+				  (funcall key ,item-var)
+				  ,(car store-vars)
+				  test-not
+				  key)
 			   (push ,item-var ,(car store-vars)))
-			`(unless (member (funcall key ,item-var) ,(car store-vars)
-					 :key key)
+			`(unless (|member test=eql key=other|
+				  'pushnew
+				  (funcall key ,item-var)
+				  ,(car store-vars)
+				  key)
 			   (push ,item-var ,(car store-vars)))))
 		(if test-p
-		    `(unless (member ,item-var ,(car store-vars)
-				     :test test)
+		    `(unless (|member test=other key=identity|
+			      'pushnew
+			      ,item-var
+			      ,(car store-vars)
+			      test)
 		       (push ,item-var ,(car store-vars)))
 		    (if test-not-p
-			`(unless (member ,item-var ,(car store-vars)
-					 :test-not test-not)
+			`(unless (|member test-not=other key=identity|
+				  'pushnew
+				  ,item-var
+				  ,(car store-vars)
+				  test-not)
 			   (push ,item-var ,(car store-vars)))
-			`(unless (member ,item-var ,(car store-vars))
+			`(unless (|member test=eql key=identity|
+				  'pushnew
+				  ,item-var
+				  ,(car store-vars))
 			   (push ,item-var ,(car store-vars))))))
 	   ,writer-form)))))
 
