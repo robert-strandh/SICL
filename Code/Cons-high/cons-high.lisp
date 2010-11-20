@@ -2640,6 +2640,8 @@
 ;;;
 ;;; Function tailp
 
+;;; We could use (loop for ... on ...) here for consistency. 
+
 (defun tailp (object list)
   (loop for rest = list then (cdr rest)
 	until (atom rest)
@@ -2671,130 +2673,166 @@
 ;;; Function union
 
 (defun union-identity-eql (list1 list2)
-  (loop with result = list2
-	for element in list1
-	unless (member element list2)
-	  do (push element result)
-	finally (return result)))
+  (let ((result list2))
+    (with-proper-list-rests (rest1 list1 union)
+      (unless (with-proper-list-rests (rest2 list2 union)
+		(when (eql (car rest1) (car rest2))
+		  (return t)))
+	(push (car rest1) result)))
+    result))
 
 (defun union-identity-eq (list1 list2)
-  (loop with result = list2
-	for element in list1
-	unless (member element list2 :test #'eq)
-	  do (push element result)
-	finally (return result)))
+  (let ((result list2))
+    (with-proper-list-rests (rest1 list1 union)
+      (unless (with-proper-list-rests (rest2 list2 union)
+		(when (eq (car rest1) (car rest2))
+		  (return t)))
+	(push (car rest1) result)))
+    result))
 
 (defun union-key-eql (list1 list2 key)
-  (loop with result = list2
-	for element in list1
-	unless (member (funcall key element) list2 :key key)
-	  do (push element result)
-	finally (return result)))
+  (let ((result list2))
+    (with-proper-list-rests (rest1 list1 union)
+      (unless (with-proper-list-rests (rest2 list2 union)
+		(when (eql (funcall key (car rest1)) (funcall key (car rest2)))
+		  (return t)))
+	(push (car rest1) result)))
+    result))
 
 (defun union-key-eq (list1 list2 key)
-  (loop with result = list2
-	for element in list1
-	unless (member (funcall key element) list2 :test #'eq :key key)
-	  do (push element result)
-	finally (return result)))
+  (let ((result list2))
+    (with-proper-list-rests (rest1 list1 union)
+      (unless (with-proper-list-rests (rest2 list2 union)
+		(when (eq (funcall key (car rest1)) (funcall key (car rest2)))
+		  (return t)))
+	(push (car rest1) result)))
+    result))
 
 (defun union-identity-test (list1 list2 test)
-  (loop with result = list2
-	for element in list1
-	unless (member element list2 :test test)
-	  do (push element result)
-	finally (return result)))
+  (let ((result list2))
+    (with-proper-list-rests (rest1 list1 union)
+      (unless (with-proper-list-rests (rest2 list2 union)
+		(when (funcall test (car rest1) (car rest2))
+		  (return t)))
+	(push (car rest1) result)))
+    result))
 
 (defun union-key-test (list1 list2 key test)
-  (loop with result = list2
-	for element in list1
-	unless (member (funcall key element) list2 :test test :key key)
-	  do (push element result)
-	finally (return result)))
+  (let ((result list2))
+    (with-proper-list-rests (rest1 list1 union)
+      (unless (with-proper-list-rests (rest2 list2 union)
+		(when (funcall test (funcall key (car rest1)) (funcall key (car rest2)))
+		  (return t)))
+	(push (car rest1) result)))
+    result))
 
 (defun union-identity-test-not (list1 list2 test-not)
-  (loop with result = list2
-	for element in list1
-	unless (member element list2 :test-not test-not)
-	  do (push element result)
-	finally (return result)))
+  (let ((result list2))
+    (with-proper-list-rests (rest1 list1 union)
+      (unless (with-proper-list-rests (rest2 list2 union)
+		(unless (funcall test-not
+				 (car rest1)
+				 (car rest2))
+		  (return t)))
+	(push (car rest1) result)))
+    result))
 
 (defun union-key-test-not (list1 list2 key test-not)
-  (loop with result = list2
-	for element in list1
-	unless (member (funcall key element) list2 :test-not test-not :key key)
-	  do (push element result)
-	finally (return result)))
+  (let ((result list2))
+    (with-proper-list-rests (rest1 list1 union)
+      (unless (with-proper-list-rests (rest2 list2 union)
+		(unless (funcall test-not
+				 (funcall key (car rest1))
+				 (funcall key (car rest2)))
+		  (return t)))
+	(push (car rest1) result)))
+    result))
 
 (defun union-identity-eq-hash (list1 list2)
   (let ((table (make-hash-table :test #'eq)))
-    (loop for element in list1
-	  do (setf (gethash element table) element))
-    (loop for element in list2
-	  do (setf (gethash element table) element))
+    (with-proper-list-rests (rest list1 union)
+      (let ((element (car rest)))
+	(setf (gethash element table) element)))
+    (with-proper-list-rests (rest list2 union)
+      (let ((element (car rest)))
+	(setf (gethash element table) element)))
     (loop for element being the hash-values of table
 	  collect element)))
 
 (defun union-identity-eql-hash (list1 list2)
   (let ((table (make-hash-table :test #'eql)))
-    (loop for element in list1
-	  do (setf (gethash element table) element))
-    (loop for element in list2
-	  do (setf (gethash element table) element))
+    (with-proper-list-rests (rest list1 union)
+      (let ((element (car rest)))
+	(setf (gethash element table) element)))
+    (with-proper-list-rests (rest list2 union)
+      (let ((element (car rest)))
+	(setf (gethash element table) element)))
     (loop for element being the hash-values of table
 	  collect element)))
 
 (defun union-identity-equal-hash (list1 list2)
   (let ((table (make-hash-table :test #'equal)))
-    (loop for element in list1
-	  do (setf (gethash element table) element))
-    (loop for element in list2
-	  do (setf (gethash element table) element))
+    (with-proper-list-rests (rest list1 union)
+      (let ((element (car rest)))
+	(setf (gethash element table) element)))
+    (with-proper-list-rests (rest list2 union)
+      (let ((element (car rest)))
+	(setf (gethash element table) element)))
     (loop for element being the hash-values of table
 	  collect element)))
 
 (defun union-identity-equalp-hash (list1 list2)
   (let ((table (make-hash-table :test #'equalp)))
-    (loop for element in list1
-	  do (setf (gethash element table) element))
-    (loop for element in list2
-	  do (setf (gethash element table) element))
+    (with-proper-list-rests (rest list1 union)
+      (let ((element (car rest)))
+	(setf (gethash element table) element)))
+    (with-proper-list-rests (rest list2 union)
+      (let ((element (car rest)))
+	(setf (gethash element table) element)))
     (loop for element being the hash-values of table
 	  collect element)))
 
 (defun union-key-eq-hash (list1 list2 key)
   (let ((table (make-hash-table :test #'eq)))
-    (loop for element in list1
-	  do (setf (gethash (funcall key element) table) element))
-    (loop for element in list2
-	  do (setf (gethash (funcall key element) table) element))
+    (with-proper-list-rests (rest list1 union)
+      (let ((element (car rest)))
+	(setf (gethash (funcall key element) table) element)))
+    (with-proper-list-rests (rest list2 union)
+      (let ((element (car rest)))
+	(setf (gethash (funcall key element) table) element)))
     (loop for element being the hash-values of table
 	  collect element)))
 
 (defun union-key-eql-hash (list1 list2 key)
   (let ((table (make-hash-table :test #'eql)))
-    (loop for element in list1
-	  do (setf (gethash (funcall key element) table) element))
-    (loop for element in list2
-	  do (setf (gethash (funcall key element) table) element))
+    (with-proper-list-rests (rest list1 union)
+      (let ((element (car rest)))
+	(setf (gethash (funcall key element) table) element)))
+    (with-proper-list-rests (rest list2 union)
+      (let ((element (car rest)))
+	(setf (gethash (funcall key element) table) element)))
     (loop for element being the hash-values of table
 	  collect element)))
 
 (defun union-key-equal-hash (list1 list2 key)
   (let ((table (make-hash-table :test #'equal)))
-    (loop for element in list1
-	  do (setf (gethash (funcall key element) table) element))
-    (loop for element in list2
-	  do (setf (gethash (funcall key element) table) element))
+    (with-proper-list-rests (rest list1 union)
+      (let ((element (car rest)))
+	(setf (gethash (funcall key element) table) element)))
+    (with-proper-list-rests (rest list2 union)
+      (let ((element (car rest)))
+	(setf (gethash (funcall key element) table) element)))
     (loop for element being the hash-values of table
 	  collect element)))
 
 (defun union-key-equalp-hash (list1 list2 key)
   (let ((table (make-hash-table :test #'equalp)))
-    (loop for element in list1
-	  do (setf (gethash (funcall key element) table) element))
-    (loop for element in list2
-	  do (setf (gethash (funcall key element) table) element))
+    (with-proper-list-rests (rest list1 union)
+      (let ((element (car rest)))
+	(setf (gethash (funcall key element) table) element)))
+    (with-proper-list-rests (rest list2 union)
+      (let ((element (car rest)))
+	(setf (gethash (funcall key element) table) element)))
     (loop for element being the hash-values of table
 	  collect element)))
 
