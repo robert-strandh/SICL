@@ -5324,22 +5324,34 @@
 ;;;
 ;;; Tests for the pairlis function
 
-(define-test pairlis.1
+(define-test |pairlis 1|
   (assert-equal '()
 		(pairlis '() '())))
 
-(define-test pairlis.2
+(define-test |pairlis 2|
   (let ((tail '((a b) (c d))))
     (assert-eq tail
 	       (cddr (pairlis '(1 2) '(2 3) tail)))))
 
-(define-test pairlis.3
+(define-test |pairlis 3|
   (assert-equal '((c . d) (a . b) (e f))
 		(pairlis '(a c) '(b d) '((e f)))))
 
-(define-test parilis.error.1
+(define-test |pairlis error 1|
   (assert-error 'type-error
 		(pairlis '(a . b) '(c d) '((e f)))))
+
+(define-test |pairlis error 2|
+  (assert-error 'type-error
+		(pairlis '(c d) '(a . b) '((e f)))))
+
+(define-test |pairlis error 3|
+  (assert-error 'error
+		(pairlis '(a b) '(c d e))))
+
+(define-test |pairlis error 4|
+  (assert-error 'error
+		(pairlis '(c d e) '(a b))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
