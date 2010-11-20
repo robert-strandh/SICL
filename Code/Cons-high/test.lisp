@@ -5495,6 +5495,14 @@
 				  (append l1 l2 l3)
 				  :test 'eql))))
 
+(define-test |union test=eql key=identity dotted-list 1|
+  (assert-error 'type-error
+		(union '(1 2 . 3) '(2 3 4))))
+
+(define-test |union test=eql key=identity dotted-list 2|
+  (assert-error 'type-error
+		(union '(1 2 3) '(2 3 . 4))))
+
 (define-test |union test=eq key=identity 1|
   (assert-equal '()
 		(union '() '() :test #'eq)))
@@ -5517,6 +5525,14 @@
 				  (append l1 l2 l3)
 				  :test #'eq))))
 
+(define-test |union test=eq key=identity dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :test #'eq)))
+
+(define-test |union test=eq key=identity dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :test #'eq)))
+
 (define-test |union test=equal key=identity 1|
   (assert-equal '()
 		(union '() '() :test #'equal)))
@@ -5537,6 +5553,14 @@
 				  l3
 				  :test #'equal))))
 
+(define-test |union test=equal key=identity dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :test #'equal)))
+
+(define-test |union test=equal key=identity dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :test #'equal)))
+
 (define-test |union test=equalp key=identity 1|
   (assert-equal '()
 		(union '() '() :test #'equalp)))
@@ -5553,9 +5577,25 @@
 				  l3
 				  :test #'equalp))))
 
+(define-test |union test=equalp key=identity dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :test #'equalp)))
+
+(define-test |union test=equalp key=identity dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :test #'equalp)))
+
 (define-test |union test=other key=identity 1|
   (assert-equal '()
 		(union '() '() :test #'<)))
+
+(define-test |union test=other key=identity dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :test #'(lambda (x y) (eq x y)))))
+
+(define-test |union test=other key=identity dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :test #'(lambda (x y) (eq x y)))))
 
 (define-test |union test=eql key=other 1a|
   (assert-equal 1
@@ -5618,6 +5658,14 @@
 				  :test 'eql
 				  :key #'car))))
 
+(define-test |union test=eql key=other dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :key #'identity)))
+
+(define-test |union test=eql key=other dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :key #'identity)))
+
 (define-test |union test=eq key=other 1|
   (assert-equal '()
                 (set-difference
@@ -5642,6 +5690,14 @@
 				  :test #'eq
 				  :key #'car))))
 
+(define-test |union test=eq key=other dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :test #'eq :key #'identity)))
+
+(define-test |union test=eq key=other dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :test #'eq :key #'identity)))
+
 (define-test |union test=equal key=other 1|
   (assert-equal '()
 		(union '() '() :test #'equal :key #'car)))
@@ -5663,6 +5719,14 @@
 		  (set-difference (union l1 l2 :test #'equal :key #'car)
 				  l3
 				  :test #'equal :key #'car))))
+
+(define-test |union test=equal key=other dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :test #'equal :key #'identity)))
+
+(define-test |union test=equal key=other dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :test #'equal :key #'identity)))
 
 (define-test |union test=equalp key=other 1|
   (assert-equal '()
@@ -5689,6 +5753,14 @@
 				  l3
 				  :test #'equalp :key #'car))))
 
+(define-test |union test=equalp key=other dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :test #'equalp :key #'identity)))
+
+(define-test |union test=equalp key=other dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :test #'equalp :key #'identity)))
+
 (define-test |union test=other key=other 1|
   (assert-equal '()
                 (set-difference
@@ -5697,6 +5769,14 @@
 			:key (lambda (x) (mod x 5))
 			:test #'=)
 		 '(0 1 2 3 4) :key (lambda (x) (mod x 5)))))
+
+(define-test |union test=other key=other dotted-list 1|
+  (assert-error 'type-error
+		(union '(a b . c) '(b c d) :test (lambda (x y) (eq x y)) :key #'identity)))
+
+(define-test |union test=other key=other dotted-list 2|
+  (assert-error 'type-error
+		(union '(a b c) '(b c . d) :test (lambda (x y) (eq x y)) :key #'identity)))
 
 (define-test |union test-not=other key=identity 1|
   (assert-equal '()
