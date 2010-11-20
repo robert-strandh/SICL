@@ -80,12 +80,36 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
+(defmethod report-condition ((c must-be-proper-or-dotted-list)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (in the ~a package):~@
+           A proper or dotted list was required,~@
+           but the following was given:~@
+           ~s"
+	  (name c)
+	  (name-package (name c))
+	  (type-error-datum c)))
+
 (defmethod report-condition ((c must-be-property-list)
 			     stream
 			     (language (eql 'en-us)))
   (format stream
 	  "In ~a (in the ~a package):~@
            A property list was required,~@
+           but the following was given:~@
+           ~s"
+	  (name c)
+	  (name-package (name c))
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c must-be-association-list)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (in the ~a package):~@
+           A association list was required,~@
            but the following was given:~@
            ~s"
 	  (name c)
@@ -112,3 +136,18 @@
 	  (name c)
 	  (name-package (name c))))
 	  
+(defmethod report-condition ((c lists-must-have-the-same-length)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (in the ~a package):~@
+           The two lists passed as arguments must~@
+           have the same length, but the following~@
+           was given:~@
+           ~s~@
+           and~@
+           ~s."
+	  (name c)
+	  (name-package (name c))
+	  (list1 c)
+	  (list2 c)))
