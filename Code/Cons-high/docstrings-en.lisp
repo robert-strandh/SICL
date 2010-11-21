@@ -359,3 +359,28 @@
               The top-level CONS cells of LIST are copied, and the resulting~@
               copy is returned.~@
               The consequences are undefined if LIST is a circular list."))
+
+(fundoc 'list-length
+	(fmt "Lambda list: (LIST)~@
+              where LIST is a proper list or a circular list.~@
+              If LIST is a proper list, its length is returned, as if computed~@
+              with the LENGTH function.  If LIST is a circular list, then NIL~@
+              is returned instead.~@
+              An error of type TYPE-ERROR is signaled if LIST is neither~@
+              a proper list or a circular list."))
+
+(fundoc 'listp
+	(fmt "Lambda list: (OBJECT)~@
+              where OBJECT is any object.~@
+              Return true if OBJECT is of type LIST, i.e., either a CONS cell~@
+              or NIL.  Return false otherwise."))
+
+(fundoc 'make-list
+	(fmt "Lambda list: (SIZE &key INITIAL-ELEMENT)~@
+              where SIZE is a nonnegative integer, and INITIAL-ELEMENT is~@
+              any object.  The default for INITIAL-ELEMENT is NIL.~@
+              Return a proper list of length SIZE containing INITIAL-ELEMENT~@
+              as every element.~@
+              Signal an error of type TYPE-ERROR if SIZE is not a nonnegative ~@
+              integer."))
+
