@@ -384,3 +384,14 @@
               Signal an error of type TYPE-ERROR if SIZE is not a nonnegative ~@
               integer."))
 
+(fundoc 'endp
+	(fmt "Lambda list: (LIST)~@
+              where LIST is a list which might be dotted or circular.~@
+              Return true if LIST is NIL.  Return false if LIST is a CONS cell.~@
+              Signal an error of type TYPE-ERROR if LIST is neither NIL, nor~@
+              a CONS cell, (i.e, if LIST is not a list)."))
+
+(fundoc 'null
+	(fmt "Lambda list: (OBJECT)~@
+              where OBJECT is any object.~@
+              Return true if OBJECT is NIL.  Return false otherwise."))
