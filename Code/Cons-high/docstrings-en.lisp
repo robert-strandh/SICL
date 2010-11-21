@@ -170,3 +170,52 @@
               in the form of CONS cells, and leaves in the form of atoms.~@
               Return a copy of the tree, i.e. a tree which is like TREE,~@
               except that every CONS cell has been copied."))
+
+(fundoc 'sublis
+	(fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT)~@
+              where ALIST is an association list, TREE is a tree~@
+              consisting of internal nodes in the form of CONS cells,~@
+              and leaves in the form of atoms.  KEY is a designator for~@
+              a function of one argument which is applied the nodes of~@
+              the tree before the test is applied, or KEY could be NIL~@
+              which means IDENTITY.  TEST and TEST-NOT are designators~@
+              for functions of two arguments that return a generalized~@
+              boolean indicating whether the test passed.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              The tree is traversed top-down, and for each node~@
+              (including internal nodes) the KEY function is applied,~@
+              and then the resulting value is used as a key too look up~@
+              an entry in ALIST as if with ASSOC.  If an entry is found,~@
+              the value of the entry is substituted for the node in the tree.~@
+              If not, and the node is a CONS cell, then its CAR and CDR are~@
+              traversed recursively.  If it is an atom, the atom is returned.~@
+              A new tree is returned, i.e., there are no modifications to~@
+              the original TREE.~@
+              If ALIST is not an association list, an error of type TYPE-ERROR~@
+              might be signales.~@
+              An error is signaled if both TEST and TEST-NOT are given."))
+
+(fundoc 'nsublis
+	(fmt "Lambda list: (ALIST TREE &key KEY TEST TEST-NOT)~@
+              where ALIST is an association list, TREE is a tree~@
+              consisting of internal nodes in the form of CONS cells,~@
+              and leaves in the form of atoms.  KEY is a designator for~@
+              a function of one argument which is applied the nodes of~@
+              the tree before the test is applied, or KEY could be NIL~@
+              which means IDENTITY.  TEST and TEST-NOT are designators~@
+              for functions of two arguments that return a generalized~@
+              boolean indicating whether the test passed.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              The tree is traversed top-down, and for each node~@
+              (including internal nodes) the KEY function is applied,~@
+              and then the resulting value is used as a key too look up~@
+              an entry in ALIST as if with ASSOC.  If an entry is found,~@
+              the value of the entry is substituted for the node in the tree.~@
+              If not, and the node is a CONS cell, then its CAR and CDR are~@
+              traversed recursively.  If it is an atom, the atom is returned.~@
+              The original TREE might be modified, i.e., the cons cells of~@
+              TREE might be altered to reflect the substitutions.~@
+              If ALIST is not an association list, an error of type TYPE-ERROR~@
+              might be signales.~@
+              An error is signaled if both TEST and TEST-NOT are given."))
+
