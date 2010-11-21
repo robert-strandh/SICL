@@ -333,3 +333,29 @@
               traversed recursively.  If it is an atom, the atom is returned.~@
               TREE might be altered to reflect the substitutions."))
 
+(fundoc 'tree-equal
+	(fmt "Lambda list: (TREE-1 TREE-2 &key TEST TEST-NOT)~@
+              where TREE-1 and TREE-2 are trees consisting of internal nodes~@
+              in the form of CONS cells, and leaves in the form of atoms.~@
+              TEST and TEST-NOT are designators for functions of two arguments~@
+              that return a generalized boolean indicating whether the test passed.~@
+              The default if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              TREE-1 and TREE-2 are traversed and compared.  If both TREE-1 and~@
+              TREE-2 are atoms, then the test is applied, and if the test is~@
+              satisfied, then true is returned, otherwise, false is returned.~@
+              If both TREE-1 and TREE-2 are CONS cells, then the CAR and the CDR~@
+              of both are compared recursively.  If both the CAR and the CDR are~@
+              recursively equal, then true is returned.  Otherwise false is returned.~@
+              The test is satisfied if the TEST function returns true, or the TEST-NOT~@
+              function returns false.  These functions receive an atom of TREE-1 and~@
+              and atom of TREE-2 in that order.~@
+              The consequences are undefined if both TREE-1 and TREE-2 contain~@
+              circular references.~@
+              An error is signaled if both TEST and TEST-NOT are given."))
+
+(fundoc 'copy-list
+	(fmt "Lambda list: (LIST)~@
+              where LIST is a proper list or a dotted list.~@
+              The top-level CONS cells of LIST are copied, and the resulting~@
+              copy is returned.~@
+              The consequences are undefined if LIST is a circular list."))
