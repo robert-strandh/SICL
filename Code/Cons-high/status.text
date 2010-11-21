@@ -3,7 +3,8 @@ What is done:
   There are definitions of all c*r functions except car and cdr, 
   and there are tests for those functions. 
 
-  There are definitions of first, second, ..., tenth.  No tests. 
+  There are definitions of first, second, ..., tenth, 
+  and there are tests for those functions.
 
   There is a definition and a compiler macro for the list function,
   and there are tests for it as well.
@@ -12,11 +13,11 @@ What is done:
   and there are tests for it as well.
 
   There are definitions of the functions last, copy-list, list-length,
-  make-list, nth, and nthcdr.
+  make-list, nth, and nthcdr, with tests.
 
-  Function copy-tree with some tests.
+  Function copy-tree with tests.
 
-  Function tree-equal with some tests.
+  Function tree-equal with tests.
 
   Function endp with tests.
 
@@ -24,59 +25,59 @@ What is done:
 
   mapc (function and compiler macro) with tests.
 
-  maplist (function and compiler macro), with some tests.
+  maplist (function and compiler macro), with tests.
 
-  mapl (function and compiler macro), with some tests.
+  mapl (function and compiler macro), with tests.
 
-  mapcan (function and compiler macro), with some tests.  
+  mapcan (function and compiler macro), with tests.  
 
-  mapcon (function and compiler macro), no tests.  
+  mapcon (function and compiler macro), with tests.
 
-  append (function only), a few tests.
+  append (function only), with tests.
 
-  nconc (function only), a few tests.
+  nconc (function only), with tests.
 
-  revappend, some tests. 
+  revappend, with tests. 
 
-  nreconc, some tests.
+  nreconc, with tests.
 
-  butlast, no tests.
+  butlast, with tests.
 
-  nbutlast, function and special case for n = 1, no tests.
+  nbutlast, function and special case for n = 1, with tests.
 
-  subst, function with several special cases.  Almost no tests.
+  subst, function with several special cases, with tests.
 
-  subst-if, function with several special cases.  No tests.
+  subst-if, function with several special cases, with tests.
 
-  subst-if-not, function with several special cases.  No tests.
+  subst-if-not, function with several special cases, with tests.
 
-  nsubst, function with several special cases.  Almost no tests.
+  nsubst, function with several special cases, with tests.
 
-  nsubst-if, function with several special cases.  No tests.
+  nsubst-if, function with several special cases, with tests.
 
-  nsubst-if-not, function with several special cases.  No tests.
+  nsubst-if-not, function with several special cases, with tests
 
-  assoc, function with several special cases.  Some tests.
+  assoc, function with several special cases,  with tests.
 
-  assoc-if, function with several special cases.  Some tests.
+  assoc-if, function with several special cases, with tests.
 
-  assoc-if-not, function with several special cases.  Some tests.
+  assoc-if-not, function with several special cases, with tests.
 
-  rassoc, function with several special cases. Some tests.
+  rassoc, function with several special cases, with tests.
 
-  rassoc-if, function with several special cases. Some tests.
+  rassoc-if, function with several special cases, with tests.
 
-  rassoc-if-not, function with several special cases. Some tests.
+  rassoc-if-not, function with several special cases, with tests.
 
-  sublis, function with several special cases.  A few tests.
+  sublis, function with several special cases, with tests.
 
-  nsublis, function with several special cases.  A few tests.
+  nsublis, function with several special cases, with tests.
 
-  member, function with several special cases.  Some tests.
+  member, function with several special cases, with tests.
 
-  member-if, function with two special cases.  Some tests.
+  member-if, function with two special cases, with tests.
 
-  member-if-not, function with two special cases.  Some tests.
+  member-if-not, function with two special cases, with tests.
 
   null, function only, with tests.  The null type is defined
   to be equivalent to cl:null for now. 
@@ -91,45 +92,50 @@ What is done:
 
   ldiff, function with tests.
 
-  union, function with several special cases.  Some tests.
+  union, function with several special cases, with tests.
 
-  nunion, function with several special cases.  Some tests.
+  nunion, function with several special cases, with tests.
 
-  intersection, function with several special cases.  Some tests.
+  intersection, function with several special cases, with tests.
 
-  nintersection, function with several special cases.  Some tests.
+  nintersection, function with several special cases, with tests.
 
-  set-difference, function with several special cases.  No tests.
+  set-difference, function with several special cases, with tests.
 
-  nset-difference, function with several special cases.  No tests.
+  nset-difference, function with several special cases, with tests.
 
-  adjoin, function with some special cases.  Some tests.
+  adjoin, function with some special cases, with tests.
 
-  set-exclusive-or, function with several special cases.  No tests.
+  set-exclusive-or, function with several special cases, with tests.
 
-  nset-exclusive-or, function with several special cases.  No tests.
+  nset-exclusive-or, function with several special cases, with tests.
 
-  subsetp, function with several special cases.  No tests.
+  subsetp, function with several special cases, with tests.
 
-  getf, function.  Some tests.
+  getf, function, with tests.
 
-  get-properties, function. No tests.
+  get-properties, function, with tests. 
 
-  macro push.  No tests.
+  macro push, with tests.
 
-  macro pop.  Some tests.
+  macro pop, with tests.
 
-  setf expander for rest
+  setf expander for rest.
 
   function (setf nth)
 
-  setf expander for getf.  No tests. 
+  setf expander for getf, with tests. 
 
-  macro remf.  Some tests.
+  macro remf, with tests.
 
   pushnew, macro with several special cases.  Several tests, but still
   need tests to check for possible multiple evaluations and correct
   evaluation order. 
+
+  There are specific conditions and English-language condition
+  reporters for those conditions. 
+
+  There are docstrings for some functions. 
 
 How to test it:
 
@@ -145,7 +151,6 @@ How to test it:
 
 What remains to to:
 
-  Define a subclass of type-error and make the functions signal 
-  that condition instead of signaling a simple-error.
+  Write the remaining docstrings. 
 
-  Add tests to test functions that are currently not tested. 
+  Make sure the tests cover all of the code.
