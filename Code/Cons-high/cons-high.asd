@@ -4,7 +4,8 @@
     :components
   ((:file "packages" :depends-on ())
    (:file "cons-high" :depends-on ("packages"))
-   (:file "condition-reporters-en" :depends-on ("packages" "cons-high"))))
+   (:file "condition-reporters-en" :depends-on ("packages" "cons-high"))
+   (:file "condition-docstrings-en" :depends-on ("packages"))))
 
 (asdf:defsystem :sicl-cons-high-test
   :depends-on (:sicl-cons-high)
