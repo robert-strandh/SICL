@@ -219,3 +219,117 @@
               might be signales.~@
               An error is signaled if both TEST and TEST-NOT are given."))
 
+(fundoc 'subst
+	(fmt "Lambda list: (NEW OLD TREE &key KEY TEST TEST-NOT)~@
+              where NEW and OLD are any objects, TREE is a tree~@
+              consisting of internal nodes in the form of CONS cells,~@
+              and leaves in the form of atoms.  KEY is a designator for~@
+              a function of one argument which is applied the nodes of~@
+              the tree before the test is applied, or KEY could be NIL~@
+              which means IDENTITY.  TEST and TEST-NOT are designators~@
+              for functions of two arguments that return a generalized~@
+              boolean indicating whether the test passed.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              The tree is traversed top-down, and for each node~@
+              (including internal nodes) the KEY function is applied,~@
+              and then the resulting value is compared to OLD using TEST~@
+              or TEST-NOT as appropriate.  If the test succeeds.~@
+              NEW is substituted for the node in the tree.~@
+              If not, and the node is a CONS cell, then its CAR and CDR are~@
+              traversed recursively.  If it is an atom, the atom is returned.~@
+              A new tree is returned, i.e., there are no modifications to~@
+              the original TREE.~@
+              An error is signaled if both TEST and TEST-NOT are given."))
+
+(fundoc 'nsubst
+	(fmt "Lambda list: (NEW OLD TREE &key KEY TEST TEST-NOT)~@
+              where NEW and OLD are any objects, TREE is a tree~@
+              consisting of internal nodes in the form of CONS cells,~@
+              and leaves in the form of atoms.  KEY is a designator for~@
+              a function of one argument which is applied the nodes of~@
+              the tree before the test is applied, or KEY could be NIL~@
+              which means IDENTITY.  TEST and TEST-NOT are designators~@
+              for functions of two arguments that return a generalized~@
+              boolean indicating whether the test passed.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              The tree is traversed top-down, and for each node~@
+              (including internal nodes) the KEY function is applied,~@
+              and then the resulting value is compared to OLD using TEST~@
+              or TEST-NOT as appropriate.  If the test succeeds.~@
+              NEW is substituted for the node in the tree.~@
+              If not, and the node is a CONS cell, then its CAR and CDR are~@
+              traversed recursively.  If it is an atom, the atom is returned.~@
+              The original TREE might be modified, i.e., the cons cells of~@
+              TREE might be altered to reflect the substitutions.~@
+              An error is signaled if both TEST and TEST-NOT are given."))
+
+(fundoc 'subst-if 
+	(fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
+              where NEW is any objects, PREDICATE is a designator for~@
+              a function of one argument that returns a generalized boolean,~@
+              TREE is a tree consisting of internal nodes in the form of 
+              CONS cells, and leaves in the form of atoms.  KEY is a 
+              designator for a function of one argument which is applied
+              the nodes of the tree before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The tree is traversed top-down, and for each node~@
+              (including internal nodes) the KEY function is applied,~@
+              and then the PREDICATE is called with resulting value.~@
+              If the PREDICATE returns true NEW is substituted for the node in the tree.~@
+              If not, and the node is a CONS cell, then its CAR and CDR are~@
+              traversed recursively.  If it is an atom, the atom is returned.~@
+              A new tree is returned, i.e., there are no modifications to~@
+              the original TREE."))
+
+(fundoc 'nsubst-if 
+	(fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
+              where NEW is any objects, PREDICATE is a designator for~@
+              a function of one argument that returns a generalized boolean,~@
+              TREE is a tree consisting of internal nodes in the form of 
+              CONS cells, and leaves in the form of atoms.  KEY is a 
+              designator for a function of one argument which is applied
+              the nodes of the tree before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The tree is traversed top-down, and for each node~@
+              (including internal nodes) the KEY function is applied,~@
+              and then the PREDICATE is called with resulting value.~@
+              If the PREDICATE returns true NEW is substituted for the node in the tree.~@
+              If not, and the node is a CONS cell, then its CAR and CDR are~@
+              traversed recursively.  If it is an atom, the atom is returned.~@
+              TREE might be altered to reflect the substitutions."))
+
+(fundoc 'subst-if-not
+	(fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
+              where NEW is any objects, PREDICATE is a designator for~@
+              a function of one argument that returns a generalized boolean,~@
+              TREE is a tree consisting of internal nodes in the form of 
+              CONS cells, and leaves in the form of atoms.  KEY is a 
+              designator for a function of one argument which is applied
+              the nodes of the tree before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The tree is traversed top-down, and for each node~@
+              (including internal nodes) the KEY function is applied,~@
+              and then the PREDICATE is called with resulting value.~@
+              If the PREDICATE returns false NEW is substituted for the node in the tree.~@
+              If not, and the node is a CONS cell, then its CAR and CDR are~@
+              traversed recursively.  If it is an atom, the atom is returned.~@
+              A new tree is returned, i.e., there are no modifications to~@
+              the original TREE."))
+
+(fundoc 'nsubst-if-not
+	(fmt "Lambda list: (NEW PREDICATE TREE &key KEY)~@
+              where NEW is any objects, PREDICATE is a designator for~@
+              a function of one argument that returns a generalized boolean,~@
+              TREE is a tree consisting of internal nodes in the form of 
+              CONS cells, and leaves in the form of atoms.  KEY is a 
+              designator for a function of one argument which is applied
+              the nodes of the tree before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The tree is traversed top-down, and for each node~@
+              (including internal nodes) the KEY function is applied,~@
+              and then the PREDICATE is called with resulting value.~@
+              If the PREDICATE returns false NEW is substituted for the node in the tree.~@
+              If not, and the node is a CONS cell, then its CAR and CDR are~@
+              traversed recursively.  If it is an atom, the atom is returned.~@
+              TREE might be altered to reflect the substitutions."))
+
