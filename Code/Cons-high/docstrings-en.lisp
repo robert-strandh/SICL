@@ -1,7 +1,8 @@
 (in-package #:sicl-cons-high)
 
-(defun fmt (&rest args)
-  (apply #'format nil args))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun fmt (&rest args)
+    (apply #'format nil args)))
 
 ;;; Create documentation for a function.
 (defun fundoc (name string)
@@ -64,7 +65,7 @@
 
 (fundoc 'list
         (fmt "Lambda list: (&rest OBJECTS)~@
-              Return a list containing the objects in OBJECTS.~@"))
+              Return a list containing the objects in OBJECTS."))
 
 (fundoc 'list*
         (fmt "Lambda list: (&rest OBJECTS)~@
