@@ -141,3 +141,32 @@
               Return true if OBJECT is a cons cell.~@
               Return false otherwise."))
 
+(fundoc 'atom
+	(fmt "Lambda list: (OBJECT)~@
+              where OBJECT is any object.~@
+              Return true if OBJECT is an atom~@
+              (i.e., not a cons cell).~@
+              Return false otherwise."))
+
+(fundoc 'rplaca
+	(fmt "Lambda list: (CONS OBJECT)~@
+              where CONS is a cons cell and OBJECT is any object.~@
+              Replace the the CAR of the CONS cell by OBJECT.~@
+              Return the modified cons cell.~@
+              The difference between RPLACA and (SETF CAR) is that~@
+              (SETF CAR) returns OBJECT instead of the CONS."))
+
+(fundoc 'rplacd
+	(fmt "Lambda list: (CONS OBJECT)~@
+              where CONS is a cons cell and OBJECT is any object.~@
+              Replace the the CDR of the CONS cell by OBJECT.~@
+              Return the modified cons cell.~@
+              The difference between RPLACD and (SETF CDR) is that~@
+              (SETF CDR) returns OBJECT instead of the CONS."))
+
+(fundoc 'copy-tree
+	(fmt "Lambda list: (TREE)~@
+              where TREE is any tree consisting of internal nodes~@
+              in the form of CONS cells, and leaves in the form of atoms.~@
+              Return a copy of the tree, i.e. a tree which is like TREE,~@
+              except that every CONS cell has been copied."))
