@@ -2197,26 +2197,27 @@
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
 
-(defun sublis (alist tree &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun sublis (alist tree
+	       &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and (not (null test-given)) (not (null test-not-given)))
     (error 'both-test-and-test-not-given :name 'sublis))
   (if key
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (sublis-eq-key alist tree key)
               (if (or (eq test #'eql) (eq test 'eql))
                   (sublis-eql-key alist tree key)
                   (sublis-test-key alist tree test key)))
-          (if test-not
+          (if test-not-given
 	      (sublis-test-not-key alist tree test-not key)
               (sublis-eql-key alist tree key)))
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (sublis-eq-identity alist tree)
               (if (or (eq test #'eql) (eq test 'eql))
                   (sublis-eql-identity alist tree)
                   (sublis-test-identity alist tree test)))
-          (if test-not
+          (if test-not-given
 	      (sublis-test-not-identity alist tree test-not)
               (sublis-eql-identity alist tree)))))
 
@@ -2406,26 +2407,27 @@
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
 
-(defun nsublis (alist tree &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun nsublis (alist tree
+		&key key (test nil test-given) (test-not nil test-not-given))
+  (when (and (not (null test-given)) (not (null test-not-given)))
     (error 'both-test-and-test-not-given :name 'nsublis))
   (if key
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (nsublis-eq-key alist tree key)
               (if (or (eq test #'eql) (eq test 'eql))
                   (nsublis-eql-key alist tree key)
                   (nsublis-test-key alist tree test key)))
-          (if test-not
+          (if test-not-given
 	      (nsublis-test-not-key alist tree test-not key)
               (nsublis-eql-key alist tree key)))
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (nsublis-eq-identity alist tree)
               (if (or (eq test #'eql) (eq test 'eql))
                   (nsublis-eql-identity alist tree)
                   (nsublis-test-identity alist tree test)))
-          (if test-not
+          (if test-not-given
 	      (nsublis-test-not-identity alist tree test-not)
               (nsublis-eql-identity alist tree)))))
 

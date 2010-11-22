@@ -4933,6 +4933,12 @@
 			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
 			:test 'eql)))
 
+(define-test |sublis test=eql key=nil 1|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(sublis '((10 . xx) (0 . a))
+			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+			:key nil)))
+
 (define-test |sublis test=eq key=identity 1|
   (assert-equal '()
 		(sublis '((xx . y) (b . a)) '()
@@ -5037,9 +5043,21 @@
 		        :test-not (lambda (x y) (not (and (numberp y) (= x (1- y)))))
 			:key (lambda (x) (if (numberp x) (1+ x) x)))))
 
-(define-test |sublis test=other test-not=other|
+(define-test |sublis test=other test-not=other 1|
   (assert-error 'error
 		(sublis 0 '((1 . 2)) :test #'= :test-not #'=)))
+
+(define-test |sublis test=nil key=identity 1|
+  (assert-error 'error
+		(sublis '((10 . xx) (0 . a))
+			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+			:test nil)))
+
+(define-test |sublis test-not=nil key=identity 1|
+  (assert-error 'error
+		(sublis '((10 . xx) (0 . a))
+			'(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+			:test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5109,6 +5127,16 @@
 		(nsublis '((10 . xx) (0 . a))
 			 0
 			 :test 'eql)))
+
+(define-test |nsublis test=eql key=nil 1|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (setf tree2 (nsublis
+			       '((10 . xx) (0 . a))
+			       tree
+			       :key nil)))
+    (assert-eq tree tree2)))
 
 (define-test |nsublis test=eq key=identity 1|
   (let ((tree (copy-tree '())))
@@ -5319,6 +5347,18 @@
 (define-test |nsublis test=other test-not=other|
   (assert-error 'error
 		(nsublis 0 '((1 . 2)) :test #'= :test-not #'=)))
+
+(define-test |nsublis test=nil key=identity 1|
+  (assert-error 'error
+		(sublis '((10 . xx) (0 . a))
+			(copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))
+			:test nil)))
+
+(define-test |nsublis test-not=nil key=identity 1|
+  (assert-error 'error
+		(nsublis '((10 . xx) (0 . a))
+			(copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0))))
+			:test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
