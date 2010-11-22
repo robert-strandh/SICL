@@ -529,10 +529,68 @@
               integer."))
 
 (fundoc 'rest
-	(frm "Lambda list: (LIST)~@
+	(fmt "Lambda list: (LIST)~@
               where LIST is a CONS cell or NIL.~@
               If LIST is a CONS cell, then the CDR of that cell is returned.~@
               If LIST is NIL, then NIL is returned.~@
               If LIST is an atom other than NIL, then an error of type TYPE-ERROR~@
               is signaled."))
 
+(fundoc 'member
+	(fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT)~@
+              where ITEM is any object and LIST is a proper list.~@
+              KEY is a designator for a function of one argument which is~@ 
+              applied the elements of LIST before the test is applied,~@
+              or KEY could be NIL which means IDENTITY.  TEST and TEST-NOT~@
+              are designators for functions of two arguments that return a~@
+              generalized boolean indicating whether the test passed.  The~@
+              default if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              The LIST is search and successive elements are compared to ITEM.~@
+              Before the comparison is made, the KEY function is applied to the~@
+              element.  Then the TEST or TEST-NOT is applied to ITEM and the~@
+              result of applying the KEY function in that order.  In the case~@
+              of TEST, if the result is true, then the remaining tail of LIST~@
+              starting with the element that made the TEST pass is returned.~@
+              Since this value is a CONS cell, it is usable as a generalized~@
+              boolean true value.  If no element passes the test, NIL is returned.~@
+              In the case of TEST-NOT, if the result is false, then the remaining~@
+              tail of LIST starting with the element that made the TEST pass is returned.~@
+              Since this value is a CONS cell, it is usable as a generalized~@
+              boolean true value.  If TEST-NOT yields true for evey element in~@
+              LIST, then NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if LIST is not a~@
+              proper list."))
+
+(fundoc 'member-if
+	(fmt "Lambda list: (PREDICATE LIST &key KEY)~@
+              where PREDICATE is a designator for a function of one argument~@
+              returning a generalized boolean, and LIST is a proper list.~@
+              KEY is a designator for a function of one argument which is~@ 
+              applied the elements of LIST before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The LIST is search and PREDICATE is applied to successive elements.~@
+              Before the PREDICATE is applied the KEY function is applied to the~@
+              element.  If the PREDICATE returns true then the remaining tail of LIST~@
+              starting with the element that made the PREDICATE return true is returned.~@
+              Since this value is a CONS cell, it is usable as a generalized~@
+              boolean true value.  If PREDICATE does not return true for any element,~@
+              Then NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if LIST is not a~@
+              proper list."))
+
+(fundoc 'member-if-not
+	(fmt "Lambda list: (PREDICATE LIST &key KEY)~@
+              where PREDICATE is a designator for a function of one argument~@
+              returning a generalized boolean, and LIST is a proper list.~@
+              KEY is a designator for a function of one argument which is~@ 
+              applied the elements of LIST before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The LIST is search and PREDICATE is applied to successive elements.~@
+              Before the PREDICATE is applied the KEY function is applied to the~@
+              element.  If the PREDICATE returns false then the remaining tail of LIST~@
+              starting with the element that made the PREDICATE return false is returned.~@
+              Since this value is a CONS cell, it is usable as a generalized~@
+              boolean true value.  If PREDICATE does not return false for any element,~@
+              Then NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if LIST is not a~@
+              proper list."))
