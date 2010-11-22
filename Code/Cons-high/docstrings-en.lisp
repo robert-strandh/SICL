@@ -705,3 +705,141 @@
               An error of type TYPE-ERROR might be signaled if any of the lists~@
               in LISTS is not a proper list."))
 
+(fundoc 'acons
+	(fmt "Lambda list: (KEY DATUM ALIST)~@
+              where KEY and DATUM are any objects, and ALIST is an association list.~@
+              ACONS allocates two CONS cells.  One contains KEY in its CAR and~@
+              DATUM in its CDR.  The second one contains the first one in its CAR~@
+              and ALIST in its CDR, this second CONS cell is return by ACONS.~@
+              (acons key datum alist) is equivalent to (cons (cons key datum) alist)."))
+
+(fundoc 'assoc
+	(fmt "Lambda list: (ITEM ALIST &key KEY TEST TEST-NOT)~@
+              where ITEM is any object and ALIST is an association list.~@
+              KEY is a designator for a function of one argument which is~@
+              applied to the CAR of the elements of ALIST before the test is applied,~@
+              or KEY could be NIL which means IDENTITY.  TEST and TEST-NOT~@
+              are designators for functions of two arguments that return a~@
+              generalized boolean indicating whether the test passed.  The~@
+              default if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              The elements of ALIST are searched.  If an element is NIL, it is~@
+              ignored.  If the element is a CONS, then KEY is applied to its CAR~@
+              and then, in the case of TEST, TEST is applied to ITEM and the result~@
+              of applying KEY, in that order.  If the result is true, then the~@
+              element (which is a CONS cell) of ALIST is returned.  
+              If TEST returns false for all of the elements of ALIST then NIL is returned.~@
+              In case of TEST-NOT, TEST-NOT is applied to ITEM and the result~@
+              of applying KEY, in that order.  If the result is false, then the~@
+              element (which is a CONS cell) of ALIST is returned.~@
+              If TEST-NOT returns true for all of the elements of ALIST the~@
+              NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if ALIST is not~@
+              an association list."))
+
+(fundoc 'assoc-if
+	(fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
+              where PREDICATE is a designator for a function of one argument~@
+              returning a generalized boolean, and ALIST is an association list.~@
+              KEY is a designator for a function of one argument which is~@
+              applied the elements of LIST before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The elements of ALIST are searched.  If an element is NIL, it is~@
+              ignored.  If the element is a CONS, then KEY is applied to its CAR~@
+              and then, the PREDICATE is applied to the result.  If the PREDICATE~@
+              returns true then the element (which is a CONS cell) of ALIST~@
+              is returned.  If the PREDICATE returns false for all of the elements~@
+              of ALIST then NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if ALIST is not~@
+              an association list."))
+
+(fundoc 'assoc-if-not
+	(fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
+              where PREDICATE is a designator for a function of one argument~@
+              returning a generalized boolean, and ALIST is an association list.~@
+              KEY is a designator for a function of one argument which is~@
+              applied the elements of LIST before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The elements of ALIST are searched.  If an element is NIL, it is~@
+              ignored.  If the element is a CONS, then KEY is applied to its CAR~@
+              and then, the PREDICATE is applied to the result.  If the PREDICATE~@
+              returns false then the element (which is a CONS cell) of ALIST~@
+              is returned.  If the PREDICATE returns true for all of the elements~@
+              of ALIST then NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if ALIST is not~@
+              an association list."))
+
+(fundoc 'copy-alist
+	(fmt "Lambda list: (ALIST)~@
+              where ALIST is an association list.~@
+              The top-level CONS cells are copied, as are any elements that~@
+              are CONS cells.  Items that are the CAR or CDR of top-level CONS~@
+              cells are not copied, but share structure with ALIST.  COPY-ALIST~@
+              returns the copy created.  Any top-level elements of ALIST that are~@
+              not CONS cells are included in the copy as-is.~@
+              The consequences are undefined if ALIST is not a proper list."))
+
+(fundoc 'pairlis
+	(fmt "Lambda list: (KEYS DATA &optional ALIST)~@
+              where KEYS and DATA are proper lists of the same length, and~@
+              ALIST is an association list.  The default of ALIST is NIL.~@
+              Elements of KEYS and DATA are paired up to form entries of~@
+              a new association list, which is then prepended to ALIST and returned.~@
+              An error of type type-error might be signaled if KEYS and DATA are~@
+              not both proper lists.~@
+              The consequences are undefined if ALIST is not an association list.~@
+              The consequences are undefined if KEYS and DATA are not the same length."))
+
+(fundoc 'rassoc
+	(fmt "Lambda list: (ITEM ALIST &key KEY TEST TEST-NOT)~@
+              where ITEM is any object and ALIST is an association list.~@
+              KEY is a designator for a function of one argument which is~@
+              applied to the CDR of the elements of ALIST before the test is applied,~@
+              or KEY could be NIL which means IDENTITY.  TEST and TEST-NOT~@
+              are designators for functions of two arguments that return a~@
+              generalized boolean indicating whether the test passed.  The~@
+              default if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              The elements of ALIST are searched.  If an element is NIL, it is~@
+              ignored.  If the element is a CONS, then KEY is applied to its CDR~@
+              and then, in the case of TEST, TEST is applied to ITEM and the result~@
+              of applying KEY, in that order.  If the result is true, then the~@
+              element (which is a CONS cell) of ALIST is returned.  
+              If TEST returns false for all of the elements of ALIST then NIL is returned.~@
+              In case of TEST-NOT, TEST-NOT is applied to ITEM and the result~@
+              of applying KEY, in that order.  If the result is false, then the~@
+              element (which is a CONS cell) of ALIST is returned.~@
+              If TEST-NOT returns true for all of the elements of ALIST the~@
+              NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if ALIST is not~@
+              an association list."))
+
+(fundoc 'rassoc-if
+	(fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
+              where PREDICATE is a designator for a function of one argument~@
+              returning a generalized boolean, and ALIST is an association list.~@
+              KEY is a designator for a function of one argument which is~@
+              applied the elements of LIST before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The elements of ALIST are searched.  If an element is NIL, it is~@
+              ignored.  If the element is a CONS, then KEY is applied to its CDR~@
+              and then, the PREDICATE is applied to the result.  If the PREDICATE~@
+              returns true then the element (which is a CONS cell) of ALIST~@
+              is returned.  If the PREDICATE returns false for all of the elements~@
+              of ALIST then NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if ALIST is not~@
+              an association list."))
+
+(fundoc 'rassoc-if-not
+	(fmt "Lambda list: (PREDICATE ALIST &key KEY)~@
+              where PREDICATE is a designator for a function of one argument~@
+              returning a generalized boolean, and ALIST is an association list.~@
+              KEY is a designator for a function of one argument which is~@
+              applied the elements of LIST before the PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.~@
+              The elements of ALIST are searched.  If an element is NIL, it is~@
+              ignored.  If the element is a CONS, then KEY is applied to its CDR~@
+              and then, the PREDICATE is applied to the result.  If the PREDICATE~@
+              returns false then the element (which is a CONS cell) of ALIST~@
+              is returned.  If the PREDICATE returns true for all of the elements~@
+              of ALIST then NIL is returned.~@
+              An error of type TYPE-ERROR might be signaled if ALIST is not~@
+              an association list."))
