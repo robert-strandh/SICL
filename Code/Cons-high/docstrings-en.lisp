@@ -539,7 +539,7 @@
 (fundoc 'member
 	(fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT)~@
               where ITEM is any object and LIST is a proper list.~@
-              KEY is a designator for a function of one argument which is~@ 
+              KEY is a designator for a function of one argument which is~@
               applied the elements of LIST before the test is applied,~@
               or KEY could be NIL which means IDENTITY.  TEST and TEST-NOT~@
               are designators for functions of two arguments that return a~@
@@ -565,7 +565,7 @@
 	(fmt "Lambda list: (PREDICATE LIST &key KEY)~@
               where PREDICATE is a designator for a function of one argument~@
               returning a generalized boolean, and LIST is a proper list.~@
-              KEY is a designator for a function of one argument which is~@ 
+              KEY is a designator for a function of one argument which is~@
               applied the elements of LIST before the PREDICATE is applied,~@
               or KEY could be NIL which means IDENTITY.~@
               The LIST is search and PREDICATE is applied to successive elements.~@
@@ -582,7 +582,7 @@
 	(fmt "Lambda list: (PREDICATE LIST &key KEY)~@
               where PREDICATE is a designator for a function of one argument~@
               returning a generalized boolean, and LIST is a proper list.~@
-              KEY is a designator for a function of one argument which is~@ 
+              KEY is a designator for a function of one argument which is~@
               applied the elements of LIST before the PREDICATE is applied,~@
               or KEY could be NIL which means IDENTITY.~@
               The LIST is search and PREDICATE is applied to successive elements.~@
@@ -594,3 +594,114 @@
               Then NIL is returned.~@
               An error of type TYPE-ERROR might be signaled if LIST is not a~@
               proper list."))
+
+(fundoc 'mapc
+	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+              were function is a designator for a function that must accept~@
+              as many arguments as there are lists in LISTS.~@
+              Each list in LISTS must be a proper list, and there must be at~@
+              least one such list in LISTS.~@
+              The FUNCTION is applied successive elements of the LISTS~@
+              in such a way that the first argument to the FUNCTION is the CAR~@
+              of the first list in LISTS, the second argument to the FUNCTION is~@
+              the CAR of the second list is LISTS, and so on.~@
+              After each application of the FUNCTION, each list in LISTS is~@
+              replaced by its CDR, and the process is repeated.~@
+              The process stops when at least one of the lists in LISTS is NIL.~@
+              The return value of the application of the FUNCTION is discarded.~@
+              Finally, MAPC returns the first list in LISTS.~@
+              An error of type TYPE-ERROR might be signaled if any of the lists~@
+              in LISTS is not a proper list."))
+
+(fundoc 'mapcar
+	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+              were function is a designator for a function that must accept~@
+              as many arguments as there are lists in LISTS.~@
+              Each list in LISTS must be a proper list, and there must be at~@
+              least one such list in LISTS.~@
+              The FUNCTION is applied successive elements of the LISTS~@
+              in such a way that the first argument to the FUNCTION is the CAR~@
+              of the first list in LISTS, the second argument to the FUNCTION is~@
+              the CAR of the second list is LISTS, and so on.~@
+              After each application of the FUNCTION, each list in LISTS is~@
+              replaced by its CDR, and the process is repeated.~@
+              The process stops when at least one of the lists in LISTS is NIL.~@
+              The return values of the applications of the FUNCTION are collected~@
+              into a list, and this list is returned by MAPCAR.~@
+              An error of type TYPE-ERROR might be signaled if any of the lists~@
+              in LISTS is not a proper list."))
+
+(fundoc 'maplist
+	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+              were function is a designator for a function that must accept~@
+              as many arguments as there are lists in LISTS.~@
+              Each list in LISTS must be a proper list, and there must be at~@
+              least one such list in LISTS.~@
+              The FUNCTION is applied successive sublists of the LISTS~@
+              in such a way that the first argument to the FUNCTION is the~@
+              first list in LISTS, the second argument to the FUNCTION is~@
+              the the second list is LISTS, and so on.~@
+              After each application of the FUNCTION, each list in LISTS is~@
+              replaced by its CDR, and the process is repeated.~@
+              The process stops when at least one of the lists in LISTS is NIL.~@
+              The return values of the applications of the FUNCTION are collected~@
+              into a list, and this list is returned by MAPLIST.~@
+              An error of type TYPE-ERROR might be signaled if any of the lists~@
+              in LISTS is not a proper list."))
+
+(fundoc 'mapl
+	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+              were function is a designator for a function that must accept~@
+              as many arguments as there are lists in LISTS.~@
+              Each list in LISTS must be a proper list, and there must be at~@
+              least one such list in LISTS.~@
+              The FUNCTION is applied successive sublists of the LISTS~@
+              in such a way that the first argument to the FUNCTION is the~@
+              first list in LISTS, the second argument to the FUNCTION is~@
+              the the second list is LISTS, and so on.~@
+              After each application of the FUNCTION, each list in LISTS is~@
+              replaced by its CDR, and the process is repeated.~@
+              The process stops when at least one of the lists in LISTS is NIL.~@
+              The return value of the application of the FUNCTION is discarded.~@
+              Finally, MAPL returns the first list in LISTS.~@
+              An error of type TYPE-ERROR might be signaled if any of the lists~@
+              in LISTS is not a proper list."))
+
+(fundoc 'mapcan
+	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+              were function is a designator for a function that must accept~@
+              as many arguments as there are lists in LISTS.~@
+              Each list in LISTS must be a proper list, and there must be at~@
+              least one such list in LISTS.~@
+              The FUNCTION is applied successive elements of the LISTS~@
+              in such a way that the first argument to the FUNCTION is the CAR~@
+              of the first list in LISTS, the second argument to the FUNCTION is~@
+              the CAR of the second list is LISTS, and so on.~@
+              After each application of the FUNCTION, each list in LISTS is~@
+              replaced by its CDR, and the process is repeated.~@
+              The process stops when at least one of the lists in LISTS is NIL.~@
+              The return values of the applications of the FUNCTION are~@
+              concatenated into a list as if NCONC were appled to them~@
+              and this list is returned by MAPCAN.~@
+              An error of type TYPE-ERROR might be signaled if any of the lists~@
+              in LISTS is not a proper list."))
+
+(fundoc 'mapcon
+	(fmt "Lambda list: (FUNCTION &rest LISTS)~@
+              were function is a designator for a function that must accept~@
+              as many arguments as there are lists in LISTS.~@
+              Each list in LISTS must be a proper list, and there must be at~@
+              least one such list in LISTS.~@
+              The FUNCTION is applied successive sublists of the LISTS~@
+              in such a way that the first argument to the FUNCTION is the~@
+              first list in LISTS, the second argument to the FUNCTION is~@
+              the the second list is LISTS, and so on.~@
+              After each application of the FUNCTION, each list in LISTS is~@
+              replaced by its CDR, and the process is repeated.~@
+              The process stops when at least one of the lists in LISTS is NIL.~@
+              The return values of the applications of the FUNCTION are~@
+              concatenated into a list as if NCONC were appled to them~@
+              and this list is returned by MAPCON.~@
+              An error of type TYPE-ERROR might be signaled if any of the lists~@
+              in LISTS is not a proper list."))
+
