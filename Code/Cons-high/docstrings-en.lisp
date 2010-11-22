@@ -775,8 +775,7 @@
               are CONS cells.  Items that are the CAR or CDR of top-level CONS~@
               cells are not copied, but share structure with ALIST.  COPY-ALIST~@
               returns the copy created.  Any top-level elements of ALIST that are~@
-              not CONS cells are included in the copy as-is.~@
-              The consequences are undefined if ALIST is not a proper list."))
+              not CONS cells are included in the copy as-is."))
 
 (fundoc 'pairlis
 	(fmt "Lambda list: (KEYS DATA &optional ALIST)~@
