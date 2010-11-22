@@ -476,3 +476,31 @@
               An error of type TYPE-ERROR is signaled if N is not a nonnegative~@
               integer."))
 
+(fundoc 'last
+	(fmt "Lambda list: (LIST &optional N)~@
+              where LIST is a proper list or a dotted list, but must not be~@
+              a circular list, and N is a nonnegative integer.~@
+              The default value of N is 1.~@
+              LAST returns the last N CONS cells of LIST.  If N is 0,~@
+              the contents of the CDR of the last CONS cell is returned.~@
+              If N is greater than or equal to the number of CONS cells of LIST,~@
+              then LIST is returned.~@
+              The consequences are undefined if LIST is a circular list.~@
+              An error of type TYPE-ERROR is signaled if N is not a nonnegative~@
+              integer"))
+
+(fundoc 'ldiff
+	(fmt "Lambda list: (LIST OBJECT)~@
+              where LIST is a proper list, a dotted list, or a circular list,~@
+              and OBJECT is any object.~@
+              If OBJECT is EQL to the contents of the CDR of any CONS cell of~@
+              LIST, then LDIFF returns a proper list that is a copy of the CONS~@
+              cells of LIST up to and including the one containing OBJECT in its~@
+              CDR, except that the copy is terminated by NIL.~@
+              If OBJECT is not EQL to the contents of the CDR of any CONS cell of~@
+              LIST, then if LIST is a proper list or a dotted list, LDIFF returns~@
+              a copy of LIST, and if LIST is a circular list, the consequences~@
+              are unspecified.~@
+              An error of type TYPE-ERROR might be signaled if LIST is not a~@
+              proper or a dotted list."))
+
