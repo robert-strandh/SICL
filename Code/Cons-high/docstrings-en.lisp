@@ -504,3 +504,35 @@
               An error of type TYPE-ERROR might be signaled if LIST is not a~@
               proper or a dotted list."))
 
+(fundoc 'tailp
+	(fmt "Lambda list: (LIST OBJECT)~@
+              where LIST is a proper list, a dotted list, or a circular list,~@
+              and OBJECT is any object.~@
+              If OBJECT is EQL to the contents of the CDR of any CONS cell of~@
+              LIST, then TAILP returns true.~@
+              If OBJECT is not EQL to the contents of the CDR of any CONS cell of~@
+              LIST, then if LIST is a proper list or a dotted list, TAILP returns~@
+              false, and if LIST is a circular list, the consequences~@
+              are unspecified.~@
+              An error of type TYPE-ERROR might be signaled if LIST is not a~@
+              proper or a dotted list."))
+
+(fundoc 'nthcdr
+	(fmt "Lambda list: (N LIST)~@
+	      where N is a nonnegative integer and LIST is a list that might~@
+              be a dotted list or a circular list.~@
+              Return the result of applying CDR N times to LIST.~@
+              If LIST contains fewer than N CONS cells, then if LIST is a proper~@
+              list, then NIL is returned, otherwise (i.e., LIST is a dotted list~@
+              with fewer than N CONS cells) an error of type TYPE-ERROR is signaled.~@
+              An error of type TYPE-ERROR is signaled if N is not a nonnegative~@
+              integer."))
+
+(fundoc 'rest
+	(frm "Lambda list: (LIST)~@
+              where LIST is a CONS cell or NIL.~@
+              If LIST is a CONS cell, then the CDR of that cell is returned.~@
+              If LIST is NIL, then NIL is returned.~@
+              If LIST is an atom other than NIL, then an error of type TYPE-ERROR~@
+              is signaled."))
+
