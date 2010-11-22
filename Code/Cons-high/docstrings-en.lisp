@@ -395,3 +395,84 @@
 	(fmt "Lambda list: (OBJECT)~@
               where OBJECT is any object.~@
               Return true if OBJECT is NIL.  Return false otherwise."))
+
+(fundoc 'nconc
+	(fmt "Lambda list: (&rest LISTS)~@
+              where each object in LISTS must be a list, except possibly the last one~@
+              which may be any object.  The others may be dotted lists, but may~@
+              not be circular lists.~@
+              The lists are desctructively concatenated as follows: The CDR~@
+              of the last CONS cell of each list (except the last one) is ~@
+              modified and made to point to the next list in LISTS.~@
+              The result of the concatenation is finally returned.~@
+              Any of the lists in LISTS might be NIL in which case it does not~@
+              participate in the operation.  It is as if it were not given.~@
+              The consequences are undefined if any object (except the last one)~@
+              in LISTS is not a list, i.e, if it is an atom other than NIL.~@
+              If no lists are given, NCONC returns NIL."))
+
+(fundoc 'append
+	(fmt "Lambda list: (&rest LISTS)~@
+              where each object in LISTS must be a proper list, except possibly the~@
+              last one, which may be any object.~@
+              Return a new list which is the concatenation of the lists in LISTS, i.e.,~@
+              a list which contains the elements of the lists in LISTS in the order~@
+              that they appear.  The lists in LISTS are not modified.  Every list~@
+              in LISTS is copied, except the last object in LISTS.  That last object~@
+              will share structure with the return value. 
+              Any of the lists in LISTS might be NIL in which case it does not~@
+              participate in the operation.  It is as if it were not given.~@
+              The consequences are undefined if any object (except the last one)~@
+              in LISTS is not a proper list.~@
+              If no lists are given, APPEND returns NIL."))
+
+(fundoc 'revappend
+	(fmt "Lambda list: (LIST TAIL)~@
+              where LIST must be a proper list, and TAIL may be any object.~@
+              Return a list that starts with the elements of LIST in reverse order,~@
+              with the CDR of the last CONS cell containing TAIL.~@
+              LIST is not modified.  The return value shares structure with TAIL.~@
+              The consequences are undefined if LIST is not a proper list."))
+
+(fundoc 'nreconc
+	(fmt "Lambda list: (LIST TAIL)~@
+              where LIST must be a proper list, and TAIL may be any object.~@
+              Return a list that starts with the elements of LIST in reverse order,~@
+              with the CDR of the last CONS cell containing TAIL.~@
+              LIST may be destructively modified.  The return value shares structure~@
+              with TAIL.~@
+              The consequences are undefined if LIST is not a proper list."))
+
+(fundoc 'butlast
+	(fmt "Lambda list: (LIST &optional N)~@
+              where LIST is list that may be dotted but not circular, and
+              N is a nonnegative integer.~@
+              The default value of N is 1.~@
+              Return a list that is a copy of LIST except that the last N~@
+              CONS cells of LIST are not copied.~@
+              If N is greater than or equal to the number of CONS cells of LIST,~@
+              then NIL is returned.~@
+              If LIST is a dotted list and N is zero, BUTLAST returns a copy of LIST~@
+              except that the CDR of the last CONS cell is NIL instead.~@
+              An error of type TYPE-ERROR is signaled if LIST is not a proper list~@
+              or a dotted list, including if LIST is a circular list.~@
+              An error of type TYPE-ERROR is signaled if N is not a nonnegative~@
+              integer."))
+
+(fundoc 'nbutlast
+	(fmt "Lambda list: (LIST &optional N)~@
+              where LIST is list that may be dotted but not circular, and
+              N is a nonnegative integer.~@
+              The default value of N is 1.~@
+              NBUTLAST changes the CDR of the Nth CONS cell from the end of LIST~@
+              to NIL (where the last CONS cell is the 0th from the end) and then~@
+              returns LIST.~@
+              If N is greater than or equal to the number of CONS cells of LIST,~@
+              then NIL is returned, and LIST is not modified~@
+              If LIST is a dotted list and N is zero, NBUTLAST changes the CDR~@
+              of the last CONS cell of LIST to NIL~@
+              An error of type TYPE-ERROR is signaled if LIST is not a proper list~@
+              or a dotted list, including if LIST is a circular list.~@
+              An error of type TYPE-ERROR is signaled if N is not a nonnegative~@
+              integer."))
+
