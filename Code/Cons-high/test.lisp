@@ -7021,6 +7021,14 @@
 				  (copy-list l2)
 				  :test 'eql))))
 
+(define-test |set-difference test=eql key=nil 1|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-equal '(1)
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :key nil))))
+
 (define-test |set-difference test=eq key=identity 1|
   (assert-equal '()
 		(set-difference '()
@@ -7375,6 +7383,22 @@
 				:test #'eql
 				:test-not #'eql)))
 
+(define-test |set-difference test=nil key=identity 1|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-error 'error
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :test nil))))
+
+(define-test |set-difference test-not=nil key=identity 1|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-error 'error
+		  (set-difference (copy-list l1)
+				  (copy-list l2)
+				  :test-not nil))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the nset-difference function
@@ -7440,6 +7464,14 @@
 		  (nset-difference (copy-list l1)
 				   (copy-list l2)
 				   :test 'eql))))
+
+(define-test |nset-difference test=eql key=nil 1|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-equal '(1)
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :key nil))))
 
 (define-test |nset-difference test=eq key=identity 1|
   (assert-equal '()
@@ -7794,6 +7826,22 @@
 		(nset-difference '(1 2 3) '(2 3 4)
 				 :test #'eql
 				 :test-not #'eql)))
+
+(define-test |nset-difference test=nil key=identity 1|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-error 'error
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :test nil))))
+
+(define-test |nset-difference test-not=nil key=identity 1|
+  (let ((l1 (loop for i from 1 below 10 collect i))
+	(l2 (loop for i from 2 below 20 collect i)))
+    (assert-error 'error
+		  (nset-difference (copy-list l1)
+				   (copy-list l2)
+				   :test-not nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

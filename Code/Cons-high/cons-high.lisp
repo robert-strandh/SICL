@@ -3358,12 +3358,13 @@
 	(push element result)))
     result))
 
-(defun set-difference (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun set-difference (list1 list2
+		       &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'set-difference))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (set-difference-key-eq-hash 'set-difference list1 list2 key)
@@ -3382,12 +3383,12 @@
 		       (set-difference-key-test 'set-difference list1 list2 key #'equalp)))
 		  (t
 		   (set-difference-key-test 'set-difference list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(set-difference-key-test-not 'set-difference list1 list2 key test-not)
 		(if use-hash
 		    (set-difference-key-eql-hash 'set-difference list1 list2 key)
 		    (set-difference-key-eql 'set-difference list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (set-difference-identity-eq-hash 'set-difference list1 list2)
@@ -3406,7 +3407,7 @@
 		       (set-difference-identity-test 'set-difference list1 list2 #'equalp)))
 		  (t
 		   (set-difference-identity-test 'set-difference list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(set-difference-identity-test-not 'set-difference list1 list2 test-not)
 		(if use-hash
 		    (set-difference-identity-eql-hash 'set-difference list1 list2)
@@ -3419,12 +3420,13 @@
 ;;; We take advantage of the fact that the standard doesn't 
 ;;; require this function to have any side effects. 
 
-(defun nset-difference (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun nset-difference (list1 list2
+			&key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'nset-difference))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (set-difference-key-eq-hash 'nset-difference list1 list2 key)
@@ -3443,12 +3445,12 @@
 		       (set-difference-key-test 'nset-difference list1 list2 key #'equalp)))
 		  (t
 		   (set-difference-key-test 'nset-difference list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(set-difference-key-test-not 'nset-difference list1 list2 key test-not)
 		(if use-hash
 		    (set-difference-key-eql-hash 'nset-difference list1 list2 key)
 		    (set-difference-key-eql 'nset-difference list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (set-difference-identity-eq-hash 'nset-difference list1 list2)
@@ -3467,7 +3469,7 @@
 		       (set-difference-identity-test 'nset-difference list1 list2 #'equalp)))
 		  (t
 		   (set-difference-identity-test 'nset-difference list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(set-difference-identity-test-not 'nset-difference list1 list2 test-not)
 		(if use-hash
 		    (set-difference-identity-eql-hash 'nset-difference list1 list2)
