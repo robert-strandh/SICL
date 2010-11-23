@@ -6310,6 +6310,16 @@
 				  l2
 				  :test 'eql))))
 
+(define-test |intersection test=eql key=nil 1|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:key nil)
+				  l2))))
+
 (define-test |intersection test=eq key=identity 1|
   (assert-equal '()
 		(intersection '() '() :test #'eq)))
@@ -6569,9 +6579,29 @@
 			      :test #'eql
 			      :test-not #'eql)))
 
+(define-test |intersection test=nil key=identity 1|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-error 'error
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:test nil)
+				  l2))))
+
+(define-test |intersection test-not=nil key=identity 1|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-error 'error
+		  (set-difference (intersection (copy-list (append l1 l2))
+						(copy-list (append l2 l3))
+						:test-not nil)
+				  l2))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the intersection function
+;;; Tests for the nintersection function
 
 (define-test |nintersection test=eql key=identity 1a|
   (assert-equal '()
@@ -6635,6 +6665,16 @@
 						 :test 'eql)
 				  l2
 				  :test 'eql))))
+
+(define-test |nintersection test=eql key=nil 1|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-equal '()
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :key nil)
+				  l2))))
 
 (define-test |nintersection test=eq key=identity 1|
   (assert-equal '()
@@ -6894,6 +6934,26 @@
 			       (copy-list '(2 3 4))
 			       :test #'eql
 			       :test-not #'eql)))
+
+(define-test |nintersection test=nil key=identity 1|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-error 'error
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :test nil)
+				  l2))))
+
+(define-test |nintersection test-not=nil key=identity 1|
+  (let ((l1 (loop for i from 30 below 40 collect i))
+	(l2 (loop for i from 40 below 100 collect i))
+	(l3 (loop for i from 100 below 110 collect i)))
+    (assert-error 'error
+		  (set-difference (nintersection (copy-list (append l1 l2))
+						 (copy-list (append l2 l3))
+						 :test-not nil)
+				  l2))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -3101,12 +3101,13 @@
 	(push element result)))
     result))
 
-(defun intersection (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun intersection (list1 list2
+		     &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'intersection))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (intersection-key-eq-hash 'intersection list1 list2 key)
@@ -3125,12 +3126,12 @@
 		       (intersection-key-test 'intersection list1 list2 key #'equalp)))
 		  (t
 		   (intersection-key-test 'intersection list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(intersection-key-test-not 'intersection list1 list2 key test-not)
 		(if use-hash
 		    (intersection-key-eql-hash 'intersection list1 list2 key)
 		    (intersection-key-eql 'intersection list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (intersection-identity-eq-hash 'intersection list1 list2)
@@ -3149,7 +3150,7 @@
 		       (intersection-identity-test 'intersection list1 list2 #'equalp)))
 		  (t
 		   (intersection-identity-test 'intersection list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(intersection-identity-test-not 'intersection list1 list2 test-not)
 		(if use-hash
 		    (intersection-identity-eql-hash 'intersection list1 list2)
@@ -3162,12 +3163,13 @@
 ;;; We take advantage of the fact that the standard doesn't 
 ;;; require this function to have any side effects. 
 
-(defun nintersection (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun nintersection (list1 list2
+		      &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'nintersection))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (intersection-key-eq-hash 'nintersection list1 list2 key)
@@ -3186,12 +3188,12 @@
 		       (intersection-key-test 'nintersection list1 list2 key #'equalp)))
 		  (t
 		   (intersection-key-test 'nintersection list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(intersection-key-test-not 'nintersection list1 list2 key test-not)
 		(if use-hash
 		    (intersection-key-eql-hash 'nintersection list1 list2 key)
 		    (intersection-key-eql 'nintersection list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (intersection-identity-eq-hash 'nintersection list1 list2)
@@ -3210,7 +3212,7 @@
 		       (intersection-identity-test 'nintersection list1 list2 #'equalp)))
 		  (t
 		   (intersection-identity-test 'nintersection list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(intersection-identity-test-not 'nintersection list1 list2 test-not)
 		(if use-hash
 		    (intersection-identity-eql-hash 'nintersection list1 list2)
