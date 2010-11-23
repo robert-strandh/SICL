@@ -3421,6 +3421,13 @@
 		(subst 'a 0 '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
 		       :test 'eql)))
 
+(define-test |subst test=eql key=nil 1|
+  (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		(subst 'a
+		       0
+		       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		       :key nil)))
+
 (define-test |subst test=eq key=identity 1|
   (assert-equal '()
 		(subst 'a 'b '()
@@ -3513,6 +3520,20 @@
 (define-test subst.1
   (assert-equal '(a (c))
 		(subst 'c '(b) '(a ((b))) :test-not (complement #'equal))))
+
+(define-test |subst test=nil key=identity 1|
+  (assert-error 'error
+		(subst 'a
+		       0
+		       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		       :test nil)))
+
+(define-test |subst test-not=nil key=identity 1|
+  (assert-error 'error
+		(subst 'a
+		       0
+		       '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))
+		       :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

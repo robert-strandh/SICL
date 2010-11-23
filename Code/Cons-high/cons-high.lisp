@@ -1320,26 +1320,27 @@
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
 
-(defun subst (new old tree &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun subst (new old tree
+	      &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'subst))
   (if key
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (subst-eq-key new old tree key)
               (if (or (eq test #'eql) (eq test 'eql))
                   (subst-eql-key new old tree key)
                   (subst-test-key new old tree test key)))
-          (if test-not
+          (if test-not-given
 	      (subst-test-not-key new old tree test-not key)
               (subst-eql-key new old tree key)))
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (subst-eq-identity new old tree)
               (if (or (eq test #'eql) (eq test 'eql))
                   (subst-eql-identity new old tree)
                   (subst-test-identity new old tree test)))
-          (if test-not
+          (if test-not-given
 	      (subst-test-not-identity new old tree test-not)
               (subst-eql-identity new old tree)))))
 
@@ -2199,7 +2200,7 @@
 
 (defun sublis (alist tree
 	       &key key (test nil test-given) (test-not nil test-not-given))
-  (when (and (not (null test-given)) (not (null test-not-given)))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'sublis))
   (if key
       (if test-given
@@ -2409,7 +2410,7 @@
 
 (defun nsublis (alist tree
 		&key key (test nil test-given) (test-not nil test-not-given))
-  (when (and (not (null test-given)) (not (null test-not-given)))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'nsublis))
   (if key
       (if test-given
