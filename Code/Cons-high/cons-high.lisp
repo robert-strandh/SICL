@@ -4000,12 +4000,13 @@
 	(return-from subsetp-key-equalp-hash nil))))
   t)
 
-(defun subsetp (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun subsetp (list1 list2
+		&key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'subsetp))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (subsetp-key-eq-hash 'subsetp list1 list2 key)
@@ -4024,12 +4025,12 @@
 		       (subsetp-key-test 'subsetp list1 list2 key #'equalp)))
 		  (t
 		   (subsetp-key-test 'subsetp list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(subsetp-key-test-not 'subsetp list1 list2 key test-not)
 		(if use-hash
 		    (subsetp-key-eql-hash 'subsetp list1 list2 key)
 		    (subsetp-key-eql 'subsetp list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (subsetp-identity-eq-hash 'subsetp list1 list2)
@@ -4048,7 +4049,7 @@
 		       (subsetp-identity-test 'subsetp list1 list2 #'equalp)))
 		  (t
 		   (subsetp-identity-test 'subsetp list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(subsetp-identity-test-not 'subsetp list1 list2 test-not)
 		(if use-hash
 		    (subsetp-identity-eql-hash 'subsetp list1 list2)

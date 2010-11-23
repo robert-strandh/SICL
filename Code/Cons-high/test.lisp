@@ -9142,6 +9142,13 @@
 			   l2
 			   :test 'eql))))
 
+(define-test |subsetp test=eql key=nil 1|
+  (let ((l1 (loop for i from 1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-true (subsetp l1
+			  l2
+			  :key nil))))
+
 (define-test |subsetp test=eq key=identity 2a|
   (let ((l (loop repeat 10 collect (make-array 1 :initial-element 1))))
     (assert-true (subsetp (reverse (cdr (butlast l)))
@@ -9718,6 +9725,22 @@
 (define-test |subsetp test=other test-not=other 1|
   (assert-error 'error
 		(subsetp '() '() :test #'eql :test-not #'eql)))
+
+(define-test |subsetp test=nil key=identity 1|
+  (let ((l1 (loop for i from 1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-error 'error
+		  (subsetp l1
+			   l2
+			  :test nil))))
+
+(define-test |subsetp test-not=nil key=identity 1|
+  (let ((l1 (loop for i from 1 to 10 collect i))
+	(l2 (loop for i downfrom 10 to 0 collect i)))
+    (assert-error 'error
+		  (subsetp l1
+			   l2
+			  :test-not nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
