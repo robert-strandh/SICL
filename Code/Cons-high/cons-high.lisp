@@ -3517,26 +3517,27 @@
       list
       (cons item list)))
 
-(defun adjoin (item list &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun adjoin (item list 
+	       &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'adjoin))
   (if key
-      (if test
+      (if test-given
 	  (if (or (eq test #'eq) (eq test 'eq))
 	      (adjoin-key-eq 'adjoin item list key)
 	      (if (or (eq test #'eql) (eq test 'eql))
 		  (adjoin-key-eql 'adjoin item list key)
 		  (adjoin-key-test 'adjoin item list key test)))
-	  (if test-not
+	  (if test-not-given
 	      (adjoin-key-test-not 'adjoin item list key test-not)
 	      (adjoin-key-eql 'adjoin item list key)))
-      (if test
+      (if test-given
 	  (if (or (eq test #'eq) (eq test 'eq))
 	      (adjoin-identity-eq 'adjoin item list)
 	      (if (or (eq test #'eql) (eq test 'eql))
 		  (adjoin-identity-eql 'adjoin item list)
 		  (adjoin-identity-test 'adjoin item list test)))
-	  (if test-not
+	  (if test-not-given
 	      (adjoin-identity-test-not 'adjoin item list test-not)
 	      (adjoin-identity-eql 'adjoin item list)))))
 
@@ -4193,7 +4194,7 @@
 		   (key nil key-p)
 		   (test nil test-p)
 		   (test-not nil test-not-p))
-  (when (and (not (null test)) (not (null test-not)))
+  (when (and test-p test-not-p)
     (error 'both-test-and-test-not-given :name 'pushnew))
   (let ((item-var (gensym)))
     (multiple-value-bind (vars vals store-vars writer-form reader-form)

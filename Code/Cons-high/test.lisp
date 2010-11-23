@@ -7835,6 +7835,10 @@
   (assert-equal '(2 1)
 		(adjoin 1 '(2 1) :test 'eql)))
 
+(define-test |adjoin test=eql key=nil 3b|
+  (assert-equal '(2 1)
+		(adjoin 1 '(2 1) :key nil)))
+
 (define-test |adjoin test=eq key=identity 1a|
   (assert-equal '(a)
 		(adjoin 'a '() :test #'eq)))
@@ -7953,6 +7957,14 @@
 
 (define-test |adjoin test=other test-not=other 1|
   (assert-error 'error (adjoin 1 '() :test #'eql :test-not #'eql)))
+
+(define-test |adjoin test=nil key=identity 3b|
+  (assert-error 'error
+		(adjoin 1 '(2 1) :test nil)))
+
+(define-test |adjoin test-not=nil key=identity 3b|
+  (assert-error 'error
+		(adjoin 1 '(2 1) :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -9693,6 +9705,13 @@
     (assert-equal '(2 1)
 		  list)))
 
+(define-test |pushnew test=eql key=nil 3b|
+  (let ((list '(2)))
+    (assert-equal '(1 2)
+		  (pushnew 1 list :key nil))
+    (assert-equal '(1 2)
+		  list)))
+
 (define-test |pushnew test=eq key=identity 1b|
   (let ((list '()))
     (assert-equal '(a)
@@ -10013,6 +10032,16 @@
 		  (pushnew '2 list
 			   :test #'eql
 			   :test-not #'eql))))
+
+(define-test |pushnew test=nil key=identity 3b|
+  (let ((list '(2)))
+    (assert-error 'error
+		  (pushnew 1 list :test nil))))
+
+(define-test |pushnew test-not=nil key=identity 3b|
+  (let ((list '(2)))
+    (assert-error 'error
+		  (pushnew 1 list :test-not nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
