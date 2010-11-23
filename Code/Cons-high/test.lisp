@@ -8074,6 +8074,15 @@
 					:test 'eql))
 	   #'<))))
 
+(define-test |set-exclusive-or test=eql key=nil 1|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:key nil))
+	   #'<))))
+
 (define-test |set-exclusive-or test=eq key=identity 2a|
   (let ((l (loop for i from 2 to 10 collect (list i))))
     (assert-equal
@@ -8502,6 +8511,24 @@
   (assert-error 'error
 		(set-exclusive-or '() '() :test #'eql :test-not #'eql)))
 
+(define-test |set-exclusive-or test=nil key=identity 1|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-error
+     'error
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test nil))
+	   #'<))))
+
+(define-test |set-exclusive-or test-not=nil key=identity 1|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-error
+     'error
+     (sort (copy-list (set-exclusive-or (cons 0 l)
+					(append l (list 1))
+					:test-not nil))
+	   #'<))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the nset-exclusiv-or function
@@ -8560,6 +8587,15 @@
      (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
 					 (copy-list (append l (list 1)))
 					 :test 'eql))
+	   #'<))))
+
+(define-test |nset-exclusive-or test=eql key=nil 3b|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-equal
+     '(0 1)
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :key nil))
 	   #'<))))
 
 (define-test |nset-exclusive-or test=eq key=identity 2a|
@@ -8989,6 +9025,24 @@
 (define-test |nset-exclusive-or test=other test-not=other 1|
   (assert-error 'error
 		(nset-exclusive-or '() '() :test #'eql :test-not #'eql)))
+
+(define-test |nset-exclusive-or test=nil key=identity 3b|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-error
+     'error
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test nil))
+	   #'<))))
+
+(define-test |nset-exclusive-or test-not=nil key=identity 3b|
+  (let ((l (loop for i from 2 to 50 collect i)))
+    (assert-error
+     'error
+     (sort (copy-list (nset-exclusive-or (copy-list (cons 0 l))
+					 (copy-list (append l (list 1)))
+					 :test-not nil))
+	   #'<))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

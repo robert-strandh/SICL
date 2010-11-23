@@ -3759,12 +3759,13 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun set-exclusive-or (list1 list2
+			 &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'set-exclusive-or))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (set-exclusive-or-key-eq-hash 'set-exclusive-or list1 list2 key)
@@ -3783,12 +3784,12 @@
 		       (set-exclusive-or-key-test 'set-exclusive-or list1 list2 key #'equalp)))
 		  (t
 		   (set-exclusive-or-key-test 'set-exclusive-or list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(set-exclusive-or-key-test-not 'set-exclusive-or list1 list2 key test-not)
 		(if use-hash
 		    (set-exclusive-or-key-eql-hash 'set-exclusive-or list1 list2 key)
 		    (set-exclusive-or-key-eql 'set-exclusive-or list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (set-exclusive-or-identity-eq-hash 'set-exclusive-or list1 list2)
@@ -3807,7 +3808,7 @@
 		       (set-exclusive-or-identity-test 'set-exclusive-or list1 list2 #'equalp)))
 		  (t
 		   (set-exclusive-or-identity-test 'set-exclusive-or list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(set-exclusive-or-identity-test-not 'set-exclusive-or list1 list2 test-not)
 		(if use-hash
 		    (set-exclusive-or-identity-eql-hash 'set-exclusive-or list1 list2)
@@ -3820,12 +3821,13 @@
 ;;; We take advantage of the fact that the standard doesn't 
 ;;; require this function to have any side effects. 
 
-(defun nset-exclusive-or (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun nset-exclusive-or (list1 list2
+			  &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'nset-exclusive-or))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (set-exclusive-or-key-eq-hash 'nset-exclusive-or list1 list2 key)
@@ -3844,12 +3846,12 @@
 		       (set-exclusive-or-key-test 'nset-exclusive-or list1 list2 key #'equalp)))
 		  (t
 		   (set-exclusive-or-key-test 'nset-exclusive-or list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(set-exclusive-or-key-test-not 'nset-exclusive-or list1 list2 key test-not)
 		(if use-hash
 		    (set-exclusive-or-key-eql-hash 'nset-exclusive-or list1 list2 key)
 		    (set-exclusive-or-key-eql 'nset-exclusive-or list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (set-exclusive-or-identity-eq-hash 'nset-exclusive-or list1 list2)
@@ -3868,7 +3870,7 @@
 		       (set-exclusive-or-identity-test 'nset-exclusive-or list1 list2 #'equalp)))
 		  (t
 		   (set-exclusive-or-identity-test 'nset-exclusive-or list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(set-exclusive-or-identity-test-not 'nset-exclusive-or list1 list2 test-not)
 		(if use-hash
 		    (set-exclusive-or-identity-eql-hash 'nset-exclusive-or list1 list2)
