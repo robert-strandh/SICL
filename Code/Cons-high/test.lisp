@@ -3647,6 +3647,13 @@
   (assert-equal 2
 		(nsubst 2 1 1 :test 'eql)))
 
+(define-test |nsubst test=eql key=nil 1|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
+    (assert-equal '(((a . 1) . (2 . a)) . ((a . 3) . (4 . a)))
+		  (setf tree2 (nsubst 'a 0 tree :key nil)))
+    (assert-eq tree tree2)))    
+
 (define-test |nsubst test=eq key=identity 1a|
   (let ((tree (copy-tree '())))
     (assert-equal '()
@@ -3881,6 +3888,18 @@
 (define-test |nsubst test=other test-not=other|
   (assert-error 'error
 		(nsubst 0 1 2 :test #'= :test-not #'=)))
+
+(define-test |nsubst test=nil key=identity 1|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
+    (assert-error 'error
+		  (setf tree2 (nsubst 'a 0 tree :test nil)))))
+
+(define-test |nsubst test-not=nil key=identity 1|
+  (let ((tree (copy-tree '(((0 . 1) . (2 . 0)) . ((0 . 3) . (4 . 0)))))
+	(tree2))
+    (assert-error 'error
+		  (setf tree2 (nsubst 'a 0 tree :test-not nil)))))
 
 ;;; old one left over.  Is it still needed?
 (define-test nsubst.1

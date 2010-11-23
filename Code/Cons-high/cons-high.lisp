@@ -1575,26 +1575,27 @@
           ((atom tree) tree)
           (t (traverse tree) tree))))
 
-(defun nsubst (new old tree &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun nsubst (new old tree
+	       &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'nsubst))
   (if key
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (nsubst-eq-key new old tree key)
               (if (or (eq test #'eql) (eq test 'eql))
                   (nsubst-eql-key new old tree key)
                   (nsubst-test-key  new old tree test key)))
-          (if test-not
+          (if test-not-given
 	      (nsubst-test-not-key  new old tree test-not key)
               (nsubst-eql-key new old tree key)))
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (nsubst-eq-identity new old tree)
               (if (or (eq test #'eql) (eq test 'eql))
                   (nsubst-eql-identity new old tree)
                   (nsubst-test-identity  new old tree test)))
-          (if test-not
+          (if test-not-given
 	      (nsubst-test-not-identity  new old tree test-not)
               (nsubst-eql-identity new old tree)))))
 
