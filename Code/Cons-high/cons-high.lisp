@@ -2523,30 +2523,31 @@
     (when (not (funcall test item (funcall key (car rest))))
       (return rest))))
 
-(defun member (item list &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun member (item list
+	       &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'member))
   (if key
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (|member test=eq key=other| 'member item list key)
               (if (or (eq test #'eql) (eq test 'eql))
                   (|member test=eql key=other| 'member item list key)
                   (|member test=other key=other| 'member item list test key)))
-          (if test-not
+          (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
                   (|member-test-not=eq key=other| 'member item list key)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
                       (|member-test-not=eql key=other| 'member item list key)
                       (|member test-not=other key=other| 'member item list test-not key)))
               (|member test=eql key=other| 'member item list key)))
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (|member test=eq key=identity| 'member item list)
               (if (or (eq test #'eql) (eq test 'eql))
                   (|member test=eql key=identity| 'member item list)
                   (|member test=other key=identity| 'member item list test)))
-          (if test-not
+          (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
                   (|member-test-not=eq key=identity| 'member item list)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))

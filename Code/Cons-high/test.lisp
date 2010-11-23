@@ -4073,6 +4073,10 @@
 			:key (lambda (x) (if (numberp x) (1+ x) x))
 			:test 'eql)))
 
+(define-test |member test=eql key=nil 1|
+  (assert-equal '(123 b c)
+		(member 123 '(a b 123 b c) :key nil)))
+
 (define-test |member test=eq key=identity 1|
   (assert-equal '(d e)
 		(member 'd '(a b c d e)
@@ -4178,6 +4182,13 @@
 			:test #'eql
 			:test-not #'eq)))
 			
+(define-test |member test=nil key=identity 1|
+  (assert-error 'error
+		(member 123 '(a b 123 b c) :test nil)))
+
+(define-test |member test-not=nil key=identity 1|
+  (assert-error 'error
+		(member 123 '(a b 123 b c) :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
