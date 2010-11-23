@@ -4316,6 +4316,11 @@
 		(assoc #\a '((b) nil (#\a . b) (nil . c))
 		       :test 'eql)))
 
+(define-test |assoc test=eql key=nil 1|
+  (assert-equal '(nil . c)
+		(assoc 'nil '((b) nil (a . b) (nil . c))
+		       :key nil)))
+
 (define-test |assoc test=eq key=identity 1a|
   (assert-equal '(a . b)
 		(assoc 'a '((b) nil (a . b) (a . c))
@@ -4511,6 +4516,16 @@
 		       :test #'eq
 		       :test-not #'eq)))
 
+(define-test |assoc test=nil key=identity 1|
+  (assert-error 'error
+		(assoc 'nil '((b) nil (a . b) (nil . c))
+		       :test nil)))
+
+(define-test |assoc test-not=nil key=identity 1|
+  (assert-error 'error
+		(assoc 'nil '((b) nil (a . b) (nil . c))
+		       :test-not nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the assoc-if function
@@ -4664,6 +4679,11 @@
   (assert-equal '(b . #\a)
 		(rassoc #\a '((b . x) nil (b . #\a) (c . nil))
 		       :test 'eql)))
+
+(define-test |rassoc test=eql key=nil 1|
+  (assert-equal '(b . 123)
+		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
+		       :key nil)))
 
 (define-test |rassoc test=eq key=identity 1a|
   (assert-equal '(b . a)
@@ -4859,6 +4879,16 @@
 		(rassoc 'a '((b . c) nil d (a b))
 		       :test #'eq
 		       :test-not #'eq)))
+
+(define-test |rassoc test=nil key=identity 1|
+  (assert-error 'error
+		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
+		       :test nil)))
+
+(define-test |rassoc test-not=nil key=identity 1|
+  (assert-error 'error
+		(rassoc 123 '((b . x) nil (b . 123) (c . nil))
+		       :test-not nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

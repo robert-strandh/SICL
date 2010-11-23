@@ -1817,30 +1817,31 @@
     (when (not (funcall test item (funcall key (car element))))
       (return element))))
   
-(defun assoc (item alist &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun assoc (item alist
+	      &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'assoc))
   (if key
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (assoc-eq-key item alist key)
               (if (or (eq test #'eql) (eq test 'eql))
                   (assoc-eql-key item alist key)
                   (assoc-test-key item alist test key)))
-          (if test-not
+          (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
                   (assoc-not-eq-key item alist key)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
                       (assoc-not-eql-key item alist key)
                       (assoc-test-not-key item alist test-not key)))
               (assoc-eql-key item alist key)))
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (assoc-eq-identity item alist)
               (if (or (eq test #'eql) (eq test 'eql))
                   (assoc-eql-identity item alist)
                   (assoc-test-identity item alist test)))
-          (if test-not
+          (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
                   (assoc-not-eq-identity item alist)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
@@ -1982,30 +1983,31 @@
     (when (not (funcall test item (funcall key (cdr element))))
       (return element))))
   
-(defun rassoc (item alist &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun rassoc (item alist
+	       &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'rassoc))
   (if key
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (rassoc-eq-key item alist key)
               (if (or (eq test #'eql) (eq test 'eql))
                   (rassoc-eql-key item alist key)
                   (rassoc-test-key item alist test key)))
-          (if test-not
+          (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
                   (rassoc-not-eq-key item alist key)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
                       (rassoc-not-eql-key item alist key)
                       (rassoc-test-not-key item alist test-not key)))
               (rassoc-eql-key item alist key)))
-      (if test
+      (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
               (rassoc-eq-identity item alist)
               (if (or (eq test #'eql) (eq test 'eql))
                   (rassoc-eql-identity item alist)
                   (rassoc-test-identity item alist test)))
-          (if test-not
+          (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
                   (rassoc-not-eq-identity item alist)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
