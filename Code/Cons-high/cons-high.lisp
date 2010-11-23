@@ -2846,12 +2846,13 @@
     (loop for element being the hash-values of table
 	  collect element)))
 
-(defun union (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun union (list1 list2
+	      &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'union))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (union-key-eq-hash 'union list1 list2 key)
@@ -2870,12 +2871,12 @@
 		       (union-key-test 'union list1 list2 key #'equalp)))
 		  (t
 		   (union-key-test 'union list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(union-key-test-not 'union list1 list2 key test-not)
 		(if use-hash
 		    (union-key-eql-hash 'union list1 list2 key)
 		    (union-key-eql 'union list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (union-identity-eq-hash 'union list1 list2)
@@ -2894,7 +2895,7 @@
 		       (union-identity-test 'union list1 list2 #'equalp)))
 		  (t
 		   (union-identity-test 'union list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(union-identity-test-not 'union list1 list2 test-not)
 		(if use-hash
 		    (union-identity-eql-hash 'union list1 list2)
@@ -2907,12 +2908,13 @@
 ;;; We take advantage of the fact that the standard doesn't 
 ;;; require this function to have any side effects. 
 
-(defun nunion (list1 list2 &key key test test-not)
-  (when (and (not (null test)) (not (null test-not)))
+(defun nunion (list1 list2
+	       &key key (test nil test-given) (test-not nil test-not-given))
+  (when (and test-given test-not-given)
     (error 'both-test-and-test-not-given :name 'nunion))
   (let ((use-hash (> (* (length list1) (length list2)) 1000)))
     (if key
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (union-key-eq-hash 'nunion list1 list2 key)
@@ -2931,12 +2933,12 @@
 		       (union-key-test 'nunion list1 list2 key #'equalp)))
 		  (t
 		   (union-key-test 'nunion list1 list2 key test)))
-	    (if test-not
+	    (if test-not-given
 		(union-key-test-not 'nunion list1 list2 key test-not)
 		(if use-hash
 		    (union-key-eql-hash 'nunion list1 list2 key)
 		    (union-key-eql 'nunion list1 list2 key))))
-	(if test
+	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
 		       (union-identity-eq-hash 'nunion list1 list2)
@@ -2955,7 +2957,7 @@
 		       (union-identity-test 'nunion list1 list2 #'equalp)))
 		  (t
 		   (union-identity-test 'nunion list1 list2 test)))
-	    (if test-not
+	    (if test-not-given
 		(union-identity-test-not 'nunion list1 list2 test-not)
 		(if use-hash
 		    (union-identity-eql-hash 'nunion list1 list2)

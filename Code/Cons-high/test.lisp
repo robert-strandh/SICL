@@ -5624,6 +5624,11 @@
   (assert-error 'type-error
 		(union '(1 2 3) '(2 3 . 4))))
 
+(define-test |union test=eql key=nil 2a|
+  (assert-equal '()
+		(set-difference (union '(1 2 3) '(3 4 5) :key nil)
+				'(1 2 3 4 5))))
+
 (define-test |union test=eq key=identity 1|
   (assert-equal '()
 		(union '() '() :test #'eq)))
@@ -5920,6 +5925,16 @@
   (assert-error 'error
 		(union '(1 2 3) '(2 3 4) :test #'eql :test-not #'eql)))
 
+(define-test |union test=nil key=identity 2a|
+  (assert-error 'error
+		(set-difference (union '(1 2 3) '(3 4 5) :test nil)
+				'(1 2 3 4 5))))
+
+(define-test |union test-not=nil key=identity 2a|
+  (assert-error 'error
+		(set-difference (union '(1 2 3) '(3 4 5) :test-not nil)
+				'(1 2 3 4 5))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the nunion function
@@ -5986,6 +6001,13 @@
 					  :test 'eql)
 				  (append l1 l2 l3)
 				  :test 'eql))))
+
+(define-test |nunion test=eql key=nil 1|
+  (assert-equal '()
+		(set-difference (nunion (copy-list '(1 2 3))
+					(copy-list '(3 4 5))
+					:key nil)
+				'(1 2 3 4 5))))
 
 (define-test |nunion test=eq key=identity 1|
   (assert-equal '()
@@ -6242,6 +6264,20 @@
 			(copy-list '(2 3 4))
 			:test #'eql
 			:test-not #'eql)))
+
+(define-test |nunion test=nil key=identity 1|
+  (assert-error 'error
+		(set-difference (nunion (copy-list '(1 2 3))
+					(copy-list '(3 4 5))
+					:test nil)
+				'(1 2 3 4 5))))
+
+(define-test |nunion test-not=nil key=identity 1|
+  (assert-error 'error
+		(set-difference (nunion (copy-list '(1 2 3))
+					(copy-list '(3 4 5))
+					:test-not nil)
+				'(1 2 3 4 5))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
