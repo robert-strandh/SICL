@@ -154,3 +154,7 @@ What remains to to:
   Write the remaining docstrings. 
 
   Make sure the tests cover all of the code.
+
+  Modify the order of arguments to specialized versions of functions
+  that take :key, :test, and :test-not keyword parameters, so as to
+  make that order uniform across all functions.
