@@ -1217,7 +1217,7 @@
 
 ;;; Special version if test is eq and key is identity.
 
-(defun subst-eq-identity (new old tree)
+(defun |subst key=identity test=eq| (new old tree)
   (labels ((traverse (tree)
              (cond ((eq tree old) new)
                    ((atom tree) tree)
@@ -1226,7 +1226,7 @@
 
 ;;; Special version if test is eql and key is identity.
 
-(defun subst-eql-identity (new old tree)
+(defun |subst key=identity test=eql| (new old tree)
   (labels ((traverse (tree)
              (cond ((eql tree old) new)
                    ((atom tree) tree)
@@ -1235,7 +1235,7 @@
 
 ;;; Special version if test is eq and key is given.
 
-(defun subst-eq-key (new old tree key)
+(defun |subst key=other test=eq| (new old tree key)
   (labels ((traverse (tree)
              (cond ((eq (funcall key tree) old) new)
                    ((atom tree) tree)
@@ -1244,7 +1244,7 @@
 
 ;;; Special version if test is eql and key is given.
 
-(defun subst-eql-key (new old tree key)
+(defun |subst key=other test=eql| (new old tree key)
   (labels ((traverse (tree)
              (cond ((eql (funcall key tree) old) new)
                    ((atom tree) tree)
@@ -1253,7 +1253,7 @@
 
 ;;; Special version if test is given and key is identity.
 
-(defun subst-test-identity (new old tree test)
+(defun |subst key=identity test=other| (new old tree test)
   (labels ((traverse (tree)
              (cond ((funcall test old tree) new)
                    ((atom tree) tree)
@@ -1262,7 +1262,7 @@
 
 ;;; Special version if test and key both are given.
 
-(defun subst-test-key (new old tree test key)
+(defun |subst key=other-test-other| (new old tree test key)
   (labels ((traverse (tree)
              (cond ((funcall test old (funcall key tree)) new)
                    ((atom tree) tree)
@@ -1304,7 +1304,7 @@
 
 ;;; Special version if test-not is given and key is identity.
 
-(defun subst-test-not-identity (new old tree test)
+(defun |subst key=identity test-not=other| (new old tree test)
   (labels ((traverse (tree)
              (cond ((not (funcall test old tree)) new)
                    ((atom tree) tree)
@@ -1313,7 +1313,7 @@
 
 ;;; Special version if test-not and key both are given
 
-(defun subst-test-not-key (new old tree test key)
+(defun |subst key=other test-not=other| (new old tree test key)
   (labels ((traverse (tree)
              (cond ((not (funcall test old (funcall key tree))) new)
                    ((atom tree) tree)
@@ -1327,22 +1327,22 @@
   (if key
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (subst-eq-key new old tree key)
+              (|subst key=other test=eq| new old tree key)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (subst-eql-key new old tree key)
-                  (subst-test-key new old tree test key)))
+                  (|subst key=other test=eql| new old tree key)
+                  (|subst key=other-test-other| new old tree test key)))
           (if test-not-given
-	      (subst-test-not-key new old tree test-not key)
-              (subst-eql-key new old tree key)))
+	      (|subst key=other test-not=other| new old tree test-not key)
+              (|subst key=other test=eql| new old tree key)))
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (subst-eq-identity new old tree)
+              (|subst key=identity test=eq| new old tree)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (subst-eql-identity new old tree)
-                  (subst-test-identity new old tree test)))
+                  (|subst key=identity test=eql| new old tree)
+                  (|subst key=identity test=other| new old tree test)))
           (if test-not-given
-	      (subst-test-not-identity new old tree test-not)
-              (subst-eql-identity new old tree)))))
+	      (|subst key=identity test-not=other| new old tree test-not)
+              (|subst key=identity test=eql| new old tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1350,7 +1350,7 @@
 
 ;;; Special version where the key function is identity.
 
-(defun subst-if-identity (new predicate tree)
+(defun |subst-if key=other=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
   (labels ((traverse (tree)
@@ -1362,7 +1362,7 @@
 ;;; Special version where the key function is something other than
 ;;; identity.
 
-(defun subst-if-key (new predicate tree key)
+(defun |subst-if key=other| (new predicate tree key)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
   (labels ((traverse (tree)
@@ -1373,8 +1373,8 @@
 
 (defun subst-if (new predicate tree &key key)
   (if (null key)
-      (subst-if-identity new predicate tree)
-      (subst-if-key new predicate tree key)))
+      (|subst-if key=other=identity| new predicate tree)
+      (|subst-if key=other| new predicate tree key)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1382,7 +1382,7 @@
 
 ;;; Special version where the key function is identity.
 
-(defun subst-if-not-identity (new predicate tree)
+(defun |subst-if-not key=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
   (labels ((traverse (tree)
@@ -1394,7 +1394,7 @@
 ;;; Special version where the key function is something other than
 ;;; identity.
 
-(defun subst-if-not-key (new predicate tree key)
+(defun |subst-if-not key=other| (new predicate tree key)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
   (labels ((traverse (tree)
@@ -1405,8 +1405,8 @@
 
 (defun subst-if-not (new predicate tree &key key)
   (if (null key)
-      (subst-if-not-identity new predicate tree)
-      (subst-if-not-key new predicate tree key)))
+      (|subst-if-not key=identity| new predicate tree)
+      (|subst-if-not key=other| new predicate tree key)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1414,7 +1414,7 @@
 
 ;;; Special version if test is eq and key is identity.
 
-(defun nsubst-eq-identity (new old tree)
+(defun |nsubst key=identity test=eq| (new old tree)
   (labels ((traverse (tree)
              (cond ((eq (car tree) old)
                     (setf (car tree) new))
@@ -1434,7 +1434,7 @@
 
 ;;; Special version if test is eql and key is identity.
 
-(defun nsubst-eql-identity (new old tree)
+(defun |nsubst key=identity test=eql| (new old tree)
   (labels ((traverse (tree)
              (cond ((eql (car tree) old)
                     (setf (car tree) new))
@@ -1454,7 +1454,7 @@
 
 ;;; Special version if test is eq and key is given.
 
-(defun nsubst-eq-key (new old tree key)
+(defun |nsubst key=other test=eq| (new old tree key)
   (labels ((traverse (tree)
              (cond ((eq (funcall key (car tree)) old)
                     (setf (car tree) new))
@@ -1474,7 +1474,7 @@
 
 ;;; Special version if test is eql and key is given.
 
-(defun nsubst-eql-key (new old tree key)
+(defun |nsubst key=other test=eql| (new old tree key)
   (labels ((traverse (tree)
              (cond ((eql (funcall key (car tree)) old)
                     (setf (car tree) new))
@@ -1494,7 +1494,7 @@
 
 ;;; Special version if test is given and key is identity.
 
-(defun nsubst-test-identity (new old tree test)
+(defun |nsubst key=identity test=other| (new old tree test)
   (labels ((traverse (tree)
              (cond ((funcall test old (car tree))
                     (setf (car tree) new))
@@ -1514,7 +1514,7 @@
 
 ;;; Special version if test and key both are given.
 
-(defun nsubst-test-key (new old tree test key)
+(defun |nsubst key=other-test-other| (new old tree test key)
   (labels ((traverse (tree)
              (cond ((funcall test old (funcall key (car tree)))
                     (setf (car tree) new))
@@ -1537,7 +1537,7 @@
 
 ;;; Special version if test-not is given and key is identity.
 
-(defun nsubst-test-not-identity (new old tree test)
+(defun |nsubst key=identity test-not=other| (new old tree test)
   (labels ((traverse (tree)
              (cond ((not (funcall test old (car tree)))
                     (setf (car tree) new))
@@ -1557,7 +1557,7 @@
 
 ;;; Special version if test-not and key both are given
 
-(defun nsubst-test-not-key (new old tree test key)
+(defun |nsubst key=other test-not=other| (new old tree test key)
   (labels ((traverse (tree)
              (cond ((not (funcall test old (funcall key (car tree))))
                     (setf (car tree) new))
@@ -1582,22 +1582,22 @@
   (if key
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (nsubst-eq-key new old tree key)
+              (|nsubst key=other test=eq| new old tree key)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (nsubst-eql-key new old tree key)
-                  (nsubst-test-key  new old tree test key)))
+                  (|nsubst key=other test=eql| new old tree key)
+                  (|nsubst key=other-test-other|  new old tree test key)))
           (if test-not-given
-	      (nsubst-test-not-key  new old tree test-not key)
-              (nsubst-eql-key new old tree key)))
+	      (|nsubst key=other test-not=other|  new old tree test-not key)
+              (|nsubst key=other test=eql| new old tree key)))
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (nsubst-eq-identity new old tree)
+              (|nsubst key=identity test=eq| new old tree)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (nsubst-eql-identity new old tree)
-                  (nsubst-test-identity  new old tree test)))
+                  (|nsubst key=identity test=eql| new old tree)
+                  (|nsubst key=identity test=other|  new old tree test)))
           (if test-not-given
-	      (nsubst-test-not-identity  new old tree test-not)
-              (nsubst-eql-identity new old tree)))))
+	      (|nsubst key=identity test-not=other|  new old tree test-not)
+              (|nsubst key=identity test=eql| new old tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1605,7 +1605,7 @@
 
 ;;; Special version where the key function is identity.
 
-(defun nsubst-if-identity (new predicate tree)
+(defun |nsubst-if key=other=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
   (labels ((traverse (tree)
@@ -1628,7 +1628,7 @@
 ;;; Special version where the key function is something other than
 ;;; identity.
 
-(defun nsubst-if-key (new predicate tree key)
+(defun |nsubst-if key=other| (new predicate tree key)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
   (labels ((traverse (tree)
@@ -1650,8 +1650,8 @@
 
 (defun nsubst-if (new predicate tree &key key)
   (if (null key)
-      (nsubst-if-identity new predicate tree)
-      (nsubst-if-key new predicate tree key)))
+      (|nsubst-if key=other=identity| new predicate tree)
+      (|nsubst-if key=other| new predicate tree key)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1659,7 +1659,7 @@
 
 ;;; Special version where the key function is identity.
 
-(defun nsubst-if-not-identity (new predicate tree)
+(defun |nsubst-if-not key=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
   (labels ((traverse (tree)
@@ -1682,7 +1682,7 @@
 ;;; Special version where the key function is something other than
 ;;; identity.
 
-(defun nsubst-if-not-key (new predicate tree key)
+(defun |nsubst-if-not key=other| (new predicate tree key)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
   (labels ((traverse (tree)
@@ -1704,8 +1704,8 @@
 
 (defun nsubst-if-not (new predicate tree &key key)
   (if (null key)
-      (nsubst-if-not-identity new predicate tree)
-      (nsubst-if-not-key new predicate tree key)))
+      (|nsubst-if-not key=identity| new predicate tree)
+      (|nsubst-if-not key=other| new predicate tree key)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1735,84 +1735,84 @@
 
 ;;; Special version when test is eq and key is identity.
 
-(defun assoc-eq-identity (item alist)
+(defun |assoc key=identity test=eq| (item alist)
   (with-alist-elements (element alist assoc)
     (when (eq item (car element))
       (return element))))
 
 ;;; Special version when test is eql and key is identity.
 
-(defun assoc-eql-identity (item alist)
+(defun |assoc key=identity test=eql| (item alist)
   (with-alist-elements (element alist assoc)
     (when (eql item (car element))
       (return element))))
         
 ;;; Special version when test is eq and key is given.
 
-(defun assoc-eq-key (item alist key)
+(defun |assoc key=other test=eq| (item alist key)
   (with-alist-elements (element alist assoc)
     (when (eq item (funcall key (car element)))
       (return element))))
   
 ;;; Special version when test is eql and key is given.
 
-(defun assoc-eql-key (item alist key)
+(defun |assoc key=other test=eql| (item alist key)
   (with-alist-elements (element alist assoc)
     (when (eql item (funcall key (car element)))
       (return element))))
 
 ;;; Special version when test is given and key is identity.
 
-(defun assoc-test-identity (item alist test)
+(defun |assoc key=identity test=other| (item alist test)
   (with-alist-elements (element alist assoc)
     (when (funcall test item (car element))
       (return element))))
 
 ;;; Special version when test and key are both given.
 
-(defun assoc-test-key (item alist test key)
+(defun |assoc key=other-test-other| (item alist test key)
   (with-alist-elements (element alist assoc)
     (when (funcall test item (funcall key (car element)))
       (return element))))
   
 ;;; Special version when test-not is eq and key is identity.
 
-(defun assoc-not-eq-identity (item alist)
+(defun |assoc key=identity test-not=eq| (item alist)
   (with-alist-elements (element alist assoc)
     (when (not (eq item (car element)))
       (return element))))
 
 ;;; Special version when test-not is eql and key is identity.
 
-(defun assoc-not-eql-identity (item alist)
+(defun |assoc key=identity test-not=eql| (item alist)
   (with-alist-elements (element alist assoc)
     (when (not (eql item (car element)))
       (return element))))
         
 ;;; Special version when test-not is eq and key is given.
 
-(defun assoc-not-eq-key (item alist key)
+(defun |assoc key=other test-not=eq| (item alist key)
   (with-alist-elements (element alist assoc)
     (when (not (eq item (funcall key (car element))))
       (return element))))
   
 ;;; Special version when test-not is eql and key is given.
 
-(defun assoc-not-eql-key (item alist key)
+(defun |assoc key=other test-not=eql| (item alist key)
   (with-alist-elements (element alist assoc)
     (when (not (eql item (funcall key (car element))))
       (return element))))
 
 ;;; Special version when test-not is given and key is identity.
 
-(defun assoc-test-not-identity (item alist test)
+(defun |assoc key=identity test-not=other| (item alist test)
   (with-alist-elements (element alist assoc)
     (when (not (funcall test item (car element)))
       (return element))))
 
 ;;; Special version when test-not and key are both given.
 
-(defun assoc-test-not-key (item alist test key)
+(defun |assoc key=other test-not=other| (item alist test key)
   (with-alist-elements (element alist assoc)
     (when (not (funcall test item (funcall key (car element))))
       (return element))))
@@ -1824,30 +1824,30 @@
   (if key
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (assoc-eq-key item alist key)
+              (|assoc key=other test=eq| item alist key)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (assoc-eql-key item alist key)
-                  (assoc-test-key item alist test key)))
+                  (|assoc key=other test=eql| item alist key)
+                  (|assoc key=other-test-other| item alist test key)))
           (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (assoc-not-eq-key item alist key)
+                  (|assoc key=other test-not=eq| item alist key)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (assoc-not-eql-key item alist key)
-                      (assoc-test-not-key item alist test-not key)))
-              (assoc-eql-key item alist key)))
+                      (|assoc key=other test-not=eql| item alist key)
+                      (|assoc key=other test-not=other| item alist test-not key)))
+              (|assoc key=other test=eql| item alist key)))
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (assoc-eq-identity item alist)
+              (|assoc key=identity test=eq| item alist)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (assoc-eql-identity item alist)
-                  (assoc-test-identity item alist test)))
+                  (|assoc key=identity test=eql| item alist)
+                  (|assoc key=identity test=other| item alist test)))
           (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (assoc-not-eq-identity item alist)
+                  (|assoc key=identity test-not=eq| item alist)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (assoc-not-eql-identity item alist)
-                      (assoc-test-not-identity item alist test-not)))
-              (assoc-eql-identity item alist)))))
+                      (|assoc key=identity test-not=eql| item alist)
+                      (|assoc key=identity test-not=other| item alist test-not)))
+              (|assoc key=identity test=eql| item alist)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1855,22 +1855,22 @@
 
 ;;; Special version when key is identity
 
-(defun assoc-if-identity (predicate alist)
+(defun |assoc-if key=other=identity| (predicate alist)
   (with-alist-elements (element alist assoc-if)
     (when (funcall predicate (car element))
       (return element))))
 
 ;;; Special version when key is given
 
-(defun assoc-if-key (predicate alist key)
+(defun |assoc-if key=other| (predicate alist key)
   (with-alist-elements (element alist assoc-if)
     (when (funcall predicate (funcall key (car element)))
       (return element))))
 
 (defun assoc-if (predicate alist &key key)
   (if key
-      (assoc-if-key predicate alist key)
-      (assoc-if-identity predicate alist)))
+      (|assoc-if key=other| predicate alist key)
+      (|assoc-if key=other=identity| predicate alist)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1878,22 +1878,22 @@
 
 ;;; Special version when key is identity
 
-(defun assoc-if-not-identity (predicate alist)
+(defun |assoc-if-not key=identity| (predicate alist)
   (with-alist-elements (element alist assoc-if-not)
     (when (not (funcall predicate (car element)))
       (return element))))
 
 ;;; Special version when key is given
 
-(defun assoc-if-not-key (predicate alist key)
+(defun |assoc-if-not key=other| (predicate alist key)
   (with-alist-elements (element alist assoc-if-not)
     (when (not (funcall predicate (funcall key (car element))))
       (return element))))
 
 (defun assoc-if-not (predicate alist &key key)
   (if key
-      (assoc-if-not-key predicate alist key)
-      (assoc-if-not-identity predicate alist)))
+      (|assoc-if-not key=other| predicate alist key)
+      (|assoc-if-not key=identity| predicate alist)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1901,84 +1901,84 @@
 
 ;;; Special version when test is eq and key is identity.
 
-(defun rassoc-eq-identity (item alist)
+(defun |rassoc key=identity test=eq| (item alist)
   (with-alist-elements (element alist rassoc)
     (when (eq item (cdr element))
       (return element))))
 
 ;;; Special version when test is eql and key is identity.
 
-(defun rassoc-eql-identity (item alist)
+(defun |rassoc key=identity test=eql| (item alist)
   (with-alist-elements (element alist rassoc)
     (when (eql item (cdr element))
       (return element))))
         
 ;;; Special version when test is eq and key is given.
 
-(defun rassoc-eq-key (item alist key)
+(defun |rassoc key=other test=eq| (item alist key)
   (with-alist-elements (element alist rassoc)
     (when (eq item (funcall key (cdr element)))
       (return element))))
   
 ;;; Special version when test is eql and key is given.
 
-(defun rassoc-eql-key (item alist key)
+(defun |rassoc key=other test=eql| (item alist key)
   (with-alist-elements (element alist rassoc)
     (when (eql item (funcall key (cdr element)))
       (return element))))
 
 ;;; Special version when test is given and key is identity.
 
-(defun rassoc-test-identity (item alist test)
+(defun |rassoc key=identity test=other| (item alist test)
   (with-alist-elements (element alist rassoc)
     (when (funcall test item (cdr element))
       (return element))))
 
 ;;; Special version when test and key are both given.
 
-(defun rassoc-test-key (item alist test key)
+(defun |rassoc key=other-test-other| (item alist test key)
   (with-alist-elements (element alist rassoc)
     (when (funcall test item (funcall key (cdr element)))
       (return element))))
   
 ;;; Special version when test-not is eq and key is identity.
 
-(defun rassoc-not-eq-identity (item alist)
+(defun |rassoc key=identity test-not=eq| (item alist)
   (with-alist-elements (element alist rassoc)
     (when (not (eq item (cdr element)))
       (return element))))
 
 ;;; Special version when test-not is eql and key is identity.
 
-(defun rassoc-not-eql-identity (item alist)
+(defun |rassoc key=identity test-not=eql| (item alist)
   (with-alist-elements (element alist rassoc)
     (when (not (eql item (cdr element)))
       (return element))))
         
 ;;; Special version when test-not is eq and key is given.
 
-(defun rassoc-not-eq-key (item alist key)
+(defun |rassoc key=other test-not=eq| (item alist key)
   (with-alist-elements (element alist rassoc)
     (when (not (eq item (funcall key (cdr element))))
       (return element))))
   
 ;;; Special version when test-not is eql and key is given.
 
-(defun rassoc-not-eql-key (item alist key)
+(defun |rassoc key=other test-not=eql| (item alist key)
   (with-alist-elements (element alist rassoc)
     (when (not (eql item (funcall key (cdr element))))
       (return element))))
 
 ;;; Special version when test-not is given and key is identity.
 
-(defun rassoc-test-not-identity (item alist test)
+(defun |rassoc key=identity test-not=other| (item alist test)
   (with-alist-elements (element alist rassoc)
     (when (not (funcall test item (cdr element)))
       (return element))))
 
 ;;; Special version when test-not and key are both given.
 
-(defun rassoc-test-not-key (item alist test key)
+(defun |rassoc key=other test-not=other| (item alist test key)
   (with-alist-elements (element alist rassoc)
     (when (not (funcall test item (funcall key (cdr element))))
       (return element))))
@@ -1990,30 +1990,30 @@
   (if key
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (rassoc-eq-key item alist key)
+              (|rassoc key=other test=eq| item alist key)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (rassoc-eql-key item alist key)
-                  (rassoc-test-key item alist test key)))
+                  (|rassoc key=other test=eql| item alist key)
+                  (|rassoc key=other-test-other| item alist test key)))
           (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (rassoc-not-eq-key item alist key)
+                  (|rassoc key=other test-not=eq| item alist key)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (rassoc-not-eql-key item alist key)
-                      (rassoc-test-not-key item alist test-not key)))
-              (rassoc-eql-key item alist key)))
+                      (|rassoc key=other test-not=eql| item alist key)
+                      (|rassoc key=other test-not=other| item alist test-not key)))
+              (|rassoc key=other test=eql| item alist key)))
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (rassoc-eq-identity item alist)
+              (|rassoc key=identity test=eq| item alist)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (rassoc-eql-identity item alist)
-                  (rassoc-test-identity item alist test)))
+                  (|rassoc key=identity test=eql| item alist)
+                  (|rassoc key=identity test=other| item alist test)))
           (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (rassoc-not-eq-identity item alist)
+                  (|rassoc key=identity test-not=eq| item alist)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (rassoc-not-eql-identity item alist)
-                      (rassoc-test-not-identity item alist test-not)))
-              (rassoc-eql-identity item alist)))))
+                      (|rassoc key=identity test-not=eql| item alist)
+                      (|rassoc key=identity test-not=other| item alist test-not)))
+              (|rassoc key=identity test=eql| item alist)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2021,22 +2021,22 @@
 
 ;;; Special version when key is identity
 
-(defun rassoc-if-identity (predicate alist)
+(defun |rassoc-if key=other=identity| (predicate alist)
   (with-alist-elements (element alist rassoc-if)
     (when (funcall predicate (cdr element))
       (return element))))
 
 ;;; Special version when key is given
 
-(defun rassoc-if-key (predicate alist key)
+(defun |rassoc-if key=other| (predicate alist key)
   (with-alist-elements (element alist rassoc-if)
     (when (funcall predicate (funcall key (cdr element)))
       (return element))))
 
 (defun rassoc-if (predicate alist &key key)
   (if key
-      (rassoc-if-key predicate alist key)
-      (rassoc-if-identity predicate alist)))
+      (|rassoc-if key=other| predicate alist key)
+      (|rassoc-if key=other=identity| predicate alist)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2044,22 +2044,22 @@
 
 ;;; Special version when key is identity
 
-(defun rassoc-if-not-identity (predicate alist)
+(defun |rassoc-if-not key=identity| (predicate alist)
   (with-alist-elements (element alist rassoc-if-not)
     (when (not (funcall predicate (cdr element)))
       (return element))))
 
 ;;; Special version when key is given
 
-(defun rassoc-if-not-key (predicate alist key)
+(defun |rassoc-if-not key=other| (predicate alist key)
   (with-alist-elements (element alist rassoc-if-not)
     (when (not (funcall predicate (funcall key (cdr element))))
       (return element))))
 
 (defun rassoc-if-not (predicate alist &key key)
   (if key
-      (rassoc-if-not-key predicate alist key)
-      (rassoc-if-not-identity predicate alist)))
+      (|rassoc-if-not key=other| predicate alist key)
+      (|rassoc-if-not key=identity| predicate alist)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2067,7 +2067,7 @@
 
 ;;; Special case when test is eq and key is identity
 
-(defun sublis-eq-identity (alist tree)
+(defun |sublis key=identity test=eq| (alist tree)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
 	       (let ((entry (with-alist-elements (element alist sublis)
@@ -2084,7 +2084,7 @@
   
 ;;; Special case when test is eql and key is identity
 
-(defun sublis-eql-identity (alist tree)
+(defun |sublis key=identity test=eql| (alist tree)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
 	       (let ((entry (with-alist-elements (element alist sublis)
@@ -2101,7 +2101,7 @@
   
 ;;; Special case when test is eq and key is given.
 
-(defun sublis-eq-key (alist tree key)
+(defun |sublis key=other test=eq| (alist tree key)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
 	       (let ((entry (with-alist-elements (element alist sublis)
@@ -2118,7 +2118,7 @@
   
 ;;; Special case when test is eql and key is given.
 
-(defun sublis-eql-key (alist tree key)
+(defun |sublis key=other test=eql| (alist tree key)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
 	       (let ((entry (with-alist-elements (element alist sublis)
@@ -2135,7 +2135,7 @@
   
 ;;; Special case when test is given and key is identity.
 
-(defun sublis-test-identity (alist tree test)
+(defun |sublis key=identity test=other| (alist tree test)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
 	       (let ((entry (with-alist-elements (element alist sublis)
@@ -2152,7 +2152,7 @@
   
 ;;; Special case when test and key are both given.
 
-(defun sublis-test-key (alist tree test key)
+(defun |sublis key=other-test-other| (alist tree test key)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
 	       (let ((entry (with-alist-elements (element alist sublis)
@@ -2169,7 +2169,7 @@
 
 ;;; Special case when test-not is given and key is identity.
 
-(defun sublis-test-not-identity (alist tree test)
+(defun |sublis key=identity test-not=other| (alist tree test)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
 	       (let ((entry (with-alist-elements (element alist sublis)
@@ -2186,7 +2186,7 @@
   
 ;;; Special case when test-not and key are both given.
 
-(defun sublis-test-not-key (alist tree test key)
+(defun |sublis key=other test-not=other| (alist tree test key)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
 	       (let ((entry (with-alist-elements (element alist sublis)
@@ -2208,22 +2208,22 @@
   (if key
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (sublis-eq-key alist tree key)
+              (|sublis key=other test=eq| alist tree key)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (sublis-eql-key alist tree key)
-                  (sublis-test-key alist tree test key)))
+                  (|sublis key=other test=eql| alist tree key)
+                  (|sublis key=other-test-other| alist tree test key)))
           (if test-not-given
-	      (sublis-test-not-key alist tree test-not key)
-              (sublis-eql-key alist tree key)))
+	      (|sublis key=other test-not=other| alist tree test-not key)
+              (|sublis key=other test=eql| alist tree key)))
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (sublis-eq-identity alist tree)
+              (|sublis key=identity test=eq| alist tree)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (sublis-eql-identity alist tree)
-                  (sublis-test-identity alist tree test)))
+                  (|sublis key=identity test=eql| alist tree)
+                  (|sublis key=identity test=other| alist tree test)))
           (if test-not-given
-	      (sublis-test-not-identity alist tree test-not)
-              (sublis-eql-identity alist tree)))))
+	      (|sublis key=identity test-not=other| alist tree test-not)
+              (|sublis key=identity test=eql| alist tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2231,7 +2231,7 @@
 
 ;;; Special case when test is eq and key is identity
 
-(defun nsublis-eq-identity (alist tree)
+(defun |nsublis key=identity test=eq| (alist tree)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
 			    (when (eq (car tree) (car element))
@@ -2254,7 +2254,7 @@
 
 ;;; Special case when test is eql and key is identity
 
-(defun nsublis-eql-identity (alist tree)
+(defun |nsublis key=identity test=eql| (alist tree)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
 			    (when (eql (car tree) (car element))
@@ -2277,7 +2277,7 @@
 
 ;;; Special case when test is eq and key is given.
 
-(defun nsublis-eq-key (alist tree key)
+(defun |nsublis key=other test=eq| (alist tree key)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
 			    (when (eq (funcall key (car tree)) (car element))
@@ -2300,7 +2300,7 @@
 
 ;;; Special case when test is eql and key is given.
 
-(defun nsublis-eql-key (alist tree key)
+(defun |nsublis key=other test=eql| (alist tree key)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
 			    (when (eql (funcall key (car tree)) (car element))
@@ -2323,7 +2323,7 @@
 
 ;;; Special case when test is given and key is identity.
 
-(defun nsublis-test-identity (alist tree test)
+(defun |nsublis key=identity test=other| (alist tree test)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
 			    (when (funcall test (car element) (car tree))
@@ -2346,7 +2346,7 @@
 
 ;;; Special case when test and key are both given.
 
-(defun nsublis-test-key (alist tree test key)
+(defun |nsublis key=other-test-other| (alist tree test key)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
 			    (when (funcall test (car element) (funcall key (car tree)))
@@ -2367,7 +2367,7 @@
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
 
-(defun nsublis-test-not-identity (alist tree test)
+(defun |nsublis key=identity test-not=other| (alist tree test)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
 			    (when (not (funcall test (car element) (car tree)))
@@ -2390,7 +2390,7 @@
 
 ;;; Special case when test-not and key are both given.
 
-(defun nsublis-test-not-key (alist tree test key)
+(defun |nsublis key=other test-not=other| (alist tree test key)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
 			    (when (not (funcall test (car element) (funcall key (car tree))))
@@ -2418,22 +2418,22 @@
   (if key
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (nsublis-eq-key alist tree key)
+              (|nsublis key=other test=eq| alist tree key)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (nsublis-eql-key alist tree key)
-                  (nsublis-test-key alist tree test key)))
+                  (|nsublis key=other test=eql| alist tree key)
+                  (|nsublis key=other-test-other| alist tree test key)))
           (if test-not-given
-	      (nsublis-test-not-key alist tree test-not key)
-              (nsublis-eql-key alist tree key)))
+	      (|nsublis key=other test-not=other| alist tree test-not key)
+              (|nsublis key=other test=eql| alist tree key)))
       (if test-given
           (if (or (eq test #'eq) (eq test 'eq))
-              (nsublis-eq-identity alist tree)
+              (|nsublis key=identity test=eq| alist tree)
               (if (or (eq test #'eql) (eq test 'eql))
-                  (nsublis-eql-identity alist tree)
-                  (nsublis-test-identity alist tree test)))
+                  (|nsublis key=identity test=eql| alist tree)
+                  (|nsublis key=identity test=other| alist tree test)))
           (if test-not-given
-	      (nsublis-test-not-identity alist tree test-not)
-              (nsublis-eql-identity alist tree)))))
+	      (|nsublis key=identity test-not=other| alist tree test-not)
+              (|nsublis key=identity test=eql| alist tree)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2475,12 +2475,12 @@
     (when (eq item (funcall key (car rest)))
       (return rest))))
 
-(defun |member-test-not=eq key=identity| (name item list)
+(defun |member test-not=eq key=identity| (name item list)
   (with-proper-list-rests (rest list name)
     (when (not (eq item (car rest)))
       (return rest))))
 
-(defun |member-test-not=eq key=other| (name item list key)
+(defun |member test-not=eq key=other| (name item list key)
   (with-proper-list-rests (rest list name)
     (when (not (eq item (funcall key (car rest))))
       (return rest))))
@@ -2495,12 +2495,12 @@
     (when (eql item (funcall key (car rest)))
       (return rest))))
 
-(defun |member-test-not=eql key=identity| (name item list)
+(defun |member test-not=eql key=identity| (name item list)
   (with-proper-list-rests (rest list name)
     (when (not (eql item (car rest)))
       (return rest))))
 
-(defun |member-test-not=eql key=other| (name item list key)
+(defun |member test-not=eql key=other| (name item list key)
   (with-proper-list-rests (rest list name)
     (when (not (eql item (funcall key (car rest))))
       (return rest))))
@@ -2538,9 +2538,9 @@
                   (|member test=other key=other| 'member item list test key)))
           (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (|member-test-not=eq key=other| 'member item list key)
+                  (|member test-not=eq key=other| 'member item list key)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (|member-test-not=eql key=other| 'member item list key)
+                      (|member test-not=eql key=other| 'member item list key)
                       (|member test-not=other key=other| 'member item list test-not key)))
               (|member test=eql key=other| 'member item list key)))
       (if test-given
@@ -2551,31 +2551,31 @@
                   (|member test=other key=identity| 'member item list test)))
           (if test-not-given
               (if (or (eq test-not #'eq) (eq test-not 'eq))
-                  (|member-test-not=eq key=identity| 'member item list)
+                  (|member test-not=eq key=identity| 'member item list)
                   (if (or (eq test-not #'eql) (eq test-not 'eql))
-                      (|member-test-not=eql key=identity| 'member item list)
+                      (|member test-not=eql key=identity| 'member item list)
                       (|member test-not=other key=identity| 'member item list test-not)))
               (|member test=eql key=identity| 'member item list)))))
 
 ;;; Special versions of the member function with the arguments
 ;;; of the test reversed.
 
-(defun |member reversed-test=other key=identity| (name item list test)
+(defun |member reversed test=other key=identity| (name item list test)
   (with-proper-list-rests (rest list name)
     (when (funcall test (car rest) item)
       (return rest))))
 
-(defun |member reversed-test=other key=other| (name item list test key)
+(defun |member reversed test=other key=other| (name item list test key)
   (with-proper-list-rests (rest list name)
     (when (funcall test (funcall key (car rest)) item)
       (return rest))))
 
-(defun |member reversed-test-not=other key=identity| (name item list test)
+(defun |member reversed test-not=other key=identity| (name item list test)
   (with-proper-list-rests (rest list name)
     (when (not (funcall test (car rest) item))
       (return rest))))
 
-(defun |member reversed-test-not=other key=other| (name item list test key)
+(defun |member reversed test-not=other key=other| (name item list test key)
   (with-proper-list-rests (rest list name)
     (when (not (funcall test (funcall key (car rest)) item))
       (return rest))))
@@ -3596,7 +3596,7 @@
 	(push element1 result)))
     ;; we need to use a member with a test with reversed order or arguments
     (with-proper-list-elements (element2 list2 name)
-      (unless (|member reversed-test=other key=identity| name element2 list1 test)
+      (unless (|member reversed test=other key=identity| name element2 list1 test)
 	(push element2 result)))
     result))
 
@@ -3607,7 +3607,7 @@
 	(push element1 result)))
     ;; we need to use a member with a test with reversed order or arguments
     (with-proper-list-elements (element2 list2 name)
-      (unless (|member reversed-test=other key=other| name (funcall key element2) list1 test key)
+      (unless (|member reversed test=other key=other| name (funcall key element2) list1 test key)
 	(push element2 result)))
     result))
 
@@ -3618,7 +3618,7 @@
 	(push element1 result)))
     ;; we need to use a member with a test with reversed order or arguments
     (with-proper-list-elements (element2 list2 name)
-      (unless (|member reversed-test-not=other key=identity| name element2 list1 test-not)
+      (unless (|member reversed test-not=other key=identity| name element2 list1 test-not)
 	(push element2 result)))
     result))
 
@@ -3629,7 +3629,7 @@
 	(push element1 result)))
     ;; we need to use a member with a test with reversed order or arguments
     (with-proper-list-elements (element2 list2 name)
-      (unless (|member reversed-test-not=other key=other| name (funcall key element2) list1 test-not key)
+      (unless (|member reversed test-not=other key=other| name (funcall key element2) list1 test-not key)
 	(push element2 result)))
     result))
 
