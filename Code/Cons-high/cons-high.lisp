@@ -2718,63 +2718,63 @@
 ;;;
 ;;; Function union
 
-(defun union-identity-eql (name list1 list2)
+(defun |union key=identity test=eql| (name list1 list2)
   (let ((result list2))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test=eql key=identity| name element1 list2)
 	(push element1 result)))
     result))
 
-(defun union-identity-eq (name list1 list2)
+(defun |union key=identity test=eq| (name list1 list2)
   (let ((result list2))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test=eq key=identity| name element1 list2)
 	(push element1 result)))
     result))
 
-(defun union-key-eql (name list1 list2 key)
+(defun |union key=other test=eql| (name list1 list2 key)
   (let ((result list2))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test=eql key=other| name (funcall key element1) list2 key)
 	(push element1 result)))
     result))
 
-(defun union-key-eq (name list1 list2 key)
+(defun |union key=other test=eq| (name list1 list2 key)
   (let ((result list2))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test=eq key=other| name (funcall key element1) list2 key)
 	(push element1 result)))
     result))
 
-(defun union-identity-test (name list1 list2 test)
+(defun |union key=identity test=other| (name list1 list2 test)
   (let ((result list2))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test=other key=identity| name element1 list2 test)
 	(push element1 result)))
     result))
 
-(defun union-key-test (name list1 list2 key test)
+(defun |union key=other test=other| (name list1 list2 key test)
   (let ((result list2))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test=other key=other| name (funcall key element1 ) list2 test key)
 	(push element1 result)))
     result))
 
-(defun union-identity-test-not (name list1 list2 test-not)
+(defun |union key=identity test-not=other| (name list1 list2 test-not)
   (let ((result list2))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test-not=other key=identity| name element1 list2 test-not)
 	(push element1 result)))
     result))
 
-(defun union-key-test-not (name list1 list2 key test-not)
+(defun |union key=other test-not=other| (name list1 list2 key test-not)
   (let ((result list2))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test-not=other key=other| name element1 list2 test-not key)
 	(push element1 result)))
     result))
 
-(defun union-identity-eq-hash (name list1 list2)
+(defun |union key=identity test=eq hash| (name list1 list2)
   (let ((table (make-hash-table :test #'eq)))
     (with-proper-list-elements (element list1 name)
       (setf (gethash element table) element))
@@ -2783,7 +2783,7 @@
     (loop for element being the hash-values of table
 	  collect element)))
 
-(defun union-identity-eql-hash (name list1 list2)
+(defun |union key=identity test=eql hash| (name list1 list2)
   (let ((table (make-hash-table :test #'eql)))
     (with-proper-list-elements (element list1 name)
       (setf (gethash element table) element))
@@ -2792,7 +2792,7 @@
     (loop for element being the hash-values of table
 	  collect element)))
 
-(defun union-identity-equal-hash (name list1 list2)
+(defun |union key=identity test=equal hash| (name list1 list2)
   (let ((table (make-hash-table :test #'equal)))
     (with-proper-list-elements (element list1 name)
       (setf (gethash element table) element))
@@ -2801,7 +2801,7 @@
     (loop for element being the hash-values of table
 	  collect element)))
 
-(defun union-identity-equalp-hash (name list1 list2)
+(defun |union key=identity test=equalp hash| (name list1 list2)
   (let ((table (make-hash-table :test #'equalp)))
     (with-proper-list-elements (element list1 name)
       (setf (gethash element table) element))
@@ -2810,7 +2810,7 @@
     (loop for element being the hash-values of table
 	  collect element)))
 
-(defun union-key-eq-hash (name list1 list2 key)
+(defun |union key=other test=eq hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'eq)))
     (with-proper-list-elements (element list1 name)
       (setf (gethash (funcall key element) table) element))
@@ -2819,7 +2819,7 @@
     (loop for element being the hash-values of table
 	  collect element)))
 
-(defun union-key-eql-hash (name list1 list2 key)
+(defun |union key=other test=eql hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'eql)))
     (with-proper-list-elements (element list1 name)
       (setf (gethash (funcall key element) table) element))
@@ -2828,7 +2828,7 @@
     (loop for element being the hash-values of table
 	  collect element)))
 
-(defun union-key-equal-hash (name list1 list2 key)
+(defun |union key=other test=equal hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'equal)))
     (with-proper-list-elements (element list1 name)
       (setf (gethash (funcall key element) table) element))
@@ -2837,7 +2837,7 @@
     (loop for element being the hash-values of table
 	  collect element)))
 
-(defun union-key-equalp-hash (name list1 list2 key)
+(defun |union key=other test=equalp hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'equalp)))
     (with-proper-list-elements (element list1 name)
       (setf (gethash (funcall key element) table) element))
@@ -2855,51 +2855,51 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (union-key-eq-hash 'union list1 list2 key)
-		       (union-key-eq 'union list1 list2 key)))
+		       (|union key=other test=eq hash| 'union list1 list2 key)
+		       (|union key=other test=eq| 'union list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (union-key-eql-hash 'union list1 list2 key)
-		       (union-key-eql 'union list1 list2 key)))
+		       (|union key=other test=eql hash| 'union list1 list2 key)
+		       (|union key=other test=eql| 'union list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (union-key-equal-hash 'union list1 list2 key)
-		       (union-key-test 'union list1 list2 key #'equal)))
+		       (|union key=other test=equal hash| 'union list1 list2 key)
+		       (|union key=other test=other| 'union list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (union-key-equalp-hash 'union list1 list2 key)
-		       (union-key-test 'union list1 list2 key #'equalp)))
+		       (|union key=other test=equalp hash| 'union list1 list2 key)
+		       (|union key=other test=other| 'union list1 list2 key #'equalp)))
 		  (t
-		   (union-key-test 'union list1 list2 key test)))
+		   (|union key=other test=other| 'union list1 list2 key test)))
 	    (if test-not-given
-		(union-key-test-not 'union list1 list2 key test-not)
+		(|union key=other test-not=other| 'union list1 list2 key test-not)
 		(if use-hash
-		    (union-key-eql-hash 'union list1 list2 key)
-		    (union-key-eql 'union list1 list2 key))))
+		    (|union key=other test=eql hash| 'union list1 list2 key)
+		    (|union key=other test=eql| 'union list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (union-identity-eq-hash 'union list1 list2)
-		       (union-identity-eq 'union list1 list2)))
+		       (|union key=identity test=eq hash| 'union list1 list2)
+		       (|union key=identity test=eq| 'union list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (union-identity-eql-hash 'union list1 list2)
-		       (union-identity-eql 'union list1 list2)))
+		       (|union key=identity test=eql hash| 'union list1 list2)
+		       (|union key=identity test=eql| 'union list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (union-identity-equal-hash 'union list1 list2)
-		       (union-identity-test 'union list1 list2 #'equal)))
+		       (|union key=identity test=equal hash| 'union list1 list2)
+		       (|union key=identity test=other| 'union list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (union-identity-equalp-hash 'union list1 list2)
-		       (union-identity-test 'union list1 list2 #'equalp)))
+		       (|union key=identity test=equalp hash| 'union list1 list2)
+		       (|union key=identity test=other| 'union list1 list2 #'equalp)))
 		  (t
-		   (union-identity-test 'union list1 list2 test)))
+		   (|union key=identity test=other| 'union list1 list2 test)))
 	    (if test-not-given
-		(union-identity-test-not 'union list1 list2 test-not)
+		(|union key=identity test-not=other| 'union list1 list2 test-not)
 		(if use-hash
-		    (union-identity-eql-hash 'union list1 list2)
-		    (union-identity-eql 'union list1 list2)))))))
+		    (|union key=identity test=eql hash| 'union list1 list2)
+		    (|union key=identity test=eql| 'union list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2917,113 +2917,113 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (union-key-eq-hash 'nunion list1 list2 key)
-		       (union-key-eq 'nunion list1 list2 key)))
+		       (|union key=other test=eq hash| 'nunion list1 list2 key)
+		       (|union key=other test=eq| 'nunion list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (union-key-eql-hash 'nunion list1 list2 key)
-		       (union-key-eql 'nunion list1 list2 key)))
+		       (|union key=other test=eql hash| 'nunion list1 list2 key)
+		       (|union key=other test=eql| 'nunion list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (union-key-equal-hash 'nunion list1 list2 key)
-		       (union-key-test 'nunion list1 list2 key #'equal)))
+		       (|union key=other test=equal hash| 'nunion list1 list2 key)
+		       (|union key=other test=other| 'nunion list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (union-key-equalp-hash 'nunion list1 list2 key)
-		       (union-key-test 'nunion list1 list2 key #'equalp)))
+		       (|union key=other test=equalp hash| 'nunion list1 list2 key)
+		       (|union key=other test=other| 'nunion list1 list2 key #'equalp)))
 		  (t
-		   (union-key-test 'nunion list1 list2 key test)))
+		   (|union key=other test=other| 'nunion list1 list2 key test)))
 	    (if test-not-given
-		(union-key-test-not 'nunion list1 list2 key test-not)
+		(|union key=other test-not=other| 'nunion list1 list2 key test-not)
 		(if use-hash
-		    (union-key-eql-hash 'nunion list1 list2 key)
-		    (union-key-eql 'nunion list1 list2 key))))
+		    (|union key=other test=eql hash| 'nunion list1 list2 key)
+		    (|union key=other test=eql| 'nunion list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (union-identity-eq-hash 'nunion list1 list2)
-		       (union-identity-eq 'nunion list1 list2)))
+		       (|union key=identity test=eq hash| 'nunion list1 list2)
+		       (|union key=identity test=eq| 'nunion list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (union-identity-eql-hash 'nunion list1 list2)
-		       (union-identity-eql 'nunion list1 list2)))
+		       (|union key=identity test=eql hash| 'nunion list1 list2)
+		       (|union key=identity test=eql| 'nunion list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (union-identity-equal-hash 'nunion list1 list2)
-		       (union-identity-test 'nunion list1 list2 #'equal)))
+		       (|union key=identity test=equal hash| 'nunion list1 list2)
+		       (|union key=identity test=other| 'nunion list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (union-identity-equalp-hash 'nunion list1 list2)
-		       (union-identity-test 'nunion list1 list2 #'equalp)))
+		       (|union key=identity test=equalp hash| 'nunion list1 list2)
+		       (|union key=identity test=other| 'nunion list1 list2 #'equalp)))
 		  (t
-		   (union-identity-test 'nunion list1 list2 test)))
+		   (|union key=identity test=other| 'nunion list1 list2 test)))
 	    (if test-not-given
-		(union-identity-test-not 'nunion list1 list2 test-not)
+		(|union key=identity test-not=other| 'nunion list1 list2 test-not)
 		(if use-hash
-		    (union-identity-eql-hash 'nunion list1 list2)
-		    (union-identity-eql 'nunion list1 list2)))))))
+		    (|union key=identity test=eql hash| 'nunion list1 list2)
+		    (|union key=identity test=eql| 'nunion list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function intersection
 
-(defun intersection-identity-eql (name list1 list2)
+(defun |intersection key=identity test=eql| (name list1 list2)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (when (|member test=eql key=identity| name element1 list2)
 	(push element1 result)))
     result))
 
-(defun intersection-identity-eq (name list1 list2)
+(defun |intersection key=identity test=eq| (name list1 list2)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (when (|member test=eq key=identity| name element1 list2)
 	(push element1 result)))
     result))
 
-(defun intersection-key-eql (name list1 list2 key)
+(defun |intersection key=other test=eql| (name list1 list2 key)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (when (|member test=eql key=other| name (funcall key element1) list2 key)
 	(push element1 result)))
     result))
 
-(defun intersection-key-eq (name list1 list2 key)
+(defun |intersection key=other test=eq| (name list1 list2 key)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (when (|member test=eq key=other| name (funcall key element1) list2 key)
 	(push element1 result)))
     result))
 
-(defun intersection-identity-test (name list1 list2 test)
+(defun |intersection key=identity test=other| (name list1 list2 test)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (when (|member test=other key=identity| name element1 list2 test)
 	(push element1 result)))
     result))
 
-(defun intersection-key-test (name list1 list2 key test)
+(defun |intersection key=other test=other| (name list1 list2 key test)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (when (|member test=other key=other| name (funcall key element1) list2 test key)
 	(push element1 result)))
     result))
 
-(defun intersection-identity-test-not (name list1 list2 test-not)
+(defun |intersection key=identity test-not=other| (name list1 list2 test-not)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (when (|member test-not=other key=identity| name element1 list2 test-not)
 	(push element1 result)))
     result))
 
-(defun intersection-key-test-not (name list1 list2 key test-not)
+(defun |intersection key=other test-not=other| (name list1 list2 key test-not)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (when (|member test-not=other key=other| name (funcall key element1) list2 test-not key)
 	(push element1 result)))
     result))
 
-(defun intersection-identity-eq-hash (name list1 list2)
+(defun |intersection key=identity test=eq hash| (name list1 list2)
   (let ((table (make-hash-table :test #'eq))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3033,7 +3033,7 @@
 	(push element result)))
     result))
 
-(defun intersection-identity-eql-hash (name list1 list2)
+(defun |intersection key=identity test=eql hash| (name list1 list2)
   (let ((table (make-hash-table :test #'eql))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3043,7 +3043,7 @@
 	(push element result)))
     result))
 
-(defun intersection-identity-equal-hash (name list1 list2)
+(defun |intersection key=identity test=equal hash| (name list1 list2)
   (let ((table (make-hash-table :test #'equal))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3053,7 +3053,7 @@
 	(push element result)))
     result))
 
-(defun intersection-identity-equalp-hash (name list1 list2)
+(defun |intersection key=identity test=equalp hash| (name list1 list2)
   (let ((table (make-hash-table :test #'equalp))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3063,7 +3063,7 @@
 	(push element result)))
     result))
 
-(defun intersection-key-eq-hash (name list1 list2 key)
+(defun |intersection key=other test=eq hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'eq))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3073,7 +3073,7 @@
 	(push element result)))
     result))
 
-(defun intersection-key-eql-hash (name list1 list2 key)
+(defun |intersection key=other test=eql hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'eql))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3083,7 +3083,7 @@
 	(push element result)))
     result))
 
-(defun intersection-key-equal-hash (name list1 list2 key)
+(defun |intersection key=other test=equal hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'equal))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3093,7 +3093,7 @@
 	(push element result)))
     result))
 	 
-(defun intersection-key-equalp-hash (name list1 list2 key)
+(defun |intersection key=other test=equalp hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'equalp))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3112,51 +3112,51 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (intersection-key-eq-hash 'intersection list1 list2 key)
-		       (intersection-key-eq 'intersection list1 list2 key)))
+		       (|intersection key=other test=eq hash| 'intersection list1 list2 key)
+		       (|intersection key=other test=eq| 'intersection list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (intersection-key-eql-hash 'intersection list1 list2 key)
-		       (intersection-key-eql 'intersection list1 list2 key)))
+		       (|intersection key=other test=eql hash| 'intersection list1 list2 key)
+		       (|intersection key=other test=eql| 'intersection list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (intersection-key-equal-hash 'intersection list1 list2 key)
-		       (intersection-key-test 'intersection list1 list2 key #'equal)))
+		       (|intersection key=other test=equal hash| 'intersection list1 list2 key)
+		       (|intersection key=other test=other| 'intersection list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (intersection-key-equalp-hash 'intersection list1 list2 key)
-		       (intersection-key-test 'intersection list1 list2 key #'equalp)))
+		       (|intersection key=other test=equalp hash| 'intersection list1 list2 key)
+		       (|intersection key=other test=other| 'intersection list1 list2 key #'equalp)))
 		  (t
-		   (intersection-key-test 'intersection list1 list2 key test)))
+		   (|intersection key=other test=other| 'intersection list1 list2 key test)))
 	    (if test-not-given
-		(intersection-key-test-not 'intersection list1 list2 key test-not)
+		(|intersection key=other test-not=other| 'intersection list1 list2 key test-not)
 		(if use-hash
-		    (intersection-key-eql-hash 'intersection list1 list2 key)
-		    (intersection-key-eql 'intersection list1 list2 key))))
+		    (|intersection key=other test=eql hash| 'intersection list1 list2 key)
+		    (|intersection key=other test=eql| 'intersection list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (intersection-identity-eq-hash 'intersection list1 list2)
-		       (intersection-identity-eq 'intersection list1 list2)))
+		       (|intersection key=identity test=eq hash| 'intersection list1 list2)
+		       (|intersection key=identity test=eq| 'intersection list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (intersection-identity-eql-hash 'intersection list1 list2)
-		       (intersection-identity-eql 'intersection list1 list2)))
+		       (|intersection key=identity test=eql hash| 'intersection list1 list2)
+		       (|intersection key=identity test=eql| 'intersection list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (intersection-identity-equal-hash 'intersection list1 list2)
-		       (intersection-identity-test 'intersection list1 list2 #'equal)))
+		       (|intersection key=identity test=equal hash| 'intersection list1 list2)
+		       (|intersection key=identity test=other| 'intersection list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (intersection-identity-equalp-hash 'intersection list1 list2)
-		       (intersection-identity-test 'intersection list1 list2 #'equalp)))
+		       (|intersection key=identity test=equalp hash| 'intersection list1 list2)
+		       (|intersection key=identity test=other| 'intersection list1 list2 #'equalp)))
 		  (t
-		   (intersection-identity-test 'intersection list1 list2 test)))
+		   (|intersection key=identity test=other| 'intersection list1 list2 test)))
 	    (if test-not-given
-		(intersection-identity-test-not 'intersection list1 list2 test-not)
+		(|intersection key=identity test-not=other| 'intersection list1 list2 test-not)
 		(if use-hash
-		    (intersection-identity-eql-hash 'intersection list1 list2)
-		    (intersection-identity-eql 'intersection list1 list2)))))))
+		    (|intersection key=identity test=eql hash| 'intersection list1 list2)
+		    (|intersection key=identity test=eql| 'intersection list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3174,113 +3174,113 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (intersection-key-eq-hash 'nintersection list1 list2 key)
-		       (intersection-key-eq 'nintersection list1 list2 key)))
+		       (|intersection key=other test=eq hash| 'nintersection list1 list2 key)
+		       (|intersection key=other test=eq| 'nintersection list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (intersection-key-eql-hash 'nintersection list1 list2 key)
-		       (intersection-key-eql 'nintersection list1 list2 key)))
+		       (|intersection key=other test=eql hash| 'nintersection list1 list2 key)
+		       (|intersection key=other test=eql| 'nintersection list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (intersection-key-equal-hash 'nintersection list1 list2 key)
-		       (intersection-key-test 'nintersection list1 list2 key #'equal)))
+		       (|intersection key=other test=equal hash| 'nintersection list1 list2 key)
+		       (|intersection key=other test=other| 'nintersection list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (intersection-key-equalp-hash 'nintersection list1 list2 key)
-		       (intersection-key-test 'nintersection list1 list2 key #'equalp)))
+		       (|intersection key=other test=equalp hash| 'nintersection list1 list2 key)
+		       (|intersection key=other test=other| 'nintersection list1 list2 key #'equalp)))
 		  (t
-		   (intersection-key-test 'nintersection list1 list2 key test)))
+		   (|intersection key=other test=other| 'nintersection list1 list2 key test)))
 	    (if test-not-given
-		(intersection-key-test-not 'nintersection list1 list2 key test-not)
+		(|intersection key=other test-not=other| 'nintersection list1 list2 key test-not)
 		(if use-hash
-		    (intersection-key-eql-hash 'nintersection list1 list2 key)
-		    (intersection-key-eql 'nintersection list1 list2 key))))
+		    (|intersection key=other test=eql hash| 'nintersection list1 list2 key)
+		    (|intersection key=other test=eql| 'nintersection list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (intersection-identity-eq-hash 'nintersection list1 list2)
-		       (intersection-identity-eq 'nintersection list1 list2)))
+		       (|intersection key=identity test=eq hash| 'nintersection list1 list2)
+		       (|intersection key=identity test=eq| 'nintersection list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (intersection-identity-eql-hash 'nintersection list1 list2)
-		       (intersection-identity-eql 'nintersection list1 list2)))
+		       (|intersection key=identity test=eql hash| 'nintersection list1 list2)
+		       (|intersection key=identity test=eql| 'nintersection list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (intersection-identity-equal-hash 'nintersection list1 list2)
-		       (intersection-identity-test 'nintersection list1 list2 #'equal)))
+		       (|intersection key=identity test=equal hash| 'nintersection list1 list2)
+		       (|intersection key=identity test=other| 'nintersection list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (intersection-identity-equalp-hash 'nintersection list1 list2)
-		       (intersection-identity-test 'nintersection list1 list2 #'equalp)))
+		       (|intersection key=identity test=equalp hash| 'nintersection list1 list2)
+		       (|intersection key=identity test=other| 'nintersection list1 list2 #'equalp)))
 		  (t
-		   (intersection-identity-test 'nintersection list1 list2 test)))
+		   (|intersection key=identity test=other| 'nintersection list1 list2 test)))
 	    (if test-not-given
-		(intersection-identity-test-not 'nintersection list1 list2 test-not)
+		(|intersection key=identity test-not=other| 'nintersection list1 list2 test-not)
 		(if use-hash
-		    (intersection-identity-eql-hash 'nintersection list1 list2)
-		    (intersection-identity-eql 'nintersection list1 list2)))))))
+		    (|intersection key=identity test=eql hash| 'nintersection list1 list2)
+		    (|intersection key=identity test=eql| 'nintersection list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function set-difference
 
-(defun set-difference-identity-eql (name list1 list2)
+(defun |set-difference key=identity test=eql| (name list1 list2)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=eql key=identity| name element list2)
 	(push element result)))
     result))
 
-(defun set-difference-identity-eq (name list1 list2)
+(defun |set-difference key=identity test=eq| (name list1 list2)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=eq key=identity| name element list2)
 	(push element result)))
     result))
 
-(defun set-difference-key-eql (name list1 list2 key)
+(defun |set-difference key=other test=eql| (name list1 list2 key)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=eql key=other| name (funcall key element) list2 key)
 	(push element result)))
     result))
 
-(defun set-difference-key-eq (name list1 list2 key)
+(defun |set-difference key=other test=eq| (name list1 list2 key)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=eq key=other| name (funcall key element) list2 key)
 	(push element result)))
     result))
 
-(defun set-difference-identity-test (name list1 list2 test)
+(defun |set-difference key=identity test=other| (name list1 list2 test)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=other key=identity| name element list2  test)
 	(push element result)))
     result))
 
-(defun set-difference-key-test (name list1 list2 key test)
+(defun |set-difference key=other test=other| (name list1 list2 key test)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=other key=other| name (funcall key element) list2 test key)
 	(push element result)))
     result))
 
-(defun set-difference-identity-test-not (name list1 list2 test-not)
+(defun |set-difference key=identity test-not=other| (name list1 list2 test-not)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test-not=other key=identity| name element list2 test-not)
 	(push element result)))
     result))
 
-(defun set-difference-key-test-not (name list1 list2 key test-not)
+(defun |set-difference key=other test-not=other| (name list1 list2 key test-not)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test-not=other key=other| name (funcall key element) list2 test-not key)
 	(push element result)))
     result))
 
-(defun set-difference-identity-eq-hash (name list1 list2)
+(defun |set-difference key=identity test=eq hash| (name list1 list2)
   (let ((table (make-hash-table :test #'eq))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3290,7 +3290,7 @@
 	(push element result)))
     result))
 
-(defun set-difference-identity-eql-hash (name list1 list2)
+(defun |set-difference key=identity test=eql hash| (name list1 list2)
   (let ((table (make-hash-table :test #'eql))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3300,7 +3300,7 @@
 	(push element result)))
     result))
 
-(defun set-difference-identity-equal-hash (name list1 list2)
+(defun |set-difference key=identity test=equal hash| (name list1 list2)
   (let ((table (make-hash-table :test #'equal))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3310,7 +3310,7 @@
 	(push element result)))
     result))
 
-(defun set-difference-identity-equalp-hash (name list1 list2)
+(defun |set-difference key=identity test=equalp hash| (name list1 list2)
   (let ((table (make-hash-table :test #'equalp))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3320,7 +3320,7 @@
 	(push element result)))
     result))
 
-(defun set-difference-key-eq-hash (name list1 list2 key)
+(defun |set-difference key=other test=eq hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'eq))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3330,7 +3330,7 @@
 	(push element result)))
     result))
 
-(defun set-difference-key-eql-hash (name list1 list2 key)
+(defun |set-difference key=other test=eql hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'eql))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3340,7 +3340,7 @@
 	(push element result)))
     result))
 
-(defun set-difference-key-equal-hash (name list1 list2 key)
+(defun |set-difference key=other test=equal hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'equal))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3350,7 +3350,7 @@
 	(push element result)))
     result))
 
-(defun set-difference-key-equalp-hash (name list1 list2 key)
+(defun |set-difference key=other test=equalp hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'equalp))
 	(result '()))
     (with-proper-list-elements (element list2 name)
@@ -3369,51 +3369,51 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (set-difference-key-eq-hash 'set-difference list1 list2 key)
-		       (set-difference-key-eq 'set-difference list1 list2 key)))
+		       (|set-difference key=other test=eq hash| 'set-difference list1 list2 key)
+		       (|set-difference key=other test=eq| 'set-difference list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (set-difference-key-eql-hash 'set-difference list1 list2 key)
-		       (set-difference-key-eql 'set-difference list1 list2 key)))
+		       (|set-difference key=other test=eql hash| 'set-difference list1 list2 key)
+		       (|set-difference key=other test=eql| 'set-difference list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (set-difference-key-equal-hash 'set-difference list1 list2 key)
-		       (set-difference-key-test 'set-difference list1 list2 key #'equal)))
+		       (|set-difference key=other test=equal hash| 'set-difference list1 list2 key)
+		       (|set-difference key=other test=other| 'set-difference list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (set-difference-key-equalp-hash 'set-difference list1 list2 key)
-		       (set-difference-key-test 'set-difference list1 list2 key #'equalp)))
+		       (|set-difference key=other test=equalp hash| 'set-difference list1 list2 key)
+		       (|set-difference key=other test=other| 'set-difference list1 list2 key #'equalp)))
 		  (t
-		   (set-difference-key-test 'set-difference list1 list2 key test)))
+		   (|set-difference key=other test=other| 'set-difference list1 list2 key test)))
 	    (if test-not-given
-		(set-difference-key-test-not 'set-difference list1 list2 key test-not)
+		(|set-difference key=other test-not=other| 'set-difference list1 list2 key test-not)
 		(if use-hash
-		    (set-difference-key-eql-hash 'set-difference list1 list2 key)
-		    (set-difference-key-eql 'set-difference list1 list2 key))))
+		    (|set-difference key=other test=eql hash| 'set-difference list1 list2 key)
+		    (|set-difference key=other test=eql| 'set-difference list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (set-difference-identity-eq-hash 'set-difference list1 list2)
-		       (set-difference-identity-eq 'set-difference list1 list2)))
+		       (|set-difference key=identity test=eq hash| 'set-difference list1 list2)
+		       (|set-difference key=identity test=eq| 'set-difference list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (set-difference-identity-eql-hash 'set-difference list1 list2)
-		       (set-difference-identity-eql 'set-difference list1 list2)))
+		       (|set-difference key=identity test=eql hash| 'set-difference list1 list2)
+		       (|set-difference key=identity test=eql| 'set-difference list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (set-difference-identity-equal-hash 'set-difference list1 list2)
-		       (set-difference-identity-test 'set-difference list1 list2 #'equal)))
+		       (|set-difference key=identity test=equal hash| 'set-difference list1 list2)
+		       (|set-difference key=identity test=other| 'set-difference list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (set-difference-identity-equalp-hash 'set-difference list1 list2)
-		       (set-difference-identity-test 'set-difference list1 list2 #'equalp)))
+		       (|set-difference key=identity test=equalp hash| 'set-difference list1 list2)
+		       (|set-difference key=identity test=other| 'set-difference list1 list2 #'equalp)))
 		  (t
-		   (set-difference-identity-test 'set-difference list1 list2 test)))
+		   (|set-difference key=identity test=other| 'set-difference list1 list2 test)))
 	    (if test-not-given
-		(set-difference-identity-test-not 'set-difference list1 list2 test-not)
+		(|set-difference key=identity test-not=other| 'set-difference list1 list2 test-not)
 		(if use-hash
-		    (set-difference-identity-eql-hash 'set-difference list1 list2)
-		    (set-difference-identity-eql 'set-difference list1 list2)))))))
+		    (|set-difference key=identity test=eql hash| 'set-difference list1 list2)
+		    (|set-difference key=identity test=eql| 'set-difference list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3431,92 +3431,92 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (set-difference-key-eq-hash 'nset-difference list1 list2 key)
-		       (set-difference-key-eq 'nset-difference list1 list2 key)))
+		       (|set-difference key=other test=eq hash| 'nset-difference list1 list2 key)
+		       (|set-difference key=other test=eq| 'nset-difference list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (set-difference-key-eql-hash 'nset-difference list1 list2 key)
-		       (set-difference-key-eql 'nset-difference list1 list2 key)))
+		       (|set-difference key=other test=eql hash| 'nset-difference list1 list2 key)
+		       (|set-difference key=other test=eql| 'nset-difference list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (set-difference-key-equal-hash 'nset-difference list1 list2 key)
-		       (set-difference-key-test 'nset-difference list1 list2 key #'equal)))
+		       (|set-difference key=other test=equal hash| 'nset-difference list1 list2 key)
+		       (|set-difference key=other test=other| 'nset-difference list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (set-difference-key-equalp-hash 'nset-difference list1 list2 key)
-		       (set-difference-key-test 'nset-difference list1 list2 key #'equalp)))
+		       (|set-difference key=other test=equalp hash| 'nset-difference list1 list2 key)
+		       (|set-difference key=other test=other| 'nset-difference list1 list2 key #'equalp)))
 		  (t
-		   (set-difference-key-test 'nset-difference list1 list2 key test)))
+		   (|set-difference key=other test=other| 'nset-difference list1 list2 key test)))
 	    (if test-not-given
-		(set-difference-key-test-not 'nset-difference list1 list2 key test-not)
+		(|set-difference key=other test-not=other| 'nset-difference list1 list2 key test-not)
 		(if use-hash
-		    (set-difference-key-eql-hash 'nset-difference list1 list2 key)
-		    (set-difference-key-eql 'nset-difference list1 list2 key))))
+		    (|set-difference key=other test=eql hash| 'nset-difference list1 list2 key)
+		    (|set-difference key=other test=eql| 'nset-difference list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (set-difference-identity-eq-hash 'nset-difference list1 list2)
-		       (set-difference-identity-eq 'nset-difference list1 list2)))
+		       (|set-difference key=identity test=eq hash| 'nset-difference list1 list2)
+		       (|set-difference key=identity test=eq| 'nset-difference list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (set-difference-identity-eql-hash 'nset-difference list1 list2)
-		       (set-difference-identity-eql 'nset-difference list1 list2)))
+		       (|set-difference key=identity test=eql hash| 'nset-difference list1 list2)
+		       (|set-difference key=identity test=eql| 'nset-difference list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (set-difference-identity-equal-hash 'nset-difference list1 list2)
-		       (set-difference-identity-test 'nset-difference list1 list2 #'equal)))
+		       (|set-difference key=identity test=equal hash| 'nset-difference list1 list2)
+		       (|set-difference key=identity test=other| 'nset-difference list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (set-difference-identity-equalp-hash 'nset-difference list1 list2)
-		       (set-difference-identity-test 'nset-difference list1 list2 #'equalp)))
+		       (|set-difference key=identity test=equalp hash| 'nset-difference list1 list2)
+		       (|set-difference key=identity test=other| 'nset-difference list1 list2 #'equalp)))
 		  (t
-		   (set-difference-identity-test 'nset-difference list1 list2 test)))
+		   (|set-difference key=identity test=other| 'nset-difference list1 list2 test)))
 	    (if test-not-given
-		(set-difference-identity-test-not 'nset-difference list1 list2 test-not)
+		(|set-difference key=identity test-not=other| 'nset-difference list1 list2 test-not)
 		(if use-hash
-		    (set-difference-identity-eql-hash 'nset-difference list1 list2)
-		    (set-difference-identity-eql 'nset-difference list1 list2)))))))
+		    (|set-difference key=identity test=eql hash| 'nset-difference list1 list2)
+		    (|set-difference key=identity test=eql| 'nset-difference list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function adjoin
 
-(defun adjoin-identity-eq (name item list)
+(defun |adjoin key=identity test=eq| (name item list)
   (if (|member test=eq key=identity| name item list)
       list
       (cons item list)))
 
-(defun adjoin-identity-eql (name item list)
+(defun |adjoin key=identity test=eql| (name item list)
   (if (|member test=eql key=identity| name item list)
       list
       (cons item list)))
 
-(defun adjoin-identity-test (name item list test)
+(defun |adjoin key=identity test=other| (name item list test)
   (if (|member test=other key=identity| name item list test)
       list
       (cons item list)))
 
-(defun adjoin-identity-test-not (name item list test-not)
+(defun |adjoin key=identity test-not=other| (name item list test-not)
   (if (|member test-not=other key=identity| name item list test-not)
       list
       (cons item list)))
 
-(defun adjoin-key-eq (name item list key)
+(defun |adjoin key=other test=eq| (name item list key)
   (if (|member test=eq key=other| name (funcall key item) list key)
       list
       (cons item list)))
 
-(defun adjoin-key-eql (name item list key)
+(defun |adjoin key=other test=eql| (name item list key)
   (if (|member test=eql key=other| name (funcall key item) list key)
       list
       (cons item list)))
 
-(defun adjoin-key-test (name item list key test)
+(defun |adjoin key=other test=other| (name item list key test)
   (if (|member test=other key=other| name (funcall key item) list test key)
       list
       (cons item list)))
 
-(defun adjoin-key-test-not (name item list key test-not)
+(defun |adjoin key=other test-not=other| (name item list key test-not)
   (if (|member test-not=other key=other| name (funcall key item) list test-not key)
       list
       (cons item list)))
@@ -3528,28 +3528,28 @@
   (if key
       (if test-given
 	  (if (or (eq test #'eq) (eq test 'eq))
-	      (adjoin-key-eq 'adjoin item list key)
+	      (|adjoin key=other test=eq| 'adjoin item list key)
 	      (if (or (eq test #'eql) (eq test 'eql))
-		  (adjoin-key-eql 'adjoin item list key)
-		  (adjoin-key-test 'adjoin item list key test)))
+		  (|adjoin key=other test=eql| 'adjoin item list key)
+		  (|adjoin key=other test=other| 'adjoin item list key test)))
 	  (if test-not-given
-	      (adjoin-key-test-not 'adjoin item list key test-not)
-	      (adjoin-key-eql 'adjoin item list key)))
+	      (|adjoin key=other test-not=other| 'adjoin item list key test-not)
+	      (|adjoin key=other test=eql| 'adjoin item list key)))
       (if test-given
 	  (if (or (eq test #'eq) (eq test 'eq))
-	      (adjoin-identity-eq 'adjoin item list)
+	      (|adjoin key=identity test=eq| 'adjoin item list)
 	      (if (or (eq test #'eql) (eq test 'eql))
-		  (adjoin-identity-eql 'adjoin item list)
-		  (adjoin-identity-test 'adjoin item list test)))
+		  (|adjoin key=identity test=eql| 'adjoin item list)
+		  (|adjoin key=identity test=other| 'adjoin item list test)))
 	  (if test-not-given
-	      (adjoin-identity-test-not 'adjoin item list test-not)
-	      (adjoin-identity-eql 'adjoin item list)))))
+	      (|adjoin key=identity test-not=other| 'adjoin item list test-not)
+	      (|adjoin key=identity test=eql| 'adjoin item list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function set-exclusive-or
 
-(defun set-exclusive-or-identity-eql (name list1 list2)
+(defun |set-exclusive-or key=identity test=eql| (name list1 list2)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=eql key=identity| name element list2)
@@ -3559,7 +3559,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-identity-eq (name list1 list2)
+(defun |set-exclusive-or key=identity test=eq| (name list1 list2)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=eq key=identity| name element list2)
@@ -3569,7 +3569,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-key-eql (name list1 list2 key)
+(defun |set-exclusive-or key=other test=eql| (name list1 list2 key)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=eql key=other| name (funcall key element) list2 key)
@@ -3579,7 +3579,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-key-eq (name list1 list2 key)
+(defun |set-exclusive-or key=other test=eq| (name list1 list2 key)
   (let ((result '()))
     (with-proper-list-elements (element list1 name)
       (unless (|member test=eq key=other| name (funcall key element) list2 key)
@@ -3589,7 +3589,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-identity-test (name list1 list2 test)
+(defun |set-exclusive-or key=identity test=other| (name list1 list2 test)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test=other key=identity| name element1 list2 test)
@@ -3600,7 +3600,7 @@
 	(push element2 result)))
     result))
 
-(defun set-exclusive-or-key-test (name list1 list2 key test)
+(defun |set-exclusive-or key=other test=other| (name list1 list2 key test)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test=other key=other| name (funcall key element1) list2 test key)
@@ -3611,7 +3611,7 @@
 	(push element2 result)))
     result))
 
-(defun set-exclusive-or-identity-test-not (name list1 list2 test-not)
+(defun |set-exclusive-or key=identity test-not=other| (name list1 list2 test-not)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test-not=other key=identity| name element1 list2 test-not)
@@ -3622,7 +3622,7 @@
 	(push element2 result)))
     result))
 
-(defun set-exclusive-or-key-test-not (name list1 list2 key test-not)
+(defun |set-exclusive-or key=other test-not=other| (name list1 list2 key test-not)
   (let ((result '()))
     (with-proper-list-elements (element1 list1 name)
       (unless (|member test-not=other key=other| name (funcall key element1) list2 test-not key)
@@ -3633,7 +3633,7 @@
 	(push element2 result)))
     result))
 
-(defun set-exclusive-or-identity-eq-hash (name list1 list2)
+(defun |set-exclusive-or key=identity test=eq hash| (name list1 list2)
   (let ((table1 (make-hash-table :test #'eq))
 	(table2 (make-hash-table :test #'eq))
 	(result '()))
@@ -3649,7 +3649,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-identity-eql-hash (name list1 list2)
+(defun |set-exclusive-or key=identity test=eql hash| (name list1 list2)
   (let ((table1 (make-hash-table :test #'eql))
 	(table2 (make-hash-table :test #'eql))
 	(result '()))
@@ -3665,7 +3665,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-identity-equal-hash (name list1 list2)
+(defun |set-exclusive-or key=identity test=equal hash| (name list1 list2)
   (let ((table1 (make-hash-table :test #'equal))
 	(table2 (make-hash-table :test #'equal))
 	(result '()))
@@ -3681,7 +3681,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-identity-equalp-hash (name list1 list2)
+(defun |set-exclusive-or key=identity test=equalp hash| (name list1 list2)
   (let ((table1 (make-hash-table :test #'equalp))
 	(table2 (make-hash-table :test #'equalp))
 	(result '()))
@@ -3697,7 +3697,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-key-eq-hash (name list1 list2 key)
+(defun |set-exclusive-or key=other test=eq hash| (name list1 list2 key)
   (let ((table1 (make-hash-table :test #'eq))
 	(table2 (make-hash-table :test #'eq))
 	(result '()))
@@ -3713,7 +3713,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-key-eql-hash (name list1 list2 key)
+(defun |set-exclusive-or key=other test=eql hash| (name list1 list2 key)
   (let ((table1 (make-hash-table :test #'eql))
 	(table2 (make-hash-table :test #'eql))
 	(result '()))
@@ -3729,7 +3729,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-key-equal-hash (name list1 list2 key)
+(defun |set-exclusive-or key=other test=equal hash| (name list1 list2 key)
   (let ((table1 (make-hash-table :test #'equal))
 	(table2 (make-hash-table :test #'equal))
 	(result '()))
@@ -3745,7 +3745,7 @@
 	(push element result)))
     result))
 
-(defun set-exclusive-or-key-equalp-hash (name list1 list2 key)
+(defun |set-exclusive-or key=other test=equalp hash| (name list1 list2 key)
   (let ((table1 (make-hash-table :test #'equalp))
 	(table2 (make-hash-table :test #'equalp))
 	(result '()))
@@ -3770,51 +3770,51 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (set-exclusive-or-key-eq-hash 'set-exclusive-or list1 list2 key)
-		       (set-exclusive-or-key-eq 'set-exclusive-or list1 list2 key)))
+		       (|set-exclusive-or key=other test=eq hash| 'set-exclusive-or list1 list2 key)
+		       (|set-exclusive-or key=other test=eq| 'set-exclusive-or list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (set-exclusive-or-key-eql-hash 'set-exclusive-or list1 list2 key)
-		       (set-exclusive-or-key-eql 'set-exclusive-or list1 list2 key)))
+		       (|set-exclusive-or key=other test=eql hash| 'set-exclusive-or list1 list2 key)
+		       (|set-exclusive-or key=other test=eql| 'set-exclusive-or list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (set-exclusive-or-key-equal-hash 'set-exclusive-or list1 list2 key)
-		       (set-exclusive-or-key-test 'set-exclusive-or list1 list2 key #'equal)))
+		       (|set-exclusive-or key=other test=equal hash| 'set-exclusive-or list1 list2 key)
+		       (|set-exclusive-or key=other test=other| 'set-exclusive-or list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (set-exclusive-or-key-equalp-hash 'set-exclusive-or list1 list2 key)
-		       (set-exclusive-or-key-test 'set-exclusive-or list1 list2 key #'equalp)))
+		       (|set-exclusive-or key=other test=equalp hash| 'set-exclusive-or list1 list2 key)
+		       (|set-exclusive-or key=other test=other| 'set-exclusive-or list1 list2 key #'equalp)))
 		  (t
-		   (set-exclusive-or-key-test 'set-exclusive-or list1 list2 key test)))
+		   (|set-exclusive-or key=other test=other| 'set-exclusive-or list1 list2 key test)))
 	    (if test-not-given
-		(set-exclusive-or-key-test-not 'set-exclusive-or list1 list2 key test-not)
+		(|set-exclusive-or key=other test-not=other| 'set-exclusive-or list1 list2 key test-not)
 		(if use-hash
-		    (set-exclusive-or-key-eql-hash 'set-exclusive-or list1 list2 key)
-		    (set-exclusive-or-key-eql 'set-exclusive-or list1 list2 key))))
+		    (|set-exclusive-or key=other test=eql hash| 'set-exclusive-or list1 list2 key)
+		    (|set-exclusive-or key=other test=eql| 'set-exclusive-or list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (set-exclusive-or-identity-eq-hash 'set-exclusive-or list1 list2)
-		       (set-exclusive-or-identity-eq 'set-exclusive-or list1 list2)))
+		       (|set-exclusive-or key=identity test=eq hash| 'set-exclusive-or list1 list2)
+		       (|set-exclusive-or key=identity test=eq| 'set-exclusive-or list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (set-exclusive-or-identity-eql-hash 'set-exclusive-or list1 list2)
-		       (set-exclusive-or-identity-eql 'set-exclusive-or list1 list2)))
+		       (|set-exclusive-or key=identity test=eql hash| 'set-exclusive-or list1 list2)
+		       (|set-exclusive-or key=identity test=eql| 'set-exclusive-or list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (set-exclusive-or-identity-equal-hash 'set-exclusive-or list1 list2)
-		       (set-exclusive-or-identity-test 'set-exclusive-or list1 list2 #'equal)))
+		       (|set-exclusive-or key=identity test=equal hash| 'set-exclusive-or list1 list2)
+		       (|set-exclusive-or key=identity test=other| 'set-exclusive-or list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (set-exclusive-or-identity-equalp-hash 'set-exclusive-or list1 list2)
-		       (set-exclusive-or-identity-test 'set-exclusive-or list1 list2 #'equalp)))
+		       (|set-exclusive-or key=identity test=equalp hash| 'set-exclusive-or list1 list2)
+		       (|set-exclusive-or key=identity test=other| 'set-exclusive-or list1 list2 #'equalp)))
 		  (t
-		   (set-exclusive-or-identity-test 'set-exclusive-or list1 list2 test)))
+		   (|set-exclusive-or key=identity test=other| 'set-exclusive-or list1 list2 test)))
 	    (if test-not-given
-		(set-exclusive-or-identity-test-not 'set-exclusive-or list1 list2 test-not)
+		(|set-exclusive-or key=identity test-not=other| 'set-exclusive-or list1 list2 test-not)
 		(if use-hash
-		    (set-exclusive-or-identity-eql-hash 'set-exclusive-or list1 list2)
-		    (set-exclusive-or-identity-eql 'set-exclusive-or list1 list2)))))))
+		    (|set-exclusive-or key=identity test=eql hash| 'set-exclusive-or list1 list2)
+		    (|set-exclusive-or key=identity test=eql| 'set-exclusive-or list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3832,174 +3832,174 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (set-exclusive-or-key-eq-hash 'nset-exclusive-or list1 list2 key)
-		       (set-exclusive-or-key-eq 'nset-exclusive-or list1 list2 key)))
+		       (|set-exclusive-or key=other test=eq hash| 'nset-exclusive-or list1 list2 key)
+		       (|set-exclusive-or key=other test=eq| 'nset-exclusive-or list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (set-exclusive-or-key-eql-hash 'nset-exclusive-or list1 list2 key)
-		       (set-exclusive-or-key-eql 'nset-exclusive-or list1 list2 key)))
+		       (|set-exclusive-or key=other test=eql hash| 'nset-exclusive-or list1 list2 key)
+		       (|set-exclusive-or key=other test=eql| 'nset-exclusive-or list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (set-exclusive-or-key-equal-hash 'nset-exclusive-or list1 list2 key)
-		       (set-exclusive-or-key-test 'nset-exclusive-or list1 list2 key #'equal)))
+		       (|set-exclusive-or key=other test=equal hash| 'nset-exclusive-or list1 list2 key)
+		       (|set-exclusive-or key=other test=other| 'nset-exclusive-or list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (set-exclusive-or-key-equalp-hash 'nset-exclusive-or list1 list2 key)
-		       (set-exclusive-or-key-test 'nset-exclusive-or list1 list2 key #'equalp)))
+		       (|set-exclusive-or key=other test=equalp hash| 'nset-exclusive-or list1 list2 key)
+		       (|set-exclusive-or key=other test=other| 'nset-exclusive-or list1 list2 key #'equalp)))
 		  (t
-		   (set-exclusive-or-key-test 'nset-exclusive-or list1 list2 key test)))
+		   (|set-exclusive-or key=other test=other| 'nset-exclusive-or list1 list2 key test)))
 	    (if test-not-given
-		(set-exclusive-or-key-test-not 'nset-exclusive-or list1 list2 key test-not)
+		(|set-exclusive-or key=other test-not=other| 'nset-exclusive-or list1 list2 key test-not)
 		(if use-hash
-		    (set-exclusive-or-key-eql-hash 'nset-exclusive-or list1 list2 key)
-		    (set-exclusive-or-key-eql 'nset-exclusive-or list1 list2 key))))
+		    (|set-exclusive-or key=other test=eql hash| 'nset-exclusive-or list1 list2 key)
+		    (|set-exclusive-or key=other test=eql| 'nset-exclusive-or list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (set-exclusive-or-identity-eq-hash 'nset-exclusive-or list1 list2)
-		       (set-exclusive-or-identity-eq 'nset-exclusive-or list1 list2)))
+		       (|set-exclusive-or key=identity test=eq hash| 'nset-exclusive-or list1 list2)
+		       (|set-exclusive-or key=identity test=eq| 'nset-exclusive-or list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (set-exclusive-or-identity-eql-hash 'nset-exclusive-or list1 list2)
-		       (set-exclusive-or-identity-eql 'nset-exclusive-or list1 list2)))
+		       (|set-exclusive-or key=identity test=eql hash| 'nset-exclusive-or list1 list2)
+		       (|set-exclusive-or key=identity test=eql| 'nset-exclusive-or list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (set-exclusive-or-identity-equal-hash 'nset-exclusive-or list1 list2)
-		       (set-exclusive-or-identity-test 'nset-exclusive-or list1 list2 #'equal)))
+		       (|set-exclusive-or key=identity test=equal hash| 'nset-exclusive-or list1 list2)
+		       (|set-exclusive-or key=identity test=other| 'nset-exclusive-or list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (set-exclusive-or-identity-equalp-hash 'nset-exclusive-or list1 list2)
-		       (set-exclusive-or-identity-test 'nset-exclusive-or list1 list2 #'equalp)))
+		       (|set-exclusive-or key=identity test=equalp hash| 'nset-exclusive-or list1 list2)
+		       (|set-exclusive-or key=identity test=other| 'nset-exclusive-or list1 list2 #'equalp)))
 		  (t
-		   (set-exclusive-or-identity-test 'nset-exclusive-or list1 list2 test)))
+		   (|set-exclusive-or key=identity test=other| 'nset-exclusive-or list1 list2 test)))
 	    (if test-not-given
-		(set-exclusive-or-identity-test-not 'nset-exclusive-or list1 list2 test-not)
+		(|set-exclusive-or key=identity test-not=other| 'nset-exclusive-or list1 list2 test-not)
 		(if use-hash
-		    (set-exclusive-or-identity-eql-hash 'nset-exclusive-or list1 list2)
-		    (set-exclusive-or-identity-eql 'nset-exclusive-or list1 list2)))))))
+		    (|set-exclusive-or key=identity test=eql hash| 'nset-exclusive-or list1 list2)
+		    (|set-exclusive-or key=identity test=eql| 'nset-exclusive-or list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function subsetp
 
-(defun subsetp-identity-eql (name list1 list2)
+(defun |subsetp key=identity test=eql| (name list1 list2)
   (with-proper-list-elements (element list1 name)
     (unless (|member test=eql key=identity| name element list2)
-      (return-from subsetp-identity-eql nil)))
+      (return-from |subsetp key=identity test=eql| nil)))
   t)
 
-(defun subsetp-identity-eq (name list1 list2)
+(defun |subsetp key=identity test=eq| (name list1 list2)
   (with-proper-list-elements (element list1 name)
     (unless (|member test=eq key=identity| name element list2)
-      (return-from subsetp-identity-eq nil)))
+      (return-from |subsetp key=identity test=eq| nil)))
   t)
 
-(defun subsetp-key-eql (name list1 list2 key)
+(defun |subsetp key=other test=eql| (name list1 list2 key)
   (with-proper-list-elements (element list1 name)
     (unless (|member test=eql key=other| name (funcall key element) list2 key)
-      (return-from subsetp-key-eql nil)))
+      (return-from |subsetp key=other test=eql| nil)))
   t)
 
-(defun subsetp-key-eq (name list1 list2 key)
+(defun |subsetp key=other test=eq| (name list1 list2 key)
   (with-proper-list-elements (element list1 name)
     (unless (|member test=eq key=other| name (funcall key element) list2 key)
-      (return-from subsetp-key-eq nil)))
+      (return-from |subsetp key=other test=eq| nil)))
   t)
 
-(defun subsetp-identity-test (name list1 list2 test)
+(defun |subsetp key=identity test=other| (name list1 list2 test)
   (with-proper-list-elements (element list1 name)
     (unless (|member test=other key=identity| name element list2 test)
-      (return-from subsetp-identity-test nil)))
+      (return-from |subsetp key=identity test=other| nil)))
   t)
 
-(defun subsetp-key-test (name list1 list2 key test)
+(defun |subsetp key=other test=other| (name list1 list2 key test)
   (with-proper-list-elements (element list1 name)
     (unless (|member test=other key=other| name (funcall key element) list2 test key)
-      (return-from subsetp-key-test nil)))
+      (return-from |subsetp key=other test=other| nil)))
   t)
 
-(defun subsetp-identity-test-not (name list1 list2 test-not)
+(defun |subsetp key=identity test-not=other| (name list1 list2 test-not)
   (with-proper-list-elements (element list1 name)
     (unless (|member test-not=other key=identity| name  element list2 test-not)
-      (return-from subsetp-identity-test-not nil)))
+      (return-from |subsetp key=identity test-not=other| nil)))
   t)
 
-(defun subsetp-key-test-not (name list1 list2 key test-not)
+(defun |subsetp key=other test-not=other| (name list1 list2 key test-not)
   (with-proper-list-elements (element list1 name)
     (unless (|member test-not=other key=other| name (funcall key element) list2 test-not key)
-      (return-from subsetp-key-test-not nil)))
+      (return-from |subsetp key=other test-not=other| nil)))
   t)
 
-(defun subsetp-identity-eq-hash (name list1 list2)
+(defun |subsetp key=identity test=eq hash| (name list1 list2)
   (let ((table (make-hash-table :test #'eq)))
     (with-proper-list-elements (element list2 name)
       (setf (gethash element table) t))
     (with-proper-list-elements (element list1 name)
       (unless (gethash element table)
-	(return-from subsetp-identity-eq-hash nil))))
+	(return-from |subsetp key=identity test=eq hash| nil))))
   t)
 
-(defun subsetp-identity-eql-hash (name list1 list2)
+(defun |subsetp key=identity test=eql hash| (name list1 list2)
   (let ((table (make-hash-table :test #'eql)))
     (with-proper-list-elements (element list2 name)
       (setf (gethash element table) t))
     (with-proper-list-elements (element list1 name)
       (unless (gethash element table)
-	(return-from subsetp-identity-eql-hash nil))))
+	(return-from |subsetp key=identity test=eql hash| nil))))
   t)
 
-(defun subsetp-identity-equal-hash (name list1 list2)
+(defun |subsetp key=identity test=equal hash| (name list1 list2)
   (let ((table (make-hash-table :test #'equal)))
     (with-proper-list-elements (element list2 name)
       (setf (gethash element table) t))
     (with-proper-list-elements (element list1 name)
       (unless (gethash element table)
-	(return-from subsetp-identity-equal-hash nil))))
+	(return-from |subsetp key=identity test=equal hash| nil))))
   t)
 
-(defun subsetp-identity-equalp-hash (name list1 list2)
+(defun |subsetp key=identity test=equalp hash| (name list1 list2)
   (let ((table (make-hash-table :test #'equalp)))
     (with-proper-list-elements (element list2 name)
       (setf (gethash element table) t))
     (with-proper-list-elements (element list1 name)
       (unless (gethash element table)
-	(return-from subsetp-identity-equalp-hash nil))))
+	(return-from |subsetp key=identity test=equalp hash| nil))))
   t)
 
-(defun subsetp-key-eq-hash (name list1 list2 key)
+(defun |subsetp key=other test=eq hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'eq)))
     (with-proper-list-elements (element list2 name)
       (setf (gethash (funcall key element) table) t))
     (with-proper-list-elements (element list1 name)
       (unless (gethash (funcall key element) table)
-	(return-from subsetp-key-eq-hash nil))))
+	(return-from |subsetp key=other test=eq hash| nil))))
   t)
 
-(defun subsetp-key-eql-hash (name list1 list2 key)
+(defun |subsetp key=other test=eql hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'eql)))
     (with-proper-list-elements (element list2 name)
       (setf (gethash (funcall key element) table) t))
     (with-proper-list-elements (element list1 name)
       (unless (gethash (funcall key element) table)
-	(return-from subsetp-key-eql-hash nil))))
+	(return-from |subsetp key=other test=eql hash| nil))))
   t)
 
-(defun subsetp-key-equal-hash (name list1 list2 key)
+(defun |subsetp key=other test=equal hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'equal)))
     (with-proper-list-elements (element list2 name)
       (setf (gethash (funcall key element) table) t))
     (with-proper-list-elements (element list1 name)
       (unless (gethash (funcall key element) table)
-	(return-from subsetp-key-equal-hash nil))))
+	(return-from |subsetp key=other test=equal hash| nil))))
   t)
 
-(defun subsetp-key-equalp-hash (name list1 list2 key)
+(defun |subsetp key=other test=equalp hash| (name list1 list2 key)
   (let ((table (make-hash-table :test #'equalp)))
     (with-proper-list-elements (element list2 name)
       (setf (gethash (funcall key element) table) t))
     (with-proper-list-elements (element list1 name)
       (unless (gethash (funcall key element) table)
-	(return-from subsetp-key-equalp-hash nil))))
+	(return-from |subsetp key=other test=equalp hash| nil))))
   t)
 
 (defun subsetp (list1 list2
@@ -4011,51 +4011,51 @@
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (subsetp-key-eq-hash 'subsetp list1 list2 key)
-		       (subsetp-key-eq 'subsetp list1 list2 key)))
+		       (|subsetp key=other test=eq hash| 'subsetp list1 list2 key)
+		       (|subsetp key=other test=eq| 'subsetp list1 list2 key)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (subsetp-key-eql-hash 'subsetp list1 list2 key)
-		       (subsetp-key-eql 'subsetp list1 list2 key)))
+		       (|subsetp key=other test=eql hash| 'subsetp list1 list2 key)
+		       (|subsetp key=other test=eql| 'subsetp list1 list2 key)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (subsetp-key-equal-hash 'subsetp list1 list2 key)
-		       (subsetp-key-test 'subsetp list1 list2 key #'equal)))
+		       (|subsetp key=other test=equal hash| 'subsetp list1 list2 key)
+		       (|subsetp key=other test=other| 'subsetp list1 list2 key #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (subsetp-key-equalp-hash 'subsetp list1 list2 key)
-		       (subsetp-key-test 'subsetp list1 list2 key #'equalp)))
+		       (|subsetp key=other test=equalp hash| 'subsetp list1 list2 key)
+		       (|subsetp key=other test=other| 'subsetp list1 list2 key #'equalp)))
 		  (t
-		   (subsetp-key-test 'subsetp list1 list2 key test)))
+		   (|subsetp key=other test=other| 'subsetp list1 list2 key test)))
 	    (if test-not-given
-		(subsetp-key-test-not 'subsetp list1 list2 key test-not)
+		(|subsetp key=other test-not=other| 'subsetp list1 list2 key test-not)
 		(if use-hash
-		    (subsetp-key-eql-hash 'subsetp list1 list2 key)
-		    (subsetp-key-eql 'subsetp list1 list2 key))))
+		    (|subsetp key=other test=eql hash| 'subsetp list1 list2 key)
+		    (|subsetp key=other test=eql| 'subsetp list1 list2 key))))
 	(if test-given
 	    (cond ((or (eq test #'eq) (eq test 'eq))
 		   (if use-hash
-		       (subsetp-identity-eq-hash 'subsetp list1 list2)
-		       (subsetp-identity-eq 'subsetp list1 list2)))
+		       (|subsetp key=identity test=eq hash| 'subsetp list1 list2)
+		       (|subsetp key=identity test=eq| 'subsetp list1 list2)))
 		  ((or (eq test #'eql) (eq test 'eql))
 		   (if use-hash
-		       (subsetp-identity-eql-hash 'subsetp list1 list2)
-		       (subsetp-identity-eql 'subsetp list1 list2)))
+		       (|subsetp key=identity test=eql hash| 'subsetp list1 list2)
+		       (|subsetp key=identity test=eql| 'subsetp list1 list2)))
 		  ((or (eq test #'equal) (eq test 'equal))
 		   (if use-hash
-		       (subsetp-identity-equal-hash 'subsetp list1 list2)
-		       (subsetp-identity-test 'subsetp list1 list2 #'equal)))
+		       (|subsetp key=identity test=equal hash| 'subsetp list1 list2)
+		       (|subsetp key=identity test=other| 'subsetp list1 list2 #'equal)))
 		  ((or (eq test #'equalp) (eq test 'equalp))
 		   (if use-hash
-		       (subsetp-identity-equalp-hash 'subsetp list1 list2)
-		       (subsetp-identity-test 'subsetp list1 list2 #'equalp)))
+		       (|subsetp key=identity test=equalp hash| 'subsetp list1 list2)
+		       (|subsetp key=identity test=other| 'subsetp list1 list2 #'equalp)))
 		  (t
-		   (subsetp-identity-test 'subsetp list1 list2 test)))
+		   (|subsetp key=identity test=other| 'subsetp list1 list2 test)))
 	    (if test-not-given
-		(subsetp-identity-test-not 'subsetp list1 list2 test-not)
+		(|subsetp key=identity test-not=other| 'subsetp list1 list2 test-not)
 		(if use-hash
-		    (subsetp-identity-eql-hash 'subsetp list1 list2)
-		    (subsetp-identity-eql 'subsetp list1 list2)))))))
+		    (|subsetp key=identity test=eql hash| 'subsetp list1 list2)
+		    (|subsetp key=identity test=eql| 'subsetp list1 list2)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
