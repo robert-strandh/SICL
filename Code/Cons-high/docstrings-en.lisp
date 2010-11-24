@@ -842,3 +842,31 @@
               of ALIST then NIL is returned.~@
               An error of type TYPE-ERROR might be signaled if ALIST is not~@
               an association list."))
+
+(fundoc 'get-properties
+	(fmt "Lambda list: (PLIST INDICATORs)~@
+              where PLIST is a property list, and INDICATORS is a proper list.~@
+              PLIST is searched for an indicator that matches one of the indicators~@
+              in INDICATORS.  The function EQ is used to determin whether the~@
+              indicator matches.  If such an indicator is found, GET-PROPERTIES~@
+              returns three values, the indicator, the value (i.e., the object~@
+              immediately after the indicator in PLIST), and the tail of PLIST~@
+              whose first element is the indicator found.  If no such entry is found~@
+              then tree NIL values are returned.~@
+              The consequences are undefined if PLIST is not a property list.~@
+              The consequences are undefined if INDICATORS is not a proper list."))
+
+(fundoc 'getf
+	(fmt "Lambda list: (PLIST INDICATOR &default DEFAULT)~@
+              where PLIST is a property list, and INDICATOR is any object.~@
+              PLIST is searched for an indicator that matches INDICATOR.~@
+              The function EQ is used to determine whether the indicator matches.~@
+              If such an indicator exists, the first one is used, and its~@
+              corresponding value (i.e. the object immediately following the~@
+              indicator in PLIST) is returned.  If no such indicator exists,~@
+              then the value of DEFAULT is returned.  The default value for~@
+              DEFAULT is NIL.~@
+              The consequences are undefined if PLIST is not a property list."))
+
+
+
