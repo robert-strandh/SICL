@@ -151,3 +151,19 @@
 	  (name-package (name c))
 	  (list1 c)
 	  (list2 c)))
+
+(defmethod report-condition ((c setf-c*r-must-be-cons)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In setf expander for ~a (in the ~a package):~@
+           The ~aargument: ~s~@
+           must be a cons cell, but the following was given instead:~@
+           ~s."
+	  (name c)
+	  (name-package (name c))
+	  (if (zerop (length (access-string c)))
+	      ""
+	      (format nil "C~aR of the " (access-string c)))
+	  (original-tree c)
+	  (type-error-datum c)))

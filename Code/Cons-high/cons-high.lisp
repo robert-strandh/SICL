@@ -81,6 +81,12 @@
   ((%list1 :initarg :list1 :reader list1)
    (%list2 :initarg :list2 :reader list2)))
 
+;;; This condition is used by setf expanders for c*r when an
+;;; object must be a cons cell but something else was found
+(define-condition setf-c*r-must-be-cons (must-be-cons)
+  ((%original-tree :initarg :original-tree :reader original-tree)
+   (%access-string :initarg :access-string :reader access-string)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Type null
@@ -294,6 +300,9 @@
 	;; Skip the sentinel and return the rest. 
 	(cdr sentinel))))
 
+;;; FIXME: use a better condition that has both the 
+;;; original argument at the part of the tree that 
+;;; generated the error.
 (defmacro define-c*r-function (function-name letters)
   (flet ((primitive (letter)
            (if (eql letter #\A) 'car 'cdr)))
@@ -353,6 +362,7 @@
 (define-c*r-function ninth  "ADDDDDDDD")
 (define-c*r-function tenth   "ADDDDDDDDD")
 
+;;;FIXME: use the new improved condition instead.
 (eval-when (:compile-toplevel :load-toplevel)
   (defmacro define-setf-c*r-function (function-name letters)
     (flet ((primitive (letter)
@@ -422,9 +432,69 @@
 (define-setf-c*r-function sixth   "ADDDDD")
 (define-setf-c*r-function seventh "ADDDDDD")
 (define-setf-c*r-function eighth  "ADDDDDDD")
-(define-setf-c*r-function ninth  "ADDDDDDDD")
+(define-setf-c*r-function ninth   "ADDDDDDDD")
 (define-setf-c*r-function tenth   "ADDDDDDDDD")
 
+(eval-when (:compile-toplevel :load-toplevel)
+  (defmacro define-setf-c*r-expander (function-name letters)
+    (flet ((primitive (letter)
+             (if (eql letter #\A) 'car 'cdr)))
+      (flet ((one-iteration (string i original-tree)
+               `(unless (consp remaining)
+		  (error 'setf-c*r-must-be-cons
+			 :datum remaining
+			 :access-string ,(subseq string i)
+			 :original-tree ,original-tree
+			 :name '(setf ,function-name)))))
+	`(defsetf ,function-name (list) (new-object)
+	   `(let ((remaining ,list)
+		  (original ,list))
+	      ,@',(loop for i downfrom (length letters)
+			collect (one-iteration letters i 'original)
+			until (= i 1)
+			collect `(setf remaining (,(primitive (aref letters (1- i)))
+							      remaining)))
+	      (setf (,',(primitive (aref letters 0)) remaining) ,new-object)))))))
+
+(define-setf-c*r-expander caar "AA")
+(define-setf-c*r-expander cadr "AD")
+(define-setf-c*r-expander cdar "DA")
+(define-setf-c*r-expander cddr "DD")
+(define-setf-c*r-expander caaar "AAA")
+(define-setf-c*r-expander caadr "AAD")
+(define-setf-c*r-expander cadar "ADA")
+(define-setf-c*r-expander caddr "ADD")
+(define-setf-c*r-expander cdaar "DAA")
+(define-setf-c*r-expander cdadr "DAD")
+(define-setf-c*r-expander cddar "DDA")
+(define-setf-c*r-expander cdddr "DDD")
+(define-setf-c*r-expander caaaar "AAAA")
+(define-setf-c*r-expander caaadr "AAAD")
+(define-setf-c*r-expander caadar "AADA")
+(define-setf-c*r-expander caaddr "AADD")
+(define-setf-c*r-expander cadaar "ADAA")
+(define-setf-c*r-expander cadadr "ADAD")
+(define-setf-c*r-expander caddar "ADDA")
+(define-setf-c*r-expander cadddr "ADDD")
+(define-setf-c*r-expander cdaaar "DAAA")
+(define-setf-c*r-expander cdaadr "DAAD")
+(define-setf-c*r-expander cdadar "DADA")
+(define-setf-c*r-expander cdaddr "DADD")
+(define-setf-c*r-expander cddaar "DDAA")
+(define-setf-c*r-expander cddadr "DDAD")
+(define-setf-c*r-expander cdddar "DDDA")
+(define-setf-c*r-expander cddddr "DDDD")
+
+(define-setf-c*r-expander first   "A")
+(define-setf-c*r-expander second  "AD")
+(define-setf-c*r-expander third   "ADD")
+(define-setf-c*r-expander fourth  "ADDD")
+(define-setf-c*r-expander fifth   "ADDDD")
+(define-setf-c*r-expander sixth   "ADDDDD")
+(define-setf-c*r-expander seventh "ADDDDDD")
+(define-setf-c*r-expander eighth  "ADDDDDDD")
+(define-setf-c*r-expander ninth   "ADDDDDDDD")
+(define-setf-c*r-expander tenth   "ADDDDDDDDD")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function rest
@@ -442,6 +512,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Setf expander for rest
+
+;;; FIXME: simplify by using the long form of defsetf instead.
 
 (define-setf-expander rest (x)
   (let ((subform-temp (gensym))
