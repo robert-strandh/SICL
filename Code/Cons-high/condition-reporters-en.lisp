@@ -167,3 +167,11 @@
 	      (format nil "C~aR of the " (access-string c)))
 	  (original-tree c)
 	  (type-error-datum c)))
+(defmethod report-condition ((c warn-both-test-and-test-not-given)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (in the ~a package),~@
+           both keyword arguments :test and :test-not were given."
+	  (name c)
+	  (name-package (name c))))
