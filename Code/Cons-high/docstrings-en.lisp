@@ -868,5 +868,36 @@
               DEFAULT is NIL.~@
               The consequences are undefined if PLIST is not a property list."))
 
+(fundoc 'intersection
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
+              Every element that occurs both in LIST-1 ans LIST-2 is~@
+              returned in the result, which is a proper list.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST returns true, then exactly~@
+              one of the elements are kept in the resulting list.~@
+              Then, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST-NOT returns false, then exactly~@
+              one of the elements are kept in the resulting list.~@
+              The order of the elements in the resulting list is not~@
+              specified.~@
+              If either LIST-1 or LIST-2 contains duplicate elements (as~@
+              defined by KEY and TEST or TEST-NOT), then the result may~@
+              also contain duplicate elements.~@
+              The result may share structure with LIST-1 and/or LIST-2."))
 
 
