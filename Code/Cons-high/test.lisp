@@ -10188,16 +10188,24 @@
 		  list)))
 
 (define-test |pushnew test=other test-not=other 1|
-  (let ((list '(2 1)))
-    (assert-error 'error
-		  (pushnew '2 list
-			   :test #'eql
-			   :test-not #'eql))))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (compile nil '(lambda ()
+		     (declare (special list))
+		     (pushnew '2 list
+		      :test #'eql
+		      :test-not #'eql))))
+    (assert-true warned)
+    (assert-error 'error (funcall fun))))
 
 (define-test |pushnew test=nil key=identity 3b|
   (let ((list '(2)))
     (assert-error 'error
 		  (pushnew 1 list :test nil))))
+    
 
 (define-test |pushnew test-not=nil key=identity 3b|
   (let ((list '(2)))
