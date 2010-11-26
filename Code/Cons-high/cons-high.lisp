@@ -87,6 +87,12 @@
   ((%original-tree :initarg :original-tree :reader original-tree)
    (%access-string :initarg :access-string :reader access-string)))
 
+;;; This condition is used by macros that detect that there
+;;; is both a :test and a :test-not, and that detection is
+;;; done at macro-expansion time. 
+(define-condition warn-both-test-and-test-not-given (warning name-mixin)
+  ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Type null
@@ -4178,14 +4184,16 @@
       (values (append vars (list indicator-var default-var))
 	      (append vals (list indicator default))
 	      (list value-var)
-	      `(progn (loop for rest on ,reader-form by #'cddr
-			    when (eq (car rest) ,indicator-var)
-			      do (setf (cadr rest) ,value-var)
-				 (return nil)
-			    finally (let ((,(car store-vars)
-					   (list* ,indicator-var ,value-var ,reader-form)))
-				      ,writer-form))
-		      ,value-var)
+	      `(let ((,default-var ,default-var))
+		 (declare (ignore ,default-var))
+		 (loop for rest on ,reader-form by #'cddr
+		       when (eq (car rest) ,indicator-var)
+			 do (setf (cadr rest) ,value-var)
+			    (return nil)
+		       finally (let ((,(car store-vars)
+				      (list* ,indicator-var ,value-var ,reader-form)))
+				 ,writer-form))
+		 ,value-var)
 	      `(getf ,reader-form ,indicator-var ,default)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4236,14 +4244,14 @@
 			   return nil
 			 do (unless (consp (cddr rest))
 			      (error 'must-be-property-list
-				     :datum plist
+				     :datum ,(car store-vars)
 				     :name 'getf))
 			 when (eq (cadr rest) ,indicator-var)
 			   do (setf (cdr rest) (cdddr rest))
 			      (return t)
 			 finally (unless (null rest)
 				   (error 'must-be-property-list
-					  :datum plist
+					  :datum ,(car store-vars)
 					  :name 'getf))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -4288,57 +4296,59 @@
 		   (test nil test-p)
 		   (test-not nil test-not-p))
   (declare (ignorable test test-not))
-  (when (and test-p test-not-p)
-    (error 'both-test-and-test-not-given :name 'pushnew))
-  (let ((item-var (gensym)))
-    (multiple-value-bind (vars vals store-vars writer-form reader-form)
-	(get-setf-expansion place env)
-      `(let ((,item-var ,item)
-	     ,@(mapcar #'list vars vals)
-	     ,@(make-bindings args))
-	 ,@(if key-p `((declare (ignorable key test test-not))) `())
-	 (let ((,(car store-vars) ,reader-form))
-	   ,(if key
-		(if test-p
-		    `(unless (|member test=other key=other|
-			      'pushnew
-			      (funcall key ,item-var)
-			      ,(car store-vars)
-			      test
-			      key)
-		       (push ,item-var ,(car store-vars)))
-		    (if test-not-p
-			`(unless (|member test-not=other key=other|
+  (if (and test-p test-not-p)
+      (progn (warn 'warn-both-test-and-test-not-given
+		   :name 'pushnew)
+	     `(error 'both-test-and-test-not-given :name 'pushnew))
+      (let ((item-var (gensym)))
+	(multiple-value-bind (vars vals store-vars writer-form reader-form)
+	    (get-setf-expansion place env)
+	  `(let ((,item-var ,item)
+		 ,@(mapcar #'list vars vals)
+		 ,@(make-bindings args))
+	     ,@(if key-p `((declare (ignorable key))) `())
+	     (let ((,(car store-vars) ,reader-form))
+	       ,(if key
+		    (if test-p
+			`(unless (|member test=other key=other|
 				  'pushnew
 				  (funcall key ,item-var)
 				  ,(car store-vars)
-				  test-not
+				  test
 				  key)
 			   (push ,item-var ,(car store-vars)))
-			`(unless (|member test=eql key=other|
-				  'pushnew
-				  (funcall key ,item-var)
-				  ,(car store-vars)
-				  key)
-			   (push ,item-var ,(car store-vars)))))
-		(if test-p
-		    `(unless (|member test=other key=identity|
-			      'pushnew
-			      ,item-var
-			      ,(car store-vars)
-			      test)
-		       (push ,item-var ,(car store-vars)))
-		    (if test-not-p
-			`(unless (|member test-not=other key=identity|
+			(if test-not-p
+			    `(unless (|member test-not=other key=other|
+				      'pushnew
+				      (funcall key ,item-var)
+				      ,(car store-vars)
+				      test-not
+				      key)
+			       (push ,item-var ,(car store-vars)))
+			    `(unless (|member test=eql key=other|
+				      'pushnew
+				      (funcall key ,item-var)
+				      ,(car store-vars)
+				      key)
+			       (push ,item-var ,(car store-vars)))))
+		    (if test-p
+			`(unless (|member test=other key=identity|
 				  'pushnew
 				  ,item-var
 				  ,(car store-vars)
-				  test-not)
+				  test)
 			   (push ,item-var ,(car store-vars)))
-			`(unless (|member test=eql key=identity|
-				  'pushnew
-				  ,item-var
-				  ,(car store-vars))
-			   (push ,item-var ,(car store-vars))))))
-	   ,writer-form)))))
+			(if test-not-p
+			    `(unless (|member test-not=other key=identity|
+				      'pushnew
+				      ,item-var
+				      ,(car store-vars)
+				      test-not)
+			       (push ,item-var ,(car store-vars)))
+			    `(unless (|member test=eql key=identity|
+				      'pushnew
+				      ,item-var
+				      ,(car store-vars))
+			       (push ,item-var ,(car store-vars))))))
+	       ,writer-form))))))
 
