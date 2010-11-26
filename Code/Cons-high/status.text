@@ -135,7 +135,7 @@ What is done:
   There are specific conditions and English-language condition
   reporters for those conditions. 
 
-  There are docstrings for some functions. 
+  There are docstrings for most function. 
 
 How to test it:
 
@@ -145,13 +145,16 @@ How to test it:
 
   3. Do (in-package #:sicl-cons-high-test).
 
-  4. Do a (run-tests) you should see some failures and some
-     successes.  The failures are that type-error should be singaled,
-     but simple-error was signaled instead. 
+  4. Do a (run-tests).  All tests should pass.
 
 What remains to to:
 
-  Write the remaining docstrings. 
+  Write docstrings for types, system classes, setf expanders and
+  function named (setf ...)
+
+  Make sure that every function named (setf ...) also has a
+  corresponding setf expander, and that every setf expander also has a
+  corresponding function named (setf ...).
 
   Make sure the tests cover all of the code.
 
