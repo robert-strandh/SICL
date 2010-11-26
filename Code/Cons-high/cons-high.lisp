@@ -445,7 +445,7 @@
 			 :datum remaining
 			 :access-string ,(subseq string i)
 			 :original-tree ,original-tree
-			 :name '(setf ,function-name)))))
+			 :name ',function-name))))
 	`(defsetf ,function-name (list) (new-object)
 	   `(let ((remaining ,list)
 		  (original ,list))

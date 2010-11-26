@@ -156,7 +156,7 @@
 			     stream
 			     (language (eql 'en-us)))
   (format stream
-	  "In setf expander for ~a (in the ~a package):~@
+	  "In the SETF expander for ~a (in the ~a package):~@
            The ~aargument: ~s~@
            must be a cons cell, but the following was given instead:~@
            ~s."
