@@ -1237,9 +1237,6 @@
 ;;; the list be traversed several times, and since list traversal
 ;;; dominates the time here, this is a win.
 
-;;; FIXME: The HyperSpec says that we must signal a type-error
-;;; for circular lists, but we currently don't. 
-
 (defun nbutlast-1 (list)
   (unless (typep list 'list)
     (error 'must-be-list
@@ -1270,9 +1267,6 @@
 			  :name 'nbutlast)))
 	(setf (cdr a) nil)
         list)))
-
-;;; FIXME: The HyperSpec says that we must signal a type-error
-;;; for circular lists, but we currently don't. 
 
 (defun nbutlast (list &optional (n 1))
   (unless (typep list 'list)
