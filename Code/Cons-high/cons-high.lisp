@@ -362,6 +362,80 @@
 (define-c*r-function ninth  "ADDDDDDDD")
 (define-c*r-function tenth   "ADDDDDDDDD")
 
+(eval-when (:compile-toplevel :load-toplevel)
+  (defmacro define-setf-c*r-expander (function-name letters)
+    (flet ((primitive (letter)
+             (if (eql letter #\A) 'car 'cdr)))
+      (flet ((one-iteration (string i original-tree)
+               `(unless (consp remaining)
+		  (error 'setf-c*r-must-be-cons
+			 :datum remaining
+			 :access-string ,(subseq string i)
+			 :original-tree ,original-tree
+			 :name ',function-name))))
+	`(defsetf ,function-name (list) (new-object)
+	   `(let ((remaining ,list)
+		  (original ,list))
+	      ,@',(loop for i downfrom (length letters)
+			collect (one-iteration letters i 'original)
+			until (= i 1)
+			collect `(setf remaining (,(primitive (aref letters (1- i)))
+							      remaining)))
+	      (setf (,',(primitive (aref letters 0)) remaining) ,new-object)))))))
+
+;;; We get warnings when defining a setf expander if there
+;;; is already a setf function defined, so we start by 
+;;; undefining all the setf functions.
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (loop for name in '(caar cadr cdar cddr
+		      caaar caadr cadar caddr cdaar cdadr cddar cdddr
+		      caaaar caaadr caadar caaddr cadaar cadadr caddar cadddr
+		      cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cddddr
+		      first second third fourth fifth
+		      sixth seventh eighth ninth tenth)
+	do (fmakunbound (list 'setf name))))
+
+(define-setf-c*r-expander caar "AA")
+(define-setf-c*r-expander cadr "AD")
+(define-setf-c*r-expander cdar "DA")
+(define-setf-c*r-expander cddr "DD")
+(define-setf-c*r-expander caaar "AAA")
+(define-setf-c*r-expander caadr "AAD")
+(define-setf-c*r-expander cadar "ADA")
+(define-setf-c*r-expander caddr "ADD")
+(define-setf-c*r-expander cdaar "DAA")
+(define-setf-c*r-expander cdadr "DAD")
+(define-setf-c*r-expander cddar "DDA")
+(define-setf-c*r-expander cdddr "DDD")
+(define-setf-c*r-expander caaaar "AAAA")
+(define-setf-c*r-expander caaadr "AAAD")
+(define-setf-c*r-expander caadar "AADA")
+(define-setf-c*r-expander caaddr "AADD")
+(define-setf-c*r-expander cadaar "ADAA")
+(define-setf-c*r-expander cadadr "ADAD")
+(define-setf-c*r-expander caddar "ADDA")
+(define-setf-c*r-expander cadddr "ADDD")
+(define-setf-c*r-expander cdaaar "DAAA")
+(define-setf-c*r-expander cdaadr "DAAD")
+(define-setf-c*r-expander cdadar "DADA")
+(define-setf-c*r-expander cdaddr "DADD")
+(define-setf-c*r-expander cddaar "DDAA")
+(define-setf-c*r-expander cddadr "DDAD")
+(define-setf-c*r-expander cdddar "DDDA")
+(define-setf-c*r-expander cddddr "DDDD")
+
+(define-setf-c*r-expander first   "A")
+(define-setf-c*r-expander second  "AD")
+(define-setf-c*r-expander third   "ADD")
+(define-setf-c*r-expander fourth  "ADDD")
+(define-setf-c*r-expander fifth   "ADDDD")
+(define-setf-c*r-expander sixth   "ADDDDD")
+(define-setf-c*r-expander seventh "ADDDDDD")
+(define-setf-c*r-expander eighth  "ADDDDDDD")
+(define-setf-c*r-expander ninth   "ADDDDDDDD")
+(define-setf-c*r-expander tenth   "ADDDDDDDDD")
+
 ;;;FIXME: use the new improved condition instead.
 (eval-when (:compile-toplevel :load-toplevel)
   (defmacro define-setf-c*r-function (function-name letters)
@@ -435,66 +509,6 @@
 (define-setf-c*r-function ninth   "ADDDDDDDD")
 (define-setf-c*r-function tenth   "ADDDDDDDDD")
 
-(eval-when (:compile-toplevel :load-toplevel)
-  (defmacro define-setf-c*r-expander (function-name letters)
-    (flet ((primitive (letter)
-             (if (eql letter #\A) 'car 'cdr)))
-      (flet ((one-iteration (string i original-tree)
-               `(unless (consp remaining)
-		  (error 'setf-c*r-must-be-cons
-			 :datum remaining
-			 :access-string ,(subseq string i)
-			 :original-tree ,original-tree
-			 :name ',function-name))))
-	`(defsetf ,function-name (list) (new-object)
-	   `(let ((remaining ,list)
-		  (original ,list))
-	      ,@',(loop for i downfrom (length letters)
-			collect (one-iteration letters i 'original)
-			until (= i 1)
-			collect `(setf remaining (,(primitive (aref letters (1- i)))
-							      remaining)))
-	      (setf (,',(primitive (aref letters 0)) remaining) ,new-object)))))))
-
-(define-setf-c*r-expander caar "AA")
-(define-setf-c*r-expander cadr "AD")
-(define-setf-c*r-expander cdar "DA")
-(define-setf-c*r-expander cddr "DD")
-(define-setf-c*r-expander caaar "AAA")
-(define-setf-c*r-expander caadr "AAD")
-(define-setf-c*r-expander cadar "ADA")
-(define-setf-c*r-expander caddr "ADD")
-(define-setf-c*r-expander cdaar "DAA")
-(define-setf-c*r-expander cdadr "DAD")
-(define-setf-c*r-expander cddar "DDA")
-(define-setf-c*r-expander cdddr "DDD")
-(define-setf-c*r-expander caaaar "AAAA")
-(define-setf-c*r-expander caaadr "AAAD")
-(define-setf-c*r-expander caadar "AADA")
-(define-setf-c*r-expander caaddr "AADD")
-(define-setf-c*r-expander cadaar "ADAA")
-(define-setf-c*r-expander cadadr "ADAD")
-(define-setf-c*r-expander caddar "ADDA")
-(define-setf-c*r-expander cadddr "ADDD")
-(define-setf-c*r-expander cdaaar "DAAA")
-(define-setf-c*r-expander cdaadr "DAAD")
-(define-setf-c*r-expander cdadar "DADA")
-(define-setf-c*r-expander cdaddr "DADD")
-(define-setf-c*r-expander cddaar "DDAA")
-(define-setf-c*r-expander cddadr "DDAD")
-(define-setf-c*r-expander cdddar "DDDA")
-(define-setf-c*r-expander cddddr "DDDD")
-
-(define-setf-c*r-expander first   "A")
-(define-setf-c*r-expander second  "AD")
-(define-setf-c*r-expander third   "ADD")
-(define-setf-c*r-expander fourth  "ADDD")
-(define-setf-c*r-expander fifth   "ADDDD")
-(define-setf-c*r-expander sixth   "ADDDDD")
-(define-setf-c*r-expander seventh "ADDDDDD")
-(define-setf-c*r-expander eighth  "ADDDDDDD")
-(define-setf-c*r-expander ninth   "ADDDDDDDD")
-(define-setf-c*r-expander tenth   "ADDDDDDDDD")
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function rest
