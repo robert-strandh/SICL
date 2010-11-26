@@ -2686,7 +2686,7 @@
     (when (funcall predicate (funcall key (car rest)))
       (return rest))))
 
-(defun |member-if| (predicate list &key key)
+(defun member-if (predicate list &key key)
   (if key
       (|member-if key=other| predicate list key)
       (|member-if key=identity| predicate list)))
@@ -2705,7 +2705,7 @@
     (unless (funcall predicate (funcall key (car rest)))
       (return rest))))
 
-(defun |member-if-not| (predicate list &key key)
+(defun member-if-not (predicate list &key key)
   (if key
       (|member-if-not key=other| predicate list key)
       (|member-if-not key=identity| predicate list)))
