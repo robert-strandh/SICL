@@ -877,20 +877,20 @@
               arguments that return a generalized boolean.  The default~@
               if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
               INTERSECTION treats LIST-1 and LIST-2 as sets.~@
-              Every element that occurs both in LIST-1 ans LIST-2 is~@
+              Every element that occurs both in LIST-1 and LIST-2 is~@
               returned in the result, which is a proper list.~@
               The semantics are as if every element of LIST-1 were compared~@
               to every element of LIST-2.  Before any test is made~@
               between two elements, the KEY function is applied to both~@
-              elements.
+              elements.~@
               Then, if TEST is given, it is applied to the result of the~@
               application of the KEY function in such a way that the first~@
               argument to the TEST comes from LIST-1 and the second argument~@
               comes from LIST-2.  If the TEST returns true, then exactly~@
               one of the elements are kept in the resulting list.~@
-              Then, if TEST-NOT is given, it is applied to the result of the~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
               application of the KEY function in such a way that the first~@
-              argument to the TEST comes from LIST-1 and the second argument~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
               comes from LIST-2.  If the TEST-NOT returns false, then exactly~@
               one of the elements are kept in the resulting list.~@
               The order of the elements in the resulting list is not~@
@@ -898,6 +898,298 @@
               If either LIST-1 or LIST-2 contains duplicate elements (as~@
               defined by KEY and TEST or TEST-NOT), then the result may~@
               also contain duplicate elements.~@
+              Neither LIST-1 nor LIST-2 is modified.
               The result may share structure with LIST-1 and/or LIST-2."))
 
+(fundoc 'nintersection
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
+              Every element that occurs both in LIST-1 and LIST-2 is~@
+              returned in the result, which is a proper list.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST returns true, then exactly~@
+              one of the elements are kept in the resulting list.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST-NOT returns false, then exactly~@
+              one of the elements are kept in the resulting list.~@
+              The order of the elements in the resulting list is not~@
+              specified.~@
+              If either LIST-1 or LIST-2 contains duplicate elements (as~@
+              defined by KEY and TEST or TEST-NOT), then the result may~@
+              also contain duplicate elements.~@
+              LIST-2 is not modified, but LIST-1 may be destroyed.  It's CONS~@
+              cells may be used to build the result.~@
+              The result may share structure with LIST-1 and/or LIST-2."))
+
+(fundoc 'adjoin
+	(fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT)~@
+              where ITEM is any object and LIST is a proper list.~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              ADJOIN treats LIST as a set.~@
+              The ITEM is compared to every element of LIST.  If ITEM already~@
+              occurs in LIST, then LIST is returned.  If not the equivalent of~@
+              (CONS ITEM LIST) is returned.~@
+              Before any test is made between the ITEM and elements of LIST,~@
+              the KEY function is applied to both of them.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from the ITEM and the second argument~@
+              comes from LIST.  If the TEST returns true, then LIST is returned,~@
+              Otherwise the equivalent of (CONS ITEM LIST) is returned.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from ITEM and the second argument~@
+              comes from LIST.  If the TEST-NOT returns false, then LIST is returned,~@
+              Otherwise the equivalent of (CONS ITEM LIST) is returned."))
+
+(fundoc 'set-difference
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
+              Only elements that occur in in LIST-1 that do not match~@
+              any element is LIST-2 are returned in the result,~@
+              which is a proper list.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST returns true, then the~@
+              corresponding element of LIST-1 is discared from the result.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST-NOT returns false, then the~@
+              corresponding element of LIST-1 is discared from the result.~@
+              The order of the elements in the resulting list is not~@
+              specified.~@
+              If LIST-1 contains duplicate elements (as~@
+              defined by KEY and TEST or TEST-NOT), then the result may~@
+              also contain duplicate elements.~@
+              Neither LIST-1 nor LIST-2 is modified.
+              The result may share structure with LIST-1 and/or LIST-2."))
+
+(fundoc 'nset-difference
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
+              Only elements that occur in in LIST-1 that do not match~@
+              any element is LIST-2 are returned in the result,~@
+              which is a proper list.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST returns true, then the~@
+              corresponding element of LIST-1 is discared from the result.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST-NOT returns false, then the~@
+              corresponding element of LIST-1 is discared from the result.~@
+              The order of the elements in the resulting list is not~@
+              specified.~@
+              If LIST-1 contains duplicate elements (as~@
+              defined by KEY and TEST or TEST-NOT), then the result may~@
+              also contain duplicate elements.~@
+              NSET-DIFFERENCE may destroy LIST-1.~@
+              The result may share structure with LIST-1 and/or LIST-2."))
+
+(fundoc 'set-exclusive-or
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
+              Every element that occurs in LIST-1 but not in LIST-2~@
+              and every element that occurs in LIST-2 but not in LIST-1~@
+              is returned in the result, which is a proper list.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST returns true, then both~@
+              elements are discarded from the result.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST-NOT returns false, then both~@
+              elements are discarded from the result.~@
+              The order of the elements in the resulting list is not~@
+              specified.~@
+              If either LIST-1 or LIST-2 contains duplicate elements (as~@
+              defined by KEY and TEST or TEST-NOT), then the result may~@
+              also contain duplicate elements.~@
+              Neither LIST-1 nor LIST-2 is modified.
+              The result may share structure with LIST-1 and/or LIST-2."))
+
+(fundoc 'nset-exclusive-or
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
+              Every element that occurs in LIST-1 but not in LIST-2~@
+              and every element that occurs in LIST-2 but not in LIST-1~@
+              is returned in the result, which is a proper list.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST returns true, then both~@
+              elements are discarded from the result.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST-NOT returns false, then both~@
+              elements are discarded from the result.~@
+              The order of the elements in the resulting list is not~@
+              specified.~@
+              If either LIST-1 or LIST-2 contains duplicate elements (as~@
+              defined by KEY and TEST or TEST-NOT), then the result may~@
+              also contain duplicate elements.~@
+              NSET-EXCLUSIVE-OR may destroy LIST-1 or LIST-2 or both.~@
+              The result may share structure with LIST-1 and/or LIST-2."))
+
+(fundoc 'union
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
+              For every element that occurs both in LIST-1 and LIST-2,~@
+              Only one of the two occurrences is returned in the result,~@
+              which is a proper list.  Every element that occures only in~@
+              LIST-1 and every element that occurs only in LIST-2 will be~@
+              returned in the result.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST returns true, then~@
+              one of the elements is discared from the result.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST-NOT returns false, then~@
+              one of the elements is discared from the result.~@
+              The order of the elements in the resulting list is not~@
+              specified.~@
+              If either LIST-1 or LIST-2 contains duplicate elements (as~@
+              defined by KEY and TEST or TEST-NOT), then the result may~@
+              also contain duplicate elements.~@
+              Neither LIST-1 nor LIST-2 is modified.
+              The result may share structure with LIST-1 and/or LIST-2."))
+
+(fundoc 'subsetp
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              SUBSETP treats LIST-1 and LIST-2 as sets.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If for some element of LIST-1 the TEST returns~@
+              false for every element in LIST-2, then SUBSETP returns false.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If for some element of LIST-1 the TEST-NOT returns~@
+              true for every element in LIST-2, then SUBSETP returns false.~@
+              Otherwise, SUBSETP returns true."))
+
+(fundoc 'nunion
+	(fmt "Lambda list: (LIST-1 LIST-2 &key KEY TEST TEST-NOT)~@
+              where LIST-1 and LIST-2 are proper lists,~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              INTERSECTION treats LIST-1 and LIST-2 as sets.~@
+              For every element that occurs both in LIST-1 and LIST-2,~@
+              Only one of the two occurrences is returned in the result,~@
+              which is a proper list.  Every element that occures only in~@
+              LIST-1 and every element that occurs only in LIST-2 will be~@
+              returned in the result.~@
+              The semantics are as if every element of LIST-1 were compared~@
+              to every element of LIST-2.  Before any test is made~@
+              between two elements, the KEY function is applied to both~@
+              elements.~@
+              Then, if TEST is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST returns true, then~@
+              one of the elements is discared from the result.~@
+              Else, if TEST-NOT is given, it is applied to the result of the~@
+              application of the KEY function in such a way that the first~@
+              argument to the TEST-NOT comes from LIST-1 and the second argument~@
+              comes from LIST-2.  If the TEST-NOT returns false, then~@
+              one of the elements is discared from the result.~@
+              The order of the elements in the resulting list is not~@
+              specified.~@
+              If either LIST-1 or LIST-2 contains duplicate elements (as~@
+              defined by KEY and TEST or TEST-NOT), then the result may~@
+              also contain duplicate elements.~@
+              NUNION may destroy any part of LIST-1 and any part of LIST-2~@
+              The result may share structure with LIST-1 and/or LIST-2."))
 
