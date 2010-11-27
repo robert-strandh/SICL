@@ -943,7 +943,7 @@
 ;;;
 ;;; Tests for the (setf caar) function
 
-(define-test setf.caar.1
+(define-test |setf caar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caar list) 1))
@@ -951,22 +951,22 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.caar.error.1
+(define-test |setf caar error 1|
   (let ((list '()))
     (assert-error 'type-error
 		  (setf (caar list) 1))))
 
-(define-test setf.caar.error.2
+(define-test |setf caar error 2|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caar list) 1))))
 
-(define-test setf.caar.error.3
+(define-test |setf caar error 3|
   (let ((list (copy-tree '(0 0))))
     (assert-error 'type-error
 		  (setf (caar list) 1))))
 
-(define-test setf.caar.error.4
+(define-test |setf caar error 4|
   (let ((list (copy-tree '(() 0))))
     (assert-error 'type-error
 		  (setf (caar list) 1))))
@@ -975,27 +975,27 @@
 ;;;
 ;;; Tests for the (setf cadr) function
 
-(define-test setf.cadr.1
+(define-test |setf cadr 1|
   (let ((list (copy-tree '(0 0))))
     (assert-equal 1 (setf (cadr list) 1))
     (assert-equal '(0 1) list)))
 
-(define-test setf.cadr.error.1
+(define-test |setf cadr error 1|
   (let ((list '()))
     (assert-error 'type-error
 		  (setf (cadr list) 1))))
 
-(define-test setf.cadr.error.2
+(define-test |setf cadr error 2|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cadr list) 1))))
 
-(define-test setf.cadr.error.3
+(define-test |setf cadr error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
 		  (setf (cadr list) 1))))
 
-(define-test setf.cadr.error.4
+(define-test |setf cadr error 4|
   (let ((list (copy-tree '(0 . 0))))
     (assert-error 'type-error
 		  (setf (cadr list) 1))))
@@ -1004,27 +1004,27 @@
 ;;;
 ;;; Tests for the (setf cdar) function
 
-(define-test setf.cdar.1
+(define-test |setf cdar 1|
   (let ((list (copy-tree '((0) 0))))
     (assert-equal 1 (setf (cdar list) 1))
     (assert-equal '((0 . 1) 0) list)))
 
-(define-test setf.cdar.error.1
+(define-test |setf cdar error 1|
   (let ((list '()))
     (assert-error 'type-error
 		  (setf (cdar list) 1))))
 
-(define-test setf.cdar.error.2
+(define-test |setf cdar error 2|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdar list) 1))))
 
-(define-test setf.cdar.error.3
+(define-test |setf cdar error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
 		  (setf (cdar list) 1))))
 
-(define-test setf.cdar.error.4
+(define-test |setf cdar error 4|
   (let ((list (copy-tree '(()))))
     (assert-error 'type-error
 		  (setf (cdar list) 1))))
@@ -1033,27 +1033,27 @@
 ;;;
 ;;; Tests for the (setf cddr) function
 
-(define-test setf.cddr.1
+(define-test |setf cddr 1|
   (let ((list (copy-tree '(0 0))))
     (assert-equal 1 (setf (cddr list) 1))
     (assert-equal '(0 0 . 1) list)))
 
-(define-test setf.cddr.error.1
+(define-test |setf cddr error 1|
   (let ((list '()))
     (assert-error 'type-error
 		  (setf (cddr list) 1))))
 
-(define-test setf.cddr.error.2
+(define-test |setf cddr error 2|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cddr list) 1))))
 
-(define-test setf.cddr.error.3
+(define-test |setf cddr error 3|
   (let ((list (copy-tree '(0))))
     (assert-error 'type-error
 		  (setf (cddr list) 1))))
 
-(define-test setf.cddr.error.4
+(define-test |setf cddr error 4|
   (let ((list (copy-tree '(0 . 1))))
     (assert-error 'type-error
 		  (setf (cddr list) 1))))
@@ -1062,32 +1062,32 @@
 ;;;
 ;;; Tests for the (setf caaar) function
 
-(define-test setf.caaar.1
+(define-test |setf caaar 1|
   (let ((list (copy-tree '(((0 0) 0) 0))))
     (assert-equal 1 (setf (caaar list) 1))
     (assert-equal '(((1 0) 0) 0) list)))
 
-(define-test setf.caaar.error.1
+(define-test |setf caaar error 1|
   (let ((list '()))
     (assert-error 'type-error
 		  (setf (caaar list) 1))))
 
-(define-test setf.caaar.error.2
+(define-test |setf caaar error 2|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caaar list) 1))))
 
-(define-test setf.caaar.error.3
+(define-test |setf caaar error 3|
   (let ((list (copy-tree '(0 0))))
     (assert-error 'type-error
 		  (setf (caaar list) 1))))
 
-(define-test setf.caaar.error.4
+(define-test |setf caaar error 4|
   (let ((list (copy-tree '((0 0) 0))))
     (assert-error 'type-error
 		  (setf (caaar list) 1))))
 
-(define-test setf.caaar.error.5
+(define-test |setf caaar error 5|
   (let ((list (copy-tree '((() 0) 0))))
     (assert-error 'type-error
 		  (setf (caaar list) 1))))
@@ -1096,7 +1096,7 @@
 ;;;
 ;;; Tests for the (setf caadr) function
 
-(define-test setf.caadr.1
+(define-test |setf caadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caadr list) 1))
@@ -1104,18 +1104,18 @@
 		    ((1       . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.caadr.error.1
+(define-test |setf caadr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caadr list) 1))))
 
-(define-test setf.caadr.error.2
+(define-test |setf caadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   0                                         ))))
     (assert-error 'type-error
 		  (setf (caadr list) 1))))
 
-(define-test setf.caadr.error.3
+(define-test |setf caadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   (0                   . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
@@ -1125,7 +1125,7 @@
 ;;;
 ;;; Tests for the (setf cadar) function
 
-(define-test setf.cadar.1
+(define-test |setf cadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cadar list) 1))
@@ -1133,18 +1133,18 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cadar.error.1
+(define-test |setf cadar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cadar list) 1))))
 
-(define-test setf.cadar.error.2
+(define-test |setf cadar error 2|
   (let ((list (copy-tree '(0 .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
 		  (setf (cadar list) 1))))
 
-(define-test setf.cadar.error.3
+(define-test |setf cadar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) .                   0) .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
@@ -1154,7 +1154,7 @@
 ;;;
 ;;; Tests for the (setf caddr) function
 
-(define-test setf.caddr.1
+(define-test |setf caddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caddr list) 1))
@@ -1162,18 +1162,18 @@
 		    (((0 . 0) . (0 . 0)) . (1       . (0 . 0))))
 		  list)))
 
-(define-test setf.caddr.error.1
+(define-test |setf caddr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caddr list) 1))))
 
-(define-test setf.caddr.error.2
+(define-test |setf caddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   0                                          ))))
     (assert-error 'type-error
 		  (setf (caddr list) 1))))
 
-(define-test setf.caddr.error.3
+(define-test |setf caddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   (((0 . 0) . (0 . 0)) . 0                   )))))
     (assert-error 'type-error
@@ -1183,7 +1183,7 @@
 ;;;
 ;;; Tests for the (setf cdaar) function
 
-(define-test setf.cdaar.1
+(define-test |setf cdaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdaar list) 1))
@@ -1191,18 +1191,18 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cdaar.error.1
+(define-test |setf cdaar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdaar list) 1))))
 
-(define-test setf.cdaar.error.2
+(define-test |setf cdaar error 2|
   (let ((list (copy-tree '(0 .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
 		  (setf (cdaar list) 1))))
 
-(define-test setf.cdaar.error.3
+(define-test |setf cdaar error 3|
   (let ((list (copy-tree '((0                   . ((0 . 0) . (0 . 0))) .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
@@ -1212,7 +1212,7 @@
 ;;;
 ;;; Tests for the (setf cdadr) function
 
-(define-test setf.cdadr.1
+(define-test |setf cdadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdadr list) 1))
@@ -1220,18 +1220,18 @@
 		    (((0 . 0) .       1) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cdadr.error.1
+(define-test |setf cdadr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdadr list) 1))))
 
-(define-test setf.cdadr.error.2
+(define-test |setf cdadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   0                                          ))))
     (assert-error 'type-error
 		  (setf (cdadr list) 1))))
 
-(define-test setf.cdadr.error.3
+(define-test |setf cdadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) .
 			   (0                   . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
@@ -1241,7 +1241,7 @@
 ;;;
 ;;; Tests for the (setf cddar) function
 
-(define-test setf.cddar.1
+(define-test |setf cddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cddar list) 1))
@@ -1249,18 +1249,18 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cddar.error.1
+(define-test |setf cddar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cddar list) 1))))
 
-(define-test setf.cddar.error.2
+(define-test |setf cddar error 2|
   (let ((list (copy-tree '(0                                           .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
 		  (setf (cddar list) 1))))
 
-(define-test setf.cddar.error.3
+(define-test |setf cddar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) .                   0) .
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-error 'type-error
@@ -1270,7 +1270,7 @@
 ;;;
 ;;; Tests for the (setf cdddr) function
 
-(define-test setf.cdddr.1
+(define-test |setf cdddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdddr list) 1))
@@ -1278,19 +1278,19 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) .        1)))
 		  list)))
 
-(define-test setf.cdddr.error.1
+(define-test |setf cdddr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdddr list) 1))))
 
-(define-test setf.cdddr.error.2
+(define-test |setf cdddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (cdddr list) 1))))
 
-(define-test setf.cdddr.error.3
+(define-test |setf cdddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
@@ -1301,7 +1301,7 @@
 ;;;
 ;;; Tests for the (setf caaaar) function
 
-(define-test setf.caaaar.1
+(define-test |setf caaaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caaaar list) 1))
@@ -1309,26 +1309,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.caaaar.error.1
+(define-test |setf caaaar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caaaar list) 1))))
 
-(define-test setf.caaaar.error.2
+(define-test |setf caaaar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
 		  (setf (caaaar list) 1))))
 
-(define-test setf.caaaar.error.3
+(define-test |setf caaaar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
 		  (setf (caaaar list) 1))))
 
-(define-test setf.caaaar.error.4
+(define-test |setf caaaar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caaar list) 0)
@@ -1339,7 +1339,7 @@
 ;;;
 ;;; Tests for the (setf caaadr) function
 
-(define-test setf.caaadr.1
+(define-test |setf caaadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caaadr list) 1))
@@ -1347,26 +1347,26 @@
 		    (((1 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.caaadr.error.1
+(define-test |setf caaadr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caaadr list) 1))))
 
-(define-test setf.caaadr.error.2
+(define-test |setf caaadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (caaadr list) 1))))
 
-(define-test setf.caaadr.error.3
+(define-test |setf caaadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
 		  (setf (caaadr list) 1))))
 
-(define-test setf.caaadr.error.4
+(define-test |setf caaadr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caadr list) 0)
@@ -1377,7 +1377,7 @@
 ;;;
 ;;; Tests for the (setf caadar) function
 
-(define-test setf.caadar.1
+(define-test |setf caadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caadar list) 1))
@@ -1385,26 +1385,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.caadar.error.1
+(define-test |setf caadar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caadar list) 1))))
 
-(define-test setf.caadar.error.2
+(define-test |setf caadar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
 		  (setf (caadar list) 1))))
 
-(define-test setf.caadar.error.3
+(define-test |setf caadar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
 		  (setf (caadar list) 1))))
 
-(define-test setf.caadar.error.4
+(define-test |setf caadar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadar list) 0)
@@ -1415,7 +1415,7 @@
 ;;;
 ;;; Tests for the (setf caaddr) function
 
-(define-test setf.caaddr.1
+(define-test |setf caaddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caaddr list) 1))
@@ -1423,26 +1423,26 @@
 		    (((0 . 0) . (0 . 0)) . ((1 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.caaddr.error.1
+(define-test |setf caaddr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caaddr list) 1))))
 
-(define-test setf.caaddr.error.2
+(define-test |setf caaddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (caaddr list) 1))))
 
-(define-test setf.caaddr.error.3
+(define-test |setf caaddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
 		  (setf (caaddr list) 1))))
 
-(define-test setf.caaddr.error.4
+(define-test |setf caaddr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caddr list) 0)
@@ -1453,7 +1453,7 @@
 ;;;
 ;;; Tests for the (setf cadaar) function
 
-(define-test setf.cadaar.1
+(define-test |setf cadaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cadaar list) 1))
@@ -1461,26 +1461,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cadaar.error.1
+(define-test |setf cadaar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cadaar list) 1))))
 
-(define-test setf.cadaar.error.2
+(define-test |setf cadaar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
 		  (setf (cadaar list) 1))))
 
-(define-test setf.cadaar.error.3
+(define-test |setf cadaar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
 		  (setf (cadaar list) 1))))
 
-(define-test setf.cadaar.error.4
+(define-test |setf cadaar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdaar list) 0)
@@ -1491,7 +1491,7 @@
 ;;;
 ;;; Tests for the (setf cadadr) function
 
-(define-test setf.cadadr.1
+(define-test |setf cadadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cadadr list) 1))
@@ -1499,26 +1499,26 @@
 		    (((0 . 0) . (1 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cadadr.error.1
+(define-test |setf cadadr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cadadr list) 1))))
 
-(define-test setf.cadadr.error.2
+(define-test |setf cadadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (cadadr list) 1))))
 
-(define-test setf.cadadr.error.3
+(define-test |setf cadadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
 		  (setf (cadadr list) 1))))
 
-(define-test setf.cadadr.error.4
+(define-test |setf cadadr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdadr list) 0)
@@ -1529,7 +1529,7 @@
 ;;;
 ;;; Tests for the (setf caddar) function
 
-(define-test setf.caddar.1
+(define-test |setf caddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (caddar list) 1))
@@ -1537,26 +1537,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.caddar.error.1
+(define-test |setf caddar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (caddar list) 1))))
 
-(define-test setf.caddar.error.2
+(define-test |setf caddar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
 		  (setf (caddar list) 1))))
 
-(define-test setf.caddar.error.3
+(define-test |setf caddar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
 		  (setf (caddar list) 1))))
 
-(define-test setf.caddar.error.4
+(define-test |setf caddar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddar list) 0)
@@ -1567,7 +1567,7 @@
 ;;;
 ;;; Tests for the (setf cadddr) function
 
-(define-test setf.cadddr.1
+(define-test |setf cadddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cadddr list) 1))
@@ -1575,26 +1575,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (1 . 0))))
 		  list)))
 
-(define-test setf.cadddr.error.1
+(define-test |setf cadddr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cadddr list) 1))))
 
-(define-test setf.cadddr.error.2
+(define-test |setf cadddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (cadddr list) 1))))
 
-(define-test setf.cadddr.error.3
+(define-test |setf cadddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
 		  (setf (cadddr list) 1))))
 
-(define-test setf.cadddr.error.4
+(define-test |setf cadddr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdddr list) 0)
@@ -1605,7 +1605,7 @@
 ;;;
 ;;; Tests for the (setf cdaaar) function
 
-(define-test setf.cdaaar.1
+(define-test |setf cdaaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdaaar list) 1))
@@ -1613,26 +1613,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cdaaar.error.1
+(define-test |setf cdaaar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdaaar list) 1))))
 
-(define-test setf.cdaaar.error.2
+(define-test |setf cdaaar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
 		  (setf (cdaaar list) 1))))
 
-(define-test setf.cdaaar.error.3
+(define-test |setf cdaaar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
 		  (setf (cdaaar list) 1))))
 
-(define-test setf.cdaaar.error.4
+(define-test |setf cdaaar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caaar list) 0)
@@ -1643,7 +1643,7 @@
 ;;;
 ;;; Tests for the (setf cdaadr) function
 
-(define-test setf.cdaadr.1
+(define-test |setf cdaadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdaadr list) 1))
@@ -1651,26 +1651,26 @@
 		    (((0 . 1) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cdaadr.error.1
+(define-test |setf cdaadr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdaadr list) 1))))
 
-(define-test setf.cdaadr.error.2
+(define-test |setf cdaadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (cdaadr list) 1))))
 
-(define-test setf.cdaadr.error.3
+(define-test |setf cdaadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
 		  (setf (cdaadr list) 1))))
 
-(define-test setf.cdaadr.error.4
+(define-test |setf cdaadr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caadr list) 0)
@@ -1681,7 +1681,7 @@
 ;;;
 ;;; Tests for the (setf cdadar) function
 
-(define-test setf.cdadar.1
+(define-test |setf cdadar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdadar list) 1))
@@ -1689,26 +1689,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cdadar.error.1
+(define-test |setf cdadar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdadar list) 1))))
 
-(define-test setf.cdadar.error.2
+(define-test |setf cdadar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
 		  (setf (cdadar list) 1))))
 
-(define-test setf.cdadar.error.3
+(define-test |setf cdadar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
 		  (setf (cdadar list) 1))))
 
-(define-test setf.cdadar.error.4
+(define-test |setf cdadar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadar list) 0)
@@ -1719,7 +1719,7 @@
 ;;;
 ;;; Tests for the (setf cdaddr) function
 
-(define-test setf.cdaddr.1
+(define-test |setf cdaddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdaddr list) 1))
@@ -1727,26 +1727,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 1) . (0 . 0))))
 		  list)))
 
-(define-test setf.cdaddr.error.1
+(define-test |setf cdaddr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdaddr list) 1))))
 
-(define-test setf.cdaddr.error.2
+(define-test |setf cdaddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (cdaddr list) 1))))
 
-(define-test setf.cdaddr.error.3
+(define-test |setf cdaddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
 		  (setf (cdaddr list) 1))))
 
-(define-test setf.cdaddr.error.4
+(define-test |setf cdaddr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caddr list) 0)
@@ -1757,7 +1757,7 @@
 ;;;
 ;;; Tests for the (setf cddaar) function
 
-(define-test setf.cddaar.1
+(define-test |setf cddaar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cddaar list) 1))
@@ -1765,26 +1765,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cddaar.error.1
+(define-test |setf cddaar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cddaar list) 1))))
 
-(define-test setf.cddaar.error.2
+(define-test |setf cddaar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
 		  (setf (cddaar list) 1))))
 
-(define-test setf.cddaar.error.3
+(define-test |setf cddaar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (caar list) 0)
     (assert-error 'type-error
 		  (setf (cddaar list) 1))))
 
-(define-test setf.cddaar.error.4
+(define-test |setf cddaar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdaar list) 0)
@@ -1795,7 +1795,7 @@
 ;;;
 ;;; Tests for the (setf cddadr) function
 
-(define-test setf.cddadr.1
+(define-test |setf cddadr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cddadr list) 1))
@@ -1803,26 +1803,26 @@
 		    (((0 . 0) . (0 . 1)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cddadr.error.1
+(define-test |setf cddadr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cddadr list) 1))))
 
-(define-test setf.cddadr.error.2
+(define-test |setf cddadr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (cddadr list) 1))))
 
-(define-test setf.cddadr.error.3
+(define-test |setf cddadr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cadr list) 0)
     (assert-error 'type-error
 		  (setf (cddadr list) 1))))
 
-(define-test setf.cddadr.error.4
+(define-test |setf cddadr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdadr list) 0)
@@ -1833,7 +1833,7 @@
 ;;;
 ;;; Tests for the (setf cdddar) function
 
-(define-test setf.cdddar.1
+(define-test |setf cdddar 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cdddar list) 1))
@@ -1841,26 +1841,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))))
 		  list)))
 
-(define-test setf.cdddar.error.1
+(define-test |setf cdddar error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cdddar list) 1))))
 
-(define-test setf.cdddar.error.2
+(define-test |setf cdddar error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (car list) 0)
     (assert-error 'type-error
 		  (setf (cdddar list) 1))))
 
-(define-test setf.cdddar.error.3
+(define-test |setf cdddar error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdar list) 0)
     (assert-error 'type-error
 		  (setf (cdddar list) 1))))
 
-(define-test setf.cdddar.error.4
+(define-test |setf cdddar error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddar list) 0)
@@ -1871,7 +1871,7 @@
 ;;;
 ;;; Tests for the (setf cddddr) function
 
-(define-test setf.cddddr.1
+(define-test |setf cddddr 1|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (assert-equal 1 (setf (cddddr list) 1))
@@ -1879,26 +1879,26 @@
 		    (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 1))))
 		  list)))
 
-(define-test setf.cddddr.error.1
+(define-test |setf cddddr error 1|
   (let ((list 0))
     (assert-error 'type-error
 		  (setf (cddddr list) 1))))
 
-(define-test setf.cddddr.error.2
+(define-test |setf cddddr error 2|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdr list) 0)
     (assert-error 'type-error
 		  (setf (cddddr list) 1))))
 
-(define-test setf.cddddr.error.3
+(define-test |setf cddddr error 3|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cddr list) 0)
     (assert-error 'type-error
 		  (setf (cddddr list) 1))))
 
-(define-test setf.cddddr.error.4
+(define-test |setf cddddr error 4|
   (let ((list (copy-tree '((((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0))) . 
 			   (((0 . 0) . (0 . 0)) . ((0 . 0) . (0 . 0)))))))
     (setf (cdddr list) 0)
@@ -3040,35 +3040,35 @@
 ;;;
 ;;; Tests for the nconc function
 
-(define-test nconc.1
+(define-test |nconc 1|
   (assert-eq '() (nconc)))
 
-(define-test nconc.2
+(define-test |nconc 2|
   (let ((list (copy-tree '(a b c))))
     (assert-eq list (nconc list))))
 
-(define-test nconc.3
+(define-test |nconc 3|
   (let ((list (copy-tree '(a b c))))
     (assert-eq list (nconc '() list))))
 
-(define-test nconc.4
+(define-test |nconc 4|
   (let ((list1 (copy-tree '(a b c)))
         (list2 (copy-tree '(d e f))))
     (assert-eq list1 (nconc list1 list2))
     (assert-eq list2 (cdddr list1))))
 
-(define-test nconc.5
+(define-test |nconc 5|
   (assert-equal '(a z)
 		(nconc (copy-tree '(a . b))
 		       (copy-tree '(z)))))
 
-(define-test nconc.6
+(define-test |nconc 6|
   (assert-equal '(x y z a z)
 		(nconc (copy-tree '(x y z))
 		       (copy-tree '(a . b))
 		       (copy-tree '(z)))))
 
-(define-test nconc.order.1
+(define-test |nconc order 1|
   (assert-equal
    '((a b c d e f g h i) 3 1 2 3)
    (let ((i 0) x y z)
@@ -3078,7 +3078,7 @@
               (progn (setf z (incf i)) (copy-list '(g h i))))
        i x y z))))
 
-(define-test nconc.apply.1
+(define-test |nconc apply 1|
   (let ((list1 '(1 2))
         (list2 '(3 4)))
     (assert-equal '(1 2 3 4)
@@ -3087,6 +3087,10 @@
     (assert-equal '(1 2 3 4)
                   (apply (cadr (list 'a 'nconc))
                          (copy-tree (list list1 list2))))))
+
+(define-test |nconc error 1|
+  (assert-error 'type-error
+		(nconc (copy-tree '(a b c)) 'd (copy-tree '(e f)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4561,7 +4565,7 @@
 			  '(((b a) . b) nil ((a b) c) ((d) e))
 			  :key #'car)))
 
-(define-test |assoc-if.error 1|
+(define-test |assoc-if error 1|
   (assert-error 'type-error
 		(assoc-if (lambda (x) (eq x 'a))
 			  '((b . c) nil d (a b)))))
@@ -4601,7 +4605,7 @@
 			      '(((b a) . b) nil ((a b) c) ((d) e))
 			      :key #'car)))
 
-(define-test |assoc-if-not.error 1|
+(define-test |assoc-if-not error 1|
   (assert-error 'type-error
 		(assoc-if-not (complement (lambda (x) (eq x 'a)))
 			      '((b . c) nil d (a b)))))
@@ -10216,33 +10220,40 @@
 ;;;
 ;;; Tests for the pop macro
 
-(define-test pop.1
+(define-test |pop 1|
   (let ((var (list 1)))
     (assert-equal 1
 		  (pop var))
     (assert-equal '()
 		  var)))
 
-(define-test pop.2
+(define-test |pop 2|
   (let ((var (list 1 2)))
     (assert-equal 1
 		  (pop var))
     (assert-equal '(2)
 		  var)))
 
-(define-test pop.3
+(define-test |pop 3|
   (let ((list (list (list 1))))
     (assert-equal 1
 		  (pop (car list)))
     (assert-equal '(())
 		  list)))
 
-(define-test pop.4
+(define-test |pop 4|
   (let ((list (list (list 1 2))))
     (assert-equal 1
 		  (pop (car list)))
     (assert-equal '((2))
 		  list)))
+
+(define-test |pop error 1|
+  (let ((list (copy-tree '(1 . 2))))
+    (assert-equal 1
+		  (pop list))
+    (assert-error 'type-error
+		  (pop list))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
