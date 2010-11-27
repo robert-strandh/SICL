@@ -4453,6 +4453,10 @@
   (assert-error 'type-error
 		(butlast '#1=(0 . #1#))))
 
+(define-test butlast.error.4
+  (assert-error 'type-error
+		(butlast 1)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the nbutlast function
@@ -5279,6 +5283,11 @@
 (define-test |member test=eql key=other 1|
   (assert-equal '(123 b c)
 		(member 124 '(a b 123 b c)
+			:key (lambda (x) (if (numberp x) (1+ x) x)))))
+
+(define-test |member test=eql key=other 2|
+  (assert-equal '(123 b c)
+		(member 124 '(a b 123 b c)
 			:key (lambda (x) (if (numberp x) (1+ x) x))
 			:test 'eql)))
 
@@ -5425,6 +5434,10 @@
   (assert-error 'type-error
 		(member-if #'oddp '(2 4 6 . 7))))
 
+(define-test |member-if key=other error 1|
+  (assert-error 'type-error
+		(member-if #'oddp '(2 4 6 . 7) :key #'identity)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the member-if-not function
@@ -5447,9 +5460,13 @@
 		(member-if-not #'oddp '(2 6 3 4)
 			       :key #'1+)))
 
-(define-test member-if-not.error.1
+(define-test |member-if-not error 1|
   (assert-error 'type-error
 		(member-if-not #'evenp '(2 4 6 . 7))))
+
+(define-test |member-if-not key=other error 1|
+  (assert-error 'type-error
+		(member-if-not #'evenp '(2 4 6 . 7) :key #'identity)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11489,8 +11506,16 @@
 		(getf '(b 2 a 1) 'c)))
 
 (define-test |getf error 1|
-  (assert-error 'error
+  (assert-error 'type-error
 		(getf '(b 2 a) 'c)))
+
+(define-test |getf error 2|
+  (assert-error 'type-error
+		(getf 1 'c)))
+
+(define-test |getf error 3|
+  (assert-error 'type-error
+		(getf '(b 2 a 3 . f) 'c)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -11532,8 +11557,16 @@
     (assert-equal '(a 1 e 10) tail)))
 
 (define-test |get-properties error 1|
-  (assert-error 'error
+  (assert-error 'type-error
 		(get-properties '(b 2 a) '(c d e))))
+
+(define-test |get-properties error 2|
+  (assert-error 'type-error
+		(get-properties '(b 2 a 3 . f) '(c d e))))
+
+(define-test |get-properties error 3|
+  (assert-error 'type-error
+		(get-properties 1 '(c d e))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
