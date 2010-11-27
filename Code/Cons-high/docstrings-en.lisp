@@ -25,14 +25,23 @@
          (letters (reverse (cdr (butlast (coerce name 'list))))))
     (flet ((primitive (letter)
              (if (eql letter #\A) 'car 'cdr)))
-      `(fundoc ',function-name
-                ,(fmt "Lambda list: (OBJECT)~@
-                       Equivalent to ~a"
-                      (loop with form = 'object
-                            for letter in letters
-                            do (setf form
-                                     (list (primitive letter) form))
-                            finally (return form)))))))
+      `(progn (fundoc ',function-name
+		      ,(fmt "Lambda list: (OBJECT)~@
+                             Equivalent to ~a"
+			    (loop with form = 'object
+				  for letter in letters
+				  do (setf form
+					   (list (primitive letter) form))
+				  finally (return form))))
+	      (fundoc '(setf ,function-name)
+		      ,(fmt "Lambda list: (NEW-VALUE LIST)~@
+                             Equivalent to (SETF (C~aR ~a) NEW-VALUE)"
+			    (car (last letters))
+			    (loop with form = 'list
+				  for letter in (butlast letters)
+				  do (setf form
+					   (list (primitive letter) form))
+				  finally (return form))))))))
              
 (make-c*r-documentation caar)
 (make-c*r-documentation cadr)
