@@ -87,6 +87,12 @@
   ((%original-tree :initarg :original-tree :reader original-tree)
    (%access-string :initarg :access-string :reader access-string)))
 
+;;; This condition is used by the setf expander for nth when an
+;;; object must be a cons cell but something else was found
+(define-condition setf-nth-must-be-cons (must-be-cons)
+  ((%original-tree :initarg :original-tree :reader original-tree)
+   (%cons-cell-count :initarg :cons-cell-count :reader cons-cell-count)))
+
 ;;; This condition is used by macros that detect that there
 ;;; is both a :test and a :test-not, and that detection is
 ;;; done at macro-expansion time. 
@@ -531,24 +537,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Setf expander for rest
+;;; Setf expander and setf function for rest
 
-;;; FIXME: simplify by using the long form of defsetf instead.
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (fmakunbound '(setf rest)))
 
-(define-setf-expander rest (x)
-  (let ((subform-temp (gensym))
-	(store-temp (gensym)))
-    (values (list subform-temp)
-	    (list x)
-	    (list store-temp)
-	    `(if (consp ,subform-temp)
-		 (progn 
-		   (rplacd ,subform-temp ,store-temp)
-		   ,store-temp)
-		 (error 'must-be-cons
-			:datum ,subform-temp
-			:name '(setf rest)))
-	    `(cdr ,subform-temp))))
+(defsetf rest (list) (new-value)
+  `(if (consp ,list)
+       (progn (rplacd ,list ,new-value) ,new-value)
+       (error 'must-be-cons
+	      :datum ,list
+	      :name '(setf rest))))
+
+(defun (setf rest) (new-value list)
+  (if (consp list)
+      (progn (rplacd list new-value) new-value)
+      (error 'must-be-cons
+	     :datum list
+	     :name '(setf rest))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -619,6 +625,10 @@
       `(last-1 ,list)
       form))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function copy-list
+
 (defun copy-list (list)
   (unless (typep list 'list)
     (error 'must-be-list
@@ -639,6 +649,10 @@
 	;; or some other atom because it was not a proper list
 	(setf (cdr trailer) list)
 	result)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function list-length
 
 ;;; The standard requires the argument to be either a circular list
 ;;; or a proper list.  In case of a circular list, NIL should be 
@@ -726,6 +740,10 @@
 		:datum list
 		:name 'list-length))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function make-list
+
 (defun make-list (length &key (initial-element nil))
   (unless (typep length '(integer 0))
     (error 'must-be-nonnegative-integer
@@ -733,6 +751,10 @@
 	   :name 'make-list))
   (loop repeat length
 	collect initial-element))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nthcdr
 
 (defun nthcdr (n list)
   (unless (typep n '(integer 0))
@@ -749,6 +771,10 @@
 	   :name 'nthcdr))
   list)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function nth
+
 (defun nth (n list)
   (unless (typep n '(integer 0))
     (error 'must-be-nonnegative-integer
@@ -764,20 +790,61 @@
 	   :name 'nth))
   (car list))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Setf expander and setf function for nth
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (fmakunbound '(setf nth)))
+
+(defsetf nth (n list) (object)
+  `(progn  (unless (typep ,n '(integer 0))
+	     (error 'must-be-nonnegative-integer
+		    :datum ,n
+		    :name '(setf nth)))
+	   (loop with remaining = ,list
+		 with count = 0
+		 until (atom remaining)
+		 until (= count ,n)
+		 do (setf remaining (cdr remaining))
+		    (incf count)
+		 finally  (when (not (consp remaining))
+			    (error 'setf-nth-must-be-cons
+				   :datum remaining
+				   :name 'nth
+				   :original-tree ,list
+				   :cons-cell-count count))
+			  (setf (car remaining) ,object))
+	   ,object))
+
 (defun (setf nth) (object n list)
   (unless (typep n '(integer 0))
     (error 'must-be-nonnegative-integer
 	   :datum n
-	   :name 'nthcdr))
-  (loop until (zerop n)
-	until (atom list)
-	do (decf n)
-	do (setf list (cdr list)))
-  (when (not (consp list))
-    (error 'must-be-cons
-	   :datum list
 	   :name '(setf nth)))
-  (setf (car list) object))
+  (loop with remaining = list
+	with count = 0
+	until (atom remaining)
+	until (= count n)
+	do (setf remaining (cdr remaining))
+	   (incf count)
+	finally  (when (not (consp remaining))
+		   (error 'setf-nth-must-be-cons
+			  :datum remaining
+			  :name 'nth
+			  :original-tree list
+			  :cons-cell-count count))
+		 (setf (car remaining) object))
+  object)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function copy-tree
+
+;;; This can probably be done better by using iteration in one
+;;; dimension and recurstion in the other.  Assuming trees are 
+;;; typically wider than they are deep, it would be better to
+;;; use iteration on the CDR and recursion on the CAR.
 
 (defun copy-tree (tree)
   (if (atom tree)
@@ -1301,16 +1368,12 @@
 ;;;
 ;;; Function subst
 
-;;; Special version if test is eq and key is identity.
-
 (defun |subst key=identity test=eq| (new old tree)
   (labels ((traverse (tree)
              (cond ((eq tree old) new)
                    ((atom tree) tree)
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
-
-;;; Special version if test is eql and key is identity.
 
 (defun |subst key=identity test=eql| (new old tree)
   (labels ((traverse (tree)
@@ -1319,16 +1382,12 @@
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
 
-;;; Special version if test is eq and key is given.
-
 (defun |subst key=other test=eq| (new old tree key)
   (labels ((traverse (tree)
              (cond ((eq (funcall key tree) old) new)
                    ((atom tree) tree)
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
-
-;;; Special version if test is eql and key is given.
 
 (defun |subst key=other test=eql| (new old tree key)
   (labels ((traverse (tree)
@@ -1337,16 +1396,12 @@
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
 
-;;; Special version if test is given and key is identity.
-
 (defun |subst key=identity test=other| (new old tree test)
   (labels ((traverse (tree)
              (cond ((funcall test old tree) new)
                    ((atom tree) tree)
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
-
-;;; Special version if test and key both are given.
 
 (defun |subst key=other-test-other| (new old tree test key)
   (labels ((traverse (tree)
@@ -1388,16 +1443,12 @@
 ;;; in combination with a key argument that is not identity, we do not
 ;;; think that case is very common either, so we omit it too. 
 
-;;; Special version if test-not is given and key is identity.
-
 (defun |subst key=identity test-not=other| (new old tree test)
   (labels ((traverse (tree)
              (cond ((not (funcall test old tree)) new)
                    ((atom tree) tree)
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
-
-;;; Special version if test-not and key both are given
 
 (defun |subst key=other test-not=other| (new old tree test key)
   (labels ((traverse (tree)
@@ -1434,8 +1485,6 @@
 ;;;
 ;;; Function subst-if
 
-;;; Special version where the key function is identity.
-
 (defun |subst-if key=other=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
@@ -1444,9 +1493,6 @@
                    ((atom tree) tree)
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
-
-;;; Special version where the key function is something other than
-;;; identity.
 
 (defun |subst-if key=other| (new predicate tree key)
   ;; Define a local function so as to avoid passing the new and
@@ -1466,8 +1512,6 @@
 ;;;
 ;;; Function subst-if-not
 
-;;; Special version where the key function is identity.
-
 (defun |subst-if-not key=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
@@ -1476,9 +1520,6 @@
                    ((atom tree) tree)
                    (t (cons (traverse (car tree)) (traverse (cdr tree)))))))
     (traverse tree)))
-
-;;; Special version where the key function is something other than
-;;; identity.
 
 (defun |subst-if-not key=other| (new predicate tree key)
   ;; Define a local function so as to avoid passing the new and
@@ -1498,8 +1539,6 @@
 ;;;
 ;;; Function nsubst
 
-;;; Special version if test is eq and key is identity.
-
 (defun |nsubst key=identity test=eq| (new old tree)
   (labels ((traverse (tree)
              (cond ((eq (car tree) old)
@@ -1517,8 +1556,6 @@
     (cond ((eq tree old) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
-
-;;; Special version if test is eql and key is identity.
 
 (defun |nsubst key=identity test=eql| (new old tree)
   (labels ((traverse (tree)
@@ -1538,8 +1575,6 @@
           ((atom tree) tree)
           (t (traverse tree) tree))))
 
-;;; Special version if test is eq and key is given.
-
 (defun |nsubst key=other test=eq| (new old tree key)
   (labels ((traverse (tree)
              (cond ((eq (funcall key (car tree)) old)
@@ -1557,8 +1592,6 @@
     (cond ((eq (funcall key tree) old) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
-
-;;; Special version if test is eql and key is given.
 
 (defun |nsubst key=other test=eql| (new old tree key)
   (labels ((traverse (tree)
@@ -1578,8 +1611,6 @@
           ((atom tree) tree)
           (t (traverse tree) tree))))
 
-;;; Special version if test is given and key is identity.
-
 (defun |nsubst key=identity test=other| (new old tree test)
   (labels ((traverse (tree)
              (cond ((funcall test old (car tree))
@@ -1597,8 +1628,6 @@
     (cond ((funcall test old tree) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
-
-;;; Special version if test and key both are given.
 
 (defun |nsubst key=other-test-other| (new old tree test key)
   (labels ((traverse (tree)
@@ -1621,8 +1650,6 @@
 ;;; As with subst, we do not provide special versions for a :test-not
 ;;; of eq or eql.  See comment above for an explanation.
 
-;;; Special version if test-not is given and key is identity.
-
 (defun |nsubst key=identity test-not=other| (new old tree test)
   (labels ((traverse (tree)
              (cond ((not (funcall test old (car tree)))
@@ -1640,8 +1667,6 @@
     (cond ((not (funcall test old tree)) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
-
-;;; Special version if test-not and key both are given
 
 (defun |nsubst key=other test-not=other| (new old tree test key)
   (labels ((traverse (tree)
@@ -1689,8 +1714,6 @@
 ;;;
 ;;; Function nsubst-if
 
-;;; Special version where the key function is identity.
-
 (defun |nsubst-if key=other=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
@@ -1710,9 +1733,6 @@
     (cond ((funcall predicate tree) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
-
-;;; Special version where the key function is something other than
-;;; identity.
 
 (defun |nsubst-if key=other| (new predicate tree key)
   ;; Define a local function so as to avoid passing the new and
@@ -1743,8 +1763,6 @@
 ;;;
 ;;; Function nsubst-if-not
 
-;;; Special version where the key function is identity.
-
 (defun |nsubst-if-not key=identity| (new predicate tree)
   ;; Define a local function so as to avoid passing the new and
   ;; predicate arguments to each recursive call.
@@ -1764,9 +1782,6 @@
     (cond ((not (funcall predicate tree)) new)
           ((atom tree) tree)
           (t (traverse tree) tree))))
-
-;;; Special version where the key function is something other than
-;;; identity.
 
 (defun |nsubst-if-not key=other| (new predicate tree key)
   ;; Define a local function so as to avoid passing the new and
@@ -1819,84 +1834,60 @@
 			    :name ',function-name))
 		   (return nil))))
 
-;;; Special version when test is eq and key is identity.
-
 (defun |assoc key=identity test=eq| (item alist)
   (with-alist-elements (element alist assoc)
     (when (eq item (car element))
       (return element))))
-
-;;; Special version when test is eql and key is identity.
 
 (defun |assoc key=identity test=eql| (item alist)
   (with-alist-elements (element alist assoc)
     (when (eql item (car element))
       (return element))))
         
-;;; Special version when test is eq and key is given.
-
 (defun |assoc key=other test=eq| (item alist key)
   (with-alist-elements (element alist assoc)
     (when (eq item (funcall key (car element)))
       (return element))))
   
-;;; Special version when test is eql and key is given.
-
 (defun |assoc key=other test=eql| (item alist key)
   (with-alist-elements (element alist assoc)
     (when (eql item (funcall key (car element)))
       (return element))))
-
-;;; Special version when test is given and key is identity.
 
 (defun |assoc key=identity test=other| (item alist test)
   (with-alist-elements (element alist assoc)
     (when (funcall test item (car element))
       (return element))))
 
-;;; Special version when test and key are both given.
-
 (defun |assoc key=other-test-other| (item alist test key)
   (with-alist-elements (element alist assoc)
     (when (funcall test item (funcall key (car element)))
       (return element))))
   
-;;; Special version when test-not is eq and key is identity.
-
 (defun |assoc key=identity test-not=eq| (item alist)
   (with-alist-elements (element alist assoc)
     (when (not (eq item (car element)))
       (return element))))
-
-;;; Special version when test-not is eql and key is identity.
 
 (defun |assoc key=identity test-not=eql| (item alist)
   (with-alist-elements (element alist assoc)
     (when (not (eql item (car element)))
       (return element))))
         
-;;; Special version when test-not is eq and key is given.
-
 (defun |assoc key=other test-not=eq| (item alist key)
   (with-alist-elements (element alist assoc)
     (when (not (eq item (funcall key (car element))))
       (return element))))
   
-;;; Special version when test-not is eql and key is given.
-
 (defun |assoc key=other test-not=eql| (item alist key)
   (with-alist-elements (element alist assoc)
     (when (not (eql item (funcall key (car element))))
       (return element))))
 
-;;; Special version when test-not is given and key is identity.
-
 (defun |assoc key=identity test-not=other| (item alist test)
   (with-alist-elements (element alist assoc)
     (when (not (funcall test item (car element)))
       (return element))))
-
-;;; Special version when test-not and key are both given.
 
 (defun |assoc key=other test-not=other| (item alist test key)
   (with-alist-elements (element alist assoc)
@@ -1939,14 +1930,10 @@
 ;;;
 ;;; Function assoc-if
 
-;;; Special version when key is identity
-
 (defun |assoc-if key=other=identity| (predicate alist)
   (with-alist-elements (element alist assoc-if)
     (when (funcall predicate (car element))
       (return element))))
-
-;;; Special version when key is given
 
 (defun |assoc-if key=other| (predicate alist key)
   (with-alist-elements (element alist assoc-if)
@@ -1962,14 +1949,10 @@
 ;;;
 ;;; Function assoc-if-not
 
-;;; Special version when key is identity
-
 (defun |assoc-if-not key=identity| (predicate alist)
   (with-alist-elements (element alist assoc-if-not)
     (when (not (funcall predicate (car element)))
       (return element))))
-
-;;; Special version when key is given
 
 (defun |assoc-if-not key=other| (predicate alist key)
   (with-alist-elements (element alist assoc-if-not)
@@ -1985,84 +1968,60 @@
 ;;;
 ;;; Function rassoc
 
-;;; Special version when test is eq and key is identity.
-
 (defun |rassoc key=identity test=eq| (item alist)
   (with-alist-elements (element alist rassoc)
     (when (eq item (cdr element))
       (return element))))
-
-;;; Special version when test is eql and key is identity.
 
 (defun |rassoc key=identity test=eql| (item alist)
   (with-alist-elements (element alist rassoc)
     (when (eql item (cdr element))
       (return element))))
         
-;;; Special version when test is eq and key is given.
-
 (defun |rassoc key=other test=eq| (item alist key)
   (with-alist-elements (element alist rassoc)
     (when (eq item (funcall key (cdr element)))
       (return element))))
   
-;;; Special version when test is eql and key is given.
-
 (defun |rassoc key=other test=eql| (item alist key)
   (with-alist-elements (element alist rassoc)
     (when (eql item (funcall key (cdr element)))
       (return element))))
-
-;;; Special version when test is given and key is identity.
 
 (defun |rassoc key=identity test=other| (item alist test)
   (with-alist-elements (element alist rassoc)
     (when (funcall test item (cdr element))
       (return element))))
 
-;;; Special version when test and key are both given.
-
 (defun |rassoc key=other-test-other| (item alist test key)
   (with-alist-elements (element alist rassoc)
     (when (funcall test item (funcall key (cdr element)))
       (return element))))
   
-;;; Special version when test-not is eq and key is identity.
-
 (defun |rassoc key=identity test-not=eq| (item alist)
   (with-alist-elements (element alist rassoc)
     (when (not (eq item (cdr element)))
       (return element))))
-
-;;; Special version when test-not is eql and key is identity.
 
 (defun |rassoc key=identity test-not=eql| (item alist)
   (with-alist-elements (element alist rassoc)
     (when (not (eql item (cdr element)))
       (return element))))
         
-;;; Special version when test-not is eq and key is given.
-
 (defun |rassoc key=other test-not=eq| (item alist key)
   (with-alist-elements (element alist rassoc)
     (when (not (eq item (funcall key (cdr element))))
       (return element))))
   
-;;; Special version when test-not is eql and key is given.
-
 (defun |rassoc key=other test-not=eql| (item alist key)
   (with-alist-elements (element alist rassoc)
     (when (not (eql item (funcall key (cdr element))))
       (return element))))
 
-;;; Special version when test-not is given and key is identity.
-
 (defun |rassoc key=identity test-not=other| (item alist test)
   (with-alist-elements (element alist rassoc)
     (when (not (funcall test item (cdr element)))
       (return element))))
-
-;;; Special version when test-not and key are both given.
 
 (defun |rassoc key=other test-not=other| (item alist test key)
   (with-alist-elements (element alist rassoc)
@@ -2105,14 +2064,10 @@
 ;;;
 ;;; Function rassoc-if
 
-;;; Special version when key is identity
-
 (defun |rassoc-if key=other=identity| (predicate alist)
   (with-alist-elements (element alist rassoc-if)
     (when (funcall predicate (cdr element))
       (return element))))
-
-;;; Special version when key is given
 
 (defun |rassoc-if key=other| (predicate alist key)
   (with-alist-elements (element alist rassoc-if)
@@ -2128,14 +2083,10 @@
 ;;;
 ;;; Function rassoc-if-not
 
-;;; Special version when key is identity
-
 (defun |rassoc-if-not key=identity| (predicate alist)
   (with-alist-elements (element alist rassoc-if-not)
     (when (not (funcall predicate (cdr element)))
       (return element))))
-
-;;; Special version when key is given
 
 (defun |rassoc-if-not key=other| (predicate alist key)
   (with-alist-elements (element alist rassoc-if-not)
@@ -2150,8 +2101,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function sublis
-
-;;; Special case when test is eq and key is identity
 
 (defun |sublis key=identity test=eq| (alist tree)
   (let ((substitution-p nil))
@@ -2168,8 +2117,6 @@
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
   
-;;; Special case when test is eql and key is identity
-
 (defun |sublis key=identity test=eql| (alist tree)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
@@ -2185,8 +2132,6 @@
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
   
-;;; Special case when test is eq and key is given.
-
 (defun |sublis key=other test=eq| (alist tree key)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
@@ -2202,8 +2147,6 @@
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
   
-;;; Special case when test is eql and key is given.
-
 (defun |sublis key=other test=eql| (alist tree key)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
@@ -2219,8 +2162,6 @@
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
   
-;;; Special case when test is given and key is identity.
-
 (defun |sublis key=identity test=other| (alist tree test)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
@@ -2236,8 +2177,6 @@
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
   
-;;; Special case when test and key are both given.
-
 (defun |sublis key=other-test-other| (alist tree test key)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
@@ -2252,8 +2191,6 @@
 				(traverse (cdr tree))))))))
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
-
-;;; Special case when test-not is given and key is identity.
 
 (defun |sublis key=identity test-not=other| (alist tree test)
   (let ((substitution-p nil))
@@ -2270,8 +2207,6 @@
       (let ((new-tree (traverse tree)))
 	(if substitution-p new-tree tree)))))
   
-;;; Special case when test-not and key are both given.
-
 (defun |sublis key=other test-not=other| (alist tree test key)
   (let ((substitution-p nil))
     (labels ((traverse (tree)
@@ -2315,8 +2250,6 @@
 ;;;
 ;;; Function nsublis
 
-;;; Special case when test is eq and key is identity
-
 (defun |nsublis key=identity test=eq| (alist tree)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
@@ -2337,8 +2270,6 @@
       (cond ((not (null entry)) (cdr entry))
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
-
-;;; Special case when test is eql and key is identity
 
 (defun |nsublis key=identity test=eql| (alist tree)
   (labels ((traverse (tree)
@@ -2361,8 +2292,6 @@
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
 
-;;; Special case when test is eq and key is given.
-
 (defun |nsublis key=other test=eq| (alist tree key)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
@@ -2383,8 +2312,6 @@
       (cond ((not (null entry)) (cdr entry))
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
-
-;;; Special case when test is eql and key is given.
 
 (defun |nsublis key=other test=eql| (alist tree key)
   (labels ((traverse (tree)
@@ -2407,8 +2334,6 @@
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
 
-;;; Special case when test is given and key is identity.
-
 (defun |nsublis key=identity test=other| (alist tree test)
   (labels ((traverse (tree)
              (let ((entry (with-alist-elements (element alist nsublis)
@@ -2429,8 +2354,6 @@
       (cond ((not (null entry)) (cdr entry))
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
-
-;;; Special case when test and key are both given.
 
 (defun |nsublis key=other-test-other| (alist tree test key)
   (labels ((traverse (tree)
@@ -2473,8 +2396,6 @@
       (cond ((not (null entry)) (cdr entry))
 	    ((atom tree) tree)
 	    (t (traverse tree) tree)))))
-
-;;; Special case when test-not and key are both given.
 
 (defun |nsublis key=other test-not=other| (alist tree test key)
   (labels ((traverse (tree)

@@ -11,11 +11,11 @@ What is done:
   arguments or optional arguments.
 
   Definitions of setf expanders for all the accessors of the conses
-  dictionary except (SETF CAR), (SETF CDR), (SETF NTH). 
+  dictionary except (SETF CAR), (SETF CDR).
 
   Definitions of setf functions for all the accessors in addition to
   the setf expanders above except (SETF GETF), so that they can be
-  used with FUNCALL and APPLY, including a setf function (SETF NTH).
+  used with FUNCALL and APPLY.
 
   Definitions of all the macros in the conses dictionary. 
 
