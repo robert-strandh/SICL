@@ -13,12 +13,14 @@
 (fundoc 'car
         (fmt "Lambda list: (OBJECT)~@
               When OBJECT is a CONS cell, return the CAR of that cell.~@
-              When OBJECT is NIL, return NIL."))
+              When OBJECT is NIL, return NIL.~@
+              Otherwise signal an error of type TYPE-ERROR."))
 
 (fundoc 'cdr
         (fmt "Lambda list: (OBJECT)~@
               When OBJECT is a CONS cell, return the CDR of that cell.~@
-              When OBJECT is NIL, return NIL."))
+              When OBJECT is NIL, return NIL.~@
+              Otherwise signal an error of type TYPE-ERROR."))
 
 (defmacro make-c*r-documentation (function-name)
   (let* ((name (symbol-name function-name))
@@ -87,22 +89,31 @@
 (fundoc 'first
         (fmt "Lambda list: (LIST)~@
               Return the first element of the list LIST.~@
-              When LIST is neither a list nor NIL,~@
-              an error is signaled."))
+              When LIST is neither a CONS cell nor NIL,~@
+              an error of type TYPE-ERROR is signaled."))
 
 (defmacro make-nth-documentation (function-name number)
-  `(fundoc ',function-name
-            ,(fmt "Lambda list: (LIST)~@
-                   Return the ~a element of the list LIST.~@
-                   When LIST is a proper list with fewer than ~a element,~@
-                   NIL is returned.~@
-                   When LIST is not a proper list, and it has fewer than~@
-                   ~a elements, an error is signaled.~@
-                   In particular, when LIST is neither a list nor NIL,~@
-                   an error is signaled."
-                  (string-downcase (symbol-name function-name))
-                  number
-                  number)))
+  `(progn (fundoc ',function-name
+		  ,(fmt "Lambda list: (LIST)~@
+                          Return the ~a element of the list LIST.~@
+                          When LIST is a proper list with fewer than ~a element,~@
+                          NIL is returned.~@
+                          When LIST is not a proper list, and it has fewer than~@
+                          ~a elements, an error of type TYPE-ERROR is signaled.~@
+                          In particular, when LIST is neither a list nor NIL,~@
+                          an error of type TYPE-ERROR is signaled."
+			(string-downcase (symbol-name function-name))
+			number
+			number))
+	  (fundoc '(setf ,function-name)
+		  ,(fmt "Lambda list: (NEW-VALUE LIST)~@
+                         Replace the ~a element of LIST by NEW-VALUE,~@
+                         and return NEW-VALUE.~@
+                         If list has fewer than ~a top-level CONS cells,~@
+                         or if it an atom, then an error of type TYPE-ERROR~@
+                         is signaled."
+			(string-downcase (symbol-name function-name))
+			number))))
 
 (make-nth-documentation second  "two")
 (make-nth-documentation third   "three")
