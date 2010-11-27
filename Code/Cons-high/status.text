@@ -1,141 +1,37 @@
 What is done:
 
-  There are definitions of all c*r functions except car and cdr, 
-  and there are tests for those functions. 
+  Definitions all the functions in the conses dictionary of the
+  HyperSpec except CONS, CAR, CDR, RPLACA, RPLACD, CONSP, ATOM.
 
-  There are definitions of first, second, ..., tenth, 
-  and there are tests for those functions.
+  Definitions of special versions of many of the functions that 
+  take keyword arguments such as :key, :test, and :test-not or
+  optional arguments. 
 
-  There is a definition and a compiler macro for the list function,
-  and there are tests for it as well.
+  Compiler macros for some of the functions that take keyword
+  arguments or optional arguments.
 
-  There is a definition and a compiler macro for the list* function,
-  and there are tests for it as well.
+  Definitions of setf expanders for all the accessors of the conses
+  dictionary except (SETF CAR), (SETF CDR), (SETF NTH). 
 
-  There are definitions of the functions last, copy-list, list-length,
-  make-list, nth, and nthcdr, with tests.
+  Definitions of setf functions for all the accessors in addition to
+  the setf expanders above except (SETF GETF), so that they can be
+  used with FUNCALL and APPLY, including a setf function (SETF NTH).
 
-  Function copy-tree with tests.
+  Definitions of all the macros in the conses dictionary. 
 
-  Function tree-equal with tests.
+  Some 15 or so conditions that are special versions of the standard
+  conditions, allowing us to detect exceptional situations in much
+  greater detail than if we had just used standard conditions. 
 
-  Function endp with tests.
+  Condition reporters (US English) for our special conditions with
+  much more complete and precise messages than would have been
+  possible without our special conditions. 
 
-  mapcar (function and compiler macro) with tests.
+  Very detailed documentation strings (US English) for all the
+  functions in the conses dictionary.
 
-  mapc (function and compiler macro) with tests.
-
-  maplist (function and compiler macro), with tests.
-
-  mapl (function and compiler macro), with tests.
-
-  mapcan (function and compiler macro), with tests.  
-
-  mapcon (function and compiler macro), with tests.
-
-  append (function only), with tests.
-
-  nconc (function only), with tests.
-
-  revappend, with tests. 
-
-  nreconc, with tests.
-
-  butlast, with tests.
-
-  nbutlast, function and special case for n = 1, with tests.
-
-  subst, function with several special cases, with tests.
-
-  subst-if, function with several special cases, with tests.
-
-  subst-if-not, function with several special cases, with tests.
-
-  nsubst, function with several special cases, with tests.
-
-  nsubst-if, function with several special cases, with tests.
-
-  nsubst-if-not, function with several special cases, with tests
-
-  assoc, function with several special cases,  with tests.
-
-  assoc-if, function with several special cases, with tests.
-
-  assoc-if-not, function with several special cases, with tests.
-
-  rassoc, function with several special cases, with tests.
-
-  rassoc-if, function with several special cases, with tests.
-
-  rassoc-if-not, function with several special cases, with tests.
-
-  sublis, function with several special cases, with tests.
-
-  nsublis, function with several special cases, with tests.
-
-  member, function with several special cases, with tests.
-
-  member-if, function with two special cases, with tests.
-
-  member-if-not, function with two special cases, with tests.
-
-  null, function only, with tests.  The null type is defined
-  to be equivalent to cl:null for now. 
-
-  acons, function with tests.
-
-  pairlis, function with tests.
-
-  copy-alist, function with tests.
-
-  tailp, function with tests. 
-
-  ldiff, function with tests.
-
-  union, function with several special cases, with tests.
-
-  nunion, function with several special cases, with tests.
-
-  intersection, function with several special cases, with tests.
-
-  nintersection, function with several special cases, with tests.
-
-  set-difference, function with several special cases, with tests.
-
-  nset-difference, function with several special cases, with tests.
-
-  adjoin, function with some special cases, with tests.
-
-  set-exclusive-or, function with several special cases, with tests.
-
-  nset-exclusive-or, function with several special cases, with tests.
-
-  subsetp, function with several special cases, with tests.
-
-  getf, function, with tests.
-
-  get-properties, function, with tests. 
-
-  macro push, with tests.
-
-  macro pop, with tests.
-
-  setf expander for rest.
-
-  function (setf nth)
-
-  setf expander for getf, with tests. 
-
-  macro remf, with tests.
-
-  pushnew, macro with several special cases.  Several tests, but still
-  need tests to check for possible multiple evaluations and correct
-  evaluation order. 
-
-  There are specific conditions and English-language condition
-  reporters for those conditions. 
-
-  There are docstrings for most function. 
+  A considerable test suite with almost 2000 tests, giving us more
+  than 99% test coverage.
 
 How to test it:
 
@@ -147,17 +43,45 @@ How to test it:
 
   4. Do a (run-tests).  All tests should pass.
 
-What remains to to:
+What remains to do:
 
-  Write docstrings for types, system classes, setf expanders and
-  function named (setf ...)
+  Short term:
 
-  Make sure that every function named (setf ...) also has a
-  corresponding setf expander, and that every setf expander also has a
-  corresponding function named (setf ...).
+    Write documentation strings for types, system classes, setf
+    expanders and setf functions.
 
-  Make sure the tests cover all of the code.
+    Increase test coverage even more. 
 
-  Modify the order of arguments to specialized versions of functions
-  that take :key, :test, and :test-not keyword parameters, so as to
-  make that order uniform across all functions.
+    Write function (SETF GETF)
+
+    Write a setf expander for (SETF NTH)
+
+    Write compiler macros for functions that might otherwise have
+    substantial overhead at runtime with respect to argument parsing,
+    especially in the presence of keyword arguments. 
+
+  Medium term:
+
+    Write compiler macros for all functions taking optional and/or
+    keyword arguments. 
+
+    Performance comparisons with native implementations of
+    corresponding functions etc of common implementations of Common
+    Lisp. 
+
+    Add more comments to the code, making it have more like a literate
+    programming style, thus allowing easier access to the code by
+    people who want to learn how one might implement Common Lisp.
+
+  Long term:
+
+    Modify the order of arguments to specialized versions of functions
+    that take :key, :test, and :test-not keyword parameters, so as to
+    make that order uniform across all functions.
+
+    Add meters.  For each specialized function with significant
+    running time, tally the number of calls.  For functions operating
+    on lists, tally the length of the list.  
+
+    Add documentation strings and condition reporters for other
+    languages than US English.
