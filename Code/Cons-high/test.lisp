@@ -4003,6 +4003,10 @@
 (define-test mapc.error.5
   (assert-error 'error (mapc #'1+)))
 
+(define-test mapc.apply.error.1
+  (assert-error 'type-error
+		(apply #'mapc (list #'list '(1 2) '(3 . 4)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the maplist function
@@ -4032,6 +4036,10 @@
 
 (define-test maplist.error.5
   (assert-error 'error (maplist #'car)))
+
+(define-test maplist.apply.error.1
+  (assert-error 'type-error
+		(apply #'maplist (list #'list '(1 2) '(3 . 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4072,6 +4080,10 @@
 
 (define-test mapl.error.5
   (assert-error 'error (mapl #'car)))
+
+(define-test mapl.apply.error.1
+  (assert-error 'type-error
+		(apply #'mapl (list #'list '(1 2) '(3 . 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -4126,6 +4138,10 @@
 (define-test mapcan.error.5
   (assert-error 'error (mapcan #'car)))
 
+(define-test mapcan.apply.error.1
+  (assert-error 'type-error
+		(apply #'mapcan (list #'list '(1 2) '(3 . 4)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the mapcon function
@@ -4157,6 +4173,10 @@
 (define-test |mapcon error 3|
   (assert-error 'error
 		(mapcon #'car)))
+
+(define-test |mapcon apply error 1|
+  (assert-error 'type-error
+		(apply #'mapcon (list #'list '(1 2) '(3 . 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
