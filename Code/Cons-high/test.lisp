@@ -3371,40 +3371,44 @@
 ;;;
 ;;; Tests for the last function 
 
-(define-test last.1
+(define-test |last 1|
   (assert-equal '() (last '())))
 
-(define-test last.2
+(define-test |last 2|
   (assert-equal '(1) (last '(1))))
 
-(define-test last.3
+(define-test |last 3|
   (assert-equal '(2) (last '(1 2))))
 
-(define-test last.4
+(define-test |last 4|
   (assert-equal '(1 . 2) (last '(1 . 2))))
 
-(define-test last.5
+(define-test |last 5|
   (assert-equal '(2 3) (last '(1 2 3) 2)))
 
-(define-test last.6
+(define-test |last 6|
   (assert-equal '(1 2 . 3) (last '(1 2 . 3) 2)))
 
-(define-test last.7
+(define-test |last 7|
   (assert-equal '(2 3 . 4) (last '(1 2 3 . 4) 2)))
 
-(define-test last.8
+(define-test |last 8|
   (assert-equal '(1 2 3) (last '(1 2 3) 3)))
 
-(define-test last.9
+(define-test |last 9|
   (assert-equal '(1 2 3) (last '(1 2 3) 4)))
 
-(define-test last.error.1
+(define-test |last error 1|
   (assert-error 'type-error
 		(last 1)))
 
-(define-test last.error.2
+(define-test |last error 2|
   (assert-error 'type-error
 		(last '(1) 'a)))
+
+(define-test |last apply error 1|
+  (assert-error 'type-error
+		(apply #'last (list 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
