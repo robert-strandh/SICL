@@ -2763,259 +2763,477 @@
 ;;;
 ;;; Tests for the (setf first) function and setf expander
 
-(define-test setf.first.1
+(define-test |setf first 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (first list) 1))
     (assert-equal '(1 0 0 0 0 0 0 0 0 0) list)))
 
-(define-test setf.first.error.1
+(define-test |setf first error 1|
   (let ((list '()))
     (assert-error 'type-error
 		  (setf (first list) 1))))
 		  
-(define-test setf.first.1
+(define-test |setf first 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (first list) 1))
     (assert-equal '(1 0 0 0 0 0 0 0 0 0) list)))
 
-(define-test setf.first.error.1
+(define-test |setf first error 1|
   (let ((list '()))
     (assert-error 'type-error
 		  (setf (first list) 1))))
+		  
+(define-test |setf first apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf first) (list 1 list)))
+    (assert-equal '(1 0 0 0 0 0 0 0 0 0) list)))
+
+(define-test |setf first apply error 1|
+  (let ((list '()))
+    (assert-error 'type-error
+		  (apply #'(setf first) (list 1 list)))))
+		  
+(define-test |setf first apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf first) (list 1 list)))
+    (assert-equal '(1 0 0 0 0 0 0 0 0 0) list)))
+
+(define-test |setf first apply error 1|
+  (let ((list '()))
+    (assert-error 'type-error
+		  (apply #'(setf first) (list 1 list)))))
 		  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf second) function and setf expander
 
-(define-test setf.second.1
+(define-test |setf second 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (second list) 1))
     (assert-equal '(0 1 0 0 0 0 0 0 0 0) list)))
 
-(define-test setf.second.error.1
+(define-test |setf second error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 0 list)) 1)
     (assert-error 'type-error
 		  (setf (second list) 1))))
 		  
-(define-test setf.second.1
+(define-test |setf second 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (second list) 1))
     (assert-equal '(0 1 0 0 0 0 0 0 0 0) list)))
 
-(define-test setf.second.error.1
+(define-test |setf second error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 0 list)) 1)
     (assert-error 'type-error
 		  (setf (second list) 1))))
+		  
+(define-test |setf second apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf second) (list 1 list)))
+    (assert-equal '(0 1 0 0 0 0 0 0 0 0) list)))
+
+(define-test |setf second apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 0 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf second) (list 1 list)))))
+		  
+(define-test |setf second apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf second) (list 1 list)))
+    (assert-equal '(0 1 0 0 0 0 0 0 0 0) list)))
+
+(define-test |setf second apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 0 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf second) (list 1 list)))))
 		  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf third) function and setf expander
 
-(define-test setf.third.1
+(define-test |setf third 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (third list) 1))
     (assert-equal '(0 0 1 0 0 0 0 0 0 0) list)))
 
-(define-test setf.third.error.1
+(define-test |setf third error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 1 list)) 1)
     (assert-error 'type-error
 		  (setf (third list) 1))))
 
-(define-test setf.third.1
+(define-test |setf third 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (third list) 1))
     (assert-equal '(0 0 1 0 0 0 0 0 0 0) list)))
 
-(define-test setf.third.error.1
+(define-test |setf third error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 1 list)) 1)
     (assert-error 'type-error
 		  (setf (third list) 1))))
+
+(define-test |setf third apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf third) (list 1 list)))
+    (assert-equal '(0 0 1 0 0 0 0 0 0 0) list)))
+
+(define-test |setf third apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 1 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf third) (list 1 list)))))
+
+(define-test |setf third apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf third) (list 1 list)))
+    (assert-equal '(0 0 1 0 0 0 0 0 0 0) list)))
+
+(define-test |setf third apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 1 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf third) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf fourth) function and setf expander
 
-(define-test setf.fourth.1
+(define-test |setf fourth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (fourth list) 1))
     (assert-equal '(0 0 0 1 0 0 0 0 0 0) list)))
 
-(define-test setf.fourth.error.1
+(define-test |setf fourth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 2 list)) 1)
     (assert-error 'type-error
 		  (setf (fourth list) 1))))
 
-(define-test setf.fourth.1
+(define-test |setf fourth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (fourth list) 1))
     (assert-equal '(0 0 0 1 0 0 0 0 0 0) list)))
 
-(define-test setf.fourth.error.1
+(define-test |setf fourth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 2 list)) 1)
     (assert-error 'type-error
 		  (setf (fourth list) 1))))
+
+(define-test |setf fourth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf fourth) (list 1 list)))
+    (assert-equal '(0 0 0 1 0 0 0 0 0 0) list)))
+
+(define-test |setf fourth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 2 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf fourth) (list 1 list)))))
+
+(define-test |setf fourth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf fourth) (list 1 list)))
+    (assert-equal '(0 0 0 1 0 0 0 0 0 0) list)))
+
+(define-test |setf fourth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 2 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf fourth) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf fifth) function and setf expander
 
-(define-test setf.fifth.1
+(define-test |setf fifth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (fifth list) 1))
     (assert-equal '(0 0 0 0 1 0 0 0 0 0) list)))
 
-(define-test setf.fifth.error.1
+(define-test |setf fifth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 3 list)) 1)
     (assert-error 'type-error
 		  (setf (fifth list) 1))))
 
-(define-test setf.fifth.1
+(define-test |setf fifth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (fifth list) 1))
     (assert-equal '(0 0 0 0 1 0 0 0 0 0) list)))
 
-(define-test setf.fifth.error.1
+(define-test |setf fifth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 3 list)) 1)
     (assert-error 'type-error
 		  (setf (fifth list) 1))))
+
+(define-test |setf fifth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf fifth) (list 1 list)))
+    (assert-equal '(0 0 0 0 1 0 0 0 0 0) list)))
+
+(define-test |setf fifth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 3 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf fifth) (list 1 list)))))
+
+(define-test |setf fifth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf fifth) (list 1 list)))
+    (assert-equal '(0 0 0 0 1 0 0 0 0 0) list)))
+
+(define-test |setf fifth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 3 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf fifth) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf sixth) function and setf expander
 
-(define-test setf.sixth.1
+(define-test |setf sixth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (sixth list) 1))
     (assert-equal '(0 0 0 0 0 1 0 0 0 0) list)))
 
-(define-test setf.sixth.error.1
+(define-test |setf sixth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 4 list)) 1)
     (assert-error 'type-error
 		  (setf (sixth list) 1))))
 
-(define-test setf.sixth.1
+(define-test |setf sixth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (sixth list) 1))
     (assert-equal '(0 0 0 0 0 1 0 0 0 0) list)))
 
-(define-test setf.sixth.error.1
+(define-test |setf sixth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 4 list)) 1)
     (assert-error 'type-error
 		  (setf (sixth list) 1))))
+
+(define-test |setf sixth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf sixth) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 1 0 0 0 0) list)))
+
+(define-test |setf sixth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 4 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf sixth) (list 1 list)))))
+
+(define-test |setf sixth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf sixth) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 1 0 0 0 0) list)))
+
+(define-test |setf sixth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 4 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf sixth) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf seventh) function and setf expander
 
-(define-test setf.seventh.1
+(define-test |setf seventh 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (seventh list) 1))
     (assert-equal '(0 0 0 0 0 0 1 0 0 0) list)))
 
-(define-test setf.seventh.error.1
+(define-test |setf seventh error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 5 list)) 1)
     (assert-error 'type-error
 		  (setf (seventh list) 1))))
 		  
-(define-test setf.seventh.1
+(define-test |setf seventh 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (seventh list) 1))
     (assert-equal '(0 0 0 0 0 0 1 0 0 0) list)))
 
-(define-test setf.seventh.error.1
+(define-test |setf seventh error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 5 list)) 1)
     (assert-error 'type-error
 		  (setf (seventh list) 1))))
+		  
+(define-test |setf seventh apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf seventh) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 0 1 0 0 0) list)))
+
+(define-test |setf seventh apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 5 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf seventh) (list 1 list)))))
+		  
+(define-test |setf seventh apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf seventh) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 0 1 0 0 0) list)))
+
+(define-test |setf seventh apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 5 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf seventh) (list 1 list)))))
 		  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf eighth) function and setf expander
 
-(define-test setf.eighth.1
+(define-test |setf eighth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (eighth list) 1))
     (assert-equal '(0 0 0 0 0 0 0 1 0 0) list)))
 
-(define-test setf.eighth.error.1
+(define-test |setf eighth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 6 list)) 1)
     (assert-error 'type-error
 		  (setf (eighth list) 1))))
 		  
-(define-test setf.eighth.1
+(define-test |setf eighth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (eighth list) 1))
     (assert-equal '(0 0 0 0 0 0 0 1 0 0) list)))
 
-(define-test setf.eighth.error.1
+(define-test |setf eighth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 6 list)) 1)
     (assert-error 'type-error
 		  (setf (eighth list) 1))))
+		  
+(define-test |setf eighth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf eighth) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 0 0 1 0 0) list)))
+
+(define-test |setf eighth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 6 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf eighth) (list 1 list)))))
+		  
+(define-test |setf eighth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf eighth) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 0 0 1 0 0) list)))
+
+(define-test |setf eighth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 6 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf eighth) (list 1 list)))))
 		  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf ninth) function and setf expander
 
-(define-test setf.ninth.1
+(define-test |setf ninth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (ninth list) 1))
     (assert-equal '(0 0 0 0 0 0 0 0 1 0) list)))
 
-(define-test setf.ninth.error.1
+(define-test |setf ninth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 7 list)) 1)
     (assert-error 'type-error
 		  (setf (ninth list) 1))))
 		  
-(define-test setf.ninth.1
+(define-test |setf ninth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (ninth list) 1))
     (assert-equal '(0 0 0 0 0 0 0 0 1 0) list)))
 
-(define-test setf.ninth.error.1
+(define-test |setf ninth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 7 list)) 1)
     (assert-error 'type-error
 		  (setf (ninth list) 1))))
+		  
+(define-test |setf ninth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf ninth) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 0 0 0 1 0) list)))
+
+(define-test |setf ninth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 7 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf ninth) (list 1 list)))))
+		  
+(define-test |setf ninth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf ninth) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 0 0 0 1 0) list)))
+
+(define-test |setf ninth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 7 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf ninth) (list 1 list)))))
 		  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for the (setf tenth) function and setf expander
 
-(define-test setf.tenth.1
+(define-test |setf tenth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (tenth list) 1))
     (assert-equal '(0 0 0 0 0 0 0 0 0 1) list)))
 
-(define-test setf.tenth.error.1
+(define-test |setf tenth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 8 list)) 1)
     (assert-error 'type-error
 		  (setf (tenth list) 1))))
 		  
-(define-test setf.tenth.1
+(define-test |setf tenth 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (assert-equal 1 (setf (tenth list) 1))
     (assert-equal '(0 0 0 0 0 0 0 0 0 1) list)))
 
-(define-test setf.tenth.error.1
+(define-test |setf tenth error 1|
   (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
     (setf (cdr (nthcdr 8 list)) 1)
     (assert-error 'type-error
 		  (setf (tenth list) 1))))
+		  
+(define-test |setf tenth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf tenth) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 0 0 0 0 1) list)))
+
+(define-test |setf tenth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 8 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf tenth) (list 1 list)))))
+		  
+(define-test |setf tenth apply 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (assert-equal 1 (apply #'(setf tenth) (list 1 list)))
+    (assert-equal '(0 0 0 0 0 0 0 0 0 1) list)))
+
+(define-test |setf tenth apply error 1|
+  (let ((list (copy-tree '(0 0 0 0 0 0 0 0 0 0))))
+    (setf (cdr (nthcdr 8 list)) 1)
+    (assert-error 'type-error
+		  (apply #'(setf tenth) (list 1 list)))))
 		  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
