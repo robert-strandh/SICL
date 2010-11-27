@@ -15,7 +15,10 @@ What is done:
 
   Definitions of setf functions for all the accessors in addition to
   the setf expanders above except (SETF GETF), so that they can be
-  used with FUNCALL and APPLY.
+  used with FUNCALL and APPLY.  It is not possible to write a setf
+  function for GETF because GETF takes another place as an argument,
+  and that place needs to be expanded by the setf expander, which
+  is not possible with a setf function.
 
   Definitions of all the macros in the conses dictionary. 
 
@@ -51,10 +54,6 @@ What remains to do:
     expanders and setf functions.
 
     Increase test coverage even more. 
-
-    Write function (SETF GETF)
-
-    Write a setf expander for (SETF NTH)
 
     Write compiler macros for functions that might otherwise have
     substantial overhead at runtime with respect to argument parsing,
