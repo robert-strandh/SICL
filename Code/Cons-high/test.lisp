@@ -3257,17 +3257,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the setf expander for rest
+;;; Tests for the setf expander and setf function for rest
 
-(define-test setf.rest.1
+(define-test |setf-rest 1|
   (let ((list (copy-list '(0))))
     (assert-equal 1 (setf (rest list) 1))
     (assert-equal '(0 . 1) list)))
 
-(define-test setf.rest.error.1
+(define-test |setf-rest error 1|
   (let ((list 1))
     (assert-error 'type-error
 		  (setf (rest list) 1))))
+
+(define-test |setf-rest apply 1|
+  (let ((list (copy-list '(0))))
+    (assert-equal 1 (apply #'(setf rest) (list 1 list)))
+    (assert-equal '(0 . 1) list)))
+
+(define-test |setf-rest apply error 1|
+  (let ((list 1))
+    (assert-error 'type-error
+		  (apply #'(setf rest) (list 1 list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -3584,7 +3594,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Tests for the (setf nth) function
+;;; Tests for the (setf nth) function and setf expander
 
 (define-test |setf-nth 1|
   (let ((list (copy-list '(0 0 0))))
@@ -3619,6 +3629,40 @@
 (define-test |setf-nth error 5|
   (assert-error 'error
 		(setf (nth 'a (copy-list '(0))) 1)))
+
+(define-test |setf-nth apply 1|
+  (let ((list (copy-list '(0 0 0))))
+    (assert-equal 1
+		  (apply #'(setf nth) (list 1 0 list)))
+    (assert-equal '(1 0 0)
+		  list)))
+
+(define-test |setf-nth apply 1|
+  (let ((list (copy-list '(0 0 0))))
+    (assert-equal 1
+		  (apply #'(setf nth) (list 1 2 list)))
+    (assert-equal '(0 0 1)
+		  list)))
+
+(define-test |setf-nth apply error 1|
+  (assert-error 'error
+		(apply #'(setf nth) (list 1 0 '()))))
+
+(define-test |setf-nth apply error 2|
+  (assert-error 'error
+		(apply #'(setf nth) (list 1 1 (copy-list '(0))))))
+
+(define-test |setf-nth apply error 3|
+  (assert-error 'error
+		(apply #'(setf nth) (list 1 2 (copy-list '(0))))))
+
+(define-test |setf-nth apply error 4|
+  (assert-error 'error
+		(apply #'(setf nth) (list 1 -1 (copy-list '(0))))))
+
+(define-test |setf-nth apply error 5|
+  (assert-error 'error
+		(apply #'(setf nth) (list 1 'a (copy-list '(0))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
