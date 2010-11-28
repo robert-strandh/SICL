@@ -373,15 +373,11 @@
           return element
 	finally (tail-must-be-proper-list 'find list remaining)))
 
-(defun |find seq-type=list from-end=t end=nil test=eq key=identity|
-    (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
-	for element = (car remaining)
-        when (eq item element)
-          do (setf value element)
-        finally (tail-must-be-proper-list 'find list remaining)
-		(return value)))
+;;; We do not supply a special version for
+;;; seq-type=list from-end=t end=nil test=eq key=identity
+;;; because there is no way to distinguish between the
+;;; eq elements of the list, so we might as well take the first one
+;;; as in the case from-end=nil
 
 (defun |find seq-type=list from-end=t end=nil test=eq key=other|
     (item list start key)
@@ -413,15 +409,11 @@
         finally (tail-must-be-proper-list 'find list remaining)
 		(return value)))
 
-(defun |find seq-type=list from-end=t end=nil test=eql key=identity|
-    (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
-	for element = (car remaining)
-        when (eql item element)
-          do (setf value element)
-        finally (tail-must-be-proper-list 'find list remaining)
-		(return value)))
+;;; We do not supply a special version for
+;;; seq-type=list from-end=t end=nil test=eql key=identity
+;;; because there is no way to distinguish between the
+;;; eql elements of the list, so we might as well take the first one
+;;; as in the case from-end=nil
 
 (defun |find seq-type=list from-end=t end=nil test=eql key=other|
     (item list start key)
@@ -493,16 +485,11 @@
         finally (tail-must-be-proper-list 'find list remaining)
 		(return value)))
 
-(defun |find seq-type=list from-end=t end=other test=eq key=identity|
-    (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
-	for element = (car remaining)
-        repeat (- end start)
-        when (eq item element)
-          do (setf value element)
-        finally (tail-must-be-proper-list 'find list remaining)
-		(return value)))
+;;; We do not supply a special version for
+;;; seq-type=list from-end=t end=other test=eq key=identity
+;;; because there is no way to distinguish between the
+;;; eq elements of the list, so we might as well take the first one
+;;; as in the case from-end=nil
 
 (defun |find seq-type=list from-end=t end=other test=eq key=other|
     (item list start end key)
@@ -537,16 +524,11 @@
         finally (tail-must-be-proper-list 'find list remaining)
 		(return value)))
 
-(defun |find seq-type=list from-end=t end=other test=eql key=identity|
-    (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
-	for element = (car remaining)
-        repeat (- end start)
-        when (eql item element)
-          do (setf value element)
-        finally (tail-must-be-proper-list 'find list remaining)
-		(return value)))
+;;; We do not supply a special version for
+;;; seq-type=list from-end=t end=other test=eql key=identity
+;;; because there is no way to distinguish between the
+;;; eql elements of the list, so we might as well take the first one
+;;; as in the case from-end=nil
 
 (defun |find seq-type=list from-end=t end=other test=eql key=other|
     (item list start end key)
@@ -1016,7 +998,9 @@
        (|find seq-type=vector from-end=t test=eq key=identity|
         item sequence start (length sequence)))
     (list
-       (|find seq-type=list from-end=t end=nil test=eq key=identity|
+       ;; We use from-end=nil instead because there is no way
+       ;; to tell the difference. 
+       (|find seq-type=list from-end=nil end=nil test=eq key=identity|
         item sequence start))))
 
 (defun |find from-end=t end=nil test=eq key=other|
@@ -1056,7 +1040,9 @@
        (|find seq-type=vector from-end=t test=eql key=identity|
         item sequence start (length sequence)))
     (list
-       (|find seq-type=list from-end=t end=nil test=eql key=identity|
+       ;; We use from-end=nil instead because there is no way
+       ;; to tell the difference. 
+       (|find seq-type=list from-end=nil end=nil test=eql key=identity|
         item sequence start))))
 
 (defun |find from-end=t end=nil test=eql key=other|
@@ -1136,7 +1122,9 @@
        (|find seq-type=vector from-end=t test=eq key=identity|
         item sequence start end))
     (list
-       (|find seq-type=list from-end=t end=other test=eq key=identity|
+       ;; We use from-end=nil instead because there is no way
+       ;; to tell the difference. 
+       (|find seq-type=list from-end=nil end=other test=eq key=identity|
         item sequence start end))))
 
 (defun |find from-end=t end=other test=eq key=other|
@@ -1176,7 +1164,9 @@
        (|find seq-type=vector from-end=t test=eql key=identity|
         item sequence start end))
     (list
-       (|find seq-type=list from-end=t end=other test=eql key=identity|
+       ;; We use from-end=nil instead because there is no way
+       ;; to tell the difference
+       (|find seq-type=list from-end=nil end=other test=eql key=identity|
         item sequence start end))))
 
 (defun |find from-end=t end=other test=eql key=other|
