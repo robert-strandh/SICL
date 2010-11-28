@@ -270,20 +270,74 @@
    nil
    (find 1 '(0 1 2) :end 1 :test 'eql)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1a|
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 2a|
   (assert-equal
-   nil
-   (find 3 '(0 1 2) :end 4)))
+   1
+   (find 1 '(0 1 2) :end 2)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 2b|
+  (assert-equal
+   1
+   (find 1 '(0 1 2) :end 2 :test #'eql)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 2c|
+  (assert-equal
+   1
+   (find 1 '(0 1 2) :end 2 :test 'eql)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1a|
+  (assert-error 'type-error
+		(find 3 '(0 1 2) :end 4)))
 
 (define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1b|
-  (assert-equal
-   nil
-   (find 3 '(0 1 2) :end 4 :test #'eql)))
+  (assert-error 'type-error
+		(find 3 '(0 1 2) :end 4 :test #'eql)))
 
 (define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1c|
+  (assert-error 'type-error
+		(find 3 '(0 1 2) :end 4 :test 'eql)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 1a|
   (assert-equal
    nil
-   (find 3 '(0 1 2) :end 4 :test 'eql)))
+   (find 2 '(0 1 2) :end 1 :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 1b|
+  (assert-equal
+   nil
+   (find 2 '(0 1 2) :end 1 :test #'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 1c|
+  (assert-equal
+   nil
+   (find 2 '(0 1 2) :end 1 :test 'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 2a|
+  (assert-equal
+   1
+   (find 2 '(0 1 2) :end 2 :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 2b|
+  (assert-equal
+   1
+   (find 2 '(0 1 2) :end 2 :test #'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 2c|
+  (assert-equal
+   1
+   (find 2 '(0 1 2) :end 2 :test 'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=other 1a|
+  (assert-error 'type-error
+		(find 4 '(0 1 2) :end 4 :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=other 1b|
+  (assert-error 'type-error
+		(find 4 '(0 1 2) :end 4 :test #'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=other 1c|
+  (assert-error 'type-error
+		(find 4 '(0 1 2) :end 4 :test 'eql :key #'1+)))
 
 (define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 1b|
   (assert-equal
@@ -295,15 +349,559 @@
    nil
    (find 'b '(a b c) :end 1 :test 'eq)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=identity 1b|
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 2b|
   (assert-equal
-   nil
-   (find 'd '(a b c) :end 4 :test #'eq)))
+   'b
+   (find 'b '(a b c) :end 2 :test #'eq)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 2c|
+  (assert-equal
+   'b
+   (find 'b '(a b c) :end 2 :test 'eq)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=identity 1b|
+  (assert-error 'type-error
+		(find 'd '(a b c) :end 4 :test #'eq)))
 
 (define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=identity 1c|
+  (assert-error 'type-error
+		(find 'd '(a b c) :end 4 :test 'eq)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=other 1b|
   (assert-equal
    nil
-   (find 'd '(a b c) :end 4 :test 'eq)))
+   (find 'c '(a b c) :end 1 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=other 1c|
+  (assert-equal
+   nil
+   (find 'c '(a b c) :end 1 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=other 2b|
+  (assert-equal
+   'b
+   (find 'c '(a b c) :end 2 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=other 2c|
+  (assert-equal
+   'b
+   (find 'c '(a b c) :end 2 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=other 1b|
+  (assert-error 'type-error
+		(find 'e '(a b c) :end 4 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=other 1c|
+  (assert-error 'type-error
+		(find 'e '(a b c) :end 4 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=identity 1a|
+  (assert-equal
+   nil
+   (find '1 '(1 1 1) :end 2 :test-not #'eql)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=identity 1b|
+  (assert-equal
+   nil
+   (find '1 '(1 1 1) :end 2 :test-not 'eql)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=identity 2a|
+  (assert-equal
+   2
+   (find '1 '(1 2 1) :end 2 :test-not #'eql)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=identity 2b|
+  (assert-equal
+   2
+   (find '1 '(1 2 1) :end 2 :test-not 'eql)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=other 1a|
+  (assert-equal
+   nil
+   (find '2 '(1 1 1) :end 2 :test-not #'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=other 1b|
+  (assert-equal
+   nil
+   (find '2 '(1 1 1) :end 2 :test-not 'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=other 2a|
+  (assert-equal
+   2
+   (find '2 '(1 2 1) :end 2 :test-not #'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=other 2b|
+  (assert-equal
+   2
+   (find '2 '(1 2 1) :end 2 :test-not 'eql :key #'1+)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=identity 1a|
+  (assert-equal
+   nil
+   (find 'a '(a a a) :end 2 :test-not #'eq)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=identity 1b|
+  (assert-equal
+   nil
+   (find 'a '(a a a) :end 2 :test-not 'eq)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=identity 2a|
+  (assert-equal
+   'b
+   (find 'a '(a b a) :end 2 :test-not #'eq)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=identity 2b|
+  (assert-equal
+   'b
+   (find 'a '(a b a) :end 2 :test-not 'eq)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=other 1a|
+  (assert-equal
+   nil
+   (find 'b '(a a a) :end 2 :test-not #'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=other 1b|
+  (assert-equal
+   nil
+   (find 'b '(a a a) :end 2 :test-not 'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=other 2a|
+  (assert-equal
+   'b
+   (find 'b '(a b a) :end 2 :test-not #'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=other 2b|
+  (assert-equal
+   'b
+   (find 'b '(a b a) :end 2 :test-not 'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 1a|
+  (let ((element '(1)))
+    (assert-equal
+     nil
+     (find element #()))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 1b|
+  (let ((element '(1)))
+    (assert-equal
+     nil
+     (find element #() :test #'eql))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 1c|
+  (let ((element '(1)))
+    (assert-equal
+     nil
+     (find element #() :test 'eql))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 2a|
+  (assert-equal
+   1
+   (find 1 #(0 1 2))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 2b|
+  (assert-equal
+   1
+   (find 1 #(0 1 2) :test #'eql)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 2c|
+  (assert-equal
+   1
+   (find 1 #(0 1 2) :test 'eql)))
+
+(define-test |find seq-type=vector start=error from-end=nil test=eql key=identity 2a|
+  (assert-error 'type-error
+		(find 1 #(0 1 2) :start 'a)))
+
+(define-test |find seq-type=vector start=error from-end=nil test=eql key=identity 2b|
+  (assert-error 'type-error
+		(find 1 #(0 1 2) :test #'eql :start 4)))
+
+(define-test |find seq-type=vector start=error from-end=nil test=eql key=identity 2c|
+  (assert-error 'type-error
+		(find 1 #(0 1 2) :test #'eql :start -1)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 1a|
+  (let ((element '(1)))
+    (assert-equal
+     nil
+     (find element #() :key #'1+))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 1b|
+  (let ((element '(1)))
+    (assert-equal
+     nil
+     (find element #() :test #'eql :key #'1+))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 1c|
+  (let ((element '(1)))
+    (assert-equal
+     nil
+     (find element #() :test 'eql :key #'1+))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 2a|
+  (assert-equal
+   1
+   (find 2 #(0 1 2) :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 2b|
+  (assert-equal
+   1
+   (find 2 #(0 1 2) :test #'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 2a|
+  (assert-equal
+   1
+   (find 2 #(0 1 2) :test 'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eq key=identity error 1a|
+  (let ((element '(a)))
+    (assert-eq
+     nil
+     (find element #() :test #'eq))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eq key=identity 1b|
+  (let ((element '(a)))
+    (assert-eq
+     nil
+     (find element #() :test 'eq))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eq key=identity 2|
+  (let ((element (copy-tree '(a))))
+    (assert-eq
+     nil
+     (find element #((a)) :test #'eq))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eq key=identity 3|
+  (let ((element (copy-tree '(a))))
+    (assert-eq
+     element
+     (find element (vector '(a) element '(a)) :test #'eq))))
+
+(define-test |find seq-type=vector start=other from-end=nil test=eq key=identity 1|
+  (let ((element (copy-tree '(a))))
+    (assert-eq
+     element
+     (find element (vector '(a) element '(a)) :test #'eq :start 1))))
+
+(define-test |find seq-type=vector start=other from-end=nil test=eq key=identity 2|
+  (let ((element (copy-tree '(a))))
+    (assert-eq
+     element
+     (find element (vector '(a) element '(a)) :test #'eq :start 1))))
+
+(define-test |find seq-type=vector start=other from-end=nil test=eq key=other 1|
+  (let ((element (copy-tree '(a))))
+    (assert-eq
+     element
+     (car (find element (vector '((a)) (list element) '((a)))
+		:test #'eq :start 1 :key #'car)))))
+
+(define-test |find seq-type=vector start=other from-end=nil test=eq key=other 2|
+  (let ((element (copy-tree '(a))))
+    (assert-eq
+     element
+     (car (find element (vector '((a)) (list element) '((a)))
+		:test #'eq :start 1 :key #'car)))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=identity 1a|
+  (assert-equal
+   1
+   (find 0 #(0 1 2) :test-not #'eql)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=identity 1b|
+  (assert-equal
+   1
+   (find 0 #(0 1 2) :test-not 'eql)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=identity 2a|
+  (assert-equal
+   nil
+   (find 0 #(0 0 0) :test-not #'eql)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=identity 2b|
+  (assert-equal
+   nil
+   (find 0 #(0 0 0) :test-not 'eql)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=other 1a|
+  (assert-equal
+   1
+   (find 1 #(0 1 2) :test-not #'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=other 1b|
+  (assert-equal
+   1
+   (find 1 #(0 1 2) :test-not 'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=other 2a|
+  (assert-equal
+   nil
+   (find 1 #(0 0 0) :test-not #'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=other 2b|
+  (assert-equal
+   nil
+   (find 1 #(0 0 0) :test-not 'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=identity 1a|
+  (assert-equal
+   'a
+   (find 'z #(z a b) :test-not #'eq)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=identity 1b|
+  (assert-equal
+   'a
+   (find 'z #(z a b) :test-not 'eq)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=identity 2a|
+  (assert-equal
+   nil
+   (find 'z #(z z z) :test-not #'eq)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=identity 2b|
+  (assert-equal
+   nil
+   (find 'z #(z z z) :test-not 'eq)))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=other 1a|
+  (assert-equal
+   'a
+   (find 'a #(z a b) :test-not #'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=other 1b|
+  (assert-equal
+   'a
+   (find 'a #(z a b) :test-not 'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=other 2a|
+  (assert-equal
+   nil
+   (find 'a #(z z z) :test-not #'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
+
+(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=other 2b|
+  (assert-equal
+   nil
+   (find 'a #(z z z) :test-not 'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 1a|
+  (assert-equal
+   nil
+   (find 1 #(0 1 2) :end 1)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 1b|
+  (assert-equal
+   nil
+   (find 1 #(0 1 2) :end 1 :test #'eql)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 1c|
+  (assert-equal
+   nil
+   (find 1 #(0 1 2) :end 1 :test 'eql)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 2a|
+  (assert-equal
+   1
+   (find 1 #(0 1 2) :end 2)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 2b|
+  (assert-equal
+   1
+   (find 1 #(0 1 2) :end 2 :test #'eql)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 2c|
+  (assert-equal
+   1
+   (find 1 #(0 1 2) :end 2 :test 'eql)))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=identity 1a|
+  (assert-error 'type-error
+		(find 3 #(0 1 2) :end 4)))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=identity 1b|
+  (assert-error 'type-error
+		(find 3 #(0 1 2) :end 4 :test #'eql)))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=identity 1c|
+  (assert-error 'type-error
+		(find 3 #(0 1 2) :end 4 :test 'eql)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 1a|
+  (assert-equal
+   nil
+   (find 2 #(0 1 2) :end 1 :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 1b|
+  (assert-equal
+   nil
+   (find 2 #(0 1 2) :end 1 :test #'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 1c|
+  (assert-equal
+   nil
+   (find 2 #(0 1 2) :end 1 :test 'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 2a|
+  (assert-equal
+   1
+   (find 2 #(0 1 2) :end 2 :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 2b|
+  (assert-equal
+   1
+   (find 2 #(0 1 2) :end 2 :test #'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 2c|
+  (assert-equal
+   1
+   (find 2 #(0 1 2) :end 2 :test 'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=other 1a|
+  (assert-error 'type-error
+		(find 4 #(0 1 2) :end 4 :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=other 1b|
+  (assert-error 'type-error
+		(find 4 #(0 1 2) :end 4 :test #'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=other 1c|
+  (assert-error 'type-error
+		(find 4 #(0 1 2) :end 4 :test 'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=identity 1b|
+  (assert-equal
+   nil
+   (find 'b #(a b c) :end 1 :test #'eq)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=identity 1c|
+  (assert-equal
+   nil
+   (find 'b #(a b c) :end 1 :test 'eq)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=identity 2b|
+  (assert-equal
+   'b
+   (find 'b #(a b c) :end 2 :test #'eq)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=identity 2c|
+  (assert-equal
+   'b
+   (find 'b #(a b c) :end 2 :test 'eq)))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eq key=identity 1b|
+  (assert-error 'type-error
+		(find 'd #(a b c) :end 4 :test #'eq)))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eq key=identity 1c|
+  (assert-error 'type-error
+		(find 'd #(a b c) :end 4 :test 'eq)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=other 1b|
+  (assert-equal
+   nil
+   (find 'c #(a b c) :end 1 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=other 1c|
+  (assert-equal
+   nil
+   (find 'c #(a b c) :end 1 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=other 2b|
+  (assert-equal
+   'b
+   (find 'c #(a b c) :end 2 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=other 2c|
+  (assert-equal
+   'b
+   (find 'c #(a b c) :end 2 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eq key=other 1b|
+  (assert-error 'type-error
+		(find 'e #(a b c) :end 4 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=vector start=0 end=error from-end=nil test=eq key=other 1c|
+  (assert-error 'type-error
+		(find 'e #(a b c) :end 4 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=identity 1a|
+  (assert-equal
+   nil
+   (find '1 #(1 1 1) :end 2 :test-not #'eql)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=identity 1b|
+  (assert-equal
+   nil
+   (find '1 #(1 1 1) :end 2 :test-not 'eql)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=identity 2a|
+  (assert-equal
+   2
+   (find '1 #(1 2 1) :end 2 :test-not #'eql)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=identity 2b|
+  (assert-equal
+   2
+   (find '1 #(1 2 1) :end 2 :test-not 'eql)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=other 1a|
+  (assert-equal
+   nil
+   (find '2 #(1 1 1) :end 2 :test-not #'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=other 1b|
+  (assert-equal
+   nil
+   (find '2 #(1 1 1) :end 2 :test-not 'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=other 2a|
+  (assert-equal
+   2
+   (find '2 #(1 2 1) :end 2 :test-not #'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=other 2b|
+  (assert-equal
+   2
+   (find '2 #(1 2 1) :end 2 :test-not 'eql :key #'1+)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=identity 1a|
+  (assert-equal
+   nil
+   (find 'a #(a a a) :end 2 :test-not #'eq)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=identity 1b|
+  (assert-equal
+   nil
+   (find 'a #(a a a) :end 2 :test-not 'eq)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=identity 2a|
+  (assert-equal
+   'b
+   (find 'a #(a b a) :end 2 :test-not #'eq)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=identity 2b|
+  (assert-equal
+   'b
+   (find 'a #(a b a) :end 2 :test-not 'eq)))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=other 1a|
+  (assert-equal
+   nil
+   (find 'b #(a a a) :end 2 :test-not #'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=other 1b|
+  (assert-equal
+   nil
+   (find 'b #(a a a) :end 2 :test-not 'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=other 2a|
+  (assert-equal
+   'b
+   (find 'b #(a b a) :end 2 :test-not #'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
+
+(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=other 2b|
+  (assert-equal
+   'b
+   (find 'b #(a b a) :end 2 :test-not 'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
