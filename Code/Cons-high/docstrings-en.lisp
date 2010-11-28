@@ -16,11 +16,35 @@
               When OBJECT is NIL, return NIL.~@
               Otherwise signal an error of type TYPE-ERROR."))
 
+(fundoc '(setf car)
+	(fmt "Lambda list: (NEW-VALUE OBJECT)~@
+              When OBJECT is a CONS cell, replace the CAR of that CONS cell~@
+              by NEW-VALUE, and return NEW-VALUE.~@
+              Otherwise signal an error of type TYPE-ERROR."))
+
+(setf (documentation 'car 'setf)
+      (fmt "Syntax: (SETF (CAR OBJECT) NEW-VALUE)~@
+            When OBJECT is a CONS cell, replace the CAR of that CONS cell~@
+            by NEW-VALUE, and return NEW-VALUE.~@
+            Otherwise signal an error of type TYPE-ERROR."))
+
 (fundoc 'cdr
         (fmt "Lambda list: (OBJECT)~@
               When OBJECT is a CONS cell, return the CDR of that cell.~@
               When OBJECT is NIL, return NIL.~@
               Otherwise signal an error of type TYPE-ERROR."))
+
+(fundoc '(setf cdr)
+	(fmt "Lambda list: (NEW-VALUE OBJECT)~@
+              When OBJECT is a CONS cell, replace the CDR of that CONS cell~@
+              by NEW-VALUE, and return NEW-VALUE.~@
+              Otherwise signal an error of type TYPE-ERROR."))
+
+(setf (documentation 'cdr 'setf)
+      (fmt "Syntax: (SETF (CDR OBJECT) NEW-VALUE)~@
+            When OBJECT is a CONS cell, replace the CDR of that CONS cell~@
+            by NEW-VALUE, and return NEW-VALUE.~@
+            Otherwise signal an error of type TYPE-ERROR."))
 
 (defmacro make-c*r-documentation (function-name)
   (let* ((name (symbol-name function-name))
@@ -43,8 +67,18 @@
 				  for letter in (butlast letters)
 				  do (setf form
 					   (list (primitive letter) form))
-				  finally (return form))))))))
-             
+				  finally (return form))))
+	      (setf (documentation ',function-name 'setf)
+		    ,(fmt "Syntax: (SETF (~a OBJECT) NEW-VALUE)~@
+                           Equivalent to (SETF (C~aR ~a) NEW-VALUE)"
+			  function-name
+			  (car (last letters))
+			  (loop with form = 'list
+				for letter in (butlast letters)
+				do (setf form
+					 (list (primitive letter) form))
+				finally (return form))))))))
+			  
 (make-c*r-documentation caar)
 (make-c*r-documentation cadr)
 (make-c*r-documentation cdar)
@@ -113,7 +147,17 @@
                          or if it an atom, then an error of type TYPE-ERROR~@
                          is signaled."
 			(string-downcase (symbol-name function-name))
-			number))))
+			number))
+	  (setf (documentation ',function-name 'setf)
+		    ,(fmt "Syntax: (SETF (~a OBJECT) NEW-VALUE)~@
+                          Replace the ~a element of LIST by NEW-VALUE,~@
+			  and return NEW-VALUE.~@
+			  If list has fewer than ~a top-level CONS cells,~@
+			  or if it an atom, then an error of type TYPE-ERROR~@
+			  is signaled."
+			  function-name
+			  (string-downcase (symbol-name function-name))
+			  number))))
 
 (make-nth-documentation second  "two")
 (make-nth-documentation third   "three")
@@ -142,6 +186,20 @@
               an error is signaled.~@
               When N is not a non-negative integer, an error~@
               of type TYPE-ERROR is signaled."))
+
+(fundoc '(setf nth)
+	(fmt "Lambda list: (NEW-VALUE N LIST)~@
+              Replace the Nth element of LIST by NEW-VALUE,~@
+              where N=0 indicates the first element of the LIST.~@
+	      The LIST must have more than N top-level CONS cells.~@
+	      If not, an error of type TYPE-ERROR is signaled."))
+
+(setf (documentation 'nth 'setf)
+      (fmt "Syntax: (setf (nth N LIST) NEW-VALUE~@
+            Replace the Nth element of LIST by NEW-VALUE,~@
+            where N=0 indicates the first element of the LIST.~@
+            The LIST must have more than N top-level CONS cells.~@
+            If not, an error of type TYPE-ERROR is signaled."))
 
 (fundoc 'nthcdr
         (fmt "Lambda list: (N LIST)~@
@@ -555,6 +613,18 @@
               If LIST is NIL, then NIL is returned.~@
               If LIST is an atom other than NIL, then an error of type TYPE-ERROR~@
               is signaled."))
+
+(fundoc '(setf rest)
+	(fmt "Lambda list: (NEW-VALUE LIST)~@
+              When LIST is a CONS cell, replace the CDR of that CONS cell~@
+              by NEW-VALUE, and return NEW-VALUE.~@
+              Otherwise signal an error of type TYPE-ERROR."))
+
+(setf (documentation 'rest 'setf)
+      (fmt "Syntax: (SETF (CAR LIST) NEW-VALUE)~@
+            When LIST is a CONS cell, replace the CAR of that CONS cell~@
+            by NEW-VALUE, and return NEW-VALUE.~@
+            Otherwise signal an error of type TYPE-ERROR."))
 
 (fundoc 'member
 	(fmt "Lambda list: (ITEM LIST &key KEY TEST TEST-NOT)~@
@@ -1213,3 +1283,112 @@
               NUNION may destroy any part of LIST-1 and any part of LIST-2~@
               The result may share structure with LIST-1 and/or LIST-2."))
 
+(setf (documentation 'getf 'setf)
+      (fmt "Syntax: (SETF (GETF PLACE INDICATOR &optional DEFAULT) NEW-VALUE)~@
+            where PLACE is a place whose value is a property list,~@
+            INDICATR, DEFAULT, and NEW-VALUE are any objects.~@
+            The NEW-VALUE is associated with the INDICATOR of the property list~@
+            that is the value of PLACE.  This can happen in two different ways.~@
+            First, if INDICATOR is identical (as compared by EQ) to an existing~@
+            indicator on the property list that is the value of PLACE,~@
+            then NEW-VALUE becomes the new property value associated with that~@
+            indicator.  If there are several such indicators on the property list,~@
+            the NEW-VALUE gets associated with the first one.~@
+            Second, if there is no indicator on the property list identical~@
+            (as compared by EQ) to INDICATOR, then a new association between~@
+            INDICATOR and NEW-VALUE is added to the property list that is the~@
+            value of PLACE.  This might require the PLACE itsef to be modified.~@
+            SETF of GETF may modify any part of the property list that is the~@
+            value of PLACE, or it may modify the value of PLACE itself.~@
+            The consequences are undefined if the value of PLACE is not a~@
+            property list."))
+
+(fundoc 'push
+	(fmt "Lambda list: (ITEM PLACE)~@
+              where ITEM is any object, and PLACE is a place whose value~@
+              may be any object.  PLACE is not evaluated.~@
+              PUSH replaces the value of PLACE by a CONS of the ITEM and the~@
+              old value of PLACE, and then returns ITEM.~@
+              (PUSH ITEM PLACE) is equivalent to (SETF PLACE (CONS ITEM PLACE),~@
+              except that subforms of PLACE are evaluated only once."))
+
+(fundoc 'pop
+	(fmt "Lambda list: (PLACE)~@
+              where PLACE is a place whose value must be a list,~@
+              i.e, a CONS cell or NIL.  PLACE is not evaluated.~@
+              POP remembers the CAR of the list that is the value of PLACE,~@
+              replaces the value of PLACE by the CDR of that value, and finally~@
+              returns the remembered value.~@
+              If the value of PLACE is NIL, then NIL is returned, and the value~@
+              of PLACE remains NIL.~@
+              (POP ITEM PLACE) is equivalent to 
+              (PROG1 (CAR PLACE) (SETF PLACE (CDR PLACE))), except that suforms~@
+              of PLACE are evaluated only once.~@
+              If the value of PLACE is not a LIST, then an error of type TYPE-ERROR~@
+              is signaled."))
+
+(fundoc 'remf
+	(fmt "Lambda list: (PLACE INDICATOR)~@
+              where PLACE whose value is a property list,~@
+              and INDICATOR is any object.  PLACE is not evaluated.~@
+              If the property list that is the value of PLACE contains an~@
+              indicator that is identical (as compared by EQ) to INDICATOR,~@
+              then that indicator and its associated value are destructively~@
+              removed from the property list.  If there are several such indicators~@
+              only the first one and its associated value are removed.~@
+              REMF returns true if any any matching indicator was found,~@
+              otherwise it returns false.~@
+              REMF may modify any part of the property list that is the value~@
+              of PLACE, or it may modify the value of PLACE itself.~@
+              The consequences are undefined if the value of PLACE is not a~@
+              property list."))
+
+(fundoc 'pushnew
+	(fmt "Lambda list: (ITEM PLACE &key KEY TEST TEST-NOT)~@
+              where ITEM is any object, and PLACE is a PLACE~@
+              whose value is a proper list.  PLACE is not evaluated.~@
+              KEY is is a designator of a function of one argument~@
+              or NIL, which means IDENTITY.~@
+              TEST and TEST-NOT are designators for functions of two~@
+              arguments that return a generalized boolean.  The default~@
+              if neither TEST nor TEST-NOT is given is a TEST of EQL.~@
+              The list that is the value of PLACE is checked for an occurrence~@
+              of ITEM.  To determine whether the item is the same as an element~@
+              of the list, KEY is first applied to both the ITEM and the element.~@
+              Then, if TEST is given, the TEST is applied to the result of applying~@
+              the KEY function to ITEM and to the element, in that order.~@
+              If the TEST returns true for some element of the list,~@
+              then the list is not altered. Otherwise the value of PLACE is replaced~@
+              by the CONS of the ITEM and that value.~@
+              If instead TEST-NOT is given, the TEST-NOT is applied to the result of~@
+              applying the KEY function to ITEM and to the element, in that order.~@
+              If the TEST-NOT returns false for some element of the list,~@
+              then the list is not altered. Otherwise the value of PLACE is replaced~@
+              by the CONS of the ITEM and that value.~@
+              The consequences are undefined if the value of PLACE is not a~@
+              proper list."))
+
+(setf (documentation 'list 'type)
+      (fmt "System class LIST.~@
+            Class precedence list: LIST, SEQUENCE, T~@
+            A LIST is a chain of CONS cells linked by their CDR,~@
+            or NIL which is considered to be the empty LIST.~@
+            The elements of the list are the contents of the CAR of each CONS cell.~@
+            A LIST is a proper LIST if it is either the empty list (NIL),~@
+            or a chain of CONS cells terminated by NIL.~@
+            A LIST is a dotted LIST if it starts with a CONS cell, and is~@
+            terminated by an atom other than NIL.~@
+            A LIST is a circular LIST if it starts with a CONS cell, and~@
+            none of its top-level CONS cells contains an atom in its CDR.~@
+            As a type, LIST is equivalent to (or CONS NULL)."))
+
+(setf (documentation 'null 'type)
+      (fmt "System class NULL.~@
+            Class precedence list: NULL, SYMBOL, LIST, SEQUENCE, T~@
+            The NULL type contains only one object: NIL, which is also~@
+            the empty list."))
+
+(setf (documentation 'cons 'type)
+      (fmt "System class CONS.~@
+            Class precedence list: CONS LIST, SEQUENCE, T~@
+            The CONS system class contains all CONS cells."))

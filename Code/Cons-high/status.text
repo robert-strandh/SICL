@@ -31,7 +31,8 @@ What is done:
   possible without our special conditions. 
 
   Very detailed documentation strings (US English) for all the
-  functions in the conses dictionary.
+  functions, setf functions, setf expanders, macros, and types of the
+  conses dictionary.
 
   A considerable test suite with almost 2000 tests, giving us more
   than 99% test coverage.
@@ -50,9 +51,6 @@ What remains to do:
 
   Short term:
 
-    Write documentation strings for types, system classes, setf
-    expanders and setf functions.
-
     Increase test coverage even more. 
 
     Write compiler macros for functions that might otherwise have
@@ -64,9 +62,9 @@ What remains to do:
     Write compiler macros for all functions taking optional and/or
     keyword arguments. 
 
-    Performance comparisons with native implementations of
+    Conduct performance comparisons with native implementations of
     corresponding functions etc of common implementations of Common
-    Lisp. 
+    Lisp.
 
     Add more comments to the code, making it have more like a literate
     programming style, thus allowing easier access to the code by
