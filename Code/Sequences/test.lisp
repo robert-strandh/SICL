@@ -255,6 +255,56 @@
    nil
    (find 'a '(z z z) :test-not 'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 1a|
+  (assert-equal
+   nil
+   (find 1 '(0 1 2) :end 1)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 1b|
+  (assert-equal
+   nil
+   (find 1 '(0 1 2) :end 1 :test #'eql)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 1c|
+  (assert-equal
+   nil
+   (find 1 '(0 1 2) :end 1 :test 'eql)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1a|
+  (assert-equal
+   nil
+   (find 3 '(0 1 2) :end 4)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1b|
+  (assert-equal
+   nil
+   (find 3 '(0 1 2) :end 4 :test #'eql)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1c|
+  (assert-equal
+   nil
+   (find 3 '(0 1 2) :end 4 :test 'eql)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 1b|
+  (assert-equal
+   nil
+   (find 'b '(a b c) :end 1 :test #'eq)))
+
+(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 1c|
+  (assert-equal
+   nil
+   (find 'b '(a b c) :end 1 :test 'eq)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=identity 1b|
+  (assert-equal
+   nil
+   (find 'd '(a b c) :end 4 :test #'eq)))
+
+(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=identity 1c|
+  (assert-equal
+   nil
+   (find 'd '(a b c) :end 4 :test 'eq)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function find-if
