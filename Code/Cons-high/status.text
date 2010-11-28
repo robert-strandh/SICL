@@ -70,6 +70,8 @@ What remains to do:
     programming style, thus allowing easier access to the code by
     people who want to learn how one might implement Common Lisp.
 
+    Improve documentation strings for types and system classes.
+
   Long term:
 
     Modify the order of arguments to specialized versions of functions
