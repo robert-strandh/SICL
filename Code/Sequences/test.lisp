@@ -610,24 +610,84 @@
   (assert-error 'type-error (find-if 'null '(a b c . d))))
 
 (define-test find-if.error.5
-  (assert-error 'program-error (find-if)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda () (find-if)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.6
-  (assert-error 'program-error (find-if #'null)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda () (find-if #'null)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.7
-  (assert-error 'program-error (find-if #'null nil :bad t)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda () (find-if #'null nil :bad t)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.8
-  (assert-error 'program-error
-		 (find-if #'null nil :bad t :allow-other-keys nil))
-  t)
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (find-if #'null nil :bad t :allow-other-keys nil)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.9
-  (assert-error 'program-error (find-if #'null nil 1 1)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (find-if #'null nil 1 1)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.10
-  (assert-error 'program-error (find-if #'null nil :key)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (find-if #'null nil :key)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
+
+(define-test find-if.error.11
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda () (find-if)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if.error.11
   (assert-error 'type-error (locally (find-if #'null 'b) t)))
@@ -1270,36 +1330,85 @@
                 (find-if-not 'identity '(a b c . d))))
 
 (define-test find-if-not.error.5
-  (assert-error 'program-error (find-if-not)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda () (find-if-not)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.6
-  (assert-error 'program-error (find-if-not #'null)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda () (find-if-not #'null)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.7
-  (assert-error 'program-error (find-if-not #'null nil :bad t)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda () (find-if-not #'null nil :bad t)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.8
-  (assert-error 'program-error
-                (find-if-not #'null nil :bad t :allow-other-keys nil)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (find-if-not #'null nil :bad t :allow-other-keys nil)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.9
-  (assert-error 'program-error (find-if-not #'null nil 1 1)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (find-if-not #'null nil 1 1)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test find-if-not.error.10
-  (assert-error 'program-error (find-if-not #'null nil :key)))
-
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (find-if-not #'null nil :key)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
+    
 (define-test find-if-not.error.11
   (assert-error 'type-error (locally (find-if-not #'null 'b) t)))
 
 (define-test find-if-not.error.12
   (assert-error 'program-error (find-if-not #'cons '(a b c))))
-
+    
 (define-test find-if-not.error.13
   (assert-error 'type-error (find-if-not #'car '(a b c))))
 
 (define-test find-if-not.error.14
-  (assert-error 'program-error
-                (find-if-not #'identity '(a b c) :key #'cons)))
+  (assert-error 'program-error (find-if-not #'identity '(a b c) :key #'cons)))
 
 (define-test find-if-not.error.15
   (assert-error 'type-error
@@ -1480,10 +1589,28 @@
        (list (length (the (simple-base-string 5) (%f))) i)))))
 
 (define-test length.error.6
-  (assert-error 'program-error (length)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (length)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test length.error.7
-  (assert-error 'program-error (length nil nil)))
+  (let ((fun nil)
+	(warned nil))
+    (handler-bind ((warning (lambda (condition)
+			      (setf warned t)
+			      (muffle-warning condition))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (length nil nil)))))
+    (assert-true warned)
+    (assert-error 'program-error (funcall fun))))
 
 (define-test length.error.8
   (assert-error 'type-error (locally (length 'a) t)))
