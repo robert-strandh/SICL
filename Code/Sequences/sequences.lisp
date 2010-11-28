@@ -105,6 +105,12 @@
 (define-condition invalid-sequence-index-type (type-error name-mixin)
   ())
 
+(define-condition invalid-start-index-type (invalid-sequence-index-type)
+  ())
+
+(define-condition invalid-end-index-type (invalid-sequence-index-type)
+  ())
+
 ;;; This is the base class of conditions that need to report
 ;;; some problem relative to a particular sequence.
 (define-condition invalid-sequence-index (type-error name-mixin)
@@ -133,12 +139,6 @@
 ;;; short, or if it is not a proper list.  Also check that start is a
 ;;; nonnegative integer.
 (defun skip-to-start (name list start)
-  (when (or (not (integerp start))
-	    (minusp start))
-    (error 'invalid-sequence-index-type
-	   :name name
-	   :datum start
-	   :expected-type '(integer 0)))
   (let ((start-bis start)
 	(remaining list))
     (loop until (zerop start-bis)
@@ -1257,9 +1257,15 @@
              (start 0)
              end
              key)
-  ;; FIXME do this better
-  (assert (not (minusp start)))
-  (assert (or (null test) (null test-not)))
+  (when (or (not (integerp start))
+	    (minusp start))
+    (error 'invalid-start-index-type
+	   :name 'find
+	   :datum start
+	   :expected-type '(integer 0)))
+  (when (and test test-not)
+    (error 'both-test-and-test-not-given
+	   :name 'find))
   (if from-end
       (if key
           (if end
@@ -1321,7 +1327,7 @@
                               (|find from-end=t end=other test-not=eq key=identity|
                                item sequence start end)
                               (|find from-end=t end=other test-not=other key=identity|
-                               item sequence start end test)))
+                               item sequence start end test-not)))
                       (|find from-end=t end=other test=eql key=identity|
                        item sequence start end)))
               (if test
@@ -1341,7 +1347,7 @@
                               (|find from-end=t end=nil test-not=eq key=identity|
                                item sequence start)
                               (|find from-end=t end=nil test-not=other key=identity|
-                               item sequence start test)))
+                               item sequence start test-not)))
                       (|find from-end=t end=nil test=eql key=identity|
                        item sequence start)))))
       (if key
@@ -1404,7 +1410,7 @@
                               (|find from-end=nil end=other test-not=eq key=identity|
                                item sequence start end)
                               (|find from-end=nil end=other test-not=other key=identity|
-                               item sequence start end test)))
+                               item sequence start end test-not)))
                       (|find from-end=nil end=other test=eql key=identity|
                        item sequence start end)))
               (if test
@@ -1424,7 +1430,7 @@
                               (|find from-end=nil end=nil test-not=eq key=identity|
                                item sequence start)
                               (|find from-end=nil end=nil test-not=other key=identity|
-                               item sequence start test)))
+                               item sequence start test-not)))
                       (|find from-end=nil end=nil test=eql key=identity|
                        item sequence start)))))))
 
@@ -1697,8 +1703,12 @@
                 (start 0)
                 (end nil)
                 (key nil))
-  ;; FIXME do this better
-  (assert (not (minusp start)))
+  (when (or (not (integerp start))
+	    (minusp start))
+    (error 'invalid-start-index-type
+	   :name 'find-if
+	   :datum start
+	   :expected-type '(integer 0)))
   (if from-end
       (if key
           (if end
@@ -2062,8 +2072,12 @@
 		    (start 0)
 		    (end nil)
 		    (key nil))
-  ;; FIXME do this better
-  (assert (not (minusp start)))
+  (when (or (not (integerp start))
+	    (minusp start))
+    (error 'invalid-start-index-type
+	   :name 'find-if-not
+	   :datum start
+	   :expected-type '(integer 0)))
   (if from-end
       (if key
           (if end
@@ -3230,9 +3244,15 @@
              (start 0)
              end
              key)
-  ;; FIXME do this better
-  (assert (not (minusp start)))
-  (assert (or (null test) (null test-not)))
+  (when (or (not (integerp start))
+	    (minusp start))
+    (error 'invalid-start-index-type
+	   :name 'position
+	   :datum start
+	   :expected-type '(integer 0)))
+  (when (and test test-not)
+    (error 'both-test-and-test-not-given
+	   :name 'position))
   (if from-end
       (if key
           (if end
@@ -3666,8 +3686,12 @@
                 (start 0)
                 (end nil)
                 (key nil))
-  ;; FIXME do this better
-  (assert (not (minusp start)))
+  (when (or (not (integerp start))
+	    (minusp start))
+    (error 'invalid-start-index-type
+	   :name 'position
+	   :datum start
+	   :expected-type '(integer 0)))
   (if from-end
       (if key
           (if end
@@ -4031,8 +4055,12 @@
 		    (start 0)
 		    (end nil)
 		    (key nil))
-  ;; FIXME do this better
-  (assert (not (minusp start)))
+  (when (or (not (integerp start))
+	    (minusp start))
+    (error 'invalid-start-index-type
+	   :name 'position
+	   :datum start
+	   :expected-type '(integer 0)))
   (if from-end
       (if key
           (if end
