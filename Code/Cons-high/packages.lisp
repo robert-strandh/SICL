@@ -1,3 +1,19 @@
+;;;; Copyright (c) 2008, 2009, 2010
+;;;;
+;;;;     Robert Strandh (strandh@labri.fr)
+;;;;
+;;;; all rights reserved. 
+;;;;
+;;;; Permission is hereby granted to use this software for any 
+;;;; purpose, including using, modifying, and redistributing it.
+;;;;
+;;;; The software is provided "as-is" with no warranty.  The user of
+;;;; this software assumes any responsibility of the consequences. 
+
+;;;; This file is part of the cons-high module of the SICL project.
+;;;; See the file SICL.text for a description of the project. 
+;;;; See the file cons-high.text for a description of the module.
+
 ;;; The symbols that are shadowed from the COMMON-LISP package
 ;;; are also symbols that we want to export.  To avoid repeating 
 ;;; that list of symbols, we use the reader macros #= and ##. 
