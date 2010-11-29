@@ -905,7 +905,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function find-if
+;;; Tests for function find-if
 
 (define-test find-if-list.1
   (assert-equal 'nil
@@ -1582,7 +1582,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function find-if-not
+;;; Tests for function find-if-not
 
 (define-test find-if-not-list.1
   (assert-equal
@@ -2292,7 +2292,7 @@
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Test length
+;;; Tests for function length
 
 (define-test length.list.1
   (assert-equal
@@ -2514,7 +2514,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Test remove
+;;; Tests for function remove
 
 (define-test test.remove.list.1
   (assert-equal
@@ -2573,7 +2573,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; 
-;;; Function substitute
+;;; Tests for function substitute
 
 (define-test |substitute seq-type=list start=0 end=nil test=eql count=nil key=identity 1|
   (assert-equal
@@ -2844,4 +2844,2296 @@
   (assert-error
    'type-error
    (substitute 'b 'c '((c) (c)) :start 3 :test #'eq :key #'car)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=0 end=nil from-end=nil
+
+;;; Check that it works with the empty list and no explicitly given test, 
+;;; and no explicit start given.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1a|
+  (assert-equal nil
+		(find 1 '())))
+
+;;; Check that it works with the empty list and :test #'eql given
+;;; and no explicit start given.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1b|
+  (assert-equal nil
+		(find 1 '() :test #'eql)))
+
+;;; Check that it works with the empty list and :test 'eql given
+;;; and no explicit start given.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1c|
+  (assert-equal nil
+		(find 1 '() :test 'eql)))
+
+;;; Check that it works with the empty list and no explicitly given test, 
+;;; and an explicit start of 0 given.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1a|
+  (assert-equal nil
+		(find 1 '() :start 0)))
+
+;;; Check that it works with the empty list and :test #'eql given
+;;; and an explicit start of 0 given.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1b|
+  (assert-equal nil
+		(find 1 '() :start 0 :test #'eql)))
+
+;;; Check that it works with the empty list and :test 'eql given
+;;; and an explicit start of 0 given.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1c|
+  (assert-equal nil
+		(find 1 '() :start 0 :test 'eql)))
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=other end=true from-end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eql key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=eq key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eql key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=eq key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test-not=other key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eql key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=eq key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test=other key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eql key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=eq key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=identity start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=0
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=0 end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=0 end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=0 end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=0 end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=0 end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=0 end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=other
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=other end=nil
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=other end=nil from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=other end=nil from-end=t
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=other end=true
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
+
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=vector test-not=other key=other start=other end=true from-end=t
+
+;;; ************** ADD MORE TESTS HERE
 
