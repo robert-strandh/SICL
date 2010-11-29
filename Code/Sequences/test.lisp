@@ -2,6 +2,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Objects that can be used in various tests.
+
+;;; Define large integers, the point being that bignums that are eql
+;;; might not be eq, allowing us to distinguish those two cases.
+
+;;; Define a large value, hopefully a bignum.
+(defparameter *i01* #.(expt 10 100))
+
+;;; Define the same large value, hoping that the compiler
+;;; will keep them apart, so they aren't eq.  Tests won't
+;;; fail if that is not true, but they might give false positives. 
+(defparameter *i02* #.(expt 10 100))
+
+;;; Define a few more large distinct values
+
+(defparameter *i1* #.(+ (expt 10 100) 1))
+(defparameter *i2* #.(+ (expt 10 100) 2))
+(defparameter *i3* #.(+ (expt 10 100) 3))
+(defparameter *i4* #.(+ (expt 10 100) 4))
+(defparameter *i5* #.(+ (expt 10 100) 5))
+(defparameter *i6* #.(+ (expt 10 100) 6))
+(defparameter *i7* #.(+ (expt 10 100) 7))
+(defparameter *i8* #.(+ (expt 10 100) 8))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Tests for function find
 
 (define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity 1a|
