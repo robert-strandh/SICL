@@ -3138,6 +3138,24 @@
   (assert-equal nil
 		(position (list 'a) (list (list 'a)) :test 'eql :from-end t)))
 
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=true 7a|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1) :from-end t)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=true 7b|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1) :test #'eql :from-end t)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=true 7c|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1) :test 'eql :from-end t)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
