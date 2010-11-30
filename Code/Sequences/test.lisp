@@ -4634,6 +4634,56 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=0 end=other from-end=false
 
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 1b|
+  (assert-equal 2
+		(position *l01* (list (list *l1*) (list *l02*) (list *l01*) (list *l2*))
+			  :test #'eq :end 3 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 1c|
+  (assert-equal 2
+		(position *l01* (list (list *l1*) (list *l02*) (list *l01*) (list *l2*))
+			  :test 'eq :end 3 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 2b|
+  (assert-equal 1
+		(position *l01* (list (list *l1*) (list *l01*) (list *l01*) (list *l2*))
+			  :test #'eq :end 2 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 2c|
+  (assert-equal 1
+		(position *l01* (list (list *l1*) (list *l01*) (list *l01*) (list *l2*))
+			  :test 'eq :end 2 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 3b|
+  (assert-equal nil
+		(position *l01* (list (list *l1*) (list *l02*) (list *l01*) (list *l2*))
+			  :test #'eq :end 1 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 3c|
+  (assert-equal nil
+		(position *l01* (list (list *l1*) (list *l02*) (list *l01*) (list *l2*))
+			  :test 'eq :end 1 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 6b|
+  (assert-error 'type-error
+		(position 'a 1
+			  :test #'eq :end 0 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 6c|
+  (assert-error 'type-error
+		(position 'a 1
+			  :test 'eq :end 0 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 7b|
+  (assert-error 'type-error
+		(position 'a '((list b) (list b) . b)
+			  :test #'eq :end 3 :key #'car)))
+
+(define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 7c|
+  (assert-error 'type-error
+		(position 'a '((list b) (list b) . b)
+			  :test 'eq :end 3 :key #'car)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
