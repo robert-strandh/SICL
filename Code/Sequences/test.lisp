@@ -2880,25 +2880,35 @@
 ;;; Tests for function position
 ;;; with seq-type=list
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=identity
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -2994,6 +3004,42 @@
 (define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 5c|
   (assert-equal nil
 		(position (list 'a) (list (list 'a)) :test 'eql)))
+
+;;; Check that we get a type error when we pass something that is not
+;;; a sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 6a|
+  (assert-error 'type-error
+		(position 0 1)))
+
+;;; Check that we get a type error when we pass something that is not
+;;; a sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 6b|
+  (assert-error 'type-error
+		(position 0 1 :test #'eql)))
+
+;;; Check that we get a type error when we pass something that is not
+;;; a sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 6c|
+  (assert-error 'type-error
+		(position 0 1 :test 'eql)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 7a|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1))))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 7b|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1) :test #'eql)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 7c|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1) :test 'eql)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -3099,6 +3145,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3118,10 +3166,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3196,10 +3248,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=identity start=other end=true from-end=nil
+
+;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3218,10 +3274,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3242,6 +3302,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3261,10 +3323,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3285,6 +3351,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3304,20 +3372,28 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3357,10 +3433,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3381,6 +3461,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3400,15 +3482,21 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3429,6 +3517,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3448,10 +3538,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3472,6 +3566,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3491,20 +3587,28 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3525,6 +3629,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3544,10 +3650,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3568,6 +3678,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3587,15 +3699,21 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3616,6 +3734,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3635,10 +3755,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3659,6 +3783,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3678,20 +3804,28 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3712,6 +3846,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3731,10 +3867,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3755,6 +3895,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3774,15 +3916,21 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3803,6 +3951,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3822,10 +3972,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3846,6 +4000,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3865,20 +4021,28 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3899,6 +4063,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3918,10 +4084,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3942,6 +4112,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -3961,15 +4133,21 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -3990,6 +4168,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4009,10 +4189,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4033,6 +4217,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4052,20 +4238,28 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4086,6 +4280,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4105,10 +4301,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4129,6 +4329,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4148,15 +4350,21 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4177,6 +4385,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4196,10 +4406,14 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4220,6 +4434,8 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=other key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4239,25 +4455,35 @@
 ;;; Tests for function position
 ;;; with seq-type=vector
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4278,6 +4504,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4297,10 +4525,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4321,6 +4553,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4340,15 +4574,21 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4369,6 +4609,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4388,10 +4630,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4412,6 +4658,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4431,20 +4679,28 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4465,6 +4721,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4484,10 +4742,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4508,6 +4770,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4527,15 +4791,21 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4556,6 +4826,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4575,10 +4847,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4599,6 +4875,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eq key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4618,20 +4896,28 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4652,6 +4938,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4671,10 +4959,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4695,6 +4987,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4714,15 +5008,21 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4743,6 +5043,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4762,10 +5064,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4786,6 +5092,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=other key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4805,20 +5113,28 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4839,6 +5155,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4858,10 +5176,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4882,6 +5204,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4901,15 +5225,21 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4930,6 +5260,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4949,10 +5281,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -4973,6 +5309,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eql key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -4992,20 +5330,28 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -5026,6 +5372,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -5045,10 +5393,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -5069,6 +5421,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -5088,15 +5442,21 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -5117,6 +5477,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -5136,10 +5498,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -5160,6 +5526,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=eq key=other start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -5179,20 +5547,28 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=identity
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=identity start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=identity start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -5213,6 +5589,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=identity start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -5232,10 +5610,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=identity start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=identity start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -5256,6 +5638,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=identity start=other end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -5275,15 +5659,21 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=other start=0
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=other start=0 end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -5304,6 +5694,8 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=other start=0 end=true
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
@@ -5323,10 +5715,14 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=other start=other
 
+;;; DO NOT PUT TESTS HERE
+
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=other start=other end=nil
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
@@ -5346,6 +5742,8 @@
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test-not=other key=other start=other end=true
+
+;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
