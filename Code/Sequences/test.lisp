@@ -5057,6 +5057,62 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=0 end=nil from-end=false
 
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 1b|
+  (assert-equal nil
+		(position *l01* '() :test-not #'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 1c|
+  (assert-equal nil
+		(position *l01* '() :test-not 'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 2b|
+  (assert-equal nil
+		(position *l01* '() :start 0 :test-not #'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 2c|
+  (assert-equal nil
+		(position *l01* '() :start 0 :test-not 'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 3b|
+  (assert-equal 1
+		(position *l01* (list *l01* *l1* *l02* *l2*) :test-not #'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 3c|
+  (assert-equal 1
+		(position *l01* (list *l01* *l1* *l02* *l2*) :test-not 'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 4b|
+  (assert-equal nil
+		(position *l01* (list *l01* *l01* *l01*) :test-not #'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 4c|
+  (assert-equal nil
+		(position *l01* (list *l01* *l01* *l01*) :test-not 'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 5b|
+  (assert-equal 0
+		(position (list *l1*) (list (list *l1*)) :test-not #'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 5c|
+  (assert-equal 0
+		(position (list *l1*) (list (list *l1*)) :test-not 'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 6b|
+  (assert-error 'type-error
+		(position 'a 1 :test-not #'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 6c|
+  (assert-error 'type-error
+		(position 'a 1 :test-not 'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 7b|
+  (assert-error 'type-error
+		(position 'b '(b b . b) :test-not #'eq)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=false 7c|
+  (assert-error 'type-error
+		(position 'b '(b b . b) :test-not 'eq)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
