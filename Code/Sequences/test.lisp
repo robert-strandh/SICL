@@ -3234,19 +3234,19 @@
   (assert-equal nil
 		(position *i01* (list *i1* *i02* *i2*) :test 'eql :start 2)))
 
-;;; Check that we do not find n eql number because of the value of start
+;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is implicit.
 (define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 4a|
   (assert-error 'type-error
 		(position *i01* (list *i1* *i02* *i2*) :start 4)))
 
-;;; Check that we do not find n eql number because of the value of start
+;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is explicit by passing the function.
 (define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 4b|
   (assert-error 'type-error
 		(position *i01* (list *i1* *i02* *i2*) :test #'eql :start 4)))
 
-;;; Check that we do not find n eql number because of the value of start
+;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is explicit by passing the name of the function. 
 (define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 4c|
   (assert-error 'type-error
@@ -3465,6 +3465,156 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=0 end=nil from-end=t
 
+;;; Check that it works with the empty list and no explicitly given test, 
+;;; and no explicit start given.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 1a|
+  (assert-equal nil
+		(position 1 '()
+			  :key #'car :from-end t)))
+
+;;; Check that it works with the empty list and :test #'eql given
+;;; and no explicit start given.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 1b|
+  (assert-equal nil
+		(position 1 '()
+			  :test #'eql :key #'car :from-end t)))
+
+;;; Check that it works with the empty list and :test 'eql given
+;;; and no explicit start given.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 1c|
+  (assert-equal nil
+		(position 1 '()
+			  :test 'eql :key #'car :from-end t)))
+
+;;; Check that it works with the empty list and no explicitly given test, 
+;;; and an explicit start of 0 given.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 2a|
+  (assert-equal nil
+		(position 1 '()
+			  :start 0 :key #'car :from-end t)))
+
+;;; Check that it works with the empty list and :test #'eql given
+;;; and an explicit start of 0 given.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 2b|
+  (assert-equal nil
+		(position 1 '()
+			  :start 0 :test #'eql :key #'car :from-end t)))
+
+;;; Check that it works with the empty list and :test 'eql given
+;;; and an explicit start of 0 given.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 2c|
+  (assert-equal nil
+		(position 1 '()
+			  :start 0 :test 'eql :key #'car :from-end t)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 3a|
+  (let ((element (list *i02*)))
+    (assert-equal 2
+		  (position *i01* (list (list *i1*) (list *i01*) element (list *i2*))
+			    :key #'car :from-end t))))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 3b|
+  (let ((element (list *i02*)))
+    (assert-equal 2
+		  (position *i01* (list (list *i1*) (list *i01*) element (list *i2*))
+			    :test #'eql :key #'car :from-end t))))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 3c|
+  (let ((element (list *i02*)))
+    (assert-equal 2
+		  (position *i01* (list (list *i1*) (list *i01*) element (list *i2*))
+			    :test 'eql :key #'car :from-end t))))
+
+;;; Check that we get nil back if the number is not in the list.
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 4a|
+  (assert-equal nil
+		(position *i01* (list (list *i1*) (list *i2*) (list *i3*))
+			  :key #'car)))
+
+;;; Check that we get nil back if the number is not in the list.
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 4b|
+  (assert-equal nil
+		(position *i01* (list (list *i1*) (list *i2*) (list *i3*))
+			  :test #'eql :key #'car :from-end t)))
+
+;;; Check that we get nil back if the number is not in the list.
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 4c|
+  (assert-equal nil
+		(position *i01* (list (list *i1*) (list *i2*) (list *i3*))
+			  :test 'eql :key #'car :from-end t)))
+
+;;; Check that we do not accidentally use equal
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 5a|
+  (assert-equal nil
+		(position (list (list 'a)) (list (list (list 'a)))
+			  :key #'car :from-end t)))
+
+;;; Check that we do not accidentally use equal
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 5b|
+  (assert-equal nil
+		(position (list (list 'a)) (list (list (list 'a)))
+			  :test #'eql :key #'car :from-end t)))
+
+;;; Check that we do not accidentally use equal
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 5c|
+  (assert-equal nil
+		(position (list (list 'a)) (list (list (list 'a)))
+			  :test 'eql :key #'car :from-end t)))
+
+;;; Check that we get a type error when we pass something that is not
+;;; a sequence.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 6a|
+  (assert-error 'type-error
+		(position 0 1
+			  :key #'car :from-end t)))
+
+;;; Check that we get a type error when we pass something that is not
+;;; a sequence.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 6b|
+  (assert-error 'type-error
+		(position 0 1
+			  :test #'eql :key #'car :from-end t)))
+
+;;; Check that we get a type error when we pass something that is not
+;;; a sequence.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 6c|
+  (assert-error 'type-error
+		(position 0 1
+			  :test 'eql :key #'car :from-end t)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 7a|
+  (assert-error 'type-error
+		(position 0 '((1) (1) . 1)
+			  :key #'car :from-end t)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 7b|
+  (assert-error 'type-error
+		(position 0 '((1) (1) . 1)
+			  :test #'eql :key #'car :from-end t)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=true 7c|
+  (assert-error 'type-error
+		(position 0 '((1) (1) . 1)
+			  :test 'eql :key #'car :from-end t)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -3506,6 +3656,78 @@
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=other end=nil from-end=nil
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 2a|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :start 1 :key #'car))))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 2b|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :test #'eql :start 1 :key #'car))))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 2c|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :test 'eql :start 1 :key #'car))))
+
+;;; Check that we do not find n eql number because of the value of start
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 3a|
+  (let ((element (list *i02*)))
+    (assert-equal nil
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :start 2 :key #'car))))
+
+;;; Check that we do not find n eql number because of the value of start
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 3b|
+  (let ((element (list *i02*)))
+    (assert-equal nil
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :test #'eql :start 2 :key #'car))))
+
+;;; Check that we do not find n eql number because of the value of start
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 3c|
+  (let ((element (list *i02*)))
+    (assert-equal nil
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :test 'eql :start 2 :key #'car))))
+
+;;; Check that we get an error when start is beyond the end of the list
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 4a|
+  (let ((element (list *i02*)))
+    (assert-error 'type-error
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :start 4 :key #'car))))
+
+;;; Check that we get an error when start is beyond the end of the list
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 4b|
+  (let ((element (list *i02*)))
+    (assert-error 'type-error
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :test #'eql :start 4 :key #'car))))
+
+;;; Check that we get an error when start is beyond the end of the list
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 4c|
+  (let ((element (list *i02*)))
+    (assert-error 'type-error
+		  (position *i01* (list (list *i1*) element (list *i2*))
+			    :test 'eql :start 4 :key #'car))))
 
 ;;; ************** ADD MORE TESTS HERE
 
