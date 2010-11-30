@@ -3395,7 +3395,7 @@
                               (position-from-end=true-end=other-test-not=eq-key=identity
                                item sequence start end)
                               (position-from-end=true-end=other-test-not-key=identity
-                               item sequence start end test)))
+                               item sequence start end test-not)))
                       (position-from-end=true-end=other-test=eql-key=identity
                        item sequence start end)))
               (if test
@@ -3415,7 +3415,7 @@
                               (position-from-end=true-end=nil-test-not=eq-key=identity
                                item sequence start)
                               (position-from-end=true-end=nil-test-not-key=identity
-                               item sequence start test)))
+                               item sequence start test-not)))
                       (position-from-end=true-end=nil-test=eql-key=identity
                        item sequence start)))))
       (if key
@@ -3478,7 +3478,7 @@
                               (position-from-end=nil-end=other-test-not=eq-key=identity
                                item sequence start end)
                               (position-from-end=nil-end=other-test-not-key=identity
-                               item sequence start end test)))
+                               item sequence start end test-not)))
                       (position-from-end=nil-end=other-test=eql-key=identity
                        item sequence start end)))
               (if test
@@ -3498,7 +3498,7 @@
                               (position-from-end=nil-end=nil-test-not=eq-key=identity
                                item sequence start)
                               (position-from-end=nil-end=nil-test-not-key=identity
-                               item sequence start test)))
+                               item sequence start test-not)))
                       (position-from-end=nil-end=nil-test=eql-key=identity
                        item sequence start)))))))
 
