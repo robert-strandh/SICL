@@ -3212,6 +3212,48 @@
 		(position *i01* (list *i1* *i02* *i01* *i2*)
 			  :test 'eql :end 1)))
 
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 3a|
+  (assert-error 'type-error
+		(position 0 '(1 1 1)
+			  :end 4)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 3b|
+  (assert-error 'type-error
+		(position 0 '(1 1 1)
+			  :test #'eql :end 4)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 3c|
+  (assert-error 'type-error
+		(position 0 '(1 1 1)
+			  :test 'eql :end 4)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 4a|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1)
+			  :end 4)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 4b|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1)
+			  :test #'eql :end 4)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 4c|
+  (assert-error 'type-error
+		(position 0 '(1 1 . 1)
+			  :test 'eql :end 4)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
