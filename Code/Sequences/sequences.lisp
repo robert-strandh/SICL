@@ -2328,7 +2328,7 @@
         for index from start below end
         when (eq item element)
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test=eq-key=other
     (item list start end key)
@@ -2337,7 +2337,7 @@
         for index from start below end
         when (eq item (funcall key element))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test-not=eq-key=identity
     (item list start end)
@@ -2346,7 +2346,7 @@
         for index from start below end
         when (not (eq item element))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test-not=eq-key=other
     (item list start end key)
@@ -2355,7 +2355,7 @@
         for index from start below end
         when (not (eq item (funcall key element)))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test=eql-key=identity
     (item list start end)
@@ -2364,7 +2364,7 @@
         for index from start below end
         when (eql item element)
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test=eql-key=other
     (item list start end key)
@@ -2373,7 +2373,7 @@
         for index from start below end
         when (eql item (funcall key element))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test-not=eql-key=identity
     (item list start end)
@@ -2382,7 +2382,7 @@
         for index from start below end
         when (not (eql item element))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test-not=eql-key=other
     (item list start end key)
@@ -2391,7 +2391,7 @@
         for index from start below end
         when (not (eql item (funcall key element)))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test-key=identity
     (item list start end test)
@@ -2400,7 +2400,7 @@
         for index from start below end
         when (funcall test item element)
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test-key=other
     (item list start end test key)
@@ -2409,7 +2409,7 @@
         for index from start below end
         when (funcall test item (funcall key element))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test-not-key=identity
     (item list start end test)
@@ -2418,7 +2418,7 @@
         for index from start below end
         when (not (funcall test item element))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=nil-end=other-test-not-key=other
     (item list start end test key)
@@ -2427,7 +2427,7 @@
         for index from start below end
         when (not (funcall test item (funcall key element)))
           return index
-	finally (tail-must-be-proper-list 'position list remaining)))
+	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun position-seq-type=list-from-end=true-end=nil-test=eq-key=identity
     (item list start)
@@ -2569,7 +2569,7 @@
         for index from start below end
         when (eq item element)
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test=eq-key=other
@@ -2580,7 +2580,7 @@
         for index from start below end
         when (eq item (funcall key element))
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test-not=eq-key=identity
@@ -2591,7 +2591,7 @@
         for index from start below end
         when (not (eq item element))
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test-not=eq-key=other
@@ -2602,7 +2602,7 @@
         for index from start below end
         when (not (eq item (funcall key item)))
           do (setf value element)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test=eql-key=identity
@@ -2613,7 +2613,7 @@
         for index from start below end
         when (eql item element)
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test=eql-key=other
@@ -2624,7 +2624,7 @@
         for index from start below end
         when (eql item (funcall key element))
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test-not=eql-key=identity
@@ -2635,7 +2635,7 @@
         for index from start below end
         when (not (eql item element))
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test-not=eql-key=other
@@ -2646,7 +2646,7 @@
         for index from start below end
         when (not (eql item (funcall key element)))
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test-key=identity
@@ -2657,7 +2657,7 @@
         for index from start below end
         when (funcall test item element)
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test-key=other
@@ -2668,7 +2668,7 @@
         for index from start below end
         when (funcall test item (funcall key element))
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test-not-key=identity
@@ -2679,7 +2679,7 @@
         for index from start below end
         when (not (funcall test item element))
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=list-from-end=true-end=other-test-not-key=other
@@ -2690,7 +2690,7 @@
         for index from start below end
         when (not (funcall test item (funcall key element)))
           do (setf value index)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
 (defun position-seq-type=vector-from-end=nil-test=eq-key=identity
@@ -3575,6 +3575,7 @@
 	finally (tail-must-be-proper-list-with-end
 		     'position-if list remaining end (- end n))))
 
+;;; FIXME: this function is not implementing position, but find. 
 ;;; Version on lists, from end, no end, no key
 (defun position-if-seq-type=list-from-end=true-end=nil-key=identity
     (predicate list start)
@@ -3586,6 +3587,7 @@
         finally (tail-must-be-proper-list 'position list remaining)
 		(return value)))
 
+;;; FIXME: this function is not implementing position, but find. 
 ;;; Version on lists, from end, no end, key
 (defun position-if-seq-type=list-from-end=true-end=nil-key=other
     (predicate list start key)
@@ -3597,6 +3599,7 @@
         finally (tail-must-be-proper-list 'position list remaining)
 		(return value)))
   
+;;; FIXME: this function is not implementing position, but find. 
 ;;; Version on lists, from end, end, no key
 (defun position-if-seq-type=list-from-end=true-end=other-key=identity
     (predicate list start end)
@@ -3606,9 +3609,10 @@
 	for element = (car remaining)
         when (funcall predicate element)
           do (setf value element)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
 		(return value)))
 
+;;; FIXME: this function is not implementing position, but find. 
 ;;; Version on lists, from end, end, key
 (defun position-if-seq-type=list-from-end=true-end=other-key=other
     (predicate list start end key)
@@ -3618,7 +3622,7 @@
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           do (setf value element)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
 		(return value)))
   
 ;;; For the versions on lists, we distinguish between 
@@ -3950,6 +3954,7 @@
 	finally (tail-must-be-proper-list-with-end
 		     'position-if-not list remaining end (- end n))))
 
+;;; FIXME: this function is not implementing position, but find. 
 ;;; Version on lists, from end, no end, no key
 (defun position-if-not-seq-type=list-from-end=true-end=nil-key=identity
     (predicate list start)
@@ -3961,6 +3966,7 @@
         finally (tail-must-be-proper-list 'position list remaining)
 		(return value)))
 
+;;; FIXME: this function is not implementing position, but find. 
 ;;; Version on lists, from end, no end, key
 (defun position-if-not-seq-type=list-from-end=true-end=nil-key=other
     (predicate list start key)
@@ -3972,6 +3978,7 @@
         finally (tail-must-be-proper-list 'position list remaining)
 		(return value)))
   
+;;; FIXME: this function is not implementing position, but find. 
 ;;; Version on lists, from end, end, no key
 (defun position-if-not-seq-type=list-from-end=true-end=other-key=identity
     (predicate list start end)
@@ -3981,9 +3988,10 @@
 	for element = (car remaining)
         unless (funcall predicate element)
           do (setf value element)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
 		(return value)))
 
+;;; FIXME: this function is not implementing position, but find. 
 ;;; Version on lists, from end, end, key
 (defun position-if-not-seq-type=list-from-end=true-end=other-key=other
     (predicate list start end key)
@@ -3993,7 +4001,7 @@
         repeat (- end start)
         unless (funcall predicate (funcall key element))
           do (setf value element)
-        finally (tail-must-be-proper-list 'position list remaining)
+        finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
 		(return value)))
   
 ;;; For the versions on lists, we distinguish between 
