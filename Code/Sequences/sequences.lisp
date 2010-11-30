@@ -2429,7 +2429,7 @@
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
-(defun position-seq-type=list-from-end-end=nil-test=eq-key=identity
+(defun position-seq-type=list-from-end=true-end=nil-test=eq-key=identity
     (item list start)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2437,9 +2437,10 @@
         for index from start
         when (eq item element)
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test=eq-key=other
+(defun position-seq-type=list-from-end=true-end=nil-test=eq-key=other
     (item list start key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2447,9 +2448,10 @@
         for index from start
         when (eq item (funcall key element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test-not=eq-key=identity
+(defun position-seq-type=list-from-end=true-end=nil-test-not=eq-key=identity
     (item list start)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2457,9 +2459,10 @@
         for index from start
         when (not (eq item element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test-not=eq-key=other
+(defun position-seq-type=list-from-end=true-end=nil-test-not=eq-key=other
     (item list start key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2467,9 +2470,10 @@
         for index from start
         when (not (eq item (funcall key element)))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test=eql-key=identity
+(defun position-seq-type=list-from-end=true-end=nil-test=eql-key=identity
     (item list start)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2477,9 +2481,10 @@
         for index from start
         when (eql item element)
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test=eql-key=other
+(defun position-seq-type=list-from-end=true-end=nil-test=eql-key=other
     (item list start key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2487,9 +2492,10 @@
         for index from start
         when (eql item (funcall key element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test-not=eql-key=identity
+(defun position-seq-type=list-from-end=true-end=nil-test-not=eql-key=identity
     (item list start)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2497,9 +2503,10 @@
         for index from start
         when (not (eql item element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test-not=eql-key=other
+(defun position-seq-type=list-from-end=true-end=nil-test-not=eql-key=other
     (item list start key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2507,9 +2514,10 @@
         for index from start
         when (not (eql item (funcall key element)))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test-key=identity
+(defun position-seq-type=list-from-end=true-end=nil-test-key=identity
     (item list start test)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2517,9 +2525,10 @@
         for index from start
         when (funcall test item element)
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test-key=other
+(defun position-seq-type=list-from-end=true-end=nil-test-key=other
     (item list start test key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2527,9 +2536,10 @@
         for index from start
         when (funcall test item (funcall key element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test-not-key=identity
+(defun position-seq-type=list-from-end=true-end=nil-test-not-key=identity
     (item list start test)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2537,9 +2547,10 @@
         for index from start
         when (not (funcall test item element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=nil-test-not-key=other
+(defun position-seq-type=list-from-end=true-end=nil-test-not-key=other
     (item list start test key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2547,9 +2558,10 @@
         for index from start
         when (not (funcall test item (funcall key element)))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test=eq-key=identity
+(defun position-seq-type=list-from-end=true-end=other-test=eq-key=identity
     (item list start end)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2557,9 +2569,10 @@
         for index from start below end
         when (eq item element)
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test=eq-key=other
+(defun position-seq-type=list-from-end=true-end=other-test=eq-key=other
     (item list start end key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2567,9 +2580,10 @@
         for index from start below end
         when (eq item (funcall key element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test-not=eq-key=identity
+(defun position-seq-type=list-from-end=true-end=other-test-not=eq-key=identity
     (item list start end)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2577,9 +2591,10 @@
         for index from start below end
         when (not (eq item element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test-not=eq-key=other
+(defun position-seq-type=list-from-end=true-end=other-test-not=eq-key=other
     (item list start end key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2587,9 +2602,10 @@
         for index from start below end
         when (not (eq item (funcall key item)))
           do (setf value element)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test=eql-key=identity
+(defun position-seq-type=list-from-end=true-end=other-test=eql-key=identity
     (item list start end)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2597,9 +2613,10 @@
         for index from start below end
         when (eql item element)
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test=eql-key=other
+(defun position-seq-type=list-from-end=true-end=other-test=eql-key=other
     (item list start end key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2607,9 +2624,10 @@
         for index from start below end
         when (eql item (funcall key element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test-not=eql-key=identity
+(defun position-seq-type=list-from-end=true-end=other-test-not=eql-key=identity
     (item list start end)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2617,9 +2635,10 @@
         for index from start below end
         when (not (eql item element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test-not=eql-key=other
+(defun position-seq-type=list-from-end=true-end=other-test-not=eql-key=other
     (item list start end key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2627,9 +2646,10 @@
         for index from start below end
         when (not (eql item (funcall key element)))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test-key=identity
+(defun position-seq-type=list-from-end=true-end=other-test-key=identity
     (item list start end test)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2637,9 +2657,10 @@
         for index from start below end
         when (funcall test item element)
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test-key=other
+(defun position-seq-type=list-from-end=true-end=other-test-key=other
     (item list start end test key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2647,9 +2668,10 @@
         for index from start below end
         when (funcall test item (funcall key element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test-not-key=identity
+(defun position-seq-type=list-from-end=true-end=other-test-not-key=identity
     (item list start end test)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2657,9 +2679,10 @@
         for index from start below end
         when (not (funcall test item element))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
-(defun position-seq-type=list-from-end-end=other-test-not-key=other
+(defun position-seq-type=list-from-end=true-end=other-test-not-key=other
     (item list start end test key)
   (loop with value = nil
         for remaining on (skip-to-start 'position list start)
@@ -2667,7 +2690,8 @@
         for index from start below end
         when (not (funcall test item (funcall key element)))
           do (setf value index)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
 (defun position-seq-type=vector-from-end=nil-test=eq-key=identity
     (item vector start end)
@@ -2741,73 +2765,73 @@
         when (not (funcall test item (funcall key (aref vector index))))
           return index))
 
-(defun position-seq-type=vector-from-end-test=eq-key=identity
+(defun position-seq-type=vector-from-end=true-test=eq-key=identity
     (item vector start end)
   (loop for index downfrom (1- end) to start
         when (eq item (aref vector index))
           return index))
 
-(defun position-seq-type=vector-from-end-test=eq-key=other
+(defun position-seq-type=vector-from-end=true-test=eq-key=other
     (item vector start end key)
   (loop for index downfrom (1- end) to start
         when (eq item (funcall key (aref vector index)))
           return index))
 
-(defun position-seq-type=vector-from-end-test-not=eq-key=identity
+(defun position-seq-type=vector-from-end=true-test-not=eq-key=identity
     (item vector start end)
   (loop for index downfrom (1- end) to start
         when (not (eq item (aref vector index)))
           return index))
 
-(defun position-seq-type=vector-from-end-test-not=eq-key=other
+(defun position-seq-type=vector-from-end=true-test-not=eq-key=other
     (item vector start end key)
   (loop for index downfrom (1- end) to start
         when (not (eq item (funcall key (aref vector index))))
           return index))
 
-(defun position-seq-type=vector-from-end-test=eql-key=identity
+(defun position-seq-type=vector-from-end=true-test=eql-key=identity
     (item vector start end)
   (loop for index downfrom (1- end) to start
         when (eql item (aref vector index))
           return index))
 
-(defun position-seq-type=vector-from-end-test=eql-key=other
+(defun position-seq-type=vector-from-end=true-test=eql-key=other
     (item vector start end key)
   (loop for index downfrom (1- end) to start
         when (eql item (funcall key (aref vector index)))
           return index))
 
-(defun position-seq-type=vector-from-end-test-not=eql-key=identity
+(defun position-seq-type=vector-from-end=true-test-not=eql-key=identity
     (item vector start end)
   (loop for index downfrom (1- end) to start
         when (not (eql item (aref vector index)))
           return index))
 
-(defun position-seq-type=vector-from-end-test-not=eql-key=other
+(defun position-seq-type=vector-from-end=true-test-not=eql-key=other
     (item vector start end key)
   (loop for index downfrom (1- end) to start
         when (not (eql item (funcall key (aref vector index))))
           return index))
 
-(defun position-seq-type=vector-from-end-test-key=identity
+(defun position-seq-type=vector-from-end=true-test-key=identity
     (item vector start end test)
   (loop for index downfrom (1- end) to start
         when (funcall test item (aref vector index))
           return index))
 
-(defun position-seq-type=vector-from-end-test-key=other
+(defun position-seq-type=vector-from-end=true-test-key=other
     (item vector start end test key)
   (loop for index downfrom (1- end) to start
         when (funcall test item (funcall key (aref vector index)))
           return index))
 
-(defun position-seq-type=vector-from-end-test-not-key=identity
+(defun position-seq-type=vector-from-end=true-test-not-key=identity
     (item vector start end test)
   (loop for index downfrom (1- end) to start
         when (not (funcall test item (aref vector index)))
           return index))
 
-(defun position-seq-type=vector-from-end-test-not-key=other
+(defun position-seq-type=vector-from-end=true-test-not-key=other
     (item vector start end test key)
   (loop for index downfrom (1- end) to start
         when (not (funcall test item (funcall key (aref vector index))))
@@ -3053,244 +3077,244 @@
        (position-seq-type=list-from-end=nil-end=other-test-not-key=other
         item sequence start end test key))))
 
-(defun position-from-end-end=nil-test=eq-key=identity
+(defun position-from-end=true-end=nil-test=eq-key=identity
     (item sequence start)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test=eq-key=identity
+       (position-seq-type=vector-from-end=true-test=eq-key=identity
         item sequence start (length sequence)))
     (list
-       (position-seq-type=list-from-end-end=nil-test=eq-key=identity
+       (position-seq-type=list-from-end=true-end=nil-test=eq-key=identity
         item sequence start))))
 
-(defun position-from-end-end=nil-test=eq-key=other
+(defun position-from-end=true-end=nil-test=eq-key=other
     (item sequence start key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test=eq-key=other
+       (position-seq-type=vector-from-end=true-test=eq-key=other
         item sequence start (length sequence) key))
     (list
-       (position-seq-type=list-from-end-end=nil-test=eq-key=other
+       (position-seq-type=list-from-end=true-end=nil-test=eq-key=other
         item sequence start key))))
 
-(defun position-from-end-end=nil-test-not=eq-key=identity
+(defun position-from-end=true-end=nil-test-not=eq-key=identity
     (item sequence start)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not=eq-key=identity
+       (position-seq-type=vector-from-end=true-test-not=eq-key=identity
         item sequence start (length sequence)))
     (list
-       (position-seq-type=list-from-end-end=nil-test-not=eq-key=identity
+       (position-seq-type=list-from-end=true-end=nil-test-not=eq-key=identity
         item sequence start))))
 
-(defun position-from-end-end=nil-test-not=eq-key=other
+(defun position-from-end=true-end=nil-test-not=eq-key=other
     (item sequence start key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not=eq-key=other
+       (position-seq-type=vector-from-end=true-test-not=eq-key=other
         item sequence start (length sequence) key))
     (list
-       (position-seq-type=list-from-end-end=nil-test-not=eq-key=other
+       (position-seq-type=list-from-end=true-end=nil-test-not=eq-key=other
         item sequence start key))))
 
-(defun position-from-end-end=nil-test=eql-key=identity
+(defun position-from-end=true-end=nil-test=eql-key=identity
     (item sequence start)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test=eql-key=identity
+       (position-seq-type=vector-from-end=true-test=eql-key=identity
         item sequence start (length sequence)))
     (list
-       (position-seq-type=list-from-end-end=nil-test=eql-key=identity
+       (position-seq-type=list-from-end=true-end=nil-test=eql-key=identity
         item sequence start))))
 
-(defun position-from-end-end=nil-test=eql-key=other
+(defun position-from-end=true-end=nil-test=eql-key=other
     (item sequence start key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test=eql-key=other
+       (position-seq-type=vector-from-end=true-test=eql-key=other
         item sequence start (length sequence) key))
     (list
-       (position-seq-type=list-from-end-end=nil-test=eql-key=other
+       (position-seq-type=list-from-end=true-end=nil-test=eql-key=other
         item sequence start key))))
 
-(defun position-from-end-end=nil-test-not=eql-key=identity
+(defun position-from-end=true-end=nil-test-not=eql-key=identity
     (item sequence start)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not=eql-key=identity
+       (position-seq-type=vector-from-end=true-test-not=eql-key=identity
         item sequence start (length sequence)))
     (list
-       (position-seq-type=list-from-end-end=nil-test-not=eql-key=identity
+       (position-seq-type=list-from-end=true-end=nil-test-not=eql-key=identity
         item sequence start))))
 
-(defun position-from-end-end=nil-test-not=eql-key=other
+(defun position-from-end=true-end=nil-test-not=eql-key=other
     (item sequence start key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not=eql-key=other
+       (position-seq-type=vector-from-end=true-test-not=eql-key=other
         item sequence start (length sequence) key))
     (list
-       (position-seq-type=list-from-end-end=nil-test-not=eql-key=other
+       (position-seq-type=list-from-end=true-end=nil-test-not=eql-key=other
         item sequence start key))))
 
-(defun position-from-end-end=nil-test-key=identity
+(defun position-from-end=true-end=nil-test-key=identity
     (item sequence start test)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-key=identity
+       (position-seq-type=vector-from-end=true-test-key=identity
         item sequence start (length sequence) test))
     (list
-       (position-seq-type=list-from-end-end=nil-test-key=identity
+       (position-seq-type=list-from-end=true-end=nil-test-key=identity
         item sequence start test))))
 
-(defun position-from-end-end=nil-test-key=other
+(defun position-from-end=true-end=nil-test-key=other
     (item sequence start test key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-key=other
+       (position-seq-type=vector-from-end=true-test-key=other
         item sequence start (length sequence) test key))
     (list
-       (position-seq-type=list-from-end-end=nil-test-key=other
+       (position-seq-type=list-from-end=true-end=nil-test-key=other
         item sequence start test key))))
 
-(defun position-from-end-end=nil-test-not-key=identity
+(defun position-from-end=true-end=nil-test-not-key=identity
     (item sequence start test)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not-key=identity
+       (position-seq-type=vector-from-end=true-test-not-key=identity
         item sequence start (length sequence) test))
     (list
-       (position-seq-type=list-from-end-end=nil-test-not-key=identity
+       (position-seq-type=list-from-end=true-end=nil-test-not-key=identity
         item sequence start test))))
 
-(defun position-from-end-end=nil-test-not-key=other
+(defun position-from-end=true-end=nil-test-not-key=other
     (item sequence start test key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not-key=other
+       (position-seq-type=vector-from-end=true-test-not-key=other
         item sequence start (length sequence) test key))
     (list
-       (position-seq-type=list-from-end-end=nil-test-not-key=other
+       (position-seq-type=list-from-end=true-end=nil-test-not-key=other
         item sequence start test key))))
 
-(defun position-from-end-end=other-test=eq-key=identity
+(defun position-from-end=true-end=other-test=eq-key=identity
     (item sequence start end)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test=eq-key=identity
+       (position-seq-type=vector-from-end=true-test=eq-key=identity
         item sequence start end))
     (list
-       (position-seq-type=list-from-end-end=other-test=eq-key=identity
+       (position-seq-type=list-from-end=true-end=other-test=eq-key=identity
         item sequence start end))))
 
-(defun position-from-end-end=other-test=eq-key=other
+(defun position-from-end=true-end=other-test=eq-key=other
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test=eq-key=other
+       (position-seq-type=vector-from-end=true-test=eq-key=other
         item sequence start end key))
     (list
-       (position-seq-type=list-from-end-end=other-test=eq-key=other
+       (position-seq-type=list-from-end=true-end=other-test=eq-key=other
         item sequence start end key))))
 
-(defun position-from-end-end=other-test-not=eq-key=identity
+(defun position-from-end=true-end=other-test-not=eq-key=identity
     (item sequence start end)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not=eq-key=identity
+       (position-seq-type=vector-from-end=true-test-not=eq-key=identity
         item sequence start end))
     (list
-       (position-seq-type=list-from-end-end=other-test-not=eq-key=identity
+       (position-seq-type=list-from-end=true-end=other-test-not=eq-key=identity
         item sequence start end))))
 
-(defun position-from-end-end=other-test-not=eq-key=other
+(defun position-from-end=true-end=other-test-not=eq-key=other
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not=eq-key=other
+       (position-seq-type=vector-from-end=true-test-not=eq-key=other
         item sequence start end key))
     (list
-       (position-seq-type=list-from-end-end=other-test-not=eq-key=other
+       (position-seq-type=list-from-end=true-end=other-test-not=eq-key=other
         item sequence start end key))))
 
-(defun position-from-end-end=other-test=eql-key=identity
+(defun position-from-end=true-end=other-test=eql-key=identity
     (item sequence start end)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test=eql-key=identity
+       (position-seq-type=vector-from-end=true-test=eql-key=identity
         item sequence start end))
     (list
-       (position-seq-type=list-from-end-end=other-test=eql-key=identity
+       (position-seq-type=list-from-end=true-end=other-test=eql-key=identity
         item sequence start end))))
 
-(defun position-from-end-end=other-test=eql-key=other
+(defun position-from-end=true-end=other-test=eql-key=other
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test=eql-key=other
+       (position-seq-type=vector-from-end=true-test=eql-key=other
         item sequence start end key))
     (list
-       (position-seq-type=list-from-end-end=other-test=eql-key=other
+       (position-seq-type=list-from-end=true-end=other-test=eql-key=other
         item sequence start end key))))
 
-(defun position-from-end-end=other-test-not=eql-key=identity
+(defun position-from-end=true-end=other-test-not=eql-key=identity
     (item sequence start end)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not=eql-key=identity
+       (position-seq-type=vector-from-end=true-test-not=eql-key=identity
         item sequence start end))
     (list
-       (position-seq-type=list-from-end-end=other-test-not=eql-key=identity
+       (position-seq-type=list-from-end=true-end=other-test-not=eql-key=identity
         item sequence start end))))
 
-(defun position-from-end-end=other-test-not=eql-key=other
+(defun position-from-end=true-end=other-test-not=eql-key=other
     (item sequence start end key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not=eql-key=other
+       (position-seq-type=vector-from-end=true-test-not=eql-key=other
         item sequence start end key))
     (list
-       (position-seq-type=list-from-end-end=other-test-not=eql-key=other
+       (position-seq-type=list-from-end=true-end=other-test-not=eql-key=other
         item sequence start end key))))
 
-(defun position-from-end-end=other-test-key=identity
+(defun position-from-end=true-end=other-test-key=identity
     (item sequence start end test)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-key=identity
+       (position-seq-type=vector-from-end=true-test-key=identity
         item sequence start end test))
     (list
-       (position-seq-type=list-from-end-end=other-test-key=identity
+       (position-seq-type=list-from-end=true-end=other-test-key=identity
         item sequence start end test))))
 
-(defun position-from-end-end=other-test-key=other
+(defun position-from-end=true-end=other-test-key=other
     (item sequence start end test key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-key=other
+       (position-seq-type=vector-from-end=true-test-key=other
         item sequence start end test key))
     (list
-       (position-seq-type=list-from-end-end=other-test-key=other
+       (position-seq-type=list-from-end=true-end=other-test-key=other
         item sequence start end test key))))
 
-(defun position-from-end-end=other-test-not-key=identity
+(defun position-from-end=true-end=other-test-not-key=identity
     (item sequence start end test)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not-key=identity
+       (position-seq-type=vector-from-end=true-test-not-key=identity
         item sequence start end test))
     (list
-       (position-seq-type=list-from-end-end=other-test-not-key=identity
+       (position-seq-type=list-from-end=true-end=other-test-not-key=identity
         item sequence start end test))))
 
-(defun position-from-end-end=other-test-not-key=other
+(defun position-from-end=true-end=other-test-not-key=other
     (item sequence start end test key)
   (etypecase sequence
     (vector
-       (position-seq-type=vector-from-end-test-not-key=other
+       (position-seq-type=vector-from-end=true-test-not-key=other
         item sequence start end test key))
     (list
-       (position-seq-type=list-from-end-end=other-test-not-key=other
+       (position-seq-type=list-from-end=true-end=other-test-not-key=other
         item sequence start end test key))))
 
 (defun position (item sequence
@@ -3315,84 +3339,84 @@
           (if end
               (if test
                   (if (eq test #'eql)
-                      (position-from-end-end=other-test=eql-key=other
+                      (position-from-end=true-end=other-test=eql-key=other
                        item sequence start end key)
                       (if (eq test #'eq)
-                          (position-from-end-end=other-test=eq-key=other
+                          (position-from-end=true-end=other-test=eq-key=other
                            item sequence start end key)
-                          (position-from-end-end=other-test-key=other
+                          (position-from-end=true-end=other-test-key=other
                            item sequence start end test key)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (position-from-end-end=other-test-not=eql-key=other
+                          (position-from-end=true-end=other-test-not=eql-key=other
                            item sequence start end key)
                           (if (eq test-not #'eq)
-                              (position-from-end-end=other-test-not=eq-key=other
+                              (position-from-end=true-end=other-test-not=eq-key=other
                                item sequence start end key)
-                              (position-from-end-end=other-test-not-key=other
+                              (position-from-end=true-end=other-test-not-key=other
                                item sequence start end test-not key)))
-                      (position-from-end-end=other-test=eql-key=other
+                      (position-from-end=true-end=other-test=eql-key=other
                        item sequence start end key)))
               (if test
                   (if (eq test #'eql)
-                      (position-from-end-end=nil-test=eql-key=other
+                      (position-from-end=true-end=nil-test=eql-key=other
                        item sequence start key)
                       (if (eq test #'eq)
-                          (position-from-end-end=nil-test=eq-key=other
+                          (position-from-end=true-end=nil-test=eq-key=other
                            item sequence start key)
-                          (position-from-end-end=nil-test-key=other
+                          (position-from-end=true-end=nil-test-key=other
                            item sequence start test key)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (position-from-end-end=nil-test-not=eql-key=other
+                          (position-from-end=true-end=nil-test-not=eql-key=other
                            item sequence start key)
                           (if (eq test-not #'eq)
-                              (position-from-end-end=nil-test-not=eq-key=other
+                              (position-from-end=true-end=nil-test-not=eq-key=other
                                item sequence start key)
-                              (position-from-end-end=nil-test-not-key=other
+                              (position-from-end=true-end=nil-test-not-key=other
                                item sequence start test-not key)))
-                      (position-from-end-end=nil-test=eql-key=other
+                      (position-from-end=true-end=nil-test=eql-key=other
                        item sequence start key))))
           (if end
               (if test
                   (if (eq test #'eql)
-                      (position-from-end-end=other-test=eql-key=identity
+                      (position-from-end=true-end=other-test=eql-key=identity
                        item sequence start end)
                       (if (eq test #'eq)
-                          (position-from-end-end=other-test=eq-key=identity
+                          (position-from-end=true-end=other-test=eq-key=identity
                            item sequence start end)
-                          (position-from-end-end=other-test-key=identity
+                          (position-from-end=true-end=other-test-key=identity
                            item sequence start end test)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (position-from-end-end=other-test-not=eql-key=identity
+                          (position-from-end=true-end=other-test-not=eql-key=identity
                            item sequence start end)
                           (if (eq test-not #'eq)
-                              (position-from-end-end=other-test-not=eq-key=identity
+                              (position-from-end=true-end=other-test-not=eq-key=identity
                                item sequence start end)
-                              (position-from-end-end=other-test-not-key=identity
+                              (position-from-end=true-end=other-test-not-key=identity
                                item sequence start end test)))
-                      (position-from-end-end=other-test=eql-key=identity
+                      (position-from-end=true-end=other-test=eql-key=identity
                        item sequence start end)))
               (if test
                   (if (eq test #'eql)
-                      (position-from-end-end=nil-test=eql-key=identity
+                      (position-from-end=true-end=nil-test=eql-key=identity
                        item sequence start)
                       (if (eq test #'eq)
-                          (position-from-end-end=nil-test=eq-key=identity
+                          (position-from-end=true-end=nil-test=eq-key=identity
                            item sequence start)
-                          (position-from-end-end=nil-test-key=identity
+                          (position-from-end=true-end=nil-test-key=identity
                            item sequence start test)))
                   (if test-not
                       (if (eq test-not #'eql)
-                          (position-from-end-end=nil-test-not=eql-key=identity
+                          (position-from-end=true-end=nil-test-not=eql-key=identity
                            item sequence start)
                           (if (eq test-not #'eq)
-                              (position-from-end-end=nil-test-not=eq-key=identity
+                              (position-from-end=true-end=nil-test-not=eq-key=identity
                                item sequence start)
-                              (position-from-end-end=nil-test-not-key=identity
+                              (position-from-end=true-end=nil-test-not-key=identity
                                item sequence start test)))
-                      (position-from-end-end=nil-test=eql-key=identity
+                      (position-from-end=true-end=nil-test=eql-key=identity
                        item sequence start)))))
       (if key
           (if end
@@ -3552,27 +3576,29 @@
 		     'position-if list remaining end (- end n))))
 
 ;;; Version on lists, from end, no end, no key
-(defun position-if-seq-type=list-from-end-end=nil-key=identity
+(defun position-if-seq-type=list-from-end=true-end=nil-key=identity
     (predicate list start)
   (loop with value = nil
         for remaining on (skip-to-start 'position-if list start)
 	for element = (car remaining)
         when (funcall predicate element)
           do (setf value element)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
 ;;; Version on lists, from end, no end, key
-(defun position-if-seq-type=list-from-end-end=nil-key=other
+(defun position-if-seq-type=list-from-end=true-end=nil-key=other
     (predicate list start key)
   (loop with value = nil
         for remaining on (skip-to-start 'position-if list start)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           do (setf value element)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
   
 ;;; Version on lists, from end, end, no key
-(defun position-if-seq-type=list-from-end-end=other-key=identity
+(defun position-if-seq-type=list-from-end=true-end=other-key=identity
     (predicate list start end)
   (loop with value = nil
         for n downfrom (- end start) above 0
@@ -3580,10 +3606,11 @@
 	for element = (car remaining)
         when (funcall predicate element)
           do (setf value element)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
 ;;; Version on lists, from end, end, key
-(defun position-if-seq-type=list-from-end-end=other-key=other
+(defun position-if-seq-type=list-from-end=true-end=other-key=other
     (predicate list start end key)
   (loop with value = nil
         for n downfrom (- end start) above 0
@@ -3591,7 +3618,8 @@
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           do (setf value element)
-        finally (return value))) ;; FIXME check proper list etc
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
   
 ;;; For the versions on lists, we distinguish between 
 ;;; two different characteristics: 
@@ -3626,14 +3654,14 @@
           return index))
 
 ;;; Version on vectors, from end, no key
-(defun position-if-seq-type=vector-from-end-key=identity
+(defun position-if-seq-type=vector-from-end=true-key=identity
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         when (funcall predicate (aref vector index))
           return index))
 
 ;;; Version on vectors, from end, key
-(defun position-if-seq-type=vector-from-end-key=other
+(defun position-if-seq-type=vector-from-end=true-key=other
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
         when (funcall predicate (funcall key (aref vector index)))
@@ -3690,43 +3718,43 @@
         predicate sequence start end key))))
 
 ;;; Version on any sequence, from end, no end, no key
-(defun position-if-from-end-end=nil-key=identity (predicate sequence start)
+(defun position-if-from-end=true-end=nil-key=identity (predicate sequence start)
   (etypecase sequence
     (vector
-       (position-if-seq-type=vector-from-end-key=identity
+       (position-if-seq-type=vector-from-end=true-key=identity
         predicate sequence start (length sequence)))
     (list
-       (position-if-seq-type=list-from-end-end=nil-key=identity
+       (position-if-seq-type=list-from-end=true-end=nil-key=identity
         predicate sequence start))))
 
 ;;; Version on any sequence, from end, no end, key
-(defun position-if-from-end-end=nil-key=other (predicate sequence start key)
+(defun position-if-from-end=true-end=nil-key=other (predicate sequence start key)
   (etypecase sequence
     (vector
-       (position-if-seq-type=vector-from-end-key=other
+       (position-if-seq-type=vector-from-end=true-key=other
         predicate sequence start (length sequence) key))
     (list
-       (position-if-seq-type=list-from-end-end=nil-key=other
+       (position-if-seq-type=list-from-end=true-end=nil-key=other
         predicate sequence start key))))
 
 ;;; Version on any sequence, from end, end, no key
-(defun position-if-from-end-end=other-key=identity (predicate sequence start end)
+(defun position-if-from-end=true-end=other-key=identity (predicate sequence start end)
   (etypecase sequence
     (vector
-       (position-if-seq-type=vector-from-end-key=identity
+       (position-if-seq-type=vector-from-end=true-key=identity
         predicate sequence start end))
     (list
-       (position-if-seq-type=list-from-end-end=other-key=identity
+       (position-if-seq-type=list-from-end=true-end=other-key=identity
         predicate sequence start end))))
 
 ;;; Version on any sequence, from end, end, key
-(defun position-if-from-end-end=other-key=other (predicate sequence start end key)
+(defun position-if-from-end=true-end=other-key=other (predicate sequence start end key)
   (etypecase sequence
     (vector
-       (position-if-seq-type=vector-from-end-key=other
+       (position-if-seq-type=vector-from-end=true-key=other
         predicate sequence start end key))
     (list
-       (position-if-seq-type=list-from-end-end=other-key=other
+       (position-if-seq-type=list-from-end=true-end=other-key=other
         predicate sequence start end key))))
 
 ;;; This is the main function.  It first checks what type of
@@ -3754,14 +3782,14 @@
   (if from-end
       (if key
           (if end
-              (position-if-from-end-end=other-key=other
+              (position-if-from-end=true-end=other-key=other
                predicate sequence start end key)
-              (position-if-from-end-end=nil-key=other
+              (position-if-from-end=true-end=nil-key=other
                predicate sequence start key))
           (if end
-              (position-if-from-end-end=other-key=identity
+              (position-if-from-end=true-end=other-key=identity
                predicate sequence start end)
-              (position-if-from-end-end=nil-key=identity
+              (position-if-from-end=true-end=nil-key=identity
                predicate sequence start)))
       (if key
           (if end
@@ -3804,10 +3832,10 @@
                     (if (and keyp (not (null key)))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(position-if-from-end-end=other-key=other
+                                `(position-if-from-end=true-end=other-key=other
                                   predicate sequence start end key)
                                 `(if from-end
-                                     (position-if-from-end-end=other-key=other
+                                     (position-if-from-end=true-end=other-key=other
                                       predicate sequence start end key)
                                      (position-if-from-end=nil-end=other-key=other
                                       predicate sequence start end key)))
@@ -3815,10 +3843,10 @@
                               predicate sequence start end key))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(position-if-from-end-end=other-key=identity
+                                `(position-if-from-end=true-end=other-key=identity
                                   predicate sequence start end)
                                 `(if from-end
-                                     (position-if-from-end-end=other-key=identity
+                                     (position-if-from-end=true-end=other-key=identity
                                       predicate sequence start end)
                                      (position-if-from-end=nil-end=other-key=identity
                                       predicate sequence start end)))
@@ -3827,10 +3855,10 @@
                     (if (and keyp (not (null key)))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(position-if-from-end-end=nil-key=other
+                                `(position-if-from-end=true-end=nil-key=other
                                   predicate sequence start key)
                                 `(if from-end
-                                     (position-if-from-end-end=nil-key=other
+                                     (position-if-from-end=true-end=nil-key=other
                                       predicate sequence start key)
                                      (position-if-from-end=nil-end=nil-key=other
                                       predicate sequence start key)))
@@ -3838,10 +3866,10 @@
                               predicate sequence start key))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(position-if-from-end-end=nil-key=identity
+                                `(position-if-from-end=true-end=nil-key=identity
                                   predicate sequence start)
                                 `(if from-end
-                                     (position-if-from-end-end=nil-key=identity
+                                     (position-if-from-end=true-end=nil-key=identity
                                       predicate sequence start)
                                      (position-if-from-end=nil-end=nil-key=identity
                                       predicate sequence start)))
@@ -3923,27 +3951,29 @@
 		     'position-if-not list remaining end (- end n))))
 
 ;;; Version on lists, from end, no end, no key
-(defun position-if-not-seq-type=list-from-end-end=nil-key=identity
+(defun position-if-not-seq-type=list-from-end=true-end=nil-key=identity
     (predicate list start)
   (loop with value = nil
         for remaining on (skip-to-start 'position-if-not list start)
 	for element = (car remaining)
         unless (funcall predicate element)
           do (setf value element)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
 ;;; Version on lists, from end, no end, key
-(defun position-if-not-seq-type=list-from-end-end=nil-key=other
+(defun position-if-not-seq-type=list-from-end=true-end=nil-key=other
     (predicate list start key)
   (loop with value = nil
         for remaining on (skip-to-start 'position-if-not list start)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
           do (setf value element)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
   
 ;;; Version on lists, from end, end, no key
-(defun position-if-not-seq-type=list-from-end-end=other-key=identity
+(defun position-if-not-seq-type=list-from-end=true-end=other-key=identity
     (predicate list start end)
   (loop with value = nil
         for n downfrom (- end start) above 0
@@ -3951,10 +3981,11 @@
 	for element = (car remaining)
         unless (funcall predicate element)
           do (setf value element)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
 
 ;;; Version on lists, from end, end, key
-(defun position-if-not-seq-type=list-from-end-end=other-key=other
+(defun position-if-not-seq-type=list-from-end=true-end=other-key=other
     (predicate list start end key)
   (loop with value = nil
         for remaining on (skip-to-start 'position-if-not list start)
@@ -3962,7 +3993,8 @@
         repeat (- end start)
         unless (funcall predicate (funcall key element))
           do (setf value element)
-        finally (return value)))
+        finally (tail-must-be-proper-list 'position list remaining)
+		(return value)))
   
 ;;; For the versions on lists, we distinguish between 
 ;;; two different characteristics: 
@@ -3997,14 +4029,14 @@
           return index))
 
 ;;; Version on vectors, from end, no key
-(defun position-if-not-seq-type=vector-from-end-key=identity
+(defun position-if-not-seq-type=vector-from-end=true-key=identity
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         unless (funcall predicate (aref vector index))
           return index))
 
 ;;; Version on vectors, from end, key
-(defun position-if-not-seq-type=vector-from-end-key=other
+(defun position-if-not-seq-type=vector-from-end=true-key=other
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
         unless (funcall predicate (funcall key (aref vector index)))
@@ -4061,43 +4093,43 @@
         predicate sequence start end key))))
 
 ;;; Version on any sequence, from end, no end, no key
-(defun position-if-not-from-end-end=nil-key=identity (predicate sequence start)
+(defun position-if-not-from-end=true-end=nil-key=identity (predicate sequence start)
   (etypecase sequence
     (vector
-       (position-if-not-seq-type=vector-from-end-key=identity
+       (position-if-not-seq-type=vector-from-end=true-key=identity
         predicate sequence start (length sequence)))
     (list
-       (position-if-not-seq-type=list-from-end-end=nil-key=identity
+       (position-if-not-seq-type=list-from-end=true-end=nil-key=identity
         predicate sequence start))))
 
 ;;; Version on any sequence, from end, no end, key
-(defun position-if-not-from-end-end=nil-key=other (predicate sequence start key)
+(defun position-if-not-from-end=true-end=nil-key=other (predicate sequence start key)
   (etypecase sequence
     (vector
-       (position-if-not-seq-type=vector-from-end-key=other
+       (position-if-not-seq-type=vector-from-end=true-key=other
         predicate sequence start (length sequence) key))
     (list
-       (position-if-not-seq-type=list-from-end-end=nil-key=other
+       (position-if-not-seq-type=list-from-end=true-end=nil-key=other
         predicate sequence start key))))
 
 ;;; Version on any sequence, from end, end, no key
-(defun position-if-not-from-end-end=other-key=identity (predicate sequence start end)
+(defun position-if-not-from-end=true-end=other-key=identity (predicate sequence start end)
   (etypecase sequence
     (vector
-       (position-if-not-seq-type=vector-from-end-key=identity
+       (position-if-not-seq-type=vector-from-end=true-key=identity
         predicate sequence start end))
     (list
-       (position-if-not-seq-type=list-from-end-end=other-key=identity
+       (position-if-not-seq-type=list-from-end=true-end=other-key=identity
         predicate sequence start end))))
 
 ;;; Version on any sequence, from end, end, key
-(defun position-if-not-from-end-end=other-key=other (predicate sequence start end key)
+(defun position-if-not-from-end=true-end=other-key=other (predicate sequence start end key)
   (etypecase sequence
     (vector
-       (position-if-not-seq-type=vector-from-end-key=other
+       (position-if-not-seq-type=vector-from-end=true-key=other
         predicate sequence start end key))
     (list
-       (position-if-not-seq-type=list-from-end-end=other-key=other
+       (position-if-not-seq-type=list-from-end=true-end=other-key=other
         predicate sequence start end key))))
 
 ;;; This is the main function.  It first checks what type of
@@ -4125,14 +4157,14 @@
   (if from-end
       (if key
           (if end
-              (position-if-not-from-end-end=other-key=other
+              (position-if-not-from-end=true-end=other-key=other
                predicate sequence start end key)
-              (position-if-not-from-end-end=nil-key=other
+              (position-if-not-from-end=true-end=nil-key=other
                predicate sequence start key))
           (if end
-              (position-if-not-from-end-end=other-key=identity
+              (position-if-not-from-end=true-end=other-key=identity
                predicate sequence start end)
-              (position-if-not-from-end-end=nil-key=identity
+              (position-if-not-from-end=true-end=nil-key=identity
                predicate sequence start)))
       (if key
           (if end
@@ -4175,10 +4207,10 @@
                     (if (and keyp (not (null key)))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(position-if-not-from-end-end=other-key=other
+                                `(position-if-not-from-end=true-end=other-key=other
                                   predicate sequence start end key)
                                 `(if from-end
-                                     (position-if-not-from-end-end=other-key=other
+                                     (position-if-not-from-end=true-end=other-key=other
                                       predicate sequence start end key)
                                      (position-if-not-from-end=nil-end=other-key=other
                                       predicate sequence start end key)))
@@ -4186,10 +4218,10 @@
                               predicate sequence start end key))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(position-if-not-from-end-end=other-key=identity
+                                `(position-if-not-from-end=true-end=other-key=identity
                                   predicate sequence start end)
                                 `(if from-end
-                                     (position-if-not-from-end-end=other-key=identity
+                                     (position-if-not-from-end=true-end=other-key=identity
                                       predicate sequence start end)
                                      (position-if-not-from-end=nil-end=other-key=identity
                                       predicate sequence start end)))
@@ -4198,10 +4230,10 @@
                     (if (and keyp (not (null key)))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(position-if-not-from-end-end=nil-key=other
+                                `(position-if-not-from-end=true-end=nil-key=other
                                   predicate sequence start key)
                                 `(if from-end
-                                     (position-if-not-from-end-end=nil-key=other
+                                     (position-if-not-from-end=true-end=nil-key=other
                                       predicate sequence start key)
                                      (position-if-not-from-end=nil-end=nil-key=other
                                       predicate sequence start key)))
@@ -4209,10 +4241,10 @@
                               predicate sequence start key))
                         (if from-end-p
                             (if (eq from-end t)
-                                `(position-if-not-from-end-end=nil-key=identity
+                                `(position-if-not-from-end=true-end=nil-key=identity
                                   predicate sequence start)
                                 `(if from-end
-                                     (position-if-not-from-end-end=nil-key=identity
+                                     (position-if-not-from-end=true-end=nil-key=identity
                                       predicate sequence start)
                                      (position-if-not-from-end=nil-end=nil-key=identity
                                       predicate sequence start)))
@@ -4365,42 +4397,42 @@
                                            (funcall key element)))
                    finally (return value))))))
 
-(defun reduce-seq-type=list-from-end-end=nil-key=identity-no-initial
+(defun reduce-seq-type=list-from-end=true-end=nil-key=identity-no-initial
     (function list start)
   (reduce-seq-type=list-from-end=nil-end=nil-key=identity-no-initial
    function (reverse (nthcdr start list)) 0))
 
-(defun reduce-seq-type=list-from-end-end=nil-key=identity-initial
+(defun reduce-seq-type=list-from-end=true-end=nil-key=identity-initial
     (function list start initial)
   (reduce-seq-type=list-from-end=nil-end=nil-key=identity-initial
    function (reverse (nthcdr start list)) 0 initial))
 
-(defun reduce-seq-type=list-from-end-end=nil-key=other-no-initial
+(defun reduce-seq-type=list-from-end=true-end=nil-key=other-no-initial
     (function list start key)
   (reduce-seq-type=list-from-end=nil-end=nil-key=other-no-initial
    function (reverse (nthcdr start list)) 0 key))
 
-(defun reduce-seq-type=list-from-end-end=nil-key=other-initial
+(defun reduce-seq-type=list-from-end=true-end=nil-key=other-initial
     (function list start key initial)
   (reduce-seq-type=list-from-end=nil-end=nil-key=other-initial
    function (reverse (nthcdr start list)) 0 key initial))
 
-(defun reduce-seq-type=list-from-end-end=other-key=identity-no-initial
+(defun reduce-seq-type=list-from-end=true-end=other-key=identity-no-initial
     (function list start end)
   (reduce-seq-type=list-from-end=nil-end=nil-key=identity-no-initial
    function (nreverse (subseq list start end)) 0))
 
-(defun reduce-seq-type=list-from-end-end=other-key=identity-initial
+(defun reduce-seq-type=list-from-end=true-end=other-key=identity-initial
     (function list start end initial)
   (reduce-seq-type=list-from-end=nil-end=nil-key=identity-initial
    function (nreverse (subseq list start end)) 0 initial))
 
-(defun reduce-seq-type=list-from-end-end=other-key=other-no-initial
+(defun reduce-seq-type=list-from-end=true-end=other-key=other-no-initial
     (function list start end key)
   (reduce-seq-type=list-from-end=nil-end=nil-key=other-no-initial
    function (nreverse (subseq list start end)) 0 key))
 
-(defun reduce-seq-type=list-from-end-end=other-key=other-initial
+(defun reduce-seq-type=list-from-end=true-end=other-key=other-initial
     (function list start end key initial)
   (reduce-seq-type=list-from-end=nil-end=nil-key=other-initial
    function (nreverse (subseq list start end)) 0 key initial))
@@ -4448,7 +4480,7 @@
                                          (funcall key (aref vector index))))
                  finally (return value)))))
 
-(defun reduce-seq-type=vector-from-end-key=identity-no-initial
+(defun reduce-seq-type=vector-from-end=true-key=identity-no-initial
     (function vector start end)
   (cond ((<= end start) (funcall function))
         ((= 1 (- end start)) (aref vector start))
@@ -4459,7 +4491,7 @@
                                          (aref vector index)))
                  finally (return value)))))
 
-(defun reduce-seq-type=vector-from-end-key=identity-initial
+(defun reduce-seq-type=vector-from-end=true-key=identity-initial
     (function vector start end initial)
   (cond ((<= end start) initial)
         (t (loop with value = initial
@@ -4469,7 +4501,7 @@
                                          (aref vector index)))
                  finally (return value)))))
 
-(defun reduce-seq-type=vector-from-end-key=other-no-initial
+(defun reduce-seq-type=vector-from-end=true-key=other-no-initial
     (function vector start end key)
   (cond ((<= end start) (funcall function))
         ((= 1 (- end start)) (aref vector start))
@@ -4481,7 +4513,7 @@
                  finally (return value)))))
 
 
-(defun reduce-seq-type=vector-from-end-key=other-initial
+(defun reduce-seq-type=vector-from-end=true-key=other-initial
     (function vector start end key initial)
   (cond ((<= end start) initial)
         (t (loop with value = initial
@@ -4571,84 +4603,84 @@
        (reduce-seq-type=list-from-end=nil-end=other-key=other-initial
         function sequence start end key initial))))
 
-(defun reduce-from-end-end=nil-key=identity-no-initial
+(defun reduce-from-end=true-end=nil-key=identity-no-initial
     (function sequence start)
   (etypecase sequence
     (vector
-       (reduce-seq-type=vector-from-end-key=identity-no-initial
+       (reduce-seq-type=vector-from-end=true-key=identity-no-initial
         function sequence start (length sequence)))
     (list 
-       (reduce-seq-type=list-from-end-end=nil-key=identity-no-initial
+       (reduce-seq-type=list-from-end=true-end=nil-key=identity-no-initial
         function sequence start))))
        
-(defun reduce-from-end-end=nil-key=identity-initial
+(defun reduce-from-end=true-end=nil-key=identity-initial
     (function sequence start initial)
   (etypecase sequence
     (vector
-       (reduce-seq-type=vector-from-end-key=identity-initial
+       (reduce-seq-type=vector-from-end=true-key=identity-initial
         function sequence start (length sequence) initial))
     (list 
-       (reduce-seq-type=list-from-end-end=nil-key=identity-initial
+       (reduce-seq-type=list-from-end=true-end=nil-key=identity-initial
         function sequence start initial))))
 
-(defun reduce-from-end-end=nil-key=other-no-initial
+(defun reduce-from-end=true-end=nil-key=other-no-initial
     (function sequence start key)
   (etypecase sequence
     (vector
-       (reduce-seq-type=vector-from-end-key=other-no-initial
+       (reduce-seq-type=vector-from-end=true-key=other-no-initial
         function sequence start (length sequence) key))
     (list 
-       (reduce-seq-type=list-from-end-end=nil-key=other-no-initial
+       (reduce-seq-type=list-from-end=true-end=nil-key=other-no-initial
         function sequence start key))))
        
-(defun reduce-from-end-end=nil-key=other-initial
+(defun reduce-from-end=true-end=nil-key=other-initial
     (function sequence start key initial)
   (etypecase sequence
     (vector
-       (reduce-seq-type=vector-from-end-key=other-initial
+       (reduce-seq-type=vector-from-end=true-key=other-initial
         function sequence start (length sequence) key initial))
     (list 
-       (reduce-seq-type=list-from-end-end=nil-key=other-initial
+       (reduce-seq-type=list-from-end=true-end=nil-key=other-initial
         function sequence start key initial))))
 
-(defun reduce-from-end-end=other-key=identity-no-initial
+(defun reduce-from-end=true-end=other-key=identity-no-initial
     (function sequence start end)
   (etypecase sequence
     (vector
-       (reduce-seq-type=vector-from-end-key=identity-no-initial
+       (reduce-seq-type=vector-from-end=true-key=identity-no-initial
         function sequence start end))
     (list 
-       (reduce-seq-type=list-from-end-end=other-key=identity-no-initial
+       (reduce-seq-type=list-from-end=true-end=other-key=identity-no-initial
         function sequence start end))))
        
-(defun reduce-from-end-end=other-key=identity-initial
+(defun reduce-from-end=true-end=other-key=identity-initial
     (function sequence start end initial)
   (etypecase sequence
     (vector
-       (reduce-seq-type=vector-from-end-key=identity-initial
+       (reduce-seq-type=vector-from-end=true-key=identity-initial
         function sequence start end initial))
     (list 
-       (reduce-seq-type=list-from-end-end=other-key=identity-initial
+       (reduce-seq-type=list-from-end=true-end=other-key=identity-initial
         function sequence start end initial))))
 
-(defun reduce-from-end-end=other-key=other-no-initial
+(defun reduce-from-end=true-end=other-key=other-no-initial
     (function sequence start end key)
   (etypecase sequence
     (vector
-       (reduce-seq-type=vector-from-end-key=other-no-initial
+       (reduce-seq-type=vector-from-end=true-key=other-no-initial
         function sequence start end key))
     (list 
-       (reduce-seq-type=list-from-end-end=other-key=other-no-initial
+       (reduce-seq-type=list-from-end=true-end=other-key=other-no-initial
         function sequence start end key))))
        
-(defun reduce-from-end-end=other-key=other-initial
+(defun reduce-from-end=true-end=other-key=other-initial
     (function sequence start end key initial)
   (etypecase sequence
     (vector
-       (reduce-seq-type=vector-from-end-key=other-initial
+       (reduce-seq-type=vector-from-end=true-key=other-initial
         function sequence start end key initial))
     (list 
-       (reduce-seq-type=list-from-end-end=other-key=other-initial
+       (reduce-seq-type=list-from-end=true-end=other-key=other-initial
         function sequence start end key initial))))
 
 (defun reduce (function sequence
@@ -4662,25 +4694,25 @@
         (if key
           (if end
               (if initial-value-p
-                  (reduce-from-end-end=other-key=other-initial
+                  (reduce-from-end=true-end=other-key=other-initial
                    function sequence start end key initial-value)
-                  (reduce-from-end-end=other-key=other-no-initial
+                  (reduce-from-end=true-end=other-key=other-no-initial
                    function sequence start end key))
               (if initial-value-p
-                  (reduce-from-end-end=nil-key=other-initial
+                  (reduce-from-end=true-end=nil-key=other-initial
                    function sequence start key initial-value)
-                  (reduce-from-end-end=nil-key=other-no-initial
+                  (reduce-from-end=true-end=nil-key=other-no-initial
                    function sequence start key)))
           (if end
               (if initial-value-p
-                  (reduce-from-end-end=other-key=identity-initial
+                  (reduce-from-end=true-end=other-key=identity-initial
                    function sequence start end initial-value)
-                  (reduce-from-end-end=other-key=identity-no-initial
+                  (reduce-from-end=true-end=other-key=identity-no-initial
                    function sequence start end))
               (if initial-value-p
-                  (reduce-from-end-end=nil-key=identity-initial
+                  (reduce-from-end=true-end=nil-key=identity-initial
                    function sequence start initial-value)
-                  (reduce-from-end-end=nil-key=identity-no-initial
+                  (reduce-from-end=true-end=nil-key=identity-no-initial
                    function sequence start))))
         (if key
           (if end
