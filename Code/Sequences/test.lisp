@@ -30,901 +30,901 @@
 ;;;
 ;;; Tests for function find
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity 1a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity 1a|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element '()))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity 1b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity 1b|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element '() :test #'eql))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity 1c|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity 1c|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element '() :test 'eql))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity 2a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity 2a|
   (assert-equal
    1
    (find 1 '(0 1 2))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity 2b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity 2b|
   (assert-equal
    1
    (find 1 '(0 1 2) :test #'eql)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity 2c|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity 2c|
   (assert-equal
    1
    (find 1 '(0 1 2) :test 'eql)))
 
-(define-test |find seq-type=list start=error from-end=nil test=eql key=identity 2a|
+(define-test |find seq-type=list start=error from-end=false test=eql key=identity 2a|
   (assert-error 'type-error
 		(find 1 '(0 1 2) :start 'a)))
 
-(define-test |find seq-type=list start=error from-end=nil test=eql key=identity 2b|
+(define-test |find seq-type=list start=error from-end=false test=eql key=identity 2b|
   (assert-error 'type-error
 		(find 1 '(0 1 2) :test #'eql :start 4)))
 
-(define-test |find seq-type=list start=error from-end=nil test=eql key=identity 2c|
+(define-test |find seq-type=list start=error from-end=false test=eql key=identity 2c|
   (assert-error 'type-error
 		(find 1 '(0 1 2) :test #'eql :start -1)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=other 1a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=other 1a|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element '() :key #'1+))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=other 1b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=other 1b|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element '() :test #'eql :key #'1+))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=other 1c|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=other 1c|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element '() :test 'eql :key #'1+))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=other 2a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=other 2a|
   (assert-equal
    1
    (find 2 '(0 1 2) :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=other 2b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=other 2b|
   (assert-equal
    1
    (find 2 '(0 1 2) :test #'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=other 2a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=other 2a|
   (assert-equal
    1
    (find 2 '(0 1 2) :test 'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity error 1a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity error 1a|
   (assert-error 'type-error
 		(find 3 '(0 1 . 2))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity error 1b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity error 1b|
   (assert-error 'type-error
 		(find 3 '(0 1 . 2) :test #'eql)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eql key=identity error 1c|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eql key=identity error 1c|
   (assert-error 'type-error
 		(find 3 '(0 1 . 2) :test 'eql)))
 
-(define-test |find seq-type=list start=other from-end=nil test=eql key=identity error 1a|
+(define-test |find seq-type=list start=other from-end=false test=eql key=identity error 1a|
   (assert-error 'type-error
 		(find 3 '(0 1 . 2) :start 2)))
 
-(define-test |find seq-type=list start=other from-end=nil test=eql key=identity error 1b|
+(define-test |find seq-type=list start=other from-end=false test=eql key=identity error 1b|
   (assert-error 'type-error
 		(find 3 '(0 1 . 2) :start 2 :test #'eql)))
 
-(define-test |find seq-type=list start=other from-end=nil test=eql key=identity error 1c|
+(define-test |find seq-type=list start=other from-end=false test=eql key=identity error 1c|
   (assert-error 'type-error
 		(find 3 '(0 1 . 2) :start 2 :test 'eql)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eq key=identity error 1a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eq key=identity error 1a|
   (let ((element '(a)))
     (assert-eq
      nil
      (find element '() :test #'eq))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eq key=identity 1b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eq key=identity 1b|
   (let ((element '(a)))
     (assert-eq
      nil
      (find element '() :test 'eq))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eq key=identity 2|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eq key=identity 2|
   (let ((element (copy-tree '(a))))
     (assert-eq
      nil
      (find element '((a)) :test #'eq))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eq key=identity 3|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eq key=identity 3|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (find element (list '(a) element '(a)) :test #'eq))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test=eq key=identity 4|
+(define-test |find seq-type=list start=0 end=nil from-end=false test=eq key=identity 4|
   (let ((element (copy-tree '(a))))
     (assert-error
      'type-error
      (find element (list* '(a) '(a) '(a) 'b) :test #'eq))))
 
-(define-test |find seq-type=list start=other from-end=nil test=eq key=identity 1|
+(define-test |find seq-type=list start=other from-end=false test=eq key=identity 1|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (find element (list '(a) element '(a)) :test #'eq :start 1))))
 
-(define-test |find seq-type=list start=other from-end=nil test=eq key=identity 2|
+(define-test |find seq-type=list start=other from-end=false test=eq key=identity 2|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (find element (list '(a) element '(a)) :test #'eq :start 1))))
 
-(define-test |find seq-type=list start=other from-end=nil test=eq key=identity 3|
+(define-test |find seq-type=list start=other from-end=false test=eq key=identity 3|
   (let ((element (copy-tree '(a))))
     (assert-error
      'type-error
      (find element (list* '(a) element '(a)  'b) :test #'eq :start 2))))
 
-(define-test |find seq-type=list start=other from-end=nil test=eq key=other 1|
+(define-test |find seq-type=list start=other from-end=false test=eq key=other 1|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (car (find element (list '((a)) (list element) '((a)))
 		:test #'eq :start 1 :key #'car)))))
 
-(define-test |find seq-type=list start=other from-end=nil test=eq key=other 2|
+(define-test |find seq-type=list start=other from-end=false test=eq key=other 2|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (car (find element (list '((a)) (list element) '((a)))
 		:test #'eq :start 1 :key #'car)))))
 
-(define-test |find seq-type=list start=other from-end=nil test=eq key=other 3|
+(define-test |find seq-type=list start=other from-end=false test=eq key=other 3|
   (let ((element (copy-tree '(a))))
     (assert-error
      'type-error
      (car (find element (list* '((a)) (list element) '((a)) 'b)
 		:test #'eq :start 2 :key #'car)))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eql key=identity 1a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=identity 1a|
   (assert-equal
    1
    (find 0 '(0 1 2) :test-not #'eql)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eql key=identity 1b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=identity 1b|
   (assert-equal
    1
    (find 0 '(0 1 2) :test-not 'eql)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eql key=identity 2a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=identity 2a|
   (assert-equal
    nil
    (find 0 '(0 0 0) :test-not #'eql)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eql key=identity 2b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=identity 2b|
   (assert-equal
    nil
    (find 0 '(0 0 0) :test-not 'eql)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eql key=other 1a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=other 1a|
   (assert-equal
    1
    (find 1 '(0 1 2) :test-not #'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eql key=other 1b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=other 1b|
   (assert-equal
    1
    (find 1 '(0 1 2) :test-not 'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eql key=other 2a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=other 2a|
   (assert-equal
    nil
    (find 1 '(0 0 0) :test-not #'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eql key=other 2b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eql key=other 2b|
   (assert-equal
    nil
    (find 1 '(0 0 0) :test-not 'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eq key=identity 1a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eq key=identity 1a|
   (assert-equal
    'a
    (find 'z '(z a b) :test-not #'eq)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eq key=identity 1b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eq key=identity 1b|
   (assert-equal
    'a
    (find 'z '(z a b) :test-not 'eq)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eq key=identity 2a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eq key=identity 2a|
   (assert-equal
    nil
    (find 'z '(z z z) :test-not #'eq)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eq key=identity 2b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eq key=identity 2b|
   (assert-equal
    nil
    (find 'z '(z z z) :test-not 'eq)))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eq key=other 1a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eq key=other 1a|
   (assert-equal
    'a
    (find 'a '(z a b) :test-not #'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eq key=other 1b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eq key=other 1b|
   (assert-equal
    'a
    (find 'a '(z a b) :test-not 'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eq key=other 2a|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eq key=other 2a|
   (assert-equal
    nil
    (find 'a '(z z z) :test-not #'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
-(define-test |find seq-type=list start=0 end=nil from-end=nil test-not=eq key=other 2b|
+(define-test |find seq-type=list start=0 end=nil from-end=false test-not=eq key=other 2b|
   (assert-equal
    nil
    (find 'a '(z z z) :test-not 'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 1a|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=identity 1a|
   (assert-equal
    nil
    (find 1 '(0 1 2) :end 1)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 1b|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=identity 1b|
   (assert-equal
    nil
    (find 1 '(0 1 2) :end 1 :test #'eql)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 1c|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=identity 1c|
   (assert-equal
    nil
    (find 1 '(0 1 2) :end 1 :test 'eql)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 2a|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=identity 2a|
   (assert-equal
    1
    (find 1 '(0 1 2) :end 2)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 2b|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=identity 2b|
   (assert-equal
    1
    (find 1 '(0 1 2) :end 2 :test #'eql)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=identity 2c|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=identity 2c|
   (assert-equal
    1
    (find 1 '(0 1 2) :end 2 :test 'eql)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1a|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eql key=identity 1a|
   (assert-error 'type-error
 		(find 3 '(0 1 2) :end 4)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1b|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eql key=identity 1b|
   (assert-error 'type-error
 		(find 3 '(0 1 2) :end 4 :test #'eql)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=identity 1c|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eql key=identity 1c|
   (assert-error 'type-error
 		(find 3 '(0 1 2) :end 4 :test 'eql)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 1a|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=other 1a|
   (assert-equal
    nil
    (find 2 '(0 1 2) :end 1 :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 1b|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=other 1b|
   (assert-equal
    nil
    (find 2 '(0 1 2) :end 1 :test #'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 1c|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=other 1c|
   (assert-equal
    nil
    (find 2 '(0 1 2) :end 1 :test 'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 2a|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=other 2a|
   (assert-equal
    1
    (find 2 '(0 1 2) :end 2 :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 2b|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=other 2b|
   (assert-equal
    1
    (find 2 '(0 1 2) :end 2 :test #'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eql key=other 2c|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eql key=other 2c|
   (assert-equal
    1
    (find 2 '(0 1 2) :end 2 :test 'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=other 1a|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eql key=other 1a|
   (assert-error 'type-error
 		(find 4 '(0 1 2) :end 4 :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=other 1b|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eql key=other 1b|
   (assert-error 'type-error
 		(find 4 '(0 1 2) :end 4 :test #'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eql key=other 1c|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eql key=other 1c|
   (assert-error 'type-error
 		(find 4 '(0 1 2) :end 4 :test 'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 1b|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eq key=identity 1b|
   (assert-equal
    nil
    (find 'b '(a b c) :end 1 :test #'eq)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 1c|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eq key=identity 1c|
   (assert-equal
    nil
    (find 'b '(a b c) :end 1 :test 'eq)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 2b|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eq key=identity 2b|
   (assert-equal
    'b
    (find 'b '(a b c) :end 2 :test #'eq)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=identity 2c|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eq key=identity 2c|
   (assert-equal
    'b
    (find 'b '(a b c) :end 2 :test 'eq)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=identity 1b|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eq key=identity 1b|
   (assert-error 'type-error
 		(find 'd '(a b c) :end 4 :test #'eq)))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=identity 1c|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eq key=identity 1c|
   (assert-error 'type-error
 		(find 'd '(a b c) :end 4 :test 'eq)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=other 1b|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eq key=other 1b|
   (assert-equal
    nil
    (find 'c '(a b c) :end 1 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=other 1c|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eq key=other 1c|
   (assert-equal
    nil
    (find 'c '(a b c) :end 1 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=other 2b|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eq key=other 2b|
   (assert-equal
    'b
    (find 'c '(a b c) :end 2 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test=eq key=other 2c|
+(define-test |find seq-type=list start=0 end=other from-end=false test=eq key=other 2c|
   (assert-equal
    'b
    (find 'c '(a b c) :end 2 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=other 1b|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eq key=other 1b|
   (assert-error 'type-error
 		(find 'e '(a b c) :end 4 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=list start=0 end=error from-end=nil test=eq key=other 1c|
+(define-test |find seq-type=list start=0 end=error from-end=false test=eq key=other 1c|
   (assert-error 'type-error
 		(find 'e '(a b c) :end 4 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=identity 1a|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=identity 1a|
   (assert-equal
    nil
    (find '1 '(1 1 1) :end 2 :test-not #'eql)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=identity 1b|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=identity 1b|
   (assert-equal
    nil
    (find '1 '(1 1 1) :end 2 :test-not 'eql)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=identity 2a|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=identity 2a|
   (assert-equal
    2
    (find '1 '(1 2 1) :end 2 :test-not #'eql)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=identity 2b|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=identity 2b|
   (assert-equal
    2
    (find '1 '(1 2 1) :end 2 :test-not 'eql)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=other 1a|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=other 1a|
   (assert-equal
    nil
    (find '2 '(1 1 1) :end 2 :test-not #'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=other 1b|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=other 1b|
   (assert-equal
    nil
    (find '2 '(1 1 1) :end 2 :test-not 'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=other 2a|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=other 2a|
   (assert-equal
    2
    (find '2 '(1 2 1) :end 2 :test-not #'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eql key=other 2b|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eql key=other 2b|
   (assert-equal
    2
    (find '2 '(1 2 1) :end 2 :test-not 'eql :key #'1+)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=identity 1a|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eq key=identity 1a|
   (assert-equal
    nil
    (find 'a '(a a a) :end 2 :test-not #'eq)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=identity 1b|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eq key=identity 1b|
   (assert-equal
    nil
    (find 'a '(a a a) :end 2 :test-not 'eq)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=identity 2a|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eq key=identity 2a|
   (assert-equal
    'b
    (find 'a '(a b a) :end 2 :test-not #'eq)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=identity 2b|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eq key=identity 2b|
   (assert-equal
    'b
    (find 'a '(a b a) :end 2 :test-not 'eq)))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=other 1a|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eq key=other 1a|
   (assert-equal
    nil
    (find 'b '(a a a) :end 2 :test-not #'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=other 1b|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eq key=other 1b|
   (assert-equal
    nil
    (find 'b '(a a a) :end 2 :test-not 'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=other 2a|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eq key=other 2a|
   (assert-equal
    'b
    (find 'b '(a b a) :end 2 :test-not #'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
 
-(define-test |find seq-type=list start=0 end=other from-end=nil test-not=eq key=other 2b|
+(define-test |find seq-type=list start=0 end=other from-end=false test-not=eq key=other 2b|
   (assert-equal
    'b
    (find 'b '(a b a) :end 2 :test-not 'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 1a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=identity 1a|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element #()))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 1b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=identity 1b|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element #() :test #'eql))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 1c|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=identity 1c|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element #() :test 'eql))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 2a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=identity 2a|
   (assert-equal
    1
    (find 1 #(0 1 2))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 2b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=identity 2b|
   (assert-equal
    1
    (find 1 #(0 1 2) :test #'eql)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=identity 2c|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=identity 2c|
   (assert-equal
    1
    (find 1 #(0 1 2) :test 'eql)))
 
-(define-test |find seq-type=vector start=error from-end=nil test=eql key=identity 2a|
+(define-test |find seq-type=vector start=error from-end=false test=eql key=identity 2a|
   (assert-error 'type-error
 		(find 1 #(0 1 2) :start 'a)))
 
-(define-test |find seq-type=vector start=error from-end=nil test=eql key=identity 2b|
+(define-test |find seq-type=vector start=error from-end=false test=eql key=identity 2b|
   (assert-error 'type-error
 		(find 1 #(0 1 2) :test #'eql :start 4)))
 
-(define-test |find seq-type=vector start=error from-end=nil test=eql key=identity 2c|
+(define-test |find seq-type=vector start=error from-end=false test=eql key=identity 2c|
   (assert-error 'type-error
 		(find 1 #(0 1 2) :test #'eql :start -1)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 1a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=other 1a|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element #() :key #'1+))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 1b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=other 1b|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element #() :test #'eql :key #'1+))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 1c|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=other 1c|
   (let ((element '(1)))
     (assert-equal
      nil
      (find element #() :test 'eql :key #'1+))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 2a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=other 2a|
   (assert-equal
    1
    (find 2 #(0 1 2) :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 2b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=other 2b|
   (assert-equal
    1
    (find 2 #(0 1 2) :test #'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eql key=other 2a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eql key=other 2a|
   (assert-equal
    1
    (find 2 #(0 1 2) :test 'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eq key=identity error 1a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eq key=identity error 1a|
   (let ((element '(a)))
     (assert-eq
      nil
      (find element #() :test #'eq))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eq key=identity 1b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eq key=identity 1b|
   (let ((element '(a)))
     (assert-eq
      nil
      (find element #() :test 'eq))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eq key=identity 2|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eq key=identity 2|
   (let ((element (copy-tree '(a))))
     (assert-eq
      nil
      (find element #((a)) :test #'eq))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test=eq key=identity 3|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test=eq key=identity 3|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (find element (vector '(a) element '(a)) :test #'eq))))
 
-(define-test |find seq-type=vector start=other from-end=nil test=eq key=identity 1|
+(define-test |find seq-type=vector start=other from-end=false test=eq key=identity 1|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (find element (vector '(a) element '(a)) :test #'eq :start 1))))
 
-(define-test |find seq-type=vector start=other from-end=nil test=eq key=identity 2|
+(define-test |find seq-type=vector start=other from-end=false test=eq key=identity 2|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (find element (vector '(a) element '(a)) :test #'eq :start 1))))
 
-(define-test |find seq-type=vector start=other from-end=nil test=eq key=other 1|
+(define-test |find seq-type=vector start=other from-end=false test=eq key=other 1|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (car (find element (vector '((a)) (list element) '((a)))
 		:test #'eq :start 1 :key #'car)))))
 
-(define-test |find seq-type=vector start=other from-end=nil test=eq key=other 2|
+(define-test |find seq-type=vector start=other from-end=false test=eq key=other 2|
   (let ((element (copy-tree '(a))))
     (assert-eq
      element
      (car (find element (vector '((a)) (list element) '((a)))
 		:test #'eq :start 1 :key #'car)))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=identity 1a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=identity 1a|
   (assert-equal
    1
    (find 0 #(0 1 2) :test-not #'eql)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=identity 1b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=identity 1b|
   (assert-equal
    1
    (find 0 #(0 1 2) :test-not 'eql)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=identity 2a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=identity 2a|
   (assert-equal
    nil
    (find 0 #(0 0 0) :test-not #'eql)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=identity 2b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=identity 2b|
   (assert-equal
    nil
    (find 0 #(0 0 0) :test-not 'eql)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=other 1a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=other 1a|
   (assert-equal
    1
    (find 1 #(0 1 2) :test-not #'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=other 1b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=other 1b|
   (assert-equal
    1
    (find 1 #(0 1 2) :test-not 'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=other 2a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=other 2a|
   (assert-equal
    nil
    (find 1 #(0 0 0) :test-not #'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eql key=other 2b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eql key=other 2b|
   (assert-equal
    nil
    (find 1 #(0 0 0) :test-not 'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=identity 1a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eq key=identity 1a|
   (assert-equal
    'a
    (find 'z #(z a b) :test-not #'eq)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=identity 1b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eq key=identity 1b|
   (assert-equal
    'a
    (find 'z #(z a b) :test-not 'eq)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=identity 2a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eq key=identity 2a|
   (assert-equal
    nil
    (find 'z #(z z z) :test-not #'eq)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=identity 2b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eq key=identity 2b|
   (assert-equal
    nil
    (find 'z #(z z z) :test-not 'eq)))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=other 1a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eq key=other 1a|
   (assert-equal
    'a
    (find 'a #(z a b) :test-not #'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=other 1b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eq key=other 1b|
   (assert-equal
    'a
    (find 'a #(z a b) :test-not 'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=other 2a|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eq key=other 2a|
   (assert-equal
    nil
    (find 'a #(z z z) :test-not #'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
-(define-test |find seq-type=vector start=0 end=nil from-end=nil test-not=eq key=other 2b|
+(define-test |find seq-type=vector start=0 end=nil from-end=false test-not=eq key=other 2b|
   (assert-equal
    nil
    (find 'a #(z z z) :test-not 'eq :key (lambda (x) (case x (z 'a) (a 'b) (b 'c))))))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 1a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=identity 1a|
   (assert-equal
    nil
    (find 1 #(0 1 2) :end 1)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 1b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=identity 1b|
   (assert-equal
    nil
    (find 1 #(0 1 2) :end 1 :test #'eql)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 1c|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=identity 1c|
   (assert-equal
    nil
    (find 1 #(0 1 2) :end 1 :test 'eql)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 2a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=identity 2a|
   (assert-equal
    1
    (find 1 #(0 1 2) :end 2)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 2b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=identity 2b|
   (assert-equal
    1
    (find 1 #(0 1 2) :end 2 :test #'eql)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=identity 2c|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=identity 2c|
   (assert-equal
    1
    (find 1 #(0 1 2) :end 2 :test 'eql)))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=identity 1a|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=identity 1a|
   (assert-error 'type-error
 		(find 3 #(0 1 2) :end 4)))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=identity 1b|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=identity 1b|
   (assert-error 'type-error
 		(find 3 #(0 1 2) :end 4 :test #'eql)))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=identity 1c|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=identity 1c|
   (assert-error 'type-error
 		(find 3 #(0 1 2) :end 4 :test 'eql)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 1a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=other 1a|
   (assert-equal
    nil
    (find 2 #(0 1 2) :end 1 :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 1b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=other 1b|
   (assert-equal
    nil
    (find 2 #(0 1 2) :end 1 :test #'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 1c|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=other 1c|
   (assert-equal
    nil
    (find 2 #(0 1 2) :end 1 :test 'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 2a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=other 2a|
   (assert-equal
    1
    (find 2 #(0 1 2) :end 2 :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 2b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=other 2b|
   (assert-equal
    1
    (find 2 #(0 1 2) :end 2 :test #'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eql key=other 2c|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eql key=other 2c|
   (assert-equal
    1
    (find 2 #(0 1 2) :end 2 :test 'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=other 1a|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=other 1a|
   (assert-error 'type-error
 		(find 4 #(0 1 2) :end 4 :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=other 1b|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=other 1b|
   (assert-error 'type-error
 		(find 4 #(0 1 2) :end 4 :test #'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eql key=other 1c|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eql key=other 1c|
   (assert-error 'type-error
 		(find 4 #(0 1 2) :end 4 :test 'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=identity 1b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=identity 1b|
   (assert-equal
    nil
    (find 'b #(a b c) :end 1 :test #'eq)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=identity 1c|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=identity 1c|
   (assert-equal
    nil
    (find 'b #(a b c) :end 1 :test 'eq)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=identity 2b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=identity 2b|
   (assert-equal
    'b
    (find 'b #(a b c) :end 2 :test #'eq)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=identity 2c|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=identity 2c|
   (assert-equal
    'b
    (find 'b #(a b c) :end 2 :test 'eq)))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eq key=identity 1b|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eq key=identity 1b|
   (assert-error 'type-error
 		(find 'd #(a b c) :end 4 :test #'eq)))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eq key=identity 1c|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eq key=identity 1c|
   (assert-error 'type-error
 		(find 'd #(a b c) :end 4 :test 'eq)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=other 1b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=other 1b|
   (assert-equal
    nil
    (find 'c #(a b c) :end 1 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=other 1c|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=other 1c|
   (assert-equal
    nil
    (find 'c #(a b c) :end 1 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=other 2b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=other 2b|
   (assert-equal
    'b
    (find 'c #(a b c) :end 2 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test=eq key=other 2c|
+(define-test |find seq-type=vector start=0 end=other from-end=false test=eq key=other 2c|
   (assert-equal
    'b
    (find 'c #(a b c) :end 2 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eq key=other 1b|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eq key=other 1b|
   (assert-error 'type-error
 		(find 'e #(a b c) :end 4 :test #'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=vector start=0 end=error from-end=nil test=eq key=other 1c|
+(define-test |find seq-type=vector start=0 end=error from-end=false test=eq key=other 1c|
   (assert-error 'type-error
 		(find 'e #(a b c) :end 4 :test 'eq :key (lambda (x) (case x (a 'b) (b 'c) (c 'd))))))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=identity 1a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=identity 1a|
   (assert-equal
    nil
    (find '1 #(1 1 1) :end 2 :test-not #'eql)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=identity 1b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=identity 1b|
   (assert-equal
    nil
    (find '1 #(1 1 1) :end 2 :test-not 'eql)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=identity 2a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=identity 2a|
   (assert-equal
    2
    (find '1 #(1 2 1) :end 2 :test-not #'eql)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=identity 2b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=identity 2b|
   (assert-equal
    2
    (find '1 #(1 2 1) :end 2 :test-not 'eql)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=other 1a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=other 1a|
   (assert-equal
    nil
    (find '2 #(1 1 1) :end 2 :test-not #'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=other 1b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=other 1b|
   (assert-equal
    nil
    (find '2 #(1 1 1) :end 2 :test-not 'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=other 2a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=other 2a|
   (assert-equal
    2
    (find '2 #(1 2 1) :end 2 :test-not #'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eql key=other 2b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eql key=other 2b|
   (assert-equal
    2
    (find '2 #(1 2 1) :end 2 :test-not 'eql :key #'1+)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=identity 1a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eq key=identity 1a|
   (assert-equal
    nil
    (find 'a #(a a a) :end 2 :test-not #'eq)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=identity 1b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eq key=identity 1b|
   (assert-equal
    nil
    (find 'a #(a a a) :end 2 :test-not 'eq)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=identity 2a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eq key=identity 2a|
   (assert-equal
    'b
    (find 'a #(a b a) :end 2 :test-not #'eq)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=identity 2b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eq key=identity 2b|
   (assert-equal
    'b
    (find 'a #(a b a) :end 2 :test-not 'eq)))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=other 1a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eq key=other 1a|
   (assert-equal
    nil
    (find 'b #(a a a) :end 2 :test-not #'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=other 1b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eq key=other 1b|
   (assert-equal
    nil
    (find 'b #(a a a) :end 2 :test-not 'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=other 2a|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eq key=other 2a|
   (assert-equal
    'b
    (find 'b #(a b a) :end 2 :test-not #'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
 
-(define-test |find seq-type=vector start=0 end=other from-end=nil test-not=eq key=other 2b|
+(define-test |find seq-type=vector start=0 end=other from-end=false test-not=eq key=other 2b|
   (assert-equal
    'b
    (find 'b #(a b a) :end 2 :test-not 'eq :key (lambda (x) (case x (a 'b) (b 'c))))))
@@ -2913,131 +2913,131 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=0 end=nil from-end=nil
+;;; with seq-type=list test=eql key=identity start=0 end=nil from-end=false
 
 ;;; Check that it works with the empty list and no explicitly given test, 
 ;;; and no explicit start given.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1a|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 1a|
   (assert-equal nil
 		(position 1 '())))
 
 ;;; Check that it works with the empty list and :test #'eql given
 ;;; and no explicit start given.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1b|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 1b|
   (assert-equal nil
 		(position 1 '() :test #'eql)))
 
 ;;; Check that it works with the empty list and :test 'eql given
 ;;; and no explicit start given.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 1c|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 1c|
   (assert-equal nil
 		(position 1 '() :test 'eql)))
 
 ;;; Check that it works with the empty list and no explicitly given test, 
 ;;; and an explicit start of 0 given.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 2a|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 2a|
   (assert-equal nil
 		(position 1 '() :start 0)))
 
 ;;; Check that it works with the empty list and :test #'eql given
 ;;; and an explicit start of 0 given.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 2b|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 2b|
   (assert-equal nil
 		(position 1 '() :start 0 :test #'eql)))
 
 ;;; Check that it works with the empty list and :test 'eql given
 ;;; and an explicit start of 0 given.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 2c|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 2c|
   (assert-equal nil
 		(position 1 '() :start 0 :test 'eql)))
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 3a|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 3a|
   (assert-equal 1
 		(position *i01* (list *i1* *i02* *i01* *i2*))))
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 3b|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 3b|
   (assert-equal 1
 		(position *i01* (list *i1* *i02* *i01* *i2*) :test #'eql)))
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 3c|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 3c|
   (assert-equal 1
 		(position *i01* (list *i1* *i02* *i01* *i2*) :test 'eql)))
 
 ;;; Check that we get nil back if the number is not in the list.
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 4a|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 4a|
   (assert-equal nil
 		(position *i01* (list *i1* *i2* *i3*))))
 
 ;;; Check that we get nil back if the number is not in the list.
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 4b|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 4b|
   (assert-equal nil
 		(position *i01* (list *i1* *i2* *i3*) :test #'eql)))
 
 ;;; Check that we get nil back if the number is not in the list.
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 4c|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 4c|
   (assert-equal nil
 		(position *i01* (list *i1* *i2* *i3*) :test 'eql)))
 
 ;;; Check that we do not accidentally use equal
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 5a|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 5a|
   (assert-equal nil
 		(position (list 'a) (list (list 'a)))))
 
 ;;; Check that we do not accidentally use equal
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 5b|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 5b|
   (assert-equal nil
 		(position (list 'a) (list (list 'a)) :test #'eql)))
 
 ;;; Check that we do not accidentally use equal
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 5c|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 5c|
   (assert-equal nil
 		(position (list 'a) (list (list 'a)) :test 'eql)))
 
 ;;; Check that we get a type error when we pass something that is not
 ;;; a sequence.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 6a|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 6a|
   (assert-error 'type-error
 		(position 0 1)))
 
 ;;; Check that we get a type error when we pass something that is not
 ;;; a sequence.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 6b|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 6b|
   (assert-error 'type-error
 		(position 0 1 :test #'eql)))
 
 ;;; Check that we get a type error when we pass something that is not
 ;;; a sequence.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 6c|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 6c|
   (assert-error 'type-error
 		(position 0 1 :test 'eql)))
 
 ;;; Check that we get a type error when we pass a dotted list and 
 ;;; the item is not in the sequence.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 7a|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 7a|
   (assert-error 'type-error
 		(position 0 '(1 1 . 1))))
 
 ;;; Check that we get a type error when we pass a dotted list and 
 ;;; the item is not in the sequence.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 7b|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 7b|
   (assert-error 'type-error
 		(position 0 '(1 1 . 1) :test #'eql)))
 
 ;;; Check that we get a type error when we pass a dotted list and 
 ;;; the item is not in the sequence.
-(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=nil 7c|
+(define-test |position seq-type=list test=eql key=identity start=0 end=nil from-end=false 7c|
   (assert-error 'type-error
 		(position 0 '(1 1 . 1) :test 'eql)))
 
@@ -3046,7 +3046,7 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=0 end=nil from-end=t
+;;; with seq-type=list test=eql key=identity start=0 end=nil from-end=true
 
 ;;; Check that it works with the empty list and no explicitly given test, 
 ;;; and no explicit start given.
@@ -3161,21 +3161,63 @@
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=0 end=true
+;;; with seq-type=list test=eql key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=0 end=true from-end=nil
+;;; with seq-type=list test=eql key=identity start=0 end=other from-end=false
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 1a|
+  (assert-equal 1
+		(position *i01* (list *i1* *i02* *i01* *i2*)
+			  :end 3)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 1b|
+  (assert-equal 1
+		(position *i01* (list *i1* *i02* *i01* *i2*)
+			  :test #'eql :end 3)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 1c|
+  (assert-equal 1
+		(position *i01* (list *i1* *i02* *i01* *i2*)
+			  :test 'eql :end 3)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 2a|
+  (assert-equal nil
+		(position *i01* (list *i1* *i02* *i01* *i2*)
+			  :end 1)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 2b|
+  (assert-equal nil
+		(position *i01* (list *i1* *i02* *i01* *i2*)
+			  :test #'eql :end 1)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=identity start=0 end=other from-end=false 2c|
+  (assert-equal nil
+		(position *i01* (list *i1* *i02* *i01* *i2*)
+			  :test 'eql :end 1)))
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=0 end=true from-end=t
+;;; with seq-type=list test=eql key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -3196,59 +3238,59 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=other end=nil from-end=nil
+;;; with seq-type=list test=eql key=identity start=other end=nil from-end=false
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 2a|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 2a|
   (assert-equal 1
 		(position *i01* (list *i1* *i02* *i2*) :start 1)))
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 2b|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 2b|
   (assert-equal 1
 		(position *i01* (list *i1* *i02* *i2*) :test #'eql :start 1)))
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 2c|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 2c|
   (assert-equal 1
 		(position *i01* (list *i1* *i02* *i2*) :test 'eql :start 1)))
 
 ;;; Check that we do not find n eql number because of the value of start
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 3a|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 3a|
   (assert-equal nil
 		(position *i01* (list *i1* *i02* *i2*) :start 2)))
 
 ;;; Check that we do not find n eql number because of the value of start
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 3b|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 3b|
   (assert-equal nil
 		(position *i01* (list *i1* *i02* *i2*) :test #'eql :start 2)))
 
 ;;; Check that we do not find n eql number because of the value of start
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 3c|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 3c|
   (assert-equal nil
 		(position *i01* (list *i1* *i02* *i2*) :test 'eql :start 2)))
 
 ;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 4a|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 4a|
   (assert-error 'type-error
 		(position *i01* (list *i1* *i02* *i2*) :start 4)))
 
 ;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 4b|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 4b|
   (assert-error 'type-error
 		(position *i01* (list *i1* *i02* *i2*) :test #'eql :start 4)))
 
 ;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=nil 4c|
+(define-test |position seq-type=list test=eql key=identity start=other end=nil from-end=false 4c|
   (assert-error 'type-error
 		(position *i01* (list *i1* *i02* *i2*) :test 'eql :start 4)))
 
@@ -3257,28 +3299,28 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=other end=nil from-end=t
+;;; with seq-type=list test=eql key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=other end=true
+;;; with seq-type=list test=eql key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=other end=true from-end=nil
+;;; with seq-type=list test=eql key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=identity start=other end=true from-end=t
+;;; with seq-type=list test=eql key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -3306,53 +3348,53 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=0 end=nil from-end=nil
+;;; with seq-type=list test=eql key=other start=0 end=nil from-end=false
 
 ;;; Check that it works with the empty list and no explicitly given test, 
 ;;; and no explicit start given.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 1a|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 1a|
   (assert-equal nil
 		(position 1 '()
 			  :key #'car)))
 
 ;;; Check that it works with the empty list and :test #'eql given
 ;;; and no explicit start given.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 1b|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 1b|
   (assert-equal nil
 		(position 1 '()
 			  :test #'eql :key #'car)))
 
 ;;; Check that it works with the empty list and :test 'eql given
 ;;; and no explicit start given.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 1c|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 1c|
   (assert-equal nil
 		(position 1 '()
 			  :test 'eql :key #'car)))
 
 ;;; Check that it works with the empty list and no explicitly given test, 
 ;;; and an explicit start of 0 given.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 2a|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 2a|
   (assert-equal nil
 		(position 1 '()
 			  :start 0 :key #'car)))
 
 ;;; Check that it works with the empty list and :test #'eql given
 ;;; and an explicit start of 0 given.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 2b|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 2b|
   (assert-equal nil
 		(position 1 '()
 			  :start 0 :test #'eql :key #'car)))
 
 ;;; Check that it works with the empty list and :test 'eql given
 ;;; and an explicit start of 0 given.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 2c|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 2c|
   (assert-equal nil
 		(position 1 '()
 			  :start 0 :test 'eql :key #'car)))
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 3a|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 3a|
   (let ((element (list *i02*)))
     (assert-equal 1
 		  (position *i01* (list (list *i1*) element (list *i01*) (list *i2*))
@@ -3360,7 +3402,7 @@
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 3b|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 3b|
   (let ((element (list *i02*)))
     (assert-equal 1
 		  (position *i01* (list (list *i1*) element (list *i01*) (list *i2*))
@@ -3368,7 +3410,7 @@
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 3c|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 3c|
   (let ((element (list *i02*)))
     (assert-equal 1
 		  (position *i01* (list (list *i1*) element (list *i01*) (list *i2*))
@@ -3376,84 +3418,84 @@
 
 ;;; Check that we get nil back if the number is not in the list.
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 4a|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 4a|
   (assert-equal nil
 		(position *i01* (list (list *i1*) (list *i2*) (list *i3*))
 			  :key #'car)))
 
 ;;; Check that we get nil back if the number is not in the list.
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 4b|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 4b|
   (assert-equal nil
 		(position *i01* (list (list *i1*) (list *i2*) (list *i3*))
 			  :test #'eql :key #'car)))
 
 ;;; Check that we get nil back if the number is not in the list.
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 4c|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 4c|
   (assert-equal nil
 		(position *i01* (list (list *i1*) (list *i2*) (list *i3*))
 			  :test 'eql :key #'car)))
 
 ;;; Check that we do not accidentally use equal
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 5a|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 5a|
   (assert-equal nil
 		(position (list (list 'a)) (list (list (list 'a)))
 			  :key #'car)))
 
 ;;; Check that we do not accidentally use equal
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 5b|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 5b|
   (assert-equal nil
 		(position (list (list 'a)) (list (list (list 'a)))
 			  :test #'eql :key #'car)))
 
 ;;; Check that we do not accidentally use equal
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 5c|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 5c|
   (assert-equal nil
 		(position (list (list 'a)) (list (list (list 'a)))
 			  :test 'eql :key #'car)))
 
 ;;; Check that we get a type error when we pass something that is not
 ;;; a sequence.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 6a|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 6a|
   (assert-error 'type-error
 		(position 0 1
 			  :key #'car)))
 
 ;;; Check that we get a type error when we pass something that is not
 ;;; a sequence.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 6b|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 6b|
   (assert-error 'type-error
 		(position 0 1
 			  :test #'eql :key #'car)))
 
 ;;; Check that we get a type error when we pass something that is not
 ;;; a sequence.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 6c|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 6c|
   (assert-error 'type-error
 		(position 0 1
 			  :test 'eql :key #'car)))
 
 ;;; Check that we get a type error when we pass a dotted list and 
 ;;; the item is not in the sequence.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 7a|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 7a|
   (assert-error 'type-error
 		(position 0 '((1) (1) . 1)
 			  :key #'car)))
 
 ;;; Check that we get a type error when we pass a dotted list and 
 ;;; the item is not in the sequence.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 7b|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 7b|
   (assert-error 'type-error
 		(position 0 '((1) (1) . 1)
 			  :test #'eql :key #'car)))
 
 ;;; Check that we get a type error when we pass a dotted list and 
 ;;; the item is not in the sequence.
-(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=nil 7c|
+(define-test |position seq-type=list test=eql key=other start=0 end=nil from-end=false 7c|
   (assert-error 'type-error
 		(position 0 '((1) (1) . 1)
 			  :test 'eql :key #'car)))
@@ -3463,7 +3505,7 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=0 end=nil from-end=t
+;;; with seq-type=list test=eql key=other start=0 end=nil from-end=true
 
 ;;; Check that it works with the empty list and no explicitly given test, 
 ;;; and no explicit start given.
@@ -3620,21 +3662,21 @@
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=0 end=true
+;;; with seq-type=list test=eql key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=0 end=true from-end=nil
+;;; with seq-type=list test=eql key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=0 end=true from-end=t
+;;; with seq-type=list test=eql key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -3655,11 +3697,11 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=other end=nil from-end=nil
+;;; with seq-type=list test=eql key=other start=other end=nil from-end=false
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 2a|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 2a|
   (let ((element (list *i02*)))
     (assert-equal 1
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3667,7 +3709,7 @@
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 2b|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 2b|
   (let ((element (list *i02*)))
     (assert-equal 1
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3675,7 +3717,7 @@
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 2c|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 2c|
   (let ((element (list *i02*)))
     (assert-equal 1
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3683,7 +3725,7 @@
 
 ;;; Check that we do not find n eql number because of the value of start
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 3a|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 3a|
   (let ((element (list *i02*)))
     (assert-equal nil
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3691,7 +3733,7 @@
 
 ;;; Check that we do not find n eql number because of the value of start
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 3b|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 3b|
   (let ((element (list *i02*)))
     (assert-equal nil
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3699,7 +3741,7 @@
 
 ;;; Check that we do not find n eql number because of the value of start
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 3c|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 3c|
   (let ((element (list *i02*)))
     (assert-equal nil
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3707,7 +3749,7 @@
 
 ;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is implicit.
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 4a|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 4a|
   (let ((element (list *i02*)))
     (assert-error 'type-error
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3715,7 +3757,7 @@
 
 ;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is explicit by passing the function.
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 4b|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 4b|
   (let ((element (list *i02*)))
     (assert-error 'type-error
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3723,7 +3765,7 @@
 
 ;;; Check that we get an error when start is beyond the end of the list
 ;;; A test of eql is explicit by passing the name of the function. 
-(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=nil 4c|
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=false 4c|
   (let ((element (list *i02*)))
     (assert-error 'type-error
 		  (position *i01* (list (list *i1*) element (list *i2*))
@@ -3734,28 +3776,28 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=other end=nil from-end=t
+;;; with seq-type=list test=eql key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=other end=true
+;;; with seq-type=list test=eql key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=other end=true from-end=nil
+;;; with seq-type=list test=eql key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eql key=other start=other end=true from-end=t
+;;; with seq-type=list test=eql key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -3790,33 +3832,33 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=0 end=nil from-end=nil
+;;; with seq-type=list test=eq key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=0 end=nil from-end=t
+;;; with seq-type=list test=eq key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=0 end=true
+;;; with seq-type=list test=eq key=identity start=0 end=other
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=0 end=true from-end=nil
+;;; with seq-type=list test=eq key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=0 end=true from-end=t
+;;; with seq-type=list test=eq key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -3837,35 +3879,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=other end=nil from-end=nil
+;;; with seq-type=list test=eq key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=other end=nil from-end=t
+;;; with seq-type=list test=eq key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=other end=true
+;;; with seq-type=list test=eq key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=other end=true from-end=nil
+;;; with seq-type=list test=eq key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=identity start=other end=true from-end=t
+;;; with seq-type=list test=eq key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -3893,35 +3935,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=0 end=nil from-end=nil
+;;; with seq-type=list test=eq key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=0 end=nil from-end=t
+;;; with seq-type=list test=eq key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=0 end=true
+;;; with seq-type=list test=eq key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=0 end=true from-end=nil
+;;; with seq-type=list test=eq key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=0 end=true from-end=t
+;;; with seq-type=list test=eq key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -3942,35 +3984,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=other end=nil from-end=nil
+;;; with seq-type=list test=eq key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=other end=nil from-end=t
+;;; with seq-type=list test=eq key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=other end=true
+;;; with seq-type=list test=eq key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=other end=true from-end=nil
+;;; with seq-type=list test=eq key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=eq key=other start=other end=true from-end=t
+;;; with seq-type=list test=eq key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4005,35 +4047,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=0 end=nil from-end=nil
+;;; with seq-type=list test=other key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=0 end=nil from-end=t
+;;; with seq-type=list test=other key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=0 end=true
+;;; with seq-type=list test=other key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=0 end=true from-end=nil
+;;; with seq-type=list test=other key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=0 end=true from-end=t
+;;; with seq-type=list test=other key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4054,35 +4096,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=other end=nil from-end=nil
+;;; with seq-type=list test=other key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=other end=nil from-end=t
+;;; with seq-type=list test=other key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=other end=true
+;;; with seq-type=list test=other key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=other end=true from-end=nil
+;;; with seq-type=list test=other key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=identity start=other end=true from-end=t
+;;; with seq-type=list test=other key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4110,35 +4152,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=0 end=nil from-end=nil
+;;; with seq-type=list test=other key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=0 end=nil from-end=t
+;;; with seq-type=list test=other key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=0 end=true
+;;; with seq-type=list test=other key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=0 end=true from-end=nil
+;;; with seq-type=list test=other key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=0 end=true from-end=t
+;;; with seq-type=list test=other key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4159,35 +4201,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=other end=nil from-end=nil
+;;; with seq-type=list test=other key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=other end=nil from-end=t
+;;; with seq-type=list test=other key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=other end=true
+;;; with seq-type=list test=other key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=other end=true from-end=nil
+;;; with seq-type=list test=other key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test=other key=other start=other end=true from-end=t
+;;; with seq-type=list test=other key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4222,35 +4264,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=0 end=nil from-end=nil
+;;; with seq-type=list test-not=eql key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=0 end=nil from-end=t
+;;; with seq-type=list test-not=eql key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=0 end=true
+;;; with seq-type=list test-not=eql key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=0 end=true from-end=nil
+;;; with seq-type=list test-not=eql key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=0 end=true from-end=t
+;;; with seq-type=list test-not=eql key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4271,35 +4313,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=other end=nil from-end=nil
+;;; with seq-type=list test-not=eql key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=other end=nil from-end=t
+;;; with seq-type=list test-not=eql key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=other end=true
+;;; with seq-type=list test-not=eql key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=other end=true from-end=nil
+;;; with seq-type=list test-not=eql key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=identity start=other end=true from-end=t
+;;; with seq-type=list test-not=eql key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4327,35 +4369,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=0 end=nil from-end=nil
+;;; with seq-type=list test-not=eql key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=0 end=nil from-end=t
+;;; with seq-type=list test-not=eql key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=0 end=true
+;;; with seq-type=list test-not=eql key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=0 end=true from-end=nil
+;;; with seq-type=list test-not=eql key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=0 end=true from-end=t
+;;; with seq-type=list test-not=eql key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4376,35 +4418,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=other end=nil from-end=nil
+;;; with seq-type=list test-not=eql key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=other end=nil from-end=t
+;;; with seq-type=list test-not=eql key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=other end=true
+;;; with seq-type=list test-not=eql key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=other end=true from-end=nil
+;;; with seq-type=list test-not=eql key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eql key=other start=other end=true from-end=t
+;;; with seq-type=list test-not=eql key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4439,35 +4481,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=0 end=nil from-end=nil
+;;; with seq-type=list test-not=eq key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=0 end=nil from-end=t
+;;; with seq-type=list test-not=eq key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=0 end=true
+;;; with seq-type=list test-not=eq key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=0 end=true from-end=nil
+;;; with seq-type=list test-not=eq key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=0 end=true from-end=t
+;;; with seq-type=list test-not=eq key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4488,35 +4530,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=other end=nil from-end=nil
+;;; with seq-type=list test-not=eq key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=other end=nil from-end=t
+;;; with seq-type=list test-not=eq key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=other end=true
+;;; with seq-type=list test-not=eq key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=other end=true from-end=nil
+;;; with seq-type=list test-not=eq key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=identity start=other end=true from-end=t
+;;; with seq-type=list test-not=eq key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4544,35 +4586,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=0 end=nil from-end=nil
+;;; with seq-type=list test-not=eq key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=0 end=nil from-end=t
+;;; with seq-type=list test-not=eq key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=0 end=true
+;;; with seq-type=list test-not=eq key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=0 end=true from-end=nil
+;;; with seq-type=list test-not=eq key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=0 end=true from-end=t
+;;; with seq-type=list test-not=eq key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4593,35 +4635,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=other end=nil from-end=nil
+;;; with seq-type=list test-not=eq key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=other end=nil from-end=t
+;;; with seq-type=list test-not=eq key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=other end=true
+;;; with seq-type=list test-not=eq key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=other end=true from-end=nil
+;;; with seq-type=list test-not=eq key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=eq key=other start=other end=true from-end=t
+;;; with seq-type=list test-not=eq key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4656,35 +4698,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=0 end=nil from-end=nil
+;;; with seq-type=list test-not=other key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=0 end=nil from-end=t
+;;; with seq-type=list test-not=other key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=0 end=true
+;;; with seq-type=list test-not=other key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=0 end=true from-end=nil
+;;; with seq-type=list test-not=other key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=0 end=true from-end=t
+;;; with seq-type=list test-not=other key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4705,35 +4747,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=other end=nil from-end=nil
+;;; with seq-type=list test-not=other key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=other end=nil from-end=t
+;;; with seq-type=list test-not=other key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=other end=true
+;;; with seq-type=list test-not=other key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=other end=true from-end=nil
+;;; with seq-type=list test-not=other key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=identity start=other end=true from-end=t
+;;; with seq-type=list test-not=other key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4761,35 +4803,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=0 end=nil from-end=nil
+;;; with seq-type=list test-not=other key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=0 end=nil from-end=t
+;;; with seq-type=list test-not=other key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=0 end=true
+;;; with seq-type=list test-not=other key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=0 end=true from-end=nil
+;;; with seq-type=list test-not=other key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=0 end=true from-end=t
+;;; with seq-type=list test-not=other key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4810,35 +4852,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=other end=nil from-end=nil
+;;; with seq-type=list test-not=other key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=other end=nil from-end=t
+;;; with seq-type=list test-not=other key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=other end=true
+;;; with seq-type=list test-not=other key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=other end=true from-end=nil
+;;; with seq-type=list test-not=other key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=list test-not=other key=other start=other end=true from-end=t
+;;; with seq-type=list test-not=other key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4880,35 +4922,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=0 end=nil from-end=nil
+;;; with seq-type=vector test=eql key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=0 end=nil from-end=t
+;;; with seq-type=vector test=eql key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=0 end=true
+;;; with seq-type=vector test=eql key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=0 end=true from-end=nil
+;;; with seq-type=vector test=eql key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=0 end=true from-end=t
+;;; with seq-type=vector test=eql key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4929,35 +4971,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=other end=nil from-end=nil
+;;; with seq-type=vector test=eql key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=other end=nil from-end=t
+;;; with seq-type=vector test=eql key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=other end=true
+;;; with seq-type=vector test=eql key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=other end=true from-end=nil
+;;; with seq-type=vector test=eql key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=identity start=other end=true from-end=t
+;;; with seq-type=vector test=eql key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4985,35 +5027,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=0 end=nil from-end=nil
+;;; with seq-type=vector test=eql key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=0 end=nil from-end=t
+;;; with seq-type=vector test=eql key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=0 end=true
+;;; with seq-type=vector test=eql key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=0 end=true from-end=nil
+;;; with seq-type=vector test=eql key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=0 end=true from-end=t
+;;; with seq-type=vector test=eql key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5034,35 +5076,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=other end=nil from-end=nil
+;;; with seq-type=vector test=eql key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=other end=nil from-end=t
+;;; with seq-type=vector test=eql key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=other end=true
+;;; with seq-type=vector test=eql key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=other end=true from-end=nil
+;;; with seq-type=vector test=eql key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eql key=other start=other end=true from-end=t
+;;; with seq-type=vector test=eql key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5097,35 +5139,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=0 end=nil from-end=nil
+;;; with seq-type=vector test=eq key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=0 end=nil from-end=t
+;;; with seq-type=vector test=eq key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=0 end=true
+;;; with seq-type=vector test=eq key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=0 end=true from-end=nil
+;;; with seq-type=vector test=eq key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=0 end=true from-end=t
+;;; with seq-type=vector test=eq key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5146,35 +5188,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=other end=nil from-end=nil
+;;; with seq-type=vector test=eq key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=other end=nil from-end=t
+;;; with seq-type=vector test=eq key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=other end=true
+;;; with seq-type=vector test=eq key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=other end=true from-end=nil
+;;; with seq-type=vector test=eq key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=identity start=other end=true from-end=t
+;;; with seq-type=vector test=eq key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5202,35 +5244,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=0 end=nil from-end=nil
+;;; with seq-type=vector test=eq key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=0 end=nil from-end=t
+;;; with seq-type=vector test=eq key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=0 end=true
+;;; with seq-type=vector test=eq key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=0 end=true from-end=nil
+;;; with seq-type=vector test=eq key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=0 end=true from-end=t
+;;; with seq-type=vector test=eq key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5251,35 +5293,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=other end=nil from-end=nil
+;;; with seq-type=vector test=eq key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=other end=nil from-end=t
+;;; with seq-type=vector test=eq key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=other end=true
+;;; with seq-type=vector test=eq key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=other end=true from-end=nil
+;;; with seq-type=vector test=eq key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=eq key=other start=other end=true from-end=t
+;;; with seq-type=vector test=eq key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5314,35 +5356,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=0 end=nil from-end=nil
+;;; with seq-type=vector test=other key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=0 end=nil from-end=t
+;;; with seq-type=vector test=other key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=0 end=true
+;;; with seq-type=vector test=other key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=0 end=true from-end=nil
+;;; with seq-type=vector test=other key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=0 end=true from-end=t
+;;; with seq-type=vector test=other key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5363,35 +5405,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=other end=nil from-end=nil
+;;; with seq-type=vector test=other key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=other end=nil from-end=t
+;;; with seq-type=vector test=other key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=other end=true
+;;; with seq-type=vector test=other key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=other end=true from-end=nil
+;;; with seq-type=vector test=other key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=identity start=other end=true from-end=t
+;;; with seq-type=vector test=other key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5419,35 +5461,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=0 end=nil from-end=nil
+;;; with seq-type=vector test=other key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=0 end=nil from-end=t
+;;; with seq-type=vector test=other key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=0 end=true
+;;; with seq-type=vector test=other key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=0 end=true from-end=nil
+;;; with seq-type=vector test=other key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=0 end=true from-end=t
+;;; with seq-type=vector test=other key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5468,35 +5510,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=other end=nil from-end=nil
+;;; with seq-type=vector test=other key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=other end=nil from-end=t
+;;; with seq-type=vector test=other key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=other end=true
+;;; with seq-type=vector test=other key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=other end=true from-end=nil
+;;; with seq-type=vector test=other key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test=other key=other start=other end=true from-end=t
+;;; with seq-type=vector test=other key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5531,35 +5573,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=0 end=nil from-end=nil
+;;; with seq-type=vector test-not=eql key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=0 end=nil from-end=t
+;;; with seq-type=vector test-not=eql key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=0 end=true
+;;; with seq-type=vector test-not=eql key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=0 end=true from-end=nil
+;;; with seq-type=vector test-not=eql key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=0 end=true from-end=t
+;;; with seq-type=vector test-not=eql key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5580,35 +5622,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=other end=nil from-end=nil
+;;; with seq-type=vector test-not=eql key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=other end=nil from-end=t
+;;; with seq-type=vector test-not=eql key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=other end=true
+;;; with seq-type=vector test-not=eql key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=other end=true from-end=nil
+;;; with seq-type=vector test-not=eql key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=identity start=other end=true from-end=t
+;;; with seq-type=vector test-not=eql key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5636,35 +5678,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=0 end=nil from-end=nil
+;;; with seq-type=vector test-not=eql key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=0 end=nil from-end=t
+;;; with seq-type=vector test-not=eql key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=0 end=true
+;;; with seq-type=vector test-not=eql key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=0 end=true from-end=nil
+;;; with seq-type=vector test-not=eql key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=0 end=true from-end=t
+;;; with seq-type=vector test-not=eql key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5685,35 +5727,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=other end=nil from-end=nil
+;;; with seq-type=vector test-not=eql key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=other end=nil from-end=t
+;;; with seq-type=vector test-not=eql key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=other end=true
+;;; with seq-type=vector test-not=eql key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=other end=true from-end=nil
+;;; with seq-type=vector test-not=eql key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eql key=other start=other end=true from-end=t
+;;; with seq-type=vector test-not=eql key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5748,35 +5790,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=0 end=nil from-end=nil
+;;; with seq-type=vector test-not=eq key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=0 end=nil from-end=t
+;;; with seq-type=vector test-not=eq key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=0 end=true
+;;; with seq-type=vector test-not=eq key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=0 end=true from-end=nil
+;;; with seq-type=vector test-not=eq key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=0 end=true from-end=t
+;;; with seq-type=vector test-not=eq key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5797,35 +5839,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=other end=nil from-end=nil
+;;; with seq-type=vector test-not=eq key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=other end=nil from-end=t
+;;; with seq-type=vector test-not=eq key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=other end=true
+;;; with seq-type=vector test-not=eq key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=other end=true from-end=nil
+;;; with seq-type=vector test-not=eq key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=identity start=other end=true from-end=t
+;;; with seq-type=vector test-not=eq key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5853,35 +5895,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=0 end=nil from-end=nil
+;;; with seq-type=vector test-not=eq key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=0 end=nil from-end=t
+;;; with seq-type=vector test-not=eq key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=0 end=true
+;;; with seq-type=vector test-not=eq key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=0 end=true from-end=nil
+;;; with seq-type=vector test-not=eq key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=0 end=true from-end=t
+;;; with seq-type=vector test-not=eq key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5902,35 +5944,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=other end=nil from-end=nil
+;;; with seq-type=vector test-not=eq key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=other end=nil from-end=t
+;;; with seq-type=vector test-not=eq key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=other end=true
+;;; with seq-type=vector test-not=eq key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=other end=true from-end=nil
+;;; with seq-type=vector test-not=eq key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=eq key=other start=other end=true from-end=t
+;;; with seq-type=vector test-not=eq key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5965,35 +6007,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=0 end=nil from-end=nil
+;;; with seq-type=vector test-not=other key=identity start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=0 end=nil from-end=t
+;;; with seq-type=vector test-not=other key=identity start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=0 end=true
+;;; with seq-type=vector test-not=other key=identity start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=0 end=true from-end=nil
+;;; with seq-type=vector test-not=other key=identity start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=0 end=true from-end=t
+;;; with seq-type=vector test-not=other key=identity start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -6014,35 +6056,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=other end=nil from-end=nil
+;;; with seq-type=vector test-not=other key=identity start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=other end=nil from-end=t
+;;; with seq-type=vector test-not=other key=identity start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=other end=true
+;;; with seq-type=vector test-not=other key=identity start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=other end=true from-end=nil
+;;; with seq-type=vector test-not=other key=identity start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=identity start=other end=true from-end=t
+;;; with seq-type=vector test-not=other key=identity start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -6070,35 +6112,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=0 end=nil from-end=nil
+;;; with seq-type=vector test-not=other key=other start=0 end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=0 end=nil from-end=t
+;;; with seq-type=vector test-not=other key=other start=0 end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=0 end=true
+;;; with seq-type=vector test-not=other key=other start=0 end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=0 end=true from-end=nil
+;;; with seq-type=vector test-not=other key=other start=0 end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=0 end=true from-end=t
+;;; with seq-type=vector test-not=other key=other start=0 end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -6119,35 +6161,35 @@
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=other end=nil from-end=nil
+;;; with seq-type=vector test-not=other key=other start=other end=nil from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=other end=nil from-end=t
+;;; with seq-type=vector test-not=other key=other start=other end=nil from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=other end=true
+;;; with seq-type=vector test-not=other key=other start=other end=other
 
 ;;; DO NOT PUT TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=other end=true from-end=nil
+;;; with seq-type=vector test-not=other key=other start=other end=other from-end=false
 
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
-;;; with seq-type=vector test-not=other key=other start=other end=true from-end=t
+;;; with seq-type=vector test-not=other key=other start=other end=other from-end=true
 
 ;;; ************** ADD MORE TESTS HERE
 
