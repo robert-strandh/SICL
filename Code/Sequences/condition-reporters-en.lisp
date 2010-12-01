@@ -123,6 +123,18 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
+(defmethod report-condition ((c invalid-sequence-index)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (in the ~a package),~@
+           The value ~s is not a valid sequence index for the sequence:~@
+           ~s."
+	  (name c)
+	  (name-package (name c))
+	  (type-error-datum c)
+	  (in-sequence c)))
+
 (defmethod report-condition ((c invalid-start-index)
 			     stream
 			     (language (eql 'en-us)))
