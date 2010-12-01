@@ -7035,12 +7035,132 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=0 end=nil from-end=false
 
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 1a|
+  (assert-equal nil
+		(position 1 #())))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 1b|
+  (assert-equal nil
+		(position 1 #() :test #'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 1c|
+  (assert-equal nil
+		(position 1 #() :test 'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 2a|
+  (assert-equal nil
+		(position 1 #() :start 0)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 2b|
+  (assert-equal nil
+		(position 1 #() :start 0 :test #'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 2c|
+  (assert-equal nil
+		(position 1 #() :start 0 :test 'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 3a|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*))))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 3b|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*) :test #'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 3c|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*) :test 'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 4a|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i2* *i3*))))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 4b|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i2* *i3*) :test #'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 4c|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i2* *i3*) :test 'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 5a|
+  (assert-equal nil
+		(position (list 'a) (vector (list 'a)))))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 5b|
+  (assert-equal nil
+		(position (list 'a) (vector (list 'a)) :test #'eql)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=false 5c|
+  (assert-equal nil
+		(position (list 'a) (vector (list 'a)) :test 'eql)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=0 end=nil from-end=true
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 1a|
+  (assert-equal nil
+		(position 1 '() :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 1b|
+  (assert-equal nil
+		(position 1 #() :test #'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 1c|
+  (assert-equal nil
+		(position 1 #() :test 'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 2a|
+  (assert-equal nil
+		(position 1 #() :start 0 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 2b|
+  (assert-equal nil
+		(position 1 #() :start 0 :test #'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 2c|
+  (assert-equal nil
+		(position 1 #() :start 0 :test 'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 3a|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*) :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 3b|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*) :test #'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 3c|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*) :test 'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 4a|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i2* *i3*) :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 4b|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i2* *i3*) :test #'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 4c|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i2* *i3*) :test 'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 5a|
+  (assert-equal nil
+		(position (list 'a) (vector (list 'a)) :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 5b|
+  (assert-equal nil
+		(position (list 'a) (vector (list 'a)) :test #'eql :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=nil from-end=true 5c|
+  (assert-equal nil
+		(position (list 'a) (vector (list 'a)) :test 'eql :from-end t)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -7056,12 +7176,102 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=0 end=other from-end=false
 
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 1a|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 1b|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test #'eql :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 1c|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test 'eql :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 2a|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :end 1)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 2b|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test #'eql :end 1)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 2c|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test 'eql :end 1)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 3a|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :end 4)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 3b|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :test #'eql :end 4)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from-end=false 3c|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :test 'eql :end 4)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=0 end=other from-end=true
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 1a|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*)
+			  :end 3 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 1b|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*)
+			  :test #'eql :end 3 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 1c|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*)
+			  :test 'eql :end 3 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 2a|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :end 1 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 2b|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test #'eql :end 1 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 2c|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test 'eql :end 1 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 3a|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :end 4 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 3b|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :test #'eql :end 4 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=0 end=other from=end=true 3c|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :test 'eql :end 4 :from-end t)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -7084,12 +7294,102 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=other end=nil from-end=false
 
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 2a|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :start 1)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 2b|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test #'eql :start 1)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 2c|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test 'eql :start 1)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 3a|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :start 2)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 3b|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test #'eql :start 2)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 3c|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test 'eql :start 2)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 4a|
+  (assert-error 'type-error
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :start 4)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 4b|
+  (assert-error 'type-error
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test #'eql :start 4)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=false 4c|
+  (assert-error 'type-error
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test 'eql :start 4)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=other end=nil from-end=true
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 2a|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :start 1 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 2b|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test #'eql :start 1 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 2c|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test 'eql :start 1 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 3a|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :start 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 3b|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test #'eql :start 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 3c|
+  (assert-equal nil
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test 'eql :start 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 4a|
+  (assert-error 'type-error
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :start 4 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 4b|
+  (assert-error 'type-error
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test #'eql :start 4 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=nil from-end=true 4c|
+  (assert-error 'type-error
+		(position *i01* (vector *i1* *i02* *i2*)
+			  :test 'eql :start 4 :from-end t)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -7105,12 +7405,132 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=other end=other from-end=false
 
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 1a|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :start 1 :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 1a|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test #'eql :start 1 :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 1c|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			   :test 'eql :start 1 :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 2a|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :start 2 :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 2a|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test #'eql :start 2 :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 2c|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			   :test 'eql :start 2 :end 3)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 3a|
+  (assert-error 'type-error
+		(position 1 #(1 1 1)
+			  :start 4 :end 2)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 3b|
+  (assert-error 'type-error
+		(position 1 #(1 1 1)
+			  :test #'eql :start 4 :end 2)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 3c|
+  (assert-error 'type-error
+		(position 1 #(1 1 1)
+			  :test 'eql :start 4 :end 2)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 4a|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :start 2 :end 4)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 4b|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :test #'eql :start 2 :end 4)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=false 4c|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :test 'eql :start 2 :end 4)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=identity start=other end=other from-end=true
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 1a|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*)
+			  :start 1 :end 3 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 1a|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*)
+			  :test #'eql :start 1 :end 3 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 1c|
+  (assert-equal 2
+		(position *i01* (vector *i1* *i01* *i02* *i2*)
+			   :test 'eql :start 1 :end 3 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 2a|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :start 1 :end 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 2a|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			  :test #'eql :start 1 :end 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 2c|
+  (assert-equal 1
+		(position *i01* (vector *i1* *i02* *i01* *i2*)
+			   :test 'eql :start 1 :end 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 3a|
+  (assert-error 'type-error
+		(position 1 #(1 1 1)
+			  :start 4 :end 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 3b|
+  (assert-error 'type-error
+		(position 1 #(1 1 1)
+			  :test #'eql :start 4 :end 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 3c|
+  (assert-error 'type-error
+		(position 1 #(1 1 1)
+			  :test 'eql :start 4 :end 2 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 4a|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :start 2 :end 4 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 4b|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :test #'eql :start 2 :end 4 :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=identity start=other end=other from-end=true 4c|
+  (assert-error 'type-error
+		(position 0 #(1 1 1)
+			  :test 'eql :start 2 :end 4 :from-end t)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -7139,6 +7559,99 @@
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=0 end=nil from-end=false
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 1a|
+  (assert-equal nil
+		(position 1 #()
+			  :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 1b|
+  (assert-equal nil
+		(position 1 #()
+			  :test #'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 1c|
+  (assert-equal nil
+		(position 1 #()
+			  :test 'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 2a|
+  (assert-equal nil
+		(position 1 #()
+			  :start 0 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 2b|
+  (assert-equal nil
+		(position 1 #()
+			  :start 0 :test #'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 2c|
+  (assert-equal nil
+		(position 1 #()
+			  :start 0 :test 'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 3a|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (vector (list *i1*) element (list *i01*) (list *i2*))
+			    :key #'car))))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 3b|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (vector (list *i1*) element (list *i01*) (list *i2*))
+			    :test #'eql :key #'car))))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 3c|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (vector (list *i1*) element (list *i01*) (list *i2*))
+			    :test 'eql :key #'car))))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 4a|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i2*) (list *i3*))
+			  :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 4b|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i2*) (list *i3*))
+			  :test #'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 4c|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i2*) (list *i3*))
+			  :test 'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 5a|
+  (assert-equal nil
+		(position (list (list 'a)) (vector (list (list 'a)))
+			  :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 5b|
+  (assert-equal nil
+		(position (list (list 'a)) (vector (list (list 'a)))
+			  :test #'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 5c|
+  (assert-equal nil
+		(position (list (list 'a)) (vector (list (list 'a)))
+			  :test 'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 6a|
+  (assert-error 'type-error
+		(position 0 1
+			  :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 6b|
+  (assert-error 'type-error
+		(position 0 1
+			  :test #'eql :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=false 6c|
+  (assert-error 'type-error
+		(position 0 1
+			  :test 'eql :key #'car)))
 
 ;;; ************** ADD MORE TESTS HERE
 
