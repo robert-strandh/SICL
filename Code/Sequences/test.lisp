@@ -5080,73 +5080,85 @@
 ;;; and no explicit start given.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 1b|
   (assert-equal nil
-		(position 1 '() :test-not #'eql)))
+		(position 1 '()
+			  :test-not #'eql)))
 
 ;;; Check that it works with the empty list and :test-not 'eql given
 ;;; and no explicit start given.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 1c|
   (assert-equal nil
-		(position 1 '() :test-not 'eql)))
+		(position 1 '()
+			  :test-not 'eql)))
 
 ;;; Check that it works with the empty list and :test-not #'eql given
 ;;; and an explicit start of 0 given.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 2b|
   (assert-equal nil
-		(position 1 '() :start 0 :test-not #'eql)))
+		(position 1 '()
+			  :start 0 :test-not #'eql)))
 
 ;;; Check that it works with the empty list and :test-not 'eql given
 ;;; and an explicit start of 0 given.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 2c|
   (assert-equal nil
-		(position 1 '() :start 0 :test-not 'eql)))
+		(position 1 '()
+			  :start 0 :test-not 'eql)))
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test-not of eql is explicit by passing the function.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 3b|
   (assert-equal 1
-		(position *i01* (list *i02* *i1* *i01* *i2*) :test-not #'eql)))
+		(position *i01* (list *i02* *i1* *i01* *i2*)
+			  :test-not #'eql)))
 
 ;;; Check that we find a eql number (but probably not eq) in a list.  
 ;;; A test-not of eql is explicit by passing the name of the function. 
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 3c|
   (assert-equal 1
-		(position *i01* (list *i02* *i1* *i01* *i2*) :test-not 'eql)))
+		(position *i01* (list *i02* *i1* *i01* *i2*)
+			  :test-not 'eql)))
 
 ;;; Check that we get nil back if the number is not in the list.
 ;;; A test-not of eql is explicit by passing the function.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 4b|
   (assert-equal nil
-		(position *i01* (list *i01* *i01* *i01*) :test-not #'eql)))
+		(position *i01* (list *i01* *i01* *i01*)
+			  :test-not #'eql)))
 
 ;;; Check that we get nil back if the number is not in the list.
 ;;; A test-not of eql is explicit by passing the name of the function. 
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 4c|
   (assert-equal nil
-		(position *i01* (list *i01* *i01* *i01*) :test-not 'eql)))
+		(position *i01* (list *i01* *i01* *i01*)
+			  :test-not 'eql)))
 
 ;;; Check that we get a type error when we pass something that is not
 ;;; a sequence.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 6b|
   (assert-error 'type-error
-		(position 0 1 :test-not #'eql)))
+		(position 0 1
+			  :test-not #'eql)))
 
 ;;; Check that we get a type error when we pass something that is not
 ;;; a sequence.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 6c|
   (assert-error 'type-error
-		(position 0 1 :test-not 'eql)))
+		(position 0 1
+			  :test-not 'eql)))
 
 ;;; Check that we get a type error when we pass a dotted list and 
 ;;; the item is not in the sequence.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 7b|
   (assert-error 'type-error
-		(position 1 '(1 1 . 1) :test-not #'eql)))
+		(position 1 '(1 1 . 1)
+			  :test-not #'eql)))
 
 ;;; Check that we get a type error when we pass a dotted list and 
 ;;; the item is not in the sequence.
 (define-test |position seq-type=list test-not=eql key=identity start=0 end=nil from-end=false 7c|
   (assert-error 'type-error
-		(position 1 '(1 1 . 1) :test-not 'eql)))
+		(position 1 '(1 1 . 1)
+			  :test-not 'eql)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5168,6 +5180,76 @@
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eql key=identity start=0 end=other from-end=false
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test-not of eql is explicit by passing the function.
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 3b|
+  (assert-equal 1
+		(position *i01* (list *i02* *i1* *i01* *i2*)
+			  :test-not #'eql :end 2)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test-not of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 3c|
+  (assert-equal 1
+		(position *i01* (list *i02* *i1* *i01* *i2*)
+			  :test-not 'eql :end 2)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test-not of eql is explicit by passing the function.
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 3b|
+  (assert-equal nil
+		(position *i01* (list *i02* *i1* *i01* *i2*)
+			  :test-not #'eql :end 1)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test-not of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 3c|
+  (assert-equal nil
+		(position *i01* (list *i02* *i1* *i01* *i2*)
+			  :test-not 'eql :end 1)))
+
+;;; Check that we get a type error when we pass something that is not
+;;; a sequence.
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 6b|
+  (assert-error 'type-error
+		(position 0 1
+			  :test-not #'eql :end 0)))
+
+;;; Check that we get a type error when we pass something that is not
+;;; a sequence.
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 6c|
+  (assert-error 'type-error
+		(position 0 1
+			  :test-not 'eql :end 0)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 7b|
+  (assert-error 'type-error
+		(position 1 '(1 1 . 1)
+			  :test-not #'eql :end 4)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 7c|
+  (assert-error 'type-error
+		(position 1 '(1 1 . 1)
+			  :test-not 'eql :end 4)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 7b|
+  (assert-equal nil
+		(position 1 '(1 1 . 1)
+			  :test-not #'eql :end 1)))
+
+;;; Check that we get a type error when we pass a dotted list and 
+;;; the item is not in the sequence.
+(define-test |position seq-type=list test-not=eql key=identity start=0 end=other from-end=false 7c|
+  (assert-equal nil
+		(position 1 '(1 1 . 1)
+			  :test-not 'eql :end 1)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5512,6 +5594,77 @@
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=0 end=nil from-end=true
 
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 1b|
+  (assert-equal nil
+		(position *l01* '()
+			  :test-not #'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 1c|
+  (assert-equal nil
+		(position *l01* '()
+			  :test-not 'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 2b|
+  (assert-equal nil
+		(position *l01* '()
+			  :start 0 :test-not #'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 2c|
+  (assert-equal nil
+		(position *l01* '()
+			  :start 0 :test-not 'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 3b|
+  (assert-equal 2
+		(position *l01* (list *l02* *l1* *l2* *l01*)
+			  :test-not #'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 3c|
+  (assert-equal 2
+		(position *l01* (list *l02* *l1* *l2* *l01*)
+			  :test-not 'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 4b|
+  (assert-equal nil
+		(position *l01* (list *l01* *l01* *l01*)
+			  :test-not #'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 4c|
+  (assert-equal nil
+		(position *l01* (list *l01* *l01* *l01*)
+			  :test-not 'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 5b|
+  (assert-equal 0
+		(position (list *l1*) (list (list *l1*))
+			  :test-not #'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 5c|
+  (assert-equal 0
+		(position (list *l1*) (list (list *l1*))
+			  :test-not 'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 6b|
+  (assert-error 'type-error
+		(position 'a 1
+			  :test-not #'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 6c|
+  (assert-error 'type-error
+		(position 'a 1
+			  :test-not 'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 7b|
+  (assert-error 'type-error
+		(position 'b '(b b . b)
+			  :test-not #'eq :from-end t)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=nil from-end=true 7c|
+  (assert-error 'type-error
+		(position 'b '(b b . b)
+			  :test-not 'eq :from-end t)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -5525,6 +5678,56 @@
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=identity start=0 end=other from-end=false
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 3b|
+  (assert-equal 1
+		(position *l01* (list *l01* *l1* *l02* *l2*)
+			  :test-not #'eq :end 2)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 3c|
+  (assert-equal 1
+		(position *l01* (list *l01* *l1* *l02* *l2*)
+			  :test-not 'eq  :end 2)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 4b|
+  (assert-equal nil
+		(position *l01* (list *l01* *l01* *l1*)
+			  :test-not #'eq :end 2)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 4c|
+  (assert-equal nil
+		(position *l01* (list *l01* *l01* *l1*)
+			  :test-not 'eq :end 2)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 6b|
+  (assert-error 'type-error
+		(position 'a 1
+			  :test-not #'eq :end 0)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 6c|
+  (assert-error 'type-error
+		(position 'a 1
+			  :test-not 'eq :end 0)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 7b|
+  (assert-equal 'nil
+		(position 'b '(b b . b)
+			  :test-not #'eq :end 1)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 7c|
+  (assert-equal nil
+		(position 'b '(b b . b)
+			  :test-not 'eq :end 1)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 7b|
+  (assert-error 'type-error
+		(position 'b '(b b . b)
+			  :test-not #'eq :end 3)))
+
+(define-test |position seq-type=list test-not=eq key=identity start=0 end=other from-end=false 7c|
+  (assert-error 'type-error
+		(position 'b '(b b . b)
+			  :test-not 'eq :end 3)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5700,6 +5903,56 @@
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test-not=eq key=other start=0 end=other from-end=false
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 3b|
+  (assert-equal 1
+		(position *l01* (list (list *l01*) (list *l1*) (list *l02*) (list *l2*))
+			  :test-not #'eq :end 2 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 3c|
+  (assert-equal 1
+		(position *l01* (list (list *l01*) (list *l1*) (list *l02*) (list *l2*))
+			  :test-not 'eq  :end 2 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 4b|
+  (assert-equal nil
+		(position *l01* (list (list *l01*) (list *l01*) (list *l1*))
+			  :test-not #'eq :end 2 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 4c|
+  (assert-equal nil
+		(position *l01* (list (list *l01*) (list *l01*) (list *l1*))
+			  :test-not 'eq :end 2 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 6b|
+  (assert-error 'type-error
+		(position 'a 1
+			  :test-not #'eq :end 0 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 6c|
+  (assert-error 'type-error
+		(position 'a 1
+			  :test-not 'eq :end 0 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 7b|
+  (assert-equal 'nil
+		(position 'b '((b) (b) . b)
+			  :test-not #'eq :end 1 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 7c|
+  (assert-equal nil
+		(position 'b '((b) (b) . b)
+			  :test-not 'eq :end 1 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 7b|
+  (assert-error 'type-error
+		(position 'b '((b) (b) . b)
+			  :test-not #'eq :end 3 :key #'car)))
+
+(define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end=false 7c|
+  (assert-error 'type-error
+		(position 'b '((b) (b) . b)
+			  :test-not 'eq :end 3 :key #'car)))
 
 ;;; ************** ADD MORE TESTS HERE
 
