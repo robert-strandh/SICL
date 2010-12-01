@@ -27347,7 +27347,7 @@
   (let ((result '())
 	(remaining list))
     (loop until (endp remaining)
-	  do (push (car remaining) result))
+	  do (push (pop remaining) result))
     result))
 
 (defun |reverse seq-type=general-vector|
