@@ -4050,6 +4050,90 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=0 end=other from-end=false
 
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 1a|
+  (assert-equal 1
+		(position *i01* (list (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :end 3 :key #'car)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 1b|
+  (assert-equal 1
+		(position *i01* (list (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test #'eql :end 3 :key #'car)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 1c|
+  (assert-equal 1
+		(position *i01* (list (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test 'eql :end 3 :key #'car)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 2a|
+  (assert-equal nil
+		(position *i01* (list (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :end 1 :key #'car)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 2b|
+  (assert-equal nil
+		(position *i01* (list (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test #'eql :end 1 :key #'car)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 2c|
+  (assert-equal nil
+		(position *i01* (list (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test 'eql :end 1 :key #'car)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 3a|
+  (assert-error 'type-error
+		(position 0 '((list 1) (list 1) (list 1))
+			  :end 4 :key #'car)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 3b|
+  (assert-error 'type-error
+		(position 0 '((list 1) (list 1) (list 1))
+			  :test #'eql :end 4 :key #'car)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 3c|
+  (assert-error 'type-error
+		(position 0 '((list 1) (list 1) (list 1))
+			  :test 'eql :end 4 :key #'car)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 4a|
+  (assert-error 'type-error
+		(position 0 '((list 1) (list 1) . 1)
+			  :end 4 :key #'car)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 4b|
+  (assert-error 'type-error
+		(position 0 '((list 1) (list 1) . 1)
+			  :test #'eql :end 4 :key #'car)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 4c|
+  (assert-error 'type-error
+		(position 0 '((list 1) (list 1) . 1)
+			  :test 'eql :end 4 :key #'car)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
