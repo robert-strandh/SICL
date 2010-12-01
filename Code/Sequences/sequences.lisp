@@ -180,6 +180,24 @@
 	   :in-sequence list
 	   :expected-type `(integer 0 ,length))))
 
+;;; This function is used when the sequence is a vector of some kind
+;;; in order to verify that start and end are valid bounding indexes.
+;;; It has already been verified that start is a nonnegative integer.
+(defun verify-bounding-indexes (name vector start end)
+  (let ((length (length vector)))
+    (when (> start length)
+      (error 'invalid-start-index
+	     :name name
+	     :datum start
+	     :expected-type `(integer 0 ,length)
+	     :in-sequence vector))
+    (unless (<= 0 end length)
+      (error 'invalid-end-index
+	     :name name
+	     :datum end
+	     :expected-type `(integer 0 ,length)
+	     :in-sequence vector))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function find
@@ -2601,7 +2619,7 @@
 	for element = (car remaining)
         for index from start below end
         when (not (eq item (funcall key item)))
-          do (setf value element)
+          do (setf value index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
 		(return value)))
 
@@ -2841,6 +2859,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test=eq-key=identity
         item sequence start (length sequence)))
     (list
@@ -2851,6 +2870,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test=eq-key=other
         item sequence start (length sequence) key))
     (list
@@ -2861,6 +2881,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test-not=eq-key=identity
         item sequence start (length sequence)))
     (list
@@ -2871,6 +2892,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test-not=eq-key=other
         item sequence start (length sequence) key))
     (list
@@ -2881,6 +2903,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test=eql-key=identity
         item sequence start (length sequence)))
     (list
@@ -2891,6 +2914,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test=eql-key=other
         item sequence start (length sequence) key))
     (list
@@ -2901,6 +2925,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test-not=eql-key=identity
         item sequence start (length sequence)))
     (list
@@ -2911,6 +2936,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test-not=eql-key=other
         item sequence start (length sequence) key))
     (list
@@ -2921,6 +2947,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test-key=identity
         item sequence start (length sequence) test))
     (list
@@ -2931,6 +2958,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test-key=other
         item sequence start (length sequence) test key))
     (list
@@ -2941,6 +2969,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test-not=other-key=identity
         item sequence start (length sequence) test))
     (list
@@ -2951,6 +2980,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test-not=other-key=other
         item sequence start (length sequence) test key))
     (list
@@ -2961,6 +2991,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=nil-test=eq-key=identity
         item sequence start end))
     (list
@@ -2971,6 +3002,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test=eq-key=other
         item sequence start end key))
     (list
@@ -2981,6 +3013,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test-not=eq-key=identity
         item sequence start end))
     (list
@@ -2991,6 +3024,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test-not=eq-key=other
         item sequence start end key))
     (list
@@ -3001,6 +3035,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test=eql-key=identity
         item sequence start end))
     (list
@@ -3011,6 +3046,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test=eql-key=other
         item sequence start end key))
     (list
@@ -3021,6 +3057,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test-not=eql-key=identity
         item sequence start end))
     (list
@@ -3031,6 +3068,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test-not=eql-key=other
         item sequence start end key))
     (list
@@ -3041,6 +3079,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test-key=identity
         item sequence start end test))
     (list
@@ -3051,6 +3090,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test-key=other
         item sequence start end test key))
     (list
@@ -3061,6 +3101,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test-not=other-key=identity
         item sequence start end test))
     (list
@@ -3071,6 +3112,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=nil-test-not=other-key=other
         item sequence start end test key))
     (list
@@ -3081,6 +3123,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test=eq-key=identity
         item sequence start (length sequence)))
     (list
@@ -3091,6 +3134,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test=eq-key=other
         item sequence start (length sequence) key))
     (list
@@ -3101,6 +3145,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test-not=eq-key=identity
         item sequence start (length sequence)))
     (list
@@ -3111,6 +3156,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test-not=eq-key=other
         item sequence start (length sequence) key))
     (list
@@ -3121,6 +3167,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test=eql-key=identity
         item sequence start (length sequence)))
     (list
@@ -3131,6 +3178,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test=eql-key=other
         item sequence start (length sequence) key))
     (list
@@ -3141,6 +3189,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test-not=eql-key=identity
         item sequence start (length sequence)))
     (list
@@ -3151,6 +3200,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test-not=eql-key=other
         item sequence start (length sequence) key))
     (list
@@ -3161,6 +3211,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test-key=identity
         item sequence start (length sequence) test))
     (list
@@ -3171,6 +3222,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test-key=other
         item sequence start (length sequence) test key))
     (list
@@ -3181,6 +3233,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test-not=other-key=identity
         item sequence start (length sequence) test))
     (list
@@ -3191,6 +3244,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start (length sequence))
        (position-seq-type=vector-from-end=true-test-not=other-key=other
         item sequence start (length sequence) test key))
     (list
@@ -3201,6 +3255,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test=eq-key=identity
         item sequence start end))
     (list
@@ -3211,6 +3266,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test=eq-key=other
         item sequence start end key))
     (list
@@ -3221,6 +3277,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test-not=eq-key=identity
         item sequence start end))
     (list
@@ -3231,6 +3288,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test-not=eq-key=other
         item sequence start end key))
     (list
@@ -3241,6 +3299,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test=eql-key=identity
         item sequence start end))
     (list
@@ -3251,6 +3310,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test=eql-key=other
         item sequence start end key))
     (list
@@ -3261,6 +3321,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test-not=eql-key=identity
         item sequence start end))
     (list
@@ -3271,6 +3332,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test-not=eql-key=other
         item sequence start end key))
     (list
@@ -3281,6 +3343,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test-key=identity
         item sequence start end test))
     (list
@@ -3291,6 +3354,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test-key=other
         item sequence start end test key))
     (list
@@ -3301,6 +3365,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test-not=other-key=identity
         item sequence start end test))
     (list
@@ -3311,6 +3376,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position sequence start end)
        (position-seq-type=vector-from-end=true-test-not=other-key=other
         item sequence start end test key))
     (list
