@@ -3313,3 +3313,315 @@
 					(list *s1* *s02* *s2* *s02* *s4*))))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function count
+
+(defun stupid-count (item sequence
+		     &key
+		     key
+		     (test nil test-p)
+		     (test-not nil test-not-p)
+		     (start 0)
+		     end
+		     from-end)
+  (assert (not (and test-p test-not-p)))
+  (when test-not-p
+    (setf test (lambda (x y) (not (funcall test-not x y)))))
+  (unless test
+    (setf test #'eql))
+  (unless key
+    (setf key #'identity))
+  (unless (vectorp sequence)
+    (setf sequence (coerce sequence 'vector)))
+  (when (null end)
+    (setf end (length sequence)))
+  (assert (<= 0 start (length sequence)))
+  (assert (<= 0 end (length sequence)))
+  (if from-end
+      (loop for index downfrom (1- end) to start
+	    count (funcall test item (funcall key (aref sequence index))))
+      (loop for index from start below end
+	    count (funcall test item (funcall key (aref sequence index))))))
+
+(defun test-count (item sequence key test test-not start end from-end)
+  (flet ((make-arg (name thing)
+	   (if (eql thing -1) '() (list name thing))))
+    (let ((arguments (append (make-arg :key key)
+			     (make-arg :test test)
+			     (make-arg :test-not test-not)
+			     (make-arg :start start)
+			     (make-arg :end end)
+			     (make-arg :from-end from-end))))
+      (let ((v1 (apply #'stupid-count item sequence arguments))
+	    (v2 (apply #'count item sequence arguments)))
+	(if (eql v1 v2)
+	    (format *trace-output* "test passed~%")
+	    (format *trace-output*
+		    "for test: COUNT ~s ~s ~s~@
+                  expected: ~s~%     but saw:  ~s~%"
+		    item sequence arguments v1 v2))))))
+
+(defun test-count-1 (item sequence test test-not start end from-end)
+  (test-count item sequence
+	      -1 test test-not start end from-end)
+  (test-count item sequence
+	      nil test test-not start end from-end)
+  (test-count item sequence
+	      #'identity test test-not start end from-end)
+  (test-count item sequence
+	      'identity test test-not start end from-end)
+
+  (test-count item (coerce sequence 'vector)
+	      -1 test test-not start end from-end)
+  (test-count item (coerce sequence 'vector)
+	      nil test test-not start end from-end)
+  (test-count item (coerce sequence 'vector)
+	      #'identity test test-not start end from-end)
+
+  (test-count item (mapcar #'list sequence)
+	      #'car test test-not start end from-end)
+  (test-count item (mapcar #'list sequence)
+	      'car test test-not start end from-end)
+
+  (test-count item (map 'vector #'list sequence)
+	      #'car test test-not start end from-end)
+  (test-count item (map 'vector #'list sequence)
+	      'car test test-not start end from-end))
+
+(defun test-count-2 (item sequence test start end from-end)
+  (if (eq test 'eql)
+      (progn (test-count-1 item sequence -1 -1 start end from-end)
+	     (test-count-1 item sequence #'eql -1 start end from-end)
+	     (test-count-1 item sequence 'eql -1 start end from-end)
+	     (test-count-1 item sequence -1 #'eql start end from-end)
+	     (test-count-1 item sequence -1 'eql start end from-end))
+      (progn (test-count-1 item sequence test -1 start end from-end)
+	     (test-count-1 item sequence (symbol-function test) -1 start end from-end)
+	     (test-count-1 item sequence -1 test start end from-end)
+	     (test-count-1 item sequence -1 (symbol-function test) start end from-end))))
+
+(defun test-count-3 (item sequence test start end)
+  (test-count-2 item sequence test start end -1)
+  (test-count-2 item sequence test start end nil)
+  (test-count-2 item sequence test start end t))
+
+(defun test-count-4 (item sequence test)
+  (let ((length (length sequence)))
+    (test-count-3 item sequence test -1 -1)
+    (loop for index from 0 to length
+	  do (test-count-3 item sequence test -1 index)
+	     (test-count-3 item sequence test index -1))
+    (loop for start from 0 to length
+	  do (loop for end from 0 to length
+		   do (test-count-3 item sequence test start end)))))
+
+(define-test |count normal|
+  (assert-equal nil
+		(test-count-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+		(test-count-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+		(test-count-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+		(test-count-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+		(test-count-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
+		(test-count-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function count-if
+
+(defun stupid-count-if (predicate sequence
+			&key
+			key
+			(start 0)
+			end
+			from-end)
+  (unless key
+    (setf key #'identity))
+  (unless (vectorp sequence)
+    (setf sequence (coerce sequence 'vector)))
+  (when (null end)
+    (setf end (length sequence)))
+  (assert (<= 0 start (length sequence)))
+  (assert (<= 0 end (length sequence)))
+  (if from-end
+      (loop for index downfrom (1- end) to start
+	    when (funcall predicate (funcall key (aref sequence index)))
+	      return index)
+      (loop for index from start below end
+	    when (funcall predicate (funcall key (aref sequence index)))
+	      return index)))
+
+(defun test-count-if (predicate sequence key start end from-end)
+  (flet ((make-arg (name thing)
+	   (if (eql thing -1) '() (list name thing))))
+    (let ((arguments (append (make-arg :key key)
+			     (make-arg :start start)
+			     (make-arg :end end)
+			     (make-arg :from-end from-end))))
+      (let ((v1 (apply #'stupid-count-if predicate sequence arguments))
+	    (v2 (apply #'count-if predicate sequence arguments)))
+	(if (eql v1 v2)
+	    (format *trace-output* "test passed~%")
+	    (format *trace-output*
+		    "for test: COUNT-IF ~s ~s ~s~@
+                  expected: ~s~%     but saw:  ~s~%"
+		    predicate sequence arguments v1 v2))))))
+
+(defun test-count-if-1 (predicate sequence start end from-end)
+  (test-count-if predicate sequence
+		 -1 start end from-end)
+  (test-count-if predicate sequence
+		 nil start end from-end)
+  (test-count-if predicate sequence
+		 #'identity start end from-end)
+  (test-count-if predicate sequence
+		 'identity start end from-end)
+
+  (test-count-if predicate (coerce sequence 'vector)
+		 -1 start end from-end)
+  (test-count-if predicate (coerce sequence 'vector)
+		 nil start end from-end)
+  (test-count-if predicate (coerce sequence 'vector)
+		 #'identity start end from-end)
+
+  (test-count-if predicate (mapcar #'list sequence)
+		 #'car start end from-end)
+  (test-count-if predicate (mapcar #'list sequence)
+		 'car start end from-end)
+
+  (test-count-if predicate (map 'vector #'list sequence)
+		 #'car start end from-end)
+  (test-count-if predicate (map 'vector #'list sequence)
+		 'car start end from-end))
+
+(defun test-count-if-2 (predicate sequence start end)
+  (test-count-if-1 predicate sequence start end -1)
+  (test-count-if-1 predicate sequence start end nil)
+  (test-count-if-1 predicate sequence start end t))
+
+(defun test-count-if-3 (predicate sequence)
+  (let ((length (length sequence)))
+    (test-count-if-2 predicate sequence -1 -1)
+    (loop for index from 0 to length
+	  do (test-count-if-2 predicate sequence -1 index)
+	     (test-count-if-2 predicate sequence index -1))
+    (loop for start from 0 to length
+	  do (loop for end from 0 to length
+		   do (test-count-if-2 predicate sequence start end)))))
+
+(define-test |count-if normal|
+  (assert-equal nil
+		(test-count-if-3 (lambda (x) (eql x *i01*))
+				 (list *i1* *i02* *i2* *i02* *i4*))
+		(test-count-if-3 (lambda (x) (eql x *i5*))
+				 (list *i1* *i02* *i2* *i02* *i4*))
+		(test-count-if-3 (lambda (x) (eq x *l01*))
+				 (list *l1* *l02* *l2* *l02* *l4*))
+		(test-count-if-3 (lambda (x) (eq x *l5* ))
+				 (list *l1* *l02* *l2* *l02* *l4*))
+		(test-count-if-3 (lambda (x) (string-equal x *s01* ))
+				 (list *s1* *s02* *s2* *s02* *s4*))
+		(test-count-if-3 (lambda (x) (string-equal x *s5*))
+				 (list *s1* *s02* *s2* *s02* *s4*))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests for function count-if-not
+
+(defun stupid-count-if-not (predicate sequence
+			    &key
+			    key
+			    (start 0)
+			    end
+			    from-end)
+  (unless key
+    (setf key #'identity))
+  (unless (vectorp sequence)
+    (setf sequence (coerce sequence 'vector)))
+  (when (null end)
+    (setf end (length sequence)))
+  (assert (<= 0 start (length sequence)))
+  (assert (<= 0 end (length sequence)))
+  (if from-end
+      (loop for index downfrom (1- end) to start
+	    unless (funcall predicate (funcall key (aref sequence index)))
+	      return index)
+      (loop for index from start below end
+	    unless (funcall predicate (funcall key (aref sequence index)))
+	      return index)))
+
+(defun test-count-if-not (predicate sequence key start end from-end)
+  (flet ((make-arg (name thing)
+	   (if (eql thing -1) '() (list name thing))))
+    (let ((arguments (append (make-arg :key key)
+			     (make-arg :start start)
+			     (make-arg :end end)
+			     (make-arg :from-end from-end))))
+      (let ((v1 (apply #'stupid-count-if-not predicate sequence arguments))
+	    (v2 (apply #'count-if-not predicate sequence arguments)))
+	(if (eql v1 v2)
+	    (format *trace-output* "test passed~%")
+	    (format *trace-output*
+		    "for test: COUNT-IF-NOT ~s ~s ~s~@
+                  expected: ~s~%     but saw:  ~s~%"
+		    predicate sequence arguments v1 v2))))))
+
+(defun test-count-if-not-1 (predicate sequence start end from-end)
+  (test-count-if-not predicate sequence
+		     -1 start end from-end)
+  (test-count-if-not predicate sequence
+		     nil start end from-end)
+  (test-count-if-not predicate sequence
+		     #'identity start end from-end)
+  (test-count-if-not predicate sequence
+		     'identity start end from-end)
+
+  (test-count-if-not predicate (coerce sequence 'vector)
+		     -1 start end from-end)
+  (test-count-if-not predicate (coerce sequence 'vector)
+		     nil start end from-end)
+  (test-count-if-not predicate (coerce sequence 'vector)
+		     #'identity start end from-end)
+
+  (test-count-if-not predicate (mapcar #'list sequence)
+		     #'car start end from-end)
+  (test-count-if-not predicate (mapcar #'list sequence)
+		     'car start end from-end)
+
+  (test-count-if-not predicate (map 'vector #'list sequence)
+		     #'car start end from-end)
+  (test-count-if-not predicate (map 'vector #'list sequence)
+		     'car start end from-end))
+
+(defun test-count-if-not-2 (predicate sequence start end)
+  (test-count-if-not-1 predicate sequence start end -1)
+  (test-count-if-not-1 predicate sequence start end nil)
+  (test-count-if-not-1 predicate sequence start end t))
+
+(defun test-count-if-not-3 (predicate sequence)
+  (let ((length (length sequence)))
+    (test-count-if-not-2 predicate sequence -1 -1)
+    (loop for index from 0 to length
+	  do (test-count-if-not-2 predicate sequence -1 index)
+	     (test-count-if-not-2 predicate sequence index -1))
+    (loop for start from 0 to length
+	  do (loop for end from 0 to length
+		   do (test-count-if-not-2 predicate sequence start end)))))
+
+(define-test |count-if-not normal|
+  (assert-equal nil
+		(test-count-if-not-3 (lambda (x) (eql x *i01*))
+				     (list *i1* *i02* *i2* *i02* *i4*))
+		(test-count-if-not-3 (lambda (x) (eql x *i5*))
+				     (list *i1* *i02* *i2* *i02* *i4*))
+		(test-count-if-not-3 (lambda (x) (eq x *l01*))
+				     (list *l1* *l02* *l2* *l02* *l4*))
+		(test-count-if-not-3 (lambda (x) (eq x *l5* ))
+				     (list *l1* *l02* *l2* *l02* *l4*))
+		(test-count-if-not-3 (lambda (x) (string-equal x *s01* ))
+				     (list *s1* *s02* *s2* *s02* *s4*))
+		(test-count-if-not-3 (lambda (x) (string-equal x *s5*))
+				     (list *s1* *s02* *s2* *s02* *s4*))))
+
+
