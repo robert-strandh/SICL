@@ -91,7 +91,7 @@
       (if (eql v1 v2)
 	  (format *trace-output* "test passed~%")
 	  (format *trace-output*
-		  "for test: ~s ~s ~s~@
+		  "for test: FIND ~s ~s ~s~@
                   expected: ~s~%     but saw:  ~s~%"
 		  item sequence arguments v1 v2))))))
 
@@ -3046,7 +3046,7 @@
       (if (eql v1 v2)
 	  (format *trace-output* "test passed~%")
 	  (format *trace-output*
-		  "for test: ~s ~s ~s~@
+		  "for test: POSITION ~s ~s ~s~@
                   expected: ~s~%     but saw:  ~s~%"
 		  item sequence arguments v1 v2))))))
 
@@ -3151,7 +3151,7 @@
       (if (eql v1 v2)
 	  (format *trace-output* "test passed~%")
 	  (format *trace-output*
-		  "for test: ~s ~s ~s~@
+		  "for test: POSITION-IF ~s ~s ~s~@
                   expected: ~s~%     but saw:  ~s~%"
 		  predicate sequence arguments v1 v2))))))
 
@@ -3251,7 +3251,7 @@
       (if (eql v1 v2)
 	  (format *trace-output* "test passed~%")
 	  (format *trace-output*
-		  "for test: ~s ~s ~s~@
+		  "for test: POSITION-IF-NOT ~s ~s ~s~@
                   expected: ~s~%     but saw:  ~s~%"
 		  predicate sequence arguments v1 v2))))))
 
