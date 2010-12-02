@@ -204,7 +204,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=eq key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eq item element)
           return element
@@ -212,7 +213,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=eq key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eq item (funcall key element))
           return element
@@ -220,7 +222,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=eq key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eq item element))
           return element
@@ -228,7 +231,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=eq key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eq item (funcall key element)))
           return element
@@ -236,7 +240,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=eql key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eql item element)
           return element
@@ -244,7 +249,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=eql key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eql item (funcall key element))
           return element
@@ -252,7 +258,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=eql key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eql item element))
           return element
@@ -260,7 +267,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=eql key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eql item (funcall key element)))
           return element
@@ -268,7 +276,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=other key=identity|
     (item list start test)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall test item element)
           return element
@@ -276,7 +285,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=other key=other|
     (item list start test key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall test item (funcall key element))
           return element
@@ -284,7 +294,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=other key=identity|
     (item list start test)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (funcall test item element))
           return element
@@ -292,7 +303,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=other key=other|
     (item list start test key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (funcall test item (funcall key element)))
           return element
@@ -300,123 +312,135 @@
 
 (defun |find seq-type=list from-end=false end=other test=eq key=identity|
     (item list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eq item element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end  n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=eq key=other|
     (item list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eq item (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=eq key=identity|
     (item list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eq item element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=eq key=other|
     (item list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eq item (funcall key element)))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=eql key=identity|
     (item list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eql item element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=eql key=other|
     (item list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eql item (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=eql key=identity|
     (item list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eql item element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=eql key=other|
     (item list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eql item (funcall key element)))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=other key=identity|
     (item list start end test)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall test item element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=other key=other|
     (item list start end test key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall test item (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=other key=identity|
     (item list start end test)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (funcall test item element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=other key=other|
     (item list start end test key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (funcall test item (funcall key element)))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 ;;; We do not supply a special version for
 ;;; seq-type=list from-end=t end=nil test=eq key=identity
@@ -427,7 +451,8 @@
 (defun |find seq-type=list from-end=t end=nil test=eq key=other|
     (item list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eq item (funcall key element))
           do (setf value element)
@@ -437,7 +462,8 @@
 (defun |find seq-type=list from-end=t end=nil test-not=eq key=identity|
     (item list start)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eq item element))
           do (setf value element)
@@ -447,7 +473,8 @@
 (defun |find seq-type=list from-end=t end=nil test-not=eq key=other|
     (item list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eq item (funcall key element)))
           do (setf value element)
@@ -463,7 +490,8 @@
 (defun |find seq-type=list from-end=t end=nil test=eql key=other|
     (item list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eql item (funcall key element))
           do (setf value element)
@@ -473,7 +501,8 @@
 (defun |find seq-type=list from-end=t end=nil test-not=eql key=identity|
     (item list start)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eql item element))
           do (setf value element)
@@ -483,7 +512,8 @@
 (defun |find seq-type=list from-end=t end=nil test-not=eql key=other|
     (item list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eql item (funcall key element)))
           do (setf value element)
@@ -493,7 +523,8 @@
 (defun |find seq-type=list from-end=t end=nil test=other key=identity|
     (item list start test)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall test item element)
           do (setf value element)
@@ -503,7 +534,8 @@
 (defun |find seq-type=list from-end=t end=nil test=other key=other|
     (item list start test key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall test item (funcall key element))
           do (setf value element)
@@ -513,7 +545,8 @@
 (defun |find seq-type=list from-end=t end=nil test-not=other key=identity|
     (item list start test)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (funcall test item element))
           do (setf value element)
@@ -523,7 +556,8 @@
 (defun |find seq-type=list from-end=t end=nil test-not=other key=other|
     (item list start test key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (funcall test item (funcall key element)))
           do (setf value element)
@@ -539,37 +573,40 @@
 (defun |find seq-type=list from-end=t end=other test=eq key=other|
     (item list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eq item (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=t end=other test-not=eq key=identity|
     (item list start end)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eq item element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=t end=other test-not=eq key=other|
     (item list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        when (not (eq item (funcall key item)))
+        when (not (eq item (funcall key element)))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 ;;; We do not supply a special version for
@@ -581,85 +618,92 @@
 (defun |find seq-type=list from-end=t end=other test=eql key=other|
     (item list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eql item (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=t end=other test-not=eql key=identity|
     (item list start end)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eql item element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=t end=other test-not=eql key=other|
     (item list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eql item (funcall key element)))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=t end=other test=other key=identity|
     (item list start end test)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall test item element)
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=t end=other test=other key=other|
     (item list start end test key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall test item (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=t end=other test-not=other key=identity|
     (item list start end test)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (funcall test item element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=t end=other test-not=other key=other|
     (item list start end test key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (funcall test item (funcall key element)))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=vector from=end=nil test=eq key=identity|
@@ -810,6 +854,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=eq key=identity|
         item sequence start (length sequence)))
     (list
@@ -820,6 +865,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=eq key=other|
         item sequence start (length sequence) key))
     (list
@@ -830,6 +876,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=eq key=identity|
         item sequence start (length sequence)))
     (list
@@ -840,6 +887,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=eq key=other|
         item sequence start (length sequence) key))
     (list
@@ -850,6 +898,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=eql key=identity|
         item sequence start (length sequence)))
     (list
@@ -860,6 +909,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=eql key=other|
         item sequence start (length sequence) key))
     (list
@@ -870,6 +920,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=eql key=identity|
         item sequence start (length sequence)))
     (list
@@ -880,6 +931,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=eql key=other|
         item sequence start (length sequence) key))
     (list
@@ -890,6 +942,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=other key=identity|
         item sequence start (length sequence) test))
     (list
@@ -900,6 +953,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=other key=other|
         item sequence start (length sequence) test key))
     (list
@@ -910,6 +964,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=other key=identity|
         item sequence start (length sequence) test))
     (list
@@ -920,6 +975,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=other key=other|
         item sequence start (length sequence) test key))
     (list
@@ -930,6 +986,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=eq key=identity|
         item sequence start end))
     (list
@@ -940,6 +997,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=eq key=other|
         item sequence start end key))
     (list
@@ -950,6 +1008,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=eq key=identity|
         item sequence start end))
     (list
@@ -960,6 +1019,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=eq key=other|
         item sequence start end key))
     (list
@@ -970,6 +1030,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=eql key=identity|
         item sequence start end))
     (list
@@ -980,6 +1041,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=eql key=other|
         item sequence start end key))
     (list
@@ -990,6 +1052,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=eql key=identity|
         item sequence start end))
     (list
@@ -1000,6 +1063,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=eql key=other|
         item sequence start end key))
     (list
@@ -1010,6 +1074,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=other key=identity|
         item sequence start end test))
     (list
@@ -1020,6 +1085,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=other key=other|
         item sequence start end test key))
     (list
@@ -1030,6 +1096,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=other key=identity|
         item sequence start end test))
     (list
@@ -1040,6 +1107,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=other key=other|
         item sequence start end test key))
     (list
@@ -1050,6 +1118,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test=eq key=identity|
         item sequence start (length sequence)))
     (list
@@ -1062,6 +1131,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test=eq key=other|
         item sequence start (length sequence) key))
     (list
@@ -1072,6 +1142,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test-not=eq key=identity|
         item sequence start (length sequence)))
     (list
@@ -1082,6 +1153,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test-not=eq key=other|
         item sequence start (length sequence) key))
     (list
@@ -1092,6 +1164,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test=eql key=identity|
         item sequence start (length sequence)))
     (list
@@ -1104,6 +1177,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test=eql key=other|
         item sequence start (length sequence) key))
     (list
@@ -1114,6 +1188,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test-not=eql key=identity|
         item sequence start (length sequence)))
     (list
@@ -1124,6 +1199,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test-not=eql key=other|
         item sequence start (length sequence) key))
     (list
@@ -1134,6 +1210,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test=other key=identity|
         item sequence start (length sequence) test))
     (list
@@ -1144,6 +1221,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test=other key=other|
         item sequence start (length sequence) test key))
     (list
@@ -1154,6 +1232,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test-not=other key=identity|
         item sequence start (length sequence) test))
     (list
@@ -1164,6 +1243,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=t test-not=other key=other|
         item sequence start (length sequence) test key))
     (list
@@ -1174,6 +1254,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test=eq key=identity|
         item sequence start end))
     (list
@@ -1186,6 +1267,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test=eq key=other|
         item sequence start end key))
     (list
@@ -1196,6 +1278,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test-not=eq key=identity|
         item sequence start end))
     (list
@@ -1206,6 +1289,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test-not=eq key=other|
         item sequence start end key))
     (list
@@ -1216,6 +1300,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test=eql key=identity|
         item sequence start end))
     (list
@@ -1228,6 +1313,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test=eql key=other|
         item sequence start end key))
     (list
@@ -1238,6 +1324,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test-not=eql key=identity|
         item sequence start end))
     (list
@@ -1248,6 +1335,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test-not=eql key=other|
         item sequence start end key))
     (list
@@ -1258,6 +1346,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test=other key=identity|
         item sequence start end test))
     (list
@@ -1268,6 +1357,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test=other key=other|
         item sequence start end test key))
     (list
@@ -1278,6 +1368,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test-not=other key=identity|
         item sequence start end test))
     (list
@@ -1288,6 +1379,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=t test-not=other key=other|
         item sequence start end test key))
     (list
@@ -1512,92 +1604,92 @@
 ;;; When there is no key function, we avoid funcalling the 
 ;;; key=identity function. 
 
-;;; Version on lists, from start, no end, no key
 (defun |find-if-list from-end=false end=nil identity|
     (predicate list start)
-  (loop for remaining on (skip-to-start 'find-if list start)
+  (loop for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate element)
           return element
 	finally (tail-must-be-proper-list 'find-if list remaining)))
 
-;;; Version on lists, from start, no end, key
 (defun |find-if-list from-end=false end=nil key|
     (predicate list start key)
-  (loop for remaining on (skip-to-start 'find-if list start)
+  (loop for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           return element
 	finally (tail-must-be-proper-list 'find-if list remaining)))
 
-;;; Version on lists, from start, end, no key
 (defun |find-if-list from-end=false end=other key=identity|
     (predicate list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find-if list remaining end (- end n))))
+		     'find-if list remaining end index)))
 
-;;; Version on lists, from start, end, key
 (defun |find-if-list from-end=false end=other key|
     (predicate list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find-if list remaining end (- end n))))
+		     'find-if list remaining end index)))
 
-;;; Version on lists, from end, no end, no key
 (defun |find-if-list from-end=t end=nil identity|
     (predicate list start)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if list start)
+        for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate element)
           do (setf value element)
         finally (tail-must-be-proper-list 'find-if list remaining)
 		(return value)))
 
-;;; Version on lists, from end, no end, key
 (defun |find-if-list from-end=t end=nil key|
     (predicate list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if list start)
+        for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list 'find-if list remaining)
 		(return value)))
   
-;;; Version on lists, from end, end, no key
 (defun |find-if-list from-end=t end=other key=identity|
     (predicate list start end)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if list start)
+        for index from start
+	for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate element)
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find-if list remaining end (- end n))
+		     'find-if list remaining end index)
 		(return value)))
 
-;;; Version on lists, from end, end, key
 (defun |find-if-list from-end=t end=other key|
     (predicate list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if list start)
+        for index from start
+	for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find-if list remaining end (- end n))
+		     'find-if list remaining end index)
 		(return value)))
   
 ;;; For the versions on lists, we distinguish between 
@@ -1618,28 +1710,24 @@
 ;;; When there is no key function, we avoid a funcall of
 ;;; key=identity, just as with lists. 
 
-;;; Version on vectors, from start, no key
 (defun |find-if-vector from-end=false key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (aref vector index))
           return (aref vector index)))
 
-;;; Version on vectors, from start, key
 (defun |find-if-vector from-end=false key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (funcall key (aref vector index)))
           return (aref vector index)))
 
-;;; Version on vectors, from end, no key
 (defun |find-if-vector from-end=t identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         when (funcall predicate (aref vector index))
           return (aref vector index)))
 
-;;; Version on vectors, from end, key
 (defun |find-if-vector from-end=t key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
@@ -1656,80 +1744,80 @@
 ;;; inferencing can determine which type of sequence it is at compile
 ;;; time.
 
-;;; Version on any sequence, from start, no end, no key
 (defun |find-if from-end=false end=nil identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start (length sequence))
        (|find-if-vector from-end=false key=identity|
         predicate sequence start (length sequence)))
     (list
        (|find-if-list from-end=false end=nil identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from start, no end, key
 (defun |find-if from-end=false end=nil key| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start (length sequence))
        (|find-if-vector from-end=false key=other|
         predicate sequence start (length sequence) key))
     (list
        (|find-if-list from-end=false end=nil key|
         predicate sequence start key))))
 
-;;; Version on any sequence, from start, end, no key
 (defun |find-if from-end=false end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start end)
        (|find-if-vector from-end=false key=identity|
         predicate sequence start end))
     (list
        (|find-if-list from-end=false end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from start, end, key
 (defun |find-if from-end=false end=other key| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start end)
        (|find-if-vector from-end=false key=other|
         predicate sequence start end key))
     (list
        (|find-if-list from-end=false end=other key|
         predicate sequence start end key))))
 
-;;; Version on any sequence, from end, no end, no key
 (defun |find-if from-end=t end=nil identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start (length sequence))
        (|find-if-vector from-end=t identity|
         predicate sequence start (length sequence)))
     (list
        (|find-if-list from-end=t end=nil identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from end, no end, key
 (defun |find-if from-end=t end=nil key| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start (length sequence))
        (|find-if-vector from-end=t key=other|
         predicate sequence start (length sequence) key))
     (list
        (|find-if-list from-end=t end=nil key|
         predicate sequence start key))))
 
-;;; Version on any sequence, from end, end, no key
 (defun |find-if from-end=t end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start end)
        (|find-if-vector from-end=t identity|
         predicate sequence start end))
     (list
        (|find-if-list from-end=t end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from end, end, key
 (defun |find-if from-end=t end=other key| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start end)
        (|find-if-vector from-end=t key=other|
         predicate sequence start end key))
     (list
@@ -1889,82 +1977,83 @@
 ;;; When there is no key function, we avoid funcalling the 
 ;;; key=identity function. 
 
-;;; Version on lists, from start, no end, no key
 (defun |find-if-not-list from-end=false end=nil identity|
     (predicate list start)
-  (loop for remaining on (skip-to-start 'find-if-not list start)
+  (loop for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate element)
           return element
 	finally (tail-must-be-proper-list 'find-if-not list remaining)))
 
-;;; Version on lists, from start, no end, key
 (defun |find-if-not-list from-end=false end=nil key|
     (predicate list start key)
-  (loop for remaining on (skip-to-start 'find-if-not list start)
+  (loop for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
           return element
 	finally (tail-must-be-proper-list 'find-if-not list remaining)))
 
-;;; Version on lists, from start, end, no key
 (defun |find-if-not-list from-end=false end=other key=identity|
     (predicate list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find-if-not list remaining end (- end n))))
+		     'find-if-not list remaining end index)))
 
-;;; Version on lists, from start, end, key
 (defun |find-if-not-list from-end=false end=other key|
     (predicate list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find-if-not list remaining end (- end n))))
+		     'find-if-not list remaining end index)))
 
-;;; Version on lists, from end, no end, no key
 (defun |find-if-not-list from-end=t end=nil identity|
     (predicate list start)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if-not list start)
+        for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate element)
           do (setf value element)
         finally (return value)))
 
-;;; Version on lists, from end, no end, key
 (defun |find-if-not-list from-end=t end=nil key|
     (predicate list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if-not list start)
+        for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
           do (setf value element)
         finally (return value)))
   
-;;; Version on lists, from end, end, no key
 (defun |find-if-not-list from-end=t end=other key=identity|
     (predicate list start end)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if-not list start)
+        for index from start
+	for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate element)
           do (setf value element)
         finally (return value)))
 
-;;; Version on lists, from end, end, key
 (defun |find-if-not-list from-end=t end=other key|
     (predicate list start end key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if-not list start)
+        for index from start
+        for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         repeat (- end start)
         unless (funcall predicate (funcall key element))
@@ -1989,28 +2078,24 @@
 ;;; When there is no key function, we avoid a funcall of
 ;;; key=identity, just as with lists. 
 
-;;; Version on vectors, from start, no key
 (defun |find-if-not-vector from-end=false key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (aref vector index))
           return (aref vector index)))
 
-;;; Version on vectors, from start, key
 (defun |find-if-not-vector from-end=false key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (funcall key (aref vector index)))
           return (aref vector index)))
 
-;;; Version on vectors, from end, no key
 (defun |find-if-not-vector from-end=t identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         unless (funcall predicate (aref vector index))
           return (aref vector index)))
 
-;;; Version on vectors, from end, key
 (defun |find-if-not-vector from-end=t key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
@@ -2027,80 +2112,80 @@
 ;;; inferencing can determine which type of sequence it is at compile
 ;;; time.
 
-;;; Version on any sequence, from start, no end, no key
 (defun |find-if-not from-end=false end=nil identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start (length sequence))
        (|find-if-not-vector from-end=false key=identity|
         predicate sequence start (length sequence)))
     (list
        (|find-if-not-list from-end=false end=nil identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from start, no end, key
 (defun |find-if-not from-end=false end=nil key| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start (length sequence))
        (|find-if-not-vector from-end=false key=other|
         predicate sequence start (length sequence) key))
     (list
        (|find-if-not-list from-end=false end=nil key|
         predicate sequence start key))))
 
-;;; Version on any sequence, from start, end, no key
 (defun |find-if-not from-end=false end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start end)
        (|find-if-not-vector from-end=false key=identity|
         predicate sequence start end))
     (list
        (|find-if-not-list from-end=false end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from start, end, key
 (defun |find-if-not from-end=false end=other key| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start end)
        (|find-if-not-vector from-end=false key=other|
         predicate sequence start end key))
     (list
        (|find-if-not-list from-end=false end=other key|
         predicate sequence start end key))))
 
-;;; Version on any sequence, from end, no end, no key
 (defun |find-if-not from-end=t end=nil identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start (length sequence))
        (|find-if-not-vector from-end=t identity|
         predicate sequence start (length sequence)))
     (list
        (|find-if-not-list from-end=t end=nil identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from end, no end, key
 (defun |find-if-not from-end=t end=nil key| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start (length sequence))
        (|find-if-not-vector from-end=t key=other|
         predicate sequence start (length sequence) key))
     (list
        (|find-if-not-list from-end=t end=nil key|
         predicate sequence start key))))
 
-;;; Version on any sequence, from end, end, no key
 (defun |find-if-not from-end=t end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start end)
        (|find-if-not-vector from-end=t identity|
         predicate sequence start end))
     (list
        (|find-if-not-list from-end=t end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from end, end, key
 (defun |find-if-not from-end=t end=other key| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start end)
        (|find-if-not-vector from-end=t key=other|
         predicate sequence start end key))
     (list
@@ -2233,483 +2318,555 @@
 
 (defun |position seq-type=list from-end=false end=nil test=eq key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (eq item element)
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test=eq key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (eq item (funcall key element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=eq key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (eq item element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=eq key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (eq item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test=eql key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (eql item element)
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test=eql key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (eql item (funcall key element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=eql key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (eql item element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=eql key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (eql item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil-test key=identity|
     (item list start test)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (funcall test item element)
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil-test key=other|
     (item list start test key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (funcall test item (funcall key element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=other key=identity|
     (item list start test)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (funcall test item element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=other key=other|
     (item list start test key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (funcall test item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=other test=eq key=identity|
     (item list start end)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eq item element)
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test=eq key=other|
     (item list start end key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eq item (funcall key element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=eq key=identity|
     (item list start end)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eq item element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=eq key=other|
     (item list start end key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eq item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test=eql key=identity|
     (item list start end)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eql item element)
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test=eql key=other|
     (item list start end key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eql item (funcall key element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=eql key=identity|
     (item list start end)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eql item element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=eql key=other|
     (item list start end key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eql item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other-test key=identity|
     (item list start end test)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (funcall test item element)
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other-test key=other|
     (item list start end test key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (funcall test item (funcall key element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=other key=identity|
     (item list start end test)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (funcall test item element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=other key=other|
     (item list start end test key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (funcall test item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=true end=nil test=eq key=identity|
     (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (eq item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test=eq key=other|
     (item list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (eq item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=eq key=identity|
     (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (eq item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=eq key=other|
     (item list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (eq item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test=eql key=identity|
     (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (eql item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test=eql key=other|
     (item list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (eql item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=eql key=identity|
     (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (eql item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=eql key=other|
     (item list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (eql item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil-test key=identity|
     (item list start test)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (funcall test item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil-test key=other|
     (item list start test key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (funcall test item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=other key=identity|
     (item list start test)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (funcall test item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=other key=other|
     (item list start test key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (funcall test item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test=eq key=identity|
     (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eq item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test=eq key=other|
     (item list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eq item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=eq key=identity|
     (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eq item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=eq key=other|
     (item list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
-        when (not (eq item (funcall key item)))
-          do (setf value index)
+        when (not (eq item (funcall key element)))
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test=eql key=identity|
     (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eql item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test=eql key=other|
     (item list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eql item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=eql key=identity|
     (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eql item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=eql key=other|
     (item list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eql item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other-test key=identity|
     (item list start end test)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (funcall test item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other-test key=other|
     (item list start end test key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (funcall test item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=other key=identity|
     (item list start end test)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (funcall test item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=other key=other|
     (item list start end test key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (funcall test item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=vector from-end=false test=eq key=identity|
     (item vector start end)
@@ -3601,96 +3758,96 @@
 ;;; When there is no key function, we avoid funcalling the 
 ;;; identity function. 
 
-;;; Version on lists, from start, no end, no key
 (defun |position-if seq-type=list from-end=false end=nil key=identity|
     (predicate list start)
-  (loop for remaining on (skip-to-start 'position-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate element)
-          return element
+          return index
 	finally (tail-must-be-proper-list 'position-if list remaining)))
 
-;;; Version on lists, from start, no end, key
 (defun |position-if seq-type=list from-end=false end=nil key=other|
     (predicate list start key)
-  (loop for remaining on (skip-to-start 'position-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
-          return element
+          return index
 	finally (tail-must-be-proper-list 'position-if list remaining)))
 
-;;; Version on lists, from start, end, no key
 (defun |position-if seq-type=list from-end=false end=other key=identity|
     (predicate list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate element)
-          return element
+          return index
 	finally (tail-must-be-proper-list-with-end
-		     'position-if list remaining end (- end n))))
+		     'position-if list remaining end index)))
 
-;;; Version on lists, from start, end, key
 (defun |position-if seq-type=list from-end=false end=other key=other|
     (predicate list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
-          return element
+          return index
 	finally (tail-must-be-proper-list-with-end
-		     'position-if list remaining end (- end n))))
+		     'position-if list remaining end index)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, no end, no key
 (defun |position-if seq-type=list from-end=true end=nil key=identity|
     (predicate list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate element)
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, no end, key
 (defun |position-if seq-type=list from-end=true end=nil key=other|
     (predicate list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
-  
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, end, no key
+		(return result)))
+
 (defun |position-if seq-type=list from-end=true end=other key=identity|
     (predicate list start end)
-  (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate element)
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
-		(return value)))
+		(return result)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, end, key
 (defun |position-if seq-type=list from-end=true end=other key=other|
     (predicate list start end key)
-  (loop with value = nil
-        for n downfrom (- end start) above 0
-        for remaining on (skip-to-start 'position-if list start)
+  (loop with result = nil
+        for index from start
+        for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
-		(return value)))
-  
+		(return result)))
+
 ;;; For the versions on lists, we distinguish between 
 ;;; two different characteristics: 
 ;;; 
@@ -3709,28 +3866,24 @@
 ;;; When there is no key function, we avoid a funcall of
 ;;; identity, just as with lists. 
 
-;;; Version on vectors, from start, no key
 (defun |position-if seq-type=vector from-end=false key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (aref vector index))
           return index))
 
-;;; Version on vectors, from start, key
 (defun |position-if seq-type=vector from-end=false key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (funcall key (aref vector index)))
           return index))
 
-;;; Version on vectors, from end, no key
 (defun |position-if seq-type=vector from-end=true key=identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         when (funcall predicate (aref vector index))
           return index))
 
-;;; Version on vectors, from end, key
 (defun |position-if seq-type=vector from-end=true key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
@@ -3747,80 +3900,80 @@
 ;;; inferencing can determine which type of sequence it is at compile
 ;;; time.
 
-;;; Version on any sequence, from start, no end, no key
 (defun |position-if from-end=false end=nil key=identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start (length sequence))
        (|position-if seq-type=vector from-end=false key=identity|
         predicate sequence start (length sequence)))
     (list
        (|position-if seq-type=list from-end=false end=nil key=identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from start, no end, key
 (defun |position-if from-end=false end=nil key=other| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start (length sequence))
        (|position-if seq-type=vector from-end=false key=other|
         predicate sequence start (length sequence) key))
     (list
        (|position-if seq-type=list from-end=false end=nil key=other|
         predicate sequence start key))))
 
-;;; Version on any sequence, from start, end, no key
 (defun |position-if from-end=false end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start end)
        (|position-if seq-type=vector from-end=false key=identity|
         predicate sequence start end))
     (list
        (|position-if seq-type=list from-end=false end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from start, end, key
 (defun |position-if from-end=false end=other key=other| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start end)
        (|position-if seq-type=vector from-end=false key=other|
         predicate sequence start end key))
     (list
        (|position-if seq-type=list from-end=false end=other key=other|
         predicate sequence start end key))))
 
-;;; Version on any sequence, from end, no end, no key
 (defun |position-if from-end=true end=nil key=identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start (length sequence))
        (|position-if seq-type=vector from-end=true key=identity|
         predicate sequence start (length sequence)))
     (list
        (|position-if seq-type=list from-end=true end=nil key=identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from end, no end, key
 (defun |position-if from-end=true end=nil key=other| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start (length sequence))
        (|position-if seq-type=vector from-end=true key=other|
         predicate sequence start (length sequence) key))
     (list
        (|position-if seq-type=list from-end=true end=nil key=other|
         predicate sequence start key))))
 
-;;; Version on any sequence, from end, end, no key
 (defun |position-if from-end=true end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start end)
        (|position-if seq-type=vector from-end=true key=identity|
         predicate sequence start end))
     (list
        (|position-if seq-type=list from-end=true end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from end, end, key
 (defun |position-if from-end=true end=other key=other| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start end)
        (|position-if seq-type=vector from-end=true key=other|
         predicate sequence start end key))
     (list
@@ -3980,95 +4133,96 @@
 ;;; When there is no key function, we avoid funcalling the 
 ;;; identity function. 
 
-;;; Version on lists, from start, no end, no key
 (defun |position-if-not seq-type=list from-end=false end=nil key=identity|
     (predicate list start)
-  (loop for remaining on (skip-to-start 'position-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate element)
-          return element
+          return index
 	finally (tail-must-be-proper-list 'position-if-not list remaining)))
 
-;;; Version on lists, from start, no end, key
 (defun |position-if-not seq-type=list from-end=false end=nil key=other|
     (predicate list start key)
-  (loop for remaining on (skip-to-start 'position-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
-          return element
+          return index
 	finally (tail-must-be-proper-list 'position-if-not list remaining)))
 
-;;; Version on lists, from start, end, no key
 (defun |position-if-not seq-type=list from-end=false end=other key=identity|
     (predicate list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate element)
-          return element
+          return index
 	finally (tail-must-be-proper-list-with-end
-		     'position-if-not list remaining end (- end n))))
+		     'position-if-not list remaining end index)))
 
-;;; Version on lists, from start, end, key
 (defun |position-if-not seq-type=list from-end=false end=other key=other|
     (predicate list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
-          return element
+          return index
 	finally (tail-must-be-proper-list-with-end
-		     'position-if-not list remaining end (- end n))))
+		     'position-if-not list remaining end index)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, no end, no key
 (defun |position-if-not seq-type=list from-end=true end=nil key=identity|
     (predicate list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if-not list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate element)
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, no end, key
 (defun |position-if-not seq-type=list from-end=true end=nil key=other|
     (predicate list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if-not list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
   
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, end, no key
 (defun |position-if-not seq-type=list from-end=true end=other key=identity|
     (predicate list start end)
-  (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if-not list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate element)
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
-		(return value)))
+		(return result)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, end, key
 (defun |position-if-not seq-type=list from-end=true end=other key=other|
     (predicate list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if-not list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         repeat (- end start)
         unless (funcall predicate (funcall key element))
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
-		(return value)))
+		(return result)))
   
 ;;; For the versions on lists, we distinguish between 
 ;;; two different characteristics: 
@@ -4088,28 +4242,24 @@
 ;;; When there is no key function, we avoid a funcall of
 ;;; identity, just as with lists. 
 
-;;; Version on vectors, from start, no key
 (defun |position-if-not seq-type=vector from-end=false key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (aref vector index))
           return index))
 
-;;; Version on vectors, from start, key
 (defun |position-if-not seq-type=vector from-end=false key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (funcall key (aref vector index)))
           return index))
 
-;;; Version on vectors, from end, no key
 (defun |position-if-not seq-type=vector from-end=true key=identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         unless (funcall predicate (aref vector index))
           return index))
 
-;;; Version on vectors, from end, key
 (defun |position-if-not seq-type=vector from-end=true key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
@@ -4126,80 +4276,80 @@
 ;;; inferencing can determine which type of sequence it is at compile
 ;;; time.
 
-;;; Version on any sequence, from start, no end, no key
 (defun |position-if-not from-end=false end=nil key=identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start (length sequence))
        (|position-if-not seq-type=vector from-end=false key=identity|
         predicate sequence start (length sequence)))
     (list
        (|position-if-not seq-type=list from-end=false end=nil key=identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from start, no end, key
 (defun |position-if-not from-end=false end=nil key=other| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start (length sequence))
        (|position-if-not seq-type=vector from-end=false key=other|
         predicate sequence start (length sequence) key))
     (list
        (|position-if-not seq-type=list from-end=false end=nil key=other|
         predicate sequence start key))))
 
-;;; Version on any sequence, from start, end, no key
 (defun |position-if-not from-end=false end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start end)
        (|position-if-not seq-type=vector from-end=false key=identity|
         predicate sequence start end))
     (list
        (|position-if-not seq-type=list from-end=false end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from start, end, key
 (defun |position-if-not from-end=false end=other key=other| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start end)
        (|position-if-not seq-type=vector from-end=false key=other|
         predicate sequence start end key))
     (list
        (|position-if-not seq-type=list from-end=false end=other key=other|
         predicate sequence start end key))))
 
-;;; Version on any sequence, from end, no end, no key
 (defun |position-if-not from-end=true end=nil key=identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start (length sequence))
        (|position-if-not seq-type=vector from-end=true key=identity|
         predicate sequence start (length sequence)))
     (list
        (|position-if-not seq-type=list from-end=true end=nil key=identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from end, no end, key
 (defun |position-if-not from-end=true end=nil key=other| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start (length sequence))
        (|position-if-not seq-type=vector from-end=true key=other|
         predicate sequence start (length sequence) key))
     (list
        (|position-if-not seq-type=list from-end=true end=nil key=other|
         predicate sequence start key))))
 
-;;; Version on any sequence, from end, end, no key
 (defun |position-if-not from-end=true end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start end)
        (|position-if-not seq-type=vector from-end=true key=identity|
         predicate sequence start end))
     (list
        (|position-if-not seq-type=list from-end=true end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from end, end, key
 (defun |position-if-not from-end=true end=other key=other| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start end)
        (|position-if-not seq-type=vector from-end=true key=other|
         predicate sequence start end key))
     (list
@@ -4601,6 +4751,7 @@
     (function sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=false key=identity-no-initial|
         function sequence start (length sequence)))
     (list 
@@ -4611,6 +4762,7 @@
     (function sequence start initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=false key=identity-initial|
         function sequence start (length sequence) initial))
     (list 
@@ -4621,6 +4773,7 @@
     (function sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=false key=other-no-initial|
         function sequence start (length sequence) key))
     (list 
@@ -4631,6 +4784,7 @@
     (function sequence start key initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=false key=other-initial|
         function sequence start (length sequence) key initial))
     (list 
@@ -4641,6 +4795,7 @@
     (function sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=false key=identity-no-initial|
         function sequence start end))
     (list 
@@ -4651,6 +4806,7 @@
     (function sequence start end initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=false key=identity-initial|
         function sequence start end initial))
     (list 
@@ -4661,6 +4817,7 @@
     (function sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=false key=other-no-initial|
         function sequence start end key))
     (list 
@@ -4671,6 +4828,7 @@
     (function sequence start end key initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=false key=other-initial|
         function sequence start end key initial))
     (list 
@@ -4681,6 +4839,7 @@
     (function sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=true key=identity-no-initial|
         function sequence start (length sequence)))
     (list 
@@ -4691,6 +4850,7 @@
     (function sequence start initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=true key=identity-initial|
         function sequence start (length sequence) initial))
     (list 
@@ -4701,6 +4861,7 @@
     (function sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=true key=other-no-initial|
         function sequence start (length sequence) key))
     (list 
@@ -4711,6 +4872,7 @@
     (function sequence start key initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=true key=other-initial|
         function sequence start (length sequence) key initial))
     (list 
@@ -4721,6 +4883,7 @@
     (function sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=true key=identity-no-initial|
         function sequence start end))
     (list 
@@ -4731,6 +4894,7 @@
     (function sequence start end initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=true key=identity-initial|
         function sequence start end initial))
     (list 
@@ -4741,6 +4905,7 @@
     (function sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=true key=other-no-initial|
         function sequence start end key))
     (list 
@@ -4751,6 +4916,7 @@
     (function sequence start end key initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=true key=other-initial|
         function sequence start end key initial))
     (list 
