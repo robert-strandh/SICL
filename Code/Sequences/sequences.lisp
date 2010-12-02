@@ -17966,12 +17966,19 @@
 	(|count seq-type=simple-vector from-end=t key=other test-not=other|
 	 item vector 0 (- end start) key test-not)))))
 
-(defun count (item sequence &key from-end (start 0) end key test test-not)
+(defun count (item sequence
+	      &key
+	      from-end
+	      (start 0)
+	      end
+	      key
+	      (test nil test-p)
+	      (test-not nil test-not-p))
   (if (listp sequence)
       (if from-end
 	  (if end
 	      (if key
-		  (if test
+		  (if test-p
 		      (if (or (eq test #'eql) (eq test 'eql))
 			  (|count seq-type=list from-end=t end=other key=other test=eql|
 			   item sequence start end key)
@@ -17980,7 +17987,7 @@
 			       item sequence start end key)
 			      (|count seq-type=list from-end=t end=other key=other test=other|
 			       item sequence start end key test)))
-		      (if test-not
+		      (if test-not-p
 			  (if (or (eq test-not #'eql) (eq test-not 'eql))
 			      (|count seq-type=list from-end=t end=other key=other test-not=eql|
 			       item sequence start end key)
@@ -17991,7 +17998,7 @@
 				   item sequence start end key test-not)))
 			  (|count seq-type=list from-end=t end=other key=other test=eql|
 			   item sequence start end key)))
-		  (if test
+		  (if test-p
 		      (if (or (eq test #'eql) (eq test 'eql))
 			  (|count seq-type=list from-end=t end=other key=identity test=eql|
 			   item sequence start end)
@@ -18000,7 +18007,7 @@
 			       item sequence start end)
 			      (|count seq-type=list from-end=t end=other key=identity test=other|
 			       item sequence start end test)))
-		      (if test-not
+		      (if test-not-p
 			  (if (or (eq test-not #'eql) (eq test-not 'eql))
 			      (|count seq-type=list from-end=t end=other key=identity test-not=eql|
 			       item sequence start end)
@@ -18009,10 +18016,10 @@
 				   item sequence start end)
 				  (|count seq-type=list from-end=t end=other key=identity test-not=other|
 				   item sequence start end test-not)))
-			  (|count seq-type=list from-end=t end=other key=identity test-not=other|
-			   item sequence start end test-not))))
+			  (|count seq-type=list from-end=t end=other key=identity test=eql|
+			   item sequence start end))))
 	      (if key
-		  (if test
+		  (if test-p
 		      (if (or (eq test #'eql) (eq test 'eql))
 			  (|count seq-type=list from-end=t end=nil key=other test=eql|
 			   item sequence start key)
@@ -18021,7 +18028,7 @@
 			       item sequence start key)
 			      (|count seq-type=list from-end=t end=nil key=other test=other|
 			       item sequence start key test)))
-		      (if test-not
+		      (if test-not-p
 			  (if (or (eq test-not #'eql) (eq test-not 'eql))
 			      (|count seq-type=list from-end=t end=nil key=other test-not=eql|
 			       item sequence start key)
@@ -18032,7 +18039,7 @@
 				   item sequence start key test-not)))
 			  (|count seq-type=list from-end=t end=nil key=other test=eql|
 			   item sequence start key)))
-		  (if test
+		  (if test-p
 		      (if (or (eq test #'eql) (eq test 'eql))
 			  (|count seq-type=list from-end=t end=nil key=identity test=eql|
 			   item sequence start)
@@ -18041,7 +18048,7 @@
 			       item sequence start)
 			      (|count seq-type=list from-end=t end=nil key=identity test=other|
 			       item sequence start test)))
-		      (if test-not
+		      (if test-not-p
 			  (if (or (eq test-not #'eql) (eq test-not 'eql))
 			      (|count seq-type=list from-end=t end=nil key=identity test-not=eql|
 			       item sequence start)
@@ -18050,11 +18057,11 @@
 				   item sequence start)
 				  (|count seq-type=list from-end=t end=nil key=identity test-not=other|
 				   item sequence start test-not)))
-			  (|count seq-type=list from-end=t end=nil key=identity test-not=other|
-			   item sequence start test-not)))))
+			  (|count seq-type=list from-end=t end=nil key=identity test=eql|
+			   item sequence start)))))
 	  (if end
 	      (if key
-		  (if test
+		  (if test-p
 		      (if (or (eq test #'eql) (eq test 'eql))
 			  (|count seq-type=list from-end=false end=other key=other test=eql|
 			   item sequence start end key)
@@ -18063,7 +18070,7 @@
 			       item sequence start end key)
 			      (|count seq-type=list from-end=false end=other key=other test=other|
 			       item sequence start end key test)))
-		      (if test-not
+		      (if test-not-p
 			  (if (or (eq test-not #'eql) (eq test-not 'eql))
 			      (|count seq-type=list from-end=false end=other key=other test-not=eql|
 			       item sequence start end key)
@@ -18074,7 +18081,7 @@
 				   item sequence start end key test-not)))
 			  (|count seq-type=list from-end=false end=other key=other test=eql|
 			   item sequence start end key)))
-		  (if test
+		  (if test-p
 		      (if (or (eq test #'eql) (eq test 'eql))
 			  (|count seq-type=list from-end=false end=other key=identity test=eql|
 			   item sequence start end)
@@ -18083,7 +18090,7 @@
 			       item sequence start end)
 			      (|count seq-type=list from-end=false end=other key=identity test=other|
 			       item sequence start end test)))
-		      (if test-not
+		      (if test-not-p
 			  (if (or (eq test-not #'eql) (eq test-not 'eql))
 			      (|count seq-type=list from-end=false end=other key=identity test-not=eql|
 			       item sequence start end)
@@ -18095,7 +18102,7 @@
 			  (|count seq-type=list from-end=false end=other key=identity test=eql|
 			   item sequence start end))))
 	      (if key
-		  (if test
+		  (if test-p
 		      (if (or (eq test #'eql) (eq test 'eql))
 			  (|count seq-type=list from-end=false end=nil key=other test=eql|
 			   item sequence start key)
@@ -18104,7 +18111,7 @@
 			       item sequence start key)
 			      (|count seq-type=list from-end=false end=nil key=other test=other|
 			       item sequence start key test)))
-		      (if test-not
+		      (if test-not-p
 			  (if (or (eq test-not #'eql) (eq test-not 'eql))
 			      (|count seq-type=list from-end=false end=nil key=other test-not=eql|
 			       item sequence start key)
@@ -18115,7 +18122,7 @@
 				   item sequence start key test-not)))
 			  (|count seq-type=list from-end=false end=nil key=other test=eql|
 			   item sequence start key)))
-		  (if test
+		  (if test-p
 		      (if (or (eq test #'eql) (eq test 'eql))
 			  (|count seq-type=list from-end=false end=nil key=identity test=eql|
 			   item sequence start)
@@ -18124,7 +18131,7 @@
 			       item sequence start)
 			      (|count seq-type=list from-end=false end=nil key=identity test=other|
 			       item sequence start test)))
-		      (if test-not
+		      (if test-not-p
 			  (if (or (eq test-not #'eql) (eq test-not 'eql))
 			      (|count seq-type=list from-end=false end=nil key=identity test-not=eql|
 			       item sequence start)
@@ -18138,7 +18145,7 @@
       (if (simple-string-p sequence)
           (if from-end
               (if key
-                  (if test
+                  (if test-p
                       (if (or (eq test #'eql) (eq test 'eql))
                           (|count seq-type=simple-string from-end=t key=other test=eql|
 			   item sequence start (or end (length sequence)) key)
@@ -18147,7 +18154,7 @@
 			       item sequence start (or end (length sequence)) key)
                               (|count seq-type=simple-string from-end=t key=other test=other|
 			       item sequence start (or end (length sequence)) key test)))
-                      (if test-not
+                      (if test-not-p
                           (if (or (eq test-not #'eql) (eq test-not 'eql))
                               (|count seq-type=simple-string from-end=t key=other test-not=eql|
 			       item sequence start (or end (length sequence)) key)
@@ -18158,7 +18165,7 @@
 				   item sequence start (or end (length sequence)) key test-not)))
                           (|count seq-type=simple-string from-end=t key=other test=eql|
 			   item sequence start (or end (length sequence)) key)))
-                  (if test
+                  (if test-p
                       (if (or (eq test #'eql) (eq test 'eql))
                           (|count seq-type=simple-string from-end=t key=identity test=eql|
 			   item sequence start (or end (length sequence)))
@@ -18167,7 +18174,7 @@
 			       item sequence start (or end (length sequence)))
                               (|count seq-type=simple-string from-end=t key=identity test=other|
 			       item sequence start (or end (length sequence)) test)))
-                      (if test-not
+                      (if test-not-p
                           (if (or (eq test-not #'eql) (eq test-not 'eql))
                               (|count seq-type=simple-string from-end=t key=identity test-not=eql|
 			       item sequence start (or end (length sequence)))
@@ -18179,7 +18186,7 @@
                           (|count seq-type=simple-string from-end=t key=identity test=eql|
 			   item sequence start (or end (length sequence))))))
               (if key
-                  (if test
+                  (if test-p
                       (if (or (eq test #'eql) (eq test 'eql))
                           (|count seq-type=simple-string from-end=false key=other test=eql|
 			   item sequence start (or end (length sequence)) key)
@@ -18188,7 +18195,7 @@
 			       item sequence start (or end (length sequence)) key)
                               (|count seq-type=simple-string from-end=false key=other test=other|
 			       item sequence start (or end (length sequence)) key test)))
-                      (if test-not
+                      (if test-not-p
                           (if (or (eq test-not #'eql) (eq test-not 'eql))
                               (|count seq-type=simple-string from-end=false key=other test-not=eql|
 			       item sequence start (or end (length sequence)) key)
@@ -18199,7 +18206,7 @@
 				   item sequence start (or end (length sequence)) key test-not)))
                           (|count seq-type=simple-string from-end=false key=other test=eql|
 			   item sequence start (or end (length sequence)) key)))
-                  (if test
+                  (if test-p
                       (if (or (eq test #'eql) (eq test 'eql))
                           (|count seq-type=simple-string from-end=false key=identity test=eql|
 			   item sequence start (or end (length sequence)))
@@ -18208,7 +18215,7 @@
 			       item sequence start (or end (length sequence)))
                               (|count seq-type=simple-string from-end=false key=identity test=other|
 			       item sequence start (or end (length sequence)) test)))
-                      (if test-not
+                      (if test-not-p
                           (if (or (eq test-not #'eql) (eq test-not 'eql))
                               (|count seq-type=simple-string from-end=false key=identity test-not=eql|
 			       item sequence start (or end (length sequence)))
@@ -18222,7 +18229,7 @@
           (if (simple-vector-p sequence)
               (if from-end
                   (if key
-                      (if test
+                      (if test-p
                           (if (or (eq test #'eql) (eq test 'eql))
                               (|count seq-type=simple-vector from-end=t key=other test=eql|
 			       item sequence start (or end (length sequence)) key)
@@ -18231,7 +18238,7 @@
 				   item sequence start (or end (length sequence)) key)
                                   (|count seq-type=simple-vector from-end=t key=other test=other|
 				   item sequence start (or end (length sequence)) key test)))
-                          (if test-not
+                          (if test-not-p
                               (if (or (eq test-not #'eql) (eq test-not 'eql))
                                   (|count seq-type=simple-vector from-end=t key=other test-not=eql|
 				   item sequence start (or end (length sequence)) key)
@@ -18242,7 +18249,7 @@
 				       item sequence start (or end (length sequence)) key test-not)))
                               (|count seq-type=simple-vector from-end=t key=other test=eql|
 			       item sequence start (or end (length sequence)) key)))
-                      (if test
+                      (if test-p
                           (if (or (eq test #'eql) (eq test 'eql))
                               (|count seq-type=simple-vector from-end=t key=identity test=eql|
 			       item sequence start (or end (length sequence)))
@@ -18251,7 +18258,7 @@
 				   item sequence start (or end (length sequence)))
                                   (|count seq-type=simple-vector from-end=t key=identity test=other|
 				   item sequence start (or end (length sequence)) test)))
-                          (if test-not
+                          (if test-not-p
                               (if (or (eq test-not #'eql) (eq test-not 'eql))
                                   (|count seq-type=simple-vector from-end=t key=identity test-not=eql|
 				   item sequence start (or end (length sequence)))
@@ -18263,7 +18270,7 @@
                               (|count seq-type=simple-vector from-end=t key=identity test=eql|
 			       item sequence start (or end (length sequence))))))
                   (if key
-                      (if test
+                      (if test-p
                           (if (or (eq test #'eql) (eq test 'eql))
                               (|count seq-type=simple-vector from-end=false key=other test=eql|
 			       item sequence start (or end (length sequence)) key)
@@ -18272,7 +18279,7 @@
 				   item sequence start (or end (length sequence)) key)
                                   (|count seq-type=simple-vector from-end=false key=other test=other|
 				   item sequence start (or end (length sequence)) key test)))
-                          (if test-not
+                          (if test-not-p
                               (if (or (eq test-not #'eql) (eq test-not 'eql))
                                   (|count seq-type=simple-vector from-end=false key=other test-not=eql|
 				   item sequence start (or end (length sequence)) key)
@@ -18283,7 +18290,7 @@
 				       item sequence start (or end (length sequence)) key test-not)))
                               (|count seq-type=simple-vector from-end=false key=other test=eql|
 			       item sequence start (or end (length sequence)) key)))
-                      (if test
+                      (if test-p
                           (if (or (eq test #'eql) (eq test 'eql))
                               (|count seq-type=simple-vector from-end=false key=identity test=eql|
 			       item sequence start (or end (length sequence)))
@@ -18292,7 +18299,7 @@
 				   item sequence start (or end (length sequence)))
                                   (|count seq-type=simple-vector from-end=false key=identity test=other|
 				   item sequence start (or end (length sequence)) test)))
-                          (if test-not
+                          (if test-not-p
                               (if (or (eq test-not #'eql) (eq test-not 'eql))
                                   (|count seq-type=simple-vector from-end=false key=identity test-not=eql|
 				   item sequence start (or end (length sequence)))
@@ -18305,7 +18312,7 @@
 			       item sequence start (or end (length sequence)))))))
               (if from-end
                   (if key
-                      (if test
+                      (if test-p
                           (if (or (eq test #'eql) (eq test 'eql))
                               (|count seq-type=general-vector from-end=t key=other test=eql|
 			       item sequence start (or end (length sequence)) key)
@@ -18314,7 +18321,7 @@
 				   item sequence start (or end (length sequence)) key)
                                   (|count seq-type=general-vector from-end=t key=other test=other|
 				   item sequence start (or end (length sequence)) key test)))
-                          (if test-not
+                          (if test-not-p
                               (if (or (eq test-not #'eql) (eq test-not 'eql))
                                   (|count seq-type=general-vector from-end=t key=other test-not=eql|
 				   item sequence start (or end (length sequence)) key)
@@ -18325,7 +18332,7 @@
 				       item sequence start (or end (length sequence)) key test-not)))
                               (|count seq-type=general-vector from-end=t key=other test=eql|
 			       item sequence start (or end (length sequence)) key)))
-                      (if test
+                      (if test-p
                           (if (or (eq test #'eql) (eq test 'eql))
                               (|count seq-type=general-vector from-end=t key=identity test=eql|
 			       item sequence start (or end (length sequence)))
@@ -18334,7 +18341,7 @@
 				   item sequence start (or end (length sequence)))
                                   (|count seq-type=general-vector from-end=t key=identity test=other|
 				   item sequence start (or end (length sequence)) test)))
-                          (if test-not
+                          (if test-not-p
                               (if (or (eq test-not #'eql) (eq test-not 'eql))
                                   (|count seq-type=general-vector from-end=t key=identity test-not=eql|
 				   item sequence start (or end (length sequence)))
@@ -18346,7 +18353,7 @@
                               (|count seq-type=general-vector from-end=t key=identity test=eql|
 			       item sequence start (or end (length sequence))))))
                   (if key
-                      (if test
+                      (if test-p
                           (if (or (eq test #'eql) (eq test 'eql))
                               (|count seq-type=general-vector from-end=false key=other test=eql|
 			       item sequence start (or end (length sequence)) key)
@@ -18355,7 +18362,7 @@
 				   item sequence start (or end (length sequence)) key)
                                   (|count seq-type=general-vector from-end=false key=other test=other|
 				   item sequence start (or end (length sequence)) key test)))
-                          (if test-not
+                          (if test-not-p
                               (if (or (eq test-not #'eql) (eq test-not 'eql))
                                   (|count seq-type=general-vector from-end=false key=other test-not=eql|
 				   item sequence start (or end (length sequence)) key)
@@ -18366,7 +18373,7 @@
 				       item sequence start (or end (length sequence)) key test-not)))
                               (|count seq-type=general-vector from-end=false key=other test=eql|
 			       item sequence start (or end (length sequence)) key)))
-                      (if test
+                      (if test-p
                           (if (or (eq test #'eql) (eq test 'eql))
                               (|count seq-type=general-vector from-end=false key=identity test=eql|
 			       item sequence start (or end (length sequence)))
@@ -18375,7 +18382,7 @@
 				   item sequence start (or end (length sequence)))
                                   (|count seq-type=general-vector from-end=false key=identity test=other|
 				   item sequence start (or end (length sequence)) test)))
-                          (if test-not
+                          (if test-not-p
                               (if (or (eq test-not #'eql) (eq test-not 'eql))
                                   (|count seq-type=general-vector from-end=false key=identity test-not=eql|
 				   item sequence start (or end (length sequence)))
