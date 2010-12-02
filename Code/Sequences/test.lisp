@@ -34,6 +34,16 @@
 (defparameter *l5* (list 'f))
 (defparameter *l6* (list 'g))
 
+(defparameter *s01* "abc")
+(defparameter *s02* "ABC")
+(defparameter *s1* "def")
+(defparameter *s2* "ghi")
+(defparameter *s3* "jkl")
+(defparameter *s4* "mno")
+(defparameter *s5* "pqr")
+(defparameter *s6* "stu")
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests for function find
@@ -4096,42 +4106,42 @@
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 3a|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) (list 1))
+		(position 0 (list (list 1) (list 1) (list 1))
 			  :end 4 :key #'car)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 3b|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) (list 1))
+		(position 0 (list (list 1) (list 1) (list 1))
 			  :test #'eql :end 4 :key #'car)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 3c|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) (list 1))
+		(position 0 (list (list 1) (list 1) (list 1))
 			  :test 'eql :end 4 :key #'car)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 4a|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) . 1)
+		(position 0 (list* (list 1) (list 1) 1)
 			  :end 4 :key #'car)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 4b|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) . 1)
+		(position 0 (list* (list 1) (list 1) 1)
 			  :test #'eql :end 4 :key #'car)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=false 4c|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) . 1)
+		(position 0 (list* (list 1) (list 1) 1)
 			  :test 'eql :end 4 :key #'car)))
 
 ;;; ************** ADD MORE TESTS HERE
@@ -4187,42 +4197,42 @@
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=true 3a|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) (list 1))
+		(position 0 (list (list 1) (list 1) (list 1))
 			  :end 4 :key #'car :from-end t)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=true 3b|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) (list 1))
+		(position 0 (list (list 1) (list 1) (list 1))
 			  :test #'eql :end 4 :key #'car :from-end t)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=true 3c|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) (list 1))
+		(position 0 (list (list 1) (list 1) (list 1))
 			  :test 'eql :end 4 :key #'car :from-end t)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=true 4a|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) . 1)
+		(position 0 (list* (list 1) (list 1)  1)
 			  :end 4 :key #'car :from-end t)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=true 4b|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) . 1)
+		(position 0 (list* (list 1) (list 1) 1)
 			  :test #'eql :end 4 :key #'car :from-end t)))
 
 ;;; Check that we get an error when :end is past the end of the list
 ;;; and the item is not in the list.
 (define-test |position seq-type=list test=eql key=other start=0 end=other from-end=true 4c|
   (assert-error 'type-error
-		(position 0 '((list 1) (list 1) . 1)
+		(position 0 (list* (list 1) (list 1) 1)
 			  :test 'eql :end 4 :key #'car :from-end t)))
 
 ;;; ************** ADD MORE TESTS HERE
@@ -4325,6 +4335,30 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=other end=nil from-end=true
 
+(define-test |position seq-type=list test=eql key=other start=other end=nil from-end=true 1|
+  (let ((seq (mapcar #'list (list *i1* *i02* *i2* *i01* *i3* *i02* *i4*))))
+    (assert-equal 5
+		  (position *i01* seq
+			    :start 1 :key #'car :from-end t))
+    (assert-equal 5
+		  (position *i01* seq
+			    :start 3 :test #'eql :key #'car :from-end t))
+    (assert-equal 5
+		  (position *i01* seq
+			   :start 5 :test 'eql :key #'car :from-end t))
+    (assert-equal nil
+		  (position *i01* seq
+			    :start 6 :test 'eql :key #'car :from-end t))
+    (assert-equal nil
+		  (position *i01* seq
+			    :start 7 :test 'eql :key #'car :from-end t))
+    (assert-error 'type-error
+		  (position *i01* seq
+			    :start 8 :test 'eql :key #'car :from-end t))
+    (assert-error 'type-error
+		  (position *i01* (append seq 'b)
+			    :start 7 :test 'eql :key #'car :from-end t))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -4339,12 +4373,66 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=other end=other from-end=false
 
+(define-test |position seq-type=list test=eql key=other start=other end=other from-end=false 1|
+  (let ((seq (mapcar #'list (list *i1* *i02* *i2* *i01* *i3* *i02* *i4*))))
+    (assert-equal 1
+		  (position *i01* seq
+			    :start 1 :end 6 :key #'car))
+    (assert-equal 1
+		  (position *i01* seq
+			    :start 1 :end 5 :key #'car))
+    (assert-equal nil
+		  (position *i01* seq
+			    :start 2 :end 3 :key #'car))
+    (assert-equal nil
+		  (position *i01* seq
+			    :start 1 :end 1 :key #'car))
+    (assert-equal 3
+		  (position *i01* seq
+			    :start 3 :end 6 :test #'eql :key #'car))
+    (assert-equal 3
+		  (position *i01* seq
+			    :start 3 :end 5 :test #'eql :key #'car))
+    (assert-equal nil
+		  (position *i01* seq
+			   :start 5 :end 4 :test 'eql :key #'car))
+    (assert-error 'type-error
+		  (position *i01* seq
+			    :start 6 :end 8 :test 'eql :key #'car))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eql key=other start=other end=other from-end=true
+
+(define-test |position seq-type=list test=eql key=other start=other end=other from-end=true 1|
+  (let ((seq (mapcar #'list (list *i1* *i02* *i2* *i01* *i3* *i02* *i4*))))
+    (assert-equal 5
+		  (position *i01* seq
+			    :start 1 :end 6 :key #'car :from-end t))
+    (assert-equal 3
+		  (position *i01* seq
+			    :start 1 :end 5 :key #'car :from-end t))
+    (assert-equal 1
+		  (position *i01* seq
+			    :start 1 :end 3 :key #'car :from-end t))
+    (assert-equal nil
+		  (position *i01* seq
+			    :start 1 :end 1 :key #'car :from-end t))
+    (assert-equal 5
+		  (position *i01* seq
+			    :start 3 :end 6 :test #'eql :key #'car :from-end t))
+    (assert-equal 3
+		  (position *i01* seq
+			    :start 3 :end 5 :test #'eql :key #'car :from-end t))
+    (assert-equal nil
+		  (position *i01* seq
+			   :start 5 :end 4 :test 'eql :key #'car :from-end t))
+    (assert-error 'type-error
+		  (position *i01* seq
+			    :start 6 :end 8 :test 'eql :key #'car :from-end t))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4670,12 +4758,78 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=other end=nil from-end=false
 
+(define-test |position seq-type=list test=eq key=identity start=other end=nil from-end=false 1|
+  (let ((seq (list *l1* *l01* *l2* *l02* *l3* *l02* *l4*)))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 1))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 1))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 3))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 3))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 4))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 4))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 6))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 6))
+    (assert-error 'type-error
+		  (position *l02* seq
+			    :test 'eq :start 8))
+    (assert-error 'type-error 
+		  (position *l02* (append seq 'b)
+			    :test 'eq :start 6))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=other end=nil from-end=true
+
+(define-test |position seq-type=list test=eq key=identity start=other end=nil from-end=true 1|
+  (let ((seq (list *l1* *l01* *l2* *l02* *l3* *l02* *l4*)))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 1 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 1 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 3 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 3 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 4 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 4 :from-end t))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 6 :from-end t))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 6 :from-end t))
+    (assert-error 'type-error
+		  (position *l02* seq
+			    :test 'eq :start 8 :from-end t))
+    (assert-error 'type-error 
+		  (position *l02* (append seq 'b)
+			    :test 'eq :start 6 :from-end t))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4691,12 +4845,84 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=other end=other from-end=false
 
+(define-test |position seq-type=list test=eq key=identity start=other end=other from-end=false 1|
+  (let ((seq (list *l1* *l01* *l2* *l02* *l3* *l02* *l4*)))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 1 :end 6))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 1 :end 6))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 3 :end 6))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 3 :end 6))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 4 :end 6))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 4 :end 6))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 4 :end 5))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 4 :end 5))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 6 :end 5))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 6 :end 5))
+    (assert-error 'type-error
+		  (position *l02* seq
+			    :test 'eq :start 8 :end 5))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=identity start=other end=other from-end=true
+
+(define-test |position seq-type=list test=eq key=identity start=other end=other from-end=true 1|
+  (let ((seq (list *l1* *l01* *l2* *l02* *l3* *l02* *l4*)))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 1 :end 6 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 1 :end 6 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 3 :end 6 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 3 :end 6 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 4 :end 6 :from-end t))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 4 :end 6 :from-end t))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 2 :end 5 :from-end t))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 2 :end 5 :from-end t))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 6 :end 5 :from-end t))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 6 :end 5 :from-end t))
+    (assert-error 'type-error
+		  (position *l02* seq
+			    :test 'eq :start 8 :end 5 :from-end t))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -4928,12 +5154,12 @@
 
 (define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 7b|
   (assert-error 'type-error
-		(position 'a '((list b) (list b) . b)
+		(position 'a (list* (list 'b) (list 'b) 'b)
 			  :test #'eq :end 3 :key #'car)))
 
 (define-test |position seq-type=list test=eq key=other start=0 end=other from-end=false 7c|
   (assert-error 'type-error
-		(position 'a '((list b) (list b) . b)
+		(position 'a (list* (list 'b) (list 'b) 'b)
 			  :test 'eq :end 3 :key #'car)))
 
 ;;; ************** ADD MORE TESTS HERE
@@ -5014,12 +5240,78 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=other end=nil from-end=false
 
+(define-test |position seq-type=list test=eq key=other start=other end=nil from-end=false 1|
+  (let ((seq (mapcar #'list (list *l1* *l01* *l2* *l02* *l3* *l02* *l4*))))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 1 :key #'car))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 1 :key #'car))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 3 :key #'car))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 3 :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 4 :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 4 :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 6 :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 6 :key #'car))
+    (assert-error 'type-error
+		  (position *l02* seq
+			    :test 'eq :start 8 :key #'car))
+    (assert-error 'type-error 
+		  (position *l02* (append seq 'b)
+			    :test 'eq :start 6 :key #'car))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=other end=nil from-end=true
+
+(define-test |position seq-type=list test=eq key=other start=other end=nil from-end=true 1|
+  (let ((seq (mapcar #'list (list *l1* *l01* *l2* *l02* *l3* *l02* *l4*))))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 1 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 1 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 3 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 3 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 4 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 4 :from-end t :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 6 :from-end t :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 6 :from-end t :key #'car))
+    (assert-error 'type-error
+		  (position *l02* seq
+			    :test 'eq :start 8 :from-end t :key #'car))
+    (assert-error 'type-error 
+		  (position *l02* (append seq 'b)
+			    :test 'eq :start 6 :from-end t :key #'car))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5035,12 +5327,84 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=other end=other from-end=false
 
+(define-test |position seq-type=list test=eq key=other start=other end=other from-end=false 1|
+  (let ((seq (mapcar #'list (list *l1* *l01* *l2* *l02* *l3* *l02* *l4*))))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 1 :end 6 :key #'car))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 1 :end 6 :key #'car))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 3 :end 6 :key #'car))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 3 :end 6 :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 4 :end 6 :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 4 :end 6 :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 4 :end 5 :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 4 :end 5 :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 6 :end 5 :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 6 :end 5 :key #'car))
+    (assert-error 'type-error
+		  (position *l02* seq
+			    :test 'eq :start 8 :end 5 :key #'car))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=eq key=other start=other end=other from-end=true
+
+(define-test |position seq-type=list test=eq key=other start=other end=other from-end=true 1|
+  (let ((seq (mapcar #'list (list *l1* *l01* *l2* *l02* *l3* *l02* *l4*))))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 1 :end 6 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 1 :end 6 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 3 :end 6 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 3 :end 6 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test #'eq :start 4 :end 6 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *l02* seq
+			    :test 'eq :start 4 :end 6 :from-end t :key #'car))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test #'eq :start 2 :end 5 :from-end t :key #'car))
+    (assert-equal 3
+		  (position *l02* seq
+			    :test 'eq :start 2 :end 5 :from-end t :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test #'eq :start 6 :end 5 :from-end t :key #'car))
+    (assert-equal nil
+		  (position *l02* seq
+			    :test 'eq :start 6 :end 5 :from-end t :key #'car))
+    (assert-error 'type-error
+		  (position *l02* seq
+			    :test 'eq :start 8 :end 5 :from-end t :key #'car))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5077,12 +5441,42 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=0 end=nil from-end=false
 
+(define-test |position seq-type=list test=other key=identity start=0 end=nil from-end=false 1|
+  (let ((seq (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*)))
+    (assert-equal nil
+		  (position *s02* (list)
+			    :test #'string-equal))
+    (assert-equal nil
+		  (position *s02* (list *s1* *s2*)
+			    :test #'string-equal))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal))
+    (assert-error 'type-error
+		  (position *s02* (list* *s1* 'b)
+			    :test #'string-equal))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=0 end=nil from-end=true
+
+(define-test |position seq-type=list test=other key=identity start=0 end=nil from-end=true 1|
+  (let ((seq (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*)))
+    (assert-equal nil
+		  (position *s02* (list)
+			    :test #'string-equal :from-end t))
+    (assert-equal nil
+		  (position *s02* (list *s1* *s2*)
+			    :test #'string-equal :from-end t))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :from-end t))
+    (assert-error 'type-error
+		  (position *s02* (list* *s1* 'b)
+			    :test #'string-equal :from-end t))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5098,12 +5492,48 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=0 end=other from-end=false
 
+(define-test |position seq-type=list test=other key=identity start=0 end=other from-end=false 1|
+  (let ((seq (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*)))
+    (assert-equal nil
+		  (position *s02* (list *s1* *s2*)
+			    :test #'string-equal :end 1))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :end 4))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :end 3))
+    (assert-error 'type-error
+		  (position *s02* (list *s1*)
+			    :test #'string-equal :end 8))
+    (assert-error 'type-error
+		  (position *s02* (list* *s1* 'b)
+			    :test #'string-equal :end 2))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=0 end=other from-end=true
+
+(define-test |position seq-type=list test=other key=identity start=0 end=other from-end=true 1|
+  (let ((seq (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*)))
+    (assert-equal nil
+		  (position *s02* (list *s1* *s2*)
+			    :test #'string-equal :end 1 :from-end t))
+    (assert-equal 3
+		  (position *s02* seq
+			    :test #'string-equal :end 4 :from-end t))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :end 3 :from-end t))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :end 8 :from-end t))
+    (assert-error 'type-error
+		  (position *s02* (list* *s1* 'b)
+			    :test #'string-equal :end 2 :from-end t))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5126,12 +5556,54 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=other end=nil from-end=false
 
+(define-test |position seq-type=list test=other key=identity start=other end=nil from-end=false 1|
+  (let ((seq (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*)))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :start 1))
+    (assert-equal 3
+		  (position *s02* seq
+			    :test #'string-equal :start 3))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 4))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 6))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :start 8))
+    (assert-error 'type-error 
+		  (position *s02* (append seq 'b)
+			    :test #'string-equal :start 6))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=other end=nil from-end=true
+
+(define-test |position seq-type=list test=other key=identity start=other end=nil from-end=true 1|
+  (let ((seq (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*)))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 1 :from-end t))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 3 :from-end t))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :from-end t))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 6 :from-end t))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :start 8 :from-end t))
+    (assert-error 'type-error 
+		  (position *s02* (append seq 'b)
+			    :test #'string-equal :start 6 :from-end t))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5147,12 +5619,54 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=other end=other from-end=false
 
+(define-test |position seq-type=list test=other key=identity start=other end=other from-end=false 1|
+  (let ((seq (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*)))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :start 1 :end 6))
+    (assert-equal 3
+		  (position *s02* seq
+			    :test #'string-equal :start 3 :end 6))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :end 6))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :end 5))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 6 :end 5))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :start 8 :end 5))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=identity start=other end=other from-end=true
+
+(define-test |position seq-type=list test=other key=identity start=other end=other from-end=true 1|
+  (let ((seq (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*)))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 1 :end 6 :from-end t))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 3 :end 6 :from-end t))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :end 6 :from-end t))
+    (assert-equal 3
+		  (position *s02* seq
+			    :test #'string-equal :start 2 :end 5 :from-end t))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 6 :end 5 :from-end t))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :start 8 :end 5 :from-end t))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5182,12 +5696,47 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=0 end=nil from-end=false
 
+;;;;;;;;;;
+;;;
+;;; Tests for function position
+;;; with seq-type=list test=other key=other start=0 end=nil from-end=false
+
+(define-test |position seq-type=list test=other key=other start=0 end=nil from-end=false 1|
+  (let ((seq (mapcar #'list (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*))))
+    (assert-equal nil
+		  (position *s02* (list)
+			    :test #'string-equal :key #'car))
+    (assert-equal nil
+		  (position *s02* (list (list *s1*) (list *s2*))
+			    :test #'string-equal :key #'car))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :key #'car))
+    (assert-error 'type-error
+		  (position *s02* (list* (list *s1*) 'b)
+			    :test #'string-equal :key #'car))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=0 end=nil from-end=true
+
+(define-test |position seq-type=list test=other key=other start=0 end=nil from-end=true 1|
+  (let ((seq (mapcar #'list (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*))))
+    (assert-equal nil
+		  (position *s02* (list)
+			    :test #'string-equal :from-end t :key #'car))
+    (assert-equal nil
+		  (position *s02* (list (list *s1*) (list *s2*))
+			    :test #'string-equal :from-end t :key #'car))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :from-end t :key #'car))
+    (assert-error 'type-error
+		  (position *s02* (list* (list *s1*) 'b)
+			    :test #'string-equal :from-end t :key #'car))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5203,12 +5752,45 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=0 end=other from-end=false
 
+(define-test |position seq-type=list test=other key=other start=0 end=other from-end=false 1|
+  (let ((seq (mapcar #'list (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*))))
+    (assert-equal nil
+		  (position *s02* (list (list *s1*) (list *s2*))
+			    :test #'string-equal :end 1 :key #'car))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :end 4 :key #'car))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :end 3 :key #'car))
+    (assert-error 'type-error
+		  (position *s02* (list* (list *s1*) 'b)
+			    :test #'string-equal :end 2 :key #'car))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=0 end=other from-end=true
+
+(define-test |position seq-type=list test=other key=other start=0 end=other from-end=true 1|
+  (let ((seq (mapcar #'list (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*))))
+    (assert-equal nil
+		  (position *s02* (list (list *s1*) (list *s2*))
+			    :test #'string-equal :end 1 :from-end t :key #'car))
+    (assert-equal 3
+		  (position *s02* seq
+			    :test #'string-equal :end 4 :from-end t :key #'car))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :end 3 :from-end t :key #'car))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :end 8 :from-end t :key #'car))
+    (assert-error 'type-error
+		  (position *s02* (list* (list *s1*) 'b)
+			    :test #'string-equal :end 2 :from-end t :key #'car))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5231,12 +5813,54 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=other end=nil from-end=false
 
+(define-test |position seq-type=list test=other key=other start=other end=nil from-end=false 1|
+  (let ((seq (mapcar #'list (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*))))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :start 1 :key #'car))
+    (assert-equal 3
+		  (position *s02* seq
+			    :test #'string-equal :start 3 :key #'car))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :key #'car))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 6 :key #'car))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :start 8 :key #'car))
+    (assert-error 'type-error 
+		  (position *s02* (append seq 'b)
+			    :test #'string-equal :start 6 :key #'car))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=other end=nil from-end=true
+
+(define-test |position seq-type=list test=other key=other start=other end=nil from-end=true 1|
+  (let ((seq (mapcar #'list (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*))))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 1 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 3 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :from-end t :key #'car))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 6 :from-end t :key #'car))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :start 8 :from-end t :key #'car))
+    (assert-error 'type-error 
+		  (position *s02* (append seq 'b)
+			    :test #'string-equal :start 6 :from-end t :key #'car))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -5252,12 +5876,54 @@
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=other end=other from-end=false
 
+(define-test |position seq-type=list test=other key=other start=other end=other from-end=false 1|
+  (let ((seq (mapcar #'list (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*))))
+    (assert-equal 1
+		  (position *s02* seq
+			    :test #'string-equal :start 1 :end 6 :key #'car))
+    (assert-equal 3
+		  (position *s02* seq
+			    :test #'string-equal :start 3 :end 6 :key #'car))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :end 6 :key #'car))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :end 5 :key #'car))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 6 :end 5 :key #'car))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :start 8 :end 5 :key #'car))))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=list test=other key=other start=other end=other from-end=true
+
+(define-test |position seq-type=list test=other key=other start=other end=other from-end=true 1|
+  (let ((seq (mapcar #'list (list *s1* *s01* *s2* *s02* *s3* *s02* *s4*))))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 1 :end 6 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 3 :end 6 :from-end t :key #'car))
+    (assert-equal 5
+		  (position *s02* seq
+			    :test #'string-equal :start 4 :end 6 :from-end t :key #'car))
+    (assert-equal 3
+		  (position *s02* seq
+			    :test #'string-equal :start 2 :end 5 :from-end t :key #'car))
+    (assert-equal nil
+		  (position *s02* seq
+			    :test #'string-equal :start 6 :end 5 :from-end t :key #'car))
+    (assert-error 'type-error
+		  (position *s02* seq
+			    :test #'string-equal :start 8 :end 5 :from-end t :key #'car))))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -6689,12 +7355,12 @@
 
 (define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end-true 4b|
   (assert-equal nil
-		(position *l01* (list (list *l01*) (list *l01*) (list *l1*))
+		(position *l01* (list (list *l01*) (list *l01*) (list *l01*))
 			  :test-not #'eq :end 2 :from-end t :key #'car)))
 
 (define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end-true 4c|
   (assert-equal nil
-		(position *l01* (list (list *l01*) (list *l01*) (list *l1*))
+		(position *l01* (list (list *l01*) (list *l01*) (list *l01*))
 			  :test-not 'eq :end 2 :from-end t :key #'car)))
 
 (define-test |position seq-type=list test-not=eq key=other start=0 end=other from-end-true 6b|
@@ -7660,6 +8326,84 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=0 end=nil from-end=true
 
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 1a|
+  (assert-equal nil
+		(position 1 #()
+			  :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 1b|
+  (assert-equal nil
+		(position 1 #()
+			  :test #'eql :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 1c|
+  (assert-equal nil
+		(position 1 #()
+			  :test 'eql :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 2a|
+  (assert-equal nil
+		(position 1 #()
+			  :start 0 :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 2b|
+  (assert-equal nil
+		(position 1 #()
+			  :start 0 :test #'eql :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 2c|
+  (assert-equal nil
+		(position 1 #()
+			  :start 0 :test 'eql :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 3a|
+  (let ((element (list *i02*)))
+    (assert-equal 2
+		  (position *i01* (vector (list *i1*) (list *i01*) element (list *i2*))
+			    :key #'car :from-end t))))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 3b|
+  (let ((element (list *i02*)))
+    (assert-equal 2
+		  (position *i01* (vector (list *i1*) (list *i01*) element (list *i2*))
+			    :test #'eql :key #'car :from-end t))))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 3c|
+  (let ((element (list *i02*)))
+    (assert-equal 2
+		  (position *i01* (vector (list *i1*) (list *i01*) element (list *i2*))
+			    :test 'eql :key #'car :from-end t))))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 4a|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i2*) (list *i3*))
+			  :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 4b|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i2*) (list *i3*))
+			  :test #'eql :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 4c|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i2*) (list *i3*))
+			  :test 'eql :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 5a|
+  (assert-equal nil
+		(position (list (list 'a)) (vector (list (list 'a)))
+			  :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 5b|
+  (assert-equal nil
+		(position (list (list 'a)) (vector (list (list 'a)))
+			  :test #'eql :key #'car :from-end t)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=nil from-end=true 5c|
+  (assert-equal nil
+		(position (list (list 'a)) (vector (list (list 'a)))
+			  :test 'eql :key #'car :from-end t)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -7674,12 +8418,120 @@
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=0 end=other from-end=false
 
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 1a|
+  (assert-equal 1
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :end 3 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 1b|
+  (assert-equal 1
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test #'eql :end 3 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 1c|
+  (assert-equal 1
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test 'eql :end 3 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 2a|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :end 1 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 2b|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test #'eql :end 1 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 2c|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test 'eql :end 1 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 3a|
+  (assert-error 'type-error
+		(position 0 (vector (list 1) (list 1) (list 1))
+			  :end 4 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 3b|
+  (assert-error 'type-error
+		(position 0 (vector (list 1) (list 1) (list 1))
+			  :test #'eql :end 4 :key #'car)))
+
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=false 3c|
+  (assert-error 'type-error
+		(position 0 (vector (list 1) (list 1) (list 1))
+			  :test 'eql :end 4 :key #'car)))
+
 ;;; ************** ADD MORE TESTS HERE
 
 ;;;;;;;;;;
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=0 end=other from-end=true
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 1a|
+  (assert-equal 2
+		(position *i01* (reverse (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*)))
+			  :end 3 :key #'car :from-end t)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 1b|
+  (assert-equal 2
+		(position *i01* (reverse (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*)))
+			  :test #'eql :end 3 :key #'car :from-end t)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 1c|
+  (assert-equal 2
+		(position *i01* (reverse (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*)))
+			  :test 'eql :end 3 :key #'car :from-end t)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 2a|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :end 1 :key #'car :from-end t)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 2b|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test #'eql :end 1 :key #'car :from-end t)))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 2c|
+  (assert-equal nil
+		(position *i01* (vector (list *i1*) (list *i02*) (list *i01*) (list *i2*))
+			  :test 'eql :end 1 :key #'car :from-end t)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 3a|
+  (assert-error 'type-error
+		(position 0 (vector (list 1) (list 1) (list 1))
+			  :end 4 :key #'car :from-end t)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 3b|
+  (assert-error 'type-error
+		(position 0 (vector (list 1) (list 1) (list 1))
+			  :test #'eql :end 4 :key #'car :from-end t)))
+
+;;; Check that we get an error when :end is past the end of the list
+;;; and the item is not in the list.
+(define-test |position seq-type=vector test=eql key=other start=0 end=other from-end=true 3c|
+  (assert-error 'type-error
+		(position 0 (vector (list 1) (list 1) (list 1))
+			  :test 'eql :end 4 :key #'car :from-end t)))
 
 ;;; ************** ADD MORE TESTS HERE
 
@@ -7701,6 +8553,78 @@
 ;;;
 ;;; Tests for function position
 ;;; with seq-type=vector test=eql key=other start=other end=nil from-end=false
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is implicit.
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 2a|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :start 1 :key #'car))))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 2b|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :test #'eql :start 1 :key #'car))))
+
+;;; Check that we find a eql number (but probably not eq) in a list.  
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 2c|
+  (let ((element (list *i02*)))
+    (assert-equal 1
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :test 'eql :start 1 :key #'car))))
+
+;;; Check that we do not find n eql number because of the value of start
+;;; A test of eql is implicit.
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 3a|
+  (let ((element (list *i02*)))
+    (assert-equal nil
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :start 2 :key #'car))))
+
+;;; Check that we do not find n eql number because of the value of start
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 3b|
+  (let ((element (list *i02*)))
+    (assert-equal nil
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :test #'eql :start 2 :key #'car))))
+
+;;; Check that we do not find n eql number because of the value of start
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 3c|
+  (let ((element (list *i02*)))
+    (assert-equal nil
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :test 'eql :start 2 :key #'car))))
+
+;;; Check that we get an error when start is beyond the end of the list
+;;; A test of eql is implicit.
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 4a|
+  (let ((element (list *i02*)))
+    (assert-error 'type-error
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :start 4 :key #'car))))
+
+;;; Check that we get an error when start is beyond the end of the list
+;;; A test of eql is explicit by passing the function.
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 4b|
+  (let ((element (list *i02*)))
+    (assert-error 'type-error
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :test #'eql :start 4 :key #'car))))
+
+;;; Check that we get an error when start is beyond the end of the list
+;;; A test of eql is explicit by passing the name of the function. 
+(define-test |position seq-type=vector test=eql key=other start=other end=nil from-end=false 4c|
+  (let ((element (list *i02*)))
+    (assert-error 'type-error
+		  (position *i01* (vector (list *i1*) element (list *i2*))
+			    :test 'eql :start 4 :key #'car))))
 
 ;;; ************** ADD MORE TESTS HERE
 
