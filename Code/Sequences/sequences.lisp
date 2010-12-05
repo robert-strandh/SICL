@@ -9081,343 +9081,195 @@
 
 (defun |remove-if-not seq-type=list end=nil count=nil key=identity|
     (predicate list start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  when (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list end=nil count=nil key=other|
     (predicate list start key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  when (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list end=other count=nil key=identity|
     (predicate list start end)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  when (funcall predicate element)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  when (funcall predicate  element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list end=other count=nil key=other|
     (predicate list start end key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  when (funcall predicate (funcall key element))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  when (funcall predicate  (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=false end=nil count=other key=identity|
     (predicate list start count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  when (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=false end=nil count=other key=other|
     (predicate list start count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  when (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=false end=other count=other key=identity|
     (predicate list start end count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  when (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=false end=other count=other key=other|
     (predicate list start end count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  when (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=true end=nil count=other key=identity|
     (predicate list start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall predicate (car reversed-prefix))
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall predicate element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=true end=nil count=other key=other|
     (predicate list start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall predicate (funcall key (car reversed-prefix)))
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall predicate (funcall key element)))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=true end=other count=other key=identity|
     (predicate list start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall predicate (car reversed-prefix))
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall predicate element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=true end=other count=other key=other|
     (predicate list start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall predicate (funcall key (car reversed-prefix)))
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall predicate (funcall key element)))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if-not seq-type=general-vector count=nil key=identity|
     (predicate vector start end)
