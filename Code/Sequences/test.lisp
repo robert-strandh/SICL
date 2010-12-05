@@ -89,10 +89,10 @@
       (let ((v1 (apply #'stupid-find item sequence arguments))
 	    (v2 (apply #'find item sequence arguments)))
       (if (eql v1 v2)
-	  (format *trace-output* "test passed~%")
+	  (format *trace-output* "*")
 	  (format *trace-output*
 		  "for test: FIND ~s ~s ~s~@
-                  expected: ~s~%     but saw:  ~s~%"
+                   expected: ~s~%     but saw:  ~s~%"
 		  item sequence arguments v1 v2))))))
 
 (defun test-find-1 (item sequence test test-not start end from-end)
@@ -3044,10 +3044,10 @@
       (let ((v1 (apply #'stupid-position item sequence arguments))
 	    (v2 (apply #'position item sequence arguments)))
       (if (eql v1 v2)
-	  (format *trace-output* "test passed~%")
+	  (format *trace-output* "*")
 	  (format *trace-output*
 		  "for test: POSITION ~s ~s ~s~@
-                  expected: ~s~%     but saw:  ~s~%"
+                   expected: ~s~%     but saw:  ~s~%"
 		  item sequence arguments v1 v2))))))
 
 (defun test-position-1 (item sequence test test-not start end from-end)
@@ -3149,10 +3149,10 @@
       (let ((v1 (apply #'stupid-position-if predicate sequence arguments))
 	    (v2 (apply #'position-if predicate sequence arguments)))
       (if (eql v1 v2)
-	  (format *trace-output* "test passed~%")
+	  (format *trace-output* "*")
 	  (format *trace-output*
 		  "for test: POSITION-IF ~s ~s ~s~@
-                  expected: ~s~%     but saw:  ~s~%"
+                   expected: ~s~%     but saw:  ~s~%"
 		  predicate sequence arguments v1 v2))))))
 
 (defun test-position-if-1 (predicate sequence start end from-end)
@@ -3249,10 +3249,10 @@
       (let ((v1 (apply #'stupid-position-if-not predicate sequence arguments))
 	    (v2 (apply #'position-if-not predicate sequence arguments)))
       (if (eql v1 v2)
-	  (format *trace-output* "test passed~%")
+	  (format *trace-output* "*")
 	  (format *trace-output*
 		  "for test: POSITION-IF-NOT ~s ~s ~s~@
-                  expected: ~s~%     but saw:  ~s~%"
+                   expected: ~s~%     but saw:  ~s~%"
 		  predicate sequence arguments v1 v2))))))
 
 (defun test-position-if-not-1 (predicate sequence start end from-end)
@@ -3356,10 +3356,10 @@
       (let ((v1 (apply #'stupid-count item sequence arguments))
 	    (v2 (apply #'count item sequence arguments)))
 	(if (eql v1 v2)
-	    (format *trace-output* "test passed~%")
+	    (format *trace-output* "*")
 	    (format *trace-output*
 		    "for test: COUNT ~s ~s ~s~@
-                  expected: ~s~%     but saw:  ~s~%"
+                     expected: ~s~%     but saw:  ~s~%"
 		    item sequence arguments v1 v2))))))
 
 (defun test-count-1 (item sequence test test-not start end from-end)
@@ -3445,11 +3445,9 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    when (funcall predicate (funcall key (aref sequence index)))
-	      return index)
+	    count (funcall predicate (funcall key (aref sequence index))))
       (loop for index from start below end
-	    when (funcall predicate (funcall key (aref sequence index)))
-	      return index)))
+	    count (funcall predicate (funcall key (aref sequence index))))))
 
 (defun test-count-if (predicate sequence key start end from-end)
   (flet ((make-arg (name thing)
@@ -3461,10 +3459,10 @@
       (let ((v1 (apply #'stupid-count-if predicate sequence arguments))
 	    (v2 (apply #'count-if predicate sequence arguments)))
 	(if (eql v1 v2)
-	    (format *trace-output* "test passed~%")
+	    (format *trace-output* "*")
 	    (format *trace-output*
 		    "for test: COUNT-IF ~s ~s ~s~@
-                  expected: ~s~%     but saw:  ~s~%"
+                     expected: ~s~%     but saw:  ~s~%"
 		    predicate sequence arguments v1 v2))))))
 
 (defun test-count-if-1 (predicate sequence start end from-end)
@@ -3545,11 +3543,9 @@
   (assert (<= 0 end (length sequence)))
   (if from-end
       (loop for index downfrom (1- end) to start
-	    unless (funcall predicate (funcall key (aref sequence index)))
-	      return index)
+	    count (not (funcall predicate (funcall key (aref sequence index)))))
       (loop for index from start below end
-	    unless (funcall predicate (funcall key (aref sequence index)))
-	      return index)))
+	    count (not (funcall predicate (funcall key (aref sequence index)))))))
 
 (defun test-count-if-not (predicate sequence key start end from-end)
   (flet ((make-arg (name thing)
@@ -3561,10 +3557,10 @@
       (let ((v1 (apply #'stupid-count-if-not predicate sequence arguments))
 	    (v2 (apply #'count-if-not predicate sequence arguments)))
 	(if (eql v1 v2)
-	    (format *trace-output* "test passed~%")
+	    (format *trace-output* "*")
 	    (format *trace-output*
 		    "for test: COUNT-IF-NOT ~s ~s ~s~@
-                  expected: ~s~%     but saw:  ~s~%"
+                     expected: ~s~%     but saw:  ~s~%"
 		    predicate sequence arguments v1 v2))))))
 
 (defun test-count-if-not-1 (predicate sequence start end from-end)
