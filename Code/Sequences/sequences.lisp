@@ -212,7 +212,7 @@
 
 ;;; This function is used to verify that the end sequence index
 ;;; is valid, and that, if we reach the end of the list, it is 
-;;; a proper list.
+;;; a proper list.  The remainder of the list is returned.
 (defun verify-end-index (name list remainder start end)
   (loop for length from start
 	until (or (atom remainder) (>= length end))
@@ -226,7 +226,8 @@
 			    :name name
 			    :datum end
 			    :expect-type `(integer 0 ,length)
-			    :in-sequence list))))
+			    :in-sequence list))
+		   (return remainder)))
 
 ;;; When we traverse a list from the end, we use the recursion stack
 ;;; to visit elements during backtrack.  However, because the stacks
@@ -283,7 +284,7 @@
 		    (error 'must-be-proper-list
 			   :name name
 			   :datum list))
-		  (values sentinel last remaining))))
+		  (return (values sentinel last remaining)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -5603,387 +5604,283 @@
 
 (defun |remove seq-type=list from-end=true test=eql end=nil count=other key=identity|
     (item list start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eql (car reversed-prefix) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eql item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eq end=nil count=other key=identity|
     (item list start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eq (car reversed-prefix) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eq item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eql end=nil count=other key=other|
     (item list start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eql (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eql item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eq end=nil count=other key=other|
     (item list start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eq (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eq item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eql end=other count=other key=identity|
     (item list start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eql (car reversed-prefix) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eql item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eq end=other count=other key=identity|
     (item list start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eq (car reversed-prefix) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eq item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eql end=other count=other key=other|
     (item list start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eql (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eql item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eq end=other count=other key=other|
     (item list start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eq (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eq item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=other end=nil count=other key=identity|
     (item list test start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test item (car reversed-prefix))
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall test item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=other end=nil count=other key=other|
     (item list test start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall test item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=other end=other count=other key=identity|
     (item list test start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test item (car reversed-prefix))
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall test item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=other end=other count=other key=other|
     (item list test start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall test item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test-not=other end=nil count=other key=identity|
     (item list test-not start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (car reversed-prefix) item)
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall test-not item element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test-not=other end=nil count=other key=other|
     (item list test-not start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (funcall key (car reversed-prefix)) item)
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall test-not item (funcall key element)))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test-not=other end=other count=other key=identity|
     (item list test-not start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (car reversed-prefix) item)
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall test-not item element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test-not=other end=other count=other key=other|
     (item list test-not start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (funcall key (car reversed-prefix)) item)
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall test-not item (funcall key element)))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 ;;; Helper function. 
 ;;; FIXME: try to explain what it does!
