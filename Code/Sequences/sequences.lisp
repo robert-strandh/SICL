@@ -15838,16 +15838,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (aref vector i))))
 
@@ -15855,16 +15846,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (aref vector i))))
 
@@ -15872,16 +15854,7 @@
     (item vector start end test)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (aref vector i))))
 
@@ -15889,16 +15862,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (funcall key (aref vector i)))))
 
@@ -15906,16 +15870,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (funcall key (aref vector i)))))
 
@@ -15923,16 +15878,7 @@
     (item vector start end key test)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (funcall key (aref vector i)))))
 
@@ -15940,16 +15886,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (aref vector i))))
 
@@ -15957,16 +15894,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (aref vector i))))
 
@@ -15974,16 +15902,7 @@
     (item vector start end test)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (aref vector i))))
 
@@ -15991,16 +15910,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (funcall key (aref vector i)))))
 
@@ -16008,16 +15918,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (funcall key (aref vector i)))))
 
@@ -16025,16 +15926,7 @@
     (item vector start end key test)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (funcall key (aref vector i)))))
 
@@ -16042,16 +15934,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (aref vector i)))))
 
@@ -16059,16 +15942,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (aref vector i)))))
 
@@ -16076,16 +15950,7 @@
     (item vector start end test-not)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (aref vector i)))))
 
@@ -16093,16 +15958,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (funcall key (aref vector i))))))
 
@@ -16110,16 +15966,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (funcall key (aref vector i))))))
 
@@ -16127,16 +15974,7 @@
     (item vector start end key test-not)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (funcall key (aref vector i))))))
 
@@ -16144,16 +15982,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (aref vector i)))))
 
@@ -16161,16 +15990,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (aref vector i)))))
 
@@ -16178,16 +15998,7 @@
     (item vector start end test-not)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (aref vector i)))))
 
@@ -16195,16 +16006,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (funcall key (aref vector i))))))
 
@@ -16212,16 +16014,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (funcall key (aref vector i))))))
 
@@ -16229,16 +16022,7 @@
     (item vector start end key test-not)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (funcall key (aref vector i))))))
 
@@ -16246,16 +16030,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (svref vector i))))
 
@@ -16263,16 +16038,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (svref vector i))))
 
@@ -16280,16 +16046,7 @@
     (item vector start end test)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (svref vector i))))
 
@@ -16297,16 +16054,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (funcall key (svref vector i)))))
 
@@ -16314,16 +16062,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (funcall key (svref vector i)))))
 
@@ -16331,16 +16070,7 @@
     (item vector start end key test)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (funcall key (svref vector i)))))
 
@@ -16348,16 +16078,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (svref vector i))))
 
@@ -16365,16 +16086,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (svref vector i))))
 
@@ -16382,16 +16094,7 @@
     (item vector start end test)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (svref vector i))))
 
@@ -16399,16 +16102,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (funcall key (svref vector i)))))
 
@@ -16416,16 +16110,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (funcall key (svref vector i)))))
 
@@ -16433,16 +16118,7 @@
     (item vector start end key test)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (funcall key (svref vector i)))))
 
@@ -16450,16 +16126,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (svref vector i)))))
 
@@ -16467,16 +16134,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (svref vector i)))))
 
@@ -16484,16 +16142,7 @@
     (item vector start end test-not)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (svref vector i)))))
 
@@ -16501,16 +16150,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (funcall key (svref vector i))))))
 
@@ -16518,16 +16158,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (funcall key (svref vector i))))))
 
@@ -16535,16 +16166,7 @@
     (item vector start end key test-not)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (funcall key (svref vector i))))))
 
@@ -16552,16 +16174,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (svref vector i)))))
 
@@ -16569,16 +16182,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (svref vector i)))))
 
@@ -16586,16 +16190,7 @@
     (item vector start end test-not)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (svref vector i)))))
 
@@ -16603,16 +16198,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (funcall key (svref vector i))))))
 
@@ -16620,16 +16206,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (funcall key (svref vector i))))))
 
@@ -16637,16 +16214,7 @@
     (item vector start end key test-not)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (funcall key (svref vector i))))))
 
@@ -16654,16 +16222,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (schar vector i))))
 
@@ -16671,16 +16230,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (schar vector i))))
 
@@ -16688,16 +16238,7 @@
     (item vector start end test)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (schar vector i))))
 
@@ -16705,16 +16246,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (funcall key (schar vector i)))))
 
@@ -16722,16 +16254,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (funcall key (schar vector i)))))
 
@@ -16739,16 +16262,7 @@
     (item vector start end key test)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (funcall key (schar vector i)))))
 
@@ -16756,16 +16270,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (schar vector i))))
 
@@ -16773,16 +16278,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (schar vector i))))
 
@@ -16790,16 +16286,7 @@
     (item vector start end test)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (schar vector i))))
 
@@ -16807,16 +16294,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (funcall key (schar vector i)))))
 
@@ -16824,16 +16302,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (funcall key (schar vector i)))))
 
@@ -16841,16 +16310,7 @@
     (item vector start end key test)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (funcall key (schar vector i)))))
 
@@ -16858,16 +16318,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (schar vector i)))))
 
@@ -16875,16 +16326,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (schar vector i)))))
 
@@ -16892,16 +16334,7 @@
     (item vector start end test-not)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (schar vector i)))))
 
@@ -16909,16 +16342,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (funcall key (schar vector i))))))
 
@@ -16926,16 +16350,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (funcall key (schar vector i))))))
 
@@ -16943,16 +16358,7 @@
     (item vector start end key test-not)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (funcall key (schar vector i))))))
 
@@ -16960,16 +16366,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (schar vector i)))))
 
@@ -16977,16 +16374,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (schar vector i)))))
 
@@ -16994,16 +16382,7 @@
     (item vector start end test-not)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (schar vector i)))))
 
@@ -17011,16 +16390,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (funcall key (schar vector i))))))
 
@@ -17028,16 +16398,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (funcall key (schar vector i))))))
 
@@ -17045,20 +16406,9 @@
     (item vector start end key test-not)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (funcall key (schar vector i))))))
-
-;;; ****************
 
 (defun |count seq-type=list from-end=false end=nil key=identity test=eql|
     (item list start)
@@ -17299,7 +16649,7 @@
 	 (end (compute-length-from-remainder 'count list remaining start))
 	 (result 0))
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (when (funcall test item (car list))
@@ -17313,7 +16663,7 @@
 	 (end (compute-length-from-remainder 'count list remaining start))
 	 (result 0))
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (when (eql item (funcall key (car list)))
@@ -17327,7 +16677,7 @@
 	 (end (compute-length-from-remainder 'count list remaining start))
 	 (result 0))
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (when (eq item (funcall key (car list)))
@@ -17341,7 +16691,7 @@
 	 (end (compute-length-from-remainder 'count list remaining start))
 	 (result 0))
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (when (funcall test item (funcall key (car list)))
@@ -17375,7 +16725,7 @@
 	 (result 0))
     (verify-end-index 'count list remaining start end)
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (when (funcall test item (car list))
@@ -17389,7 +16739,7 @@
 	 (result 0))
     (verify-end-index 'count list remaining start end)
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (when (eql item (funcall key (car list)))
@@ -17403,7 +16753,7 @@
 	 (result 0))
     (verify-end-index 'count list remaining start end)
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (when (eq item (funcall key (car list)))
@@ -17417,7 +16767,7 @@
 	 (result 0))
     (verify-end-index 'count list remaining start end)
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (when (funcall test item (funcall key (car list)))
@@ -17445,7 +16795,7 @@
 	 (end (compute-length-from-remainder 'count list remaining start))
 	 (result 0))
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (unless (funcall test-not item (car list))
@@ -17459,7 +16809,7 @@
 	 (end (compute-length-from-remainder 'count list remaining start))
 	 (result 0))
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (unless (eql item (funcall key (car list)))
@@ -17473,7 +16823,7 @@
 	 (end (compute-length-from-remainder 'count list remaining start))
 	 (result 0))
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (unless (eq item (funcall key (car list)))
@@ -17487,7 +16837,7 @@
 	 (end (compute-length-from-remainder 'count list remaining start))
 	 (result 0))
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (unless (funcall test-not item (funcall key (car list)))
@@ -17521,7 +16871,7 @@
 	 (result 0))
     (verify-end-index 'count list remaining start end)
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (unless (funcall test-not item (car list))
@@ -17535,7 +16885,7 @@
 	 (result 0))
     (verify-end-index 'count list remaining start end)
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (unless (eql item (funcall key (car list)))
@@ -17549,7 +16899,7 @@
 	 (result 0))
     (verify-end-index 'count list remaining start end)
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (unless (eq item (funcall key (car list)))
@@ -17563,7 +16913,7 @@
 	 (result 0))
     (verify-end-index 'count list remaining start end)
     (labels ((traverse-list-step-1 (list length)
-	       (if (zerop length)
+	       (if (<= length 0)
 		   nil
 		   (progn (traverse-list-step-1 (cdr list) (1- length))
 			  (unless (funcall test-not item (funcall key (car list)))
@@ -18007,16 +17357,7 @@
     (predicate vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (aref vector i))))
 
@@ -18024,16 +17365,7 @@
     (predicate vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (funcall key (aref vector i)))))
 
@@ -18041,16 +17373,7 @@
     (predicate vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (aref vector i))))
 
@@ -18058,16 +17381,7 @@
     (predicate vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (funcall key (aref vector i)))))
 
@@ -18075,16 +17389,7 @@
     (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (svref vector i))))
 
@@ -18092,16 +17397,7 @@
     (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (funcall key (svref vector i)))))
 
@@ -18109,16 +17405,7 @@
     (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (svref vector i))))
 
@@ -18126,16 +17413,7 @@
     (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (funcall key (svref vector i)))))
 
@@ -18143,16 +17421,7 @@
     (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (schar vector i))))
 
@@ -18160,16 +17429,7 @@
     (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (funcall key (schar vector i)))))
 
@@ -18177,16 +17437,7 @@
     (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (schar vector i))))
 
@@ -18194,178 +17445,99 @@
     (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (funcall key (schar vector i)))))
 
 (defun |count-if seq-type=list from-end=false end=nil key=identity|
     (predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall predicate element))))
+  (loop for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (funcall predicate element)
+	finally (tail-must-be-proper-list 'count-if list remaining)))
 
 (defun |count-if seq-type=list from-end=false end=nil key=other|
     (predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall predicate (funcall key element)))))
+  (loop for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (funcall predicate (funcall key element))
+	finally (tail-must-be-proper-list 'count-if list remaining)))
 
 (defun |count-if seq-type=list from-end=false end=other key=identity|
     (predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall predicate element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (funcall predicate element)
+	finally (tail-must-be-proper-list-with-end 'count-if list remaining end index)))
 
 (defun |count-if seq-type=list from-end=false end=other key=other|
     (predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall predicate (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (funcall predicate (funcall key element))
+	finally (tail-must-be-proper-list-with-end 'count-if list remaining end index)))
 
 (defun |count-if seq-type=list from-end=true end=nil key=identity|
     (predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall predicate element))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall predicate (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if seq-type=list from-end=true end=nil key=other|
     (predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall predicate (funcall key element)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall predicate (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if seq-type=list from-end=true end=other key=identity|
     (predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall predicate element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall predicate (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if seq-type=list from-end=true end=other key=other|
     (predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall predicate (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall predicate (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun count-if (predicate sequence &key from-end (start 0) end key)
   (if (listp sequence)
@@ -18436,16 +17608,7 @@
     (predicate vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (aref vector i)))))
 
@@ -18453,16 +17616,7 @@
     (predicate vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (funcall key (aref vector i))))))
 
@@ -18470,16 +17624,7 @@
     (predicate vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (aref vector i)))))
 
@@ -18487,16 +17632,7 @@
     (predicate vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (funcall key (aref vector i))))))
 
@@ -18504,16 +17640,7 @@
     (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (svref vector i)))))
 
@@ -18521,16 +17648,7 @@
     (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (funcall key (svref vector i))))))
 
@@ -18538,16 +17656,7 @@
     (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (svref vector i)))))
 
@@ -18555,16 +17664,7 @@
     (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (funcall key (svref vector i))))))
 
@@ -18572,16 +17672,7 @@
     (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (schar vector i)))))
 
@@ -18589,16 +17680,7 @@
     (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (funcall key (schar vector i))))))
 
@@ -18606,16 +17688,7 @@
     (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (schar vector i)))))
 
@@ -18623,178 +17696,99 @@
     (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (funcall key (schar vector i))))))
 
 (defun |count-if-not seq-type=list from-end=false end=nil key=identity|
     (predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall predicate element)))))
+  (loop for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (funcall predicate element))
+	finally (tail-must-be-proper-list 'count-if list remaining)))
 
 (defun |count-if-not seq-type=list from-end=false end=nil key=other|
     (predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall predicate (funcall key element))))))
+  (loop for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (funcall predicate (funcall key element)))
+	finally (tail-must-be-proper-list 'count-if list remaining)))
 
 (defun |count-if-not seq-type=list from-end=false end=other key=identity|
     (predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall predicate element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (funcall predicate element))
+	finally (tail-must-be-proper-list-with-end 'count-if list remaining end index)))
 
 (defun |count-if-not seq-type=list from-end=false end=other key=other|
     (predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall predicate (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (funcall predicate (funcall key element)))
+	finally (tail-must-be-proper-list-with-end 'count-if list remaining end index)))
 
 (defun |count-if-not seq-type=list from-end=true end=nil key=identity|
     (predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall predicate element)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall predicate (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if-not seq-type=list from-end=true end=nil key=other|
     (predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall predicate (funcall key element))))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall predicate (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if-not seq-type=list from-end=true end=other key=identity|
     (predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall predicate element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall predicate (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if-not seq-type=list from-end=true end=other key=other|
     (predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall predicate (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall predicate (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun count-if-not (predicate sequence &key from-end (start 0) end key)
   (if (listp sequence)
