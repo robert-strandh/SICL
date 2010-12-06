@@ -2670,6 +2670,49 @@
 ;;;
 ;;; Tests for function remove
 
+(defun stupid-remove (item sequence
+		      &key
+		      key
+		      (test nil test-p)
+		      (test-not nil test-not-p)
+		      (start 0)
+		      end
+		      from-end
+		      count)
+  (let ((length (length sequence)))
+    (if (null end)
+	(setf end length)
+	(assert (<= end length)))
+    (assert (<= 0 start length))
+    (assert (not (and test-p test-not-p)))
+    (if from-end
+	(reverse (apply #'stupid-remove
+			item (reverse sequence)
+			:key key
+			:start (- length end)
+			:end (- length start)
+			:from-end nil
+			:count count
+			(append (if test-p (list :test test) '())
+				(if test-not-p (list :test-not test-not) '()))))
+	(progn (when (null key)
+		 (setf key #'identity))
+	       (if test-not-p
+		   (setf test (lambda (x y) (not (funcall test-not x y))))
+		   (when (not test-p)
+		     (setf test #'eql)))
+	       (unless count
+		 (setf count length))
+	       (append (subseq sequence 0 start)
+		       (coerce (loop for element in (coerce (subseq sequence start end) 'list)
+				     unless (and (plusp count)
+						(funcall test item (funcall key element)))
+				       collect element
+				     else
+				       do (decf count))
+			       (type-of sequence))
+		       (subseq sequence end length))))))
+
 (define-test test.remove.list.1
   (assert-equal
    '()
