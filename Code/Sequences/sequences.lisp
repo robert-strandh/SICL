@@ -173,7 +173,7 @@
     (error 'must-be-proper-list
 	   :name name
 	   :datum list))
-  (when (< length end)
+  (when (and (null tail) (< length end))
     (error 'invalid-end-index
 	   :name name
 	   :datum end
