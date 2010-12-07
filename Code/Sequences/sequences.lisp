@@ -276,7 +276,7 @@
   (let* ((sentinel (list nil))
 	 (last sentinel))
     (loop for index from 0
-	  for remaining = list then (cdr list)
+	  for remaining = list then (cdr remaining)
 	  until (or (atom remaining) (>= index start))
 	  do (setf (cdr last) (cons (car remaining) nil))
 	     (setf last (cdr last))
