@@ -5354,7 +5354,8 @@
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  finally (tail-must-be-proper-list 'remove list remaining))
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eq end=nil count=other key=identity|
@@ -5369,7 +5370,8 @@
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  finally (tail-must-be-proper-list 'remove list remaining))
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eql end=nil count=other key=other|
@@ -5384,7 +5386,8 @@
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  finally (tail-must-be-proper-list 'remove list remaining))
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eq end=nil count=other key=other|
@@ -5399,7 +5402,8 @@
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  finally (tail-must-be-proper-list 'remove list remaining))
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eql end=other count=other key=identity|
