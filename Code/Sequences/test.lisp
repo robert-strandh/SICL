@@ -2703,15 +2703,106 @@
 		     (setf test #'eql)))
 	       (unless count
 		 (setf count length))
-	       (append (subseq sequence 0 start)
-		       (coerce (loop for element in (coerce (subseq sequence start end) 'list)
+	       (coerce (append (coerce (subseq sequence 0 start) 'list)
+			       (loop for element in (coerce (subseq sequence start end) 'list)
 				     unless (and (plusp count)
-						(funcall test item (funcall key element)))
+						 (funcall test item (funcall key element)))
 				       collect element
 				     else
 				       do (decf count))
-			       (type-of sequence))
-		       (subseq sequence end length))))))
+			       (coerce (subseq sequence end length) 'list))
+		       (cond ((listp sequence) 'list)
+			     ((stringp sequence) 'string)
+			     (t 'vector)))))))
+			      
+(defun test-remove (item sequence key test test-not start end from-end count)
+  (flet ((make-arg (name thing)
+	   (if (eql thing -1) '() (list name thing))))
+    (let ((arguments (append (make-arg :key key)
+			     (make-arg :test test)
+			     (make-arg :test-not test-not)
+			     (make-arg :start start)
+			     (make-arg :end end)
+			     (make-arg :from-end from-end)
+			     (make-arg :count count))))
+      (let ((v1 (apply #'stupid-remove item sequence arguments))
+	    (v2 (apply #'remove item sequence arguments)))
+	(if (equalp v1 v2)
+	    (format *trace-output* "*")
+	    (format *trace-output*
+		    "for test: REMOVE ~s ~s ~s~@
+                     expected: ~s~%     but saw:  ~s~%"
+		    item sequence arguments v1 v2))))))
+
+(defun test-remove-1 (item sequence test test-not start end from-end count)
+  (test-remove item sequence
+	       -1 test test-not start end from-end count)
+  (test-remove item sequence
+	       nil test test-not start end from-end count)
+  (test-remove item sequence
+	       #'identity test test-not start end from-end count)
+  (test-remove item sequence
+	       'identity test test-not start end from-end count)
+
+  (test-remove item (coerce sequence 'vector)
+	       -1 test test-not start end from-end count)
+  (test-remove item (coerce sequence 'vector)
+	       nil test test-not start end from-end count)
+  (test-remove item (coerce sequence 'vector)
+	       #'identity test test-not start end from-end count)
+
+  (test-remove item (mapcar #'list sequence)
+	       #'car test test-not start end from-end count)
+  (test-remove item (mapcar #'list sequence)
+	       'car test test-not start end from-end count)
+
+  (test-remove item (map 'vector #'list sequence)
+	       #'car test test-not start end from-end count)
+  (test-remove item (map 'vector #'list sequence)
+	       'car test test-not start end from-end count))
+
+(defun test-remove-2 (item sequence test start end from-end count)
+  (if (eq test 'eql)
+      (progn (test-remove-1 item sequence -1 -1 start end from-end count)
+	     (test-remove-1 item sequence #'eql -1 start end from-end count)
+	     (test-remove-1 item sequence 'eql -1 start end from-end count)
+	     (test-remove-1 item sequence -1 #'eql start end from-end count)
+	     (test-remove-1 item sequence -1 'eql start end from-end count))
+      (progn (test-remove-1 item sequence test -1 start end from-end count)
+	     (test-remove-1 item sequence (symbol-function test) -1 start end from-end count)
+	     (test-remove-1 item sequence -1 test start end from-end count)
+	     (test-remove-1 item sequence -1 (symbol-function test) start end from-end count))))
+
+(defun test-remove-3 (item sequence test start end count)
+  (test-remove-2 item sequence test start end -1 count)
+  (test-remove-2 item sequence test start end nil count)
+  (test-remove-2 item sequence test start end t count))
+
+(defun test-remove-4 (item sequence test)
+  (let ((length (length sequence)))
+    (test-remove-3 item sequence test -1 -1 -1)
+    (loop for index from 0 to length
+	  do (test-remove-3 item sequence test -1 -1 index)
+	     (test-remove-3 item sequence test -1 index -1)
+	     (test-remove-3 item sequence test index -1 -1))
+    (loop for index1 from 0 to length
+	  do (loop for index2 from 0 to length
+		   do (test-remove-3 item sequence test -1 index1 index2)
+		      (test-remove-3 item sequence test index1 -1 index2)
+		      (test-remove-3 item sequence test index1 index2 -1)))
+    (loop for start from 0 to length
+	  do (loop for end from 0 to length
+		   do (loop for count from 0 to length
+			    do (test-remove-3 item sequence test start end count))))))
+
+(define-test |remove normal|
+  (assert-equal nil
+		(test-remove-4 *i01* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+		(test-remove-4 *i5* (list *i1* *i02* *i2* *i02* *i4*) 'eql)
+		(test-remove-4 *l01* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+		(test-remove-4 *l5* (list *l1* *l02* *l2* *l02* *l4*) 'eq)
+		(test-remove-4 *s01* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)
+		(test-remove-4 *s5* (list *s1* *s02* *s2* *s02* *s4*) 'string-equal)))
 
 (define-test test.remove.list.1
   (assert-equal
