@@ -7177,10 +7177,10 @@
 			      (|remove seq-type=list from-end=true test-not=other end=nil count=other key=identity|
 			       item sequence test-not start count))
 			  (if key
-			      (|remove seq-type=list test-not=other end=other count=nil key=other|
-			       item sequence test-not start end key)
-			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
-			       item sequence test-not start end))))
+			      (|remove seq-type=list test-not=other end=nil count=nil key=other|
+			       item sequence test-not start key)
+			      (|remove seq-type=list test-not=other end=nil count=nil key=identity|
+			       item sequence test-not start))))
 		  ;; seq-type=list from-end=true test=eql
 		  (if end
 		      ;; seq-type=list from-end=true test=eql end=other
@@ -7368,10 +7368,10 @@
 			      (|remove seq-type=list from-end=false test-not=other end=nil count=other key=identity|
 			       item sequence test-not start count))
 			  (if key
-			      (|remove seq-type=list test-not=other end=other count=nil key=other|
-			       item sequence test-not start end key)
-			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
-			       item sequence test-not start end))))
+			      (|remove seq-type=list test-not=other end=nil count=nil key=other|
+			       item sequence test-not start key)
+			      (|remove seq-type=list test-not=other end=nil count=nil key=identity|
+			       item sequence test-not start))))
 		  ;; seq-type=list from-end=false test=eql
 		  (if end
 		      ;; seq-type=list from-end=false test=eql end=other
