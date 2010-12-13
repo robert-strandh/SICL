@@ -198,13 +198,102 @@
 	     :expected-type `(integer 0 ,length)
 	     :in-sequence vector))))
 
+;;; This function is used to compute the length of the list
+;;; given a remainder and a start index.
+(defun compute-length-from-remainder (name list remainder start)
+  (loop for length from start
+	until (atom remainder)
+	do (setf remainder (cdr remainder))
+	finally (unless (null remainder)
+		  (error 'must-be-proper-list
+			 :name name
+			 :datum list))
+		(return length)))
+
+;;; This function is used to verify that the end sequence index
+;;; is valid, and that, if we reach the end of the list, it is 
+;;; a proper list.  The remainder of the list is returned.
+(defun verify-end-index (name list remainder start end)
+  (loop for length from start
+	until (or (atom remainder) (>= length end))
+	do (setf remainder (cdr remainder))
+	   finally (unless (or (null remainder) (consp remainder))
+		     (error 'must-be-proper-list
+			 :name name
+			 :datum list))
+		   (when (< length end)
+		     (error 'invalid-end-index
+			    :name name
+			    :datum end
+			    :expect-type `(integer 0 ,length)
+			    :in-sequence list))
+		   (return remainder)))
+
+;;; When we traverse a list from the end, we use the recursion stack
+;;; to visit elements during backtrack.  However, because the stacks
+;;; might have limited depth, we make sure we only use a fixed number
+;;; of recursive calls.  This parameter indicates how many recursive
+;;; calls we are allowed to use.  In fact, we will probably use up to
+;;; 4 times as many recursions as that.  Implementations should set
+;;; this as large as possible, but it should be significantly smaller
+;;; than any hard limit on the recursion depth to allow for our
+;;; traversal to be invoked when the stack already has some
+;;; invocations on it.
+(defparameter *max-recursion-depth* 100)
+
+;;; The basic traversal technique is as follows.  We divide the list
+;;; into chunks such that there are no more than c <= m chunks and
+;;; each chunk has the a size of m^k where m is the "maximum"
+;;; recursion depth allowed and k is the smallest nonnegative integer
+;;; that makes c <= m.  We then handle each chunk on the backtrack
+;;; side of a recursive call, so that the last chunk is handled first.
+;;; Each chunk is then handled the same way, but this time with a
+;;; sub-chunk size of m^(k-1), etc, until the sub-chunk size is 1 at
+;;; which point we call a function traverse-list-1 which was passed in
+;;; as an argument. 
+(defun traverse-list (traverse-list-1 list length step)
+  (let ((max-recursion-depth *max-recursion-depth*))
+    (labels ((aux (list length step)
+	       (cond ((> (ceiling length step) max-recursion-depth)
+		      (aux list length (* step max-recursion-depth)))
+		     ((= step 1)
+		      (funcall traverse-list-1 list length))
+		     ((<= length step)
+		      (aux list length (/ step max-recursion-depth)))
+		     (t
+		      (aux (nthcdr step list) (- length step) step)
+		      (aux list step (/ step max-recursion-depth))))))
+      (aux list length step))))
+
+;;; This function copies a prefix of a list and returns three values:
+;;; A sentinel cons cell at the beginning of the copied list in case
+;;; the prefix to copy is empty, the last cell of the copied prefix,
+;;; or the sentinel if the prefix to copy is empty, and the remainder
+;;; of the list when the prefix has been removed.  We verify whenever
+;;; possible that the list is a proper list.  We also verify that the
+;;; length of the list is greater than or equal to the prefix length. 
+(defun copy-prefix (name list start)
+  (let* ((sentinel (list nil))
+	 (last sentinel))
+    (loop for index from 0
+	  for remaining = list then (cdr remaining)
+	  until (or (atom remaining) (>= index start))
+	  do (setf (cdr last) (cons (car remaining) nil))
+	     (setf last (cdr last))
+	  finally (unless (or (null remaining) (consp remaining))
+		    (error 'must-be-proper-list
+			   :name name
+			   :datum list))
+		  (return (values sentinel last remaining)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function find
 
 (defun |find seq-type=list from-end=false end=nil test=eq key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eq item element)
           return element
@@ -212,7 +301,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=eq key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eq item (funcall key element))
           return element
@@ -220,7 +310,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=eq key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eq item element))
           return element
@@ -228,7 +319,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=eq key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eq item (funcall key element)))
           return element
@@ -236,7 +328,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=eql key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eql item element)
           return element
@@ -244,7 +337,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=eql key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eql item (funcall key element))
           return element
@@ -252,7 +346,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=eql key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eql item element))
           return element
@@ -260,7 +355,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=eql key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eql item (funcall key element)))
           return element
@@ -268,7 +364,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=other key=identity|
     (item list start test)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall test item element)
           return element
@@ -276,7 +373,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test=other key=other|
     (item list start test key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall test item (funcall key element))
           return element
@@ -284,7 +382,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=other key=identity|
     (item list start test)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (funcall test item element))
           return element
@@ -292,7 +391,8 @@
 
 (defun |find seq-type=list from-end=false end=nil test-not=other key=other|
     (item list start test key)
-  (loop for remaining on (skip-to-start 'find list start)
+  (loop for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (funcall test item (funcall key element)))
           return element
@@ -300,123 +400,135 @@
 
 (defun |find seq-type=list from-end=false end=other test=eq key=identity|
     (item list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eq item element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end  n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=eq key=other|
     (item list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eq item (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=eq key=identity|
     (item list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eq item element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=eq key=other|
     (item list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eq item (funcall key element)))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=eql key=identity|
     (item list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eql item element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=eql key=other|
     (item list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eql item (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=eql key=identity|
     (item list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eql item element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=eql key=other|
     (item list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eql item (funcall key element)))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=other key=identity|
     (item list start end test)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall test item element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test=other key=other|
     (item list start end test key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall test item (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=other key=identity|
     (item list start end test)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (funcall test item element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 (defun |find seq-type=list from-end=false end=other test-not=other key=other|
     (item list start end test key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (funcall test item (funcall key element)))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))))
+		     'find list remaining end index)))
 
 ;;; We do not supply a special version for
 ;;; seq-type=list from-end=true end=nil test=eq key=identity
@@ -427,7 +539,8 @@
 (defun |find seq-type=list from-end=true end=nil test=eq key=other|
     (item list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eq item (funcall key element))
           do (setf value element)
@@ -437,7 +550,8 @@
 (defun |find seq-type=list from-end=true end=nil test-not=eq key=identity|
     (item list start)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eq item element))
           do (setf value element)
@@ -447,7 +561,8 @@
 (defun |find seq-type=list from-end=true end=nil test-not=eq key=other|
     (item list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eq item (funcall key element)))
           do (setf value element)
@@ -463,7 +578,8 @@
 (defun |find seq-type=list from-end=true end=nil test=eql key=other|
     (item list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (eql item (funcall key element))
           do (setf value element)
@@ -473,7 +589,8 @@
 (defun |find seq-type=list from-end=true end=nil test-not=eql key=identity|
     (item list start)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eql item element))
           do (setf value element)
@@ -483,7 +600,8 @@
 (defun |find seq-type=list from-end=true end=nil test-not=eql key=other|
     (item list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (eql item (funcall key element)))
           do (setf value element)
@@ -493,7 +611,8 @@
 (defun |find seq-type=list from-end=true end=nil test=other key=identity|
     (item list start test)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall test item element)
           do (setf value element)
@@ -503,7 +622,8 @@
 (defun |find seq-type=list from-end=true end=nil test=other key=other|
     (item list start test key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall test item (funcall key element))
           do (setf value element)
@@ -513,7 +633,8 @@
 (defun |find seq-type=list from-end=true end=nil test-not=other key=identity|
     (item list start test)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (funcall test item element))
           do (setf value element)
@@ -523,7 +644,8 @@
 (defun |find seq-type=list from-end=true end=nil test-not=other key=other|
     (item list start test key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find list start)
+        for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (not (funcall test item (funcall key element)))
           do (setf value element)
@@ -539,37 +661,40 @@
 (defun |find seq-type=list from-end=true end=other test=eq key=other|
     (item list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eq item (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=true end=other test-not=eq key=identity|
     (item list start end)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eq item element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=true end=other test-not=eq key=other|
     (item list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        when (not (eq item (funcall key item)))
+        when (not (eq item (funcall key element)))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 ;;; We do not supply a special version for
@@ -581,85 +706,92 @@
 (defun |find seq-type=list from-end=true end=other test=eql key=other|
     (item list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (eql item (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=true end=other test-not=eql key=identity|
     (item list start end)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eql item element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=true end=other test-not=eql key=other|
     (item list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (eql item (funcall key element)))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=true end=other test=other key=identity|
     (item list start end test)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall test item element)
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=true end=other test=other key=other|
     (item list start end test key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall test item (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=true end=other test-not=other key=identity|
     (item list start end test)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (funcall test item element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=list from-end=true end=other test-not=other key=other|
     (item list start end test key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find list start)
+        for index from start
+	for remaining = (skip-to-start 'find list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (not (funcall test item (funcall key element)))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find list remaining end (- end n))
+		     'find list remaining end index)
 		(return value)))
 
 (defun |find seq-type=vector from=end=nil test=eq key=identity|
@@ -810,6 +942,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=eq key=identity|
         item sequence start (length sequence)))
     (list
@@ -820,6 +953,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=eq key=other|
         item sequence start (length sequence) key))
     (list
@@ -830,6 +964,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=eq key=identity|
         item sequence start (length sequence)))
     (list
@@ -840,6 +975,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=eq key=other|
         item sequence start (length sequence) key))
     (list
@@ -850,6 +986,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=eql key=identity|
         item sequence start (length sequence)))
     (list
@@ -860,6 +997,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=eql key=other|
         item sequence start (length sequence) key))
     (list
@@ -870,6 +1008,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=eql key=identity|
         item sequence start (length sequence)))
     (list
@@ -880,6 +1019,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=eql key=other|
         item sequence start (length sequence) key))
     (list
@@ -890,6 +1030,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=other key=identity|
         item sequence start (length sequence) test))
     (list
@@ -900,6 +1041,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test=other key=other|
         item sequence start (length sequence) test key))
     (list
@@ -910,6 +1052,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=other key=identity|
         item sequence start (length sequence) test))
     (list
@@ -920,6 +1063,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from=end=nil test-not=other key=other|
         item sequence start (length sequence) test key))
     (list
@@ -930,6 +1074,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=eq key=identity|
         item sequence start end))
     (list
@@ -940,6 +1085,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=eq key=other|
         item sequence start end key))
     (list
@@ -950,6 +1096,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=eq key=identity|
         item sequence start end))
     (list
@@ -960,6 +1107,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=eq key=other|
         item sequence start end key))
     (list
@@ -970,6 +1118,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=eql key=identity|
         item sequence start end))
     (list
@@ -980,6 +1129,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=eql key=other|
         item sequence start end key))
     (list
@@ -990,6 +1140,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=eql key=identity|
         item sequence start end))
     (list
@@ -1000,6 +1151,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=eql key=other|
         item sequence start end key))
     (list
@@ -1010,6 +1162,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=other key=identity|
         item sequence start end test))
     (list
@@ -1020,6 +1173,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test=other key=other|
         item sequence start end test key))
     (list
@@ -1030,6 +1184,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=other key=identity|
         item sequence start end test))
     (list
@@ -1040,6 +1195,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from=end=nil test-not=other key=other|
         item sequence start end test key))
     (list
@@ -1050,6 +1206,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test=eq key=identity|
         item sequence start (length sequence)))
     (list
@@ -1062,6 +1219,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test=eq key=other|
         item sequence start (length sequence) key))
     (list
@@ -1072,6 +1230,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test-not=eq key=identity|
         item sequence start (length sequence)))
     (list
@@ -1082,6 +1241,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test-not=eq key=other|
         item sequence start (length sequence) key))
     (list
@@ -1092,6 +1252,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test=eql key=identity|
         item sequence start (length sequence)))
     (list
@@ -1104,6 +1265,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test=eql key=other|
         item sequence start (length sequence) key))
     (list
@@ -1114,6 +1276,7 @@
     (item sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test-not=eql key=identity|
         item sequence start (length sequence)))
     (list
@@ -1124,6 +1287,7 @@
     (item sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test-not=eql key=other|
         item sequence start (length sequence) key))
     (list
@@ -1134,6 +1298,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test=other key=identity|
         item sequence start (length sequence) test))
     (list
@@ -1144,6 +1309,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test=other key=other|
         item sequence start (length sequence) test key))
     (list
@@ -1154,6 +1320,7 @@
     (item sequence start test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test-not=other key=identity|
         item sequence start (length sequence) test))
     (list
@@ -1164,6 +1331,7 @@
     (item sequence start test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start (length sequence))
        (|find seq-type=vector from-end=true test-not=other key=other|
         item sequence start (length sequence) test key))
     (list
@@ -1174,6 +1342,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test=eq key=identity|
         item sequence start end))
     (list
@@ -1186,6 +1355,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test=eq key=other|
         item sequence start end key))
     (list
@@ -1196,6 +1366,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test-not=eq key=identity|
         item sequence start end))
     (list
@@ -1206,6 +1377,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test-not=eq key=other|
         item sequence start end key))
     (list
@@ -1216,6 +1388,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test=eql key=identity|
         item sequence start end))
     (list
@@ -1228,6 +1401,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test=eql key=other|
         item sequence start end key))
     (list
@@ -1238,6 +1412,7 @@
     (item sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test-not=eql key=identity|
         item sequence start end))
     (list
@@ -1248,6 +1423,7 @@
     (item sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test-not=eql key=other|
         item sequence start end key))
     (list
@@ -1258,6 +1434,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test=other key=identity|
         item sequence start end test))
     (list
@@ -1268,6 +1445,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test=other key=other|
         item sequence start end test key))
     (list
@@ -1278,6 +1456,7 @@
     (item sequence start end test)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test-not=other key=identity|
         item sequence start end test))
     (list
@@ -1288,6 +1467,7 @@
     (item sequence start end test key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find sequence start end)
        (|find seq-type=vector from-end=true test-not=other key=other|
         item sequence start end test key))
     (list
@@ -1512,92 +1692,92 @@
 ;;; When there is no key function, we avoid funcalling the 
 ;;; key=identity function. 
 
-;;; Version on lists, from start, no end, no key
 (defun |find-if-list from-end=false end=nil identity|
     (predicate list start)
-  (loop for remaining on (skip-to-start 'find-if list start)
+  (loop for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate element)
           return element
 	finally (tail-must-be-proper-list 'find-if list remaining)))
 
-;;; Version on lists, from start, no end, key
 (defun |find-if-list from-end=false end=nil key|
     (predicate list start key)
-  (loop for remaining on (skip-to-start 'find-if list start)
+  (loop for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           return element
 	finally (tail-must-be-proper-list 'find-if list remaining)))
 
-;;; Version on lists, from start, end, no key
 (defun |find-if-list from-end=false end=other key=identity|
     (predicate list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find-if list remaining end (- end n))))
+		     'find-if list remaining end index)))
 
-;;; Version on lists, from start, end, key
 (defun |find-if-list from-end=false end=other key|
     (predicate list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find-if list remaining end (- end n))))
+		     'find-if list remaining end index)))
 
-;;; Version on lists, from end, no end, no key
 (defun |find-if-list from-end=true end=nil identity|
     (predicate list start)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if list start)
+        for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate element)
           do (setf value element)
         finally (tail-must-be-proper-list 'find-if list remaining)
 		(return value)))
 
-;;; Version on lists, from end, no end, key
 (defun |find-if-list from-end=true end=nil key|
     (predicate list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if list start)
+        for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list 'find-if list remaining)
 		(return value)))
   
-;;; Version on lists, from end, end, no key
 (defun |find-if-list from-end=true end=other key=identity|
     (predicate list start end)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if list start)
+        for index from start
+	for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate element)
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find-if list remaining end (- end n))
+		     'find-if list remaining end index)
 		(return value)))
 
-;;; Version on lists, from end, end, key
 (defun |find-if-list from-end=true end=other key|
     (predicate list start end key)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if list start)
+        for index from start
+	for remaining = (skip-to-start 'find-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
           do (setf value element)
         finally (tail-must-be-proper-list-with-end
-		     'find-if list remaining end (- end n))
+		     'find-if list remaining end index)
 		(return value)))
   
 ;;; For the versions on lists, we distinguish between 
@@ -1618,28 +1798,24 @@
 ;;; When there is no key function, we avoid a funcall of
 ;;; key=identity, just as with lists. 
 
-;;; Version on vectors, from start, no key
 (defun |find-if-vector from-end=false key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (aref vector index))
           return (aref vector index)))
 
-;;; Version on vectors, from start, key
 (defun |find-if-vector from-end=false key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (funcall key (aref vector index)))
           return (aref vector index)))
 
-;;; Version on vectors, from end, no key
 (defun |find-if-vector from-end=true identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         when (funcall predicate (aref vector index))
           return (aref vector index)))
 
-;;; Version on vectors, from end, key
 (defun |find-if-vector from-end=true key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
@@ -1656,80 +1832,80 @@
 ;;; inferencing can determine which type of sequence it is at compile
 ;;; time.
 
-;;; Version on any sequence, from start, no end, no key
 (defun |find-if from-end=false end=nil identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start (length sequence))
        (|find-if-vector from-end=false key=identity|
         predicate sequence start (length sequence)))
     (list
        (|find-if-list from-end=false end=nil identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from start, no end, key
 (defun |find-if from-end=false end=nil key| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start (length sequence))
        (|find-if-vector from-end=false key=other|
         predicate sequence start (length sequence) key))
     (list
        (|find-if-list from-end=false end=nil key|
         predicate sequence start key))))
 
-;;; Version on any sequence, from start, end, no key
 (defun |find-if from-end=false end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start end)
        (|find-if-vector from-end=false key=identity|
         predicate sequence start end))
     (list
        (|find-if-list from-end=false end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from start, end, key
 (defun |find-if from-end=false end=other key| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start end)
        (|find-if-vector from-end=false key=other|
         predicate sequence start end key))
     (list
        (|find-if-list from-end=false end=other key|
         predicate sequence start end key))))
 
-;;; Version on any sequence, from end, no end, no key
 (defun |find-if from-end=true end=nil identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start (length sequence))
        (|find-if-vector from-end=true identity|
         predicate sequence start (length sequence)))
     (list
        (|find-if-list from-end=true end=nil identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from end, no end, key
 (defun |find-if from-end=true end=nil key| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start (length sequence))
        (|find-if-vector from-end=true key=other|
         predicate sequence start (length sequence) key))
     (list
        (|find-if-list from-end=true end=nil key|
         predicate sequence start key))))
 
-;;; Version on any sequence, from end, end, no key
 (defun |find-if from-end=true end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start end)
        (|find-if-vector from-end=true identity|
         predicate sequence start end))
     (list
        (|find-if-list from-end=true end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from end, end, key
 (defun |find-if from-end=true end=other key| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if sequence start end)
        (|find-if-vector from-end=true key=other|
         predicate sequence start end key))
     (list
@@ -1889,82 +2065,83 @@
 ;;; When there is no key function, we avoid funcalling the 
 ;;; key=identity function. 
 
-;;; Version on lists, from start, no end, no key
 (defun |find-if-not-list from-end=false end=nil identity|
     (predicate list start)
-  (loop for remaining on (skip-to-start 'find-if-not list start)
+  (loop for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate element)
           return element
 	finally (tail-must-be-proper-list 'find-if-not list remaining)))
 
-;;; Version on lists, from start, no end, key
 (defun |find-if-not-list from-end=false end=nil key|
     (predicate list start key)
-  (loop for remaining on (skip-to-start 'find-if-not list start)
+  (loop for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
           return element
 	finally (tail-must-be-proper-list 'find-if-not list remaining)))
 
-;;; Version on lists, from start, end, no key
 (defun |find-if-not-list from-end=false end=other key=identity|
     (predicate list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate element)
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find-if-not list remaining end (- end n))))
+		     'find-if-not list remaining end index)))
 
-;;; Version on lists, from start, end, key
 (defun |find-if-not-list from-end=false end=other key|
     (predicate list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
           return element
 	finally (tail-must-be-proper-list-with-end
-		     'find-if-not list remaining end (- end n))))
+		     'find-if-not list remaining end index)))
 
-;;; Version on lists, from end, no end, no key
 (defun |find-if-not-list from-end=true end=nil identity|
     (predicate list start)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if-not list start)
+        for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate element)
           do (setf value element)
         finally (return value)))
 
-;;; Version on lists, from end, no end, key
 (defun |find-if-not-list from-end=true end=nil key|
     (predicate list start key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if-not list start)
+        for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
           do (setf value element)
         finally (return value)))
   
-;;; Version on lists, from end, end, no key
 (defun |find-if-not-list from-end=true end=other key=identity|
     (predicate list start end)
   (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'find-if-not list start)
+        for index from start
+	for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate element)
           do (setf value element)
         finally (return value)))
 
-;;; Version on lists, from end, end, key
 (defun |find-if-not-list from-end=true end=other key|
     (predicate list start end key)
   (loop with value = nil
-        for remaining on (skip-to-start 'find-if-not list start)
+        for index from start
+        for remaining = (skip-to-start 'find-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         repeat (- end start)
         unless (funcall predicate (funcall key element))
@@ -1989,28 +2166,24 @@
 ;;; When there is no key function, we avoid a funcall of
 ;;; key=identity, just as with lists. 
 
-;;; Version on vectors, from start, no key
 (defun |find-if-not-vector from-end=false key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (aref vector index))
           return (aref vector index)))
 
-;;; Version on vectors, from start, key
 (defun |find-if-not-vector from-end=false key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (funcall key (aref vector index)))
           return (aref vector index)))
 
-;;; Version on vectors, from end, no key
 (defun |find-if-not-vector from-end=true identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         unless (funcall predicate (aref vector index))
           return (aref vector index)))
 
-;;; Version on vectors, from end, key
 (defun |find-if-not-vector from-end=true key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
@@ -2027,80 +2200,80 @@
 ;;; inferencing can determine which type of sequence it is at compile
 ;;; time.
 
-;;; Version on any sequence, from start, no end, no key
 (defun |find-if-not from-end=false end=nil identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start (length sequence))
        (|find-if-not-vector from-end=false key=identity|
         predicate sequence start (length sequence)))
     (list
        (|find-if-not-list from-end=false end=nil identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from start, no end, key
 (defun |find-if-not from-end=false end=nil key| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start (length sequence))
        (|find-if-not-vector from-end=false key=other|
         predicate sequence start (length sequence) key))
     (list
        (|find-if-not-list from-end=false end=nil key|
         predicate sequence start key))))
 
-;;; Version on any sequence, from start, end, no key
 (defun |find-if-not from-end=false end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start end)
        (|find-if-not-vector from-end=false key=identity|
         predicate sequence start end))
     (list
        (|find-if-not-list from-end=false end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from start, end, key
 (defun |find-if-not from-end=false end=other key| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start end)
        (|find-if-not-vector from-end=false key=other|
         predicate sequence start end key))
     (list
        (|find-if-not-list from-end=false end=other key|
         predicate sequence start end key))))
 
-;;; Version on any sequence, from end, no end, no key
 (defun |find-if-not from-end=true end=nil identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start (length sequence))
        (|find-if-not-vector from-end=true identity|
         predicate sequence start (length sequence)))
     (list
        (|find-if-not-list from-end=true end=nil identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from end, no end, key
 (defun |find-if-not from-end=true end=nil key| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start (length sequence))
        (|find-if-not-vector from-end=true key=other|
         predicate sequence start (length sequence) key))
     (list
        (|find-if-not-list from-end=true end=nil key|
         predicate sequence start key))))
 
-;;; Version on any sequence, from end, end, no key
 (defun |find-if-not from-end=true end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start end)
        (|find-if-not-vector from-end=true identity|
         predicate sequence start end))
     (list
        (|find-if-not-list from-end=true end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from end, end, key
 (defun |find-if-not from-end=true end=other key| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'find-if-not sequence start end)
        (|find-if-not-vector from-end=true key=other|
         predicate sequence start end key))
     (list
@@ -2233,483 +2406,555 @@
 
 (defun |position seq-type=list from-end=false end=nil test=eq key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (eq item element)
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test=eq key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (eq item (funcall key element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=eq key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (eq item element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=eq key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (eq item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test=eql key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (eql item element)
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test=eql key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (eql item (funcall key element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=eql key=identity|
     (item list start)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (eql item element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=eql key=other|
     (item list start key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (eql item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil-test key=identity|
     (item list start test)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (funcall test item element)
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil-test key=other|
     (item list start test key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (funcall test item (funcall key element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=other key=identity|
     (item list start test)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (funcall test item element))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=nil test-not=other key=other|
     (item list start test key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
-        for index from start
+        
         when (not (funcall test item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list 'position list remaining)))
 
 (defun |position seq-type=list from-end=false end=other test=eq key=identity|
     (item list start end)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eq item element)
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test=eq key=other|
     (item list start end key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eq item (funcall key element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=eq key=identity|
     (item list start end)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eq item element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=eq key=other|
     (item list start end key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eq item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test=eql key=identity|
     (item list start end)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eql item element)
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test=eql key=other|
     (item list start end key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eql item (funcall key element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=eql key=identity|
     (item list start end)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eql item element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=eql key=other|
     (item list start end key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eql item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other-test key=identity|
     (item list start end test)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (funcall test item element)
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other-test key=other|
     (item list start end test key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (funcall test item (funcall key element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=other key=identity|
     (item list start end test)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (funcall test item element))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=false end=other test-not=other key=other|
     (item list start end test key)
-  (loop for remaining on (skip-to-start 'position list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (funcall test item (funcall key element)))
           return index
 	finally (tail-must-be-proper-list-with-end 'position list remaining end index)))
 
 (defun |position seq-type=list from-end=true end=nil test=eq key=identity|
     (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (eq item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test=eq key=other|
     (item list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (eq item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=eq key=identity|
     (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (eq item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=eq key=other|
     (item list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (eq item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test=eql key=identity|
     (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (eql item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test=eql key=other|
     (item list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (eql item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=eql key=identity|
     (item list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (eql item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=eql key=other|
     (item list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (eql item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil-test key=identity|
     (item list start test)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (funcall test item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil-test key=other|
     (item list start test key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (funcall test item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=other key=identity|
     (item list start test)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (funcall test item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=nil test-not=other key=other|
     (item list start test key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
-	for element = (car remaining)
+  (loop with result = nil
         for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+        
         when (not (funcall test item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test=eq key=identity|
     (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eq item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test=eq key=other|
     (item list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eq item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=eq key=identity|
     (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eq item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=eq key=other|
     (item list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
-        when (not (eq item (funcall key item)))
-          do (setf value index)
+        when (not (eq item (funcall key element)))
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test=eql key=identity|
     (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eql item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test=eql key=other|
     (item list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (eql item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=eql key=identity|
     (item list start end)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eql item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=eql key=other|
     (item list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (eql item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other-test key=identity|
     (item list start end test)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (funcall test item element)
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other-test key=other|
     (item list start end test key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (funcall test item (funcall key element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=other key=identity|
     (item list start end test)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (funcall test item element))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=list from-end=true end=other test-not=other key=other|
     (item list start end test key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
-        for index from start below end
         when (not (funcall test item (funcall key element)))
-          do (setf value index)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end index)
-		(return value)))
+		(return result)))
 
 (defun |position seq-type=vector from-end=false test=eq key=identity|
     (item vector start end)
@@ -3601,96 +3846,96 @@
 ;;; When there is no key function, we avoid funcalling the 
 ;;; identity function. 
 
-;;; Version on lists, from start, no end, no key
 (defun |position-if seq-type=list from-end=false end=nil key=identity|
     (predicate list start)
-  (loop for remaining on (skip-to-start 'position-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate element)
-          return element
+          return index
 	finally (tail-must-be-proper-list 'position-if list remaining)))
 
-;;; Version on lists, from start, no end, key
 (defun |position-if seq-type=list from-end=false end=nil key=other|
     (predicate list start key)
-  (loop for remaining on (skip-to-start 'position-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
-          return element
+          return index
 	finally (tail-must-be-proper-list 'position-if list remaining)))
 
-;;; Version on lists, from start, end, no key
 (defun |position-if seq-type=list from-end=false end=other key=identity|
     (predicate list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate element)
-          return element
+          return index
 	finally (tail-must-be-proper-list-with-end
-		     'position-if list remaining end (- end n))))
+		     'position-if list remaining end index)))
 
-;;; Version on lists, from start, end, key
 (defun |position-if seq-type=list from-end=false end=other key=other|
     (predicate list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
-          return element
+          return index
 	finally (tail-must-be-proper-list-with-end
-		     'position-if list remaining end (- end n))))
+		     'position-if list remaining end index)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, no end, no key
 (defun |position-if seq-type=list from-end=true end=nil key=identity|
     (predicate list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate element)
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, no end, key
 (defun |position-if seq-type=list from-end=true end=nil key=other|
     (predicate list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
-  
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, end, no key
+		(return result)))
+
 (defun |position-if seq-type=list from-end=true end=other key=identity|
     (predicate list start end)
-  (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate element)
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
-		(return value)))
+		(return result)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, end, key
 (defun |position-if seq-type=list from-end=true end=other key=other|
     (predicate list start end key)
-  (loop with value = nil
-        for n downfrom (- end start) above 0
-        for remaining on (skip-to-start 'position-if list start)
+  (loop with result = nil
+        for index from start
+        for remaining = (skip-to-start 'position-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         when (funcall predicate (funcall key element))
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
-		(return value)))
-  
+		(return result)))
+
 ;;; For the versions on lists, we distinguish between 
 ;;; two different characteristics: 
 ;;; 
@@ -3709,28 +3954,24 @@
 ;;; When there is no key function, we avoid a funcall of
 ;;; identity, just as with lists. 
 
-;;; Version on vectors, from start, no key
 (defun |position-if seq-type=vector from-end=false key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (aref vector index))
           return index))
 
-;;; Version on vectors, from start, key
 (defun |position-if seq-type=vector from-end=false key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         when (funcall predicate (funcall key (aref vector index)))
           return index))
 
-;;; Version on vectors, from end, no key
 (defun |position-if seq-type=vector from-end=true key=identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         when (funcall predicate (aref vector index))
           return index))
 
-;;; Version on vectors, from end, key
 (defun |position-if seq-type=vector from-end=true key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
@@ -3747,80 +3988,80 @@
 ;;; inferencing can determine which type of sequence it is at compile
 ;;; time.
 
-;;; Version on any sequence, from start, no end, no key
 (defun |position-if from-end=false end=nil key=identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start (length sequence))
        (|position-if seq-type=vector from-end=false key=identity|
         predicate sequence start (length sequence)))
     (list
        (|position-if seq-type=list from-end=false end=nil key=identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from start, no end, key
 (defun |position-if from-end=false end=nil key=other| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start (length sequence))
        (|position-if seq-type=vector from-end=false key=other|
         predicate sequence start (length sequence) key))
     (list
        (|position-if seq-type=list from-end=false end=nil key=other|
         predicate sequence start key))))
 
-;;; Version on any sequence, from start, end, no key
 (defun |position-if from-end=false end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start end)
        (|position-if seq-type=vector from-end=false key=identity|
         predicate sequence start end))
     (list
        (|position-if seq-type=list from-end=false end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from start, end, key
 (defun |position-if from-end=false end=other key=other| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start end)
        (|position-if seq-type=vector from-end=false key=other|
         predicate sequence start end key))
     (list
        (|position-if seq-type=list from-end=false end=other key=other|
         predicate sequence start end key))))
 
-;;; Version on any sequence, from end, no end, no key
 (defun |position-if from-end=true end=nil key=identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start (length sequence))
        (|position-if seq-type=vector from-end=true key=identity|
         predicate sequence start (length sequence)))
     (list
        (|position-if seq-type=list from-end=true end=nil key=identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from end, no end, key
 (defun |position-if from-end=true end=nil key=other| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start (length sequence))
        (|position-if seq-type=vector from-end=true key=other|
         predicate sequence start (length sequence) key))
     (list
        (|position-if seq-type=list from-end=true end=nil key=other|
         predicate sequence start key))))
 
-;;; Version on any sequence, from end, end, no key
 (defun |position-if from-end=true end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start end)
        (|position-if seq-type=vector from-end=true key=identity|
         predicate sequence start end))
     (list
        (|position-if seq-type=list from-end=true end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from end, end, key
 (defun |position-if from-end=true end=other key=other| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if sequence start end)
        (|position-if seq-type=vector from-end=true key=other|
         predicate sequence start end key))
     (list
@@ -3980,95 +4221,96 @@
 ;;; When there is no key function, we avoid funcalling the 
 ;;; identity function. 
 
-;;; Version on lists, from start, no end, no key
 (defun |position-if-not seq-type=list from-end=false end=nil key=identity|
     (predicate list start)
-  (loop for remaining on (skip-to-start 'position-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate element)
-          return element
+          return index
 	finally (tail-must-be-proper-list 'position-if-not list remaining)))
 
-;;; Version on lists, from start, no end, key
 (defun |position-if-not seq-type=list from-end=false end=nil key=other|
     (predicate list start key)
-  (loop for remaining on (skip-to-start 'position-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
-          return element
+          return index
 	finally (tail-must-be-proper-list 'position-if-not list remaining)))
 
-;;; Version on lists, from start, end, no key
 (defun |position-if-not seq-type=list from-end=false end=other key=identity|
     (predicate list start end)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate element)
-          return element
+          return index
 	finally (tail-must-be-proper-list-with-end
-		     'position-if-not list remaining end (- end n))))
+		     'position-if-not list remaining end index)))
 
-;;; Version on lists, from start, end, key
 (defun |position-if-not seq-type=list from-end=false end=other key=other|
     (predicate list start end key)
-  (loop for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if-not list start)
+  (loop for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
-          return element
+          return index
 	finally (tail-must-be-proper-list-with-end
-		     'position-if-not list remaining end (- end n))))
+		     'position-if-not list remaining end index)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, no end, no key
 (defun |position-if-not seq-type=list from-end=true end=nil key=identity|
     (predicate list start)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if-not list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate element)
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, no end, key
 (defun |position-if-not seq-type=list from-end=true end=nil key=other|
     (predicate list start key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if-not list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (atom remaining)
 	for element = (car remaining)
         unless (funcall predicate (funcall key element))
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list 'position list remaining)
-		(return value)))
+		(return result)))
   
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, end, no key
 (defun |position-if-not seq-type=list from-end=true end=other key=identity|
     (predicate list start end)
-  (loop with value = nil
-        for n downfrom (- end start) above 0
-	for remaining on (skip-to-start 'position-if-not list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         unless (funcall predicate element)
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
-		(return value)))
+		(return result)))
 
-;;; FIXME: this function is not implementing position, but find. 
-;;; Version on lists, from end, end, key
 (defun |position-if-not seq-type=list from-end=true end=other key=other|
     (predicate list start end key)
-  (loop with value = nil
-        for remaining on (skip-to-start 'position-if-not list start)
+  (loop with result = nil
+        for index from start
+	for remaining = (skip-to-start 'position-if-not list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
 	for element = (car remaining)
         repeat (- end start)
         unless (funcall predicate (funcall key element))
-          do (setf value element)
+          do (setf result index)
         finally (tail-must-be-proper-list-with-end 'position list remaining end 1000)
-		(return value)))
+		(return result)))
   
 ;;; For the versions on lists, we distinguish between 
 ;;; two different characteristics: 
@@ -4088,28 +4330,24 @@
 ;;; When there is no key function, we avoid a funcall of
 ;;; identity, just as with lists. 
 
-;;; Version on vectors, from start, no key
 (defun |position-if-not seq-type=vector from-end=false key=identity|
     (predicate vector start end)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (aref vector index))
           return index))
 
-;;; Version on vectors, from start, key
 (defun |position-if-not seq-type=vector from-end=false key=other|
     (predicate vector start end key)
   (loop for index from start below (min end (length vector))
         unless (funcall predicate (funcall key (aref vector index)))
           return index))
 
-;;; Version on vectors, from end, no key
 (defun |position-if-not seq-type=vector from-end=true key=identity|
     (predicate vector start end)
   (loop for index downfrom (1- (min end (length vector))) to start
         unless (funcall predicate (aref vector index))
           return index))
 
-;;; Version on vectors, from end, key
 (defun |position-if-not seq-type=vector from-end=true key=other|
     (predicate vector start end key)
   (loop for index downfrom (1- (min end (length vector))) to start
@@ -4126,80 +4364,80 @@
 ;;; inferencing can determine which type of sequence it is at compile
 ;;; time.
 
-;;; Version on any sequence, from start, no end, no key
 (defun |position-if-not from-end=false end=nil key=identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start (length sequence))
        (|position-if-not seq-type=vector from-end=false key=identity|
         predicate sequence start (length sequence)))
     (list
        (|position-if-not seq-type=list from-end=false end=nil key=identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from start, no end, key
 (defun |position-if-not from-end=false end=nil key=other| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start (length sequence))
        (|position-if-not seq-type=vector from-end=false key=other|
         predicate sequence start (length sequence) key))
     (list
        (|position-if-not seq-type=list from-end=false end=nil key=other|
         predicate sequence start key))))
 
-;;; Version on any sequence, from start, end, no key
 (defun |position-if-not from-end=false end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start end)
        (|position-if-not seq-type=vector from-end=false key=identity|
         predicate sequence start end))
     (list
        (|position-if-not seq-type=list from-end=false end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from start, end, key
 (defun |position-if-not from-end=false end=other key=other| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start end)
        (|position-if-not seq-type=vector from-end=false key=other|
         predicate sequence start end key))
     (list
        (|position-if-not seq-type=list from-end=false end=other key=other|
         predicate sequence start end key))))
 
-;;; Version on any sequence, from end, no end, no key
 (defun |position-if-not from-end=true end=nil key=identity| (predicate sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start (length sequence))
        (|position-if-not seq-type=vector from-end=true key=identity|
         predicate sequence start (length sequence)))
     (list
        (|position-if-not seq-type=list from-end=true end=nil key=identity|
         predicate sequence start))))
 
-;;; Version on any sequence, from end, no end, key
 (defun |position-if-not from-end=true end=nil key=other| (predicate sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start (length sequence))
        (|position-if-not seq-type=vector from-end=true key=other|
         predicate sequence start (length sequence) key))
     (list
        (|position-if-not seq-type=list from-end=true end=nil key=other|
         predicate sequence start key))))
 
-;;; Version on any sequence, from end, end, no key
 (defun |position-if-not from-end=true end=other key=identity| (predicate sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start end)
        (|position-if-not seq-type=vector from-end=true key=identity|
         predicate sequence start end))
     (list
        (|position-if-not seq-type=list from-end=true end=other key=identity|
         predicate sequence start end))))
 
-;;; Version on any sequence, from end, end, key
 (defun |position-if-not from-end=true end=other key=other| (predicate sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'position-if-not sequence start end)
        (|position-if-not seq-type=vector from-end=true key=other|
         predicate sequence start end key))
     (list
@@ -4601,6 +4839,7 @@
     (function sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=false key=identity-no-initial|
         function sequence start (length sequence)))
     (list 
@@ -4611,6 +4850,7 @@
     (function sequence start initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=false key=identity-initial|
         function sequence start (length sequence) initial))
     (list 
@@ -4621,6 +4861,7 @@
     (function sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=false key=other-no-initial|
         function sequence start (length sequence) key))
     (list 
@@ -4631,6 +4872,7 @@
     (function sequence start key initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=false key=other-initial|
         function sequence start (length sequence) key initial))
     (list 
@@ -4641,6 +4883,7 @@
     (function sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=false key=identity-no-initial|
         function sequence start end))
     (list 
@@ -4651,6 +4894,7 @@
     (function sequence start end initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=false key=identity-initial|
         function sequence start end initial))
     (list 
@@ -4661,6 +4905,7 @@
     (function sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=false key=other-no-initial|
         function sequence start end key))
     (list 
@@ -4671,6 +4916,7 @@
     (function sequence start end key initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=false key=other-initial|
         function sequence start end key initial))
     (list 
@@ -4681,6 +4927,7 @@
     (function sequence start)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=true key=identity-no-initial|
         function sequence start (length sequence)))
     (list 
@@ -4691,6 +4938,7 @@
     (function sequence start initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=true key=identity-initial|
         function sequence start (length sequence) initial))
     (list 
@@ -4701,6 +4949,7 @@
     (function sequence start key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=true key=other-no-initial|
         function sequence start (length sequence) key))
     (list 
@@ -4711,6 +4960,7 @@
     (function sequence start key initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start (length sequence))
        (|reduce seq-type=vector from-end=true key=other-initial|
         function sequence start (length sequence) key initial))
     (list 
@@ -4721,6 +4971,7 @@
     (function sequence start end)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=true key=identity-no-initial|
         function sequence start end))
     (list 
@@ -4731,6 +4982,7 @@
     (function sequence start end initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=true key=identity-initial|
         function sequence start end initial))
     (list 
@@ -4741,6 +4993,7 @@
     (function sequence start end key)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=true key=other-no-initial|
         function sequence start end key))
     (list 
@@ -4751,6 +5004,7 @@
     (function sequence start end key initial)
   (etypecase sequence
     (vector
+       (verify-bounding-indexes 'reduce sequence start end)
        (|reduce seq-type=vector from-end=true key=other-initial|
         function sequence start end key initial))
     (list 
@@ -4866,1373 +5120,781 @@
 
 (defun |remove seq-type=list test=eql end=nil count=nil key=identity|
     (item list start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  unless (eql item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=eq end=nil count=nil key=identity|
     (item list start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  unless (eq item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=eql end=nil count=nil key=other|
     (item list start key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  unless (eql item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=eq end=nil count=nil key=other|
     (item list start key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  unless (eq item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=eql end=other count=nil key=identity|
     (item list start end)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
 	  unless (eql item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=eq end=other count=nil key=identity|
     (item list start end)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
 	  unless (eq item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=eql end=other count=nil key=other|
     (item list start end key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
 	  unless (eql item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=eq end=other count=nil key=other|
     (item list start end key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
 	  unless (eq item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=other end=nil count=nil key=identity|
     (item list test start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  unless (funcall test item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=other end=nil count=nil key=other|
     (item list test start key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  unless (funcall test item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=other end=other count=nil key=identity|
     (item list test start end)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  unless (funcall test item element)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  unless (funcall test item  element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test=other end=other count=nil key=other|
     (item list test start end key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  unless (funcall test item (funcall key element))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  unless (funcall test item  (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test-not=other end=nil count=nil key=identity|
     (item list test-not start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  when (funcall test-not item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test-not=other end=nil count=nil key=other|
     (item list test-not start key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
 	  when (funcall test-not item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test-not=other end=other count=nil key=identity|
     (item list test-not start end)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  when (funcall test-not item element)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  when (funcall test-not item  element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list test-not=other end=other count=nil key=other|
     (item list test-not start end key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  when (funcall test-not item (funcall key element))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  when (funcall test-not item  (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eql end=nil count=other key=identity|
     (item list start count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  unless (eql item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eq end=nil count=other key=identity|
     (item list start count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  unless (eq item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eql end=nil count=other key=other|
     (item list start count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  unless (eql item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eq end=nil count=other key=other|
     (item list start count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  unless (eq item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eql end=other count=other key=identity|
     (item list start end count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  unless (eql item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eq end=other count=other key=identity|
     (item list start end count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  unless (eq item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eql end=other count=other key=other|
     (item list start end count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  unless (eql item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=eq end=other count=other key=other|
     (item list start end count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  unless (eq item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=other end=nil count=other key=identity|
     (item list test count start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  unless (funcall test item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=other end=nil count=other key=other|
     (item list test start count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  unless (funcall test item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=other end=other count=other key=identity|
     (item list test start end count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  unless (funcall test item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test=other end=other count=other key=other|
     (item list test start end count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  unless (funcall test item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test-not=other end=nil count=other key=identity|
     (item list test-not start count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  when (funcall test-not item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test-not=other end=nil count=other key=other|
     (item list test-not start count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
 	  when (funcall test-not item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test-not=other end=other count=other key=identity|
     (item list test-not start end count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  when (funcall test-not item element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=false test-not=other end=other count=other key=other|
     (item list test-not start end count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
 	  when (funcall test-not item (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eql end=nil count=other key=identity|
     (item list start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eql (car reversed-prefix) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eql item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eq end=nil count=other key=identity|
     (item list start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eq (car reversed-prefix) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eq item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eql end=nil count=other key=other|
     (item list start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eql (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eql item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eq end=nil count=other key=other|
     (item list start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eq (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eq item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eql end=other count=other key=identity|
     (item list start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eql (car reversed-prefix) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eql item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eq end=other count=other key=identity|
     (item list start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eq (car reversed-prefix) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eq item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eql end=other count=other key=other|
     (item list start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eql (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eql item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=eq end=other count=other key=other|
     (item list start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (eq (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (eq item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=other end=nil count=other key=identity|
     (item list test start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test item (car reversed-prefix))
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall test item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=other end=nil count=other key=other|
     (item list test start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall test item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=other end=other count=other key=identity|
     (item list test start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test item (car reversed-prefix))
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall test item element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test=other end=other count=other key=other|
     (item list test start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test (funcall key (car reversed-prefix)) item)
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall test item (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test-not=other end=nil count=other key=identity|
     (item list test-not start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (car reversed-prefix) item)
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall test-not item element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test-not=other end=nil count=other key=other|
     (item list test-not start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (funcall key (car reversed-prefix)) item)
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall test-not item (funcall key element)))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test-not=other end=other count=other key=identity|
     (item list test-not start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (car reversed-prefix) item)
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall test-not item element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove seq-type=list from-end=true test-not=other end=other count=other key=other|
     (item list test-not start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (funcall key (car reversed-prefix)) item)
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall test-not item (funcall key element)))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 ;;; Helper function. 
 ;;; FIXME: try to explain what it does!
-(defun copy-result-general (original-vector start end bit-vector count)
+(defun copy-result-general (original-vector start end bit-vector delete-count)
   (declare (type simple-bit-vector bit-vector)
-	   (type fixnum start end count))
-  (if (= count (- end start))
+	   (type fixnum start end delete-count))
+  (if (zerop delete-count)
       original-vector
       (let* ((length (length original-vector))
-	     (result (make-array (+ start (- length end) count)
+	     (result (make-array (- length delete-count)
 				 :element-type (array-element-type original-vector))))
 	;; Copy the prefix
 	(loop for i from 0 below start
@@ -6246,322 +5908,298 @@
 		   (incf result-index))
 	;; Copy the suffix
 	(loop for source-index from end below length
-	      for result-index from (+ start count)
+	      for result-index from (- end delete-count)
 	      do (setf (svref result result-index)
 		       (aref original-vector source-index)))
 	result)))
 
 (defun |remove seq-type=general-vector test=eql count=nil key=identity|
     (item vector start end)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eql item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (eql item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector test=eq count=nil key=identity|
     (item vector start end)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eq item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (eq item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector test=eql count=nil key=other|
     (item vector start end key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eql item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (eql item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector test=eq count=nil key=other|
     (item vector start end key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eq item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (eq item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector test=other count=nil key=identity|
     (item vector test start end)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall test item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector test=other count=nil key=other|
     (item vector test start end key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall test item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector test-not=other count=nil key=identity|
     (item vector test-not start end)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector test-not=other count=nil key=other|
     (item vector test-not start end key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  when (funcall test-not item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=false test=eql count=other key=identity|
     (item vector start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eql item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (eql item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=false test=eq count=other key=identity|
     (item vector start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eq item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (eq item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=false test=eql count=other key=other|
     (item vector start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eql item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (eql item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=false test=eq count=other key=other|
     (item vector start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eq item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (eq item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=false test=other count=other key=identity|
     (item vector test start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (funcall test item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=false test=other count=other key=other|
     (item vector test start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (funcall test item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=false test-not=other count=other key=identity|
     (item vector test-not start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  unless (funcall test-not item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=false test-not=other count=other key=other|
     (item vector test-not start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  unless (funcall test-not item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=true test=eql count=other key=identity|
     (item vector start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eql item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (eql item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=true test=eq count=other key=identity|
     (item vector start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eq item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (eq item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=true test=eql count=other key=other|
     (item vector start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eql item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (eql item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=true test=eq count=other key=other|
     (item vector start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eq item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (eq item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=true test=other count=other key=identity|
     (item vector test start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (funcall test item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=true test=other count=other key=other|
     (item vector test start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  when (funcall test item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=true test-not=other count=other key=identity|
     (item vector test-not start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not item (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  unless (funcall test-not item (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=general-vector from-end=true test-not=other count=other key=other|
     (item vector test-not start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not item (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
+	  unless (funcall test-not item (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
 	  else
 	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 ;;; For vectors, the technique used is to allocate a bitvector that
 ;;; has the length of the interval in which elements should be
@@ -6588,14 +6226,14 @@
 
 ;;; Helper function. 
 ;;; FIXME: try to explain what it does!
-(defun copy-result-simple (original-vector start end bit-vector count)
+(defun copy-result-simple (original-vector start end bit-vector delete-count)
   (declare (type simple-vector original-vector)
 	   (type simple-bit-vector bit-vector)
-	   (type fixnum start end count))
-  (if (= count (- end start))
+	   (type fixnum start end delete-count))
+  (if (zerop delete-count)
       original-vector
       (let* ((length (length original-vector))
-	     (result (make-array (+ start (- length end) count)
+	     (result (make-array (- length delete-count)
 				 :element-type (array-element-type original-vector))))
 	;; Copy the prefix
 	(loop for i from 0 below start
@@ -6609,7 +6247,7 @@
 		   (incf result-index))
 	;; Copy the suffix
 	(loop for source-index from end below length
-	      for result-index from (+ start count)
+	      for result-index from (- end delete-count)
 	      do (setf (svref result result-index)
 		       (svref original-vector source-index)))
 	result)))
@@ -6618,372 +6256,332 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eql item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eql item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector test=eq count=nil key=identity|
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eq item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eq item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector test=eql count=nil key=other|
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eql item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eql item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector test=eq count=nil key=other|
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eq item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eq item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector test=other count=nil key=identity|
     (item vector test start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall test item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector test=other count=nil key=other|
     (item vector test start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall test item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector test-not=other count=nil key=identity|
     (item vector test-not start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector test-not=other count=nil key=other|
     (item vector test-not start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=false test=eql count=other key=identity|
     (item vector start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eql item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eql item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=false test=eq count=other key=identity|
     (item vector start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eq item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eq item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=false test=eql count=other key=other|
     (item vector start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eql item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eql item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=false test=eq count=other key=other|
     (item vector start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eq item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eq item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=false test=other count=other key=identity|
     (item vector test start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall test item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=false test=other count=other key=other|
     (item vector test start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall test item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=false test-not=other count=other key=identity|
     (item vector test-not start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=false test-not=other count=other key=other|
     (item vector test-not start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=true test=eql count=other key=identity|
     (item vector start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eql item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eql item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=true test=eq count=other key=identity|
     (item vector start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eq item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eq item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=true test=eql count=other key=other|
     (item vector start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eql item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eql item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=true test=eq count=other key=other|
     (item vector start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eq item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (eq item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=true test=other count=other key=identity|
     (item vector test start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall test item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=true test=other count=other key=other|
     (item vector test start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall test item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=true test-not=other count=other key=identity|
     (item vector test-not start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not item (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-vector from-end=true test-not=other count=other key=other|
     (item vector test-not start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not item (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 ;;; Helper function. 
 ;;; FIXME: try to explain what it does!
-(defun copy-result-simple-string (original-vector start end bit-vector count)
+(defun copy-result-simple-string (original-vector start end bit-vector delete-count)
   (declare (type simple-string original-vector)
 	   (type simple-bit-vector bit-vector)
-	   (type fixnum start end count))
-  (if (= count (- end start))
+	   (type fixnum start end delete-count))
+  (if (zerop delete-count)
       original-vector
       (let* ((length (length original-vector))
-	     (result (make-array (+ start (- length end) count)
+	     (result (make-array (- length delete-count)
 				 :element-type (array-element-type original-vector))))
 	;; Copy the prefix
 	(loop for i from 0 below start
@@ -6997,7 +6595,7 @@
 		   (incf result-index))
 	;; Copy the suffix
 	(loop for source-index from end below length
-	      for result-index from (+ start count)
+	      for result-index from (- end delete-count)
 	      do (setf (svref result result-index)
 		       (schar original-vector source-index)))
 	result)))
@@ -7006,361 +6604,321 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eql item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eql item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string test=eq count=nil key=identity|
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eq item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eq item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string test=eql count=nil key=other|
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eql item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eql item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string test=eq count=nil key=other|
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (eq item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eq item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string test=other count=nil key=identity|
     (item vector test start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall test item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string test=other count=nil key=other|
     (item vector test start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall test item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string test-not=other count=nil key=identity|
     (item vector test-not start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string test-not=other count=nil key=other|
     (item vector test-not start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=false test=eql count=other key=identity|
     (item vector start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eql item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eql item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=false test=eq count=other key=identity|
     (item vector start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eq item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eq item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=false test=eql count=other key=other|
     (item vector start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eql item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eql item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=false test=eq count=other key=other|
     (item vector start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (eq item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eq item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=false test=other count=other key=identity|
     (item vector test start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall test item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=false test=other count=other key=other|
     (item vector test start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall test item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=false test-not=other count=other key=identity|
     (item vector test-not start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=false test-not=other count=other key=other|
     (item vector test-not start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=true test=eql count=other key=identity|
     (item vector start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eql item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eql item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=true test=eq count=other key=identity|
     (item vector start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eq item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eq item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=true test=eql count=other key=other|
     (item vector start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eql item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eql item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=true test=eq count=other key=other|
     (item vector start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (eq item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (eq item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=true test=other count=other key=identity|
     (item vector test start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall test item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=true test=other count=other key=other|
     (item vector test start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall test item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=true test-not=other count=other key=identity|
     (item vector test-not start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not item (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove seq-type=simple-string from-end=true test-not=other count=other key=other|
     (item vector test-not start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not item (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  unless (funcall test-not item (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun remove (item sequence &key from-end test test-not (start 0) end count key)
   (assert (or (null test) (null test-not)))
@@ -7519,10 +7077,10 @@
 			      (|remove seq-type=list from-end=true test-not=other end=nil count=other key=identity|
 			       item sequence test-not start count))
 			  (if key
-			      (|remove seq-type=list test-not=other end=other count=nil key=other|
-			       item sequence test-not start end key)
-			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
-			       item sequence test-not start end))))
+			      (|remove seq-type=list test-not=other end=nil count=nil key=other|
+			       item sequence test-not start key)
+			      (|remove seq-type=list test-not=other end=nil count=nil key=identity|
+			       item sequence test-not start))))
 		  ;; seq-type=list from-end=true test=eql
 		  (if end
 		      ;; seq-type=list from-end=true test=eql end=other
@@ -7710,10 +7268,10 @@
 			      (|remove seq-type=list from-end=false test-not=other end=nil count=other key=identity|
 			       item sequence test-not start count))
 			  (if key
-			      (|remove seq-type=list test-not=other end=other count=nil key=other|
-			       item sequence test-not start end key)
-			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
-			       item sequence test-not start end))))
+			      (|remove seq-type=list test-not=other end=nil count=nil key=other|
+			       item sequence test-not start key)
+			      (|remove seq-type=list test-not=other end=nil count=nil key=identity|
+			       item sequence test-not start))))
 		  ;; seq-type=list from-end=false test=eql
 		  (if end
 		      ;; seq-type=list from-end=false test=eql end=other
@@ -8678,422 +8236,264 @@
 ;;; Function remove-if
 
 (defun |remove-if seq-type=list end=nil count=nil key=identity|
-    (test list start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
-	  unless (funcall test element)
+    (predicate list start)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
+	  unless (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove-if seq-type=list end=nil count=nil key=other|
-    (test list start key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
-	  unless (funcall test (funcall key element))
+    (predicate list start key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
+	  unless (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove-if seq-type=list end=other count=nil key=identity|
-    (test list start end)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  unless (funcall test element)
+    (predicate list start end)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  unless (funcall predicate  element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if seq-type=list end=other count=nil key=other|
-    (test list start end key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  unless (funcall test (funcall key element))
+    (predicate list start end key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  unless (funcall predicate  (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if seq-type=list from-end=false end=nil count=other key=identity|
-    (test list count start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
-	  unless (funcall test element)
+    (predicate list count start)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
+	  unless (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if seq-type=list from-end=false end=nil count=other key=other|
-    (test list start count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
-	  unless (funcall test (funcall key element))
+    (predicate list start count key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
+	  unless (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if seq-type=list from-end=false end=other count=other key=identity|
-    (test list start end count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  unless (funcall test element)
+    (predicate list start end count)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
+	  unless (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if seq-type=list from-end=false end=other count=other key=other|
-    (test list start end count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  unless (funcall test (funcall key element))
+    (predicate list start end count key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
+	  unless (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if seq-type=list from-end=true end=nil count=other key=identity|
-    (test list start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test (car reversed-prefix))
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+    (predicate list start count)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall predicate element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if seq-type=list from-end=true end=nil count=other key=other|
-    (test list start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test (funcall key (car reversed-prefix)))
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+    (predicate list start count key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall predicate (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if seq-type=list from-end=true end=other count=other key=identity|
-    (test list start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test (car reversed-prefix))
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+    (predicate list start end count)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall predicate element)
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if seq-type=list from-end=true end=other count=other key=other|
-    (test list start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test (funcall key (car reversed-prefix)))
-	    do (progn (pop reversed-prefix) (decf count))
-	  else
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp)))
-    (nreconc reversed-prefix result)))
+    (predicate list start end count key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (funcall predicate (funcall key element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if seq-type=general-vector count=nil key=identity|
-    (test vector start end)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=general-vector count=nil key=other|
-    (test vector start end key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=general-vector from-end=false count=other key=identity|
-    (test vector start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end count)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=general-vector from-end=false count=other key=other|
-    (test vector start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end count key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=general-vector from-end=true count=other key=identity|
-    (test vector start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end count)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=general-vector from-end=true count=other key=other|
-    (test vector start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end count key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 ;;; For vectors, the technique used is to allocate a bitvector that
 ;;; has the length of the interval in which elements should be
@@ -9119,186 +8519,166 @@
 ;;; be kept.
 
 (defun |remove-if seq-type=simple-vector count=nil key=identity|
-    (test vector start end)
+    (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-vector count=nil key=other|
-    (test vector start end key)
+    (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-vector from-end=false count=other key=identity|
-    (test vector start end count)
+    (predicate vector start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-vector from-end=false count=other key=other|
-    (test vector start end count key)
+    (predicate vector start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-vector from-end=true count=other key=identity|
-    (test vector start end count)
+    (predicate vector start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-vector from-end=true count=other key=other|
-    (test vector start end count key)
+    (predicate vector start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-string count=nil key=identity|
-    (test vector start end)
+    (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-string count=nil key=other|
-    (test vector start end key)
+    (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  unless (funcall test (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-string from-end=false count=other key=identity|
-    (test vector start end count)
+    (predicate vector start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-string from-end=false count=other key=other|
-    (test vector start end count key)
+    (predicate vector start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  unless (funcall test (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-string from-end=true count=other key=identity|
-    (test vector start end count)
+    (predicate vector start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if seq-type=simple-string from-end=true count=other key=other|
-    (test vector start end count key)
+    (predicate vector start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  unless (funcall test (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
-(defun remove-if (test sequence &key from-end (start 0) end count key)
+(defun remove-if (predicate sequence &key from-end (start 0) end count key)
   ;; FIXME test if it is a sequence at all.
   (if (listp sequence)
       ;; seq-type=list
@@ -9311,36 +8691,36 @@
 		  (if key
 		      ;;          seq-type=list from-end=true end=other count=other key=other
 		      (|remove-if seq-type=list from-end=true end=other count=other key=other|
-		       test sequence start end count key)
+		       predicate sequence start end count key)
 		      ;;          seq-type=list from-end=true end=other count=other key=identity
 		      (|remove-if seq-type=list from-end=true end=other count=other key=identity|
-		       test sequence start end count))
+		       predicate sequence start end count))
 		  ;; seq-type=list from-end=true end=other count=nil
 		  (if key
 		      ;;          seq-type=list end=other count=nil key=other
 		      (|remove-if seq-type=list end=other count=nil key=other|
-		       test sequence start end key)
+		       predicate sequence start end key)
 		      ;;          seq-type=list end=other count=nil key=identity
 		      (|remove-if seq-type=list end=other count=nil key=identity|
-		       test sequence start end)))
+		       predicate sequence start end)))
 	      ;; seq-type=list from-end=true end=nil
 	      (if count
 		  ;; seq-type=list from-end=true end=nil count=other
 		  (if key
 		      ;;          seq-type=list from-end=true end=nil count=other key=other
 		      (|remove-if seq-type=list from-end=true end=nil count=other key=other|
-		       test sequence start count key)
+		       predicate sequence start count key)
 		      ;;          seq-type=list from-end=true end=nil count=other key=identity
 		      (|remove-if seq-type=list from-end=true end=nil count=other key=identity|
-		       test sequence start count))
+		       predicate sequence start count))
 		  ;; seq-type=list from-end=true end=nil count=nil
 		  (if key
 		      ;;          seq-type=list end=nil count=nil key=other
 		      (|remove-if seq-type=list end=nil count=nil key=other|
-		       test sequence start key)
+		       predicate sequence start key)
 		      ;;          seq-type=list end=nil count=nil key=identity
 		      (|remove-if seq-type=list end=nil count=nil key=identity|
-		       test sequence start))))
+		       predicate sequence start))))
 	  ;; seq-type=list from-end=false
 	  (if end
 	      ;; seq-type=list from-end=false end=other
@@ -9349,35 +8729,35 @@
 		  (if key
 		      ;;          seq-type=list from-end=false end=other count=other key=other
 		      (|remove-if seq-type=list from-end=false end=other count=other key=other|
-		       test sequence start end count key)
+		       predicate sequence start end count key)
 		      ;;          seq-type=list from-end=false end=other count=other key=identity
 		      (|remove-if seq-type=list from-end=false end=other count=other key=identity|
-		       test sequence start end count))
+		       predicate sequence start end count))
 		  ;; seq-type=list from-end=false end=other count=nil
 		  (if key
 		      ;;          seq-type=list end=other count=nil key=other
 		      (|remove-if seq-type=list end=other count=nil key=other|
-		       test sequence start end key)
+		       predicate sequence start end key)
 		      ;;          seq-type=list end=other count=nil key=identity
 		      (|remove-if seq-type=list end=other count=nil key=identity|
-		       test sequence start end)))
+		       predicate sequence start end)))
 	      ;; seq-type=list from-end=false end=nil
 	      (if count
 		  ;; seq-type=list from-end=false end=nil count=other
 		  (if key
 		      ;;          seq-type=list from-end=false end=nil count=other key=other
 		      (|remove-if seq-type=list from-end=false end=nil count=other key=other|
-		       test sequence start count key)
+		       predicate sequence start count key)
 		      ;;          seq-type=list from-end=false end=nil count=other key=identity
 		      (|remove-if seq-type=list from-end=false end=nil count=other key=identity|
-		       test sequence start count))
+		       predicate sequence start count))
 		  ;; seq-type=list from-end=false end=nil count=nil
 		  (if key
 		      ;;          seq-type=list end=nil count=nil key=other
 		      (|remove-if seq-type=list end=nil count=nil key=other|
-		       test sequence start key)
+		       predicate sequence start key)
 		      (|remove-if seq-type=list end=nil count=nil key=identity|
-		       test sequence start)))))
+		       predicate sequence start)))))
       (if (simple-string-p sequence)
 	  ;; seq-type=simple-string
 	  ;; seq-type=simple-string test=given
@@ -9391,27 +8771,27 @@
 		      (if key
 			  ;;          seq-type=simple-string from-end=true count=other key=other end=other 
 			  (|remove-if seq-type=simple-string from-end=true count=other key=other|
-			   test sequence start end count key)
+			   predicate sequence start end count key)
 			  ;;          seq-type=simple-string from-end=true count=other key=identity end=other 
 			  (|remove-if seq-type=simple-string from-end=true count=other key=identity|
-			   test sequence start end count))
+			   predicate sequence start end count))
 		      ;; seq-type=simple-string from-end=false count=other end=other
 		      (if key
 			  ;;          seq-type=simple-string from-end=false count=other key=other end=other 
 			  (|remove-if seq-type=simple-string from-end=false count=other key=other|
-			   test sequence start end count key)
+			   predicate sequence start end count key)
 			  ;;          seq-type=simple-string from-end=false count=other key=identity end=other 
 			  (|remove-if seq-type=simple-string from-end=false count=other key=identity|
-			   test sequence start end count)))
+			   predicate sequence start end count)))
 		  ;; seq-type=simple-string count=nil end=other
 		  ;; no need to test from-end
 		  (if key
 		      ;;          seq-type=simple-string count=nil key=other end=other 
 		      (|remove-if seq-type=simple-string count=nil key=other|
-		       test sequence start end key)
+		       predicate sequence start end key)
 		      ;;          seq-type=simple-string count=nil key=identity end=other 
 		      (|remove-if seq-type=simple-string count=nil key=identity|
-		       test sequence start end)))
+		       predicate sequence start end)))
 	      ;; seq-type=simple-string end=nil
 	      (if count
 		  ;; seq-type=simple-string count=other end=nil
@@ -9420,27 +8800,27 @@
 		      (if key
 			  ;;          seq-type=simple-string from-end=true count=other key=other end=nil 
 			  (|remove-if seq-type=simple-string from-end=true count=other key=other|
-			   test sequence start (length sequence) count key)
+			   predicate sequence start (length sequence) count key)
 			  ;;          seq-type=simple-string from-end=true count=other key=identity end=nil 
 			  (|remove-if seq-type=simple-string from-end=true count=other key=identity|
-			   test sequence start (length sequence) count))
+			   predicate sequence start (length sequence) count))
 		      ;; seq-type=simple-string from-end=false count=other end=nil
 		      (if key
 			  ;;          seq-type=simple-string from-end=false count=other key=other end=nil 
 			  (|remove-if seq-type=simple-string from-end=false count=other key=other|
-			   test sequence start (length sequence) count key)
+			   predicate sequence start (length sequence) count key)
 			  ;;          seq-type=simple-string from-end=false count=other key=identity end=nil 
 			  (|remove-if seq-type=simple-string from-end=false count=other key=identity|
-			   test sequence start (length sequence) count)))
+			   predicate sequence start (length sequence) count)))
 		  ;; seq-type=simple-string count=nil end=nil
 		  ;; no need to test from-end
 		  (if key
 		      ;;          seq-type=simple-string count=nil key=other end=nil 
 		      (|remove-if seq-type=simple-string count=nil key=other|
-		       test sequence start (length sequence) key)
+		       predicate sequence start (length sequence) key)
 		      ;;          seq-type=simple-string count=nil key=identity end=nil 
 		      (|remove-if seq-type=simple-string count=nil key=identity|
-		       test sequence start (length sequence)))))
+		       predicate sequence start (length sequence)))))
 	  (if (simple-vector-p sequence)
 	      ;; seq-type=simple-vector
 	      ;; seq-type=simple-vector test=given
@@ -9454,27 +8834,27 @@
 			  (if key
 			      ;;          seq-type=simple-vector from-end=true count=other key=other end=other 
 			      (|remove-if seq-type=simple-vector from-end=true count=other key=other|
-			       test sequence start end count key)
+			       predicate sequence start end count key)
 			      ;;          seq-type=simple-vector from-end=true count=other key=identity end=other 
 			      (|remove-if seq-type=simple-vector from-end=true count=other key=identity|
-			       test sequence start end count))
+			       predicate sequence start end count))
 			  ;; seq-type=simple-vector from-end=false count=other end=other
 			  (if key
 			      ;;          seq-type=simple-vector from-end=false count=other key=other end=other 
 			      (|remove-if seq-type=simple-vector from-end=false count=other key=other|
-			       test sequence start end count key)
+			       predicate sequence start end count key)
 			      ;;          seq-type=simple-vector from-end=false count=other key=identity end=other 
 			      (|remove-if seq-type=simple-vector from-end=false count=other key=identity|
-			       test sequence start end count)))
+			       predicate sequence start end count)))
 		      ;; seq-type=simple-vector count=nil end=other
 		      ;; no need to test from-end
 		      (if key
 			  ;;          seq-type=simple-vector count=nil key=other end=other 
 			  (|remove-if seq-type=simple-vector count=nil key=other|
-			   test sequence start end key)
+			   predicate sequence start end key)
 			  ;;          seq-type=simple-vector count=nil key=identity end=other 
 			  (|remove-if seq-type=simple-vector count=nil key=identity|
-			   test sequence start end)))
+			   predicate sequence start end)))
 		  ;; seq-type=simple-vector end=nil
 		  (if count
 		      ;; seq-type=simple-vector count=other end=nil
@@ -9483,27 +8863,27 @@
 			  (if key
 			      ;;          seq-type=simple-vector from-end=true count=other key=other end=nil 
 			      (|remove-if seq-type=simple-vector from-end=true count=other key=other|
-			       test sequence start (length sequence) count key)
+			       predicate sequence start (length sequence) count key)
 			      ;;          seq-type=simple-vector from-end=true count=other key=identity end=nil 
 			      (|remove-if seq-type=simple-vector from-end=true count=other key=identity|
-			       test sequence start (length sequence) count))
+			       predicate sequence start (length sequence) count))
 			  ;; seq-type=simple-vector from-end=false count=other end=nil
 			  (if key
 			      ;;          seq-type=simple-vector from-end=false count=other key=other end=nil 
 			      (|remove-if seq-type=simple-vector from-end=false count=other key=other|
-			       test sequence start (length sequence) count key)
+			       predicate sequence start (length sequence) count key)
 			      ;;          seq-type=simple-vector from-end=false count=other key=identity end=nil 
 			      (|remove-if seq-type=simple-vector from-end=false count=other key=identity|
-			       test sequence start (length sequence) count)))
+			       predicate sequence start (length sequence) count)))
 		      ;; seq-type=simple-vector count=nil end=nil
 		      ;; no need to test from-end
 		      (if key
 			  ;;          seq-type=simple-vector count=nil key=other end=nil 
 			  (|remove-if seq-type=simple-vector count=nil key=other|
-			   test sequence start (length sequence) key)
+			   predicate sequence start (length sequence) key)
 			  ;;          seq-type=simple-vector count=nil key=identity end=nil 
 			  (|remove-if seq-type=simple-vector count=nil key=identity|
-			   test sequence start (length sequence)))))
+			   predicate sequence start (length sequence)))))
 	      ;; seq-type=general-vector
 	      (if end
 		  ;; seq-type=general-vector end=other
@@ -9514,27 +8894,27 @@
 			  (if key
 			      ;;          seq-type=general-vector from-end=true count=other key=other end=other 
 			      (|remove-if seq-type=general-vector from-end=true count=other key=other|
-			       test sequence start end count key)
+			       predicate sequence start end count key)
 			      ;;          seq-type=general-vector from-end=true count=other key=identity end=other 
 			      (|remove-if seq-type=general-vector from-end=true count=other key=identity|
-			       test sequence start end count))
+			       predicate sequence start end count))
 			  ;; seq-type=general-vector from-end=false count=other end=other
 			  (if key
 			      ;;          seq-type=general-vector from-end=false count=other key=other end=other 
 			      (|remove-if seq-type=general-vector from-end=false count=other key=other|
-			       test sequence start end count key)
+			       predicate sequence start end count key)
 			      ;;          seq-type=general-vector from-end=false count=other key=identity end=other 
 			      (|remove-if seq-type=general-vector from-end=false count=other key=identity|
-			       test sequence start end count)))
+			       predicate sequence start end count)))
 		      ;; seq-type=general-vector count=nil end=other
 		      ;; no need to test from-end
 		      (if key
 			  ;;          seq-type=general-vector count=nil key=other end=other 
 			  (|remove-if seq-type=general-vector count=nil key=other|
-			   test sequence start end key)
+			   predicate sequence start end key)
 			  ;;          seq-type=general-vector count=nil key=identity end=other 
 			  (|remove-if seq-type=general-vector count=nil key=identity|
-			   test sequence start end)))
+			   predicate sequence start end)))
 		  ;; seq-type=general-vector end=nil
 		  (if count
 		      ;; seq-type=general-vector count=other end=nil
@@ -9543,449 +8923,291 @@
 			  (if key
 			      ;;          seq-type=general-vector from-end=true count=other key=other end=nil 
 			      (|remove-if seq-type=general-vector from-end=true count=other key=other|
-			       test sequence start (length sequence) count key)
+			       predicate sequence start (length sequence) count key)
 			      ;;          seq-type=general-vector from-end=true count=other key=identity end=nil 
 			      (|remove-if seq-type=general-vector from-end=true count=other key=identity|
-			       test sequence start (length sequence) count))
+			       predicate sequence start (length sequence) count))
 			  ;; seq-type=general-vector from-end=false count=other end=nil
 			  (if key
 			      ;;          seq-type=general-vector from-end=false count=other key=other end=nil 
 			      (|remove-if seq-type=general-vector from-end=false count=other key=other|
-			       test sequence start (length sequence) count key)
+			       predicate sequence start (length sequence) count key)
 			      ;;          seq-type=general-vector from-end=false count=other key=identity end=nil 
 			      (|remove-if seq-type=general-vector from-end=false count=other key=identity|
-			       test sequence start (length sequence) count)))
+			       predicate sequence start (length sequence) count)))
 		      ;; seq-type=general-vector count=nil end=nil
 		      ;; no need to test from-end
 		      (if key
 			  ;;          seq-type=general-vector count=nil key=other end=nil 
 			  (|remove-if seq-type=general-vector count=nil key=other|
-			   test sequence start (length sequence) key)
+			   predicate sequence start (length sequence) key)
 			  ;;          seq-type=general-vector count=nil key=identity end=nil 
 			  (|remove-if seq-type=general-vector count=nil key=identity|
-			   test sequence start (length sequence)))))))))
+			   predicate sequence start (length sequence)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function remove-if-not
 
 (defun |remove-if-not seq-type=list end=nil count=nil key=identity|
-    (test-not list start)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
-	  when (funcall test-not element)
+    (predicate list start)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
+	  when (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list end=nil count=nil key=other|
-    (test-not list start key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  for element = (pop list)
-	  when (funcall test-not (funcall key element))
+    (predicate list start key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (atom remaining)
+	  for element = (car remaining)
+	  when (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
-		 (setf last temp)))
-    (setf (cdr last) list)
+		 (setf last temp))
+	  finally (tail-must-be-proper-list 'remove list remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list end=other count=nil key=identity|
-    (test-not list start end)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  when (funcall test-not element)
+    (predicate list start end)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  when (funcall predicate  element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list end=other count=nil key=other|
-    (test-not list start end key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  when (funcall test-not (funcall key element))
+    (predicate list start end key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end))
+	  for element = (car remaining)
+	  when (funcall predicate  (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=false end=nil count=other key=identity|
-    (test-not list start count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
-	  when (funcall test-not element)
+    (predicate list start count)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
+	  when (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=false end=nil count=other key=other|
-    (test-not list start count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  for element = (pop list)
-	  when (funcall test-not (funcall key element))
+    (predicate list start count key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (zerop count))
+	  for element = (car remaining)
+	  when (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
-	    do (decf count))
-    (setf (cdr last) list)
+	    do (decf count)
+	  finally (tail-must-be-proper-list 'remove list remaining)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=false end=other count=other key=identity|
-    (test-not list start end count)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  when (funcall test-not element)
+    (predicate list start end count)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
+	  when (funcall predicate element)
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=false end=other count=other key=other|
-    (test-not list start end count key)
-  (let* ((result (list nil))
-	 (last result)
-	 (start-bis start)
-	 (end-start (- end start)))
-    (loop until (zerop start-bis)
-	  until (null list)
-	  do (let ((temp (list (car list))))
-	       (setf (cdr last) temp)
-	       (setf last temp)
-	       (setf list (cdr list))
-	       (decf start-bis)))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))))
-    (loop until (null list)
-	  until (zerop count)
-	  until (zerop end-start)
-	  for element = (pop list)
-	  when (funcall test-not (funcall key element))
+    (predicate list start end count key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (loop for index from start
+	  for remaining = rest then (cdr remaining)
+	  until (or (atom remaining) (>= index end) (zerop count))
+	  for element = (car remaining)
+	  when (funcall predicate (funcall key element))
 	    do (let ((temp (list element)))
 		 (setf (cdr last) temp)
 		 (setf last temp))
 	  else
 	    do (decf count)
-	  do (decf end-start))
-    (when (plusp end-start)
-      (error 'invalid-end-index
-	     :datum end
-	     :expected-type `(integer 0 ,(+ start (- end end-start)))
-	     :in-sequence list))
-    (setf (cdr last) list)
+	  finally (tail-must-be-proper-list-with-end 'remove list remaining end index)
+		  (setf (cdr last) remaining))
     (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=true end=nil count=other key=identity|
-    (test-not list start count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (car reversed-prefix))
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+    (predicate list start count)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall predicate element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=true end=nil count=other key=other|
-    (test-not list start count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    ;; For end=nil, the prefix is the entire list.
-    (loop until (null result)
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (funcall key (car reversed-prefix)))
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+    (predicate list start count key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((end (compute-length-from-remainder 'remove list rest start))
+	  (tail '()))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall predicate (funcall key element)))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=true end=other count=other key=identity|
-    (test-not list start end count)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (car reversed-prefix))
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+    (predicate list start end count)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall predicate element))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if-not seq-type=list from-end=true end=other count=other key=other|
-    (test-not list start end count key)
-  (let ((result list)
-	(reversed-prefix '())
-	(prefix-length 0))
-    ;; Reverse a prefix and figure out its length.
-    (loop until (null result)
-	  repeat end
-	  do (push (pop result) reversed-prefix)
-	     (incf prefix-length))
-    ;; FIXME: Check here whether start is a valid index
-    ;; Go through the interval concerned and remove if the test is satisfied.
-    ;; The cons cells are ours, so we can reuse them.
-    (loop repeat (- prefix-length start)
-	  until (zerop count)
-	  if (funcall test-not (funcall key (car reversed-prefix)))
-	    do (let ((temp (cdr reversed-prefix)))
-		 (setf (cdr reversed-prefix) result
-		       result reversed-prefix
-		       reversed-prefix temp))
-	  else
-	    do (progn (pop reversed-prefix) (decf count)))
-    (nreconc reversed-prefix result)))
+    (predicate list start end count key)
+  (multiple-value-bind (result last rest) (copy-prefix 'remove list start)
+    (let ((tail (verify-end-index 'remove list rest start end)))
+      (labels ((traverse-list-step-1 (list length)
+		 (if (<= length 0)
+		     nil
+		     (progn (traverse-list-step-1 (cdr list) (1- length))
+			    (let ((element (car list)))
+			      (if (and (not (funcall predicate (funcall key element)))
+				       (plusp count))
+				  (decf count) 
+				  (push element tail)))))))
+	(traverse-list #'traverse-list-step-1 rest (- end start) 1))
+      (setf (cdr last) tail))
+    (cdr result)))
 
 (defun |remove-if-not seq-type=general-vector count=nil key=identity|
-    (test-not vector start end)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=general-vector count=nil key=other|
-    (test-not vector start end key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=general-vector from-end=false count=other key=identity|
-    (test-not vector start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end count)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=general-vector from-end=false count=other key=other|
-    (test-not vector start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end count key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=general-vector from-end=true count=other key=identity|
-    (test-not vector start end count)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end count)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not (aref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (aref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=general-vector from-end=true count=other key=other|
-    (test-not vector start end count key)
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+    (predicate vector start end count key)
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not (funcall key (aref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-general vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (aref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-general vector start end bit-vector delete-count)))
 
 ;;; For vectors, the technique used is to allocate a bitvector that
 ;;; has the length of the interval in which elements should be
@@ -10011,186 +9233,166 @@
 ;;; be kept.
 
 (defun |remove-if-not seq-type=simple-vector count=nil key=identity|
-    (test-not vector start end)
+    (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-vector count=nil key=other|
-    (test-not vector start end key)
+    (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-vector from-end=false count=other key=identity|
-    (test-not vector start end count)
+    (predicate vector start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-vector from-end=false count=other key=other|
-    (test-not vector start end count key)
+    (predicate vector start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-vector from-end=true count=other key=identity|
-    (test-not vector start end count)
+    (predicate vector start end count)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not (svref vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (svref vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-vector from-end=true count=other key=other|
-    (test-not vector start end count key)
+    (predicate vector start end count key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not (funcall key (svref vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (svref vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-string count=nil key=identity|
-    (test-not vector start end)
+    (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-string count=nil key=other|
-    (test-not vector start end key)
+    (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
-	  when (funcall test-not (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-string from-end=false count=other key=identity|
-    (test-not vector start end count)
+    (predicate vector start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-string from-end=false count=other key=other|
-    (test-not vector start end count key)
+    (predicate vector start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i from start below end
 	  until (zerop count)
-	  when (funcall test-not (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-string from-end=true count=other key=identity|
-    (test-not vector start end count)
+    (predicate vector start end count)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not (schar vector i))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (schar vector i))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
 (defun |remove-if-not seq-type=simple-string from-end=true count=other key=other|
-    (test-not vector start end count key)
+    (predicate vector start end count key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 0))
-	(items-to-keep 0))
-    (declare (type fixnum items-to-keep))
+  (let ((bit-vector (make-array (- end start) :element-type 'bit :initial-element 1))
+	(delete-count 0))
     (loop for i downfrom (1- end) to start
 	  until (zerop count)
-	  when (funcall test-not (funcall key (schar vector i)))
-	    do (setf (sbit bit-vector (- i start)) 1)
-	       (incf items-to-keep)
-	  else
-	    do (decf count))
-    (copy-result-simple-string vector start end bit-vector items-to-keep)))
+	  when (funcall predicate (funcall key (schar vector i)))
+	    do (setf (sbit bit-vector (- i start)) 0)
+	       (incf delete-count)
+	       (decf count))
+    (copy-result-simple-string vector start end bit-vector delete-count)))
 
-(defun remove-if-not (test-not sequence &key from-end (start 0) end count key)
+(defun remove-if-not (predicate sequence &key from-end (start 0) end count key)
   ;; FIXME test if it is a sequence at all.
   (if (listp sequence)
       ;; seq-type=list
@@ -10204,33 +9406,33 @@
 		  (if key
 		      ;;              seq-type=list from-end=true end=other count=other key=other
 		      (|remove-if-not seq-type=list from-end=true end=other count=other key=other|
-		       test-not sequence start end count key)
+		       predicate sequence start end count key)
 		      ;;              seq-type=list from-end=true end=other count=other key=identity
 		      (|remove-if-not seq-type=list from-end=true end=other count=other key=identity|
-		       test-not sequence start end count))
+		       predicate sequence start end count))
 		  ;; seq-type=list from-end=true end=other count=nil
 		  (if key
 		      ;;              seq-type=list end=other count=nil key=other
 		      (|remove-if-not seq-type=list end=other count=nil key=other|
-		       test-not sequence start end key)
+		       predicate sequence start end key)
 		      ;;              seq-type=list end=other count=nil key=identity
 		      (|remove-if-not seq-type=list end=other count=nil key=identity|
-		       test-not sequence start end)))
+		       predicate sequence start end)))
 	      ;; seq-type=list from-end=true end=nil
 	      (if count
 		  ;; seq-type=list from-end=true end=nil count=other
 		  (if key
 		      ;;              seq-type=list from-end=true end=nil count=other key=other
 		      (|remove-if-not seq-type=list from-end=true end=nil count=other key=other|
-		       test-not sequence start count key)
+		       predicate sequence start count key)
 		      ;;              seq-type=list from-end=true end=nil count=other key=identity
 		      (|remove-if-not seq-type=list from-end=true end=nil count=other key=identity|
-		       test-not sequence start count))
+		       predicate sequence start count))
 		  (if key
 		      (|remove-if-not seq-type=list end=other count=nil key=other|
-		       test-not sequence start end key)
+		       predicate sequence start end key)
 		      (|remove-if-not seq-type=list end=other count=nil key=identity|
-		       test-not sequence start end))))
+		       predicate sequence start end))))
 	  ;; seq-type=list from-end=false
 	  ;; seq-type=list from-end=false
 	  (if end
@@ -10240,33 +9442,33 @@
 		  (if key
 		      ;;              seq-type=list from-end=false end=other count=other key=other
 		      (|remove-if-not seq-type=list from-end=false end=other count=other key=other|
-		       test-not sequence start end count key)
+		       predicate sequence start end count key)
 		      ;;              seq-type=list from-end=false end=other count=other key=identity
 		      (|remove-if-not seq-type=list from-end=false end=other count=other key=identity|
-		       test-not sequence start end count))
+		       predicate sequence start end count))
 		  ;; seq-type=list from-end=false end=other count=nil
 		  (if key
 		      ;;              seq-type=list end=other count=nil key=other
 		      (|remove-if-not seq-type=list end=other count=nil key=other|
-		       test-not sequence start end key)
+		       predicate sequence start end key)
 		      ;;              seq-type=list end=other count=nil key=identity
 		      (|remove-if-not seq-type=list end=other count=nil key=identity|
-		       test-not sequence start end)))
+		       predicate sequence start end)))
 	      ;; seq-type=list from-end=false end=nil
 	      (if count
 		  ;; seq-type=list from-end=false end=nil count=other
 		  (if key
 		      ;;              seq-type=list from-end=false end=nil count=other key=other
 		      (|remove-if-not seq-type=list from-end=false end=nil count=other key=other|
-		       test-not sequence start count key)
+		       predicate sequence start count key)
 		      ;;              seq-type=list from-end=false end=nil count=other key=identity
 		      (|remove-if-not seq-type=list from-end=false end=nil count=other key=identity|
-		       test-not sequence start count))
+		       predicate sequence start count))
 		  (if key
 		      (|remove-if-not seq-type=list end=other count=nil key=other|
-		       test-not sequence start end key)
+		       predicate sequence start end key)
 		      (|remove-if-not seq-type=list end=other count=nil key=identity|
-		       test-not sequence start end)))))
+		       predicate sequence start end)))))
       (if (simple-string-p sequence)
 	  ;; seq-type=simple-string
 	  ;; seq-type=simple-string
@@ -10279,27 +9481,27 @@
 		      (if key
 			  ;;              seq-type=simple-string from-end=true count=other key=other end=other
 			  (|remove-if-not seq-type=simple-string from-end=true count=other key=other|
-			   test-not sequence start end count key)
+			   predicate sequence start end count key)
 			  ;;              seq-type=simple-string from-end=true count=other key=identity end=other 
 			  (|remove-if-not seq-type=simple-string from-end=true count=other key=identity|
-			   test-not sequence start end count))
+			   predicate sequence start end count))
 		      ;; seqr-type=simple-string from-end=false count=other end=other
 		      (if key
 			  ;;              seq-type=simple-string from-end=false count=other key=other end=other
 			  (|remove-if-not seq-type=simple-string from-end=false count=other key=other|
-			   test-not sequence start end count key)
+			   predicate sequence start end count key)
 			  ;;              seq-type=simple-string from-end=false count=other key=identity end=other 
 			  (|remove-if-not seq-type=simple-string from-end=false count=other key=identity|
-			   test-not sequence start end count)))
+			   predicate sequence start end count)))
 		  ;; seq-type=simple-string count=nil end=other
 		  ;; no need to test from-end
 		  (if key
 		      ;;              seq-type=simple-string count=nil key=other end=other
 		      (|remove-if-not seq-type=simple-string count=nil key=other|
-		       test-not sequence start end key)
+		       predicate sequence start end key)
 		      ;;              seq-type=simple-string count=nil key=identity end=other 
 		      (|remove-if-not seq-type=simple-string count=nil key=identity|
-		       test-not sequence start end)))
+		       predicate sequence start end)))
 	      ;; seq-type=simple-string end=nil
 	      (if count
 		  ;; seq-type=simple-string count=other end=nil
@@ -10308,27 +9510,27 @@
 		      (if key
 			  ;;              seq-type=simple-string from-end=true count=other key=other end=nil
 			  (|remove-if-not seq-type=simple-string from-end=true count=other key=other|
-			   test-not sequence start (length sequence) count key)
+			   predicate sequence start (length sequence) count key)
 			  ;;              seq-type=simple-string from-end=true count=other key=identity end=nil 
 			  (|remove-if-not seq-type=simple-string from-end=true count=other key=identity|
-			   test-not sequence start (length sequence) count))
+			   predicate sequence start (length sequence) count))
 		      ;; seqr-type=simple-string from-end=false count=other end=nil
 		      (if key
 			  ;;              seq-type=simple-string from-end=false count=other key=other end=nil
 			  (|remove-if-not seq-type=simple-string from-end=false count=other key=other|
-			   test-not sequence start (length sequence) count key)
+			   predicate sequence start (length sequence) count key)
 			  ;;              seq-type=simple-string from-end=false count=other key=identity end=nil 
 			  (|remove-if-not seq-type=simple-string from-end=false count=other key=identity|
-			   test-not sequence start (length sequence) count)))
+			   predicate sequence start (length sequence) count)))
 		  ;; seq-type=simple-string count=nil end=nil
 		  ;; no need to test from-end
 		  (if key
 		      ;;              seq-type=simple-string count=nil key=other end=nil
 		      (|remove-if-not seq-type=simple-string count=nil key=other|
-		       test-not sequence start (length sequence) key)
+		       predicate sequence start (length sequence) key)
 		      ;;              seq-type=simple-string count=nil key=identity end=nil! 
 		      (|remove-if-not seq-type=simple-string count=nil key=identity|
-		       test-not sequence start (length sequence)))))
+		       predicate sequence start (length sequence)))))
 	  (if (simple-vector-p sequence)
 	      ;; seq-type=simple-vector
 	      ;; seq-type=simple-vector
@@ -10341,27 +9543,27 @@
 			  (if key
 			      ;;              seq-type=simple-vector from-end=true count=other key=other end=other
 			      (|remove-if-not seq-type=simple-vector from-end=true count=other key=other|
-			       test-not sequence start end count key)
+			       predicate sequence start end count key)
 			      ;;              seq-type=simple-vector from-end=true count=other key=identity end=other 
 			      (|remove-if-not seq-type=simple-vector from-end=true count=other key=identity|
-			       test-not sequence start end count))
+			       predicate sequence start end count))
 			  ;; seqr-type=simple-vector from-end=false count=other end=other
 			  (if key
 			      ;;              seq-type=simple-vector from-end=false count=other key=other end=other
 			      (|remove-if-not seq-type=simple-vector from-end=false count=other key=other|
-			       test-not sequence start end count key)
+			       predicate sequence start end count key)
 			      ;;              seq-type=simple-vector from-end=false count=other key=identity end=other 
 			      (|remove-if-not seq-type=simple-vector from-end=false count=other key=identity|
-			       test-not sequence start end count)))
+			       predicate sequence start end count)))
 		      ;; seq-type=simple-vector count=nil end=other
 		      ;; no need to test from-end
 		      (if key
 			  ;;              seq-type=simple-vector count=nil key=other end=other
 			  (|remove-if-not seq-type=simple-vector count=nil key=other|
-			   test-not sequence start end key)
+			   predicate sequence start end key)
 			  ;;              seq-type=simple-vector count=nil key=identity end=other 
 			  (|remove-if-not seq-type=simple-vector count=nil key=identity|
-			   test-not sequence start end)))
+			   predicate sequence start end)))
 		  ;; seq-type=simple-vector end=nil
 		  (if count
 		      ;; seq-type=simple-vector count=other end=nil
@@ -10370,27 +9572,27 @@
 			  (if key
 			      ;;              seq-type=simple-vector from-end=true count=other key=other end=nil
 			      (|remove-if-not seq-type=simple-vector from-end=true count=other key=other|
-			       test-not sequence start (length sequence) count key)
+			       predicate sequence start (length sequence) count key)
 			      ;;              seq-type=simple-vector from-end=true count=other key=identity end=nil 
 			      (|remove-if-not seq-type=simple-vector from-end=true count=other key=identity|
-			       test-not sequence start (length sequence) count))
+			       predicate sequence start (length sequence) count))
 			  ;; seqr-type=simple-vector from-end=false count=other end=nil
 			  (if key
 			      ;;              seq-type=simple-vector from-end=false count=other key=other end=nil
 			      (|remove-if-not seq-type=simple-vector from-end=false count=other key=other|
-			       test-not sequence start (length sequence) count key)
+			       predicate sequence start (length sequence) count key)
 			      ;;              seq-type=simple-vector from-end=false count=other key=identity end=nil 
 			      (|remove-if-not seq-type=simple-vector from-end=false count=other key=identity|
-			       test-not sequence start (length sequence) count)))
+			       predicate sequence start (length sequence) count)))
 		      ;; seq-type=simple-vector count=nil end=nil
 		      ;; no need to test from-end
 		      (if key
 			  ;;              seq-type=simple-vector count=nil key=other end=nil
 			  (|remove-if-not seq-type=simple-vector count=nil key=other|
-			   test-not sequence start (length sequence) key)
+			   predicate sequence start (length sequence) key)
 			  ;;              seq-type=simple-vector count=nil key=identity end=nil! 
 			  (|remove-if-not seq-type=simple-vector count=nil key=identity|
-			   test-not sequence start (length sequence)))))
+			   predicate sequence start (length sequence)))))
 	      ;; seq-type=general-vector
 	      ;; seq-type=general-vector
 	      (if end
@@ -10402,27 +9604,27 @@
 			  (if key
 			      ;;              seq-type=general-vector from-end=true count=other key=other end=other
 			      (|remove-if-not seq-type=general-vector from-end=true count=other key=other|
-			       test-not sequence start end count key)
+			       predicate sequence start end count key)
 			      ;;              seq-type=general-vector from-end=true count=other key=identity end=other 
 			      (|remove-if-not seq-type=general-vector from-end=true count=other key=identity|
-			       test-not sequence start end count))
+			       predicate sequence start end count))
 			  ;; seqr-type=general-vector from-end=false count=other end=other
 			  (if key
 			      ;;              seq-type=general-vector from-end=false count=other key=other end=other
 			      (|remove-if-not seq-type=general-vector from-end=false count=other key=other|
-			       test-not sequence start end count key)
+			       predicate sequence start end count key)
 			      ;;              seq-type=general-vector from-end=false count=other key=identity end=other 
 			      (|remove-if-not seq-type=general-vector from-end=false count=other key=identity|
-			       test-not sequence start end count)))
+			       predicate sequence start end count)))
 		      ;; seq-type=general-vector count=nil end=other
 		      ;; no need to test from-end
 		      (if key
 			  ;;              seq-type=general-vector count=nil key=other end=other
 			  (|remove-if-not seq-type=general-vector count=nil key=other|
-			   test-not sequence start end key)
+			   predicate sequence start end key)
 			  ;;              seq-type=general-vector count=nil key=identity end=other 
 			  (|remove-if-not seq-type=general-vector count=nil key=identity|
-			   test-not sequence start end)))
+			   predicate sequence start end)))
 		  ;; seq-type=general-vector end=nil
 		  (if count
 		      ;; seq-type=general-vector count=other end=nil
@@ -10431,27 +9633,27 @@
 			  (if key
 			      ;;              seq-type=general-vector from-end=true count=other key=other end=nil
 			      (|remove-if-not seq-type=general-vector from-end=true count=other key=other|
-			       test-not sequence start (length sequence) count key)
+			       predicate sequence start (length sequence) count key)
 			      ;;              seq-type=general-vector from-end=true count=other key=identity end=nil 
 			      (|remove-if-not seq-type=general-vector from-end=true count=other key=identity|
-			       test-not sequence start (length sequence) count))
+			       predicate sequence start (length sequence) count))
 			  ;; seqr-type=general-vector from-end=false count=other end=nil
 			  (if key
 			      ;;              seq-type=general-vector from-end=false count=other key=other end=nil
 			      (|remove-if-not seq-type=general-vector from-end=false count=other key=other|
-			       test-not sequence start (length sequence) count key)
+			       predicate sequence start (length sequence) count key)
 			      ;;              seq-type=general-vector from-end=false count=other key=identity end=nil 
 			      (|remove-if-not seq-type=general-vector from-end=false count=other key=identity|
-			       test-not sequence start (length sequence) count)))
+			       predicate sequence start (length sequence) count)))
 		      ;; seq-type=general-vector count=nil end=nil
 		      ;; no need to test from-end
 		      (if key
 			  ;;              seq-type=general-vector count=nil key=other end=nil
 			  (|remove-if-not seq-type=general-vector count=nil key=other|
-			   test-not sequence start (length sequence) key)
+			   predicate sequence start (length sequence) key)
 			  ;;              seq-type=general-vector count=nil key=identity end=nil! 
 			  (|remove-if-not seq-type=general-vector count=nil key=identity|
-			   test-not sequence start (length sequence)))))))))
+			   predicate sequence start (length sequence)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -15606,16 +14808,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (aref vector i))))
 
@@ -15623,16 +14816,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (aref vector i))))
 
@@ -15640,16 +14824,7 @@
     (item vector start end test)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (aref vector i))))
 
@@ -15657,16 +14832,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (funcall key (aref vector i)))))
 
@@ -15674,16 +14840,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (funcall key (aref vector i)))))
 
@@ -15691,16 +14848,7 @@
     (item vector start end key test)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (funcall key (aref vector i)))))
 
@@ -15708,16 +14856,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (aref vector i))))
 
@@ -15725,16 +14864,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (aref vector i))))
 
@@ -15742,16 +14872,7 @@
     (item vector start end test)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (aref vector i))))
 
@@ -15759,16 +14880,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (funcall key (aref vector i)))))
 
@@ -15776,16 +14888,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (funcall key (aref vector i)))))
 
@@ -15793,16 +14896,7 @@
     (item vector start end key test)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (funcall key (aref vector i)))))
 
@@ -15810,16 +14904,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (aref vector i)))))
 
@@ -15827,16 +14912,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (aref vector i)))))
 
@@ -15844,16 +14920,7 @@
     (item vector start end test-not)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (aref vector i)))))
 
@@ -15861,16 +14928,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (funcall key (aref vector i))))))
 
@@ -15878,16 +14936,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (funcall key (aref vector i))))))
 
@@ -15895,16 +14944,7 @@
     (item vector start end key test-not)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (funcall key (aref vector i))))))
 
@@ -15912,16 +14952,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (aref vector i)))))
 
@@ -15929,16 +14960,7 @@
     (item vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (aref vector i)))))
 
@@ -15946,16 +14968,7 @@
     (item vector start end test-not)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (aref vector i)))))
 
@@ -15963,16 +14976,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (funcall key (aref vector i))))))
 
@@ -15980,16 +14984,7 @@
     (item vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (funcall key (aref vector i))))))
 
@@ -15997,16 +14992,7 @@
     (item vector start end key test-not)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (funcall key (aref vector i))))))
 
@@ -16014,16 +15000,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (svref vector i))))
 
@@ -16031,16 +15008,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (svref vector i))))
 
@@ -16048,16 +15016,7 @@
     (item vector start end test)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (svref vector i))))
 
@@ -16065,16 +15024,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (funcall key (svref vector i)))))
 
@@ -16082,16 +15032,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (funcall key (svref vector i)))))
 
@@ -16099,16 +15040,7 @@
     (item vector start end key test)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (funcall key (svref vector i)))))
 
@@ -16116,16 +15048,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (svref vector i))))
 
@@ -16133,16 +15056,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (svref vector i))))
 
@@ -16150,16 +15064,7 @@
     (item vector start end test)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (svref vector i))))
 
@@ -16167,16 +15072,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (funcall key (svref vector i)))))
 
@@ -16184,16 +15080,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (funcall key (svref vector i)))))
 
@@ -16201,16 +15088,7 @@
     (item vector start end key test)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (funcall key (svref vector i)))))
 
@@ -16218,16 +15096,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (svref vector i)))))
 
@@ -16235,16 +15104,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (svref vector i)))))
 
@@ -16252,16 +15112,7 @@
     (item vector start end test-not)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (svref vector i)))))
 
@@ -16269,16 +15120,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (funcall key (svref vector i))))))
 
@@ -16286,16 +15128,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (funcall key (svref vector i))))))
 
@@ -16303,16 +15136,7 @@
     (item vector start end key test-not)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (funcall key (svref vector i))))))
 
@@ -16320,16 +15144,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (svref vector i)))))
 
@@ -16337,16 +15152,7 @@
     (item vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (svref vector i)))))
 
@@ -16354,16 +15160,7 @@
     (item vector start end test-not)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (svref vector i)))))
 
@@ -16371,16 +15168,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (funcall key (svref vector i))))))
 
@@ -16388,16 +15176,7 @@
     (item vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (funcall key (svref vector i))))))
 
@@ -16405,16 +15184,7 @@
     (item vector start end key test-not)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (funcall key (svref vector i))))))
 
@@ -16422,16 +15192,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (schar vector i))))
 
@@ -16439,16 +15200,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (schar vector i))))
 
@@ -16456,16 +15208,7 @@
     (item vector start end test)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (schar vector i))))
 
@@ -16473,16 +15216,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eql item (funcall key (schar vector i)))))
 
@@ -16490,16 +15224,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (eq item (funcall key (schar vector i)))))
 
@@ -16507,16 +15232,7 @@
     (item vector start end key test)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (funcall test item (funcall key (schar vector i)))))
 
@@ -16524,16 +15240,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (schar vector i))))
 
@@ -16541,16 +15248,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (schar vector i))))
 
@@ -16558,16 +15256,7 @@
     (item vector start end test)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (schar vector i))))
 
@@ -16575,16 +15264,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eql item (funcall key (schar vector i)))))
 
@@ -16592,16 +15272,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (eq item (funcall key (schar vector i)))))
 
@@ -16609,16 +15280,7 @@
     (item vector start end key test)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall test item (funcall key (schar vector i)))))
 
@@ -16626,16 +15288,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (schar vector i)))))
 
@@ -16643,16 +15296,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (schar vector i)))))
 
@@ -16660,16 +15304,7 @@
     (item vector start end test-not)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (schar vector i)))))
 
@@ -16677,16 +15312,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eql item (funcall key (schar vector i))))))
 
@@ -16694,16 +15320,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (eq item (funcall key (schar vector i))))))
 
@@ -16711,16 +15328,7 @@
     (item vector start end key test-not)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i from start below end
 	count (not (funcall test-not item (funcall key (schar vector i))))))
 
@@ -16728,16 +15336,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (schar vector i)))))
 
@@ -16745,16 +15344,7 @@
     (item vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (schar vector i)))))
 
@@ -16762,16 +15352,7 @@
     (item vector start end test-not)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (schar vector i)))))
 
@@ -16779,16 +15360,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eql item (funcall key (schar vector i))))))
 
@@ -16796,16 +15368,7 @@
     (item vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (eq item (funcall key (schar vector i))))))
 
@@ -16813,1882 +15376,948 @@
     (item vector start end key test-not)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall test-not item (funcall key (schar vector i))))))
 
 (defun |count seq-type=list from-end=false end=nil key=identity test=eql|
     (item list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (eql item element))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (eql item element)
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=identity test=eq|
     (item list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (eq item element))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (eq item element)
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=identity test=other|
     (item list start test)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall test item element))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (funcall test item element)
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=other test=eql|
     (item list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (eql item (funcall key element)))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (eql item (funcall key element))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=other test=eq|
     (item list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (eq item (funcall key element)))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (eq item (funcall key element))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=other test=other|
     (item list start key test)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall test item (funcall key element)))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (funcall test item (funcall key element))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=other key=identity test=eql|
     (item list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (eql item element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (eql item element)
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=identity test=eq|
     (item list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (eq item element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (eq item element)
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=identity test=other|
     (item list start end test)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall test item element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+
+	count (funcall test item element)
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=other test=eql|
     (item list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (eql item (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (eql item (funcall key element))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=other test=eq|
     (item list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (eq item (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (eq item (funcall key element))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=other test=other|
     (item list start end key test)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall test item (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (funcall test item (funcall key element))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=nil key=identity test-not=eql|
     (item list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (eql item element)))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (eql item element))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=identity test-not=eq|
     (item list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (eq item element)))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (eq item element))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=identity test-not=other|
     (item list start test-not)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall test-not item element)))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (funcall test-not item element))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=other test-not=eql|
     (item list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (eql item (funcall key element))))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (eql item (funcall key element)))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=other test-not=eq|
     (item list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (eq item (funcall key element))))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (eq item (funcall key element)))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=nil key=other test-not=other|
     (item list start key test-not)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall test-not item (funcall key element))))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (funcall test-not item (funcall key element)))
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=false end=other key=identity test-not=eql|
     (item list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (eql item element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (eql item element))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=identity test-not=eq|
     (item list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (eq item element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (eq item element))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=identity test-not=other|
     (item list start end test-not)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall test-not item element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (funcall test-not item element))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=other test-not=eql|
     (item list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (eql item (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (eql item (funcall key element)))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=other test-not=eq|
     (item list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (eq item (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (eq item (funcall key element)))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=false end=other key=other test-not=other|
     (item list start end key test-not)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall test-not item (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (funcall test-not item (funcall key element)))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=true end=nil key=identity test=eql|
     (item list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (eql item element))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (eql item element)
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=true end=nil key=identity test=eq|
     (item list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (eq item element))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (eq item element)
+	finally (tail-must-be-proper-list 'count list remaining)))
 
 (defun |count seq-type=list from-end=true end=nil key=identity test=other|
     (item list start test)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (let ((vector (coerce remaining 'vector)))
-      (|count seq-type=simple-vector from-end=true key=identity test=other|
-       item vector 0 (length vector) test))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall test item (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=nil key=other test=eql|
     (item list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (eql item (funcall key element)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (eql item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=nil key=other test=eq|
     (item list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (eq item (funcall key element)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (eq item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=nil key=other test=other|
     (item list start key test)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (let ((vector (coerce remaining 'vector)))
-      (|count seq-type=simple-vector from-end=true key=other test=other|
-       item vector 0 (length vector) key test))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall test item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=other key=identity test=eql|
     (item list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (eql item element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (eql item element)
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=true end=other key=identity test=eq|
     (item list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (eq item element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (eq item element)
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=true end=other key=identity test=other|
     (item list start end test)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (let ((length (length remaining)))
-      (when (> (- end start) length)
-	(error 'invalid-end-index
-	       :datum end
-	       :expected-type `(integer 0 ,(+ start length))
-	       :in-sequence list
-	       :in-sequence list))
-      (let ((vector (make-array (- end start))))
-	(loop for i from 0 below (- end start)
-	      for element in remaining
-	      do (setf (aref vector i) element))
-	(|count seq-type=simple-vector from-end=true key=identity test=other|
-	 item vector 0 (- end start) test)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall test item (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=other key=other test=eql|
     (item list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (eql item (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (eql item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=other key=other test=eq|
     (item list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (eq item (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (eq item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=other key=other test=other|
     (item list start end key test)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (let ((length (length remaining)))
-      (when (> (- end start) length)
-	(error 'invalid-end-index
-	       :datum end
-	       :expected-type `(integer 0 ,(+ start length))
-	       :in-sequence list
-	       :in-sequence list))
-      (let ((vector (make-array (- end start))))
-	(loop for i from 0 below (- end start)
-	      for element in remaining
-	      do (setf (aref vector i) element))
-	(|count seq-type=simple-vector from-end=true key=other test=other|
-	 item vector 0 (- end start) key test)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall test item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=nil key=identity test-not=eql|
     (item list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (eql item element)))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (eql item element))))
 
 (defun |count seq-type=list from-end=true end=nil key=identity test-not=eq|
     (item list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (eq item element)))))
+  (loop for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (eq item element))))
 
 (defun |count seq-type=list from-end=true end=nil key=identity test-not=other|
     (item list start test-not)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (let ((vector (coerce remaining 'vector)))
-      (|count seq-type=simple-vector from-end=true key=identity test-not=other|
-       item vector 0 (length vector) test-not))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall test-not item (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=nil key=other test-not=eql|
     (item list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (eql item (funcall key element))))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (eql item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=nil key=other test-not=eq|
     (item list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (eq item (funcall key element))))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (eq item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=nil key=other test-not=other|
     (item list start key test-not)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (let ((vector (coerce remaining 'vector)))
-      (|count seq-type=simple-vector from-end=true key=other test-not=other|
-       item vector 0 (length vector) key test-not))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall test-not item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=other key=identity test-not=eql|
     (item list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (eql item element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (eql item element))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=true end=other key=identity test-not=eq|
     (item list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (eq item element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (eq item element))
+	finally (tail-must-be-proper-list-with-end
+		     'count list remaining end index)))
 
 (defun |count seq-type=list from-end=true end=other key=identity test-not=other|
     (item list start end test-not)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (let ((length (length remaining)))
-      (when (> (- end start) length)
-	(error 'invalid-end-index
-	       :datum end
-	       :expected-type `(integer 0 ,(+ start length))
-	       :in-sequence list))
-      (let ((vector (make-array (- end start))))
-	(loop for i from 0 below (- end start)
-	      for element in remaining
-	      do (setf (aref vector i) element))
-	(|count seq-type=simple-vector from-end=true key=identity test-not=other|
-	 item vector 0 (- end start) test-not)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall test-not item (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=other key=other test-not=eql|
     (item list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (eql item (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (eql item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=other key=other test-not=eq|
     (item list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (eq item (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (eq item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count seq-type=list from-end=true end=other key=other test-not=other|
     (item list start end key test-not)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (let ((length (length remaining)))
-      (when (> (- end start) length)
-	(error 'invalid-end-index
-	       :datum end
-	       :expected-type `(integer 0 ,(+ start length))
-	       :in-sequence list))
-      (let ((vector (make-array (- end start))))
-	(loop for i from 0 below (- end start)
-	      for element in remaining
-	      do (setf (aref vector i) element))
-	(|count seq-type=simple-vector from-end=true key=other test-not=other|
-	 item vector 0 (- end start) key test-not)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall test-not item (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
-(defun |count from-end=false end=nil key=identity test=eql|
-    (item sequence start)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=identity test=eql|
-	  item sequence start))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test=eql|
-	  item sequence start (length sequence)))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test=eql|
-	  item sequence start (length sequence)))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test=eql|
-	  item sequence start (length sequence)))))
-	
-(defun |count from-end=false end=nil key=identity test=eq|
-    (item sequence start)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=identity test=eq|
-	  item sequence start))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test=eq|
-	  item sequence start (length sequence)))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test=eq|
-	  item sequence start (length sequence)))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test=eq|
-	  item sequence start (length sequence)))))
-	
-(defun |count from-end=false end=nil key=identity test=other|
-    (item sequence start test)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=identity test=other|
-	  item sequence start test))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test=other|
-	  item sequence start (length sequence) test))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test=other|
-	  item sequence start (length sequence) test))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test=other|
-	  item sequence start (length sequence) test))))
-	
-(defun |count from-end=false end=nil key=other test=eql|
-    (item sequence start key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=other test=eql|
-	  item sequence start key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test=eql|
-	  item sequence start (length sequence) key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test=eql|
-	  item sequence start (length sequence) key))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test=eql|
-	  item sequence start (length sequence) key))))
-	
-(defun |count from-end=false end=nil key=other test=eq|
-    (item sequence start key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=other test=eq|
-	  item sequence start key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test=eq|
-	  item sequence start (length sequence) key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test=eq|
-	  item sequence start (length sequence) key))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test=eq|
-	  item sequence start (length sequence) key))))
-
-(defun |count from-end=false end=nil key=other test=other|
-    (item sequence start key test)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=other test=other|
-	  item sequence start key test))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test=other|
-	  item sequence start (length sequence) key test))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test=other|
-	  item sequence start (length sequence) key test))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test=other|
-	  item sequence start (length sequence) key test))))
-
-(defun |count from-end=false end=other key=identity test=eql|
-    (item sequence start end)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=identity test=eql|
-	  item sequence start end))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test=eql|
-	  item sequence start end))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test=eql|
-	  item sequence start end))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test=eql|
-	  item sequence start end))))
-	
-(defun |count from-end=false end=other key=identity test=eq|
-    (item sequence start end)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=identity test=eq|
-	  item sequence start end))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test=eq|
-	  item sequence start end))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test=eq|
-	  item sequence start end))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test=eq|
-	  item sequence start end))))
-	
-(defun |count from-end=false end=other key=identity test=other|
-    (item sequence start end test)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=identity test=other|
-	  item sequence start end test))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test=other|
-	  item sequence start end test))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test=other|
-	  item sequence start end test))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test=other|
-	  item sequence start end test))))
-	
-(defun |count from-end=false end=other key=other test=eql|
-    (item sequence start end key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=other test=eql|
-	  item sequence start end key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test=eql|
-	  item sequence start end key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test=eql|
-	  item sequence start end key))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test=eql|
-	  item sequence start end key))))
-	
-(defun |count from-end=false end=other key=other test=eq|
-    (item sequence start end key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=other test=eq|
-	  item sequence start end key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test=eq|
-	  item sequence start end key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test=eq|
-	  item sequence start end key))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test=eq|
-	  item sequence start end key))))
-
-(defun |count from-end=false end=other key=other test=other|
-    (item sequence start end key test)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=other test=other|
-	  item sequence start end key test))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test=other|
-	  item sequence start end key test))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test=other|
-	  item sequence start end key test))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test=other|
-	  item sequence start end key test))))
-
-(defun |count from-end=false end=nil key=identity test-not=eql|
-    (item sequence start)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=identity test-not=eql|
-	  item sequence start))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test-not=eql|
-	  item sequence start (length sequence)))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test-not=eql|
-	  item sequence start (length sequence)))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test-not=eql|
-	  item sequence start (length sequence)))))
-	
-(defun |count from-end=false end=nil key=identity test-not=eq|
-    (item sequence start)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=identity test-not=eq|
-	  item sequence start))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test-not=eq|
-	  item sequence start (length sequence)))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test-not=eq|
-	  item sequence start (length sequence)))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test-not=eq|
-	  item sequence start (length sequence)))))
-	
-(defun |count from-end=false end=nil key=identity test-not=other|
-    (item sequence start test-not)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=identity test-not=other|
-	  item sequence start test-not))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test-not=other|
-	  item sequence start (length sequence) test-not))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test-not=other|
-	  item sequence start (length sequence) test-not))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test-not=other|
-	  item sequence start (length sequence) test-not))))
-	
-(defun |count from-end=false end=nil key=other test-not=eql|
-    (item sequence start key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=other test-not=eql|
-	  item sequence start key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test-not=eql|
-	  item sequence start (length sequence) key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test-not=eql|
-	  item sequence start (length sequence) key))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test-not=eql|
-	  item sequence start (length sequence) key))))
-	
-(defun |count from-end=false end=nil key=other test-not=eq|
-    (item sequence start key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=other test-not=eq|
-	  item sequence start key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test-not=eq|
-	  item sequence start (length sequence) key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test-not=eq|
-	  item sequence start (length sequence) key))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test-not=eq|
-	  item sequence start (length sequence) key))))
-
-(defun |count from-end=false end=nil key=other test-not=other|
-    (item sequence start key test-not)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=nil key=other test-not=other|
-	  item sequence start key test-not))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test-not=other|
-	  item sequence start (length sequence) key test-not))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test-not=other|
-	  item sequence start (length sequence) key test-not))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test-not=other|
-	  item sequence start (length sequence) key test-not))))
-
-(defun |count from-end=false end=other key=identity test-not=eql|
-    (item sequence start end)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=identity test-not=eql|
-	  item sequence start end))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test-not=eql|
-	  item sequence start end))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test-not=eql|
-	  item sequence start end))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test-not=eql|
-	  item sequence start end))))
-	
-(defun |count from-end=false end=other key=identity test-not=eq|
-    (item sequence start end)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=identity test-not=eq|
-	  item sequence start end))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test-not=eq|
-	  item sequence start end))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test-not=eq|
-	  item sequence start end))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test-not=eq|
-	  item sequence start end))))
-	
-(defun |count from-end=false end=other key=identity test-not=other|
-    (item sequence start end test-not)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=identity test-not=other|
-	  item sequence start end test-not))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=identity test-not=other|
-	  item sequence start end test-not))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=identity test-not=other|
-	  item sequence start end test-not))
-	(t
-	 (|count seq-type=general-vector from-end=false key=identity test-not=other|
-	  item sequence start end test-not))))
-	
-(defun |count from-end=false end=other key=other test-not=eql|
-    (item sequence start end key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=other test-not=eql|
-	  item sequence start end key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test-not=eql|
-	  item sequence start end key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test-not=eql|
-	  item sequence start end key))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test-not=eql|
-	  item sequence start end key))))
-	
-(defun |count from-end=false end=other key=other test-not=eq|
-    (item sequence start end key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=other test-not=eq|
-	  item sequence start end key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test-not=eq|
-	  item sequence start end key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test-not=eq|
-	  item sequence start end key))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test-not=eq|
-	  item sequence start end key))))
-
-(defun |count from-end=false end=other key=other test-not=other|
-    (item sequence start end key test-not)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=false end=other key=other test-not=other|
-	  item sequence start end key test-not))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=false key=other test-not=other|
-	  item sequence start end key test-not))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=false key=other test-not=other|
-	  item sequence start end key test-not))
-	(t
-	 (|count seq-type=general-vector from-end=false key=other test-not=other|
-	  item sequence start end key test-not))))
-
-(defun |count from-end=true end=nil key=identity test=eql|
-    (item sequence start)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=identity test=eql|
-	  item sequence start))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test=eql|
-	  item sequence start (length sequence)))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test=eql|
-	  item sequence start (length sequence)))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test=eql|
-	  item sequence start (length sequence)))))
-	
-(defun |count from-end=true end=nil key=identity test=eq|
-    (item sequence start)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=identity test=eq|
-	  item sequence start))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test=eq|
-	  item sequence start (length sequence)))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test=eq|
-	  item sequence start (length sequence)))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test=eq|
-	  item sequence start (length sequence)))))
-	
-(defun |count from-end=true end=nil key=identity test=other|
-    (item sequence start test)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=identity test=other|
-	  item sequence start test))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test=other|
-	  item sequence start (length sequence) test))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test=other|
-	  item sequence start (length sequence) test))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test=other|
-	  item sequence start (length sequence) test))))
-	
-(defun |count from-end=true end=nil key=other test=eql|
-    (item sequence start key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=other test=eql|
-	  item sequence start key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test=eql|
-	  item sequence start (length sequence) key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test=eql|
-	  item sequence start (length sequence) key))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test=eql|
-	  item sequence start (length sequence) key))))
-	
-(defun |count from-end=true end=nil key=other test=eq|
-    (item sequence start key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=other test=eq|
-	  item sequence start key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test=eq|
-	  item sequence start (length sequence) key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test=eq|
-	  item sequence start (length sequence) key))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test=eq|
-	  item sequence start (length sequence) key))))
-
-(defun |count from-end=true end=nil key=other test=other|
-    (item sequence start key test)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=other test=other|
-	  item sequence start key test))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test=other|
-	  item sequence start (length sequence) key test))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test=other|
-	  item sequence start (length sequence) key test))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test=other|
-	  item sequence start (length sequence) key test))))
-
-(defun |count from-end=true end=other key=identity test=eql|
-    (item sequence start end)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=identity test=eql|
-	  item sequence start end))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test=eql|
-	  item sequence start end))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test=eql|
-	  item sequence start end))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test=eql|
-	  item sequence start end))))
-	
-(defun |count from-end=true end=other key=identity test=eq|
-    (item sequence start end)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=identity test=eq|
-	  item sequence start end))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test=eq|
-	  item sequence start end))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test=eq|
-	  item sequence start end))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test=eq|
-	  item sequence start end))))
-	
-(defun |count from-end=true end=other key=identity test=other|
-    (item sequence start end test)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=identity test=other|
-	  item sequence start end test))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test=other|
-	  item sequence start end test))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test=other|
-	  item sequence start end test))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test=other|
-	  item sequence start end test))))
-	
-(defun |count from-end=true end=other key=other test=eql|
-    (item sequence start end key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=other test=eql|
-	  item sequence start end key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test=eql|
-	  item sequence start end key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test=eql|
-	  item sequence start end key))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test=eql|
-	  item sequence start end key))))
-	
-(defun |count from-end=true end=other key=other test=eq|
-    (item sequence start end key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=other test=eq|
-	  item sequence start end key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test=eq|
-	  item sequence start end key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test=eq|
-	  item sequence start end key))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test=eq|
-	  item sequence start end key))))
-
-(defun |count from-end=true end=other key=other test=other|
-    (item sequence start end key test)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=other test=other|
-	  item sequence start end key test))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test=other|
-	  item sequence start end key test))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test=other|
-	  item sequence start end key test))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test=other|
-	  item sequence start end key test))))
-
-(defun |count from-end=true end=nil key=identity test-not=eql|
-    (item sequence start)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=identity test-not=eql|
-	  item sequence start))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test-not=eql|
-	  item sequence start (length sequence)))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test-not=eql|
-	  item sequence start (length sequence)))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test-not=eql|
-	  item sequence start (length sequence)))))
-	
-(defun |count from-end=true end=nil key=identity test-not=eq|
-    (item sequence start)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=identity test-not=eq|
-	  item sequence start))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test-not=eq|
-	  item sequence start (length sequence)))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test-not=eq|
-	  item sequence start (length sequence)))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test-not=eq|
-	  item sequence start (length sequence)))))
-	
-(defun |count from-end=true end=nil key=identity test-not=other|
-    (item sequence start test-not)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=identity test-not=other|
-	  item sequence start test-not))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test-not=other|
-	  item sequence start (length sequence) test-not))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test-not=other|
-	  item sequence start (length sequence) test-not))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test-not=other|
-	  item sequence start (length sequence) test-not))))
-	
-(defun |count from-end=true end=nil key=other test-not=eql|
-    (item sequence start key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=other test-not=eql|
-	  item sequence start key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test-not=eql|
-	  item sequence start (length sequence) key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test-not=eql|
-	  item sequence start (length sequence) key))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test-not=eql|
-	  item sequence start (length sequence) key))))
-	
-(defun |count from-end=true end=nil key=other test-not=eq|
-    (item sequence start key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=other test-not=eq|
-	  item sequence start key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test-not=eq|
-	  item sequence start (length sequence) key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test-not=eq|
-	  item sequence start (length sequence) key))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test-not=eq|
-	  item sequence start (length sequence) key))))
-
-(defun |count from-end=true end=nil key=other test-not=other|
-    (item sequence start key test-not)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=nil key=other test-not=other|
-	  item sequence start key test-not))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test-not=other|
-	  item sequence start (length sequence) key test-not))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test-not=other|
-	  item sequence start (length sequence) key test-not))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test-not=other|
-	  item sequence start (length sequence) key test-not))))
-
-(defun |count from-end=true end=other key=identity test-not=eql|
-    (item sequence start end)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=identity test-not=eql|
-	  item sequence start end))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test-not=eql|
-	  item sequence start end))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test-not=eql|
-	  item sequence start end))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test-not=eql|
-	  item sequence start end))))
-	
-(defun |count from-end=true end=other key=identity test-not=eq|
-    (item sequence start end)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=identity test-not=eq|
-	  item sequence start end))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test-not=eq|
-	  item sequence start end))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test-not=eq|
-	  item sequence start end))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test-not=eq|
-	  item sequence start end))))
-	
-(defun |count from-end=true end=other key=identity test-not=other|
-    (item sequence start end test-not)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=identity test-not=other|
-	  item sequence start end test-not))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=identity test-not=other|
-	  item sequence start end test-not))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=identity test-not=other|
-	  item sequence start end test-not))
-	(t
-	 (|count seq-type=general-vector from-end=true key=identity test-not=other|
-	  item sequence start end test-not))))
-	
-(defun |count from-end=true end=other key=other test-not=eql|
-    (item sequence start end key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=other test-not=eql|
-	  item sequence start end key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test-not=eql|
-	  item sequence start end key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test-not=eql|
-	  item sequence start end key))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test-not=eql|
-	  item sequence start end key))))
-	
-(defun |count from-end=true end=other key=other test-not=eq|
-    (item sequence start end key)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=other test-not=eq|
-	  item sequence start end key))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test-not=eq|
-	  item sequence start end key))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test-not=eq|
-	  item sequence start end key))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test-not=eq|
-	  item sequence start end key))))
-
-(defun |count from-end=true end=other key=other test-not=other|
-    (item sequence start end key test-not)
-  (cond ((listp sequence)
-	 (|count seq-type=list from-end=true end=other key=other test-not=other|
-	  item sequence start end key test-not))
-	((simple-string-p sequence)
-	 (|count seq-type=simple-string from-end=true key=other test-not=other|
-	  item sequence start end key test-not))
-	((simple-vector-p sequence)
-	 (|count seq-type=simple-vector from-end=true key=other test-not=other|
-	  item sequence start end key test-not))
-	(t
-	 (|count seq-type=general-vector from-end=true key=other test-not=other|
-	  item sequence start end key test-not))))
-
-(defun count (item sequence &key from-end (start 0) end key test test-not)
-  (if from-end
-      (if end
-	  (if key
-	      (if test
-		  (if (or (eq test #'eql) (eq test 'eql))
-		      (|count from-end=true end=other key=other test=eql|
-		       item sequence start end key)
-		      (if (or (eq test #'eq) (eq test 'eq))
-			  (|count from-end=true end=other key=other test=eq|
+(defun count (item sequence
+	      &key
+	      from-end
+	      (start 0)
+	      end
+	      key
+	      (test nil test-p)
+	      (test-not nil test-not-p))
+  (if (listp sequence)
+      (if from-end
+	  (if end
+	      (if key
+		  (if test-p
+		      (if (or (eq test #'eql) (eq test 'eql))
+			  (|count seq-type=list from-end=true end=other key=other test=eql|
 			   item sequence start end key)
-			  (|count from-end=true end=other key=other test=other|
-			   item sequence start end key test)))
-		  (if test-not
-		      (if (or (eq test-not #'eql) (eq test-not 'eql))
-			  (|count from-end=true end=other key=other test-not=eql|
-			   item sequence start end key)
-			  (if (or (eq test-not #'eq) (eq test-not 'eq))
-			      (|count from-end=true end=other key=other test-not=eq|
+			  (if (or (eq test #'eq) (eq test 'eq))
+			      (|count seq-type=list from-end=true end=other key=other test=eq|
 			       item sequence start end key)
-			      (|count from-end=true end=other key=other test-not=other|
-			       item sequence start end key test-not)))
-		      (|count from-end=true end=other key=other test=eql|
-		       item sequence start end key)))
-	      (if test
-		  (if (or (eq test #'eql) (eq test 'eql))
-		      (|count from-end=true end=other key=identity test=eql|
-		       item sequence start end)
-		      (if (or (eq test #'eq) (eq test 'eq))
-			  (|count from-end=true end=other key=identity test=eq|
-			   item sequence start end)
-			  (|count from-end=true end=other key=identity test=other|
-			   item sequence start end test)))
-		  (if test-not
-		      (if (or (eq test-not #'eql) (eq test-not 'eql))
-			  (|count from-end=true end=other key=identity test-not=eql|
-			   item sequence start end)
-			  (if (or (eq test-not #'eq) (eq test-not 'eq))
-			      (|count from-end=true end=other key=identity test-not=eq|
-			       item sequence start end)
-			      (|count from-end=true end=other key=identity test-not=other|
-			       item sequence start end test-not)))
-		      (|count from-end=true end=other key=identity test-not=other|
-		       item sequence start end test-not))))
-	  (if key
-	      (if test
-		  (if (or (eq test #'eql) (eq test 'eql))
-		      (|count from-end=true end=nil key=other test=eql|
-		       item sequence start key)
-		      (if (or (eq test #'eq) (eq test 'eq))
-			  (|count from-end=true end=nil key=other test=eq|
-			   item sequence start key)
-			  (|count from-end=true end=nil key=other test=other|
-			   item sequence start key test)))
-		  (if test-not
-		      (if (or (eq test-not #'eql) (eq test-not 'eql))
-			  (|count from-end=true end=nil key=other test-not=eql|
-			   item sequence start key)
-			  (if (or (eq test-not #'eq) (eq test-not 'eq))
-			      (|count from-end=true end=nil key=other test-not=eq|
-			       item sequence start key)
-			      (|count from-end=true end=nil key=other test-not=other|
-			       item sequence start key test-not)))
-		      (|count from-end=true end=nil key=other test=eql|
-		       item sequence start key)))
-	      (if test
-		  (if (or (eq test #'eql) (eq test 'eql))
-		      (|count from-end=true end=nil key=identity test=eql|
-		       item sequence start)
-		      (if (or (eq test #'eq) (eq test 'eq))
-			  (|count from-end=true end=nil key=identity test=eq|
-			   item sequence start)
-			  (|count from-end=true end=nil key=identity test=other|
-			   item sequence start test)))
-		  (if test-not
-		      (if (or (eq test-not #'eql) (eq test-not 'eql))
-			  (|count from-end=true end=nil key=identity test-not=eql|
-			   item sequence start)
-			  (if (or (eq test-not #'eq) (eq test-not 'eq))
-			      (|count from-end=true end=nil key=identity test-not=eq|
-			       item sequence start)
-			      (|count from-end=true end=nil key=identity test-not=other|
-			       item sequence start test-not)))
-		      (|count from-end=true end=nil key=identity test-not=other|
-		       item sequence start test-not)))))
-      (if end
-	  (if key
-	      (if test
-		  (if (or (eq test #'eql) (eq test 'eql))
-		      (|count from-end=false end=other key=other test=eql|
-		       item sequence start end key)
-		      (if (or (eq test #'eq) (eq test 'eq))
-			  (|count from-end=false end=other key=other test=eq|
-			   item sequence start end key)
-			  (|count from-end=false end=other key=other test=other|
-			   item sequence start end key test)))
-		  (if test-not
-		      (if (or (eq test-not #'eql) (eq test-not 'eql))
-			  (|count from-end=false end=other key=other test-not=eql|
-			   item sequence start end key)
-			  (if (or (eq test-not #'eq) (eq test-not 'eq))
-			      (|count from-end=false end=other key=other test-not=eq|
+			      (|count seq-type=list from-end=true end=other key=other test=other|
+			       item sequence start end key test)))
+		      (if test-not-p
+			  (if (or (eq test-not #'eql) (eq test-not 'eql))
+			      (|count seq-type=list from-end=true end=other key=other test-not=eql|
 			       item sequence start end key)
-			      (|count from-end=false end=other key=other test-not=other|
-			       item sequence start end key test-not)))
-		      (|count from-end=false end=other key=other test=eql|
-		       item sequence start end key)))
-	      (if test
-		  (if (or (eq test #'eql) (eq test 'eql))
-		      (|count from-end=false end=other key=identity test=eql|
-		       item sequence start end)
-		      (if (or (eq test #'eq) (eq test 'eq))
-			  (|count from-end=false end=other key=identity test=eq|
+			      (if (or (eq test-not #'eq) (eq test-not 'eq))
+				  (|count seq-type=list from-end=true end=other key=other test-not=eq|
+				   item sequence start end key)
+				  (|count seq-type=list from-end=true end=other key=other test-not=other|
+				   item sequence start end key test-not)))
+			  (|count seq-type=list from-end=true end=other key=other test=eql|
+			   item sequence start end key)))
+		  (if test-p
+		      (if (or (eq test #'eql) (eq test 'eql))
+			  (|count seq-type=list from-end=true end=other key=identity test=eql|
 			   item sequence start end)
-			  (|count from-end=false end=other key=identity test=other|
-			   item sequence start end test)))
-		  (if test-not
-		      (if (or (eq test-not #'eql) (eq test-not 'eql))
-			  (|count from-end=false end=other key=identity test-not=eql|
-			   item sequence start end)
-			  (if (or (eq test-not #'eq) (eq test-not 'eq))
-			      (|count from-end=false end=other key=identity test-not=eq|
+			  (if (or (eq test #'eq) (eq test 'eq))
+			      (|count seq-type=list from-end=true end=other key=identity test=eq|
 			       item sequence start end)
-			      (|count from-end=false end=other key=identity test-not=other|
-			       item sequence start end test-not)))
-		      (|count from-end=false end=other key=identity test=eql|
-		       item sequence start end))))
-	  (if key
-	      (if test
-		  (if (or (eq test #'eql) (eq test 'eql))
-		      (|count from-end=false end=nil key=other test=eql|
-		       item sequence start key)
-		      (if (or (eq test #'eq) (eq test 'eq))
-			  (|count from-end=false end=nil key=other test=eq|
+			      (|count seq-type=list from-end=true end=other key=identity test=other|
+			       item sequence start end test)))
+		      (if test-not-p
+			  (if (or (eq test-not #'eql) (eq test-not 'eql))
+			      (|count seq-type=list from-end=true end=other key=identity test-not=eql|
+			       item sequence start end)
+			      (if (or (eq test-not #'eq) (eq test-not 'eq))
+				  (|count seq-type=list from-end=true end=other key=identity test-not=eq|
+				   item sequence start end)
+				  (|count seq-type=list from-end=true end=other key=identity test-not=other|
+				   item sequence start end test-not)))
+			  (|count seq-type=list from-end=true end=other key=identity test=eql|
+			   item sequence start end))))
+	      (if key
+		  (if test-p
+		      (if (or (eq test #'eql) (eq test 'eql))
+			  (|count seq-type=list from-end=true end=nil key=other test=eql|
 			   item sequence start key)
-			  (|count from-end=false end=nil key=other test=other|
-			   item sequence start key test)))
-		  (if test-not
-		      (if (or (eq test-not #'eql) (eq test-not 'eql))
-			  (|count from-end=false end=nil key=other test-not=eql|
-			   item sequence start key)
-			  (if (or (eq test-not #'eq) (eq test-not 'eq))
-			      (|count from-end=false end=nil key=other test-not=eq|
+			  (if (or (eq test #'eq) (eq test 'eq))
+			      (|count seq-type=list from-end=true end=nil key=other test=eq|
 			       item sequence start key)
-			      (|count from-end=false end=nil key=other test-not=other|
-			       item sequence start key test-not)))
-		      (|count from-end=false end=nil key=other test=eql|
-		       item sequence start key)))
-	      (if test
-		  (if (or (eq test #'eql) (eq test 'eql))
-		      (|count from-end=false end=nil key=identity test=eql|
-		       item sequence start)
-		      (if (or (eq test #'eq) (eq test 'eq))
-			  (|count from-end=false end=nil key=identity test=eq|
+			      (|count seq-type=list from-end=true end=nil key=other test=other|
+			       item sequence start key test)))
+		      (if test-not-p
+			  (if (or (eq test-not #'eql) (eq test-not 'eql))
+			      (|count seq-type=list from-end=true end=nil key=other test-not=eql|
+			       item sequence start key)
+			      (if (or (eq test-not #'eq) (eq test-not 'eq))
+				  (|count seq-type=list from-end=true end=nil key=other test-not=eq|
+				   item sequence start key)
+				  (|count seq-type=list from-end=true end=nil key=other test-not=other|
+				   item sequence start key test-not)))
+			  (|count seq-type=list from-end=true end=nil key=other test=eql|
+			   item sequence start key)))
+		  (if test-p
+		      (if (or (eq test #'eql) (eq test 'eql))
+			  (|count seq-type=list from-end=true end=nil key=identity test=eql|
 			   item sequence start)
-			  (|count from-end=false end=nil key=identity test=other|
-			   item sequence start test)))
-		  (if test-not
-		      (if (or (eq test-not #'eql) (eq test-not 'eql))
-			  (|count from-end=false end=nil key=identity test-not=eql|
-			   item sequence start)
-			  (if (or (eq test-not #'eq) (eq test-not 'eq))
-			      (|count from-end=false end=nil key=identity test-not=eq|
+			  (if (or (eq test #'eq) (eq test 'eq))
+			      (|count seq-type=list from-end=true end=nil key=identity test=eq|
 			       item sequence start)
-			      (|count from-end=false end=nil key=identity test-not=other|
-			       item sequence start test-not)))
-		      (|count from-end=false end=nil key=identity test=eql|
-		       item sequence start)))))))
-
+			      (|count seq-type=list from-end=true end=nil key=identity test=other|
+			       item sequence start test)))
+		      (if test-not-p
+			  (if (or (eq test-not #'eql) (eq test-not 'eql))
+			      (|count seq-type=list from-end=true end=nil key=identity test-not=eql|
+			       item sequence start)
+			      (if (or (eq test-not #'eq) (eq test-not 'eq))
+				  (|count seq-type=list from-end=true end=nil key=identity test-not=eq|
+				   item sequence start)
+				  (|count seq-type=list from-end=true end=nil key=identity test-not=other|
+				   item sequence start test-not)))
+			  (|count seq-type=list from-end=true end=nil key=identity test=eql|
+			   item sequence start)))))
+	  (if end
+	      (if key
+		  (if test-p
+		      (if (or (eq test #'eql) (eq test 'eql))
+			  (|count seq-type=list from-end=false end=other key=other test=eql|
+			   item sequence start end key)
+			  (if (or (eq test #'eq) (eq test 'eq))
+			      (|count seq-type=list from-end=false end=other key=other test=eq|
+			       item sequence start end key)
+			      (|count seq-type=list from-end=false end=other key=other test=other|
+			       item sequence start end key test)))
+		      (if test-not-p
+			  (if (or (eq test-not #'eql) (eq test-not 'eql))
+			      (|count seq-type=list from-end=false end=other key=other test-not=eql|
+			       item sequence start end key)
+			      (if (or (eq test-not #'eq) (eq test-not 'eq))
+				  (|count seq-type=list from-end=false end=other key=other test-not=eq|
+				   item sequence start end key)
+				  (|count seq-type=list from-end=false end=other key=other test-not=other|
+				   item sequence start end key test-not)))
+			  (|count seq-type=list from-end=false end=other key=other test=eql|
+			   item sequence start end key)))
+		  (if test-p
+		      (if (or (eq test #'eql) (eq test 'eql))
+			  (|count seq-type=list from-end=false end=other key=identity test=eql|
+			   item sequence start end)
+			  (if (or (eq test #'eq) (eq test 'eq))
+			      (|count seq-type=list from-end=false end=other key=identity test=eq|
+			       item sequence start end)
+			      (|count seq-type=list from-end=false end=other key=identity test=other|
+			       item sequence start end test)))
+		      (if test-not-p
+			  (if (or (eq test-not #'eql) (eq test-not 'eql))
+			      (|count seq-type=list from-end=false end=other key=identity test-not=eql|
+			       item sequence start end)
+			      (if (or (eq test-not #'eq) (eq test-not 'eq))
+				  (|count seq-type=list from-end=false end=other key=identity test-not=eq|
+				   item sequence start end)
+				  (|count seq-type=list from-end=false end=other key=identity test-not=other|
+				   item sequence start end test-not)))
+			  (|count seq-type=list from-end=false end=other key=identity test=eql|
+			   item sequence start end))))
+	      (if key
+		  (if test-p
+		      (if (or (eq test #'eql) (eq test 'eql))
+			  (|count seq-type=list from-end=false end=nil key=other test=eql|
+			   item sequence start key)
+			  (if (or (eq test #'eq) (eq test 'eq))
+			      (|count seq-type=list from-end=false end=nil key=other test=eq|
+			       item sequence start key)
+			      (|count seq-type=list from-end=false end=nil key=other test=other|
+			       item sequence start key test)))
+		      (if test-not-p
+			  (if (or (eq test-not #'eql) (eq test-not 'eql))
+			      (|count seq-type=list from-end=false end=nil key=other test-not=eql|
+			       item sequence start key)
+			      (if (or (eq test-not #'eq) (eq test-not 'eq))
+				  (|count seq-type=list from-end=false end=nil key=other test-not=eq|
+				   item sequence start key)
+				  (|count seq-type=list from-end=false end=nil key=other test-not=other|
+				   item sequence start key test-not)))
+			  (|count seq-type=list from-end=false end=nil key=other test=eql|
+			   item sequence start key)))
+		  (if test-p
+		      (if (or (eq test #'eql) (eq test 'eql))
+			  (|count seq-type=list from-end=false end=nil key=identity test=eql|
+			   item sequence start)
+			  (if (or (eq test #'eq) (eq test 'eq))
+			      (|count seq-type=list from-end=false end=nil key=identity test=eq|
+			       item sequence start)
+			      (|count seq-type=list from-end=false end=nil key=identity test=other|
+			       item sequence start test)))
+		      (if test-not-p
+			  (if (or (eq test-not #'eql) (eq test-not 'eql))
+			      (|count seq-type=list from-end=false end=nil key=identity test-not=eql|
+			       item sequence start)
+			      (if (or (eq test-not #'eq) (eq test-not 'eq))
+				  (|count seq-type=list from-end=false end=nil key=identity test-not=eq|
+				   item sequence start)
+				  (|count seq-type=list from-end=false end=nil key=identity test-not=other|
+				   item sequence start test-not)))
+			  (|count seq-type=list from-end=false end=nil key=identity test=eql|
+			   item sequence start))))))
+      (if (simple-string-p sequence)
+          (if from-end
+              (if key
+                  (if test-p
+                      (if (or (eq test #'eql) (eq test 'eql))
+                          (|count seq-type=simple-string from-end=true key=other test=eql|
+			   item sequence start (or end (length sequence)) key)
+                          (if (or (eq test #'eq) (eq test 'eq))
+                              (|count seq-type=simple-string from-end=true key=other test=eq|
+			       item sequence start (or end (length sequence)) key)
+                              (|count seq-type=simple-string from-end=true key=other test=other|
+			       item sequence start (or end (length sequence)) key test)))
+                      (if test-not-p
+                          (if (or (eq test-not #'eql) (eq test-not 'eql))
+                              (|count seq-type=simple-string from-end=true key=other test-not=eql|
+			       item sequence start (or end (length sequence)) key)
+                              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                  (|count seq-type=simple-string from-end=true key=other test-not=eq|
+				   item sequence start (or end (length sequence)) key)
+                                  (|count seq-type=simple-string from-end=true key=other test-not=other|
+				   item sequence start (or end (length sequence)) key test-not)))
+                          (|count seq-type=simple-string from-end=true key=other test=eql|
+			   item sequence start (or end (length sequence)) key)))
+                  (if test-p
+                      (if (or (eq test #'eql) (eq test 'eql))
+                          (|count seq-type=simple-string from-end=true key=identity test=eql|
+			   item sequence start (or end (length sequence)))
+                          (if (or (eq test #'eq) (eq test 'eq))
+                              (|count seq-type=simple-string from-end=true key=identity test=eq|
+			       item sequence start (or end (length sequence)))
+                              (|count seq-type=simple-string from-end=true key=identity test=other|
+			       item sequence start (or end (length sequence)) test)))
+                      (if test-not-p
+                          (if (or (eq test-not #'eql) (eq test-not 'eql))
+                              (|count seq-type=simple-string from-end=true key=identity test-not=eql|
+			       item sequence start (or end (length sequence)))
+                              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                  (|count seq-type=simple-string from-end=true key=identity test-not=eq|
+				   item sequence start (or end (length sequence)))
+                                  (|count seq-type=simple-string from-end=true key=identity test-not=other|
+				   item sequence start (or end (length sequence)) test-not)))
+                          (|count seq-type=simple-string from-end=true key=identity test=eql|
+			   item sequence start (or end (length sequence))))))
+              (if key
+                  (if test-p
+                      (if (or (eq test #'eql) (eq test 'eql))
+                          (|count seq-type=simple-string from-end=false key=other test=eql|
+			   item sequence start (or end (length sequence)) key)
+                          (if (or (eq test #'eq) (eq test 'eq))
+                              (|count seq-type=simple-string from-end=false key=other test=eq|
+			       item sequence start (or end (length sequence)) key)
+                              (|count seq-type=simple-string from-end=false key=other test=other|
+			       item sequence start (or end (length sequence)) key test)))
+                      (if test-not-p
+                          (if (or (eq test-not #'eql) (eq test-not 'eql))
+                              (|count seq-type=simple-string from-end=false key=other test-not=eql|
+			       item sequence start (or end (length sequence)) key)
+                              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                  (|count seq-type=simple-string from-end=false key=other test-not=eq|
+				   item sequence start (or end (length sequence)) key)
+                                  (|count seq-type=simple-string from-end=false key=other test-not=other|
+				   item sequence start (or end (length sequence)) key test-not)))
+                          (|count seq-type=simple-string from-end=false key=other test=eql|
+			   item sequence start (or end (length sequence)) key)))
+                  (if test-p
+                      (if (or (eq test #'eql) (eq test 'eql))
+                          (|count seq-type=simple-string from-end=false key=identity test=eql|
+			   item sequence start (or end (length sequence)))
+                          (if (or (eq test #'eq) (eq test 'eq))
+                              (|count seq-type=simple-string from-end=false key=identity test=eq|
+			       item sequence start (or end (length sequence)))
+                              (|count seq-type=simple-string from-end=false key=identity test=other|
+			       item sequence start (or end (length sequence)) test)))
+                      (if test-not-p
+                          (if (or (eq test-not #'eql) (eq test-not 'eql))
+                              (|count seq-type=simple-string from-end=false key=identity test-not=eql|
+			       item sequence start (or end (length sequence)))
+                              (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                  (|count seq-type=simple-string from-end=false key=identity test-not=eq|
+				   item sequence start (or end (length sequence)))
+                                  (|count seq-type=simple-string from-end=false key=identity test-not=other|
+				   item sequence start (or end (length sequence)) test-not)))
+                          (|count seq-type=simple-string from-end=false key=identity test=eql|
+			   item sequence start (or end (length sequence)))))))
+          (if (simple-vector-p sequence)
+              (if from-end
+                  (if key
+                      (if test-p
+                          (if (or (eq test #'eql) (eq test 'eql))
+                              (|count seq-type=simple-vector from-end=true key=other test=eql|
+			       item sequence start (or end (length sequence)) key)
+                              (if (or (eq test #'eq) (eq test 'eq))
+                                  (|count seq-type=simple-vector from-end=true key=other test=eq|
+				   item sequence start (or end (length sequence)) key)
+                                  (|count seq-type=simple-vector from-end=true key=other test=other|
+				   item sequence start (or end (length sequence)) key test)))
+                          (if test-not-p
+                              (if (or (eq test-not #'eql) (eq test-not 'eql))
+                                  (|count seq-type=simple-vector from-end=true key=other test-not=eql|
+				   item sequence start (or end (length sequence)) key)
+                                  (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                      (|count seq-type=simple-vector from-end=true key=other test-not=eq|
+				       item sequence start (or end (length sequence)) key)
+                                      (|count seq-type=simple-vector from-end=true key=other test-not=other|
+				       item sequence start (or end (length sequence)) key test-not)))
+                              (|count seq-type=simple-vector from-end=true key=other test=eql|
+			       item sequence start (or end (length sequence)) key)))
+                      (if test-p
+                          (if (or (eq test #'eql) (eq test 'eql))
+                              (|count seq-type=simple-vector from-end=true key=identity test=eql|
+			       item sequence start (or end (length sequence)))
+                              (if (or (eq test #'eq) (eq test 'eq))
+                                  (|count seq-type=simple-vector from-end=true key=identity test=eq|
+				   item sequence start (or end (length sequence)))
+                                  (|count seq-type=simple-vector from-end=true key=identity test=other|
+				   item sequence start (or end (length sequence)) test)))
+                          (if test-not-p
+                              (if (or (eq test-not #'eql) (eq test-not 'eql))
+                                  (|count seq-type=simple-vector from-end=true key=identity test-not=eql|
+				   item sequence start (or end (length sequence)))
+                                  (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                      (|count seq-type=simple-vector from-end=true key=identity test-not=eq|
+				       item sequence start (or end (length sequence)))
+                                      (|count seq-type=simple-vector from-end=true key=identity test-not=other|
+				       item sequence start (or end (length sequence)) test-not)))
+                              (|count seq-type=simple-vector from-end=true key=identity test=eql|
+			       item sequence start (or end (length sequence))))))
+                  (if key
+                      (if test-p
+                          (if (or (eq test #'eql) (eq test 'eql))
+                              (|count seq-type=simple-vector from-end=false key=other test=eql|
+			       item sequence start (or end (length sequence)) key)
+                              (if (or (eq test #'eq) (eq test 'eq))
+                                  (|count seq-type=simple-vector from-end=false key=other test=eq|
+				   item sequence start (or end (length sequence)) key)
+                                  (|count seq-type=simple-vector from-end=false key=other test=other|
+				   item sequence start (or end (length sequence)) key test)))
+                          (if test-not-p
+                              (if (or (eq test-not #'eql) (eq test-not 'eql))
+                                  (|count seq-type=simple-vector from-end=false key=other test-not=eql|
+				   item sequence start (or end (length sequence)) key)
+                                  (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                      (|count seq-type=simple-vector from-end=false key=other test-not=eq|
+				       item sequence start (or end (length sequence)) key)
+                                      (|count seq-type=simple-vector from-end=false key=other test-not=other|
+				       item sequence start (or end (length sequence)) key test-not)))
+                              (|count seq-type=simple-vector from-end=false key=other test=eql|
+			       item sequence start (or end (length sequence)) key)))
+                      (if test-p
+                          (if (or (eq test #'eql) (eq test 'eql))
+                              (|count seq-type=simple-vector from-end=false key=identity test=eql|
+			       item sequence start (or end (length sequence)))
+                              (if (or (eq test #'eq) (eq test 'eq))
+                                  (|count seq-type=simple-vector from-end=false key=identity test=eq|
+				   item sequence start (or end (length sequence)))
+                                  (|count seq-type=simple-vector from-end=false key=identity test=other|
+				   item sequence start (or end (length sequence)) test)))
+                          (if test-not-p
+                              (if (or (eq test-not #'eql) (eq test-not 'eql))
+                                  (|count seq-type=simple-vector from-end=false key=identity test-not=eql|
+				   item sequence start (or end (length sequence)))
+                                  (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                      (|count seq-type=simple-vector from-end=false key=identity test-not=eq|
+				       item sequence start (or end (length sequence)))
+                                      (|count seq-type=simple-vector from-end=false key=identity test-not=other|
+				       item sequence start (or end (length sequence)) test-not)))
+                              (|count seq-type=simple-vector from-end=false key=identity test=eql|
+			       item sequence start (or end (length sequence)))))))
+              (if from-end
+                  (if key
+                      (if test-p
+                          (if (or (eq test #'eql) (eq test 'eql))
+                              (|count seq-type=general-vector from-end=true key=other test=eql|
+			       item sequence start (or end (length sequence)) key)
+                              (if (or (eq test #'eq) (eq test 'eq))
+                                  (|count seq-type=general-vector from-end=true key=other test=eq|
+				   item sequence start (or end (length sequence)) key)
+                                  (|count seq-type=general-vector from-end=true key=other test=other|
+				   item sequence start (or end (length sequence)) key test)))
+                          (if test-not-p
+                              (if (or (eq test-not #'eql) (eq test-not 'eql))
+                                  (|count seq-type=general-vector from-end=true key=other test-not=eql|
+				   item sequence start (or end (length sequence)) key)
+                                  (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                      (|count seq-type=general-vector from-end=true key=other test-not=eq|
+				       item sequence start (or end (length sequence)) key)
+                                      (|count seq-type=general-vector from-end=true key=other test-not=other|
+				       item sequence start (or end (length sequence)) key test-not)))
+                              (|count seq-type=general-vector from-end=true key=other test=eql|
+			       item sequence start (or end (length sequence)) key)))
+                      (if test-p
+                          (if (or (eq test #'eql) (eq test 'eql))
+                              (|count seq-type=general-vector from-end=true key=identity test=eql|
+			       item sequence start (or end (length sequence)))
+                              (if (or (eq test #'eq) (eq test 'eq))
+                                  (|count seq-type=general-vector from-end=true key=identity test=eq|
+				   item sequence start (or end (length sequence)))
+                                  (|count seq-type=general-vector from-end=true key=identity test=other|
+				   item sequence start (or end (length sequence)) test)))
+                          (if test-not-p
+                              (if (or (eq test-not #'eql) (eq test-not 'eql))
+                                  (|count seq-type=general-vector from-end=true key=identity test-not=eql|
+				   item sequence start (or end (length sequence)))
+                                  (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                      (|count seq-type=general-vector from-end=true key=identity test-not=eq|
+				       item sequence start (or end (length sequence)))
+                                      (|count seq-type=general-vector from-end=true key=identity test-not=other|
+				       item sequence start (or end (length sequence)) test-not)))
+                              (|count seq-type=general-vector from-end=true key=identity test=eql|
+			       item sequence start (or end (length sequence))))))
+                  (if key
+                      (if test-p
+                          (if (or (eq test #'eql) (eq test 'eql))
+                              (|count seq-type=general-vector from-end=false key=other test=eql|
+			       item sequence start (or end (length sequence)) key)
+                              (if (or (eq test #'eq) (eq test 'eq))
+                                  (|count seq-type=general-vector from-end=false key=other test=eq|
+				   item sequence start (or end (length sequence)) key)
+                                  (|count seq-type=general-vector from-end=false key=other test=other|
+				   item sequence start (or end (length sequence)) key test)))
+                          (if test-not-p
+                              (if (or (eq test-not #'eql) (eq test-not 'eql))
+                                  (|count seq-type=general-vector from-end=false key=other test-not=eql|
+				   item sequence start (or end (length sequence)) key)
+                                  (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                      (|count seq-type=general-vector from-end=false key=other test-not=eq|
+				       item sequence start (or end (length sequence)) key)
+                                      (|count seq-type=general-vector from-end=false key=other test-not=other|
+				       item sequence start (or end (length sequence)) key test-not)))
+                              (|count seq-type=general-vector from-end=false key=other test=eql|
+			       item sequence start (or end (length sequence)) key)))
+                      (if test-p
+                          (if (or (eq test #'eql) (eq test 'eql))
+                              (|count seq-type=general-vector from-end=false key=identity test=eql|
+			       item sequence start (or end (length sequence)))
+                              (if (or (eq test #'eq) (eq test 'eq))
+                                  (|count seq-type=general-vector from-end=false key=identity test=eq|
+				   item sequence start (or end (length sequence)))
+                                  (|count seq-type=general-vector from-end=false key=identity test=other|
+				   item sequence start (or end (length sequence)) test)))
+                          (if test-not-p
+                              (if (or (eq test-not #'eql) (eq test-not 'eql))
+                                  (|count seq-type=general-vector from-end=false key=identity test-not=eql|
+				   item sequence start (or end (length sequence)))
+                                  (if (or (eq test-not #'eq) (eq test-not 'eq))
+                                      (|count seq-type=general-vector from-end=false key=identity test-not=eq|
+				       item sequence start (or end (length sequence)))
+                                      (|count seq-type=general-vector from-end=false key=identity test-not=other|
+				       item sequence start (or end (length sequence)) test-not)))
+                              (|count seq-type=general-vector from-end=false key=identity test=eql|
+			       item sequence start (or end (length sequence)))))))))))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function count-if
@@ -18697,16 +16326,7 @@
     (predicate vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (aref vector i))))
 
@@ -18714,16 +16334,7 @@
     (predicate vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (funcall key (aref vector i)))))
 
@@ -18731,16 +16342,7 @@
     (predicate vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (aref vector i))))
 
@@ -18748,16 +16350,7 @@
     (predicate vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (funcall key (aref vector i)))))
 
@@ -18765,16 +16358,7 @@
     (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (svref vector i))))
 
@@ -18782,16 +16366,7 @@
     (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (funcall key (svref vector i)))))
 
@@ -18799,16 +16374,7 @@
     (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (svref vector i))))
 
@@ -18816,16 +16382,7 @@
     (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (funcall key (svref vector i)))))
 
@@ -18833,16 +16390,7 @@
     (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (schar vector i))))
 
@@ -18850,16 +16398,7 @@
     (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i from start below end
 	count (funcall predicate (funcall key (schar vector i)))))
 
@@ -18867,16 +16406,7 @@
     (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (schar vector i))))
 
@@ -18884,178 +16414,99 @@
     (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if vector start end)
   (loop for i downfrom (1- end) to start
 	count (funcall predicate (funcall key (schar vector i)))))
 
 (defun |count-if seq-type=list from-end=false end=nil key=identity|
     (predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall predicate element))))
+  (loop for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (funcall predicate element)
+	finally (tail-must-be-proper-list 'count-if list remaining)))
 
 (defun |count-if seq-type=list from-end=false end=nil key=other|
     (predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall predicate (funcall key element)))))
+  (loop for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (funcall predicate (funcall key element))
+	finally (tail-must-be-proper-list 'count-if list remaining)))
 
 (defun |count-if seq-type=list from-end=false end=other key=identity|
     (predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall predicate element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (funcall predicate element)
+	finally (tail-must-be-proper-list-with-end 'count-if list remaining end index)))
 
 (defun |count-if seq-type=list from-end=false end=other key=other|
     (predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall predicate (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (funcall predicate (funcall key element))
+	finally (tail-must-be-proper-list-with-end 'count-if list remaining end index)))
 
 (defun |count-if seq-type=list from-end=true end=nil key=identity|
     (predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall predicate element))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall predicate (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if seq-type=list from-end=true end=nil key=other|
     (predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (funcall predicate (funcall key element)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall predicate (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if seq-type=list from-end=true end=other key=identity|
     (predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall predicate element)
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall predicate (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if seq-type=list from-end=true end=other key=other|
     (predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (funcall predicate (funcall key element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (when (funcall predicate (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if from-end=false end=nil key=identity|
     (predicate sequence start)
@@ -19210,16 +16661,7 @@
     (predicate vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (aref vector i)))))
 
@@ -19227,16 +16669,7 @@
     (predicate vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (funcall key (aref vector i))))))
 
@@ -19244,16 +16677,7 @@
     (predicate vector start end)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (aref vector i)))))
 
@@ -19261,16 +16685,7 @@
     (predicate vector start end key)
   (declare (type vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (funcall key (aref vector i))))))
 
@@ -19278,16 +16693,7 @@
     (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (svref vector i)))))
 
@@ -19295,16 +16701,7 @@
     (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (funcall key (svref vector i))))))
 
@@ -19312,16 +16709,7 @@
     (predicate vector start end)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (svref vector i)))))
 
@@ -19329,16 +16717,7 @@
     (predicate vector start end key)
   (declare (type simple-vector vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (funcall key (svref vector i))))))
 
@@ -19346,16 +16725,7 @@
     (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (schar vector i)))))
 
@@ -19363,16 +16733,7 @@
     (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i from start below end
 	count (not (funcall predicate (funcall key (schar vector i))))))
 
@@ -19380,16 +16741,7 @@
     (predicate vector start end)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (schar vector i)))))
 
@@ -19397,178 +16749,99 @@
     (predicate vector start end key)
   (declare (type simple-string vector)
 	   (type fixnum start end))
-  (unless (<= 0 start (length vector))
-    (error 'invalid-start-index
-	   :datum start
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
-  (unless (<= 0 end (length vector))
-    (error 'invalid-end-index
-	   :datum end
-	   :expected-type `(integer 0 ,(length vector))
-	   :in-sequence vector))
+  (verify-bounding-indexes 'count-if-not vector start end)
   (loop for i downfrom (1- end) to start
 	count (not (funcall predicate (funcall key (schar vector i))))))
 
 (defun |count-if-not seq-type=list from-end=false end=nil key=identity|
     (predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall predicate element)))))
+  (loop for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (funcall predicate element))
+	finally (tail-must-be-proper-list 'count-if list remaining)))
 
 (defun |count-if-not seq-type=list from-end=false end=nil key=other|
     (predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall predicate (funcall key element))))))
+  (loop for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (atom remaining)
+	for element = (car remaining)
+	count (not (funcall predicate (funcall key element)))
+	finally (tail-must-be-proper-list 'count-if list remaining)))
 
 (defun |count-if-not seq-type=list from-end=false end=other key=identity|
     (predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall predicate element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (funcall predicate element))
+	finally (tail-must-be-proper-list-with-end 'count-if list remaining end index)))
 
 (defun |count-if-not seq-type=list from-end=false end=other key=other|
     (predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall predicate (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (loop for index from start
+	for remaining = (skip-to-start 'count-if list start) then (cdr remaining)
+	until (or (atom remaining) (>= index end))
+	for element = (car remaining)
+	count (not (funcall predicate (funcall key element)))
+	finally (tail-must-be-proper-list-with-end 'count-if list remaining end index)))
 
 (defun |count-if-not seq-type=list from-end=true end=nil key=identity|
     (predicate list start)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall predicate element)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall predicate (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if-not seq-type=list from-end=true end=nil key=other|
     (predicate list start key)
-  (let ((remaining list)
-	(start-bis start))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  count (not (funcall predicate (funcall key element))))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (end (compute-length-from-remainder 'count list remaining start))
+	 (result 0))
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall predicate (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if-not seq-type=list from-end=true end=other key=identity|
     (predicate list start end)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall predicate element))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall predicate (car list))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if-not seq-type=list from-end=true end=other key=other|
     (predicate list start end key)
-  (let ((remaining list)
-	(start-bis start)
-	(end-start (- end start)))
-    (loop until (null remaining)
-	  until (zerop start-bis)
-	  do (setf remaining (cdr remaining))
-	     (decf start-bis))
-    (when (plusp start-bis)
-      (error 'invalid-start-index
-	     :datum start
-	     :expected-type `(integer 0 ,(- start start-bis))
-	     :in-sequence list))
-    (loop for element in remaining
-	  until (zerop end-start)
-	  count (not (funcall predicate (funcall key element)))
-	  do (decf end-start)
-	  finally (when (plusp end-start)
-		    (error 'invalid-end-index
-			   :datum end
-			   :expected-type `(integer 0 ,(- end end-start))
-			   :in-sequence list)))))
+  (let* ((remaining (skip-to-start 'count list start))
+	 (result 0))
+    (verify-end-index 'count list remaining start end)
+    (labels ((traverse-list-step-1 (list length)
+	       (if (<= length 0)
+		   nil
+		   (progn (traverse-list-step-1 (cdr list) (1- length))
+			  (unless (funcall predicate (funcall key (car list)))
+			    (incf result))))))
+      (traverse-list #'traverse-list-step-1 remaining (- end start) 1))
+    result))
 
 (defun |count-if-not from-end=false end=nil key=identity|
     (predicate sequence start)
