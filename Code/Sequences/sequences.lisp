@@ -22151,6 +22151,276 @@
 	     (setf (schar vector i) newitem)))
   vector)
 
+(defun |nsubstitute end=nil test=eql count=nil key=identity|
+    (newitem olditem sequence start)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test=eql count=nil key=identity|
+	  newitem olditem sequence start))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test=eql count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test=eql count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))
+	(t
+	 (|nsubstitute seq-type=general-vector test=eql count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))))
+
+(defun |nsubstitute end=nil test=eql count=nil key=other|
+    (newitem olditem sequence start key)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test=eql count=nil key=other|
+	  newitem olditem sequence start key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test=eql count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test=eql count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))
+	(t
+	 (|nsubstitute seq-type=general-vector test=eql count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))))
+
+(defun |nsubstitute end=nil test=eq count=nil key=identity|
+    (newitem olditem sequence start)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test=eq count=nil key=identity|
+	  newitem olditem sequence start))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test=eq count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test=eq count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))
+	(t
+	 (|nsubstitute seq-type=general-vector test=eq count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))))
+
+(defun |nsubstitute end=nil test=eq count=nil key=other|
+    (newitem olditem sequence start key)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test=eq count=nil key=other|
+	  newitem olditem sequence start key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test=eq count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test=eq count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))
+	(t
+	 (|nsubstitute seq-type=general-vector test=eq count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))))
+
+(defun |nsubstitute end=nil test=other count=nil key=identity|
+    (newitem olditem sequence start test)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test=other count=nil key=identity|
+	  newitem olditem sequence start test))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test=other count=nil key=identity|
+	  newitem olditem sequence start (length sequence) test))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test=other count=nil key=identity|
+	  newitem olditem sequence start (length sequence) test))
+	(t
+	 (|nsubstitute seq-type=general-vector test=other count=nil key=identity|
+	  newitem olditem sequence start (length sequence) test))))
+
+(defun |nsubstitute end=nil test=other count=nil key=other|
+    (newitem olditem sequence start test key)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test=other count=nil key=other|
+	  newitem olditem sequence start test key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test=other count=nil key=other|
+	  newitem olditem sequence start (length sequence) test key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test=other count=nil key=other|
+	  newitem olditem sequence start (length sequence) test key))
+	(t
+	 (|nsubstitute seq-type=general-vector test=other count=nil key=other|
+	  newitem olditem sequence start (length sequence) test key))))
+
+(defun |nsubstitute end=nil test-not=eql count=nil key=identity|
+    (newitem olditem sequence start)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test-not=eql count=nil key=identity|
+	  newitem olditem sequence start))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test-not=eql count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test-not=eql count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))
+	(t
+	 (|nsubstitute seq-type=general-vector test-not=eql count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))))
+
+(defun |nsubstitute end=nil test-not=eql count=nil key=other|
+    (newitem olditem sequence start key)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test-not=eql count=nil key=other|
+	  newitem olditem sequence start key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test-not=eql count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test-not=eql count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))
+	(t
+	 (|nsubstitute seq-type=general-vector test-not=eql count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))))
+
+(defun |nsubstitute end=nil test-not=eq count=nil key=identity|
+    (newitem olditem sequence start)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test-not=eq count=nil key=identity|
+	  newitem olditem sequence start))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test-not=eq count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test-not=eq count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))
+	(t
+	 (|nsubstitute seq-type=general-vector test-not=eq count=nil key=identity|
+	  newitem olditem sequence start (length sequence)))))
+
+(defun |nsubstitute end=nil test-not=eq count=nil key=other|
+    (newitem olditem sequence start key)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test-not=eq count=nil key=other|
+	  newitem olditem sequence start key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test-not=eq count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test-not=eq count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))
+	(t
+	 (|nsubstitute seq-type=general-vector test-not=eq count=nil key=other|
+	  newitem olditem sequence start (length sequence) key))))
+
+(defun |nsubstitute end=nil test-not=other count=nil key=identity|
+    (newitem olditem sequence start test-not)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test-not=other count=nil key=identity|
+	  newitem olditem sequence start test-not))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test-not=other count=nil key=identity|
+	  newitem olditem sequence start (length sequence) test-not))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test-not=other count=nil key=identity|
+	  newitem olditem sequence start (length sequence) test-not))
+	(t
+	 (|nsubstitute seq-type=general-vector test-not=other count=nil key=identity|
+	  newitem olditem sequence start (length sequence) test-not))))
+
+(defun |nsubstitute end=nil test-not=other count=nil key=other|
+    (newitem olditem sequence start test-not key)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list end=nil test-not=other count=nil key=other|
+	  newitem olditem sequence start test-not key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string test-not=other count=nil key=other|
+	  newitem olditem sequence start (length sequence) test-not key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector test-not=other count=nil key=other|
+	  newitem olditem sequence start (length sequence) test-not key))
+	(t
+	 (|nsubstitute seq-type=general-vector test-not=other count=nil key=other|
+	  newitem olditem sequence start (length sequence) test-not key))))
+
+(defun |nsubstitute from-end=false end=nil test=eql count=other key=identity|
+    (newitem olditem sequence start count)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list from-end=false end=nil test=eql count=other key=identity|
+	  newitem olditem sequence start count))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string from-end=false test=eql count=other key=identity|
+	  newitem olditem sequence start (length sequence) count))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector from-end=false test=eql count=other key=identity|
+	  newitem olditem sequence start (length sequence) count))
+	(t
+	 (|nsubstitute seq-type=simple-string from-end=false test=eql count=other key=identity|
+	  newitem olditem sequence start (length sequence) count))))
+
+(defun |nsubstitute from-end=false end=nil test=eql count=other key=other|
+    (newitem olditem sequence start count)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list from-end=false end=nil test=eql count=other key=other|
+	  newitem olditem sequence start count key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string from-end=false test=eql count=other key=other|
+	  newitem olditem sequence start (length sequence) count key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector from-end=false test=eql count=other key=other|
+	  newitem olditem sequence start (length sequence) count key))
+	(t
+	 (|nsubstitute seq-type=simple-string from-end=false test=eql count=other key=other|
+	  newitem olditem sequence start (length sequence) count key))))
+
+(defun |nsubstitute from-end=false end=nil test=eq count=other key=identity|
+    (newitem olditem sequence start count)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list from-end=false end=nil test=eq count=other key=identity|
+	  newitem olditem sequence start count))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string from-end=false test=eq count=other key=identity|
+	  newitem olditem sequence start (length sequence) count))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector from-end=false test=eq count=other key=identity|
+	  newitem olditem sequence start (length sequence) count))
+	(t
+	 (|nsubstitute seq-type=simple-string from-end=false test=eq count=other key=identity|
+	  newitem olditem sequence start (length sequence) count))))
+
+(defun |nsubstitute from-end=false end=nil test=eq count=other key=other|
+    (newitem olditem sequence start count)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list from-end=false end=nil test=eq count=other key=other|
+	  newitem olditem sequence start count key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string from-end=false test=eq count=other key=other|
+	  newitem olditem sequence start (length sequence) count key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector from-end=false test=eq count=other key=other|
+	  newitem olditem sequence start (length sequence) count key))
+	(t
+	 (|nsubstitute seq-type=simple-string from-end=false test=eq count=other key=other|
+	  newitem olditem sequence start (length sequence) count key))))
+
+(defun |nsubstitute from-end=false end=nil test=other count=other key=identity|
+    (newitem olditem sequence start test count)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list from-end=false end=nil test=other count=other key=identity|
+	  newitem olditem sequence start test count))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string from-end=false test=other count=other key=identity|
+	  newitem olditem sequence start (length sequence) test count))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector from-end=false test=other count=other key=identity|
+	  newitem olditem sequence start (length sequence) test count))
+	(t
+	 (|nsubstitute seq-type=simple-string from-end=false test=other count=other key=identity|
+	  newitem olditem sequence start (length sequence) test count))))
+
+(defun |nsubstitute from-end=false end=nil test=other count=other key=other|
+    (newitem olditem sequence start count key)
+  (cond ((listp sequence)
+	 (|nsubstitute seq-type=list from-end=false end=nil test=other count=other key=other|
+	  newitem olditem sequence start test count key))
+	((simple-string-p sequence)
+	 (|nsubstitute seq-type=simple-string from-end=false test=other count=other key=other|
+	  newitem olditem sequence start (length sequence) test count key))
+	((simple-vector-p sequence)
+	 (|nsubstitute seq-type=simple-vector from-end=false test=other count=other key=other|
+	  newitem olditem sequence start (length sequence) test count key))
+	(t
+	 (|nsubstitute seq-type=simple-string from-end=false test=other count=other key=other|
+	  newitem olditem sequence start (length sequence) test count key))))
+
 (defun nsubstitute
     (newitem olditem sequence &key from-end test test-not (start 0) end count key)
   (assert (or (null test) (null test-not)))
