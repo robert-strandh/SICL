@@ -131,6 +131,14 @@
 (define-condition invalid-end-index (invalid-bounding-index)
   ())
 
+;;; This condition is used to indicate that, although both
+;;; the start and the end indexes are valid bounding indexes 
+;;; separately, the end index is smaller than the start index. 
+;;; We reuse the datum in the type-error for the start index,
+;;; and add a slot for the end index.
+(define-condition end-less-than-start (invalid-bounding-index)
+  ((end-index :initarg :end-index :reader end-index)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Utilities
@@ -173,7 +181,7 @@
     (error 'must-be-proper-list
 	   :name name
 	   :datum list))
-  (when (< length end)
+  (when (and (atom tail) (< length end))
     (error 'invalid-end-index
 	   :name name
 	   :datum end
@@ -183,6 +191,7 @@
 ;;; This function is used when the sequence is a vector of some kind
 ;;; in order to verify that start and end are valid bounding indexes.
 ;;; It has already been verified that start is a nonnegative integer.
+;;; FIXME: What do we know about end?
 (defun verify-bounding-indexes (name vector start end)
   (let ((length (length vector)))
     (when (> start length)
@@ -196,6 +205,13 @@
 	     :name name
 	     :datum end
 	     :expected-type `(integer 0 ,length)
+	     :in-sequence vector))
+    (unless (<= start end)
+      (error 'end-less-than-start
+	     :name name
+	     :datum start
+	     :expected-type `(integer 0 ,end)
+	     :end-index end
 	     :in-sequence vector))))
 
 ;;; This function is used to compute the length of the list
@@ -1477,8 +1493,8 @@
 (defun find (item sequence
              &key
              from-end
-             test
-             test-not
+             (test nil test-p)
+             (test-not nil test-not-p)
              (start 0)
              end
              key)
@@ -1488,13 +1504,13 @@
 	   :name 'find
 	   :datum start
 	   :expected-type '(integer 0)))
-  (when (and test test-not)
+  (when (and test-p test-not-p)
     (error 'both-test-and-test-not-given
 	   :name 'find))
   (if from-end
       (if key
           (if end
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|find from-end=true end=other test=eql key=other|
                        item sequence start end key)
@@ -1503,7 +1519,7 @@
                            item sequence start end key)
                           (|find from-end=true end=other test=other key=other|
                            item sequence start end test key)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|find from-end=true end=other test-not=eql key=other|
                            item sequence start end key)
@@ -1514,7 +1530,7 @@
                                item sequence start end test-not key)))
                       (|find from-end=true end=other test=eql key=other|
                        item sequence start end key)))
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|find from-end=true end=nil test=eql key=other|
                        item sequence start key)
@@ -1523,7 +1539,7 @@
                            item sequence start key)
                           (|find from-end=true end=nil test=other key=other|
                            item sequence start test key)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|find from-end=true end=nil test-not=eql key=other|
                            item sequence start key)
@@ -1535,7 +1551,7 @@
                       (|find from-end=true end=nil test=eql key=other|
                        item sequence start key))))
           (if end
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|find from-end=true end=other test=eql key=identity|
                        item sequence start end)
@@ -1544,7 +1560,7 @@
                            item sequence start end)
                           (|find from-end=true end=other test=other key=identity|
                            item sequence start end test)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|find from-end=true end=other test-not=eql key=identity|
                            item sequence start end)
@@ -1555,7 +1571,7 @@
                                item sequence start end test-not)))
                       (|find from-end=true end=other test=eql key=identity|
                        item sequence start end)))
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|find from-end=true end=nil test=eql key=identity|
                        item sequence start)
@@ -1564,7 +1580,7 @@
                            item sequence start)
                           (|find from-end=true end=nil test=other key=identity|
                            item sequence start test)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|find from-end=true end=nil test-not=eql key=identity|
                            item sequence start)
@@ -1577,7 +1593,7 @@
                        item sequence start)))))
       (if key
           (if end
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|find from-end=false end=other test=eql key=other|
                        item sequence start end key)
@@ -1586,7 +1602,7 @@
                            item sequence start end key)
                           (|find from-end=false end=other test=other key=other|
                            item sequence start end test key)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|find from-end=false end=other test-not=eql key=other|
                            item sequence start end key)
@@ -1597,7 +1613,7 @@
                                item sequence start end test-not key)))
                       (|find from-end=false end=other test=eql key=other|
                        item sequence start end key)))
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|find from-end=false end=nil test=eql key=other|
                        item sequence start key)
@@ -1606,7 +1622,7 @@
                            item sequence start key)
                           (|find from-end=false end=nil test=other key=other|
                            item sequence start test key)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|find from-end=false end=nil test-not=eql key=other|
                            item sequence start key)
@@ -1618,7 +1634,7 @@
                       (|find from-end=false end=nil test=eql key=other|
                        item sequence start key))))
           (if end
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|find from-end=false end=other test=eql key=identity|
                        item sequence start end)
@@ -1627,7 +1643,7 @@
                            item sequence start end)
                           (|find from-end=false end=other test=other key=identity|
                            item sequence start end test)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|find from-end=false end=other test-not=eql key=identity|
                            item sequence start end)
@@ -1638,7 +1654,7 @@
                                item sequence start end test-not)))
                       (|find from-end=false end=other test=eql key=identity|
                        item sequence start end)))
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|find from-end=false end=nil test=eql key=identity|
                        item sequence start)
@@ -1647,7 +1663,7 @@
                            item sequence start)
                           (|find from-end=false end=nil test=other key=identity|
                            item sequence start test)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|find from-end=false end=nil test-not=eql key=identity|
                            item sequence start)
@@ -3631,8 +3647,8 @@
 (defun position (item sequence
              &key
              from-end
-             test
-             test-not
+             (test nil test-p)
+             (test-not nil test-not-p)
              (start 0)
              end
              key)
@@ -3642,13 +3658,13 @@
 	   :name 'position
 	   :datum start
 	   :expected-type '(integer 0)))
-  (when (and test test-not)
+  (when (and test-p test-not-p)
     (error 'both-test-and-test-not-given
 	   :name 'position))
   (if from-end
       (if key
           (if end
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|position from-end=true end=other test=eql key=other|
                        item sequence start end key)
@@ -3657,7 +3673,7 @@
                            item sequence start end key)
                           (|position from-end=true end=other-test key=other|
                            item sequence start end test key)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|position from-end=true end=other test-not=eql key=other|
                            item sequence start end key)
@@ -3668,7 +3684,7 @@
                                item sequence start end test-not key)))
                       (|position from-end=true end=other test=eql key=other|
                        item sequence start end key)))
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|position from-end=true end=nil test=eql key=other|
                        item sequence start key)
@@ -3677,7 +3693,7 @@
                            item sequence start key)
                           (|position from-end=true end=nil-test key=other|
                            item sequence start test key)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|position from-end=true end=nil test-not=eql key=other|
                            item sequence start key)
@@ -3689,7 +3705,7 @@
                       (|position from-end=true end=nil test=eql key=other|
                        item sequence start key))))
           (if end
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|position from-end=true end=other test=eql key=identity|
                        item sequence start end)
@@ -3698,7 +3714,7 @@
                            item sequence start end)
                           (|position from-end=true end=other-test key=identity|
                            item sequence start end test)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|position from-end=true end=other test-not=eql key=identity|
                            item sequence start end)
@@ -3709,7 +3725,7 @@
                                item sequence start end test-not)))
                       (|position from-end=true end=other test=eql key=identity|
                        item sequence start end)))
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|position from-end=true end=nil test=eql key=identity|
                        item sequence start)
@@ -3718,7 +3734,7 @@
                            item sequence start)
                           (|position from-end=true end=nil-test key=identity|
                            item sequence start test)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|position from-end=true end=nil test-not=eql key=identity|
                            item sequence start)
@@ -3731,7 +3747,7 @@
                        item sequence start)))))
       (if key
           (if end
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|position from-end=false end=other test=eql key=other|
                        item sequence start end key)
@@ -3740,7 +3756,7 @@
                            item sequence start end key)
                           (|position from-end=false end=other-test key=other|
                            item sequence start end test key)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|position from-end=false end=other test-not=eql key=other|
                            item sequence start end key)
@@ -3751,7 +3767,7 @@
                                item sequence start end test-not key)))
                       (|position from-end=false end=other test=eql key=other|
                        item sequence start end key)))
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|position from-end=false end=nil test=eql key=other|
                        item sequence start key)
@@ -3760,7 +3776,7 @@
                            item sequence start key)
                           (|position from-end=false end=nil-test key=other|
                            item sequence start test key)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|position from-end=false end=nil test-not=eql key=other|
                            item sequence start key)
@@ -3772,7 +3788,7 @@
                       (|position from-end=false end=nil test=eql key=other|
                        item sequence start key))))
           (if end
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|position from-end=false end=other test=eql key=identity|
                        item sequence start end)
@@ -3781,7 +3797,7 @@
                            item sequence start end)
                           (|position from-end=false end=other-test key=identity|
                            item sequence start end test)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|position from-end=false end=other test-not=eql key=identity|
                            item sequence start end)
@@ -3792,7 +3808,7 @@
                                item sequence start end test-not)))
                       (|position from-end=false end=other test=eql key=identity|
                        item sequence start end)))
-              (if test
+              (if test-p
                   (if (eq test #'eql)
                       (|position from-end=false end=nil test=eql key=identity|
                        item sequence start)
@@ -3801,7 +3817,7 @@
                            item sequence start)
                           (|position from-end=false end=nil-test key=identity|
                            item sequence start test)))
-                  (if test-not
+                  (if test-not-p
                       (if (eq test-not #'eql)
                           (|position from-end=false end=nil test-not=eql key=identity|
                            item sequence start)
@@ -6920,14 +6936,24 @@
 	       (decf count))
     (copy-result-simple-string vector start end bit-vector delete-count)))
 
-(defun remove (item sequence &key from-end test test-not (start 0) end count key)
-  (assert (or (null test) (null test-not)))
+(defun remove (item sequence
+	       &key
+	       from-end
+	       (test nil test-p)
+	       (test-not nil test-not-p)
+	       (start 0)
+	       end
+	       count
+	       key)
+  (when (and test-p test-not-p)
+    (error 'both-test-and-test-not-given
+	   :name 'remove))
   ;; FIXME test if it is a sequence at all.
   (if (listp sequence)
       ;; seq-type=list
       (if from-end
 	  ;; seq-type=list from-end=t
-	  (if test
+	  (if test-p
 	      ;; seq-type=list from-end=true test=?
 	      (if (or (eq test 'eq) (eq test #'eq))
 		  ;; seq-type=list from-end=true test=eq
@@ -7045,7 +7071,7 @@
 				  ;;       seq-type=list test=other end=nil count=nil key=identity
 				  (|remove seq-type=list test=other end=nil count=nil key=identity|
 				   item sequence test start))))))
-	      (if test-not
+	      (if test-not-p
 		  ;; seq-type=list from-end=true test-not=other
 		  (if end
 		      ;; seq-type=list from-end=true test-not=other end=other
@@ -7120,7 +7146,7 @@
 			      (|remove seq-type=list test=eql end=nil count=nil key=identity|
 			       item sequence start))))))
 	  ;; seq-type=list from-end=false
-	  (if test
+	  (if test-p
 	      ;; seq-type=list from-end=false test=?
 	      (if (or (eq test 'eq) (eq test #'eq))
 		  ;; seq-type=list from-end=false test=eq
@@ -7236,7 +7262,7 @@
 				   item sequence test start key)
 				  (|remove seq-type=list test=other end=nil count=nil key=identity|
 				   item sequence test start))))))
-	      (if test-not
+	      (if test-not-p
 		  ;; seq-type=list from-end=false test-not=other
 		  (if end
 		      ;; seq-type=list from-end=false test-not=other end=other
@@ -7312,7 +7338,7 @@
 			       item sequence start)))))))
       (if (simple-string-p sequence)
 	  ;; seq-type=simple-string
-	  (if test
+	  (if test-p
 	      ;; seq-type=simple-string test=given
 	      (if (or (eq test 'eq) (eq test #'eq))
 		  ;; seq-type=simple-string test=eq
@@ -7496,7 +7522,7 @@
 				  ;;       seq-type=simple-string test=other count=nil key=identity end=nil 
 				  (|remove seq-type=simple-string test=other count=nil key=identity|
 				   item sequence test start (length sequence)))))))
-	      (if test-not
+	      (if test-not-p
 		  ;; seq-type=simple-string test-not=other
 		  (if end
 		      ;; seq-type=simple-string test-not=other end=other
@@ -7619,7 +7645,7 @@
 			       item sequence start (length sequence)))))))
 	  (if (simple-vector-p sequence)
 	      ;; seq-type=simple-vector
-	      (if test
+	      (if test-p
 		  ;; seq-type=simple-vector test=given
 		  (if (or (eq test 'eq) (eq test #'eq))
 		      ;; seq-type=simple-vector test=eq
@@ -7803,7 +7829,7 @@
 				      ;;       seq-type=simple-vector test=other count=nil key=identity end=nil 
 				      (|remove seq-type=simple-vector test=other count=nil key=identity|
 				       item sequence test start (length sequence)))))))
-		  (if test-not
+		  (if test-not-p
 		      ;; seq-type=simple-vector test-not=other
 		      (if end
 			  ;; seq-type=simple-vector test-not=other end=other
@@ -7925,7 +7951,7 @@
 				  (|remove seq-type=simple-vector test=eql count=nil key=identity|
 				   item sequence start (length sequence)))))))
 	      ;; seq-type=general-vector
-	      (if test
+	      (if test-p
 		  ;; seq-type=general-vector test=given
 		  (if (or (eq test 'eq) (eq test #'eq))
 		      ;; seq-type=general-vector test=eq
@@ -8109,7 +8135,7 @@
 				      ;;       seq-type=general-vector test=other count=nil key=identity end=nil 
 				      (|remove seq-type=general-vector test=other count=nil key=identity|
 				       item sequence test start (length sequence)))))))
-		  (if test-not
+		  (if test-not-p
 		      ;; seq-type=general-vector test-not=other
 		      (if end
 			  ;; seq-type=general-vector test-not=other end=other
@@ -11805,14 +11831,24 @@
 
 ;;; For now, use the corresponding remove functions on sequences
 
-(defun delete (item sequence &key from-end test test-not (start 0) end count key)
-  (assert (or (null test) (null test-not)))
+(defun delete (item sequence
+	       &key
+	       from-end
+	       (test nil test-p)
+	       (test-not nil test-not-p)
+	       (start 0)
+	       end
+	       count
+	       key)
+  (when (and test-p test-not-p)
+    (error 'both-test-and-test-not-given
+	   :name 'delete))
   ;; FIXME test if it is a sequence at all.
   (if (listp sequence)
       ;; seq-type=list
       (if from-end
 	  ;; seq-type=list from-end=t
-	  (if test
+	  (if test-p
 	      ;; seq-type=list from-end=true test=?
 	      (if (or (eq test 'eq) (eq test #'eq))
 		  ;; seq-type=list from-end=true test=eq
@@ -11930,7 +11966,7 @@
 				  ;;       seq-type=list test=other end=nil count=nil key=identity
 				  (|delete seq-type=list test=other end=nil count=nil key=identity|
 				   item sequence test start))))))
-	      (if test-not
+	      (if test-not-p
 		  ;; seq-type=list from-end=true test-not=other
 		  (if end
 		      ;; seq-type=list from-end=true test-not=other end=other
@@ -12005,7 +12041,7 @@
 			      (|delete seq-type=list test=eql end=nil count=nil key=identity|
 			       item sequence start))))))
 	  ;; seq-type=list from-end=false
-	  (if test
+	  (if test-p
 	      ;; seq-type=list from-end=false test=?
 	      (if (or (eq test 'eq) (eq test #'eq))
 		  ;; seq-type=list from-end=false test=eq
@@ -12121,7 +12157,7 @@
 				   item sequence test start key)
 				  (|delete seq-type=list test=other end=nil count=nil key=identity|
 				   item sequence test start))))))
-	      (if test-not
+	      (if test-not-p
 		  ;; seq-type=list from-end=false test-not=other
 		  (if end
 		      ;; seq-type=list from-end=false test-not=other end=other
@@ -12197,7 +12233,7 @@
 			       item sequence start)))))))
       (if (simple-string-p sequence)
 	  ;; seq-type=simple-string
-	  (if test
+	  (if test-p
 	      ;; seq-type=simple-string test=given
 	      (if (or (eq test 'eq) (eq test #'eq))
 		  ;; seq-type=simple-string test=eq
@@ -12381,7 +12417,7 @@
 				  ;;       seq-type=simple-string test=other count=nil key=identity end=nil 
 				  (|remove seq-type=simple-string test=other count=nil key=identity|
 				   item sequence test start (length sequence)))))))
-	      (if test-not
+	      (if test-not-p
 		  ;; seq-type=simple-string test-not=other
 		  (if end
 		      ;; seq-type=simple-string test-not=other end=other
@@ -12504,7 +12540,7 @@
 			       item sequence start (length sequence)))))))
 	  (if (simple-vector-p sequence)
 	      ;; seq-type=simple-vector
-	      (if test
+	      (if test-p
 		  ;; seq-type=simple-vector test=given
 		  (if (or (eq test 'eq) (eq test #'eq))
 		      ;; seq-type=simple-vector test=eq
@@ -12688,7 +12724,7 @@
 				      ;;       seq-type=simple-vector test=other count=nil key=identity end=nil 
 				      (|remove seq-type=simple-vector test=other count=nil key=identity|
 				       item sequence test start (length sequence)))))))
-		  (if test-not
+		  (if test-not-p
 		      ;; seq-type=simple-vector test-not=other
 		      (if end
 			  ;; seq-type=simple-vector test-not=other end=other
@@ -12810,7 +12846,7 @@
 				  (|remove seq-type=simple-vector test=eql count=nil key=identity|
 				   item sequence start (length sequence)))))))
 	      ;; seq-type=general-vector
-	      (if test
+	      (if test-p
 		  ;; seq-type=general-vector test=given
 		  (if (or (eq test 'eq) (eq test #'eq))
 		      ;; seq-type=general-vector test=eq
@@ -12994,7 +13030,7 @@
 				      ;;       seq-type=general-vector test=other count=nil key=identity end=nil 
 				      (|remove seq-type=general-vector test=other count=nil key=identity|
 				       item sequence test start (length sequence)))))))
-		  (if test-not
+		  (if test-not-p
 		      ;; seq-type=general-vector test-not=other
 		      (if end
 			  ;; seq-type=general-vector test-not=other end=other
