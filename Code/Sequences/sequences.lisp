@@ -15952,7 +15952,7 @@
 	  item sequence start (length sequence) key))))
 
 (defun |count from-end=false end=nil key=other test=eq|
-    (item sequence start)
+    (item sequence start key)
   (cond ((listp sequence)
 	 (|count seq-type=list from-end=false end=nil key=other test=eq|
 	  item sequence start key))
@@ -16042,7 +16042,7 @@
 	  item sequence start end key))))
 
 (defun |count from-end=false end=other key=other test=eq|
-    (item sequence start end)
+    (item sequence start end key)
   (cond ((listp sequence)
 	 (|count seq-type=list from-end=false end=other key=other test=eq|
 	  item sequence start end key))
@@ -16132,7 +16132,7 @@
 	  item sequence start (length sequence) key))))
 
 (defun |count from-end=false end=nil key=other test-not=eq|
-    (item sequence start)
+    (item sequence start key)
   (cond ((listp sequence)
 	 (|count seq-type=list from-end=false end=nil key=other test-not=eq|
 	  item sequence start key))
@@ -16222,7 +16222,7 @@
 	  item sequence start end key))))
 
 (defun |count from-end=false end=other key=other test-not=eq|
-    (item sequence start end)
+    (item sequence start end key)
   (cond ((listp sequence)
 	 (|count seq-type=list from-end=false end=other key=other test-not=eq|
 	  item sequence start end key))
@@ -16312,7 +16312,7 @@
 	  item sequence start (length sequence) key))))
 
 (defun |count from-end=true end=nil key=other test=eq|
-    (item sequence start)
+    (item sequence start key)
   (cond ((listp sequence)
 	 (|count seq-type=list from-end=true end=nil key=other test=eq|
 	  item sequence start key))
@@ -16402,7 +16402,7 @@
 	  item sequence start end key))))
 
 (defun |count from-end=true end=other key=other test=eq|
-    (item sequence start end)
+    (item sequence start end key)
   (cond ((listp sequence)
 	 (|count seq-type=list from-end=true end=other key=other test=eq|
 	  item sequence start end key))
@@ -16492,7 +16492,7 @@
 	  item sequence start (length sequence) key))))
 
 (defun |count from-end=true end=nil key=other test-not=eq|
-    (item sequence start)
+    (item sequence start key)
   (cond ((listp sequence)
 	 (|count seq-type=list from-end=true end=nil key=other test-not=eq|
 	  item sequence start key))
@@ -16582,7 +16582,7 @@
 	  item sequence start end key))))
 
 (defun |count from-end=true end=other key=other test-not=eq|
-    (item sequence start end)
+    (item sequence start end key)
   (cond ((listp sequence)
 	 (|count seq-type=list from-end=true end=other key=other test-not=eq|
 	  item sequence start end key))
@@ -20089,7 +20089,7 @@
 	  newitem olditem sequence start (length sequence) count))))
 
 (defun |nsubstitute from-end=false end=nil test=eql count=other key=other|
-    (newitem olditem sequence start count)
+    (newitem olditem sequence start count key)
   (cond ((listp sequence)
 	 (|nsubstitute seq-type=list from-end=false end=nil test=eql count=other key=other|
 	  newitem olditem sequence start count key))
@@ -20119,7 +20119,7 @@
 	  newitem olditem sequence start (length sequence) count))))
 
 (defun |nsubstitute from-end=false end=nil test=eq count=other key=other|
-    (newitem olditem sequence start count)
+    (newitem olditem sequence start count key)
   (cond ((listp sequence)
 	 (|nsubstitute seq-type=list from-end=false end=nil test=eq count=other key=other|
 	  newitem olditem sequence start count key))
@@ -20149,7 +20149,7 @@
 	  newitem olditem sequence start (length sequence) test count))))
 
 (defun |nsubstitute from-end=false end=nil test=other count=other key=other|
-    (newitem olditem sequence start count key)
+    (newitem olditem sequence start test count key)
   (cond ((listp sequence)
 	 (|nsubstitute seq-type=list from-end=false end=nil test=other count=other key=other|
 	  newitem olditem sequence start test count key))
