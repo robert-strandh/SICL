@@ -7100,156 +7100,96 @@
 	   :name 'remove))
   ;; FIXME test if it is a sequence at all.
   (if (listp sequence)
-      ;; seq-type=list
       (if from-end
-	  ;; seq-type=list from-end=t
 	  (if test-p
-	      ;; seq-type=list from-end=true test=?
 	      (if (or (eq test 'eq) (eq test #'eq))
-		  ;; seq-type=list from-end=true test=eq
 		  (if end
-		      ;; seq-type=list from-end=true end=other test=eq
 		      (if count
-			  ;; seq-type=list from-end=true end=other test=eq count=other
 			  (if key
-			      ;;       seq-type=list from-end=true end=other test=eq count=other key=other
 			      (|remove seq-type=list from-end=true end=other test=eq count=other key=other|
 			       item sequence start end count key)
-			      ;;       seq-type=list from-end=true end=other test=eq count=other key=identity
 			      (|remove seq-type=list from-end=true end=other test=eq count=other key=identity|
 			       item sequence start end count))
-			  ;; seq-type=list from-end=true end=other test=eq count=nil
 			  (if key
-			      ;;       seq-type=list end=other test=eq count=nil key=other
 			      (|remove seq-type=list end=other test=eq count=nil key=other|
 			       item sequence start end key)
-			      ;;       seq-type=list end=other test=eq count=nil key=identity
 			      (|remove seq-type=list end=other test=eq count=nil key=identity|
 			       item sequence start end)))
-		      ;; seq-type=list from-end=true end=nil test=eq
 		      (if count
-			  ;; seq-type=list from-end=true end=nil test=eq count=other
 			  (if key
-			      ;;       seq-type=list from-end=true end=nil test=eq count=other key=other
 			      (|remove seq-type=list from-end=true end=nil test=eq count=other key=other|
 			       item sequence start count key)
-			      ;;       seq-type=list from-end=true end=nil test=eq count=other key=identity
 			      (|remove seq-type=list from-end=true end=nil test=eq count=other key=identity|
 			       item sequence start count))
-			  ;; seq-type=list from-end=true end=nil test=eq count=nil
 			  (if key
-			      ;;       seq-type=list end=nil test=eq count=nil key=other
 			      (|remove seq-type=list end=nil test=eq count=nil key=other|
 			       item sequence start key)
-			      ;;       seq-type=list end=nil test=eq count=nil key=identity
 			      (|remove seq-type=list end=nil test=eq count=nil key=identity|
 			       item sequence start))))
 		  (if (or (eq test 'eql) (eq test #'eql))
-		      ;; seq-type=list from-end=true test=eql
 		      (if end
-			  ;; seq-type=list from-end=true end=other test=eql
 			  (if count
-			      ;; seq-type=list from-end=true end=other test=eql count=other
 			      (if key
-				  ;;       seq-type=list from-end=true end=other test=eql count=other key=other
 				  (|remove seq-type=list from-end=true end=other test=eql count=other key=other|
 				   item sequence start end count key)
-				  ;;       seq-type=list from-end=true end=other test=eql count=other key=identity
 				  (|remove seq-type=list from-end=true end=other test=eql count=other key=identity|
 				   item sequence start end count))
-			      ;; seq-type=list from-end=true end=other test=eql count=nil
 			      (if key
-				  ;;       seq-type=list end=other test=eql count=nil key=other
 				  (|remove seq-type=list end=other test=eql count=nil key=other|
 				   item sequence start end key)
-				  ;;       seq-type=list end=other test=eql count=nil key=identity
 				  (|remove seq-type=list end=other test=eql count=nil key=identity|
 				   item sequence start end)))
-			  ;; seq-type=list from-end=true end=nil test=eql
 			  (if count
-			      ;; seq-type=list from-end=true end=nil test=eql count=other
 			      (if key
-				  ;;       seq-type=list from-end=true end=nil test=eql count=other key=other
 				  (|remove seq-type=list from-end=true end=nil test=eql count=other key=other|
 				   item sequence start count key)
-				  ;;       seq-type=list from-end=true end=nil test=eql count=other key=identity
 				  (|remove seq-type=list from-end=true end=nil test=eql count=other key=identity|
 				   item sequence start count))
-			      ;; seq-type=list from-end=true end=nil test=eql count=nil
 			      (if key
-				  ;;       seq-type=list end=nil test=eql count=nil key=other
 				  (|remove seq-type=list end=nil test=eql count=nil key=other|
 				   item sequence start key)
-				  ;;       seq-type=list end=nil test=eql count=nil key=identity
 				  (|remove seq-type=list end=nil test=eql count=nil key=identity|
 				   item sequence start))))
-		      ;; seq-type=list from-end=true test=other
 		      (if end
-			  ;; seq-type=list from-end=true end=other test=other
 			  (if count
-			      ;; seq-type=list from-end=true end=other test=other count=other
 			      (if key
-				  ;;       seq-type=list from-end=true end=other test=other count=other key=other
 				  (|remove seq-type=list from-end=true end=other test=other count=other key=other|
 				   item sequence start end test count key)
-				  ;;       seq-type=list from-end=true end=other test=other count=other key=identity
 				  (|remove seq-type=list from-end=true end=other test=other count=other key=identity|
 				   item sequence start end test count))
-			      ;; seq-type=list from-end=true end=other test=other count=nil
 			      (if key
-				  ;;       seq-type=list end=other test=other count=nil key=other
 				  (|remove seq-type=list end=other test=other count=nil key=other|
 				   item sequence start end test key)
-				  ;;       seq-type=list end=other test=other count=nil key=identity
 				  (|remove seq-type=list end=other test=other count=nil key=identity|
 				   item sequence start end test)))
-			  ;; seq-type=list from-end=true end=nil test=other
 			  (if count
-			      ;; seq-type=list from-end=true end=nil test=other count=other
 			      (if key
-				  ;;       seq-type=list from-end=true end=nil test=other count=other key=other
 				  (|remove seq-type=list from-end=true end=nil test=other count=other key=other|
 				   item sequence start test count key)
-				  ;;       seq-type=list from-end=true end=nil test=other count=other key=identity
 				  (|remove seq-type=list from-end=true end=nil test=other count=other key=identity|
 				   item sequence start test count))
-			      ;; seq-type=list from-end=true end=nil test=other count=nil
 			      (if key
-				  ;;       seq-type=list end=nil test=other count=nil key=other
 				  (|remove seq-type=list end=nil test=other count=nil key=other|
 				   item sequence start test key)
-				  ;;       seq-type=list end=nil test=other count=nil key=identity
 				  (|remove seq-type=list end=nil test=other count=nil key=identity|
 				   item sequence start test))))))
 	      (if test-not-p
-		  ;; seq-type=list from-end=true test-not=other
 		  (if end
-		      ;; seq-type=list from-end=true test-not=other end=other
 		      (if count
-			  ;; seq-type=list from-end=true test-not=other end=other count=other
 			  (if key
-			      ;;       seq-type=list from-end=true test-not=other end=other count=other key=other
 			      (|remove seq-type=list from-end=true test-not=other end=other count=other key=other|
 			       item sequence start end test-not count key)
-			      ;;       seq-type=list from-end=true test-not=other end=other count=other key=identity
 			      (|remove seq-type=list from-end=true test-not=other end=other count=other key=identity|
 			       item sequence start end test-not count))
-			  ;; seq-type=list from-end=true test-not=other end=other count=nil
 			  (if key
-			      ;;       seq-type=list test-not=other end=other count=nil key=other
 			      (|remove seq-type=list test-not=other end=other count=nil key=other|
 			       item sequence start end test-not key)
-			      ;;       seq-type=list test-not=other end=other count=nil key=identity
 			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
 			       item sequence start end test-not)))
-		      ;; seq-type=list from-end=true test-not=other end=nil
 		      (if count
-			  ;; seq-type=list from-end=true test-not=other end=nil count=other
 			  (if key
-			      ;;       seq-type=list from-end=true test-not=other end=nil count=other key=other
 			      (|remove seq-type=list from-end=true test-not=other end=nil count=other key=other|
 			       item sequence start test-not count key)
-			      ;;       seq-type=list from-end=true test-not=other end=nil count=other key=identity
 			      (|remove seq-type=list from-end=true test-not=other end=nil count=other key=identity|
 			       item sequence start test-not count))
 			  (if key
@@ -7257,190 +7197,118 @@
 			       item sequence start test-not key)
 			      (|remove seq-type=list test-not=other end=nil count=nil key=identity|
 			       item sequence start test-not))))
-		  ;; seq-type=list from-end=true test=eql
 		  (if end
-		      ;; seq-type=list from-end=true end=other test=eql
 		      (if count
-			  ;; seq-type=list from-end=true end=other test=eql count=other
 			  (if key
-			      ;;       seq-type=list from-end=true end=other test=eql count=other key=other
 			      (|remove seq-type=list from-end=true end=other test=eql count=other key=other|
 			       item sequence start end count key)
-			      ;;       seq-type=list from-end=true end=other test=eql count=other key=identity
 			      (|remove seq-type=list from-end=true end=other test=eql count=other key=identity|
 			       item sequence start end count))
-			  ;; seq-type=list from-end=true end=other test=eql count=nil
 			  (if key
-			      ;;       seq-type=list end=other test=eql count=nil key=other
 			      (|remove seq-type=list end=other test=eql count=nil key=other|
 			       item sequence start end key)
-			      ;;       seq-type=list end=other test=eql count=nil key=identity
 			      (|remove seq-type=list end=other test=eql count=nil key=identity|
 			       item sequence start end)))
-		      ;; seq-type=list from-end=true end=nil test=eql
 		      (if count
-			  ;; seq-type=list from-end=true end=nil test=eql count=other
 			  (if key
-			      ;;       seq-type=list from-end=true end=nil test=eql count=other key=other
 			      (|remove seq-type=list from-end=true end=nil test=eql count=other key=other|
 			       item sequence start count key)
-			      ;;       seq-type=list from-end=true end=nil test=eql count=other key=identity
 			      (|remove seq-type=list from-end=true end=nil test=eql count=other key=identity|
 			       item sequence start count))
-			  ;; seq-type=list from-end=true end=nil test=eql count=nil
 			  (if key
-			      ;;       seq-type=list end=nil test=eql count=nil key=other
 			      (|remove seq-type=list end=nil test=eql count=nil key=other|
 			       item sequence start key)
-			      ;;       seq-type=list end=nil test=eql count=nil key=identity
 			      (|remove seq-type=list end=nil test=eql count=nil key=identity|
 			       item sequence start))))))
-	  ;; seq-type=list from-end=false
 	  (if test-p
-	      ;; seq-type=list from-end=false test=?
 	      (if (or (eq test 'eq) (eq test #'eq))
-		  ;; seq-type=list from-end=false test=eq
 		  (if end
-		      ;; seq-type=list from-end=false end=other test=eq
 		      (if count
-			  ;; seq-type=list from-end=false end=other test=eq count=other
 			  (if key
-			      ;;       seq-type=list from-end=false end=other test=eq count=other key=other
 			      (|remove seq-type=list from-end=false end=other test=eq count=other key=other|
 			       item sequence start end count key)
-			      ;;       seq-type=list from-end=false end=other test=eq count=other key=identity
 			      (|remove seq-type=list from-end=false end=other test=eq count=other key=identity|
 			       item sequence start end count))
-			  ;; seq-type=list from-end=false end=other test=eq count=nil
 			  (if key
-			      ;;       seq-type=list end=other test=eq count=nil key=other
 			      (|remove seq-type=list end=other test=eq count=nil key=other|
 			       item sequence start end key)
-			      ;;       seq-type=list end=other test=eq count=nil key=identity
 			      (|remove seq-type=list end=other test=eq count=nil key=identity|
 			       item sequence start end)))
-		      ;; seq-type=list from-end=false end=nil test=eq
 		      (if count
-			  ;; seq-type=list from-end=false end=nil test=eq count=other
 			  (if key
-			      ;;       seq-type=list from-end=false end=nil test=eq count=other key=other
 			      (|remove seq-type=list from-end=false end=nil test=eq count=other key=other|
 			       item sequence start count key)
-			      ;;       seq-type=list from-end=false end=nil test=eq count=other key=identity
 			      (|remove seq-type=list from-end=false end=nil test=eq count=other key=identity|
 			       item sequence start count))
-			  ;; seq-type=list from-end=false end=nil test=eq count=nil
 			  (if key
-			      ;;       seq-type=list end=nil test=eq count=nil key=other
 			      (|remove seq-type=list end=nil test=eq count=nil key=other|
 			       item sequence start key)
-			      ;;       seq-type=list end=nil test=eq count=nil key=identity
 			      (|remove seq-type=list end=nil test=eq count=nil key=identity|
 			       item sequence start))))
 		  (if (or (eq test 'eql) (eq test #'eql))
-		      ;; seq-type=list from-end=false test=eql
 		      (if end
-			  ;; seq-type=list from-end=false end=other test=eql
 			  (if count
-			      ;; seq-type=list from-end=false end=other test=eql count=other
 			      (if key
-				  ;;       seq-type=list from-end=false end=other test=eql count=other key=other
 				  (|remove seq-type=list from-end=false end=other test=eql count=other key=other|
 				   item sequence start end count key)
-				  ;;       seq-type=list from-end=false end=other test=eql count=other key=identity
 				  (|remove seq-type=list from-end=false end=other test=eql count=other key=identity|
 				   item sequence start end count))
-			      ;; seq-type=list from-end=false end=other test=eql count=nil
 			      (if key
-				  ;;       seq-type=list end=other test=eql count=nil key=other
 				  (|remove seq-type=list end=other test=eql count=nil key=other|
 				   item sequence start end key)
-				  ;;       seq-type=list end=other test=eql count=nil key=identity
 				  (|remove seq-type=list end=other test=eql count=nil key=identity|
 				   item sequence start end)))
-			  ;; seq-type=list from-end=false end=nil test=eql
 			  (if count
-			      ;; seq-type=list from-end=false end=nil test=eql count=other
 			      (if key
-				  ;;       seq-type=list from-end=false end=nil test=eql count=other key=other
 				  (|remove seq-type=list from-end=false end=nil test=eql count=other key=other|
 				   item sequence start count key)
-				  ;;       seq-type=list from-end=false end=nil test=eql count=other key=identity
 				  (|remove seq-type=list from-end=false end=nil test=eql count=other key=identity|
 				   item sequence start count))
-			      ;; seq-type=list from-end=false end=nil test=eql count=nil
 			      (if key
-				  ;;       seq-type=list end=nil test=eql count=nil key=other
 				  (|remove seq-type=list end=nil test=eql count=nil key=other|
 				   item sequence start key)
 				  (|remove seq-type=list end=nil test=eql count=nil key=identity|
 				   item sequence start))))
-		      ;; seq-type=list from-end=false test=other
 		      (if end
-			  ;; seq-type=list from-end=false end=other test=other
 			  (if count
-			      ;; seq-type=list from-end=false end=other test=other count=other
 			      (if key
-				  ;;       seq-type=list from-end=false end=other test=other count=other key=other
 				  (|remove seq-type=list from-end=false end=other test=other count=other key=other|
 				   item sequence start end test count key)
-				  ;;       seq-type=list from-end=false end=other test=other count=other key=identity
 				  (|remove seq-type=list from-end=false end=other test=other count=other key=identity|
 				   item sequence start end test count))
-			      ;; seq-type=list from-end=false end=other test=other count=nil
 			      (if key
-				  ;;       seq-type=list end=other test=other count=nil key=other
 				  (|remove seq-type=list end=other test=other count=nil key=other|
 				   item sequence start end test key)
-				  ;;       seq-type=list end=other test=other count=nil key=identity
 				  (|remove seq-type=list end=other test=other count=nil key=identity|
 				   item sequence start end test)))
-			  ;; seq-type=list from-end=false end=nil test=other
 			  (if count
-			      ;; seq-type=list from-end=false end=nil test=other count=other
 			      (if key
-				  ;;       seq-type=list from-end=false end=nil test=other count=other key=other
 				  (|remove seq-type=list from-end=false end=nil test=other count=other key=other|
 				   item sequence start test count key)
-				  ;;       seq-type=list from-end=false end=nil test=other count=other key=identity
 				  (|remove seq-type=list from-end=false end=nil test=other count=other key=identity|
 				   item sequence start test count))
-			      ;; seq-type=list from-end=false end=nil test=other count=nil
 			      (if key
-				  ;;       seq-type=list end=nil test=other count=nil key=other
 				  (|remove seq-type=list end=nil test=other count=nil key=other|
 				   item sequence start test key)
 				  (|remove seq-type=list end=nil test=other count=nil key=identity|
 				   item sequence start test))))))
 	      (if test-not-p
-		  ;; seq-type=list from-end=false test-not=other
 		  (if end
-		      ;; seq-type=list from-end=false test-not=other end=other
 		      (if count
-			  ;; seq-type=list from-end=false test-not=other end=other count=other
 			  (if key
-			      ;;       seq-type=list from-end=false test-not=other end=other count=other key=other
 			      (|remove seq-type=list from-end=false test-not=other end=other count=other key=other|
 			       item sequence start end test-not count key)
-			      ;;       seq-type=list from-end=false test-not=other end=other count=other key=identity
 			      (|remove seq-type=list from-end=false test-not=other end=other count=other key=identity|
 			       item sequence start end test-not count))
-			  ;; seq-type=list from-end=false test-not=other end=other count=nil
 			  (if key
-			      ;;       seq-type=list test-not=other end=other count=nil key=other
 			      (|remove seq-type=list test-not=other end=other count=nil key=other|
 			       item sequence start end test-not key)
-			      ;;       seq-type=list test-not=other end=other count=nil key=identity
 			      (|remove seq-type=list test-not=other end=other count=nil key=identity|
 			       item sequence start end test-not)))
-		      ;; seq-type=list from-end=false test-not=other end=nil
 		      (if count
-			  ;; seq-type=list from-end=false test-not=other end=nil count=other
 			  (if key
-			      ;;       seq-type=list from-end=false test-not=other end=nil count=other key=other
 			      (|remove seq-type=list from-end=false test-not=other end=nil count=other key=other|
 			       item sequence start test-not count key)
-			      ;;       seq-type=list from-end=false test-not=other end=nil count=other key=identity
 			      (|remove seq-type=list from-end=false test-not=other end=nil count=other key=identity|
 			       item sequence start test-not count))
 			  (if key
@@ -7448,962 +7316,566 @@
 			       item sequence start test-not key)
 			      (|remove seq-type=list test-not=other end=nil count=nil key=identity|
 			       item sequence start test-not))))
-		  ;; seq-type=list from-end=false test=eql
 		  (if end
-		      ;; seq-type=list from-end=false end=other test=eql
 		      (if count
-			  ;; seq-type=list from-end=false end=other test=eql count=other
 			  (if key
-			      ;;       seq-type=list from-end=false end=other test=eql count=other key=other
 			      (|remove seq-type=list from-end=false end=other test=eql count=other key=other|
 			       item sequence start end count key)
-			      ;;       seq-type=list from-end=false end=other test=eql count=other key=identity
 			      (|remove seq-type=list from-end=false end=other test=eql count=other key=identity|
 			       item sequence start end count))
-			  ;; seq-type=list from-end=false end=other test=eql count=nil
 			  (if key
-			      ;;       seq-type=list end=other test=eql count=nil key=other
 			      (|remove seq-type=list end=other test=eql count=nil key=other|
 			       item sequence start end key)
-			      ;;       seq-type=list end=other test=eql count=nil key=identity
 			      (|remove seq-type=list end=other test=eql count=nil key=identity|
 			       item sequence start end)))
-		      ;; seq-type=list from-end=false end=nil test=eql
 		      (if count
-			  ;; seq-type=list from-end=false end=nil test=eql count=other
 			  (if key
-			      ;;       seq-type=list from-end=false end=nil test=eql count=other key=other
 			      (|remove seq-type=list from-end=false end=nil test=eql count=other key=other|
 			       item sequence start count key)
-			      ;;       seq-type=list from-end=false end=nil test=eql count=other key=identity
 			      (|remove seq-type=list from-end=false end=nil test=eql count=other key=identity|
 			       item sequence start count))
-			  ;; seq-type=list from-end=false end=nil test=eql count=nil
 			  (if key
-			      ;;       seq-type=list end=nil test=eql count=nil key=other
 			      (|remove seq-type=list end=nil test=eql count=nil key=other|
 			       item sequence start key)
-			      ;;       seq-type=list end=nil test=eql count=nil key=identity
 			      (|remove seq-type=list end=nil test=eql count=nil key=identity|
 			       item sequence start)))))))
       (if (simple-string-p sequence)
-	  ;; seq-type=simple-string
 	  (if test-p
-	      ;; seq-type=simple-string test=given
 	      (if (or (eq test 'eq) (eq test #'eq))
-		  ;; seq-type=simple-string test=eq
 		  (if end
-		      ;; seq-type=simple-string end=other test=eq
 		      (if count
-			  ;; seq-type=simple-string test=eq count=other end=other
 			  (if from-end
-			      ;; seq-type=simple-string from-end=true test=eq count=other end=other
 			      (if key
-				  ;;       seq-type=simple-string from-end=true test=eq count=other key=other end=other 
 				  (|remove seq-type=simple-string from-end=true test=eq count=other key=other|
 				   item sequence start end count key)
-				  ;;       seq-type=simple-string from-end=true test=eq count=other key=identity end=other 
 				  (|remove seq-type=simple-string from-end=true test=eq count=other key=identity|
 				   item sequence start end count))
-			      ;; seq-type=simple-string from-end=false test=eq count=other end=other
 			      (if key
-				  ;;       seq-type=simple-string from-end=false test=eq count=other key=other end=other 
 				  (|remove seq-type=simple-string from-end=false test=eq count=other key=other|
 				   item sequence start end count key)
-				  ;;       seq-type=simple-string from-end=false test=eq count=other key=identity end=other 
 				  (|remove seq-type=simple-string from-end=false test=eq count=other key=identity|
 				   item sequence start end count)))
-			  ;; seq-type=simple-string test=eq count=nil end=other
-			  ;; no need to test from-end
 			  (if key
-			      ;;       seq-type=simple-string test=eq count=nil key=other end=other 
 			      (|remove seq-type=simple-string test=eq count=nil key=other|
 			       item sequence start end key)
-			      ;;       seq-type=simple-string test=eq count=nil key=identity end=other 
 			      (|remove seq-type=simple-string test=eq count=nil key=identity|
 			       item sequence start end)))
-		      ;; seq-type=simple-string end=nil test=eq
 		      (if count
-			  ;; seq-type=simple-string test=eq count=other end=nil
 			  (if from-end
-			      ;; seq-type=simple-string from-end=true test=eq count=other end=nil
 			      (if key
-				  ;;       seq-type=simple-string from-end=true test=eq count=other key=other end=nil 
 				  (|remove seq-type=simple-string from-end=true test=eq count=other key=other|
 				   item sequence start (length sequence) count key)
-				  ;;       seq-type=simple-string from-end=true test=eq count=other key=identity end=nil 
 				  (|remove seq-type=simple-string from-end=true test=eq count=other key=identity|
 				   item sequence start (length sequence) count))
-			      ;; seq-type=simple-string from-end=false test=eq count=other end=nil
 			      (if key
-				  ;;       seq-type=simple-string from-end=false test=eq count=other key=other end=nil 
 				  (|remove seq-type=simple-string from-end=false test=eq count=other key=other|
 				   item sequence start (length sequence) count key)
-				  ;;       seq-type=simple-string from-end=false test=eq count=other key=identity end=nil 
 				  (|remove seq-type=simple-string from-end=false test=eq count=other key=identity|
 				   item sequence start (length sequence) count)))
-			  ;; seq-type=simple-string test=eq count=nil end=nil
-			  ;; no need to test from-end
 			  (if key
-			      ;;       seq-type=simple-string test=eq count=nil key=other end=nil 
 			      (|remove seq-type=simple-string test=eq count=nil key=other|
 			       item sequence start (length sequence) key)
-			      ;;       seq-type=simple-string test=eq count=nil key=identity end=nil 
 			      (|remove seq-type=simple-string test=eq count=nil key=identity|
 			       item sequence start (length sequence)))))
 		  (if (or (eq test 'eql) (eq test #'eql))
-		      ;; seq-type=simple-string test=eql
 		      (if end
-			  ;; seq-type=simple-string end=other test=eql
 			  (if count
-			      ;; seq-type=simple-string test=eql count=other end=other
 			      (if from-end
-				  ;; seq-type=simple-string from-end=true test=eql count=other end=other
 				  (if key
-				      ;;       seq-type=simple-string from-end=true test=eql count=other key=other end=other 
 				      (|remove seq-type=simple-string from-end=true test=eql count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=simple-string from-end=true test=eql count=other key=identity end=other 
 				      (|remove seq-type=simple-string from-end=true test=eql count=other key=identity|
 				       item sequence start end count))
-				  ;; seq-type=simple-string from-end=false test=eql count=other end=other
 				  (if key
-				      ;;       seq-type=simple-string from-end=false test=eql count=other key=other end=other 
 				      (|remove seq-type=simple-string from-end=false test=eql count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=simple-string from-end=false test=eql count=other key=identity end=other 
 				      (|remove seq-type=simple-string from-end=false test=eql count=other key=identity|
 				       item sequence start end count)))
-			      ;; seq-type=simple-string test=eql count=nil end=other
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-string test=eql count=nil key=other end=other 
 				  (|remove seq-type=simple-string test=eql count=nil key=other|
 				   item sequence start end key)
-				  ;;       seq-type=simple-string test=eql count=nil key=identity end=other 
 				  (|remove seq-type=simple-string test=eql count=nil key=identity|
 				   item sequence start end)))
-			  ;; seq-type=simple-string end=nil test=eql
 			  (if count
-			      ;; seq-type=simple-string test=eql count=other end=nil
 			      (if from-end
-				  ;; seq-type=simple-string from-end=true test=eql count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-string from-end=true test=eql count=other key=other end=nil 
 				      (|remove seq-type=simple-string from-end=true test=eql count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=simple-string from-end=true test=eql count=other key=identity end=nil 
 				      (|remove seq-type=simple-string from-end=true test=eql count=other key=identity|
 				       item sequence start (length sequence) count))
-				  ;; seq-type=simple-string from-end=false test=eql count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-string from-end=false test=eql count=other key=other end=nil 
 				      (|remove seq-type=simple-string from-end=false test=eql count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=simple-string from-end=false test=eql count=other key=identity end=nil 
 				      (|remove seq-type=simple-string from-end=false test=eql count=other key=identity|
 				       item sequence start (length sequence) count)))
-			      ;; seq-type=simple-string test=eql count=nil end=nil
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-string test=eql count=nil key=other end=nil 
 				  (|remove seq-type=simple-string test=eql count=nil key=other|
 				   item sequence start (length sequence) key)
-				  ;;       seq-type=simple-string test=eql count=nil key=identity end=nil 
 				  (|remove seq-type=simple-string test=eql count=nil key=identity|
 				   item sequence start (length sequence)))))
-		      ;; seq-type=simple-string test=other
 		      (if end
-			  ;; seq-type=simple-string end=other test=other
 			  (if count
-			      ;; seq-type=simple-string test=other count=other end=other
 			      (if from-end
-				  ;; seq-type=simple-string from-end=true test=other count=other end=other
 				  (if key
-				      ;;       seq-type=simple-string from-end=true test=other count=other key=other end=other 
 				      (|remove seq-type=simple-string from-end=true test=other count=other key=other|
 				       item sequence start end test count key)
-				      ;;       seq-type=simple-string from-end=true test=other count=other key=identity end=other 
 				      (|remove seq-type=simple-string from-end=true test=other count=other key=identity|
 				       item sequence start end test count))
-				  ;; seq-type=simple-string from-end=false test=other count=other end=other
 				  (if key
-				      ;;       seq-type=simple-string from-end=false test=other count=other key=other end=other 
 				      (|remove seq-type=simple-string from-end=false test=other count=other key=other|
 				       item sequence start end test count key)
-				      ;;       seq-type=simple-string from-end=false test=other count=other key=identity end=other 
 				      (|remove seq-type=simple-string from-end=false test=other count=other key=identity|
 				       item sequence start end test count)))
-			      ;; seq-type=simple-string test=other count=nil end=other
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-string test=other count=nil key=other end=other 
 				  (|remove seq-type=simple-string test=other count=nil key=other|
 				   item sequence start end test key)
-				  ;;       seq-type=simple-string test=other count=nil key=identity end=other 
 				  (|remove seq-type=simple-string test=other count=nil key=identity|
 				   item sequence start end test)))
-			  ;; seq-type=simple-string end=nil test=other
 			  (if count
-			      ;; seq-type=simple-string test=other count=other end=nil
 			      (if from-end
-				  ;; seq-type=simple-string from-end=true test=other count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-string from-end=true test=other count=other key=other end=nil 
 				      (|remove seq-type=simple-string from-end=true test=other count=other key=other|
 				       item sequence start (length sequence) test count key)
-				      ;;       seq-type=simple-string from-end=true test=other count=other key=identity end=nil 
 				      (|remove seq-type=simple-string from-end=true test=other count=other key=identity|
 				       item sequence start (length sequence) test count))
-				  ;; seq-type=simple-string from-end=false test=other count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-string from-end=false test=other count=other key=other end=nil 
 				      (|remove seq-type=simple-string from-end=false test=other count=other key=other|
 				       item sequence start (length sequence) test count key)
-				      ;;       seq-type=simple-string from-end=false test=other count=other key=identity end=nil 
 				      (|remove seq-type=simple-string from-end=false test=other count=other key=identity|
 				       item sequence start (length sequence) test count)))
-			      ;; seq-type=simple-string test=other count=nil end=nil
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-string test=other count=nil key=other end=nil 
 				  (|remove seq-type=simple-string test=other count=nil key=other|
 				   item sequence start (length sequence) test key)
-				  ;;       seq-type=simple-string test=other count=nil key=identity end=nil 
 				  (|remove seq-type=simple-string test=other count=nil key=identity|
 				   item sequence start (length sequence) test))))))
 	      (if test-not-p
-		  ;; seq-type=simple-string test-not=other
 		  (if end
-		      ;; seq-type=simple-string test-not=other end=other
 		      (if count
-			  ;; seq-type=simple-string test-not=other count=other end=other
 			  (if from-end
-			      ;; seq-type=simple-string from-end=true test-not=other count=other end=other
 			      (if key
-				  ;;       seq-type=simple-string from-end=true test-not=other count=other key=other end=other
 				  (|remove seq-type=simple-string from-end=true test-not=other count=other key=other|
 				   item sequence start end test-not count key)
-				  ;;       seq-type=simple-string from-end=true test-not=other count=other key=identity end=other 
 				  (|remove seq-type=simple-string from-end=true test-not=other count=other key=identity|
 				   item sequence start end test-not count))
-			      ;; seqr-type=simple-string from-end=false test-not=other count=other end=other
 			      (if key
-				  ;;       seq-type=simple-string from-end=false test-not=other count=other key=other end=other
 				  (|remove seq-type=simple-string from-end=false test-not=other count=other key=other|
 				   item sequence start end test-not count key)
-				  ;;       seq-type=simple-string from-end=false test-not=other count=other key=identity end=other 
 				  (|remove seq-type=simple-string from-end=false test-not=other count=other key=identity|
 				   item sequence start end test-not count)))
-			  ;; seq-type=simple-string test-not=other count=nil end=other
-			  ;; no need to test from-end
 			  (if key
-			      ;;       seq-type=simple-string test-not=other count=nil key=other end=other
 			      (|remove seq-type=simple-string test-not=other count=nil key=other|
 			       item sequence start end test-not key)
-			      ;;       seq-type=simple-string test-not=other count=nil key=identity end=other 
 			      (|remove seq-type=simple-string test-not=other count=nil key=identity|
 			       item sequence start end test-not)))
-		      ;; seq-type=simple-string test-not=other end=nil
 		      (if count
-			  ;; seq-type=simple-string test-not=other count=other end=nil
 			  (if from-end
-			      ;; seq-type=simple-string from-end=true test-not=other count=other end=nil
 			      (if key
-				  ;;       seq-type=simple-string from-end=true test-not=other count=other key=other end=nil
 				  (|remove seq-type=simple-string from-end=true test-not=other count=other key=other|
 				   item sequence start (length sequence) test-not count key)
-				  ;;       seq-type=simple-string from-end=true test-not=other count=other key=identity end=nil 
 				  (|remove seq-type=simple-string from-end=true test-not=other count=other key=identity|
 				   item sequence start (length sequence) test-not count))
-			      ;; seqr-type=simple-string from-end=false test-not=other count=other end=nil
 			      (if key
-				  ;;       seq-type=simple-string from-end=false test-not=other count=other key=other end=nil
 				  (|remove seq-type=simple-string from-end=false test-not=other count=other key=other|
 				   item sequence start (length sequence) test-not count key)
-				  ;;       seq-type=simple-string from-end=false test-not=other count=other key=identity end=nil 
 				  (|remove seq-type=simple-string from-end=false test-not=other count=other key=identity|
 				   item sequence start (length sequence) test-not count)))
-			  ;; seq-type=simple-string test-not=other count=nil end=nil
-			  ;; no need to test from-end
 			  (if key
-			      ;;       seq-type=simple-string test-not=other count=nil key=other end=nil
 			      (|remove seq-type=simple-string test-not=other count=nil key=other|
 			       item sequence start (length sequence) test-not key)
-			      ;;       seq-type=simple-string test-not=other count=nil key=identity end=nil! 
 			      (|remove seq-type=simple-string test-not=other count=nil key=identity|
 			       item sequence start (length sequence) test-not))))
-		  ;; seq-type=simple-string test=eql
 		  (if end
-		      ;; seq-type=simple-string end=other test=eql
 		      (if count
-			  ;; seq-type=simple-string test=eql count=other end=other
 			  (if from-end
-			      ;; seq-type=simple-string from-end=true test=eql count=other end=other
 			      (if key
-				  ;;       seq-type=simple-string from-end=true test=eql count=other key=other end=other
 				  (|remove seq-type=simple-string from-end=true test=eql count=other key=other|
 				   item sequence start end count key)
-				  ;;       seq-type=simple-string from-end=true test=eql count=other key=identity end=other 
 				  (|remove seq-type=simple-string from-end=true test=eql count=other key=identity|
 				   item sequence start end count))
-			      ;; seqr-type=simple-string from-end=false test=eql count=other end=other
 			      (if key
-				  ;;       seq-type=simple-string from-end=false test=eql count=other key=other end=other
 				  (|remove seq-type=simple-string from-end=false test=eql count=other key=other|
 				   item sequence start end count key)
-				  ;;       seq-type=simple-string from-end=false test=eql count=other key=identity end=other 
 				  (|remove seq-type=simple-string from-end=false test=eql count=other key=identity|
 				   item sequence start end count)))
-			  ;; seq-type=simple-string test=eql count=nil end=other
-			  ;; no need to test from-end
 			  (if key
-			      ;;       seq-type=simple-string test=eql count=nil key=other end=other
 			      (|remove seq-type=simple-string test=eql count=nil key=other|
 			       item sequence start end key)
-			      ;;       seq-type=simple-string test=eql count=nil key=identity end=other 
 			      (|remove seq-type=simple-string test=eql count=nil key=identity|
 			       item sequence start end)))
-		      ;; seq-type=simple-string end=nil test=eql
 		      (if count
-			  ;; seq-type=simple-string test=eql count=other end=nil
 			  (if from-end
-			      ;; seq-type=simple-string from-end=true test=eql count=other end=nil
 			      (if key
-				  ;;       seq-type=simple-string from-end=true test=eql count=other key=other end=nil
 				  (|remove seq-type=simple-string from-end=true test=eql count=other key=other|
 				   item sequence start (length sequence) count key)
-				  ;;       seq-type=simple-string from-end=true test=eql count=other key=identity end=nil 
 				  (|remove seq-type=simple-string from-end=true test=eql count=other key=identity|
 				   item sequence start (length sequence) count))
-			      ;; seqr-type=simple-string from-end=false test=eql count=other end=nil
 			      (if key
-				  ;;       seq-type=simple-string from-end=false test=eql count=other key=other end=nil
 				  (|remove seq-type=simple-string from-end=false test=eql count=other key=other|
 				   item sequence start (length sequence) count key)
-				  ;;       seq-type=simple-string from-end=false test=eql count=other key=identity end=nil 
 				  (|remove seq-type=simple-string from-end=false test=eql count=other key=identity|
 				   item sequence start (length sequence) count)))
-			  ;; seq-type=simple-string test=eql count=nil end=nil
-			  ;; no need to test from-end
 			  (if key
-			      ;;       seq-type=simple-string test=eql count=nil key=other end=nil
 			      (|remove seq-type=simple-string test=eql count=nil key=other|
 			       item sequence start (length sequence) key)
-			      ;;       seq-type=simple-string test=eql count=nil key=identity end=nil! 
 			      (|remove seq-type=simple-string test=eql count=nil key=identity|
 			       item sequence start (length sequence)))))))
 	  (if (simple-vector-p sequence)
-	      ;; seq-type=simple-vector
 	      (if test-p
-		  ;; seq-type=simple-vector test=given
 		  (if (or (eq test 'eq) (eq test #'eq))
-		      ;; seq-type=simple-vector test=eq
 		      (if end
-			  ;; seq-type=simple-vector end=other test=eq
 			  (if count
-			      ;; seq-type=simple-vector test=eq count=other end=other
 			      (if from-end
-				  ;; seq-type=simple-vector from-end=true test=eq count=other end=other
 				  (if key
-				      ;;       seq-type=simple-vector from-end=true test=eq count=other key=other end=other 
 				      (|remove seq-type=simple-vector from-end=true test=eq count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=simple-vector from-end=true test=eq count=other key=identity end=other 
 				      (|remove seq-type=simple-vector from-end=true test=eq count=other key=identity|
 				       item sequence start end count))
-				  ;; seq-type=simple-vector from-end=false test=eq count=other end=other
 				  (if key
-				      ;;       seq-type=simple-vector from-end=false test=eq count=other key=other end=other 
 				      (|remove seq-type=simple-vector from-end=false test=eq count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=simple-vector from-end=false test=eq count=other key=identity end=other 
 				      (|remove seq-type=simple-vector from-end=false test=eq count=other key=identity|
 				       item sequence start end count)))
-			      ;; seq-type=simple-vector test=eq count=nil end=other
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-vector test=eq count=nil key=other end=other 
 				  (|remove seq-type=simple-vector test=eq count=nil key=other|
 				   item sequence start end key)
-				  ;;       seq-type=simple-vector test=eq count=nil key=identity end=other 
 				  (|remove seq-type=simple-vector test=eq count=nil key=identity|
 				   item sequence start end)))
-			  ;; seq-type=simple-vector end=nil test=eq
 			  (if count
-			      ;; seq-type=simple-vector test=eq count=other end=nil
 			      (if from-end
-				  ;; seq-type=simple-vector from-end=true test=eq count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-vector from-end=true test=eq count=other key=other end=nil 
 				      (|remove seq-type=simple-vector from-end=true test=eq count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=simple-vector from-end=true test=eq count=other key=identity end=nil 
 				      (|remove seq-type=simple-vector from-end=true test=eq count=other key=identity|
 				       item sequence start (length sequence) count))
-				  ;; seq-type=simple-vector from-end=false test=eq count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-vector from-end=false test=eq count=other key=other end=nil 
 				      (|remove seq-type=simple-vector from-end=false test=eq count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=simple-vector from-end=false test=eq count=other key=identity end=nil 
 				      (|remove seq-type=simple-vector from-end=false test=eq count=other key=identity|
 				       item sequence start (length sequence) count)))
-			      ;; seq-type=simple-vector test=eq count=nil end=nil
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-vector test=eq count=nil key=other end=nil 
 				  (|remove seq-type=simple-vector test=eq count=nil key=other|
 				   item sequence start (length sequence) key)
-				  ;;       seq-type=simple-vector test=eq count=nil key=identity end=nil 
 				  (|remove seq-type=simple-vector test=eq count=nil key=identity|
 				   item sequence start (length sequence)))))
 		      (if (or (eq test 'eql) (eq test #'eql))
-			  ;; seq-type=simple-vector test=eql
 			  (if end
-			      ;; seq-type=simple-vector end=other test=eql
 			      (if count
-				  ;; seq-type=simple-vector test=eql count=other end=other
 				  (if from-end
-				      ;; seq-type=simple-vector from-end=true test=eql count=other end=other
 				      (if key
-					  ;;       seq-type=simple-vector from-end=true test=eql count=other key=other end=other 
 					  (|remove seq-type=simple-vector from-end=true test=eql count=other key=other|
 					   item sequence start end count key)
-					  ;;       seq-type=simple-vector from-end=true test=eql count=other key=identity end=other 
 					  (|remove seq-type=simple-vector from-end=true test=eql count=other key=identity|
 					   item sequence start end count))
-				      ;; seq-type=simple-vector from-end=false test=eql count=other end=other
 				      (if key
-					  ;;       seq-type=simple-vector from-end=false test=eql count=other key=other end=other 
 					  (|remove seq-type=simple-vector from-end=false test=eql count=other key=other|
 					   item sequence start end count key)
-					  ;;       seq-type=simple-vector from-end=false test=eql count=other key=identity end=other 
 					  (|remove seq-type=simple-vector from-end=false test=eql count=other key=identity|
 					   item sequence start end count)))
-				  ;; seq-type=simple-vector test=eql count=nil end=other
-				  ;; no need to test from-end
 				  (if key
-				      ;;       seq-type=simple-vector test=eql count=nil key=other end=other 
 				      (|remove seq-type=simple-vector test=eql count=nil key=other|
 				       item sequence start end key)
-				      ;;       seq-type=simple-vector test=eql count=nil key=identity end=other 
 				      (|remove seq-type=simple-vector test=eql count=nil key=identity|
 				       item sequence start end)))
-			      ;; seq-type=simple-vector end=nil test=eql
 			      (if count
-				  ;; seq-type=simple-vector test=eql count=other end=nil
 				  (if from-end
-				      ;; seq-type=simple-vector from-end=true test=eql count=other end=nil
 				      (if key
-					  ;;       seq-type=simple-vector from-end=true test=eql count=other key=other end=nil 
 					  (|remove seq-type=simple-vector from-end=true test=eql count=other key=other|
 					   item sequence start (length sequence) count key)
-					  ;;       seq-type=simple-vector from-end=true test=eql count=other key=identity end=nil 
 					  (|remove seq-type=simple-vector from-end=true test=eql count=other key=identity|
 					   item sequence start (length sequence) count))
-				      ;; seq-type=simple-vector from-end=false test=eql count=other end=nil
 				      (if key
-					  ;;       seq-type=simple-vector from-end=false test=eql count=other key=other end=nil 
 					  (|remove seq-type=simple-vector from-end=false test=eql count=other key=other|
 					   item sequence start (length sequence) count key)
-					  ;;       seq-type=simple-vector from-end=false test=eql count=other key=identity end=nil 
 					  (|remove seq-type=simple-vector from-end=false test=eql count=other key=identity|
 					   item sequence start (length sequence) count)))
-				  ;; seq-type=simple-vector test=eql count=nil end=nil
-				  ;; no need to test from-end
 				  (if key
-				      ;;       seq-type=simple-vector test=eql count=nil key=other end=nil 
 				      (|remove seq-type=simple-vector test=eql count=nil key=other|
 				       item sequence start (length sequence) key)
-				      ;;       seq-type=simple-vector test=eql count=nil key=identity end=nil 
 				      (|remove seq-type=simple-vector test=eql count=nil key=identity|
 				       item sequence start (length sequence)))))
-			  ;; seq-type=simple-vector test=other
 			  (if end
-			      ;; seq-type=simple-vector end=other test=other
 			      (if count
-				  ;; seq-type=simple-vector test=other count=other end=other
 				  (if from-end
-				      ;; seq-type=simple-vector from-end=true test=other count=other end=other
 				      (if key
-					  ;;       seq-type=simple-vector from-end=true test=other count=other key=other end=other 
 					  (|remove seq-type=simple-vector from-end=true test=other count=other key=other|
 					   item sequence start end test count key)
-					  ;;       seq-type=simple-vector from-end=true test=other count=other key=identity end=other 
 					  (|remove seq-type=simple-vector from-end=true test=other count=other key=identity|
 					   item sequence start end test count))
-				      ;; seq-type=simple-vector from-end=false test=other count=other end=other
 				      (if key
-					  ;;       seq-type=simple-vector from-end=false test=other count=other key=other end=other 
 					  (|remove seq-type=simple-vector from-end=false test=other count=other key=other|
 					   item sequence start end test count key)
-					  ;;       seq-type=simple-vector from-end=false test=other count=other key=identity end=other 
 					  (|remove seq-type=simple-vector from-end=false test=other count=other key=identity|
 					   item sequence start end test count)))
-				  ;; seq-type=simple-vector test=other count=nil end=other
-				  ;; no need to test from-end
 				  (if key
-				      ;;       seq-type=simple-vector test=other count=nil key=other end=other 
 				      (|remove seq-type=simple-vector test=other count=nil key=other|
 				       item sequence start end test key)
-				      ;;       seq-type=simple-vector test=other count=nil key=identity end=other 
 				      (|remove seq-type=simple-vector test=other count=nil key=identity|
 				       item sequence start end test)))
-			      ;; seq-type=simple-vector end=nil test=other
 			      (if count
-				  ;; seq-type=simple-vector test=other count=other end=nil
 				  (if from-end
-				      ;; seq-type=simple-vector from-end=true test=other count=other end=nil
 				      (if key
-					  ;;       seq-type=simple-vector from-end=true test=other count=other key=other end=nil 
 					  (|remove seq-type=simple-vector from-end=true test=other count=other key=other|
 					   item sequence start (length sequence) test count key)
-					  ;;       seq-type=simple-vector from-end=true test=other count=other key=identity end=nil 
 					  (|remove seq-type=simple-vector from-end=true test=other count=other key=identity|
 					   item sequence start (length sequence) test count))
-				      ;; seq-type=simple-vector from-end=false test=other count=other end=nil
 				      (if key
-					  ;;       seq-type=simple-vector from-end=false test=other count=other key=other end=nil 
 					  (|remove seq-type=simple-vector from-end=false test=other count=other key=other|
 					   item sequence start (length sequence) test count key)
-					  ;;       seq-type=simple-vector from-end=false test=other count=other key=identity end=nil 
 					  (|remove seq-type=simple-vector from-end=false test=other count=other key=identity|
 					   item sequence start (length sequence) test count)))
-				  ;; seq-type=simple-vector test=other count=nil end=nil
-				  ;; no need to test from-end
 				  (if key
-				      ;;       seq-type=simple-vector test=other count=nil key=other end=nil 
 				      (|remove seq-type=simple-vector test=other count=nil key=other|
 				       item sequence start (length sequence) test key)
-				      ;;       seq-type=simple-vector test=other count=nil key=identity end=nil 
 				      (|remove seq-type=simple-vector test=other count=nil key=identity|
 				       item sequence start (length sequence) test))))))
 		  (if test-not-p
-		      ;; seq-type=simple-vector test-not=other
 		      (if end
-			  ;; seq-type=simple-vector test-not=other end=other
 			  (if count
-			      ;; seq-type=simple-vector test-not=other count=other end=other
 			      (if from-end
-				  ;; seq-type=simple-vector from-end=true test-not=other count=other end=other
 				  (if key
-				      ;;       seq-type=simple-vector from-end=true test-not=other count=other key=other end=other
 				      (|remove seq-type=simple-vector from-end=true test-not=other count=other key=other|
 				       item sequence start end test-not count key)
-				      ;;       seq-type=simple-vector from-end=true test-not=other count=other key=identity end=other 
 				      (|remove seq-type=simple-vector from-end=true test-not=other count=other key=identity|
 				       item sequence start end test-not count))
-				  ;; seqr-type=simple-vector from-end=false test-not=other count=other end=other
 				  (if key
-				      ;;       seq-type=simple-vector from-end=false test-not=other count=other key=other end=other
 				      (|remove seq-type=simple-vector from-end=false test-not=other count=other key=other|
 				       item sequence start end test-not count key)
-				      ;;       seq-type=simple-vector from-end=false test-not=other count=other key=identity end=other 
 				      (|remove seq-type=simple-vector from-end=false test-not=other count=other key=identity|
 				       item sequence start end test-not count)))
-			      ;; seq-type=simple-vector test-not=other count=nil end=other
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-vector test-not=other count=nil key=other end=other
 				  (|remove seq-type=simple-vector test-not=other count=nil key=other|
 				   item sequence start end test-not key)
-				  ;;       seq-type=simple-vector test-not=other count=nil key=identity end=other 
 				  (|remove seq-type=simple-vector test-not=other count=nil key=identity|
 				   item sequence start end test-not)))
-			  ;; seq-type=simple-vector test-not=other end=nil
 			  (if count
-			      ;; seq-type=simple-vector test-not=other count=other end=nil
 			      (if from-end
-				  ;; seq-type=simple-vector from-end=true test-not=other count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-vector from-end=true test-not=other count=other key=other end=nil
 				      (|remove seq-type=simple-vector from-end=true test-not=other count=other key=other|
 				       item sequence start (length sequence) test-not count key)
-				      ;;       seq-type=simple-vector from-end=true test-not=other count=other key=identity end=nil 
 				      (|remove seq-type=simple-vector from-end=true test-not=other count=other key=identity|
 				       item sequence start (length sequence) test-not count))
-				  ;; seqr-type=simple-vector from-end=false test-not=other count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-vector from-end=false test-not=other count=other key=other end=nil
 				      (|remove seq-type=simple-vector from-end=false test-not=other count=other key=other|
 				       item sequence start (length sequence) test-not count key)
-				      ;;       seq-type=simple-vector from-end=false test-not=other count=other key=identity end=nil 
 				      (|remove seq-type=simple-vector from-end=false test-not=other count=other key=identity|
 				       item sequence start (length sequence) test-not count)))
-			      ;; seq-type=simple-vector test-not=other count=nil end=nil
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-vector test-not=other count=nil key=other end=nil
 				  (|remove seq-type=simple-vector test-not=other count=nil key=other|
 				   item sequence start (length sequence) test-not key)
-				  ;;       seq-type=simple-vector test-not=other count=nil key=identity end=nil! 
 				  (|remove seq-type=simple-vector test-not=other count=nil key=identity|
 				   item sequence start (length sequence) test-not))))
-		      ;; seq-type=simple-vector test=eql
 		      (if end
-			  ;; seq-type=simple-vector end=other test=eql
 			  (if count
-			      ;; seq-type=simple-vector test=eql count=other end=other
 			      (if from-end
-				  ;; seq-type=simple-vector from-end=true test=eql count=other end=other
 				  (if key
-				      ;;       seq-type=simple-vector from-end=true test=eql count=other key=other end=other
 				      (|remove seq-type=simple-vector from-end=true test=eql count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=simple-vector from-end=true test=eql count=other key=identity end=other 
 				      (|remove seq-type=simple-vector from-end=true test=eql count=other key=identity|
 				       item sequence start end count))
-				  ;; seqr-type=simple-vector from-end=false test=eql count=other end=other
 				  (if key
-				      ;;       seq-type=simple-vector from-end=false test=eql count=other key=other end=other
 				      (|remove seq-type=simple-vector from-end=false test=eql count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=simple-vector from-end=false test=eql count=other key=identity end=other 
 				      (|remove seq-type=simple-vector from-end=false test=eql count=other key=identity|
 				       item sequence start end count)))
-			      ;; seq-type=simple-vector test=eql count=nil end=other
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-vector test=eql count=nil key=other end=other
 				  (|remove seq-type=simple-vector test=eql count=nil key=other|
 				   item sequence start end key)
-				  ;;       seq-type=simple-vector test=eql count=nil key=identity end=other 
 				  (|remove seq-type=simple-vector test=eql count=nil key=identity|
 				   item sequence start end)))
-			  ;; seq-type=simple-vector end=nil test=eql
 			  (if count
-			      ;; seq-type=simple-vector test=eql count=other end=nil
 			      (if from-end
-				  ;; seq-type=simple-vector from-end=true test=eql count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-vector from-end=true test=eql count=other key=other end=nil
 				      (|remove seq-type=simple-vector from-end=true test=eql count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=simple-vector from-end=true test=eql count=other key=identity end=nil 
 				      (|remove seq-type=simple-vector from-end=true test=eql count=other key=identity|
 				       item sequence start (length sequence) count))
-				  ;; seqr-type=simple-vector from-end=false test=eql count=other end=nil
 				  (if key
-				      ;;       seq-type=simple-vector from-end=false test=eql count=other key=other end=nil
 				      (|remove seq-type=simple-vector from-end=false test=eql count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=simple-vector from-end=false test=eql count=other key=identity end=nil 
 				      (|remove seq-type=simple-vector from-end=false test=eql count=other key=identity|
 				       item sequence start (length sequence) count)))
-			      ;; seq-type=simple-vector test=eql count=nil end=nil
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=simple-vector test=eql count=nil key=other end=nil
 				  (|remove seq-type=simple-vector test=eql count=nil key=other|
 				   item sequence start (length sequence) key)
-				  ;;       seq-type=simple-vector test=eql count=nil key=identity end=nil! 
 				  (|remove seq-type=simple-vector test=eql count=nil key=identity|
 				   item sequence start (length sequence)))))))
-	      ;; seq-type=general-vector
 	      (if test-p
-		  ;; seq-type=general-vector test=given
 		  (if (or (eq test 'eq) (eq test #'eq))
-		      ;; seq-type=general-vector test=eq
 		      (if end
-			  ;; seq-type=general-vector end=other test=eq
 			  (if count
-			      ;; seq-type=general-vector test=eq count=other end=other
 			      (if from-end
-				  ;; seq-type=general-vector from-end=true test=eq count=other end=other
 				  (if key
-				      ;;       seq-type=general-vector from-end=true test=eq count=other key=other end=other 
 				      (|remove seq-type=general-vector from-end=true test=eq count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=general-vector from-end=true test=eq count=other key=identity end=other 
 				      (|remove seq-type=general-vector from-end=true test=eq count=other key=identity|
 				       item sequence start end count))
-				  ;; seq-type=general-vector from-end=false test=eq count=other end=other
 				  (if key
-				      ;;       seq-type=general-vector from-end=false test=eq count=other key=other end=other 
 				      (|remove seq-type=general-vector from-end=false test=eq count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=general-vector from-end=false test=eq count=other key=identity end=other 
 				      (|remove seq-type=general-vector from-end=false test=eq count=other key=identity|
 				       item sequence start end count)))
-			      ;; seq-type=general-vector test=eq count=nil end=other
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=general-vector test=eq count=nil key=other end=other 
 				  (|remove seq-type=general-vector test=eq count=nil key=other|
 				   item sequence start end key)
-				  ;;       seq-type=general-vector test=eq count=nil key=identity end=other 
 				  (|remove seq-type=general-vector test=eq count=nil key=identity|
 				   item sequence start end)))
-			  ;; seq-type=general-vector end=nil test=eq
 			  (if count
-			      ;; seq-type=general-vector test=eq count=other end=nil
 			      (if from-end
-				  ;; seq-type=general-vector from-end=true test=eq count=other end=nil
 				  (if key
-				      ;;       seq-type=general-vector from-end=true test=eq count=other key=other end=nil 
 				      (|remove seq-type=general-vector from-end=true test=eq count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=general-vector from-end=true test=eq count=other key=identity end=nil 
 				      (|remove seq-type=general-vector from-end=true test=eq count=other key=identity|
 				       item sequence start (length sequence) count))
-				  ;; seq-type=general-vector from-end=false test=eq count=other end=nil
 				  (if key
-				      ;;       seq-type=general-vector from-end=false test=eq count=other key=other end=nil 
 				      (|remove seq-type=general-vector from-end=false test=eq count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=general-vector from-end=false test=eq count=other key=identity end=nil 
 				      (|remove seq-type=general-vector from-end=false test=eq count=other key=identity|
 				       item sequence start (length sequence) count)))
-			      ;; seq-type=general-vector test=eq count=nil end=nil
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=general-vector test=eq count=nil key=other end=nil 
 				  (|remove seq-type=general-vector test=eq count=nil key=other|
 				   item sequence start (length sequence) key)
-				  ;;       seq-type=general-vector test=eq count=nil key=identity end=nil 
 				  (|remove seq-type=general-vector test=eq count=nil key=identity|
 				   item sequence start (length sequence)))))
 		      (if (or (eq test 'eql) (eq test #'eql))
-			  ;; seq-type=general-vector test=eql
 			  (if end
-			      ;; seq-type=general-vector end=other test=eql
 			      (if count
-				  ;; seq-type=general-vector test=eql count=other end=other
 				  (if from-end
-				      ;; seq-type=general-vector from-end=true test=eql count=other end=other
 				      (if key
-					  ;;       seq-type=general-vector from-end=true test=eql count=other key=other end=other 
 					  (|remove seq-type=general-vector from-end=true test=eql count=other key=other|
 					   item sequence start end count key)
-					  ;;       seq-type=general-vector from-end=true test=eql count=other key=identity end=other 
 					  (|remove seq-type=general-vector from-end=true test=eql count=other key=identity|
 					   item sequence start end count))
-				      ;; seq-type=general-vector from-end=false test=eql count=other end=other
 				      (if key
-					  ;;       seq-type=general-vector from-end=false test=eql count=other key=other end=other 
 					  (|remove seq-type=general-vector from-end=false test=eql count=other key=other|
 					   item sequence start end count key)
-					  ;;       seq-type=general-vector from-end=false test=eql count=other key=identity end=other 
 					  (|remove seq-type=general-vector from-end=false test=eql count=other key=identity|
 					   item sequence start end count)))
-				  ;; seq-type=general-vector test=eql count=nil end=other
-				  ;; no need to test from-end
 				  (if key
-				      ;;       seq-type=general-vector test=eql count=nil key=other end=other 
 				      (|remove seq-type=general-vector test=eql count=nil key=other|
 				       item sequence start end key)
-				      ;;       seq-type=general-vector test=eql count=nil key=identity end=other 
 				      (|remove seq-type=general-vector test=eql count=nil key=identity|
 				       item sequence start end)))
-			      ;; seq-type=general-vector end=nil test=eql
 			      (if count
-				  ;; seq-type=general-vector test=eql count=other end=nil
 				  (if from-end
-				      ;; seq-type=general-vector from-end=true test=eql count=other end=nil
 				      (if key
-					  ;;       seq-type=general-vector from-end=true test=eql count=other key=other end=nil 
 					  (|remove seq-type=general-vector from-end=true test=eql count=other key=other|
 					   item sequence start (length sequence) count key)
-					  ;;       seq-type=general-vector from-end=true test=eql count=other key=identity end=nil 
 					  (|remove seq-type=general-vector from-end=true test=eql count=other key=identity|
 					   item sequence start (length sequence) count))
-				      ;; seq-type=general-vector from-end=false test=eql count=other end=nil
 				      (if key
-					  ;;       seq-type=general-vector from-end=false test=eql count=other key=other end=nil 
 					  (|remove seq-type=general-vector from-end=false test=eql count=other key=other|
 					   item sequence start (length sequence) count key)
-					  ;;       seq-type=general-vector from-end=false test=eql count=other key=identity end=nil 
 					  (|remove seq-type=general-vector from-end=false test=eql count=other key=identity|
 					   item sequence start (length sequence) count)))
-				  ;; seq-type=general-vector test=eql count=nil end=nil
-				  ;; no need to test from-end
 				  (if key
-				      ;;       seq-type=general-vector test=eql count=nil key=other end=nil 
 				      (|remove seq-type=general-vector test=eql count=nil key=other|
 				       item sequence start (length sequence) key)
-				      ;;       seq-type=general-vector test=eql count=nil key=identity end=nil 
 				      (|remove seq-type=general-vector test=eql count=nil key=identity|
 				       item sequence start (length sequence)))))
-			  ;; seq-type=general-vector test=other
 			  (if end
-			      ;; seq-type=general-vector end=other test=other
 			      (if count
-				  ;; seq-type=general-vector test=other count=other end=other
 				  (if from-end
-				      ;; seq-type=general-vector from-end=true test=other count=other end=other
 				      (if key
-					  ;;       seq-type=general-vector from-end=true test=other count=other key=other end=other 
 					  (|remove seq-type=general-vector from-end=true test=other count=other key=other|
 					   item sequence start end test count key)
-					  ;;       seq-type=general-vector from-end=true test=other count=other key=identity end=other 
 					  (|remove seq-type=general-vector from-end=true test=other count=other key=identity|
 					   item sequence start end test count))
-				      ;; seq-type=general-vector from-end=false test=other count=other end=other
 				      (if key
-					  ;;       seq-type=general-vector from-end=false test=other count=other key=other end=other 
 					  (|remove seq-type=general-vector from-end=false test=other count=other key=other|
 					   item sequence start end test count key)
-					  ;;       seq-type=general-vector from-end=false test=other count=other key=identity end=other 
 					  (|remove seq-type=general-vector from-end=false test=other count=other key=identity|
 					   item sequence start end test count)))
-				  ;; seq-type=general-vector test=other count=nil end=other
-				  ;; no need to test from-end
 				  (if key
-				      ;;       seq-type=general-vector test=other count=nil key=other end=other 
 				      (|remove seq-type=general-vector test=other count=nil key=other|
 				       item sequence start end test key)
-				      ;;       seq-type=general-vector test=other count=nil key=identity end=other 
 				      (|remove seq-type=general-vector test=other count=nil key=identity|
 				       item sequence start end test)))
-			      ;; seq-type=general-vector end=nil test=other
 			      (if count
-				  ;; seq-type=general-vector test=other count=other end=nil
 				  (if from-end
-				      ;; seq-type=general-vector from-end=true test=other count=other end=nil
 				      (if key
-					  ;;       seq-type=general-vector from-end=true test=other count=other key=other end=nil 
 					  (|remove seq-type=general-vector from-end=true test=other count=other key=other|
 					   item sequence start (length sequence) test count key)
-					  ;;       seq-type=general-vector from-end=true test=other count=other key=identity end=nil 
 					  (|remove seq-type=general-vector from-end=true test=other count=other key=identity|
 					   item sequence start (length sequence) test count))
-				      ;; seq-type=general-vector from-end=false test=other count=other end=nil
 				      (if key
-					  ;;       seq-type=general-vector from-end=false test=other count=other key=other end=nil 
 					  (|remove seq-type=general-vector from-end=false test=other count=other key=other|
 					   item sequence start (length sequence) test count key)
-					  ;;       seq-type=general-vector from-end=false test=other count=other key=identity end=nil 
 					  (|remove seq-type=general-vector from-end=false test=other count=other key=identity|
 					   item sequence start (length sequence) test count)))
-				  ;; seq-type=general-vector test=other count=nil end=nil
-				  ;; no need to test from-end
 				  (if key
-				      ;;       seq-type=general-vector test=other count=nil key=other end=nil 
 				      (|remove seq-type=general-vector test=other count=nil key=other|
 				       item sequence start (length sequence) test key)
-				      ;;       seq-type=general-vector test=other count=nil key=identity end=nil 
 				      (|remove seq-type=general-vector test=other count=nil key=identity|
 				       item sequence start (length sequence) test))))))
 		  (if test-not-p
-		      ;; seq-type=general-vector test-not=other
 		      (if end
-			  ;; seq-type=general-vector test-not=other end=other
 			  (if count
-			      ;; seq-type=general-vector test-not=other count=other end=other
 			      (if from-end
-				  ;; seq-type=general-vector from-end=true test-not=other count=other end=other
 				  (if key
-				      ;;       seq-type=general-vector from-end=true test-not=other count=other key=other end=other
 				      (|remove seq-type=general-vector from-end=true test-not=other count=other key=other|
 				       item sequence start end test-not count key)
-				      ;;       seq-type=general-vector from-end=true test-not=other count=other key=identity end=other 
 				      (|remove seq-type=general-vector from-end=true test-not=other count=other key=identity|
 				       item sequence start end test-not count))
-				  ;; seqr-type=general-vector from-end=false test-not=other count=other end=other
 				  (if key
-				      ;;       seq-type=general-vector from-end=false test-not=other count=other key=other end=other
 				      (|remove seq-type=general-vector from-end=false test-not=other count=other key=other|
 				       item sequence start end test-not count key)
-				      ;;       seq-type=general-vector from-end=false test-not=other count=other key=identity end=other 
 				      (|remove seq-type=general-vector from-end=false test-not=other count=other key=identity|
 				       item sequence start end test-not count)))
-			      ;; seq-type=general-vector test-not=other count=nil end=other
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=general-vector test-not=other count=nil key=other end=other
 				  (|remove seq-type=general-vector test-not=other count=nil key=other|
 				   item sequence start end test-not key)
-				  ;;       seq-type=general-vector test-not=other count=nil key=identity end=other 
 				  (|remove seq-type=general-vector test-not=other count=nil key=identity|
 				   item sequence start end test-not)))
-			  ;; seq-type=general-vector test-not=other end=nil
 			  (if count
-			      ;; seq-type=general-vector test-not=other count=other end=nil
 			      (if from-end
-				  ;; seq-type=general-vector from-end=true test-not=other count=other end=nil
 				  (if key
-				      ;;       seq-type=general-vector from-end=true test-not=other count=other key=other end=nil
 				      (|remove seq-type=general-vector from-end=true test-not=other count=other key=other|
 				       item sequence start (length sequence) test-not count key)
-				      ;;       seq-type=general-vector from-end=true test-not=other count=other key=identity end=nil 
 				      (|remove seq-type=general-vector from-end=true test-not=other count=other key=identity|
 				       item sequence start (length sequence) test-not count))
-				  ;; seqr-type=general-vector from-end=false test-not=other count=other end=nil
 				  (if key
-				      ;;       seq-type=general-vector from-end=false test-not=other count=other key=other end=nil
 				      (|remove seq-type=general-vector from-end=false test-not=other count=other key=other|
 				       item sequence start (length sequence) test-not count key)
-				      ;;       seq-type=general-vector from-end=false test-not=other count=other key=identity end=nil 
 				      (|remove seq-type=general-vector from-end=false test-not=other count=other key=identity|
 				       item sequence start (length sequence) test-not count)))
-			      ;; seq-type=general-vector test-not=other count=nil end=nil
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=general-vector test-not=other count=nil key=other end=nil
 				  (|remove seq-type=general-vector test-not=other count=nil key=other|
 				   item sequence start (length sequence) test-not key)
-				  ;;       seq-type=general-vector test-not=other count=nil key=identity end=nil! 
 				  (|remove seq-type=general-vector test-not=other count=nil key=identity|
 				   item sequence start (length sequence) test-not))))
-		      ;; seq-type=general-vector test=eql
 		      (if end
-			  ;; seq-type=general-vector end=other test=eql
 			  (if count
-			      ;; seq-type=general-vector test=eql count=other end=other
 			      (if from-end
-				  ;; seq-type=general-vector from-end=true test=eql count=other end=other
 				  (if key
-				      ;;       seq-type=general-vector from-end=true test=eql count=other key=other end=other
 				      (|remove seq-type=general-vector from-end=true test=eql count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=general-vector from-end=true test=eql count=other key=identity end=other 
 				      (|remove seq-type=general-vector from-end=true test=eql count=other key=identity|
 				       item sequence start end count))
-				  ;; seqr-type=general-vector from-end=false test=eql count=other end=other
 				  (if key
-				      ;;       seq-type=general-vector from-end=false test=eql count=other key=other end=other
 				      (|remove seq-type=general-vector from-end=false test=eql count=other key=other|
 				       item sequence start end count key)
-				      ;;       seq-type=general-vector from-end=false test=eql count=other key=identity end=other 
 				      (|remove seq-type=general-vector from-end=false test=eql count=other key=identity|
 				       item sequence start end count)))
-			      ;; seq-type=general-vector test=eql count=nil end=other
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=general-vector test=eql count=nil key=other end=other
 				  (|remove seq-type=general-vector test=eql count=nil key=other|
 				   item sequence start end key)
-				  ;;       seq-type=general-vector test=eql count=nil key=identity end=other 
 				  (|remove seq-type=general-vector test=eql count=nil key=identity|
 				   item sequence start end)))
-			  ;; seq-type=general-vector end=nil test=eql
 			  (if count
-			      ;; seq-type=general-vector test=eql count=other end=nil
 			      (if from-end
-				  ;; seq-type=general-vector from-end=true test=eql count=other end=nil
 				  (if key
-				      ;;       seq-type=general-vector from-end=true test=eql count=other key=other end=nil
 				      (|remove seq-type=general-vector from-end=true test=eql count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=general-vector from-end=true test=eql count=other key=identity end=nil 
 				      (|remove seq-type=general-vector from-end=true test=eql count=other key=identity|
 				       item sequence start (length sequence) count))
-				  ;; seqr-type=general-vector from-end=false test=eql count=other end=nil
 				  (if key
-				      ;;       seq-type=general-vector from-end=false test=eql count=other key=other end=nil
 				      (|remove seq-type=general-vector from-end=false test=eql count=other key=other|
 				       item sequence start (length sequence) count key)
-				      ;;       seq-type=general-vector from-end=false test=eql count=other key=identity end=nil 
 				      (|remove seq-type=general-vector from-end=false test=eql count=other key=identity|
 				       item sequence start (length sequence) count)))
-			      ;; seq-type=general-vector test=eql count=nil end=nil
-			      ;; no need to test from-end
 			      (if key
-				  ;;       seq-type=general-vector test=eql count=nil key=other end=nil
 				  (|remove seq-type=general-vector test=eql count=nil key=other|
 				   item sequence start (length sequence) key)
-				  ;;       seq-type=general-vector test=eql count=nil key=identity end=nil! 
 				  (|remove seq-type=general-vector test=eql count=nil key=identity|
 				   item sequence start (length sequence)))))))))))
 
@@ -8857,267 +8329,158 @@
 (defun remove-if (predicate sequence &key from-end (start 0) end count key)
   ;; FIXME test if it is a sequence at all.
   (if (listp sequence)
-      ;; seq-type=list
       (if from-end
-	  ;; seq-type=list from-end=t
 	  (if end
-	      ;; seq-type=list from-end=true end=other
 	      (if count
-		  ;; seq-type=list from-end=true end=other count=other
 		  (if key
-		      ;;          seq-type=list from-end=true end=other count=other key=other
 		      (|remove-if seq-type=list from-end=true end=other count=other key=other|
 		       predicate sequence start end count key)
-		      ;;          seq-type=list from-end=true end=other count=other key=identity
 		      (|remove-if seq-type=list from-end=true end=other count=other key=identity|
 		       predicate sequence start end count))
-		  ;; seq-type=list from-end=true end=other count=nil
 		  (if key
-		      ;;          seq-type=list end=other count=nil key=other
 		      (|remove-if seq-type=list end=other count=nil key=other|
 		       predicate sequence start end key)
-		      ;;          seq-type=list end=other count=nil key=identity
 		      (|remove-if seq-type=list end=other count=nil key=identity|
 		       predicate sequence start end)))
-	      ;; seq-type=list from-end=true end=nil
 	      (if count
-		  ;; seq-type=list from-end=true end=nil count=other
 		  (if key
-		      ;;          seq-type=list from-end=true end=nil count=other key=other
 		      (|remove-if seq-type=list from-end=true end=nil count=other key=other|
 		       predicate sequence start count key)
-		      ;;          seq-type=list from-end=true end=nil count=other key=identity
 		      (|remove-if seq-type=list from-end=true end=nil count=other key=identity|
 		       predicate sequence start count))
-		  ;; seq-type=list from-end=true end=nil count=nil
 		  (if key
-		      ;;          seq-type=list end=nil count=nil key=other
 		      (|remove-if seq-type=list end=nil count=nil key=other|
 		       predicate sequence start key)
-		      ;;          seq-type=list end=nil count=nil key=identity
 		      (|remove-if seq-type=list end=nil count=nil key=identity|
 		       predicate sequence start))))
-	  ;; seq-type=list from-end=false
 	  (if end
-	      ;; seq-type=list from-end=false end=other
 	      (if count
-		  ;; seq-type=list from-end=false end=other count=other
 		  (if key
-		      ;;          seq-type=list from-end=false end=other count=other key=other
 		      (|remove-if seq-type=list from-end=false end=other count=other key=other|
 		       predicate sequence start end count key)
-		      ;;          seq-type=list from-end=false end=other count=other key=identity
 		      (|remove-if seq-type=list from-end=false end=other count=other key=identity|
 		       predicate sequence start end count))
-		  ;; seq-type=list from-end=false end=other count=nil
 		  (if key
-		      ;;          seq-type=list end=other count=nil key=other
 		      (|remove-if seq-type=list end=other count=nil key=other|
 		       predicate sequence start end key)
-		      ;;          seq-type=list end=other count=nil key=identity
 		      (|remove-if seq-type=list end=other count=nil key=identity|
 		       predicate sequence start end)))
-	      ;; seq-type=list from-end=false end=nil
 	      (if count
-		  ;; seq-type=list from-end=false end=nil count=other
 		  (if key
-		      ;;          seq-type=list from-end=false end=nil count=other key=other
 		      (|remove-if seq-type=list from-end=false end=nil count=other key=other|
 		       predicate sequence start count key)
-		      ;;          seq-type=list from-end=false end=nil count=other key=identity
 		      (|remove-if seq-type=list from-end=false end=nil count=other key=identity|
 		       predicate sequence start count))
-		  ;; seq-type=list from-end=false end=nil count=nil
 		  (if key
-		      ;;          seq-type=list end=nil count=nil key=other
 		      (|remove-if seq-type=list end=nil count=nil key=other|
 		       predicate sequence start key)
 		      (|remove-if seq-type=list end=nil count=nil key=identity|
 		       predicate sequence start)))))
       (if (simple-string-p sequence)
-	  ;; seq-type=simple-string
-	  ;; seq-type=simple-string test=given
-	  ;; seq-type=simple-string
 	  (if end
-	      ;; seq-type=simple-string end=other
 	      (if count
-		  ;; seq-type=simple-string count=other end=other
 		  (if from-end
-		      ;; seq-type=simple-string from-end=true count=other end=other
 		      (if key
-			  ;;          seq-type=simple-string from-end=true count=other key=other end=other 
 			  (|remove-if seq-type=simple-string from-end=true count=other key=other|
 			   predicate sequence start end count key)
-			  ;;          seq-type=simple-string from-end=true count=other key=identity end=other 
 			  (|remove-if seq-type=simple-string from-end=true count=other key=identity|
 			   predicate sequence start end count))
-		      ;; seq-type=simple-string from-end=false count=other end=other
 		      (if key
-			  ;;          seq-type=simple-string from-end=false count=other key=other end=other 
 			  (|remove-if seq-type=simple-string from-end=false count=other key=other|
 			   predicate sequence start end count key)
-			  ;;          seq-type=simple-string from-end=false count=other key=identity end=other 
 			  (|remove-if seq-type=simple-string from-end=false count=other key=identity|
 			   predicate sequence start end count)))
-		  ;; seq-type=simple-string count=nil end=other
-		  ;; no need to test from-end
 		  (if key
-		      ;;          seq-type=simple-string count=nil key=other end=other 
 		      (|remove-if seq-type=simple-string count=nil key=other|
 		       predicate sequence start end key)
-		      ;;          seq-type=simple-string count=nil key=identity end=other 
 		      (|remove-if seq-type=simple-string count=nil key=identity|
 		       predicate sequence start end)))
-	      ;; seq-type=simple-string end=nil
 	      (if count
-		  ;; seq-type=simple-string count=other end=nil
 		  (if from-end
-		      ;; seq-type=simple-string from-end=true count=other end=nil
 		      (if key
-			  ;;          seq-type=simple-string from-end=true count=other key=other end=nil 
 			  (|remove-if seq-type=simple-string from-end=true count=other key=other|
 			   predicate sequence start (length sequence) count key)
-			  ;;          seq-type=simple-string from-end=true count=other key=identity end=nil 
 			  (|remove-if seq-type=simple-string from-end=true count=other key=identity|
 			   predicate sequence start (length sequence) count))
-		      ;; seq-type=simple-string from-end=false count=other end=nil
 		      (if key
-			  ;;          seq-type=simple-string from-end=false count=other key=other end=nil 
 			  (|remove-if seq-type=simple-string from-end=false count=other key=other|
 			   predicate sequence start (length sequence) count key)
-			  ;;          seq-type=simple-string from-end=false count=other key=identity end=nil 
 			  (|remove-if seq-type=simple-string from-end=false count=other key=identity|
 			   predicate sequence start (length sequence) count)))
-		  ;; seq-type=simple-string count=nil end=nil
-		  ;; no need to test from-end
 		  (if key
-		      ;;          seq-type=simple-string count=nil key=other end=nil 
 		      (|remove-if seq-type=simple-string count=nil key=other|
 		       predicate sequence start (length sequence) key)
-		      ;;          seq-type=simple-string count=nil key=identity end=nil 
 		      (|remove-if seq-type=simple-string count=nil key=identity|
 		       predicate sequence start (length sequence)))))
 	  (if (simple-vector-p sequence)
-	      ;; seq-type=simple-vector
-	      ;; seq-type=simple-vector test=given
-	      ;; seq-type=simple-vector
 	      (if end
-		  ;; seq-type=simple-vector end=other
 		  (if count
-		      ;; seq-type=simple-vector count=other end=other
 		      (if from-end
-			  ;; seq-type=simple-vector from-end=true count=other end=other
 			  (if key
-			      ;;          seq-type=simple-vector from-end=true count=other key=other end=other 
 			      (|remove-if seq-type=simple-vector from-end=true count=other key=other|
 			       predicate sequence start end count key)
-			      ;;          seq-type=simple-vector from-end=true count=other key=identity end=other 
 			      (|remove-if seq-type=simple-vector from-end=true count=other key=identity|
 			       predicate sequence start end count))
-			  ;; seq-type=simple-vector from-end=false count=other end=other
 			  (if key
-			      ;;          seq-type=simple-vector from-end=false count=other key=other end=other 
 			      (|remove-if seq-type=simple-vector from-end=false count=other key=other|
 			       predicate sequence start end count key)
-			      ;;          seq-type=simple-vector from-end=false count=other key=identity end=other 
 			      (|remove-if seq-type=simple-vector from-end=false count=other key=identity|
 			       predicate sequence start end count)))
-		      ;; seq-type=simple-vector count=nil end=other
-		      ;; no need to test from-end
 		      (if key
-			  ;;          seq-type=simple-vector count=nil key=other end=other 
 			  (|remove-if seq-type=simple-vector count=nil key=other|
 			   predicate sequence start end key)
-			  ;;          seq-type=simple-vector count=nil key=identity end=other 
 			  (|remove-if seq-type=simple-vector count=nil key=identity|
 			   predicate sequence start end)))
-		  ;; seq-type=simple-vector end=nil
 		  (if count
-		      ;; seq-type=simple-vector count=other end=nil
 		      (if from-end
-			  ;; seq-type=simple-vector from-end=true count=other end=nil
 			  (if key
-			      ;;          seq-type=simple-vector from-end=true count=other key=other end=nil 
 			      (|remove-if seq-type=simple-vector from-end=true count=other key=other|
 			       predicate sequence start (length sequence) count key)
-			      ;;          seq-type=simple-vector from-end=true count=other key=identity end=nil 
 			      (|remove-if seq-type=simple-vector from-end=true count=other key=identity|
 			       predicate sequence start (length sequence) count))
-			  ;; seq-type=simple-vector from-end=false count=other end=nil
 			  (if key
-			      ;;          seq-type=simple-vector from-end=false count=other key=other end=nil 
 			      (|remove-if seq-type=simple-vector from-end=false count=other key=other|
 			       predicate sequence start (length sequence) count key)
-			      ;;          seq-type=simple-vector from-end=false count=other key=identity end=nil 
 			      (|remove-if seq-type=simple-vector from-end=false count=other key=identity|
 			       predicate sequence start (length sequence) count)))
-		      ;; seq-type=simple-vector count=nil end=nil
-		      ;; no need to test from-end
 		      (if key
-			  ;;          seq-type=simple-vector count=nil key=other end=nil 
 			  (|remove-if seq-type=simple-vector count=nil key=other|
 			   predicate sequence start (length sequence) key)
-			  ;;          seq-type=simple-vector count=nil key=identity end=nil 
 			  (|remove-if seq-type=simple-vector count=nil key=identity|
 			   predicate sequence start (length sequence)))))
-	      ;; seq-type=general-vector
 	      (if end
-		  ;; seq-type=general-vector end=other
 		  (if count
-		      ;; seq-type=general-vector count=other end=other
 		      (if from-end
-			  ;; seq-type=general-vector from-end=true count=other end=other
 			  (if key
-			      ;;          seq-type=general-vector from-end=true count=other key=other end=other 
 			      (|remove-if seq-type=general-vector from-end=true count=other key=other|
 			       predicate sequence start end count key)
-			      ;;          seq-type=general-vector from-end=true count=other key=identity end=other 
 			      (|remove-if seq-type=general-vector from-end=true count=other key=identity|
 			       predicate sequence start end count))
-			  ;; seq-type=general-vector from-end=false count=other end=other
 			  (if key
-			      ;;          seq-type=general-vector from-end=false count=other key=other end=other 
 			      (|remove-if seq-type=general-vector from-end=false count=other key=other|
 			       predicate sequence start end count key)
-			      ;;          seq-type=general-vector from-end=false count=other key=identity end=other 
 			      (|remove-if seq-type=general-vector from-end=false count=other key=identity|
 			       predicate sequence start end count)))
-		      ;; seq-type=general-vector count=nil end=other
-		      ;; no need to test from-end
 		      (if key
-			  ;;          seq-type=general-vector count=nil key=other end=other 
 			  (|remove-if seq-type=general-vector count=nil key=other|
 			   predicate sequence start end key)
-			  ;;          seq-type=general-vector count=nil key=identity end=other 
 			  (|remove-if seq-type=general-vector count=nil key=identity|
 			   predicate sequence start end)))
-		  ;; seq-type=general-vector end=nil
 		  (if count
-		      ;; seq-type=general-vector count=other end=nil
 		      (if from-end
-			  ;; seq-type=general-vector from-end=true count=other end=nil
 			  (if key
-			      ;;          seq-type=general-vector from-end=true count=other key=other end=nil 
 			      (|remove-if seq-type=general-vector from-end=true count=other key=other|
 			       predicate sequence start (length sequence) count key)
-			      ;;          seq-type=general-vector from-end=true count=other key=identity end=nil 
 			      (|remove-if seq-type=general-vector from-end=true count=other key=identity|
 			       predicate sequence start (length sequence) count))
-			  ;; seq-type=general-vector from-end=false count=other end=nil
 			  (if key
-			      ;;          seq-type=general-vector from-end=false count=other key=other end=nil 
 			      (|remove-if seq-type=general-vector from-end=false count=other key=other|
 			       predicate sequence start (length sequence) count key)
-			      ;;          seq-type=general-vector from-end=false count=other key=identity end=nil 
 			      (|remove-if seq-type=general-vector from-end=false count=other key=identity|
 			       predicate sequence start (length sequence) count)))
-		      ;; seq-type=general-vector count=nil end=nil
-		      ;; no need to test from-end
 		      (if key
-			  ;;          seq-type=general-vector count=nil key=other end=nil 
 			  (|remove-if seq-type=general-vector count=nil key=other|
 			   predicate sequence start (length sequence) key)
-			  ;;          seq-type=general-vector count=nil key=identity end=nil 
 			  (|remove-if seq-type=general-vector count=nil key=identity|
 			   predicate sequence start (length sequence)))))))))
 
@@ -9571,37 +8934,23 @@
 (defun remove-if-not (predicate sequence &key from-end (start 0) end count key)
   ;; FIXME test if it is a sequence at all.
   (if (listp sequence)
-      ;; seq-type=list
       (if from-end
-	  ;; seq-type=list from-end=t
-	  ;; seq-type=list from-end=t
 	  (if end
-	      ;; seq-type=list from-end=true end=other
 	      (if count
-		  ;; seq-type=list from-end=true end=other count=other
 		  (if key
-		      ;;              seq-type=list from-end=true end=other count=other key=other
 		      (|remove-if-not seq-type=list from-end=true end=other count=other key=other|
 		       predicate sequence start end count key)
-		      ;;              seq-type=list from-end=true end=other count=other key=identity
 		      (|remove-if-not seq-type=list from-end=true end=other count=other key=identity|
 		       predicate sequence start end count))
-		  ;; seq-type=list from-end=true end=other count=nil
 		  (if key
-		      ;;              seq-type=list end=other count=nil key=other
 		      (|remove-if-not seq-type=list end=other count=nil key=other|
 		       predicate sequence start end key)
-		      ;;              seq-type=list end=other count=nil key=identity
 		      (|remove-if-not seq-type=list end=other count=nil key=identity|
 		       predicate sequence start end)))
-	      ;; seq-type=list from-end=true end=nil
 	      (if count
-		  ;; seq-type=list from-end=true end=nil count=other
 		  (if key
-		      ;;              seq-type=list from-end=true end=nil count=other key=other
 		      (|remove-if-not seq-type=list from-end=true end=nil count=other key=other|
 		       predicate sequence start count key)
-		      ;;              seq-type=list from-end=true end=nil count=other key=identity
 		      (|remove-if-not seq-type=list from-end=true end=nil count=other key=identity|
 		       predicate sequence start count))
 		  (if key
@@ -9609,35 +8958,22 @@
 		       predicate sequence start end key)
 		      (|remove-if-not seq-type=list end=other count=nil key=identity|
 		       predicate sequence start end))))
-	  ;; seq-type=list from-end=false
-	  ;; seq-type=list from-end=false
 	  (if end
-	      ;; seq-type=list from-end=false end=other
 	      (if count
-		  ;; seq-type=list from-end=false end=other count=other
 		  (if key
-		      ;;              seq-type=list from-end=false end=other count=other key=other
 		      (|remove-if-not seq-type=list from-end=false end=other count=other key=other|
 		       predicate sequence start end count key)
-		      ;;              seq-type=list from-end=false end=other count=other key=identity
 		      (|remove-if-not seq-type=list from-end=false end=other count=other key=identity|
 		       predicate sequence start end count))
-		  ;; seq-type=list from-end=false end=other count=nil
 		  (if key
-		      ;;              seq-type=list end=other count=nil key=other
 		      (|remove-if-not seq-type=list end=other count=nil key=other|
 		       predicate sequence start end key)
-		      ;;              seq-type=list end=other count=nil key=identity
 		      (|remove-if-not seq-type=list end=other count=nil key=identity|
 		       predicate sequence start end)))
-	      ;; seq-type=list from-end=false end=nil
 	      (if count
-		  ;; seq-type=list from-end=false end=nil count=other
 		  (if key
-		      ;;              seq-type=list from-end=false end=nil count=other key=other
 		      (|remove-if-not seq-type=list from-end=false end=nil count=other key=other|
 		       predicate sequence start count key)
-		      ;;              seq-type=list from-end=false end=nil count=other key=identity
 		      (|remove-if-not seq-type=list from-end=false end=nil count=other key=identity|
 		       predicate sequence start count))
 		  (if key
@@ -9646,188 +8982,110 @@
 		      (|remove-if-not seq-type=list end=other count=nil key=identity|
 		       predicate sequence start end)))))
       (if (simple-string-p sequence)
-	  ;; seq-type=simple-string
-	  ;; seq-type=simple-string
 	  (if end
-	      ;; seq-type=simple-string end=other
 	      (if count
-		  ;; seq-type=simple-string count=other end=other
 		  (if from-end
-		      ;; seq-type=simple-string from-end=true count=other end=other
 		      (if key
-			  ;;              seq-type=simple-string from-end=true count=other key=other end=other
 			  (|remove-if-not seq-type=simple-string from-end=true count=other key=other|
 			   predicate sequence start end count key)
-			  ;;              seq-type=simple-string from-end=true count=other key=identity end=other 
 			  (|remove-if-not seq-type=simple-string from-end=true count=other key=identity|
 			   predicate sequence start end count))
-		      ;; seqr-type=simple-string from-end=false count=other end=other
 		      (if key
-			  ;;              seq-type=simple-string from-end=false count=other key=other end=other
 			  (|remove-if-not seq-type=simple-string from-end=false count=other key=other|
 			   predicate sequence start end count key)
-			  ;;              seq-type=simple-string from-end=false count=other key=identity end=other 
 			  (|remove-if-not seq-type=simple-string from-end=false count=other key=identity|
 			   predicate sequence start end count)))
-		  ;; seq-type=simple-string count=nil end=other
-		  ;; no need to test from-end
 		  (if key
-		      ;;              seq-type=simple-string count=nil key=other end=other
 		      (|remove-if-not seq-type=simple-string count=nil key=other|
 		       predicate sequence start end key)
-		      ;;              seq-type=simple-string count=nil key=identity end=other 
 		      (|remove-if-not seq-type=simple-string count=nil key=identity|
 		       predicate sequence start end)))
-	      ;; seq-type=simple-string end=nil
 	      (if count
-		  ;; seq-type=simple-string count=other end=nil
 		  (if from-end
-		      ;; seq-type=simple-string from-end=true count=other end=nil
 		      (if key
-			  ;;              seq-type=simple-string from-end=true count=other key=other end=nil
 			  (|remove-if-not seq-type=simple-string from-end=true count=other key=other|
 			   predicate sequence start (length sequence) count key)
-			  ;;              seq-type=simple-string from-end=true count=other key=identity end=nil 
 			  (|remove-if-not seq-type=simple-string from-end=true count=other key=identity|
 			   predicate sequence start (length sequence) count))
-		      ;; seqr-type=simple-string from-end=false count=other end=nil
 		      (if key
-			  ;;              seq-type=simple-string from-end=false count=other key=other end=nil
 			  (|remove-if-not seq-type=simple-string from-end=false count=other key=other|
 			   predicate sequence start (length sequence) count key)
-			  ;;              seq-type=simple-string from-end=false count=other key=identity end=nil 
 			  (|remove-if-not seq-type=simple-string from-end=false count=other key=identity|
 			   predicate sequence start (length sequence) count)))
-		  ;; seq-type=simple-string count=nil end=nil
-		  ;; no need to test from-end
 		  (if key
-		      ;;              seq-type=simple-string count=nil key=other end=nil
 		      (|remove-if-not seq-type=simple-string count=nil key=other|
 		       predicate sequence start (length sequence) key)
-		      ;;              seq-type=simple-string count=nil key=identity end=nil! 
 		      (|remove-if-not seq-type=simple-string count=nil key=identity|
 		       predicate sequence start (length sequence)))))
 	  (if (simple-vector-p sequence)
-	      ;; seq-type=simple-vector
-	      ;; seq-type=simple-vector
 	      (if end
-		  ;; seq-type=simple-vector end=other
 		  (if count
-		      ;; seq-type=simple-vector count=other end=other
 		      (if from-end
-			  ;; seq-type=simple-vector from-end=true count=other end=other
 			  (if key
-			      ;;              seq-type=simple-vector from-end=true count=other key=other end=other
 			      (|remove-if-not seq-type=simple-vector from-end=true count=other key=other|
 			       predicate sequence start end count key)
-			      ;;              seq-type=simple-vector from-end=true count=other key=identity end=other 
 			      (|remove-if-not seq-type=simple-vector from-end=true count=other key=identity|
 			       predicate sequence start end count))
-			  ;; seqr-type=simple-vector from-end=false count=other end=other
 			  (if key
-			      ;;              seq-type=simple-vector from-end=false count=other key=other end=other
 			      (|remove-if-not seq-type=simple-vector from-end=false count=other key=other|
 			       predicate sequence start end count key)
-			      ;;              seq-type=simple-vector from-end=false count=other key=identity end=other 
 			      (|remove-if-not seq-type=simple-vector from-end=false count=other key=identity|
 			       predicate sequence start end count)))
-		      ;; seq-type=simple-vector count=nil end=other
-		      ;; no need to test from-end
 		      (if key
-			  ;;              seq-type=simple-vector count=nil key=other end=other
 			  (|remove-if-not seq-type=simple-vector count=nil key=other|
 			   predicate sequence start end key)
-			  ;;              seq-type=simple-vector count=nil key=identity end=other 
 			  (|remove-if-not seq-type=simple-vector count=nil key=identity|
 			   predicate sequence start end)))
-		  ;; seq-type=simple-vector end=nil
 		  (if count
-		      ;; seq-type=simple-vector count=other end=nil
 		      (if from-end
-			  ;; seq-type=simple-vector from-end=true count=other end=nil
 			  (if key
-			      ;;              seq-type=simple-vector from-end=true count=other key=other end=nil
 			      (|remove-if-not seq-type=simple-vector from-end=true count=other key=other|
 			       predicate sequence start (length sequence) count key)
-			      ;;              seq-type=simple-vector from-end=true count=other key=identity end=nil 
 			      (|remove-if-not seq-type=simple-vector from-end=true count=other key=identity|
 			       predicate sequence start (length sequence) count))
-			  ;; seqr-type=simple-vector from-end=false count=other end=nil
 			  (if key
-			      ;;              seq-type=simple-vector from-end=false count=other key=other end=nil
 			      (|remove-if-not seq-type=simple-vector from-end=false count=other key=other|
 			       predicate sequence start (length sequence) count key)
-			      ;;              seq-type=simple-vector from-end=false count=other key=identity end=nil 
 			      (|remove-if-not seq-type=simple-vector from-end=false count=other key=identity|
 			       predicate sequence start (length sequence) count)))
-		      ;; seq-type=simple-vector count=nil end=nil
-		      ;; no need to test from-end
 		      (if key
-			  ;;              seq-type=simple-vector count=nil key=other end=nil
 			  (|remove-if-not seq-type=simple-vector count=nil key=other|
 			   predicate sequence start (length sequence) key)
-			  ;;              seq-type=simple-vector count=nil key=identity end=nil! 
 			  (|remove-if-not seq-type=simple-vector count=nil key=identity|
 			   predicate sequence start (length sequence)))))
-	      ;; seq-type=general-vector
-	      ;; seq-type=general-vector
 	      (if end
-		  ;; seq-type=general-vector end=other
 		  (if count
-		      ;; seq-type=general-vector count=other end=other
 		      (if from-end
-			  ;; seq-type=general-vector from-end=true count=other end=other
 			  (if key
-			      ;;              seq-type=general-vector from-end=true count=other key=other end=other
 			      (|remove-if-not seq-type=general-vector from-end=true count=other key=other|
 			       predicate sequence start end count key)
-			      ;;              seq-type=general-vector from-end=true count=other key=identity end=other 
 			      (|remove-if-not seq-type=general-vector from-end=true count=other key=identity|
 			       predicate sequence start end count))
-			  ;; seqr-type=general-vector from-end=false count=other end=other
 			  (if key
-			      ;;              seq-type=general-vector from-end=false count=other key=other end=other
 			      (|remove-if-not seq-type=general-vector from-end=false count=other key=other|
 			       predicate sequence start end count key)
-			      ;;              seq-type=general-vector from-end=false count=other key=identity end=other 
 			      (|remove-if-not seq-type=general-vector from-end=false count=other key=identity|
 			       predicate sequence start end count)))
-		      ;; seq-type=general-vector count=nil end=other
-		      ;; no need to test from-end
 		      (if key
-			  ;;              seq-type=general-vector count=nil key=other end=other
 			  (|remove-if-not seq-type=general-vector count=nil key=other|
 			   predicate sequence start end key)
-			  ;;              seq-type=general-vector count=nil key=identity end=other 
 			  (|remove-if-not seq-type=general-vector count=nil key=identity|
 			   predicate sequence start end)))
-		  ;; seq-type=general-vector end=nil
 		  (if count
-		      ;; seq-type=general-vector count=other end=nil
 		      (if from-end
-			  ;; seq-type=general-vector from-end=true count=other end=nil
 			  (if key
-			      ;;              seq-type=general-vector from-end=true count=other key=other end=nil
 			      (|remove-if-not seq-type=general-vector from-end=true count=other key=other|
 			       predicate sequence start (length sequence) count key)
-			      ;;              seq-type=general-vector from-end=true count=other key=identity end=nil 
 			      (|remove-if-not seq-type=general-vector from-end=true count=other key=identity|
 			       predicate sequence start (length sequence) count))
-			  ;; seqr-type=general-vector from-end=false count=other end=nil
 			  (if key
-			      ;;              seq-type=general-vector from-end=false count=other key=other end=nil
 			      (|remove-if-not seq-type=general-vector from-end=false count=other key=other|
 			       predicate sequence start (length sequence) count key)
-			      ;;              seq-type=general-vector from-end=false count=other key=identity end=nil 
 			      (|remove-if-not seq-type=general-vector from-end=false count=other key=identity|
 			       predicate sequence start (length sequence) count)))
-		      ;; seq-type=general-vector count=nil end=nil
-		      ;; no need to test from-end
 		      (if key
-			  ;;              seq-type=general-vector count=nil key=other end=nil
 			  (|remove-if-not seq-type=general-vector count=nil key=other|
 			   predicate sequence start (length sequence) key)
-			  ;;              seq-type=general-vector count=nil key=identity end=nil! 
 			  (|remove-if-not seq-type=general-vector count=nil key=identity|
 			   predicate sequence start (length sequence)))))))))
 
