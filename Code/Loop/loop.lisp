@@ -23,6 +23,8 @@
 
 (in-package #:sicl-loop)
 
+(declaim (optimize (debug 3)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Conditions for parsing
@@ -394,11 +396,11 @@
 ;;;
 ;;; Parse a with-clause
 
-(defclass with-clause (clause subclauses-mixin variable-clause-mixin)
+(defclass with-clause (clause subclauses-mixin variable-clause-mixin) ())
+
+(defclass with-subclause (var-and-type-spec-mixin)
   ((%form :initarg :form :reader form)
    (%form-present :initarg :form-present :reader form-present)))
-
-(defclass with-subclause (var-and-type-spec-mixin) ())
 
 (define-elementary-parser parse-and-with-subclause body (#:and)
   (multiple-value-bind (var type-spec rest1)
@@ -407,20 +409,21 @@
 	    (not (symbol-equal (car rest1) '#:=)))
 	(values
 	 (make-instance 'with-subclause
-	   :var-spec var
-	   :type-spec type-spec
-	   :form nil
-	   :form-present nil)
+                    :var-spec var
+                    :type-spec type-spec
+                    :form nil
+                    :form-present nil)
 	 rest1)
 	;; Else, there is a `='
 	(multiple-value-bind (form rest2)
 	    (parse-form (cdr rest1))
-	  (make-instance 'with-subclause
-	    :var-spec var
-	    :type-spec type-spec
-	    :form form
-	    :form-present t)
-	  rest2))))
+      (values
+       (make-instance 'with-subclause
+                      :var-spec var
+                      :type-spec type-spec
+                      :form form
+                      :form-present t)
+       rest2)))))
 
 (defun parse-with-subclauses (body)
   (parse-sequence body #'parse-and-with-subclause))
@@ -892,7 +895,8 @@
 ;;;
 ;;; Parse list accumulation clauses
 
-(defclass list-accumulation-clause (accumulation-clause) ())
+(defclass list-accumulation-clause (accumulation-clause)
+  ((%into-tail-var :initform nil :initarg :into-tail-var :accessor into-tail-var)))
 
 (defclass collect-clause (list-accumulation-clause) ())
 (defclass append-clause (list-accumulation-clause) ())
@@ -904,19 +908,18 @@
   (if (null body)
       (error 'expected-form-but-end)
       (let ((result (make-instance class-name
-		      :form (car body))))
-	(if (and (not (null (cdr body)))
-		 (symbol-equal (cadr body) '#:into))
-	    (cond ((null (cddr body))
-		   (error 'expected-simple-var-but-end))
-		  ((not (symbolp (caddr body)))
-		   (error 'expected-simple-var-but-found
-			  :found (caddr body)))
-		  (t
-		   (setf (into-var result)
-			 (caddr body))
-		   (values result (cdddr body))))
-	    (values result (cdr body))))))
+                                   :form (car body)
+                                   :into-tail-var (gensym "LIST-TAIL-"))))
+        (if (and (not (null (cdr body)))
+                 (symbol-equal (cadr body) '#:into))
+            (cond ((null (cddr body))
+                   (error 'expected-simple-var-but-end))
+                  ((not (symbolp (caddr body)))
+                   (error 'expected-simple-var-but-found :found (caddr body)))
+                  (t
+                   (setf (into-var result) (caddr body))
+                   (values result (cdddr body))))
+            (values result (cdr body))))))
 
 (define-elementary-parser parse-collect body (#:collect #:collecting)
   (parse-list-accumulation-clause (cdr body) 'collect-clause))
@@ -1062,7 +1065,7 @@
 
 (defclass while-clause (termination-test) ())
 (defclass until-clause (termination-test) ())
-(defclass repeat-clause (termination-test) ())
+(defclass repeat-clause (termination-test var-and-type-spec-mixin) ())
 (defclass always-clause (termination-test) ())
 (defclass never-clause (termination-test) ())
 (defclass thereis-clause (termination-test) ())
@@ -1080,7 +1083,10 @@
   (parse-termination-test (cdr body) 'until-clause))
 
 (define-elementary-parser parse-repeat-clause body (#:repeat)
-  (parse-termination-test (cdr body) 'repeat-clause))
+  (multiple-value-bind (clause rest)                        
+      (parse-termination-test (cdr body) 'repeat-clause)
+    (setf (var-spec clause) (gensym "REPEAT-"))
+    (values clause rest)))
 
 (define-elementary-parser parse-always-clause body (#:always)
   (parse-termination-test (cdr body) 'always-clause))
@@ -1116,7 +1122,10 @@
 (defclass loop-body ()
   ((%name-clause :initarg :name-clause :reader name-clause)
    (%variable-clauses :initarg :variable-clauses :reader variable-clauses)
-   (%main-clauses :initarg :main-clauses :reader main-clauses)))
+   (%main-clauses :initarg :main-clauses :reader main-clauses)
+   (%accumulation-variable :initform nil :accessor accumulation-variable)
+   (%accumulation-list-tail :initform nil :accessor accumulation-list-tail)
+   (%accumulation-type :initform nil :accessor accumulation-type)))
 
 (defun parse-loop-body (body)
   (multiple-value-bind (name-clause rest1)
@@ -1194,19 +1203,164 @@
 ;;;
 ;;; Code generation
 
-(defgeneric generate-code (clause))
+(defun progn-or-single-form (forms)
+  (if (> (length forms) 1)
+      `(progn ,@forms)
+      (first forms)))
 
-(defmethod generate-code ((clause while-clause))
+(defgeneric generate-bindings (clause))
+
+(defmethod generate-bindings (clause)
+  nil)
+
+(defmethod generate-bindings ((clause repeat-clause))
+  `((,(var-spec clause) ,(form clause))))
+
+(defmethod generate-bindings ((clause with-clause))
+  (mapcar (lambda (subclause)
+            `(,(var-spec subclause) ,(if (form-present subclause)
+                                         (form subclause)
+                                         nil)))
+          (subclauses clause)))
+
+(defmethod generate-bindings ((clause list-accumulation-clause))
+  (if (null (into-var clause))
+      nil
+      `((,(into-var clause) nil)
+        (,(into-tail-var clause) nil))))
+
+(defmethod generate-bindings ((clause numeric-accumulation-clause))
+  (if (null (into-var clause))
+      nil
+      `((,(into-var clause) 0))))
+
+(defgeneric generate-prologue (clause))
+
+(defmethod generate-prologue (clause)
+  nil)
+
+(defmethod generate-prologue ((clause initially-clause))
+  (progn-or-single-form (forms clause)))
+
+(defgeneric generate-epilogue (clause))
+
+(defmethod generate-epilogue (clause)
+  nil)
+
+(defmethod generate-epilogue ((clause finally-clause))
+  (progn-or-single-form (forms clause)))
+
+(defgeneric generate-termination-check (clause))
+
+(defmethod generate-termination-check (clause)
+  nil)
+
+(defmethod generate-termination-check ((clause while-clause))
   `(unless ,(form clause)
      (go end)))
 
-(defmethod generate-code ((clause until-clause))
+(defmethod generate-termination-check ((clause until-clause))
   `(when ,(form clause)
      (go end)))
 
-(defmacro loop (&rest body)
-  `(tagbody
-    again
-      ,@(mapcar #'generate-code (main-clauses (parse-loop-body body)))
-      (go again)
-    end))
+(defmethod generate-termination-check ((clause repeat-clause))
+  (let ((repeat-counter (var-spec clause)))
+    `(if (plusp ,repeat-counter)
+         (decf ,repeat-counter)
+         (go end))))
+
+(defvar *body*)
+
+(defgeneric generate-main-code (clause))
+
+(defmethod generate-main-code (clause)
+  nil)
+
+(defmethod generate-main-code ((clause do-clause))
+  (form clause))
+
+(defmethod generate-main-code ((clause collect-clause))
+  (let ((var (or (into-var clause)
+                 (accumulation-variable *body*)))
+        (tail (if (into-var clause)
+                  (into-tail-var clause)
+                  (accumulation-list-tail *body*)))
+        (cons (gensym)))
+    `(let ((,cons (cons ,(form clause) nil)))
+       (if (null ,var)
+           (setf ,var ,cons
+                 ,tail ,cons)
+           (setf (cdr ,tail) ,cons
+                 ,tail ,cons)))))
+
+(defmethod generate-main-code ((clause sum-clause))
+  (let ((var (or (into-var clause)
+                 (accumulation-variable *body*))))
+    `(incf ,var ,(form clause))))
+
+(defun generate-body (body)
+  (let ((clauses (append (variable-clauses body)
+                         (main-clauses body)))
+        (*body* body))
+    `(tagbody
+        ,@(remove nil (mapcar #'generate-prologue clauses))
+      again
+        ,@(remove nil (mapcar #'generate-termination-check clauses))
+        ,@(remove nil (mapcar #'generate-main-code clauses))
+        (go again)
+      end
+        ,@(remove nil (mapcar #'generate-epilogue clauses)))))
+
+(defun generate-accumulation-bindings-and-body (body)
+  (let ((body-form (generate-body body)))
+    (case (accumulation-type body)
+      (:list
+       `(let ((,(accumulation-variable body) nil)
+              (,(accumulation-list-tail body) nil))
+              ,body-form))
+      (:numeric
+       `(let ((,(accumulation-variable body) 0))
+          ,body-form))
+      ((nil)
+       body-form))))
+
+(defun generate-bindings-and-body (binding-clauses body)
+  (if (endp binding-clauses)
+      (generate-accumulation-bindings-and-body body)
+      (let ((bindings-first (generate-bindings (first binding-clauses)))
+            (bindings-rest-and-body (generate-bindings-and-body
+                                     (rest binding-clauses)
+                                     body)))
+        (if (null bindings-first)
+            bindings-rest-and-body
+            `(let (,@bindings-first)
+               ,bindings-rest-and-body)))))
+
+(defun initialize-accumulation (clauses body)
+  (unless (endp clauses)
+    (let ((clause (first clauses)))
+      (when (and (typep clause 'accumulation-clause)
+                 (null (into-var clause)))
+        (let ((clause-accumulation-type
+               (cond ((typep clause 'list-accumulation-clause)
+                      :list)
+                     ((typep clause 'numeric-accumulation-clause)
+                      :numeric))))
+          (cond ((null (accumulation-type body))
+                 (setf (accumulation-variable body) (gensym)
+                       (accumulation-list-tail body) (gensym)
+                       (accumulation-type body) clause-accumulation-type))
+                ((not (eq (accumulation-type body) clause-accumulation-type))
+                 (error "Conflicting accumulation types")))))
+      (initialize-accumulation (rest clauses) body))))
+
+(defmacro loop (&rest forms)
+  (let* ((body (parse-loop-body forms))
+         (block-name (let ((name-clause (name-clause body)))
+                       (and name-clause (name name-clause)))))
+    (initialize-accumulation (main-clauses body) body)
+    `(block ,block-name
+       ,(let* ((variable-clauses (variable-clauses body))
+               (main-clauses (main-clauses body))
+               (all-clauses (append variable-clauses main-clauses)))
+          (generate-bindings-and-body all-clauses body)))))
