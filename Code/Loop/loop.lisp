@@ -1,19 +1,24 @@
-;;; This code is in the public domain.
-;;;
-;;; The preliminary name for this project is SICL, which doesn't stand
-;;; for anything in particular.  Pronounce it like "sickle".
-;;;
-;;; The purpose of this code is to provide a totally portable
-;;; implementation of some high-level functionality of the Common Lisp
-;;; language, so that implementors of Common Lisp systems can
-;;; integrate it as it is into their systems, without having to
-;;; implement and maintain a specific version of it. 
-;;;
-;;; Author: Robert Strandh (strandh@labri.fr)
-;;; Date: 2008
-;;;
-;;; A portable implementation of the LOOP macro.
-;;; This implementation does not use any iteration construct. 
+;;;; Copyright (c) 2008, 2009, 2010, 2011
+;;;;
+;;;;     Robert Strandh (strandh@labri.fr)
+;;;; 
+;;;; Copyright (c) 2010, 2011
+;;;;
+;;;;     Matthieu Villeneuve (matthieu.villeneuve@gmail.com)
+;;;;
+;;;; all rights reserved. 
+;;;;
+;;;; Permission is hereby granted to use this software for any 
+;;;; purpose, including using, modifying, and redistributing it.
+;;;;
+;;;; The software is provided "as-is" with no warranty.  The user of
+;;;; this software assumes any responsibility of the consequences. 
+
+;;;; This file is part of the loop module of the SICL project.
+;;;; See the file SICL.text for a description of the project. 
+
+;;;; A portable implementation of the LOOP macro.
+;;;; This implementation does not use any iteration construct. 
 
 ;;; It would be good if we could get rid of the use of mapping
 ;;; functions here, so that the mapping functions could use loop
@@ -25,12 +30,18 @@
 
 (declaim (optimize (debug 3)))
 
+;;; The terminology used here is that of the BNF grammar in the
+;;; dictionary description of the loop macro in the HyperSpec.  It is
+;;; not the same as the terminology used in the section 6.1. 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Conditions for parsing
 
 (define-condition loop-parse-error (parse-error) ())
 
+;;; Root class for loop parse errors that report
+;;; something that was found, but should not be there. 
 (define-condition loop-parse-error-found (parse-error)
   ((%found :initarg :found :reader found)))
 
@@ -300,7 +311,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Parse a d-var-spec and a type spec
+;;; Parse a d-var-spec and a type-spec
+
+;;; A d-var-spec is a is a destructuring variable specifier: 
+;;; 
+;;;    d-var-spec ::= simple-var | nil | (d-var-spec . d-var-spec)
+;;;
+;;; where simple-var is a symbol (a name of a variable). 
+;;;
+;;; The syntax of a type-spec is:
+;;;
+;;;    type-spec ::= simple-type-spec | destructured-type-spec
+;;;    
+;;;    simple-type-spec ::= fixnum | float | t | nil
+;;;    
+;;;    destructured-type-spec ::= of-type d-type-spec
 
 ;;; Parse a d-var-spec
 (defun parse-d-var-spec (body)
@@ -376,7 +401,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause NAMED
+;;; Parse a name-clause
+
+;;; A name-clause is a clause that gives a name to the loop.  It
+;;; translates to a block name, so that return-from can be used to
+;;; exit the loop.  By default, the name of the loop is nil.
+
+;;; The name-clause is optional, and if present, must be the first one
+;;; in the body.  The syntax is:
+;;;
+;;;    named name
+;;;
+;;; where name is a symbol.
 
 (defclass named-clause (clause)
   ((%name :initarg :name :reader name)))
@@ -395,6 +431,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parse a with-clause
+
+;;; A with-clause allows the creation of local variables.  It is
+;;; executed once. 
+;;;
+;;; The syntax of a with-clause is:
+;;;
+;;;    with-clause ::= with var1 [type-spec] [= form1] {and var2 [type-spec] [= form2]}*
+;;;
+;;; where var1 and var2 are destructuring variable specifiers
+;;; (d-var-spec) allowing multiple local variables to be created in a
+;;; single with-clause by destructuring the value of the corresponding
+;;; form.
+;;;
+;;; When there are several consecutive with-claues, the execution is
+;;; done sequentially, so that variables created in one with-clause
+;;; can be used in the forms of subsequent with-clauses.  If parallel
+;;; creation of variables is wanted, then the with-clause can be
+;;; followed by one or more and-clauses. 
+;;;
+;;; The (destructuring) type specifier is optional.  If no type
+;;; specifier is given, it is as if t was given. 
+;;;
+;;; The initialization form is optional.  If there is a corresponding
+;;; type specifier for a variable, but no initialization form, then
+;;; the variable is initialized to a value that is appropriate for the
+;;; type.  In particular, for the type t the value is nil, for the
+;;; type number, the value is 0, and for the type float, the value is
+;;; 0.0.  
 
 (defclass with-clause (clause subclauses-mixin variable-clause-mixin) ())
 
