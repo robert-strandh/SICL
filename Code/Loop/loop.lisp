@@ -300,6 +300,14 @@
 	    (values clause rest)
 	    (apply #'parse-alternative body (rest parsers))))))
 
+;;; An elementary parser is one that takes a list of tokens as an
+;;; argument, checks that the first element of that list is one of a
+;;; set of symbols given and if so, executes some code and returns the
+;;; values of that execution, and if not returns two values: nil and
+;;; the list unchanged.
+;;;
+;;; This macro helps avoid duplicated boilerplate code by automating
+;;; the check for whether the first element of the list is in the set.
 (defmacro define-elementary-parser (name body-var start-symbols &body body)
   `(defun ,name (,body-var)
      (when (or (null ,body-var)
@@ -502,6 +510,33 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clauses FOR/AS
+
+;;; A for/as clause has the following syntax:
+;;;
+;;;    for-as-clause ::= {for | as} for-as-subclause {and for-as-subclause}* 
+;;;    for-as-subclause::= for-as-arithmetic | for-as-in-list | 
+;;;                        for-as-on-list | for-as-equals-then | 
+;;;                        for-as-across | for-as-hash | for-as-package 
+;;;    for-as-arithmetic::= var [type-spec] for-as-arithmetic-subclause 
+;;;    for-as-arithmetic-subclause::= arithmetic-up | arithmetic-downto | 
+;;;                                   arithmetic-downfrom 
+;;;    arithmetic-up::= [[{from | upfrom} form1 |   {to | upto | below} form2 |   by form3]]+ 
+;;;    arithmetic-downto::= [[{{from form1}}1  |   {{{downto | above} form2}}1  |   by form3]] 
+;;;    arithmetic-downfrom::= [[{{downfrom form1}}1  |   {to | downto | above} form2 |   by form3]] 
+;;;    for-as-in-list::= var [type-spec] in form1 [by step-fun] 
+;;;    for-as-on-list::= var [type-spec] on form1 [by step-fun] 
+;;;    for-as-equals-then::= var [type-spec] = form1 [then form2] 
+;;;    for-as-across::= var [type-spec] across vector 
+;;;    for-as-hash::= var [type-spec] being {each | the}  
+;;;               {{hash-key | hash-keys} {in | of} hash-table  
+;;;                [using (hash-value other-var)] |  
+;;;                {hash-value | hash-values} {in | of} hash-table  
+;;;                [using (hash-key other-var)]} 
+;;;    for-as-package::= var [type-spec] being {each | the}  
+;;;                      {symbol | symbols | 
+;;;                      present-symbol | present-symbols | 
+;;;                      external-symbol | external-symbols} 
+;;;                      [{in | of} package] 
 
 (defclass for/as-clause (clause subclause-mixin variable-clause-mixin) ())
 
