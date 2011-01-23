@@ -272,9 +272,21 @@
 ;;;
 ;;; Utilities
 
+;;; Loop keywords are symbols, but they are not recognized by symbol
+;;; identity as is usually the case, but instead by their names.  The
+;;; HyperSpec doesn't say what function to use for comparing the
+;;; names.  We assume string= here, meaning that the names are case 
+;;; sensitive. 
+
 (defun symbol-equal (symbol1 symbol2)
   (and (symbolp symbol1)
        (string= symbol1 symbol2)))
+
+;;; A parser is a function that takes a list of arbitrary Lisp objects
+;;; and returns two values, the result of the parse and the remainder
+;;; of the list that needs to be parsed.  When a parser fails, the
+;;; second value returned is the same as the the list of Lisp objects
+;;; that it received as an argument. 
 
 ;;; Returns a list of clauses parsed by repeated 
 ;;; invocations of the parser.
@@ -282,15 +294,21 @@
   (multiple-value-bind (clause rest1)
       (funcall parser body)
     (if (eq rest1 body)
+	;; Failed parsing the body according to the parser we recieved. 
+	;; Indicate failure by returning the empty list and the same
+	;; body as we recieved as argument. 
 	(values '() body)
+	;; We succeeded parsing the body according to the parser we
+	;; received.  Parse the remainder of the body recursively, and
+	;; return a list of the results returned by the parser we
+	;; received.
 	(multiple-value-bind (clauses rest2)
 	    (parse-sequence rest1 parser)
 	  (values (cons clause clauses) rest2)))))
 
-;;; Try alternative parsers and return the result
-;;; of the first one that succeeds.  If none of
-;;; the parsers succeeds, then return nil and 
-;;; the body unchanged.
+;;; Try alternative parsers and return the result of the first one
+;;; that succeeds.  If none of the parsers succeeds, then indicate
+;;; failure by returning nil and the body unchanged.
 (defun parse-alternative (body &rest parsers)
   (if (null parsers)
       (values nil body)
@@ -370,12 +388,6 @@
   (if (null body)
       (error 'expected-form-but-end)
       (values (car body) (cdr body))))
-
-;;; Return two values, the first clause of the body, and the remaining
-;;; body to be parsed.  The body does not include the loop keyword
-;;; which must have been removed before this function is called.
-
-(defgeneric parse-body (body keyword))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -623,7 +635,7 @@
 (define-elementary-parser parse-for/as-in body (#:in)
   (parse-for/as-in/on (cdr body) 'for/as-in-list-subclause))
 
-(define-elementary-parser parse-for/as-on body (#:n)
+(define-elementary-parser parse-for/as-on body (#:on)
   (parse-for/as-in/on (cdr body) 'for/as-on-list-subclause))
 
 (define-elementary-parser parse-for/as-equals-then body (#:=)
@@ -958,8 +970,13 @@
 ;;;
 ;;;    variable-clause::= with-clause | initial-final | for-as-clause 
 ;;; 
-;;; and we follow this example.  Why the HyperSpec defines it that way
-;;; is a mystery.  
+;;; and we follow this example.  The reason the HyperSpec defines
+;;; variable-clause is because the loop body is a named-clause
+;;; followed by zero or more variable-clauses followed by zero or more
+;;; main-clauses, and initia-final is one possibility both for
+;;; variable-clause and main-clause.  This means that an
+;;; initially-clause or a finally-clause can appear anywhere after a
+;;; named-clause.
 
 (defun parse-variable-clause (body)
   (parse-alternative body
@@ -1238,6 +1255,22 @@
 ;;;
 ;;; Parse a main-clause
 
+;;; The HyperSpec defines main-clause like this:
+;;;
+;;;    main-clause::= unconditional | accumulation | conditional |
+;;;                   termination-test | initial-final              
+;;; 
+;;; and we follow this example.  The reason the HyperSpec defines
+;;; main-clause is because the loop body is a named-clause
+;;; followed by zero or more variable-clauses followed by zero or more
+;;; main-clauses, and initia-final is one possibility both for
+;;; variable-clause and main-clause.  This means that an
+;;; initially-clause or a finally-clause can appear anywhere after a
+;;; named-clause.
+
+;;; FIXME: introduce a parse-conditional to make the code agree with
+;;; the grammar.
+
 (defun parse-main-clause (body)
   (parse-alternative body
 		     #'parse-unconditional
@@ -1263,6 +1296,19 @@
    (%accumulation-variable :initform nil :accessor accumulation-variable)
    (%accumulation-list-tail :initform nil :accessor accumulation-list-tail)
    (%accumulation-type :initform nil :accessor accumulation-type)))
+
+;;; The HyperSpec defines the syntax of the loop macro like this:
+;;;
+;;;    loop [name-clause] {variable-clause}* {main-clause}*
+;;;
+;;; meaning that there is an optional name-clause followed by zero or
+;;; more variable-clauses, followed by zero or more main clauses.  One
+;;; might think from this that a main-clause cannot precede a
+;;; variable-clause, but this is not true, because initially-clauses
+;;; and finally-clauses are possibilites for both variable-clause and
+;;; main-clause, and it is indeed possible for an initally-clause or a
+;;; finally-clause to precede another variable-clause or to follow
+;;; another main-clause.  
 
 (defun parse-loop-body (body)
   (multiple-value-bind (name-clause rest1)
