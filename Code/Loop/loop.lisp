@@ -895,6 +895,11 @@
     (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
   ())
 
+;;; An initially clause does not exist as a separate grammar item in
+;;; the HyperSpec, but it is here.  The syntax is:
+;;;
+;;;    initial ::= initially compound-form+
+
 (define-elementary-parser parse-initially-clause body (#:initially)
   (multiple-value-bind (compound-forms rest)
       (parse-nonempty-compound-forms (cdr body))
@@ -909,6 +914,11 @@
     (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
   ())
 
+;;; A finally clause does not exist as a separate grammar item in the
+;;; HyperSpec, but it is here.  The syntax is:
+;;;
+;;;    final ::= finally compound-form+
+
 (define-elementary-parser parse-finally-clause body (#:finally)
   (multiple-value-bind (compound-forms rest)
       (parse-nonempty-compound-forms (cdr body))
@@ -919,6 +929,22 @@
 ;;;
 ;;; Parse initial or final
 
+;;; There is no particular reason to regroup these two, other than the
+;;; fact that the HyperSpec does, and the HyperSpec probably does it
+;;; only because they both take 1 or more compound forms after the
+;;; loop keyword.  We do not take advantage of this fact for code
+;;; factoring, though.
+;;;
+;;; The syntax is according to the HyperSpec is:
+;;;
+;;;    initial-final ::= initially compound-form+ | finally compound-form+ 
+;;;
+;;; but here it would be more like:
+;;;
+;;;    initial-final ::= initial | final
+;;;    initial ::= initially compund-form+
+;;;    final ::= finally compound-form+
+
 (defun parse-initial-final (body)
   (parse-alternative body
 		     #'parse-initially-clause
@@ -927,6 +953,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parse a variable-clause
+
+;;; The HyperSpec defines varible-clause like this:
+;;;
+;;;    variable-clause::= with-clause | initial-final | for-as-clause 
+;;; 
+;;; and we follow this example.  Why the HyperSpec defines it that way
+;;; is a mystery.  
 
 (defun parse-variable-clause (body)
   (parse-alternative body
@@ -938,10 +971,15 @@
 ;;;
 ;;; Parse a do-clause
 
+;;; The HyperSpec does not have an explicit do-clause, but we do here,
+;;; and we define the syntax to be:
+;;;
+;;;    do-clause ::= {do | doing} compund-form+
+
 (defclass do-clause
     (clause main-clause-mixin compound-forms-mixin) ())
 
-(define-elementary-parser parse-do body (#:do)
+(define-elementary-parser parse-do-clause body (#:do #:doing)
   (multiple-value-bind (compound-forms rest)
       (parse-nonempty-compound-forms (cdr body))
     (values (make-instance 'do-clause :forms compound-forms)
@@ -950,6 +988,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parse a return-clause
+
+;;; The HyperSpec does not have an explicit return-clause, but we do here,
+;;; and we define the syntax to be:
+;;;
+;;;    return-clause ::= return {form | it}
 
 (defclass return-clause (clause main-clause-mixin)
   ((%form :initarg :form :reader form)))
@@ -962,25 +1005,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Parse a do-clause
-
-(defclass do-clause (clause main-clause-mixin)
-  ((%form :initarg :form :reader form)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Parse unconditional
+
+;;; An unconditional is defined in the HyperSpec like this:
+;;;
+;;;    unconditional::= {do | doing} compound-form+ | return {form | it} 
+;;;
+;;; but here it would be more like:
+;;;
+;;;    unconditional::= do-clause | return-clause
 
 (defun parse-unconditional (body)
   (parse-alternative body
 		     #'parse-do-clause
 		     #'parse-return-clause))
-
-(define-elementary-parser parse-do-clause body (#:do)
-  (multiple-value-bind (form rest)
-      (parse-form (cdr body))
-    (values (make-instance 'do-clause :form form)
-          rest)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
