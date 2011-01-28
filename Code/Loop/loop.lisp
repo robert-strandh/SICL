@@ -1460,7 +1460,7 @@
   nil)
 
 (defmethod generate-main-code ((clause do-clause))
-  (form clause))
+  `(progn ,@(forms clause)))
 
 (defmethod generate-main-code ((clause collect-clause))
   (let ((var (or (into-var clause)
