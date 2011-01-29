@@ -434,7 +434,7 @@
 ;;;
 ;;; where name is a symbol.
 
-(defclass named-clause (clause)
+(defclass name-clause (clause)
   ((%name :initarg :name :reader name)))
 
 (define-elementary-parser parse-name-clause body (#:named)
@@ -444,7 +444,7 @@
 	 (error 'expected-symbol-but-found
 		:found (cadr body)))
 	(t
-	 (values (make-instance 'named-clause
+	 (values (make-instance 'name-clause
 		   :name (cadr body))
 		 (cddr body)))))
 
@@ -964,28 +964,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Parse a variable-clause
-
-;;; The HyperSpec defines varible-clause like this:
-;;;
-;;;    variable-clause::= with-clause | initial-final | for-as-clause 
-;;; 
-;;; and we follow this example.  The reason the HyperSpec defines
-;;; variable-clause is because the loop body is a named-clause
-;;; followed by zero or more variable-clauses followed by zero or more
-;;; main-clauses, and initia-final is one possibility both for
-;;; variable-clause and main-clause.  This means that an
-;;; initially-clause or a finally-clause can appear anywhere after a
-;;; named-clause.
-
-(defun parse-variable-clause (body)
-  (parse-alternative body
-		     #'parse-with-clause
-		     #'parse-initial-final
-		     #'parse-for/as-clause))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Parse a do-clause
 
 ;;; The HyperSpec does not have an explicit do-clause, but we do here,
@@ -1152,6 +1130,13 @@
 ;;;
 ;;; Parse conditional
 
+;;; The HyperSpec defines conditional in a way similar to this:
+;;;
+;;;    conditional ::= if/when | unless
+;;;
+;;; except that it does not introduce the names if/when and unless.  We find it
+;;; practical to do so so that we can give a name to each individual parser.
+
 (defclass conditional-clause (clause main-clause)
   ((%test-form :initarg :test-form :reader test-form)
    (%then-clauses :initarg :then-clauses :reader then-clauses)
@@ -1172,7 +1157,7 @@
 
 ;;; This function is called when we have 
 ;;; already seen if, when, or unless
-(defun parse-conditional (body class-name)
+(defun parse-conditional-remaining (body class-name)
   (multiple-value-bind (form rest1)
       (parse-form body)
     (declare (ignore rest1))
@@ -1205,14 +1190,29 @@
 			   rest3))))))))
 
 (define-elementary-parser parse-if/when body (#:if #:when)
-  (parse-conditional body 'if/when-clause))
+  (parse-conditional-remaining body 'if/when-clause))
 
 (define-elementary-parser parse-unless body (#:if)
-  (parse-conditional body 'unless-clause))
+  (parse-conditional-remaining body 'unless-clause))
 
+(defun parse-conditional (body)
+  (parse-alternative body
+		     #'parse-if/when
+		     #'parse-unless))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parse termination test
+
+;;; The HyperSpec defines termination-test in a way similar to this:
+;;;
+;;;    termination-test ::= while-clause | until-clause | repeat-clause
+;;;                         always-clause | never-clause | thereis-clause
+;;; 
+;;; except that it does not introduce the names while-clause,
+;;; until-clause, repeat-clause, always-clause, never-clause and
+;;; thereis-clause .  We find it practical to do so so that we can
+;;; give a name to each individual parser.
 
 (defclass termination-test (clause main-clause-mixin)
   ((%form :initarg :form :reader form)))
@@ -1224,106 +1224,81 @@
 (defclass never-clause (termination-test) ())
 (defclass thereis-clause (termination-test) ())
 
-(defun parse-termination-test (body class-name)
+(defun parse-termination-test-remaining (body class-name)
   (multiple-value-bind (form rest)
       (parse-form body)
     (values (make-instance class-name :form form)
 	    rest)))
 
 (define-elementary-parser parse-while-clause body (#:while)
-  (parse-termination-test (cdr body) 'while-clause))
+  (parse-termination-test-remaining (cdr body) 'while-clause))
 
 (define-elementary-parser parse-until-clause body (#:until)
-  (parse-termination-test (cdr body) 'until-clause))
+  (parse-termination-test-remaining (cdr body) 'until-clause))
 
 (define-elementary-parser parse-repeat-clause body (#:repeat)
   (multiple-value-bind (clause rest)                        
-      (parse-termination-test (cdr body) 'repeat-clause)
+      (parse-termination-test-remaining (cdr body) 'repeat-clause)
     (setf (var-spec clause) (gensym "REPEAT-"))
     (values clause rest)))
 
 (define-elementary-parser parse-always-clause body (#:always)
-  (parse-termination-test (cdr body) 'always-clause))
+  (parse-termination-test-remaining (cdr body) 'always-clause))
 
 (define-elementary-parser parse-never-clause body (#:never)
-  (parse-termination-test (cdr body) 'never-clause))
+  (parse-termination-test-remaining (cdr body) 'never-clause))
 
 (define-elementary-parser parse-thereis-clause body (#:thereis)
-  (parse-termination-test (cdr body) 'thereis-clause))
+  (parse-termination-test-remaining (cdr body) 'thereis-clause))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Parse a main-clause
-
-;;; The HyperSpec defines main-clause like this:
-;;;
-;;;    main-clause::= unconditional | accumulation | conditional |
-;;;                   termination-test | initial-final              
-;;; 
-;;; and we follow this example.  The reason the HyperSpec defines
-;;; main-clause is because the loop body is a named-clause
-;;; followed by zero or more variable-clauses followed by zero or more
-;;; main-clauses, and initia-final is one possibility both for
-;;; variable-clause and main-clause.  This means that an
-;;; initially-clause or a finally-clause can appear anywhere after a
-;;; named-clause.
-
-;;; FIXME: introduce a parse-conditional to make the code agree with
-;;; the grammar.
-
-(defun parse-main-clause (body)
+(defun parse-termination-test (body)
   (parse-alternative body
-		     #'parse-unconditional
-		     #'parse-accumulation
-		     #'parse-if/when
-                     #'parse-unless
 		     #'parse-while-clause
                      #'parse-until-clause
                      #'parse-repeat-clause
                      #'parse-always-clause
                      #'parse-never-clause
-                     #'parse-thereis-clause
-		     #'parse-initial-final))
+                     #'parse-thereis-clause))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Loop parser
 
+;;; At this level, we do not impose any order between the clauses, and
+;;; we just store all the cluses as we find them.  Later, we verify
+;;; that the order is correct.
+;;;
+;;; The reason for doing it that way is so that it is common that
+;;; programmers get the order between clauses wrong, so in that case
+;;; we want to be able to generate an appropriate error message. 
+
 (defclass loop-body ()
-  ((%name-clause :initarg :name-clause :reader name-clause)
-   (%variable-clauses :initarg :variable-clauses :reader variable-clauses)
-   (%main-clauses :initarg :main-clauses :reader main-clauses)
+  ((%clauses :initform '() :initarg :clauses :accessor clauses)
    (%accumulation-variable :initform nil :accessor accumulation-variable)
    (%accumulation-list-tail :initform nil :accessor accumulation-list-tail)
    (%accumulation-type :initform nil :accessor accumulation-type)))
 
-;;; The HyperSpec defines the syntax of the loop macro like this:
-;;;
-;;;    loop [name-clause] {variable-clause}* {main-clause}*
-;;;
-;;; meaning that there is an optional name-clause followed by zero or
-;;; more variable-clauses, followed by zero or more main clauses.  One
-;;; might think from this that a main-clause cannot precede a
-;;; variable-clause, but this is not true, because initially-clauses
-;;; and finally-clauses are possibilites for both variable-clause and
-;;; main-clause, and it is indeed possible for an initally-clause or a
-;;; finally-clause to precede another variable-clause or to follow
-;;; another main-clause.  
+(defun parse-any-clause (body)
+  (parse-alternative body
+		     #'parse-name-clause
+		     ;; Treat initially and finally separately
+		     #'parse-initial-final
+		     ;; Variable clauses except initial and final
+		     #'parse-with-clause
+		     #'parse-for/as-clause
+		     ;; Main clauses except initial and final
+		     #'parse-unconditional
+		     #'parse-conditional
+		     #'parse-accumulation
+		     #'parse-termination-test))
 
 (defun parse-loop-body (body)
-  (multiple-value-bind (name-clause rest1)
-      (parse-name-clause body)
-    (multiple-value-bind (variable-clauses rest2)
-	(parse-sequence rest1 #'parse-variable-clause)
-      (multiple-value-bind (main-clauses rest3)
-	  (parse-sequence rest2 #'parse-main-clause)
-	(cond ((not (null rest3))
-	       (error 'expected-keyword-but-found
-		      :found (car rest3)))
-	      (t (make-instance 'loop-body
-                   :name-clause name-clause
-                   :variable-clauses variable-clauses
-                   :main-clauses main-clauses)))))))
+  (multiple-value-bind (clauses rest)
+      (parse-sequence body #'parse-any-clause)
+    (if (not (null rest))
+	(error 'expected-keyword-but-found
+	       :found (car rest))
+	(make-instance 'loop-body :clauses clauses))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1381,6 +1356,44 @@
 		      (extract-aux (cdr d-var-spec) (cdr d-type-spec))))))
       (extract-aux d-var-spec d-type-spec)
       result)))
+
+;;; The HyperSpec defines main-clause like this:
+;;;
+;;;    main-clause::= unconditional | accumulation | conditional |
+;;;                   termination-test | initial-final              
+;;; 
+;;; The reason the HyperSpec defines main-clause is because the loop
+;;; body is a name-clause followed by zero or more variable-clauses
+;;; followed by zero or more main-clauses, and initia-final is one
+;;; possibility both for variable-clause and main-clause.  This means
+;;; that an initially-clause or a finally-clause can appear anywhere
+;;; after a name-clause.
+
+;;; The HyperSpec defines varible-clause like this:
+;;;
+;;;    variable-clause::= with-clause | initial-final | for-as-clause 
+;;; 
+;;; and we follow this example.  The reason the HyperSpec defines
+;;; variable-clause is because the loop body is a name-clause
+;;; followed by zero or more variable-clauses followed by zero or more
+;;; main-clauses, and initia-final is one possibility both for
+;;; variable-clause and main-clause.  This means that an
+;;; initially-clause or a finally-clause can appear anywhere after a
+;;; name-clause.
+
+
+;;; The HyperSpec defines the syntax of the loop macro like this:
+;;;
+;;;    loop [name-clause] {variable-clause}* {main-clause}*
+;;;
+;;; meaning that there is an optional name-clause followed by zero or
+;;; more variable-clauses, followed by zero or more main clauses.  One
+;;; might think from this that a main-clause cannot precede a
+;;; variable-clause, but this is not true, because initially-clauses
+;;; and finally-clauses are possibilites for both variable-clause and
+;;; main-clause, and it is indeed possible for an initally-clause or a
+;;; finally-clause to precede another variable-clause or to follow
+;;; another main-clause.  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1482,8 +1495,7 @@
     `(incf ,var ,(form clause))))
 
 (defun generate-body (body)
-  (let ((clauses (append (variable-clauses body)
-                         (main-clauses body)))
+  (let ((clauses (clauses body))
         (*body* body))
     `(tagbody
         ,@(remove nil (mapcar #'generate-prologue clauses))
@@ -1539,11 +1551,10 @@
 
 (defmacro loop (&rest forms)
   (let* ((body (parse-loop-body forms))
-         (block-name (let ((name-clause (name-clause body)))
-                       (and name-clause (name name-clause)))))
-    (initialize-accumulation (main-clauses body) body)
+         (block-name (if (typep (car (clauses body)) 'name-clause)
+			 (name (car (clauses body)))
+			 nil)))
+    (initialize-accumulation (clauses body) body)
     `(block ,block-name
-       ,(let* ((variable-clauses (variable-clauses body))
-               (main-clauses (main-clauses body))
-               (all-clauses (append variable-clauses main-clauses)))
-          (generate-bindings-and-body all-clauses body)))))
+       ,(generate-bindings-and-body (clauses body) body))))
+
