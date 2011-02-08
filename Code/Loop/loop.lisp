@@ -1304,9 +1304,68 @@
 ;;;
 ;;; Conditions for syntactic and semantic analysis
 
+;;; The root of all syntax errors.
+(define-condition loop-syntax-error (program-error) ())
+
+;;; This condition is signaled when a name-clause is found
+;;; and the first clause is not a name-clause. 
+(define-condition name-clause-not-first (loop-syntax-error) ())
+
+;;; This condition is signaled when the first clause is a name-clause
+;;; but there are other name-clauses. 
+(define-condition multiple-name-clauses (loop-syntax-error) ())
+
+;;; This condition is signaled when a variable-clause (other than an
+;;; initially-clause or a finally-clause) appears after a main-clause
+;;; (other than an initially-clause or a finally-clause).  
+(define-condition invalid-clause-order (loop-syntax-error) ())
+
+;;; The root of all semantic errors.
+(define-condition loop-semantic-error (program-error) ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Syntactic and semantic analysis
+
+(defun verify-clause-order (loop-body)
+  (let ((clauses (clauses loop-body)))
+    ;; Check that if there is a name-clause, the first one is in
+    ;; position 0.  For now, we do not care if there is more than one
+    ;; name-clause.
+    (let ((name-clause-position
+	   (position-if (lambda (clause) (typep clause 'name-clause))
+			clauses)))
+      (when (and (not (null name-clause-position)) (plusp name-clause-position))
+	(error 'name-clause-not-first)))
+    ;; Check that, if the first clause is a name-clause, there is not
+    ;; a second name-clause.  We have already tested the case when
+    ;; there is a name-clause other than in the first position.
+    (when (typep (car clauses) 'name-clause)
+      (let ((second-name-clause
+	     (find-if (lambda (clause) (typep clause 'name-clause))
+		      (cdr clauses))))
+	(when (not (null second-name-clause))
+	  (error 'multiple-name-clauses))))
+    ;; Check that there is not a variable-clause (other than an
+    ;; initially-clause or a finally-clause) following a name clause
+    ;; (other than an initially-clause or a finally-clause). 
+    (let ((last-variable-clause-position
+	   (position-if (lambda (clause)
+			  (and (typep clause 'variable-clause-mixin)
+			       (not (typep clause 'initially-clause))
+			       (not (typep clause 'finally-clause))))
+			clauses
+			:from-end t))
+	  (first-main-clause-position
+	   (position-if (lambda (clause)
+			  (and (typep clause 'main-clause-mixin)
+			       (not (typep clause 'initially-clause))
+			       (not (typep clause 'finally-clause))))
+			clauses)))
+      (when (and (not (null last-variable-clause-position))
+		 (not (null first-main-clause-position))
+		 (> last-variable-clause-position first-main-clause-position))
+	(error 'invalid-clause-order)))))
 
 (defun destructure-variables (d-var-spec root)
   (let ((bindings '())
@@ -1554,6 +1613,7 @@
          (block-name (if (typep (car (clauses body)) 'name-clause)
 			 (name (car (clauses body)))
 			 nil)))
+    (verify-clause-order body)
     (initialize-accumulation (clauses body) body)
     `(block ,block-name
        ,(generate-bindings-and-body (clauses body) body))))
