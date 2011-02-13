@@ -95,29 +95,33 @@
 ;;;
 ;;; Implementation of the macros
 
+;;; FIXME: This is a bit wasteful because we call proper-list-p for
+;;; each sublist of the forms.
 (defmacro or (&rest forms)
+  (unless (proper-list-p forms)
+    (error 'malformed-body :name 'or :body forms))
   (if (null forms)
       nil
-      (if (not (consp forms))
-	  (error 'malformed-body :name 'or :body forms)
-	  (if (null (cdr forms))
-	      (car forms)
-	      (let ((temp-var (gensym)))
-		`(let ((,temp-var ,(car forms)))
-		   (if ,temp-var
-		       ,temp-var
-		       (or ,@(cdr forms)))))))))
+      (if (null (cdr forms))
+	  (car forms)
+	  (let ((temp-var (gensym)))
+	    `(let ((,temp-var ,(car forms)))
+	       (if ,temp-var
+		   ,temp-var
+		   (or ,@(cdr forms))))))))
 
+;;; FIXME: This is a bit wasteful because we call proper-list-p for
+;;; each sublist of the forms.
 (defmacro and (&rest forms)
+  (unless (proper-list-p forms)
+    (error 'malformed-body :name 'or :body forms))
   (if (null forms)
       t
-      (if (not (consp forms))
-	  (error 'malformed-body :name 'and :body forms)
-	  (if (null (cdr forms))
-	      (car forms)
-	      `(if ,(car forms)
-		   (and ,@(cdr forms))
-		   nil)))))
+      (if (null (cdr forms))
+	  (car forms)
+	  `(if ,(car forms)
+	       (and ,@(cdr forms))
+	       nil))))
 
 (defmacro when (form &body body)
   (if (not (proper-list-p body))
