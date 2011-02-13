@@ -29,6 +29,14 @@
     (assert-equal '0
 		  (or nil 0 (/ x)))))
 
+(define-test or-6
+  (assert-equal '(0)
+		(multiple-value-list (or nil (values 0 1) nil))))
+
+(define-test or-7
+  (assert-equal '(0 1)
+		(multiple-value-list (or nil (values 0 1)))))
+
 (define-test or-error-0
   (assert-error 'program-error
 		(macroexpand-1 '(or . 1))))
@@ -39,6 +47,38 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Tests for the and macro
+
+(define-test and-0
+  (assert-equal 't
+		(and)))
+
+(define-test and-1
+  (assert-equal 'nil
+		(and nil)))
+
+(define-test and-2
+  (assert-equal '0
+		(and 0)))
+
+(define-test and-3
+  (assert-equal 'nil
+		(and nil 0)))
+
+(define-test and-4
+  (assert-equal '0
+		(and 1 0)))
+
+(define-test and-5
+  (assert-equal 'nil
+		(and 1 nil 0)))
+
+(define-test and-6
+  (assert-equal '(0 1)
+		(multiple-value-list (and 0 2 (values 0 1)))))
+
+(define-test and-7
+  (assert-equal '(2)
+		(multiple-value-list (and 0 (values 0 1) 2))))
 
 (define-test and-error-0
   (assert-error 'program-error
