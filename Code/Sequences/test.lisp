@@ -2703,17 +2703,19 @@
 		     (setf test #'eql)))
 	       (unless count
 		 (setf count length))
-	       (coerce (append (coerce (subseq sequence 0 start) 'list)
-			       (loop for element in (coerce (subseq sequence start end) 'list)
-				     unless (and (plusp count)
-						 (funcall test item (funcall key element)))
-				       collect element
-				     else
-				       do (decf count))
-			       (coerce (subseq sequence end length) 'list))
-		       (cond ((listp sequence) 'list)
-			     ((stringp sequence) 'string)
-			     (t 'vector)))))))
+	       (if (<= end start)
+		   sequence
+		   (coerce (append (coerce (subseq sequence 0 start) 'list)
+				   (loop for element in (coerce (subseq sequence start end) 'list)
+					 unless (and (plusp count)
+						     (funcall test item (funcall key element)))
+					   collect element
+					 else
+					   do (decf count))
+				   (coerce (subseq sequence end length) 'list))
+			   (cond ((listp sequence) 'list)
+				 ((stringp sequence) 'string)
+				 (t 'vector))))))))
 			      
 (defun test-remove (item sequence key test test-not start end from-end count)
   (flet ((make-arg (name thing)
