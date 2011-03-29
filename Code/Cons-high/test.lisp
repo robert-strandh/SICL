@@ -11479,11 +11479,12 @@
     (handler-bind ((warning (lambda (condition)
 			      (setf warned t)
 			      (muffle-warning condition))))
-      (compile nil '(lambda ()
-		     (declare (special list))
-		     (pushnew '2 list
-		      :test #'eql
-		      :test-not #'eql))))
+      (setf fun
+	    (compile nil '(lambda ()
+			   (declare (special list))
+			   (pushnew '2 list
+			    :test #'eql
+			    :test-not #'eql)))))
     (assert-true warned)
     (assert-error 'error (funcall fun))))
 

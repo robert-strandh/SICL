@@ -146,7 +146,7 @@
 	  do (test-find-3 item sequence test -1 index)
 	     (test-find-3 item sequence test index -1))
     (loop for start from 0 to length
-	  do (loop for end from 0 to length
+	  do (loop for end from start to length
 		   do (test-find-3 item sequence test start end)))))
     
 (define-test |find normal|
@@ -2790,11 +2790,11 @@
     (loop for index1 from 0 to length
 	  do (loop for index2 from 0 to length
 		   do (test-remove-3 item sequence test -1 index1 index2)
-		      (test-remove-3 item sequence test index1 -1 index2)
-		      (test-remove-3 item sequence test index1 index2 -1)))
+		      (test-remove-3 item sequence test index1 -1 index2)))
     (loop for start from 0 to length
-	  do (loop for end from 0 to length
+	  do (loop for end from start to length
 		   do (loop for count from 0 to length
+			    do (test-remove-3 item sequence test start end -1)
 			    do (test-remove-3 item sequence test start end count))))))
 
 (define-test |remove normal|
@@ -3237,7 +3237,7 @@
 	  do (test-position-3 item sequence test -1 index)
 	     (test-position-3 item sequence test index -1))
     (loop for start from 0 to length
-	  do (loop for end from 0 to length
+	  do (loop for end from start to length
 		   do (test-position-3 item sequence test start end)))))
     
 (define-test |position normal|
@@ -3330,7 +3330,7 @@
 	  do (test-position-if-2 predicate sequence -1 index)
 	     (test-position-if-2 predicate sequence index -1))
     (loop for start from 0 to length
-	  do (loop for end from 0 to length
+	  do (loop for end from start to length
 		   do (test-position-if-2 predicate sequence start end)))))
     
 (define-test |position-if normal|
@@ -3430,7 +3430,7 @@
 	  do (test-position-if-not-2 predicate sequence -1 index)
 	     (test-position-if-not-2 predicate sequence index -1))
     (loop for start from 0 to length
-	  do (loop for end from 0 to length
+	  do (loop for end from start to length
 		   do (test-position-if-not-2 predicate sequence start end)))))
     
 (define-test |position-if-not normal|
@@ -3549,7 +3549,7 @@
 	  do (test-count-3 item sequence test -1 index)
 	     (test-count-3 item sequence test index -1))
     (loop for start from 0 to length
-	  do (loop for end from 0 to length
+	  do (loop for end from start to length
 		   do (test-count-3 item sequence test start end)))))
 
 (define-test |count normal|
@@ -3640,7 +3640,7 @@
 	  do (test-count-if-2 predicate sequence -1 index)
 	     (test-count-if-2 predicate sequence index -1))
     (loop for start from 0 to length
-	  do (loop for end from 0 to length
+	  do (loop for end from start to length
 		   do (test-count-if-2 predicate sequence start end)))))
 
 (define-test |count-if normal|
@@ -3738,7 +3738,7 @@
 	  do (test-count-if-not-2 predicate sequence -1 index)
 	     (test-count-if-not-2 predicate sequence index -1))
     (loop for start from 0 to length
-	  do (loop for end from 0 to length
+	  do (loop for end from start to length
 		   do (test-count-if-not-2 predicate sequence start end)))))
 
 (define-test |count-if-not normal|

@@ -158,3 +158,19 @@
 	  (name-package (name c))
 	  (type-error-datum c)
 	  (in-sequence c)))
+
+(defmethod report-condition ((c end-less-than-start)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "In ~a (in the ~a package),~@
+           The bounding indexes start: ~s and end: ~s are not valid~@
+           bounding indexes, because start must be less than or equal~@
+           to end.  The sequence is:~@
+           ~s."
+	  (name c)
+	  (name-package (name c))
+	  (type-error-datum c)
+	  (end-index c)
+	  (in-sequence c)))
+
