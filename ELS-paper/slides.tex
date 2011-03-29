@@ -1,0 +1,265 @@
+\documentclass{slides}
+\usepackage[utf8]{inputenc}
+\usepackage{graphics}
+\usepackage{portland}
+\usepackage{epsfig}
+\usepackage{alltt}
+\usepackage{moreverb}
+\usepackage{url}
+\usepackage[dvips,usenames]{color}
+
+\definecolor{MyLightMagenta}{rgb}{1,0.7,1}
+\definecolor{darkgreen}{rgb}{0.1,0.7,0.1}
+
+\newcommand{\darkgreen}[1]{\textcolor{darkgreen}{#1}}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\thistle}[1]{\textcolor{Thistle}{#1}}
+\newcommand{\apricot}[1]{\textcolor{Apricot}{#1}}
+\newcommand{\melon}[1]{\textcolor{Melon}{#1}}
+\newcommand{\dandelion}[1]{\textcolor{Dandelion}{#1}}
+\newcommand{\green}[1]{\textcolor{OliveGreen}{#1}}
+\newcommand{\lavender}[1]{\textcolor{Lavender}{#1}}
+\newcommand{\mylightmagenta}[1]{\textcolor{MyLightMagenta}{#1}}
+\newcommand{\blue}[1]{\textcolor{RoyalBlue}{#1}}
+\newcommand{\darkorchid}[1]{\textcolor{DarkOrchid}{#1}}
+\newcommand{\orchid}[1]{\textcolor{Orchid}{#1}}
+\newcommand{\brickred}[1]{\textcolor{BrickRed}{#1}}
+\newcommand{\peach}[1]{\textcolor{Peach}{#1}}
+\newcommand{\bittersweet}[1]{\textcolor{Bittersweet}{#1}}
+\newcommand{\salmon}[1]{\textcolor{Salmon}{#1}}
+\newcommand{\yelloworange}[1]{\textcolor{YellowOrange}{#1}}
+\newcommand{\periwinkle}[1]{\textcolor{Periwinkle}{#1}}
+
+\newcommand{\names}[1]{\periwinkle{#1}}
+\newcommand{\motcle}[1]{\mylightmagenta{#1}}
+\newcommand{\classname}[1]{\darkgreen{#1}}
+\newcommand{\str}[1]{\yelloworange{#1}}
+\newcommand{\defun}[1]{\orchid{#1}}
+\newcommand{\ti}[1]{\begin{center}\Large{\textcolor{blue}{#1}}\end{center}}
+\newcommand{\alert}[1]{\thistle{#1}}
+\newcommand{\lispprint}[1]{\dandelion{#1}}
+\newcommand{\lispvalue}[1]{\red{#1}}
+\newcommand{\tr}[1]{\texttt{\red{#1}}}
+\newcommand{\emc}[1]{\red{#1}}
+\newcommand{\lispobj}[1]{\green{\texttt{#1}}}
+\def\prompt{{\textcolor{Orchid}{CL-USER>}}}
+\newcommand{\promptp}[1]{\textcolor{Orchid}{#1>}}
+
+\newcommand{\Comment}[1]{
+\begin{center}
+\textcolor{yellow}
+{#1}
+\end{center}
+}
+
+\def\bs{$\backslash$}
+\def\inputfig#1{\input #1}
+\def\inputtex#1{\input #1}
+
+\begin{document}
+\landscape
+\setlength{\oddsidemargin}{1cm}
+\setlength{\evensidemargin}{1cm}
+\setlength{\marginparwidth}{1cm}
+\setlength{\parskip}{0.5cm}
+\setlength{\parindent}{0cm}
+%-----------------------------------------------------------
+\begin{slide}\ti{SICL \\ Building blocks for implementers of Common Lisp}
+\vskip 0.5cm
+\begin{center}
+Robert Strandh \\
+LaBRI \\
+Université de Bordeaux \\
+Bordeaux, France
+\end{center}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Motivation}
+\vskip 0.5cm
+\begin{itemize}
+\item (mainly) ease of debugging user code
+\item improved documentation strings
+\item internationalization 
+\item improved performance
+\item modern implementation techniques
+\end{itemize}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Debugging user code}
+\small
+Example:
+\begin{verbatim}
+CL-USER> (remove 10 '(1 2 3 4 . 5))
+
+The value 5 is not of type LIST.
+   [Condition of type TYPE-ERROR]
+\end{verbatim}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Debugging user code}
+In SICL:
+\small
+\begin{verbatim}
+CL-USER> (sicl-sequences:remove 10 '(1 2 3 4 . 5))
+
+In REMOVE (in the SICL-SEQUENCES package):
+A proper list was required,
+but the following was given:
+(1 2 3 4 . 5)
+   [Condition of type SICL-SEQUENCES::MUST-BE-PROPER-LIST]
+\end{verbatim}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Improved documentation strings}
+Example:
+\small
+\begin{verbatim}
+CL-USER> (documentation 'rassoc-if-not 'function)
+"Return the first cons in ALIST whose CDR does not satisfy PREDICATE.
+  If KEY is supplied, apply it to the CDR of each cons before testing."
+\end{verbatim}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Improved documentation strings}
+In SICL:
+\small
+\begin{verbatim}
+CL-USER> (documentation 'sicl-cons-high:rassoc-if-not 'function)
+"Lambda list: (PREDICATE ALIST &key KEY)
+where PREDICATE is a designator for a function of one argument
+returning a generalized boolean, and ALIST is an association list.
+KEY is a designator for a function of one argument which is
+applied the elements of LIST before the PREDICATE is applied,
+or KEY could be NIL which means IDENTITY.
+The elements of ALIST are searched.  If an element is NIL, it is
+ignored.  If the element is a CONS, then KEY is applied to its CDR
+and then, the PREDICATE is applied to the result.  If the PREDICATE
+returns false then the element (which is a CONS cell) of ALIST
+is returned.  If the PREDICATE returns true for all of the elements
+of ALIST then NIL is returned.
+An error of type TYPE-ERROR might be signaled if ALIST is not
+an association list."
+\end{verbatim}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Internationalization}
+\begin{itemize}
+\item of documentation strings
+\item of condition reporting
+\end{itemize}
+
+The combination of new terminology and a foreign language complicates
+learning. 
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Improved performance}
+Example:
+\small
+\begin{verbatim}
+CL-USER> (time (count 10 *l* :from-end t))
+Evaluation took:
+  2.123 seconds of real time
+  2.120000 seconds of total run time (1.780000 user, 0.340000 system)
+  [ Run times consist of 1.560 seconds GC time, and 0.560 seconds non-GC time. ]
+  99.86% CPU
+  5,352,470,222 processor cycles
+  160,144,832 bytes consed
+  
+10000000
+\end{verbatim}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Improved performance}
+In SICL:
+\small
+\begin{verbatim}
+CL-USER> (time (sicl-sequences:count 10 *l* :from-end t))
+Evaluation took:
+  0.172 seconds of real time
+  0.170000 seconds of total run time (0.170000 user, 0.000000 system)
+  98.84% CPU
+  292,789,133 processor cycles
+  0 bytes consed
+  
+10000000
+\end{verbatim}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Modern implementation techniques}
+
+\begin{itemize}
+\item object-oriented techniques using CLOS
+\item compiler macros
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Current status}
+\begin{itemize}
+\item A complete implementation of the \emph{conses} dictionary,
+  including docstrings, specialized conditions, condition reporters. 
+
+Performance is good.  Some problems have been avoided
+(e.g. \texttt{butlast}). 
+
+\item A near-complete implementation of standard conditional macros.
+  More tests are required.
+\item A near-complete implementation of standard iteration macros.
+  More tests are required.
+\item A near-complete implementation of the \texttt{format} function.
+  Floating-point printers are missing. 
+\end{itemize}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Current status}
+\begin{itemize}
+\item A near-complete implementation of the \emph{sequences}
+  dictionary.  Currently being redesigned because of changes in
+  conventions. 
+\item A partial implementation of the \texttt{loop} macro.  Code
+  generation remains.  
+\item A partial implementation of \texttt{read}.  No separate token
+  parsing.  Separate versions for common cases (input base 10,
+  upcase).  Entry point for generating a syntax tree with source
+  tracking. 
+\end{itemize}
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Conclusions}
+
+It is useful to revisit every function, macro, etc. of the standard to
+gain insight about correctness, modularity, performance,
+understandability, and debuggability of client code.  
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Future work}
+
+\begin{itemize}
+\item Finish existing and remaining modules (obviously).
+\item Perhaps supply several versions (small, fast, etc.) of modules.
+\item Use-case scenarios and implications for bootstrapping. 
+\item New complete Common Lisp implementation?
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{}
+
+\vfill\end{slide}
+%--------------------------------
+
+\end{document}
+ 
