@@ -82,6 +82,7 @@ Bordeaux, France
 \item internationalization 
 \item improved performance
 \item modern implementation techniques
+\item code understandability
 \end{itemize}
 \vfill\end{slide}
 %-----------------------------------------------------------
@@ -185,12 +186,116 @@ Evaluation took:
 \end{verbatim}
 \vfill\end{slide}
 %-----------------------------------------------------------
+\begin{slide}\ti{How to improve debuggability}
+
+Detecting and reporting errors:
+
+\begin{itemize}
+\item Errors are reported by the outermost standard functionality
+  called by the innermost user code.
+\item No standard functionality can rely directly on any other
+  standard functionality to detect and report errors.
+\item Error messages should be directly related to arguments supplied
+  by user code.
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{How to improve debuggability}
+
+Error messages:
+
+\begin{itemize}
+\item Explicitly mention the standard functionality that was invoked
+  by user code.
+\item Explicitly mention preconditions that were violated, with a
+  reference to the standard where possible.
+\item Explicitly mention arguments and other objects that demonstrate
+  a violation of one or more preconditions.
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Improved documentation strings}
+
+\begin{itemize}
+\item Do not assume the programmer knows the entire HyperSpec, nor
+  even the exact definitions of the glossary (can an association list
+  have top-level NIL elements?).
+\item Mention possible exceptional situations that are not listed as
+  such in the HyperSpec (typically restrictions on argument types). 
+\item Use \texttt{(setf documentation)} to avoid noise in code. 
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Internationalization}
+
+\begin{itemize}
+\item Mechanism must be transparent, i.e., it should not be required
+  by implementations that do not want internationalization. 
+\item Use \texttt{(setf documentation)} in separate modules for each
+  language to modify documentation strings.
+\item Use methods on \texttt{print-object} in separate modules to
+  modify condition reporters. These methods trampoline to a generic
+  function that specialized on the language. 
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Improved performance}
+
+General techniques:
+
+\begin{itemize}
+\item Use special versions for common special cases, e.g.,
+  using a \texttt{:test} of \texttt{eql} or \texttt{eq} or a
+  \texttt{:key} of \texttt{identity} on sequences, 
+\item Use compiler macros to eliminate argument-parsing overhead in
+  most cases. 
+\item For \texttt{read}, scan tokens a single time in most cases. 
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Improved performance}
+
+Scanning a list from the end:
+
+\begin{itemize}
+\item Basic idea: traverse on the backtrack phase of recursive calls.
+\item For long lists, trade multiple (inexpensive) scans for stack
+  depth. 
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Improved performance}
+
+Revisit algorithms:
+
+\begin{itemize}
+\item Use merge sort for sorting lists. 
+\item Reading and writing floating-point numbers.
+\end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
 \begin{slide}\ti{Modern implementation techniques}
 
 \begin{itemize}
 \item object-oriented techniques using CLOS
 \item compiler macros
 \end{itemize}
+
+\vfill\end{slide}
+%-----------------------------------------------------------
+\begin{slide}\ti{Code understandability}
+
+Use a ``literate programming'' style with many comments.  
+
+Normally, I do not recommend this style, but for code that implements
+a stable standard, it may be justified. 
 
 \vfill\end{slide}
 %-----------------------------------------------------------
@@ -233,10 +338,6 @@ understandability, and debuggability of client code.
 
 \vfill\end{slide}
 %-----------------------------------------------------------
-\begin{slide}\ti{}
-
-\vfill\end{slide}
-%-----------------------------------------------------------
 \begin{slide}\ti{Future work}
 
 \begin{itemize}
@@ -247,18 +348,18 @@ understandability, and debuggability of client code.
 \end{itemize}
 
 \vfill\end{slide}
-%-----------------------------------------------------------
-\begin{slide}\ti{}
+%% %-----------------------------------------------------------
+%% \begin{slide}\ti{}
 
-\vfill\end{slide}
-%-----------------------------------------------------------
-\begin{slide}\ti{}
+%% \vfill\end{slide}
+%% %-----------------------------------------------------------
+%% \begin{slide}\ti{}
 
-\vfill\end{slide}
-%-----------------------------------------------------------
-\begin{slide}\ti{}
+%% \vfill\end{slide}
+%% %-----------------------------------------------------------
+%% \begin{slide}\ti{}
 
-\vfill\end{slide}
+%% \vfill\end{slide}
 %--------------------------------
 
 \end{document}
