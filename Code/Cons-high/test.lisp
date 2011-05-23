@@ -8573,8 +8573,8 @@
 				    :test #'eq)))))
 
 (define-test |set-difference test=eq key=other 2b|
-  (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 20 collect (list i))))
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 20 collect (list (list i)))))
     (assert-equal 1
 		  (length (set-difference (copy-list l1)
 					  (copy-list (append (mapcar #'copy-list (cdr l1))
@@ -8589,8 +8589,8 @@
 				    :test 'eq)))))
 
 (define-test |set-difference test=eq key=other 3|
-  (let ((l1 (loop for i from 1 below 10 collect (list i)))
-	(l2 (loop for i from 2 below 200 collect (list i))))
+  (let ((l1 (loop for i from 1 below 10 collect (list (list i))))
+	(l2 (loop for i from 2 below 200 collect (list (list i)))))
     (assert-equal 1
 		  (length (set-difference (copy-list l1)
 					  (copy-list (append (mapcar #'copy-list (cdr l1))
