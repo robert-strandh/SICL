@@ -3846,7 +3846,7 @@
   (assert-false (tree-equal '((a)) '(a) :test-not #'eq)))
 
 (define-test |tree-equal test-not=eq 5b|
-  (assert-false (tree-equal '((a)) '(a) :test-not #'eq)))
+  (assert-false (tree-equal '((a)) '(a) :test-not 'eq)))
 
 (define-test |tree-equal test-not=eq 6a|
   (assert-false (tree-equal '(a) '(b) :test-not #'eq)))
