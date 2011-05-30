@@ -181,11 +181,7 @@
     (error 'must-be-proper-list
 	   :name name
 	   :datum list))
-<<<<<<< HEAD
-  (when (and (null tail) (< length end))
-=======
   (when (and (atom tail) (< length end))
->>>>>>> 77e852ff0974d8f8048c9ad174774463aeed8a2f
     (error 'invalid-end-index
 	   :name name
 	   :datum end
