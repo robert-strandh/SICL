@@ -44,6 +44,11 @@
         the indexes i such that START <= i < END.  The default for START is 0,~@
         and the default for END is NIL, which means the end of the sequence."))
 
+(defparameter *count*
+  (fmt "COUNT is an integer or NIL.  When no value of COUNT is given, the~@
+        default is NIL.  The value of COUNT limits the number of elements~@
+        affected by the operation."))
+
 (defparameter *satisfy-a-two-argument-test*
   (fmt "To determine whether an element satisfies the test,  The KEY function~@
         is first applied to the element.  The result is then used in the test.~@
@@ -78,6 +83,10 @@
   (fmt "An error might be signaled if START and END are not valid bounding~@
 	index designators for SEQUENCE, which means that 0 <= START <= L, and~@
 	either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
+
+(defparameter *error-count*
+  (fmt "The consequences are undefined if a value of COUNT other than NIL or~@
+        an integer is given."))
 
 (defparameter *find-description*
   (fmt "Searches the interval of SEQUENCE designated by START and END~@
@@ -313,3 +322,99 @@
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
 	     *error-bounding-indexes*))
+
+(defparameter *remove-description*
+  (fmt "Returns a sequence that is like SEQUENCE, except that the elements in~@
+        the interval designated by START and END in SEQUENCE that satisfy the~@
+        test are not present in the sequence returned. Otherwise the elements~@
+        of the resulting sequence are the same, and in the same order, as those~@
+        of SEQUENCE.~@
+        ~@
+        If SEQUENCE is a list, then the resulting sequence is a list.~@
+        If SEQUENCE is a vector, then the resulting sequence is a vector with~@
+        the same actual array element type as SEQUENCE.~@
+        ~@
+        The resulting sequence may be identical to SEQUENCE if no elements were~@
+        removed, and if SEQUENCE is a list, then the resulting sequence may share~@
+        structure with SEQUENCE.~@
+        ~@
+        When FROM-END is true, it is the last COUNT elements of the interval~@
+        designated by START and END that are no longer present in the resulting~@
+        sequence.  Otherwise, it is the first COUNT elements of the interval~@
+        designated by START and END that are no longer present in the resulting~@
+        sequence.  Thus, if COUNT is not given or NIL is given as the value of~@
+        COUNT, it does not matter whether FROM-END is true or false.~@
+        ~@
+        When a non-NIL value of COUNT is supplied, at most COUNT elements in the~@
+        interval designated by START and END are no longer present in the resulting~@
+        sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
+        same effect as supplying the value 0 (zero)."))
+
+(fundoc 'remove
+	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+	      Arguments:~@
+	      ~a~%~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *remove-description*
+	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-two-argument-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+            
+(fundoc 'remove-if
+	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *remove-description*
+	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-one-argument-positive-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+
+(fundoc 'remove-if-not
+	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *remove-description*
+	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-one-argument-negative-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
