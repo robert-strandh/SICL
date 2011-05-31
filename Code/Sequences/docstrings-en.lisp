@@ -418,3 +418,103 @@
 	     *error-not-proper-sequence*
 	     *error-bounding-indexes*
 	     *error-count*))
+
+(defparameter *delete-description*
+  (fmt "Returns a sequence that is like SEQUENCE, except that the elements in~@
+        the interval designated by START and END in SEQUENCE that satisfy the~@
+        test are not present in the sequence returned. Otherwise the elements~@
+        of the resulting sequence are the same, and in the same order, as those~@
+        of SEQUENCE. SEQUENCE might be modified as a result of this operation.~@
+        ~@
+        If SEQUENCE is a list, then the resulting sequence is a list.~@
+        If SEQUENCE is a vector, then the resulting sequence is a vector with~@
+        the same actual array element type as SEQUENCE.~@
+        ~@
+        SEQUENCE may be destroyed, and may be used to construct the resulting~@
+        sequence.  The resulting sequence may or may not be identical to SEQUENCE.~@
+        When SEQUENCE is a list, any CAR or CDR of its top-level list structure~@
+        may be modified.~@
+        When SEQUENCE is a vector, the length of SEQUENCE may be modified and its~@
+        elements may be moved in order to produce the resulting sequence. 
+        ~@
+        When FROM-END is true, it is the last COUNT elements of the interval~@
+        designated by START and END that are no longer present in the resulting~@
+        sequence.  Otherwise, it is the first COUNT elements of the interval~@
+        designated by START and END that are no longer present in the resulting~@
+        sequence.  Thus, if COUNT is not given or NIL is given as the value of~@
+        COUNT, it does not matter whether FROM-END is true or false.~@
+        ~@
+        When a non-NIL value of COUNT is supplied, at most COUNT elements in the~@
+        interval designated by START and END are no longer present in the resulting~@
+        sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
+        same effect as supplying the value 0 (zero)."))
+
+(fundoc 'delete
+	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+	      Arguments:~@
+	      ~a~%~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *delete-description*
+	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-two-argument-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+            
+(fundoc 'delete-if
+	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *delete-description*
+	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-one-argument-positive-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+
+(fundoc 'delete-if-not
+	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *delete-description*
+	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-one-argument-negative-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+
