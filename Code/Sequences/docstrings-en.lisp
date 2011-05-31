@@ -87,10 +87,10 @@
 	~@
 	If FROM-END is false, then the first element that satisfies the test is~@
 	returned.  Otherwise the last element that satisfies the test is returned.~@
-	There is no requirement, however that the KEY and the TEST or TEST-NOT~@
-	functions will be applied in any particular order.  In particular, even if~@
-	FROM-END is true, SEQUENCE may be search from the beginning to the end~@
-	and the last element that satisfies the test returned."))
+	There is no requirement that the test will be applied in any particular~@
+        order.  In particular, even if FROM-END is true, SEQUENCE may be~@
+        search from the beginning to the end and the last element that satisfies~@
+        the test returned."))
 
 ;;; Create documentation for a function.
 (defun fundoc (name string)
@@ -169,7 +169,7 @@
 	tested from the beginning to the end of the sequence.  If FROM-END is true,~@
 	then elements of the designated interval will be tested from the end to the~@
 	beginning of the sequence.  This difference is important only when~@
-	KEY, TEST, or TEST-NOT has side effects."))
+	one of the functions implicated in the test has side effects."))
 
 (fundoc 'count
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
@@ -229,6 +229,86 @@
               ~a~@
               ~a"
 	     *count-description*
+	     *predicate-sequence* *key* *bounding-indexes* *from-end*
+	     *satisfy-a-one-argument-negative-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*))
+
+(defparameter *position-description*
+  (fmt "Searches the interval of SEQUENCE designated by START and END~@
+        for an element of the sequence that satisfies the test.~@
+	If such an element is found, then the position within SEQUENCE of~@
+        the element found is returned.~@
+	Otherwise NIL is returned.~@
+	~@
+	If FROM-END is false, then the position of the first element in the~@
+        designated inteval of SEQUENCE that satisfies the test is returned.~@
+	Otherwise the position of the last element in the designated inteval~@
+        of SEQUENCE that satisfies the test is returned.  The position returned~@
+        is relative to the beginning of the SEQUENCE and not of the interval.~@
+	There is no requirement that the test will be applied in any particular~@
+        order.  In particular, even if FROM-END is true, SEQUENCE may be~@
+        searched from the beginning to the end and the position of the last~@
+        element that satisfies the test returned."))
+
+(fundoc 'position
+	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+	      Arguments:~@
+	      ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a"
+	     *position-description*
+	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+	     *satisfy-a-two-argument-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*))
+            
+(fundoc 'position-if
+	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a"
+	     *position-description*
+	     *predicate-sequence* *key* *bounding-indexes* *from-end*
+	     *satisfy-a-one-argument-positive-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*))
+
+(fundoc 'position-if-not
+	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a"
+	     *position-description*
 	     *predicate-sequence* *key* *bounding-indexes* *from-end*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
