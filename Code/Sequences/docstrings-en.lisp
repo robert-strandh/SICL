@@ -37,10 +37,7 @@
   (fmt "START and END are bounding index designators.  They determine~@
         an interval with SEQUENCE that is considered.  This interval contains~@
         the indexes i such that START <= i < END.  The default for START is 0,~@
-        and the default for END is NIL, which means the end of the sequence.~@
-	An error might be signaled if START and END are not valid bounding~@
-	index designators for SEQUENCE, which means that 0 <= START <= L, and~@
-	either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
+        and the default for END is NIL, which means the end of the sequence."))
 
 (defparameter *satisfy-the-test*
   (fmt "To determine whether an element satisfies the test,  The KEY function~@
@@ -59,6 +56,11 @@
 (defparameter *error-not-proper-sequence*
   (fmt "An error of type TYPE-ERROR might be signaled if SEQUENCE is not a~@
         proper sequence."))
+
+(defparameter *error-bounding-indexes*
+  (fmt "An error might be signaled if START and END are not valid bounding~@
+	index designators for SEQUENCE, which means that 0 <= START <= L, and~@
+	either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
 
 ;;; Create documentation for a function.
 (defun fundoc (name string)
@@ -89,8 +91,37 @@
               ~a~@
               ~@
               Exceptional situations:~@
+              ~a~@
               ~a"
               *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
-	      *satisfy-the-test* *error-not-proper-sequence*))
+	      *satisfy-the-test*
+	      *error-not-proper-sequence*
+	      *error-bounding-indexes*))
 
-
+(fundoc 'count
+	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+              ~@
+              Description:~@
+              COUNT counts the number of elements in the interval of SEQUENCE designated by~@
+	      START and END that satisfy the test, and returns the number of such elements.~@
+	      ~@
+	      IF FROM-END is false, then the elements of the designated interval will be~@
+	      tested from the beginning to the end of the sequence.  If FROM-END is true,~@
+	      then elements of the designated interval will be tested from the end to the~@
+	      beginning of the sequence.  This difference is important only when~@
+	      KEY, TEST, or TEST-NOT have side effects.~@
+              ~@
+	      Arguments:~@
+	      ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a"
+              *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+	      *satisfy-the-test*
+	      *error-not-proper-sequence*
+	      *error-bounding-indexes*))
+            
