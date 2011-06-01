@@ -28,6 +28,16 @@
         that returns a generalized boolean.~@
         SEQUENCE is a proper sequence."))
 
+(defparameter *newitem-item-sequence*
+  (fmt "NEWITEM is any object, ITEM is any object, and~@
+        SEQUENCE is a proper sequence."))
+
+(defparameter *newitem-predicate-sequence*
+  (fmt "NEWITEM is any object.~@
+        PREDICATE is a designator for a function of one argument~@
+        that returns a generalized boolean.~@
+        SEQUENCE is a proper sequence."))
+
 (defparameter *key*
   (fmt "KEY is a designator for a function of one argument which is~@
         applied the elements of SEQUENCE before the test is applied,~@
@@ -518,3 +528,95 @@
 	     *error-bounding-indexes*
 	     *error-count*))
 
+(defparameter *substitute-description*
+  (fmt "Returns a copy of SEQUENCE in which every element in the interval designated~@
+        START and END that satisfies the test has been replaced by NEWITEM.~@
+         ~@
+        If SEQUENCE is a list, then the resulting sequence is a list.~@
+        If SEQUENCE is a vector, then the resulting sequence is a vector with~@
+        the same actual array element type as SEQUENCE.~@
+        ~@
+        The resulting sequence may be identical to SEQUENCE if no elements were~@
+        replaced, and if SEQUENCE is a list, then the resulting sequence may share~@
+        structure with SEQUENCE.~@
+        ~@
+        When FROM-END is true, it is the last COUNT elements of the interval~@
+        designated by START and END that are replaced in the resulting~@
+        sequence.  Otherwise, it is the first COUNT elements of the interval~@
+        designated by START and END that are replaced in the resulting~@
+        sequence.  Thus, if COUNT is not given or NIL is given as the value of~@
+        COUNT, it does not matter whether FROM-END is true or false.~@
+        ~@
+        When a non-NIL value of COUNT is supplied, at most COUNT elements in the~@
+        interval designated by START and END are replaced in the resulting~@
+        sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
+        same effect as supplying the value 0 (zero)."))
+       
+(fundoc 'substitute
+	(fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+	      Arguments:~@
+	      ~a~%~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *substitute-description*
+	     *newitem-item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-two-argument-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+            
+(fundoc 'substitute-if
+	(fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *substitute-description*
+	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-one-argument-positive-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+
+(fundoc 'substitute-if-not
+	(fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *substitute-description*
+	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-one-argument-negative-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
