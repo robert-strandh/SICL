@@ -107,9 +107,9 @@
 	If FROM-END is false, then the first element that satisfies the test is~@
 	returned.  Otherwise the last element that satisfies the test is returned.~@
 	There is no requirement that the test will be applied in any particular~@
-        order.  In particular, even if FROM-END is true, SEQUENCE may be~@
-        search from the beginning to the end and the last element that satisfies~@
-        the test returned."))
+        order, nor that it will be applied at most once to a particular element.~@
+        In particular, even if FROM-END is true, SEQUENCE may be search from the~@
+        beginning to the end and the last element that satisfies the test returned."))
 
 ;;; Create documentation for a function.
 (defun fundoc (name string)
@@ -266,9 +266,10 @@
         of SEQUENCE that satisfies the test is returned.  The position returned~@
         is relative to the beginning of the SEQUENCE and not of the interval.~@
 	There is no requirement that the test will be applied in any particular~@
-        order.  In particular, even if FROM-END is true, SEQUENCE may be~@
-        searched from the beginning to the end and the position of the last~@
-        element that satisfies the test returned."))
+        order, nor that it will be applied at most once to a particular element.~@
+        In particular, even if FROM-END is true, SEQUENCE may be searched from~@
+        the beginning to the end and the position of the last element that~@
+        satisfies the test returned."))
 
 (fundoc 'position
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
@@ -358,7 +359,10 @@
         When a non-NIL value of COUNT is supplied, at most COUNT elements in the~@
         interval designated by START and END are no longer present in the resulting~@
         sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
-        same effect as supplying the value 0 (zero)."))
+        same effect as supplying the value 0 (zero).~@
+        ~@
+      	There is no requirement that the test will be applied in any particular~@
+        order, nor that it will be applied at most once to a particular element."))
 
 (fundoc 'remove
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
@@ -457,7 +461,10 @@
         When a non-NIL value of COUNT is supplied, at most COUNT elements in the~@
         interval designated by START and END are no longer present in the resulting~@
         sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
-        same effect as supplying the value 0 (zero)."))
+        same effect as supplying the value 0 (zero).~@
+        ~@
+      	There is no requirement that the test will be applied in any particular~@
+        order, nor that it will be applied at most once to a particular element."))
 
 (fundoc 'delete
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
@@ -550,7 +557,10 @@
         When a non-NIL value of COUNT is supplied, at most COUNT elements in the~@
         interval designated by START and END are replaced in the resulting~@
         sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
-        same effect as supplying the value 0 (zero)."))
+        same effect as supplying the value 0 (zero).~@
+        ~@
+      	There is no requirement that the test will be applied in any particular~@
+        order, nor that it will be applied at most once to a particular element."))
        
 (fundoc 'substitute
 	(fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
@@ -615,6 +625,94 @@
               ~a~@
               ~a"
 	     *substitute-description*
+	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-one-argument-negative-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+
+(defparameter *nsubstitute-description*
+  (fmt "Returns SEQUENCE in which every element in the interval designated~@
+        START and END that satisfies the test has been replaced by NEWITEM.~@
+         ~@
+        When FROM-END is true, it is the last COUNT elements of the interval~@
+        designated by START and END that are replaced in the resulting~@
+        sequence.  Otherwise, it is the first COUNT elements of the interval~@
+        designated by START and END that are replaced in the resulting~@
+        sequence.  Thus, if COUNT is not given or NIL is given as the value of~@
+        COUNT, it does not matter whether FROM-END is true or false.~@
+        ~@
+        When a non-NIL value of COUNT is supplied, at most COUNT elements in the~@
+        interval designated by START and END are replaced in the resulting~@
+        sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
+        same effect as supplying the value 0 (zero).~@
+        ~@
+      	There is no requirement that the test will be applied in any particular~@
+        order, nor that it will be applied at most once to a particular element."))
+       
+(fundoc 'nsubstitute
+	(fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+	      Arguments:~@
+	      ~a~%~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *nsubstitute-description*
+	     *newitem-item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-two-argument-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+            
+(fundoc 'nsubstitute-if
+	(fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *nsubstitute-description*
+	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+	     *satisfy-a-one-argument-positive-test*
+	     *error-not-proper-sequence*
+	     *error-bounding-indexes*
+	     *error-count*))
+
+(fundoc 'nsubstitute-if-not
+	(fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+              ~@
+              Description:~@
+              ~a~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~@
+              ~a~@
+              ~a"
+	     *nsubstitute-description*
 	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
