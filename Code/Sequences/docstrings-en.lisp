@@ -117,6 +117,25 @@
   (setf (documentation (fdefinition name) 'function)
         (documentation name 'function)))
 
+(fundoc 'copy-seq
+	(fmt "Lambda list: (SEQUENCE)~@
+              ~@
+              Description:~@
+              Returns a copy of SEQUENCE, i.e, a sequence that has the same length~@
+              and the same elements of SEQUENCE in the same order.~@
+              ~@
+              If SEQUENCE is a vector, then the resulting sequence is a freshly~@
+              allocated simple array of rank 1 with the same actual array element~@
+              type as SEQUENCE.  Notice that it might not be a simple vector because~@
+              simple vectors have an element type of t.  If SEQUENCE is a list, then~@
+              the resulting sequence is a freshly-allocated list.~@
+              ~@
+              Arguments:~@
+              SEQUENCE is a proper sequence.~@
+              ~@
+              ~a"
+	     *error-not-proper-sequence*))
+
 (fundoc 'find
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
