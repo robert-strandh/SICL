@@ -20,6 +20,12 @@
   (defun fmt (&rest args)
     (apply #'format nil args)))
 
+(defparameter *sequence*
+  (fmt "SEQUENCE is a proper sequence"))
+
+(defparameter *index*
+  (fmt "INDEX is a valid sequence index for SEQUENCE"))
+
 (defparameter *item-sequence*
   (fmt "ITEM is any object, and SEQUENCE is a proper sequence."))
 
@@ -89,8 +95,17 @@
   (fmt "An error of type TYPE-ERROR might be signaled if SEQUENCE is not a~@
         proper sequence."))
 
-(defparameter *error-bounding-indexes*
+(defparameter *error-not-valid-index*
+  (fmt "An error of type TYPE-ERROR is signaled if INDEX is not a~@
+        valid sequence index for SEQUENCE"))
+
+(defparameter *maybe-error-bounding-indexes*
   (fmt "An error might be signaled if START and END are not valid bounding~@
+	index designators for SEQUENCE, which means that 0 <= START <= L, and~@
+	either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
+
+(defparameter *definitely-error-bounding-indexes*
+  (fmt "An error is signaled if START and END are not valid bounding~@
 	index designators for SEQUENCE, which means that 0 <= START <= L, and~@
 	either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
 
@@ -133,8 +148,55 @@
               Arguments:~@
               SEQUENCE is a proper sequence.~@
               ~@
+              Exceptional situations:~@
               ~a"
 	     *error-not-proper-sequence*))
+
+(fundoc 'elt
+	(fmt "Lambda list: (SEQUENCE INDEX)~@
+              ~@
+              Description:~@
+              Returns the element of SEQUENCE indicated by INDEX.~@
+              ~@
+              Arguments:~@
+              ~a~%~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~%~a"
+	     *sequence*
+	     *index*
+	     *error-not-proper-sequence*
+	     *error-not-valid-index*))
+
+;;; The CLHS entry for FILL is strange because it requires an error to be signaled
+;;; if START is not a non-negative integer or if END is not either a non-negative
+;;; integer or NIL.  However, it does not require an error to be signaled if START
+;;; and END are otherwise invalid bounding index designators, for instance if 
+;;; START > END.  In that case the default rule applies which says that the
+;;; consequences are undefined if the restriction is not respected.  
+;;;
+;;; However, no sane implementation of FILL would fail to test for these restrictions
+;;; and signal an error, so here we just assume that this is the case. 
+;;;
+;;; Question: What happens or should happen if ITEM is not the correct type as 
+;;; an element of SEQUENCE?
+(fundoc 'fill
+	(fmt "Lambda list: (SEQUENCE ITEM &key START END)~@
+              ~@
+              Description:~@
+              Destructively replaces the elements of SEQUENCE in the interval designated~@
+              by START and END by ITEM.~@
+              ~@
+              Arguments:~@
+              ~a~@
+              ITEM is any object.~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              ~a~%~a"
+	     *sequence* *bounding-indexes*
+	     *error-not-proper-sequence*
+	     *definitely-error-bounding-indexes*))
 
 (fundoc 'find
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
@@ -155,7 +217,7 @@
 	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
 	     *satisfy-a-two-argument-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
 
 (fundoc 'find-if
 	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
@@ -176,7 +238,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end*
 	     *satisfy-a-one-argument-positive-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
 
 (fundoc 'find-if-not
 	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
@@ -197,7 +259,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
 
 (defparameter *count-description*
   (fmt "Counts the number of elements in the interval of SEQUENCE designated by~@
@@ -228,7 +290,7 @@
 	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
 	     *satisfy-a-two-argument-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
             
 (fundoc 'count-if
 	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
@@ -249,7 +311,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end*
 	     *satisfy-a-one-argument-positive-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
 
 (fundoc 'count-if-not
 	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
@@ -270,7 +332,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
 
 (defparameter *position-description*
   (fmt "Searches the interval of SEQUENCE designated by START and END~@
@@ -309,7 +371,7 @@
 	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
 	     *satisfy-a-two-argument-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
             
 (fundoc 'position-if
 	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
@@ -330,7 +392,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end*
 	     *satisfy-a-one-argument-positive-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
 
 (fundoc 'position-if-not
 	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
@@ -351,7 +413,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*))
+	     *maybe-error-bounding-indexes*))
 
 (defparameter *remove-description*
   (fmt "Returns a sequence that is like SEQUENCE, except that the elements in~@
@@ -403,7 +465,7 @@
 	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-two-argument-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
             
 (fundoc 'remove-if
@@ -426,7 +488,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-positive-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
 
 (fundoc 'remove-if-not
@@ -449,7 +511,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
 
 (defparameter *delete-description*
@@ -505,7 +567,7 @@
 	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-two-argument-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
             
 (fundoc 'delete-if
@@ -528,7 +590,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-positive-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
 
 (fundoc 'delete-if-not
@@ -551,7 +613,7 @@
 	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
 
 (defparameter *substitute-description*
@@ -601,7 +663,7 @@
 	     *newitem-item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-two-argument-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
             
 (fundoc 'substitute-if
@@ -624,7 +686,7 @@
 	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-positive-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
 
 (fundoc 'substitute-if-not
@@ -647,7 +709,7 @@
 	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
 
 (defparameter *nsubstitute-description*
@@ -689,7 +751,7 @@
 	     *newitem-item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-two-argument-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
             
 (fundoc 'nsubstitute-if
@@ -712,7 +774,7 @@
 	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-positive-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
 
 (fundoc 'nsubstitute-if-not
@@ -735,5 +797,5 @@
 	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
 	     *satisfy-a-one-argument-negative-test*
 	     *error-not-proper-sequence*
-	     *error-bounding-indexes*
+	     *maybe-error-bounding-indexes*
 	     *error-count*))
