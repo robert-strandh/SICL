@@ -198,6 +198,58 @@
 	     *error-not-proper-sequence*
 	     *definitely-error-bounding-indexes*))
 
+;;; The CLHS entry for MAKE-SEQUENCE says that the "consequences are
+;;; unspecified" if INITIAL-ELEMENT is not an object that can be
+;;; stored in the resulting sequence.  According to the error
+;;; terminology in 1.4.2 of the CLHS this means that the consequences
+;;; are unpredictable but harmless.  So the question here is: What do 
+;;; typical implementations do in this case?  This docstring assumes
+;;; that they signal en error of type TYPE-ERROR.
+;;;
+;;; The CLHS entry also says "If the result type is a subtype of
+;;; VECTOR if the implementation can determine the element type
+;;; specified for the result-type, the element type of the resulting
+;;; array is the result of upgrading that element type; or, if the
+;;; implementation can determine that the element type is unspecified
+;;; (or *), the element type of the resulting array is t; otherwise,
+;;; an error is signaled.".  But what does it mean to "determine" an
+;;; element type?
+;;; 
+;;; FIXME: For now, I just reproduce what the CLHS says, but this is
+;;; a temporary solution.
+(fundoc 'make-sequence
+	(fmt "Lambda list: (RESULT-TYPE SIZE &key INITIAL-ELEMENT)~@
+              ~@
+              Description:~@
+              Returns a proper sequence.  The length of the sequence is SIZE,~@
+              its type is RESULT-TYPE, and the elements are initialized to~@
+              INITIAL-ELEMENT.~@
+              ~@
+              If RESULT-TYPE is a subtype of LIST, then the resulting sequence is~@
+              a list.~@
+              ~@
+              If RESULT-TYPE is a subtype of VECTOR, then if the element type ~@
+              specified for RESULT-TYPE can be determined, the element type of~@
+              the resulting array is the result of upgrading that element type,~@
+              or if it can be determined that the element type is unspecified~@
+              then the element type of the resulting array is T.  Otherwise, an~@
+              error is signaled.~@
+              ~@
+              Arguments:~@
+              RESULT-TYPE is type specifier that specifies a sequence type.~@
+              SIZE is a non-negative integer~@
+              INITIAL-ELEMENT is any object.  The default is implementation dependent.~@
+              ~@
+              Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if INITIAL-ELEMENT is an~@
+              object that can not be stored in the resulting sequence.~@
+              An error of type TYPE-ERROR is signaled if RESULT-TYPE is neither a~@
+              recognizable subtype of LIST nor a recognizable subtype of VECTOR.~@
+              An error of type TYPE-ERROR is signaled if RESULT-TYPE specifies a~@
+              size that is different from SIZE.~@
+              An error is signaled if the element specified for RESULT-TYPE can not~@
+              be determined."))
+
 (fundoc 'find
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
