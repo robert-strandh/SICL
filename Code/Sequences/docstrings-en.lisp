@@ -346,14 +346,46 @@
               ~a~@
               ~@
               Exceptional situations:~@
-              "
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a vector or~@
+              a list, and if SEQUENCE is a dotted list, and the interval designated by~@
+              START and END contains the last CONS cell of SEQUENCE.  No error is~@
+              signaled if SEQUENCE is a circular list, or if SEQUENCE is a dotted list~@
+              such that the interval designated by START and END does not contain the~@
+              last CONS cell of SEQUENCE.~@
+              ~@
+              ~a~@
+              ~@
+              Portability note:~@
+              The Common Lisp standard says that an error should be signaled whenever~@
+              SEQUENCE is not a proper sequence.  We think this is an error in the~@
+              standard document, as it would imply always testing for dotted lists~@
+              and circular lists."
 	     *sequence* *key* *test-test-not* *bounding-indexes* *from-end*
-	     *satisfy-a-two-argument-test*))
+	     *satisfy-a-two-argument-test*
+	     *maybe-error-bounding-indexes*))
 
 (fundoc 'delete-duplicates
 	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
               Description:~@
+              The elements in the interval of SEQUENCE designated by START and END~@
+              are compared pairwise by applying the test.  If two elements satisfy~@
+              the test, then the first one of the two will not be present in the~@
+              resulting sequence.  If the two elements do not satisfy the test,~@
+              then they will both be present in the resulting sequence.~@
+              Elements in SEQUENCE that occur outside the interval designated by~@
+              START and END will all be present in the resulting sequence.~@
+              The relative order of any two elements in the resulting sequence will~@
+              be the same as their relative order in SEQUENCE.~@
+              ~@
+              If SEQUENCE is a VECTOR, then the resulting sequence is also a VECTOR~@
+              with the same actual element type as SEQUENCE.  If SEQUENCE is a LIST,~@
+              then the resulting sequence is also a LIST.~@
+              ~@
+              When SEQUENCE is a list, any top-level CAR or CDR of SEQUENCE might be~@
+              modified in order to construct the resulting sequence.  When SEQUENCE~@
+              is a vector, the length of SEQUENCE might be modified and the elements~@
+              moved in order to construct the resulting sequence.~@
               ~@
               Arguments:~@
               ~a~%~a~%~a~%~a~%~a~@
@@ -362,9 +394,23 @@
               ~a~@
               ~@
               Exceptional situations:~@
-              "
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a vector or~@
+              a list, and if SEQUENCE is a dotted list, and the interval designated by~@
+              START and END contains the last CONS cell of SEQUENCE.  No error is~@
+              signaled if SEQUENCE is a circular list, or if SEQUENCE is a dotted list~@
+              such that the interval designated by START and END does not contain the~@
+              last CONS cell of SEQUENCE.~@
+              ~@
+              ~a~@
+              ~@
+              Portability note:~@
+              The Common Lisp standard says that an error should be signaled whenever~@
+              SEQUENCE is not a proper sequence.  We think this is an error in the~@
+              standard document, as it would imply always testing for dotted lists~@
+              and circular lists."
 	     *sequence* *key* *test-test-not* *bounding-indexes* *from-end*
-	     *satisfy-a-two-argument-test*))
+	     *satisfy-a-two-argument-test*
+	     *maybe-error-bounding-indexes*))
 
 (fundoc 'find
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
