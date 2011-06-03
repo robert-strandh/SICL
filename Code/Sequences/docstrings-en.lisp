@@ -21,7 +21,7 @@
     (apply #'format nil args)))
 
 (defparameter *sequence*
-  (fmt "SEQUENCE is a proper sequence"))
+  (fmt "SEQUENCE is a proper sequence."))
 
 (defparameter *index*
   (fmt "INDEX is a valid sequence index for SEQUENCE"))
@@ -249,6 +249,37 @@
               size that is different from SIZE.~@
               An error is signaled if the element specified for RESULT-TYPE can not~@
               be determined."))
+
+;;; The CLHS entry for LENGTH says that it "should be prepared to
+;;; signal an error...  if sequence is not a proper sequence".  This
+;;; phrase is meant for implementers of CL systems.  Here, we should
+;;; try to describe what really happens.  We are assuming that an
+;;; error is signaled for objects other than vectors and lists, and
+;;; for dotted lists, so the only time an error is not signaled is when
+;;; we have a circular list. 
+(fundoc 'length
+	(fmt "Lambda list: (SEQUENCE)~@
+              ~@
+              Description:~@
+              Returns the length of SEQUENCE, i.e., the number of elements in it.~@
+              LENGTH takes into account fill pointers of vectors, so that the the~@
+              result is the value of the fill pointer in case SEQUENCE is a vector~@
+              with a fill pointer.~@
+              ~@
+              Arguments:~@
+              ~a~@
+              Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is neither a VECTOR~@
+              nor a LIST, and if SEQUENCE is a dotted list.  If SEQUENCE is a circular~@
+              list, then the computation will not halt, and no value is returned.~@
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if SEQUENCE is not a proper sequence.~@
+              For LENGTH this means in practice that an implementation might signal~@
+              an error for circular lists, and that it might not signal an error for~@
+              dotted lists."
+	     *sequence*))
 
 (fundoc 'find
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
