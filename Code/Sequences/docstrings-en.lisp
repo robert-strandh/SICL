@@ -281,6 +281,91 @@
               dotted lists."
 	     *sequence*))
 
+(fundoc 'subseq
+	(fmt "Lambda list: (SEQUENCE START &optional END>)~@
+              ~@
+              Description:~@
+              Creates a sequence containing the elements of SEQUENCE in the~@
+              inteval designated by START and END, in the same order.~@
+              ~@
+              A fresh sequence is always allocated.  There is no top-level~@
+              structure sharing between the resulting sequence and SEQUENCE.~@
+              ~@
+              If SEQUENCE is a vector, then the resulting sequence is a freshly~@
+              allocated simple array of rank 1 with the same actual array element~@
+              type as SEQUENCE.  Notice that it might not be a simple vector because~@
+              simple vectors have an element type of t.  If SEQUENCE is a list, then~@
+              the resulting sequence is a freshly-allocated list.~@
+              ~@
+              Arguments:~@
+              ~a~@
+              ~@
+              START and END are bounding index designators.  They determine~@
+              an interval with SEQUENCE that is considered.  This interval contains~@
+              the indexes i such that START <= i < END.  The default for END is NIL,~@
+              which means the end of the sequence.~@
+              ~@
+              Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a vector or~@
+              a list, and if SEQUENCE is a dotted list, and the interval designated by~@
+              START and END contains the last CONS cell of SEQUENCE.  No error is~@
+              signaled if SEQUENCE is a circular list, or if SEQUENCE is a dotted list~@
+              such that the interval designated by START and END does not contain the~@
+              last CONS cell of SEQUENCE.~@
+              ~@
+              ~a"
+	     *sequence*
+	     *maybe-error-bounding-indexes*))
+
+(fundoc 'remove-duplicates
+	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+              ~@
+              Description:~@
+              The elements in the interval of SEQUENCE designated by START and END~@
+              are compared pairwise by applying the test.  If two elements satisfy~@
+              the test, then the first one of the two will not be present in the~@
+              resulting sequence.  If the two elements do not satisfy the test,~@
+              then they will both be present in the resulting sequence.~@
+              Elements in SEQUENCE that occur outside the interval designated by~@
+              START and END will all be present in the resulting sequence.~@
+              The relative order of any two elements in the resulting sequence will~@
+              be the same as their relative order in SEQUENCE.~@
+              ~@
+              If SEQUENCE is a VECTOR, then the resulting sequence is also a VECTOR~@
+              with the same actual element type as SEQUENCE.  If SEQUENCE is a LIST,~@
+              then the resulting sequence is also a LIST.~@
+              ~@
+              The resulting sequence may share structure with SEQUENCE, and may be~@
+              identical to SEQUENCE if no two elements in the interval of SEQUENCE~@
+              designated by START and END satisfy the test.~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              "
+	     *sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+	     *satisfy-a-two-argument-test*))
+
+(fundoc 'delete-duplicates
+	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+              ~@
+              Description:~@
+              ~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
+              ~@
+              Satisfying the test:~@
+              ~a~@
+              ~@
+              Exceptional situations:~@
+              "
+	     *sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+	     *satisfy-a-two-argument-test*))
+
 (fundoc 'find
 	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
