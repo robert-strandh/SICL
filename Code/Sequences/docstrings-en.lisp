@@ -313,7 +313,17 @@
               such that the interval designated by START and END does not contain the~@
               last CONS cell of SEQUENCE.~@
               ~@
-              ~a"
+              ~a~@
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if SEQUENCE is not a proper sequence.~@
+              For SUBSEQ this means in practice that an implementation might signal~@
+              an error for circular lists, or for dotted lists such that the interval~@
+              designated by START and END does not contain the last CONS cell of~@
+              SEQUENCE, and that an implementation might not signal an error when~@
+              SEQUENCE is a dotted list such that the interval designated by START~@
+              and END contains the last CONS cell of SEQUENCE."
 	     *sequence*
 	     *maybe-error-bounding-indexes*))
 
