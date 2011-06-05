@@ -327,6 +327,53 @@
 	     *sequence*
 	     *maybe-error-bounding-indexes*))
 
+(fundoc 'map
+	(fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
+              ~@
+              Description:~@
+              Applies the function to successive elements, starting with the first one~@
+              of each sequence in SEQUENCES in such a way that the first argument~@
+              to FUNCTION is taken from the first sequence, the second arguement is~@
+              taken from the second sequence, and so on.~@
+              The function is applied as many times as there are elements in the shortest~@
+              sequence of SEQUENCES.~@
+              If RESULT-TYPE is NIL, then NIL is returned.  In this case, MAP is used~@
+              only for side effects.~@
+              If RESULT-TYPE is not NIL, then the result is a sequence of the type~@
+              specified in RESULT-TYPE containing the results of applying FUNCTION as~@
+              mentioned above in the order from the first to the last application.~@
+              ~@
+              Arguments:~@
+              RESULT-TYPE is type specifier that specifies a sequence type.~@
+              FUNCTION is a designator for a function that must accept to be~@
+              passed as many arguments as there are sequences.~@
+              SEQUENCES is a non-empty list of proper sequences, so a call to~@
+              MAP must pass at least one proper sequence in addition to the~@
+              required arguments.~@
+              ~@
+              Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if RESULT-TYPE is neither a~@
+              recognizable subtype of LIST, a recognizable subtype of VECTOR, nor NIL.~@
+              An error of type TYPE-ERROR is signaled if RESULT-TYPE specifies a~@
+              size and that size is different from the length of the shortest sequence~@
+              in SEQUENCES.~@
+              An error of type TYPE-ERROR is signaled if any of the sequences is neither~@
+              a LIST nor a VECTOR.~@
+              An error of type TYPE-ERROR is signaled if any of the sequences is a dotted~@
+              list, and the CAR of the last CONS cell of that list is required to compute~@
+              the result.~@
+              No error is signaled because any of the sequences is a circular list.~@
+              No error is signaled for a sequence that is a dotted list that is so long~@
+              that the CAR of the last CONS cell is not needed to compute the result.
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if any sequence in SEQUENCES is not~@
+              a proper sequence.  In practice this means that an implementation might~@
+              not signal an error if a result can be determined without doing so~@
+              or that an implementation might always signal an error when a sequence~@
+              is a dotted or a circular list."))
+
 (fundoc 'remove-duplicates
 	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
