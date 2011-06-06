@@ -331,11 +331,11 @@
 	(fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
               ~@
               Description:~@
-              Applies the function to successive elements, starting with the first one~@
+              Applies FUNCTION to successive elements, starting with the first one,~@
               of each sequence in SEQUENCES in such a way that the first argument~@
               to FUNCTION is taken from the first sequence, the second arguement is~@
               taken from the second sequence, and so on.~@
-              The function is applied as many times as there are elements in the shortest~@
+              FUNCTION is applied as many times as there are elements in the shortest~@
               sequence of SEQUENCES.~@
               If RESULT-TYPE is NIL, then NIL is returned.  In this case, MAP is used~@
               only for side effects.~@
@@ -357,14 +357,14 @@
               An error of type TYPE-ERROR is signaled if RESULT-TYPE specifies a~@
               size and that size is different from the length of the shortest sequence~@
               in SEQUENCES.~@
-              An error of type TYPE-ERROR is signaled if any of the sequences is neither~@
-              a LIST nor a VECTOR.~@
-              An error of type TYPE-ERROR is signaled if any of the sequences is a dotted~@
-              list, and the CAR of the last CONS cell of that list is required to compute~@
-              the result.~@
-              No error is signaled because any of the sequences is a circular list.~@
-              No error is signaled for a sequence that is a dotted list that is so long~@
-              that the CAR of the last CONS cell is not needed to compute the result.
+              An error of type TYPE-ERROR is signaled if any of the sequences in SEQUENCES~@
+              is neither a LIST nor a VECTOR.~@
+              An error of type TYPE-ERROR is signaled if any of the sequences in SEQUENCES~@
+              is a dotted list, and the CAR of the last CONS cell of that list is required~@
+              to compute the result.~@
+              No error is signaled because any of the sequences in SEQUENCES is a circular list.~@
+              No error is signaled for a sequence in SEQUENCES that is a dotted list that is~@
+              so long that the CAR of the last CONS cell is not needed to compute the result.~@
               ~@
               Portability notes:~@
               The Common Lisp HyperSpec states that an implementation should be~@
@@ -373,6 +373,61 @@
               not signal an error if a result can be determined without doing so~@
               or that an implementation might always signal an error when a sequence~@
               is a dotted or a circular list."))
+
+(fundoc 'map-into
+	(fmt "Lambda list: (RESULT-SEQUENCE FUNCTION &rest SEQUENCES)~@
+              ~@
+              Description:~@
+              Applies FUNCTION to successive elements, starting with the first one,~@
+              of each sequence in SEQUENCES in such a way that the first argument~@
+              to FUNCTION is taken from the first sequence, the second arguement is~@
+              taken from the second sequence, and so on.~@
+              If there are no sequences in SEQUENCES, then FUNCTION is called with~@
+              no arguments.~@
+              ~@
+              FUNCTION is applied as many times as there are elements in the shortest~@
+              sequence of any of the sequences in SEQUENCES and RESULT-SEQUENCE~@
+              The result of applying FUNCTION is stored in the successive elements~@
+              of RESULT-SEQUENCE. 
+              ~@
+              If RESULT-SEQUENCE is a VECTOR with a fill-pointer, then the fill-pointer~@
+              is not taken into account when determining the shortest sequence, and~@
+              RESULT-SEQUENCE is instead considered to have as many elements as indicated~@
+              by (ARRAY-DIMENSION RESULT-SEQUENCE 0).  The fill pointer is then set by~@
+              MAP-INTO to the number of times FUNCTION was applied.~@
+              ~@
+              Arguments:~@
+              RESULT-SEQUENCE is a proper sequence.~@
+              FUNCTION is a designator for a function that must accept to be~@
+              passed as many arguments as there are sequences in SEQUENCES~@
+              SEQUENCES is a (possibly empty) list of proper sequences.~@
+              ~@
+              Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if any of the sequences in SEQUENCES~@
+              is neither a LIST nor a VECTOR.~@
+              An error of type TYPE-ERROR is signaled if RESULT-SEQUENCE is neither a~@
+              LIST nor a VECTOR.~@
+              An error of type TYPE-ERROR is signaled if any of the sequences in SEQUENCES~@
+              is a dotted list, and the CAR of the last CONS cell of that list is required~@
+              to compute the result.~@
+              An error of type TYPE-ERROR is signaled if RESULT-SEQUENCE is a dotted list,~@
+              and a value is stored in the CAR of the last CONS cell of RESULT-SEQUENCE as~@
+              a result of the successive applications of FUNCTION.~@
+              No error is signaled because any of the sequences in SEQUENCES is a circular list.~@
+              No error is signaled because RESULT-SEQUENCE is a circular list.~@
+              No error is signaled for a sequence in SEQUENCES that is a dotted list that is~@
+              so long that the CAR of the last CONS cell is not needed to compute the result.~@
+              No error is signaled if RESULT-SEQUENCE is a dotted list that is so long that~@
+              no value is stored in the CAR of the last CONS cell as a result of~@
+              successively applying FUNCTION.~@
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if any sequence in SEQUENCES is not~@
+              a proper sequence.  In practice this means that an implementation might~@
+              not signal an error if a result can be determined without doing so~@
+              or that an implementation might always signal an error when a sequence~@
+              is a dotted or a circular list.  A similar thing holds for RESULT-SEQUENCE."))
 
 (fundoc 'remove-duplicates
 	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
