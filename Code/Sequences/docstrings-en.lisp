@@ -429,6 +429,67 @@
               or that an implementation might always signal an error when a sequence~@
               is a dotted or a circular list.  A similar thing holds for RESULT-SEQUENCE."))
 
+(fundoc 'reverse
+	(fmt "Lambda list: (SEQUENCE)~@
+              ~@
+              Description:~@
+              Returns a sequence of the same type as SEQUENCE, but with the elements~@
+              in the reverse order compared to SEQUENCE.~@
+              ~@
+              If SEQUENCE is a vector, then the resulting sequence is a freshly~@
+              allocated simple array of rank 1 with the same actual array element~@
+              type as SEQUENCE.  Notice that it might not be a simple vector because~@
+              simple vectors have an element type of t.  If SEQUENCE is a list, then~@
+              the resulting sequence is a freshly-allocated list.~@
+              ~@
+              Arguments:~@
+              SEQUENCE is a proper sequence.~@
+              ~@
+              Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a proper sequence.
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if SEQUENCE is not a proper sequence.~@
+              For REVERSE this means in practice that an implementation might not signal~@
+              an error when SEQUENCE is a circular list or a dotted list."))
+
+(fundoc 'nreverse
+	(fmt "Lambda list: (SEQUENCE)~@
+              ~@
+              Description:~@
+              Returns a sequence of the same type as SEQUENCE, but with the elements~@
+              in the reverse order compared to SEQUENCE.~@
+              ~@
+              If SEQUENCE is a vector, then the resulting sequence is identical to~@
+              SEQUENCE, and the elements have been reordered to compute the result.~@
+              If SEQUENCE is a list, then the CONS cells of SEQUENCE are reordered~@
+              to compute the result, and one of the CONS cells of SEQUENCE is returned.~@
+              ~@
+              Arguments:~@
+              SEQUENCE is a proper sequence.~@
+              ~@
+              Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is neither a vector~@
+              nor a list.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is a dotted list.~@
+              No error is signaled if SEQUENCE is a circular list, and NREVERSE~@
+              does not halt in this case.~@
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if SEQUENCE is not a proper sequence.~@
+              For NREVERSE this means in practice that an implementation might not signal~@
+              an error when SEQUENCE is a dotted list, and that an implementation~@
+              might signal an error when SEQUENCE is a circular list.~@
+              The Common Lisp HyperSpec gives great freedom to implementations~@
+              with respect to side effects.  An implementation is allowed to~@
+              return a freshly allocated sequence, to modify SEQUENCE or both,~@
+              but it is also allowed not to modify SEQUENCE or to return a sequence~@
+              that is built from SEQUENCE or parts of it.  Portable code should always~@
+              use the resulting sequence, and never refer to SEQUENCE after a call~@
+              to NREVERSE."))
+
 (fundoc 'remove-duplicates
 	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
