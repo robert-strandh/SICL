@@ -46,7 +46,7 @@
 
 (defparameter *key*
   (fmt "KEY is a designator for a function of one argument which is~@
-        applied the elements of SEQUENCE before the test is applied,~@
+        applied to the elements of SEQUENCE before the test is applied,~@
         or KEY could be NIL which means IDENTITY."))
 
 (defparameter *test-test-not*
@@ -56,7 +56,7 @@
 
 (defparameter *bounding-indexes*
   (fmt "START and END are bounding index designators.  They determine~@
-        an interval with SEQUENCE that is considered.  This interval contains~@
+        an interval within SEQUENCE that is considered.  This interval contains~@
         the indexes i such that START <= i < END.  The default for START is 0,~@
         and the default for END is NIL, which means the end of the sequence."))
 
@@ -428,6 +428,79 @@
               not signal an error if a result can be determined without doing so~@
               or that an implementation might always signal an error when a sequence~@
               is a dotted or a circular list.  A similar thing holds for RESULT-SEQUENCE."))
+
+(fundoc 'reduce
+	(fmt "Lambda list: (FUNCTION SEQUENCE &key KEY START END FROM-END INITIAL-VALUE)~@
+              ~@
+              Description:~@
+              In the normal case, the interval designated by START and END together with~@
+              the INITIAL-VALUE (if given) have at least two values.  In this case,~@
+              FUNCTION is first applied to the first two such values indicated, giving~@
+              an initial combined value.  Then FUNCTION is applied to the combined value~@
+              and the next value, giving a new combined value, and so on until there are~@
+              no more values in the interval designated by START and END together with~@
+              the INITIAL-VALUE.  The final combined value is then returned.~@
+              ~@
+              If FROM-END is false, and no INITIAL-VALUE is given, then FUNCTION is first~@
+              applied to the first two elements of the interval of SEQUENCE designated~@
+              by START and END, then to the combined value and the third element in the~@
+              interval, and so on as described above.~@
+              ~@
+              If FROM-END is false, and an INITIAL-VALUE is given, then FUNCTION is first~@
+              applied to the INITIAL-VALUE and the first element of the interval of SEQUENCE~@
+              designated by START and END, then to the combined value and the second element~@
+              in the interval, and so on as described above.~@
+              ~@
+              If FROM-END is true, and no INITIAL-VALUE is given, then FUNCTION is first~@
+              applied to the last two elements of the interval of SEQUENCE designated~@
+              by START and END, then to the combined value and the third element from the~@
+              end in the interval, and so on as described above.~@
+              ~@
+              If FROM-END is true, and an INITIAL-VALUE is given, then FUNCTION is first~@
+              applied to the INITIAL-VALUE and the last element of the interval of SEQUENCE~@
+              designated by START and END, then to the combined value and the second element~@
+              from the end in the interval, and so on as described above.~@
+              ~@
+              If KEY is supplied and is not NIL, then it is applied to the elements of~@
+              SEQUENCE before FUNCTION is applied.  Then KEY is applied to each element~@
+              of sequence in the interval designated by START and END exactly once, and~@
+              in the order indicated by FROM-END.  If KEY is not supplied or is NIL, then~@
+              the elements themselves are passed as arguments to FUNCTION.  KEY is not~@
+              applied to INITIAL-VALUE.~@
+              ~@
+              If the interval in SEQUENCE designated by START and END is empty and~@
+              INITIAL-VALUE is not given, then the result is the value of the application~@
+              of FUNCTION to zero arguments.  Otherwise, FUNCTION is always applied~@
+              to two arguments.~@
+              ~@
+              If INITIAL-VALUE is given, and the interval designated by START and END~@
+              contains no elements, then INITIAL-VALUE is returned and FUNCTION is never~@
+              called.  If INITIAL-VALUE is not given, and the interval designated by~@
+              START and END contains exactly one element, then the result of applying KEY~@
+              to that single element is returned and FUNCTION is never called.~@
+              ~@
+              Arguments:~@
+              FUNCTION is a designator for a function that is called with two arguments,~@
+              or with zero arguments if the interval designated by START and END is empty~@
+              and no initial value is given.~@
+              ~a~%~a~%~a~%~a~@
+              INITIAL-VALUE is any object.~@
+              ~@
+              Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a vector or~@
+              a list, and if SEQUENCE is a dotted list, and the interval designated by~@
+              START and END contains the last CONS cell of SEQUENCE.  No error is~@
+              signaled if SEQUENCE is a circular list, or if SEQUENCE is a dotted list~@
+              such that the interval designated by START and END does not contain the~@
+              last CONS cell of SEQUENCE.~@
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if SEQUENCE is not a proper sequence.~@
+              For REDUCE this means in practice that an implementation might not signal~@
+              an error when SEQUENCE is a dotted list, and that an implementation~@
+              might signal an error when SEQUENCE is a circular list."
+	     *sequence* *key* *bounding-indexes* *from-end*))
 
 (fundoc 'reverse
 	(fmt "Lambda list: (SEQUENCE)~@
