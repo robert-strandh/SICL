@@ -563,6 +563,122 @@
               use the resulting sequence, and never refer to SEQUENCE after a call~@
               to NREVERSE."))
 
+(fundoc 'sort
+	(fmt "Lambda list: (SEQUENCE PREDICATE &key KEY)~@
+              ~@
+              Description:~@
+              Destructively sorts SEQUENCE and returns the sorted result.~@
+              ~@
+              If SEQUENCE is a VECTOR, then the resulting sequence is also a VECTOR~@
+              with the same actual element type as SEQUENCE.  If SEQUENCE is a LIST,~@
+              then the resulting sequence is also a LIST.~@
+              ~@
+              If PREDICATE and KEY always terminate, then the result is a sequence that~@
+              contain the same elements as SEQUENCE, but reordered in some way.  If KEY~@
+              always returns the same value when called with a particular element, and if~@
+              PREDICATE represents the strictly-less-than function of a total order between~@
+              the elements of SEQUENCE, then the resulting sequence is sorted in increasing~@
+              order with respect to that total order. For PREDICATE to represent such a~@
+              function, it must always return the same value for a given pair of arguments.~@
+              Furthermore, (funcall PREDICATE x y) and (funcall PREDICATE y x) must never~@
+              both return true, and if both return false, then x and y are considired equal~@
+              with respect to the total order.  If KEY and/or PREDICATE always terminate but~@
+              violate some of the restrictions above, the resulting sequence will still~@
+              contain the same elements as SEQUENCE, but reordered in some arbitrary way.~@
+              ~@
+              For SORT, two elements in SEQUENCE that are considered equal according~@
+              to the definition above may appear in any order in the resulting sequence.~@
+              In other words, the SORT function does not necessarily use a stable~@
+              sorting algorithm.~@
+              If preserving order between equal elements is important, use STABLE-SORT~@
+              instead.~@
+              ~@
+              If SEQUENCE is a vector, then the resulting sequence is identical to~@
+              SEQUENCE, and the elements have been reordered to compute the result.~@
+              If SEQUENCE is a list, then the CONS cells of SEQUENCE are reordered~@
+              to compute the result, and one of the CONS cells of SEQUENCE is returned.~@
+              ~@
+              Arguments:~@
+              ~a~@
+              PREDICATE is a designator for a function that must accept two arguments~@
+              and that returns a generalized boolean.~@
+              KEY is a designator for a function that must accept one argument and~@
+              that is applied to teh elements of SEQUENCE before PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.  The default value of KEY is NIL.~@
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if SEQUENCE is not a proper sequence.~@
+              For SORT this means in practice that an implementation might not signal~@
+              an error when SEQUENCE is a dotted list, and that an implementation~@
+              might signal an error when SEQUENCE is a circular list.~@
+              The Common Lisp HyperSpec gives great freedom to implementations~@
+              with respect to side effects.  An implementation is allowed to~@
+              return a freshly allocated sequence, to modify SEQUENCE or both,~@
+              but it is also allowed not to modify SEQUENCE or to return a sequence~@
+              that is built from SEQUENCE or parts of it.  Portable code should always~@
+              use the resulting sequence, and never refer to SEQUENCE after a call~@
+              to SORT."
+	     *sequence*))
+
+(fundoc 'stable-sort
+	(fmt "Lambda list: (SEQUENCE PREDICATE &key KEY)~@
+              ~@
+              Description:~@
+              Destructively sorts SEQUENCE and returns the sorted result.~@
+              ~@
+              If SEQUENCE is a VECTOR, then the resulting sequence is also a VECTOR~@
+              with the same actual element type as SEQUENCE.  If SEQUENCE is a LIST,~@
+              then the resulting sequence is also a LIST.~@
+              ~@
+              If PREDICATE and KEY always terminate, then the result is a sequence that~@
+              contain the same elements as SEQUENCE, but reordered in some way.  If KEY~@
+              always returns the same value when called with a particular element, and if~@
+              PREDICATE represents the strictly-less-than function of a total order between~@
+              the elements of SEQUENCE, then the resulting sequence is sorted in increasing~@
+              order with respect to that total order. For PREDICATE to represent such a~@
+              function, it must always return the same value for a given pair of arguments.~@
+              Furthermore, (funcall PREDICATE x y) and (funcall PREDICATE y x) must never~@
+              both return true, and if both return false, then x and y are considired equal~@
+              with respect to the total order.  If KEY and/or PREDICATE always terminate but~@
+              violate some of the restrictions above, the resulting sequence will still~@
+              contain the same elements as SEQUENCE, but reordered in some arbitrary way.~@
+              ~@
+              For STABLE-SORT, two elements in SEQUENCE that are considered equal according~@
+              to the definition above appear in the same order in the resulting sequence.~@
+              In other words, the STABLE-SORT function is guaranteed to use a stable~@
+              sorting algorithm.~@
+              If preserving order between equal elements is not important, use SORT~@
+              instead, because it is likely to have better performance.~@
+              ~@
+              If SEQUENCE is a vector, then the resulting sequence is identical to~@
+              SEQUENCE, and the elements have been reordered to compute the result.~@
+              If SEQUENCE is a list, then the CONS cells of SEQUENCE are reordered~@
+              to compute the result, and one of the CONS cells of SEQUENCE is returned.~@
+              ~@
+              Arguments:~@
+              ~a~@
+              PREDICATE is a designator for a function that must accept two arguments~@
+              and that returns a generalized boolean.~@
+              KEY is a designator for a function that must accept one argument and~@
+              that is applied to teh elements of SEQUENCE before PREDICATE is applied,~@
+              or KEY could be NIL which means IDENTITY.  The default value of KEY is NIL.~@
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if SEQUENCE is not a proper sequence.~@
+              For SORT this means in practice that an implementation might not signal~@
+              an error when SEQUENCE is a dotted list, and that an implementation~@
+              might signal an error when SEQUENCE is a circular list.~@
+              The Common Lisp HyperSpec gives great freedom to implementations~@
+              with respect to side effects.  An implementation is allowed to~@
+              return a freshly allocated sequence, to modify SEQUENCE or both,~@
+              but it is also allowed not to modify SEQUENCE or to return a sequence~@
+              that is built from SEQUENCE or parts of it.  Portable code should always~@
+              use the resulting sequence, and never refer to SEQUENCE after a call~@
+              to STABLE-SORT."
+	     *sequence*))
+
 (fundoc 'remove-duplicates
 	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
