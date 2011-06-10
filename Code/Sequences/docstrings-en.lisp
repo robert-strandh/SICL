@@ -603,7 +603,7 @@
               PREDICATE is a designator for a function that must accept two arguments~@
               and that returns a generalized boolean.~@
               KEY is a designator for a function that must accept one argument and~@
-              that is applied to teh elements of SEQUENCE before PREDICATE is applied,~@
+              that is applied to the elements of SEQUENCE before PREDICATE is applied,~@
               or KEY could be NIL which means IDENTITY.  The default value of KEY is NIL.~@
               ~@
               Portability notes:~@
@@ -661,7 +661,7 @@
               PREDICATE is a designator for a function that must accept two arguments~@
               and that returns a generalized boolean.~@
               KEY is a designator for a function that must accept one argument and~@
-              that is applied to teh elements of SEQUENCE before PREDICATE is applied,~@
+              that is applied to the elements of SEQUENCE before PREDICATE is applied,~@
               or KEY could be NIL which means IDENTITY.  The default value of KEY is NIL.~@
               ~@
               Portability notes:~@
@@ -678,6 +678,49 @@
               use the resulting sequence, and never refer to SEQUENCE after a call~@
               to STABLE-SORT."
 	     *sequence*))
+
+(fundoc 'search
+	(fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key KEY TEST TEST-NOT START1 START2 END1 END2 FROM-END)~@
+              ~@
+              Description:~@
+              The interval of SEQUENCE-2 designated by START2 and END2 is searched for~@
+              a subsequence that matches the subsequence defined by the interval of~@
+              SEQUENCE-1 designated by START1 and END1.  A match is considered to exist~@
+              when the test is satisfied for each pair of elements of the two subsequences.~@
+              ~@
+              Arguments:~@
+              SEQUENCE-1 is a proper sequence.~@
+              SEQUENCE-2 is a proper sequence.~@
+              KEY is a designator for a function that must accept one argument and~@
+              that is applied to the elements of SEQUENCE-1 and of SEQUENCE-2 before~@
+              the test is applied, or KEY could be NIL which means IDENTITY.~@
+              The default value of KEY is NIL.~@
+              ~a~@
+              START1 and END1 are bounding index designators.  They determine~@
+	      an interval within SEQUENCE-1 that is considered.  This interval contains~@
+	      the indexes i such that START1 <= i < END1.  The default for START1 is 0,~@
+	      and the default for END1 is NIL, which means the end of the sequence.~@
+	      START2 and END2 are bounding index designators.  They determine~@
+	      an interval within SEQUENCE-2 that is considered.  This interval contains~@
+	      the indexes i such that START2 <= i < END2.  The default for START2 is 0,~@
+	      and the default for END2 is NIL, which means the end of the sequence.~@
+              ~@
+              Exceptional situations:~@
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec does not explicity mention that SEQUENCE-1 and~@
+              SEQUENCE-2 must be proper sequences, and only says that they have to be~@
+              sequences.  However, section 17.1.1 states that they still have to be~@
+              proper sequences.~@
+              The Common Lisp HyperSpec does not state any exceptional situations for~@
+              SEARCH.  This omission implicitly means that the behavior is undefined~@
+              if SEQUENCE-1 and SEQUENCE-2 are not both proper sequences.  For that~@
+              reason, portable code should not assume that any errors are signaled if~@
+              this restriction is violated.~@
+              Simlarly, this omission means that the behavior is undefined if the~@
+              bounding index designators for any of the sequences are not valid~@
+              or if some of the other arguments are not of the type indicated."
+	     *test-test-not*))
 
 (fundoc 'remove-duplicates
 	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
