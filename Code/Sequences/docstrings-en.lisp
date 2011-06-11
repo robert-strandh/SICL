@@ -269,9 +269,10 @@
               Arguments:~@
               ~a~@
               Exceptional situations:~@
-              An error of type TYPE-ERROR is signaled if SEQUENCE is neither a VECTOR~@
-              nor a LIST, and if SEQUENCE is a dotted list.  If SEQUENCE is a circular~@
-              list, then the computation will not halt, and no value is returned.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is a dotted list.~@
+              No error is signaled if SEQUENCE is a circular list, and then the~@
+              computation will not halt, so no value is returned.~@
               ~@
               Portability notes:~@
               The Common Lisp HyperSpec states that an implementation should be~@
@@ -306,12 +307,13 @@
               which means the end of the sequence.~@
               ~@
               Exceptional situations:~@
-              An error of type TYPE-ERROR is signaled if SEQUENCE is not a vector or~@
-              a list, and if SEQUENCE is a dotted list, and the interval designated by~@
-              START and END contains the last CONS cell of SEQUENCE.  No error is~@
-              signaled if SEQUENCE is a circular list, or if SEQUENCE is a dotted list~@
-              such that the interval designated by START and END does not contain the~@
-              last CONS cell of SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
+              An error of tyep TYPE-ERROR is signaled if SEQUENCE is a dotted list~@
+              and the interval designated by START and END contains the last CONS cell~@
+              of SEQUENCE.  
+              No error is signaled if SEQUENCE is a dotted list such that the interval~@
+              designated by START and END does not contain the last CONS cell of SEQUENCE.~@
+              No error is signaled if SEQUENCE is a circular list.~@
               ~@
               ~a~@
               ~@
@@ -358,7 +360,7 @@
               size and that size is different from the length of the shortest sequence~@
               in SEQUENCES.~@
               An error of type TYPE-ERROR is signaled if any of the sequences in SEQUENCES~@
-              is neither a LIST nor a VECTOR.~@
+              is not a SEQUENCE.~@
               An error of type TYPE-ERROR is signaled if any of the sequences in SEQUENCES~@
               is a dotted list, and the CAR of the last CONS cell of that list is required~@
               to compute the result.~@
@@ -404,9 +406,8 @@
               ~@
               Exceptional situations:~@
               An error of type TYPE-ERROR is signaled if any of the sequences in SEQUENCES~@
-              is neither a LIST nor a VECTOR.~@
-              An error of type TYPE-ERROR is signaled if RESULT-SEQUENCE is neither a~@
-              LIST nor a VECTOR.~@
+              is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if RESULT-SEQUENCE is not a SEQUENCE.~@
               An error of type TYPE-ERROR is signaled if any of the sequences in SEQUENCES~@
               is a dotted list, and the CAR of the last CONS cell of that list is required~@
               to compute the result.~@
@@ -487,12 +488,13 @@
               INITIAL-VALUE is any object.~@
               ~@
               Exceptional situations:~@
-              An error of type TYPE-ERROR is signaled if SEQUENCE is not a vector or~@
-              a list, and if SEQUENCE is a dotted list, and the interval designated by~@
-              START and END contains the last CONS cell of SEQUENCE.  No error is~@
-              signaled if SEQUENCE is a circular list, or if SEQUENCE is a dotted list~@
-              such that the interval designated by START and END does not contain the~@
-              last CONS cell of SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
+              An error of tyep TYPE-ERROR is signaled if SEQUENCE is a dotted list~@
+              and the interval designated by START and END contains the last CONS cell~@
+              of SEQUENCE.  
+              No error is signaled if SEQUENCE is a dotted list such that the interval~@
+              designated by START and END does not contain the last CONS cell of SEQUENCE.~@
+              No error is signaled if SEQUENCE is a circular list.~@
               ~@
               Portability notes:~@
               The Common Lisp HyperSpec states that an implementation should be~@
@@ -543,8 +545,7 @@
               SEQUENCE is a proper sequence.~@
               ~@
               Exceptional situations:~@
-              An error of type TYPE-ERROR is signaled if SEQUENCE is neither a vector~@
-              nor a list.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
               An error of type TYPE-ERROR is signaled if SEQUENCE is a dotted list.~@
               No error is signaled if SEQUENCE is a circular list, and NREVERSE~@
               does not halt in this case.~@
@@ -844,12 +845,13 @@
               ~a~@
               ~@
               Exceptional situations:~@
-              An error of type TYPE-ERROR is signaled if SEQUENCE is not a vector or~@
-              a list, and if SEQUENCE is a dotted list, and the interval designated by~@
-              START and END contains the last CONS cell of SEQUENCE.  No error is~@
-              signaled if SEQUENCE is a circular list, or if SEQUENCE is a dotted list~@
-              such that the interval designated by START and END does not contain the~@
-              last CONS cell of SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
+              An error of tyep TYPE-ERROR is signaled if SEQUENCE is a dotted list~@
+              and the interval designated by START and END contains the last CONS cell~@
+              of SEQUENCE.  
+              No error is signaled if SEQUENCE is a dotted list such that the interval~@
+              designated by START and END does not contain the last CONS cell of SEQUENCE.~@
+              No error is signaled if SEQUENCE is a circular list.~@
               ~@
               ~a~@
               ~@
@@ -892,12 +894,13 @@
               ~a~@
               ~@
               Exceptional situations:~@
-              An error of type TYPE-ERROR is signaled if SEQUENCE is not a vector or~@
-              a list, and if SEQUENCE is a dotted list, and the interval designated by~@
-              START and END contains the last CONS cell of SEQUENCE.  No error is~@
-              signaled if SEQUENCE is a circular list, or if SEQUENCE is a dotted list~@
-              such that the interval designated by START and END does not contain the~@
-              last CONS cell of SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a SEQUENCE.~@
+              An error of tyep TYPE-ERROR is signaled if SEQUENCE is a dotted list~@
+              and the interval designated by START and END contains the last CONS cell~@
+              of SEQUENCE.  
+              No error is signaled if SEQUENCE is a dotted list such that the interval~@
+              designated by START and END does not contain the last CONS cell of SEQUENCE.~@
+              No error is signaled if SEQUENCE is a circular list.~@
               ~@
               ~a~@
               ~@
