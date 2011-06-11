@@ -722,6 +722,54 @@
               or if some of the other arguments are not of the type indicated."
 	     *test-test-not*))
 
+(fundoc 'mismatch
+	(fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key KEY TEST TEST-NOT START1 START2 END1 END2 FROM-END)~@
+              ~@
+              Description:~@
+              ~@
+              Arguments:~@
+              ~@
+              Exceptional situations:~@
+              ~@
+              Portability notes:~@
+              "))
+
+(fundoc 'replace
+	(fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &keySTART1 START2 END1 END2)~@
+              ~@
+              Description:~@
+              ~@
+              Arguments:~@
+              ~@
+              Exceptional situations:~@
+              ~@
+              Portability notes:~@
+              "))
+
+(fundoc 'concatenate
+	(fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
+              ~@
+              Description:~@
+              ~@
+              Arguments:~@
+              ~@
+              Exceptional situations:~@
+              ~@
+              Portability notes:~@
+              "))
+
+(fundoc 'merge
+	(fmt "Lambda list: (RESULT-TYPE SEQUENCE-1 SEQUENCE-2 PREDICATE &key KEY)~@
+              ~@
+              Description:~@
+              ~@
+              Arguments:~@
+              ~@
+              Exceptional situations:~@
+              ~@
+              Portability notes:~@
+              "))
+
 (fundoc 'remove-duplicates
 	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
