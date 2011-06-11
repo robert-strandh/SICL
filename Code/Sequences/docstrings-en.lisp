@@ -68,13 +68,13 @@
 (defparameter *satisfy-a-two-argument-test*
   (fmt "To determine whether an element satisfies the test,  The KEY function~@
         is first applied to the element.  The result is then used in the test.~@
-	Then, if TEST is given, TEST is applied to ITEM and the result of~@
-	applying the KEY function.  If TEST returns true, then the element~@
-	satisfies the test.  Otherwise the element does not satisfy the test.~@
-	If instead TEST-NOT is given, then TEST-NOT is is applied to ITEM and~@
-	the result of applying the KEY function. If TEST-NOT returns false, then~@
-	the element satisfies the test.  Otherwise the element does not~@
-	satisfy the test."))
+        Then, if TEST is given, TEST is applied to ITEM and the result of~@
+        applying the KEY function.  If TEST returns true, then the element~@
+        satisfies the test.  Otherwise the element does not satisfy the test.~@
+        If instead TEST-NOT is given, then TEST-NOT is is applied to ITEM and~@
+        the result of applying the KEY function. If TEST-NOT returns false, then~@
+        the element satisfies the test.  Otherwise the element does not~@
+        satisfy the test."))
 
 (defparameter *satisfy-a-one-argument-positive-test*
   (fmt "To determine whether an element satisfies the test, the KEY function is~@
@@ -101,13 +101,13 @@
 
 (defparameter *maybe-error-bounding-indexes*
   (fmt "An error might be signaled if START and END are not valid bounding~@
-	index designators for SEQUENCE, which means that 0 <= START <= L, and~@
-	either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
+        index designators for SEQUENCE, which means that 0 <= START <= L, and~@
+        either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
 
 (defparameter *definitely-error-bounding-indexes*
   (fmt "An error is signaled if START and END are not valid bounding~@
-	index designators for SEQUENCE, which means that 0 <= START <= L, and~@
-	either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
+        index designators for SEQUENCE, which means that 0 <= START <= L, and~@
+        either END is NIL or 0 <= END <= L where L is the length of SEQUENCE."))
 
 (defparameter *error-count*
   (fmt "The consequences are undefined if a value of COUNT other than NIL or~@
@@ -116,12 +116,12 @@
 (defparameter *find-description*
   (fmt "Searches the interval of SEQUENCE designated by START and END~@
         for an element of the sequence that satisfies the test.~@
-	If such an element is found, then it is returned.~@
-	Otherwise NIL is returned.~@
-	~@
-	If FROM-END is false, then the first element that satisfies the test is~@
-	returned.  Otherwise the last element that satisfies the test is returned.~@
-	There is no requirement that the test will be applied in any particular~@
+        If such an element is found, then it is returned.~@
+        Otherwise NIL is returned.~@
+        ~@
+        If FROM-END is false, then the first element that satisfies the test is~@
+        returned.  Otherwise the last element that satisfies the test is returned.~@
+        There is no requirement that the test will be applied in any particular~@
         order, nor that it will be applied at most once to a particular element.~@
         In particular, even if FROM-END is true, SEQUENCE may be search from the~@
         beginning to the end and the last element that satisfies the test returned."))
@@ -133,7 +133,7 @@
         (documentation name 'function)))
 
 (fundoc 'copy-seq
-	(fmt "Lambda list: (SEQUENCE)~@
+        (fmt "Lambda list: (SEQUENCE)~@
               ~@
               Description:~@
               Returns a copy of SEQUENCE, i.e, a sequence that has the same length~@
@@ -150,10 +150,10 @@
               ~@
               Exceptional situations:~@
               ~a"
-	     *error-not-proper-sequence*))
+             *error-not-proper-sequence*))
 
 (fundoc 'elt
-	(fmt "Lambda list: (SEQUENCE INDEX)~@
+        (fmt "Lambda list: (SEQUENCE INDEX)~@
               ~@
               Description:~@
               Returns the element of SEQUENCE indicated by INDEX.~@
@@ -163,10 +163,10 @@
               ~@
               Exceptional situations:~@
               ~a~%~a"
-	     *sequence*
-	     *index*
-	     *error-not-proper-sequence*
-	     *error-not-valid-index*))
+             *sequence*
+             *index*
+             *error-not-proper-sequence*
+             *error-not-valid-index*))
 
 ;;; The CLHS entry for FILL is strange because it requires an error to be signaled
 ;;; if START is not a non-negative integer or if END is not either a non-negative
@@ -181,7 +181,7 @@
 ;;; Question: What happens or should happen if ITEM is not the correct type as 
 ;;; an element of SEQUENCE?
 (fundoc 'fill
-	(fmt "Lambda list: (SEQUENCE ITEM &key START END)~@
+        (fmt "Lambda list: (SEQUENCE ITEM &key START END)~@
               ~@
               Description:~@
               Destructively replaces the elements of SEQUENCE in the interval designated~@
@@ -194,9 +194,9 @@
               ~@
               Exceptional situations:~@
               ~a~%~a"
-	     *sequence* *bounding-indexes*
-	     *error-not-proper-sequence*
-	     *definitely-error-bounding-indexes*))
+             *sequence* *bounding-indexes*
+             *error-not-proper-sequence*
+             *definitely-error-bounding-indexes*))
 
 ;;; The CLHS entry for MAKE-SEQUENCE says that the "consequences are
 ;;; unspecified" if INITIAL-ELEMENT is not an object that can be
@@ -218,7 +218,7 @@
 ;;; FIXME: For now, I just reproduce what the CLHS says, but this is
 ;;; a temporary solution.
 (fundoc 'make-sequence
-	(fmt "Lambda list: (RESULT-TYPE SIZE &key INITIAL-ELEMENT)~@
+        (fmt "Lambda list: (RESULT-TYPE SIZE &key INITIAL-ELEMENT)~@
               ~@
               Description:~@
               Returns a proper sequence.  The length of the sequence is SIZE,~@
@@ -258,7 +258,7 @@
 ;;; for dotted lists, so the only time an error is not signaled is when
 ;;; we have a circular list. 
 (fundoc 'length
-	(fmt "Lambda list: (SEQUENCE)~@
+        (fmt "Lambda list: (SEQUENCE)~@
               ~@
               Description:~@
               Returns the length of SEQUENCE, i.e., the number of elements in it.~@
@@ -279,10 +279,10 @@
               For LENGTH this means in practice that an implementation might signal~@
               an error for circular lists, and that it might not signal an error for~@
               dotted lists."
-	     *sequence*))
+             *sequence*))
 
 (fundoc 'subseq
-	(fmt "Lambda list: (SEQUENCE START &optional END>)~@
+        (fmt "Lambda list: (SEQUENCE START &optional END>)~@
               ~@
               Description:~@
               Creates a sequence containing the elements of SEQUENCE in the~@
@@ -324,11 +324,11 @@
               SEQUENCE, and that an implementation might not signal an error when~@
               SEQUENCE is a dotted list such that the interval designated by START~@
               and END contains the last CONS cell of SEQUENCE."
-	     *sequence*
-	     *maybe-error-bounding-indexes*))
+             *sequence*
+             *maybe-error-bounding-indexes*))
 
 (fundoc 'map
-	(fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
+        (fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
               ~@
               Description:~@
               Applies FUNCTION to successive elements, starting with the first one,~@
@@ -375,7 +375,7 @@
               is a dotted or a circular list."))
 
 (fundoc 'map-into
-	(fmt "Lambda list: (RESULT-SEQUENCE FUNCTION &rest SEQUENCES)~@
+        (fmt "Lambda list: (RESULT-SEQUENCE FUNCTION &rest SEQUENCES)~@
               ~@
               Description:~@
               Applies FUNCTION to successive elements, starting with the first one,~@
@@ -430,7 +430,7 @@
               is a dotted or a circular list.  A similar thing holds for RESULT-SEQUENCE."))
 
 (fundoc 'reduce
-	(fmt "Lambda list: (FUNCTION SEQUENCE &key KEY START END FROM-END INITIAL-VALUE)~@
+        (fmt "Lambda list: (FUNCTION SEQUENCE &key KEY START END FROM-END INITIAL-VALUE)~@
               ~@
               Description:~@
               In the normal case, the interval designated by START and END together with~@
@@ -500,10 +500,10 @@
               For REDUCE this means in practice that an implementation might not signal~@
               an error when SEQUENCE is a dotted list, and that an implementation~@
               might signal an error when SEQUENCE is a circular list."
-	     *sequence* *key* *bounding-indexes* *from-end*))
+             *sequence* *key* *bounding-indexes* *from-end*))
 
 (fundoc 'reverse
-	(fmt "Lambda list: (SEQUENCE)~@
+        (fmt "Lambda list: (SEQUENCE)~@
               ~@
               Description:~@
               Returns a sequence of the same type as SEQUENCE, but with the elements~@
@@ -528,7 +528,7 @@
               an error when SEQUENCE is a circular list or a dotted list."))
 
 (fundoc 'nreverse
-	(fmt "Lambda list: (SEQUENCE)~@
+        (fmt "Lambda list: (SEQUENCE)~@
               ~@
               Description:~@
               Returns a sequence of the same type as SEQUENCE, but with the elements~@
@@ -564,7 +564,7 @@
               to NREVERSE."))
 
 (fundoc 'sort
-	(fmt "Lambda list: (SEQUENCE PREDICATE &key KEY)~@
+        (fmt "Lambda list: (SEQUENCE PREDICATE &key KEY)~@
               ~@
               Description:~@
               Destructively sorts SEQUENCE and returns the sorted result.~@
@@ -619,10 +619,10 @@
               that is built from SEQUENCE or parts of it.  Portable code should always~@
               use the resulting sequence, and never refer to SEQUENCE after a call~@
               to SORT."
-	     *sequence*))
+             *sequence*))
 
 (fundoc 'stable-sort
-	(fmt "Lambda list: (SEQUENCE PREDICATE &key KEY)~@
+        (fmt "Lambda list: (SEQUENCE PREDICATE &key KEY)~@
               ~@
               Description:~@
               Destructively sorts SEQUENCE and returns the sorted result.~@
@@ -677,16 +677,27 @@
               that is built from SEQUENCE or parts of it.  Portable code should always~@
               use the resulting sequence, and never refer to SEQUENCE after a call~@
               to STABLE-SORT."
-	     *sequence*))
+             *sequence*))
 
 (fundoc 'search
-	(fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key KEY TEST TEST-NOT START1 START2 END1 END2 FROM-END)~@
+        (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key KEY TEST TEST-NOT START1 START2 END1 END2 FROM-END)~@
               ~@
               Description:~@
               The interval of SEQUENCE-2 designated by START2 and END2 is searched for~@
               a subsequence that matches the subsequence defined by the interval of~@
-              SEQUENCE-1 designated by START1 and END1.  A match is considered to exist~@
-              when the test is satisfied for each pair of elements of the two subsequences.~@
+              SEQUENCE-1 designated by START1 and END1.  If a match is found, then the~@
+              position in SEQUENCE-2 of the first element of the matching subsequence~@
+              is returned. Otherwise NIL is returned. A match is considered to exist when~@
+              the test is satisfied for each pair of elements of the two subsequences.~@
+              ~@
+              If a match exists and FROM-END is true, then the position of the last~@
+              matching subsequence in SEQUENCE-2 is returned.  If a match exists and~@
+              FROM-END is false, then the position of the first matching subsequence~@
+              in SEQUENCE-2 is returned.
+              ~@
+              The elements of the designated intervals of the two sequence may be tested~@
+              in any order and any number of times, independently of whether FROM-END is~@
+              true or false. 
               ~@
               Arguments:~@
               SEQUENCE-1 is a proper sequence.~@
@@ -697,21 +708,55 @@
               The default value of KEY is NIL.~@
               ~a~@
               START1 and END1 are bounding index designators.  They determine~@
-	      an interval within SEQUENCE-1 that is considered.  This interval contains~@
-	      the indexes i such that START1 <= i < END1.  The default for START1 is 0,~@
-	      and the default for END1 is NIL, which means the end of the sequence.~@
-	      START2 and END2 are bounding index designators.  They determine~@
-	      an interval within SEQUENCE-2 that is considered.  This interval contains~@
-	      the indexes i such that START2 <= i < END2.  The default for START2 is 0,~@
-	      and the default for END2 is NIL, which means the end of the sequence.~@
+              an interval within SEQUENCE-1 that is considered.  This interval contains~@
+              the indexes i such that START1 <= i < END1.  The default for START1 is 0,~@
+              and the default for END1 is NIL, which means the end of the sequence.~@
+              START2 and END2 are bounding index designators.  They determine~@
+              an interval within SEQUENCE-2 that is considered.  This interval contains~@
+              the indexes i such that START2 <= i < END2.  The default for START2 is 0,~@
+              and the default for END2 is NIL, which means the end of the sequence.~@
+              ~a~@
+              ~@
+              Satisfying the test:~@
+              To determine whether a pair of elements satisfies the test,  The KEY~@
+              function is first applied to the element of SEQUENCE-1 and to the element~@
+              of SEQUENCE-2 to be tested.  The result is then used in the test.~@
+              Then, if TEST is given, TEST is applied to the result of applying the KEY~@
+              function to the two elements, with the element from SEQUENCE-1 as its~@
+              first argument, and the element of SEQUENCE-2 as its second argument.~@
+              If TEST returns true, then that pair of elements satisfies the test.~@
+              Otherwise that pair of elements does not satisfy the test.~@
+              If instead TEST-NOT is given, then TEST-NOT is is applied to the result~@
+              of applying the KEY function to the two elements, with the element from~@
+              SEQUENCE-1 as its first argument, and the element of SEQUENCE-2 as its~@
+              second argument. If TEST-NOT returns false, then that pair of elements~@
+              satisfies the test. Otherwise that pair of elements does not satisfy~@
+              the test.~@
               ~@
               Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-1 is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-1 is a dotted list~@
+              and the last CONS cell of SEQUENCE-1 is needed to compute the result.~@
+              No error is signaled if SEQUENCE-1 is a dotted list and the last CONS cell~@
+              of SEQUENCE-1 is not needed to compute the result.~@
+              No error is signaled if SEQUENCE-1 is a circular list.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-2 is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-2 is a dotted list~@
+              and the last CONS cell of SEQUENCE-2 is needed to compute the result.~@
+              No error is signaled if SEQUENCE-2 is a dotted list and the last CONS cell~@
+              of SEQUENCE-2 is not needed to compute the result.~@
+              No error is signaled if SEQUENCE-2 is a circular list.~@
               ~@
               Portability notes:~@
               The Common Lisp HyperSpec does not explicity mention that SEQUENCE-1 and~@
               SEQUENCE-2 must be proper sequences, and only says that they have to be~@
               sequences.  However, section 17.1.1 states that they still have to be~@
               proper sequences.~@
+              The Common Lisp HyperSpec does not specify that the test is applied with~@
+              an element from SEQUENCE-1 as its first argument, and an element from~@
+              SEQUENCE-2 as its second argument, though that is probably what is intended.~@
+              To be completely portable, code should only use tests that are commutable~@
+              and side-effect free.~@
               The Common Lisp HyperSpec does not state any exceptional situations for~@
               SEARCH.  This omission implicitly means that the behavior is undefined~@
               if SEQUENCE-1 and SEQUENCE-2 are not both proper sequences.  For that~@
@@ -720,10 +765,10 @@
               Simlarly, this omission means that the behavior is undefined if the~@
               bounding index designators for any of the sequences are not valid~@
               or if some of the other arguments are not of the type indicated."
-	     *test-test-not*))
+             *test-test-not* *from-end*))
 
 (fundoc 'mismatch
-	(fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key KEY TEST TEST-NOT START1 START2 END1 END2 FROM-END)~@
+        (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key KEY TEST TEST-NOT START1 START2 END1 END2 FROM-END)~@
               ~@
               Description:~@
               ~@
@@ -735,7 +780,7 @@
               "))
 
 (fundoc 'replace
-	(fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &keySTART1 START2 END1 END2)~@
+        (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &keySTART1 START2 END1 END2)~@
               ~@
               Description:~@
               ~@
@@ -747,7 +792,7 @@
               "))
 
 (fundoc 'concatenate
-	(fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
+        (fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
               ~@
               Description:~@
               ~@
@@ -759,7 +804,7 @@
               "))
 
 (fundoc 'merge
-	(fmt "Lambda list: (RESULT-TYPE SEQUENCE-1 SEQUENCE-2 PREDICATE &key KEY)~@
+        (fmt "Lambda list: (RESULT-TYPE SEQUENCE-1 SEQUENCE-2 PREDICATE &key KEY)~@
               ~@
               Description:~@
               ~@
@@ -771,7 +816,7 @@
               "))
 
 (fundoc 'remove-duplicates
-	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+        (fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
               Description:~@
               The elements in the interval of SEQUENCE designated by START and END~@
@@ -813,12 +858,12 @@
               SEQUENCE is not a proper sequence.  We think this is an error in the~@
               standard document, as it would imply always testing for dotted lists~@
               and circular lists."
-	     *sequence* *key* *test-test-not* *bounding-indexes* *from-end*
-	     *satisfy-a-two-argument-test*
-	     *maybe-error-bounding-indexes*))
+             *sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+             *satisfy-a-two-argument-test*
+             *maybe-error-bounding-indexes*))
 
 (fundoc 'delete-duplicates
-	(fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+        (fmt "Lambda list: (SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
               Description:~@
               The elements in the interval of SEQUENCE designated by START and END~@
@@ -861,12 +906,12 @@
               SEQUENCE is not a proper sequence.  We think this is an error in the~@
               standard document, as it would imply always testing for dotted lists~@
               and circular lists."
-	     *sequence* *key* *test-test-not* *bounding-indexes* *from-end*
-	     *satisfy-a-two-argument-test*
-	     *maybe-error-bounding-indexes*))
+             *sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+             *satisfy-a-two-argument-test*
+             *maybe-error-bounding-indexes*))
 
 (fundoc 'find
-	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+        (fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
@@ -880,14 +925,14 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *find-description*
-	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
-	     *satisfy-a-two-argument-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *find-description*
+             *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+             *satisfy-a-two-argument-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
 
 (fundoc 'find-if
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
@@ -901,14 +946,14 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *find-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end*
-	     *satisfy-a-one-argument-positive-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *find-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end*
+             *satisfy-a-one-argument-positive-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
 
 (fundoc 'find-if-not
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
@@ -922,30 +967,30 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *find-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end*
-	     *satisfy-a-one-argument-negative-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *find-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end*
+             *satisfy-a-one-argument-negative-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
 
 (defparameter *count-description*
   (fmt "Counts the number of elements in the interval of SEQUENCE designated by~@
-	START and END that satisfy the test, and returns the number of such elements.~@
-	~@
-	If FROM-END is false, then the elements of the designated interval will be~@
-	tested from the beginning to the end of the sequence.  If FROM-END is true,~@
-	then elements of the designated interval will be tested from the end to the~@
-	beginning of the sequence.  This difference is important only when~@
-	one of the functions implicated in the test has side effects."))
+        START and END that satisfy the test, and returns the number of such elements.~@
+        ~@
+        If FROM-END is false, then the elements of the designated interval will be~@
+        tested from the beginning to the end of the sequence.  If FROM-END is true,~@
+        then elements of the designated interval will be tested from the end to the~@
+        beginning of the sequence.  This difference is important only when~@
+        one of the functions implicated in the test has side effects."))
 
 (fundoc 'count
-	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+        (fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
               ~@
-	      Arguments:~@
-	      ~a~%~a~%~a~%~a~%~a~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
               ~@
               Satisfying the test:~@
               ~a~@
@@ -953,14 +998,14 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *count-description*
-	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
-	     *satisfy-a-two-argument-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *count-description*
+             *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+             *satisfy-a-two-argument-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
             
 (fundoc 'count-if
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
@@ -974,14 +1019,14 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *count-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end*
-	     *satisfy-a-one-argument-positive-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *count-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end*
+             *satisfy-a-one-argument-positive-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
 
 (fundoc 'count-if-not
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
@@ -995,38 +1040,38 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *count-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end*
-	     *satisfy-a-one-argument-negative-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *count-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end*
+             *satisfy-a-one-argument-negative-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
 
 (defparameter *position-description*
   (fmt "Searches the interval of SEQUENCE designated by START and END~@
         for an element of the sequence that satisfies the test.~@
-	If such an element is found, then the position within SEQUENCE of~@
+        If such an element is found, then the position within SEQUENCE of~@
         the element found is returned.~@
-	Otherwise NIL is returned.~@
-	~@
-	If FROM-END is false, then the position of the first element in the~@
+        Otherwise NIL is returned.~@
+        ~@
+        If FROM-END is false, then the position of the first element in the~@
         designated inteval of SEQUENCE that satisfies the test is returned.~@
-	Otherwise the position of the last element in the designated inteval~@
+        Otherwise the position of the last element in the designated inteval~@
         of SEQUENCE that satisfies the test is returned.  The position returned~@
         is relative to the beginning of the SEQUENCE and not of the interval.~@
-	There is no requirement that the test will be applied in any particular~@
+        There is no requirement that the test will be applied in any particular~@
         order, nor that it will be applied at most once to a particular element.~@
         In particular, even if FROM-END is true, SEQUENCE may be searched from~@
         the beginning to the end and the position of the last element that~@
         satisfies the test returned."))
 
 (fundoc 'position
-	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
+        (fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
               ~@
-	      Arguments:~@
-	      ~a~%~a~%~a~%~a~%~a~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~@
               ~@
               Satisfying the test:~@
               ~a~@
@@ -1034,14 +1079,14 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *position-description*
-	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
-	     *satisfy-a-two-argument-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *position-description*
+             *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end*
+             *satisfy-a-two-argument-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
             
 (fundoc 'position-if
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
@@ -1055,14 +1100,14 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *position-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end*
-	     *satisfy-a-one-argument-positive-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *position-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end*
+             *satisfy-a-one-argument-positive-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
 
 (fundoc 'position-if-not
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END)~@
               ~@
               Description:~@
               ~a~@
@@ -1076,11 +1121,11 @@
               Exceptional situations:~@
               ~a~@
               ~a"
-	     *position-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end*
-	     *satisfy-a-one-argument-negative-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*))
+             *position-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end*
+             *satisfy-a-one-argument-negative-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*))
 
 (defparameter *remove-description*
   (fmt "Returns a sequence that is like SEQUENCE, except that the elements in~@
@@ -1109,17 +1154,17 @@
         sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
         same effect as supplying the value 0 (zero).~@
         ~@
-      	There is no requirement that the test will be applied in any particular~@
+        There is no requirement that the test will be applied in any particular~@
         order, nor that it will be applied at most once to a particular element."))
 
 (fundoc 'remove
-	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
+        (fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
               ~@
-	      Arguments:~@
-	      ~a~%~a~%~a~%~a~%~a~%~a~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~%~a~@
               ~@
               Satisfying the test:~@
               ~a~@
@@ -1128,15 +1173,15 @@
               ~a~@
               ~a~@
               ~a"
-	     *remove-description*
-	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-two-argument-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *remove-description*
+             *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
+             *satisfy-a-two-argument-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
             
 (fundoc 'remove-if
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
@@ -1151,15 +1196,15 @@
               ~a~@
               ~a~@
               ~a"
-	     *remove-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-one-argument-positive-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *remove-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+             *satisfy-a-one-argument-positive-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
 
 (fundoc 'remove-if-not
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
@@ -1174,12 +1219,12 @@
               ~a~@
               ~a~@
               ~a"
-	     *remove-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-one-argument-negative-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *remove-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+             *satisfy-a-one-argument-negative-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
 
 (defparameter *delete-description*
   (fmt "Returns a sequence that is like SEQUENCE, except that the elements in~@
@@ -1211,17 +1256,17 @@
         sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
         same effect as supplying the value 0 (zero).~@
         ~@
-      	There is no requirement that the test will be applied in any particular~@
+        There is no requirement that the test will be applied in any particular~@
         order, nor that it will be applied at most once to a particular element."))
 
 (fundoc 'delete
-	(fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
+        (fmt "Lambda list: (ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
               ~@
-	      Arguments:~@
-	      ~a~%~a~%~a~%~a~%~a~%~a~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~%~a~@
               ~@
               Satisfying the test:~@
               ~a~@
@@ -1230,15 +1275,15 @@
               ~a~@
               ~a~@
               ~a"
-	     *delete-description*
-	     *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-two-argument-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *delete-description*
+             *item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
+             *satisfy-a-two-argument-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
             
 (fundoc 'delete-if
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
@@ -1253,15 +1298,15 @@
               ~a~@
               ~a~@
               ~a"
-	     *delete-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-one-argument-positive-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *delete-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+             *satisfy-a-one-argument-positive-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
 
 (fundoc 'delete-if-not
-	(fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+        (fmt "Lambda list: (PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
@@ -1276,12 +1321,12 @@
               ~a~@
               ~a~@
               ~a"
-	     *delete-description*
-	     *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-one-argument-negative-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *delete-description*
+             *predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+             *satisfy-a-one-argument-negative-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
 
 (defparameter *substitute-description*
   (fmt "Returns a copy of SEQUENCE in which every element in the interval designated~@
@@ -1307,17 +1352,17 @@
         sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
         same effect as supplying the value 0 (zero).~@
         ~@
-      	There is no requirement that the test will be applied in any particular~@
+        There is no requirement that the test will be applied in any particular~@
         order, nor that it will be applied at most once to a particular element."))
        
 (fundoc 'substitute
-	(fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
+        (fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
               ~@
-	      Arguments:~@
-	      ~a~%~a~%~a~%~a~%~a~%~a~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~%~a~@
               ~@
               Satisfying the test:~@
               ~a~@
@@ -1326,15 +1371,15 @@
               ~a~@
               ~a~@
               ~a"
-	     *substitute-description*
-	     *newitem-item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-two-argument-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *substitute-description*
+             *newitem-item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
+             *satisfy-a-two-argument-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
             
 (fundoc 'substitute-if
-	(fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+        (fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
@@ -1349,15 +1394,15 @@
               ~a~@
               ~a~@
               ~a"
-	     *substitute-description*
-	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-one-argument-positive-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *substitute-description*
+             *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+             *satisfy-a-one-argument-positive-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
 
 (fundoc 'substitute-if-not
-	(fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+        (fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
@@ -1372,12 +1417,12 @@
               ~a~@
               ~a~@
               ~a"
-	     *substitute-description*
-	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-one-argument-negative-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *substitute-description*
+             *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+             *satisfy-a-one-argument-negative-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
 
 (defparameter *nsubstitute-description*
   (fmt "Returns SEQUENCE in which every element in the interval designated~@
@@ -1395,17 +1440,17 @@
         sequence, as mentioned above.  Supplying a negative value for COUNT has the~@
         same effect as supplying the value 0 (zero).~@
         ~@
-      	There is no requirement that the test will be applied in any particular~@
+        There is no requirement that the test will be applied in any particular~@
         order, nor that it will be applied at most once to a particular element."))
        
 (fundoc 'nsubstitute
-	(fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
+        (fmt "Lambda list: (NEWITEM ITEM SEQUENCE &key KEY TEST TEST-NOT START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
               ~@
-	      Arguments:~@
-	      ~a~%~a~%~a~%~a~%~a~%~a~@
+              Arguments:~@
+              ~a~%~a~%~a~%~a~%~a~%~a~@
               ~@
               Satisfying the test:~@
               ~a~@
@@ -1414,15 +1459,15 @@
               ~a~@
               ~a~@
               ~a"
-	     *nsubstitute-description*
-	     *newitem-item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-two-argument-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *nsubstitute-description*
+             *newitem-item-sequence* *key* *test-test-not* *bounding-indexes* *from-end* *count*
+             *satisfy-a-two-argument-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
             
 (fundoc 'nsubstitute-if
-	(fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+        (fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
@@ -1437,15 +1482,15 @@
               ~a~@
               ~a~@
               ~a"
-	     *nsubstitute-description*
-	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-one-argument-positive-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *nsubstitute-description*
+             *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+             *satisfy-a-one-argument-positive-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
 
 (fundoc 'nsubstitute-if-not
-	(fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
+        (fmt "Lambda list: (NEWITEM PREDICATE SEQUENCE &key KEY START END FROM-END COUNT)~@
               ~@
               Description:~@
               ~a~@
@@ -1460,9 +1505,9 @@
               ~a~@
               ~a~@
               ~a"
-	     *nsubstitute-description*
-	     *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
-	     *satisfy-a-one-argument-negative-test*
-	     *error-not-proper-sequence*
-	     *maybe-error-bounding-indexes*
-	     *error-count*))
+             *nsubstitute-description*
+             *newitem-predicate-sequence* *key* *bounding-indexes* *from-end* *count*
+             *satisfy-a-one-argument-negative-test*
+             *error-not-proper-sequence*
+             *maybe-error-bounding-indexes*
+             *error-count*))
