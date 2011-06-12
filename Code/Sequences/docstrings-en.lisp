@@ -756,7 +756,7 @@
               The Common Lisp HyperSpec does not specify that the test is applied with~@
               an element from SEQUENCE-1 as its first argument, and an element from~@
               SEQUENCE-2 as its second argument, though that is probably what is intended.~@
-              To be completely portable, code should only use tests that are commutable~@
+              To be completely portable, code should only use tests that are commutative~@
               and side-effect free.~@
               The Common Lisp HyperSpec does not state any exceptional situations for~@
               SEARCH.  This omission implicitly means that the behavior is undefined~@
@@ -772,13 +772,76 @@
         (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key KEY TEST TEST-NOT START1 START2 END1 END2 FROM-END)~@
               ~@
               Description:~@
+              The interval in SEQUENCE-1 designated by START1 and END1 and the interval~@
+              in SEQUENCE-2 designated by START2 and END2 are compared element-wise.~@
+              If the two intervals have the same length and every pair of elements satisfies~@
+              the test, then there is no mismatch and NIL is returned.  Otherwise, a position~@
+              of SEQUENCE-1 is returned.~@
+              ~@
+              If FROM-END is false, the elements of the two designated intervals are compared~@
+              from the begining to the end, so that the first element of each interval are~@
+              compared first.  If there is a mismatch, then the position in SEQUENCE-1~@
+              of the first element that does not satisfy the test is returned.~@
+              If FROM-END is true, the elements of the two designated intervals are compared~@
+              from the end to the beginning, so that the last element of each interval are~@
+              compared first.  If there is a mismatch, then one plus the position in SEQUENCE-1~@
+              of the last element that does not satisfy the test is returned.~@
               ~@
               Arguments:~@
+              SEQUENCE-1 is a proper sequence.~@
+              SEQUENCE-2 is a proper sequence.~@
+              KEY is a designator for a function that must accept one argument and~@
+              that is applied to the elements of SEQUENCE-1 and of SEQUENCE-2 before~@
+              the test is applied, or KEY could be NIL which means IDENTITY.~@
+              The default value of KEY is NIL.~@
+              ~a~@
+              START1 and END1 are bounding index designators.  They determine~@
+              an interval within SEQUENCE-1 that is considered.  This interval contains~@
+              the indexes i such that START1 <= i < END1.  The default for START1 is 0,~@
+              and the default for END1 is NIL, which means the end of the sequence.~@
+              START2 and END2 are bounding index designators.  They determine~@
+              an interval within SEQUENCE-2 that is considered.  This interval contains~@
+              the indexes i such that START2 <= i < END2.  The default for START2 is 0,~@
+              and the default for END2 is NIL, which means the end of the sequence.~@
+              ~a~@
+              ~@
+              Satisfying the test:~@
+              To determine whether a pair of elements satisfies the test,  The KEY~@
+              function is first applied to the element of SEQUENCE-1 and to the element~@
+              of SEQUENCE-2 to be tested.  The result is then used in the test.~@
+              Then, if TEST is given, TEST is applied to the result of applying the KEY~@
+              function to the two elements, with the element from SEQUENCE-1 as its~@
+              first argument, and the element of SEQUENCE-2 as its second argument.~@
+              If TEST returns true, then that pair of elements satisfies the test.~@
+              Otherwise that pair of elements does not satisfy the test.~@
+              If instead TEST-NOT is given, then TEST-NOT is is applied to the result~@
+              of applying the KEY function to the two elements, with the element from~@
+              SEQUENCE-1 as its first argument, and the element of SEQUENCE-2 as its~@
+              second argument. If TEST-NOT returns false, then that pair of elements~@
+              satisfies the test. Otherwise that pair of elements does not satisfy~@
+              the test.~@
               ~@
               Exceptional situations:~@
               ~@
               Portability notes:~@
-              "))
+              The Common Lisp HyperSpec does not explicity mention that SEQUENCE-1 and~@
+              SEQUENCE-2 must be proper sequences, and only says that they have to be~@
+              sequences.  However, section 17.1.1 states that they still have to be~@
+              proper sequences.~@
+              The Common Lisp HyperSpec does not specify that the test is applied with~@
+              an element from SEQUENCE-1 as its first argument, and an element from~@
+              SEQUENCE-2 as its second argument, though that is probably what is intended.~@
+              To be completely portable, code should only use tests that are commutative~@
+              and side-effect free.~@
+              The Common Lisp HyperSpec does not state any exceptional situations for~@
+              SEARCH.  This omission implicitly means that the behavior is undefined~@
+              if SEQUENCE-1 and SEQUENCE-2 are not both proper sequences.  For that~@
+              reason, portable code should not assume that any errors are signaled if~@
+              this restriction is violated.~@
+              Simlarly, this omission means that the behavior is undefined if the~@
+              bounding index designators for any of the sequences are not valid~@
+              or if some of the other arguments are not of the type indicated."
+	     *test-test-not* *from-end*))
 
 (fundoc 'replace
         (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key START1 START2 END1 END2)~@
