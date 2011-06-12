@@ -19,6 +19,7 @@
 		 #:nsubstitute #:nsubstitute-if #:nsubstitute-if-not
 		 #:copy-seq #:elt
 		 #:merge #:sort
+		 #:mismatch
 		 #:reverse #:nreverse))
   (:export . #1#))
 
