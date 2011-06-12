@@ -781,7 +781,7 @@
               "))
 
 (fundoc 'replace
-        (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &keySTART1 START2 END1 END2)~@
+        (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key START1 START2 END1 END2)~@
               ~@
               Description:~@
               ~@
