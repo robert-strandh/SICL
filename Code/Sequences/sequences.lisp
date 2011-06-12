@@ -24844,3 +24844,80 @@
 	 (|nreverse seq-type=simple-string| sequence))
 	((simple-vector-p sequence)
 	 (|nreverse seq-type=simple-vector| sequence))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function mismatch
+
+;;; FIXME: incomplete non-working definition at the moment
+
+;;; Check whether a list is circular.
+(defun circular-list-p (list)
+  (if (null list)
+      nil
+      (loop with fast = (cdr list)
+	    with slow = list
+	    until (atom fast)
+	    when (eq fast slow) return t
+	    do (setf fast (cdr fast))
+	    until (atom fast)
+	    do (setf fast (cdr fast))
+	    do (setf slow (cdr slow)))))
+
+;;; Check whether a non-circular list is a dotted list
+(defun dotted-list-p (list)
+  (and (not (null list))
+       (not (null (cdr (last list))))))
+
+;;; Check whether a list is a proper list.
+(defun proper-list-p (list)
+  (or (null list)
+      (and (not (circular-list-p list))
+	   (not (dotted-list-p list)))))
+
+;;; Convert a list to a vector.  Signal an error if the list is not
+;;; a proper list. 
+(defun convert-list-to-vector (name list)
+  (if (proper-list-p list)
+      (coerce list 'vector)
+      (error 'must-be-proper-list
+	     :name name
+	     :datum list)))
+
+(defun |mismatch seq-type-1=vector seq-type-2=vector from-end=false|
+    (sequence-1 sequence-2 key test start1 start2 end1 end2)
+  (loop for i1 from start1 below end1
+	for i2 from start2 below end2
+	unless (funcall test (funcall key (aref sequence-1 i1)) (funcall key (aref sequence-2 i2)))
+	return i1
+	finally (return (if (= (- end2 start2) (- end1 start1))
+			    nil
+			    i1))))
+    
+(defun |mismatch seq-type-1=vector seq-type-2=vector from-end=true|
+    (sequence-1 sequence-2 key test start1 start2 end1 end2)
+  (loop for i1 downfrom (1- end1) to start1
+	for i2 downfrom (1- end2) to start2
+	unless (funcall test (funcall key (aref sequence-1 i1)) (funcall key (aref sequence-2 i2)))
+	return (1+ i1)
+	finally (return (if (= (- end2 start2) (- end1 start1))
+			    nil
+			    (1+ i1)))))
+
+(defun mismatch (sequence-1 sequence-2
+		 &key key test test-not start1 start2 end1 end2 from-end)
+  (declare (ignore sequence-1 sequence-2 key test test-not start1 start2 end1 end2 from-end))
+  nil)
+  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function merge
+
+;;; FIXME: incomplete non-working definition at the moment
+
+(defun merge (result-type sequence-1 sequence-2 predicate &key key)
+  (declare (ignore result-type sequence-1 sequence-2 predicate key))
+  nil)
+
+
