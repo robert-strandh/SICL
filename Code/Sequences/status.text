@@ -32,6 +32,9 @@ What is done:
 
   reverse, nreverse 
 
+  docstrings for all functions except mismatch, replace, concatenate,
+  and merge. 
+
 How to test it:
 
   1. Load lisp-unit.lisp and sequences.asd into your lisp system.
