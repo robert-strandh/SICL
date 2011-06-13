@@ -847,13 +847,63 @@
         (fmt "Lambda list: (SEQUENCE-1 SEQUENCE-2 &key START1 START2 END1 END2)~@
               ~@
               Description:~@
+              The consecutive objects in the interval of SEQUENCE-1 designated by~@
+              START1 and END1 are copied into the interval of SEQUENCE-2 designated by~@
+              START2 and END2, thereby modifying SEQUENCE-1.  The number of objects~@
+              copied is determined by the shorter of the two intervals, which can~@
+              be expressed as (MIN (- END2 START2) (- END1 START1)).~@
+              ~@
+              If SEQUENCE-1 and SEQUENCE-2 are the same object, i.e., the two are EQ,~@
+              and the two intervals overlap, then REPLACE works as expected, i.e.,~@
+              the operation is equivalent to first copying the elements of the interval~@
+              of SEQUENCE-2 designated by START2 and END2 to a different place, and then~@
+              copying those elements to the interval of SEQUENCE-1 designated by~@
+              START1 and END1. 
+              ~@
+              If SEQUENCE-1 and SEQUENCE-2 are not the same object, but they nevertheless~@
+              share structure between the two designated intervals, then the contents of~@
+              the interval of SEQUENCE-1 designated by START1 and END1 will have~@
+              unpredictable contents after the operation.~@
               ~@
               Arguments:~@
+              SEQUENCE-1 is a proper sequence.~@
+              SEQUENCE-2 is a proper sequence.~@
+              START1 and END1 are bounding index designators.  They determine~@
+              an interval within SEQUENCE-1 that is considered.  This interval contains~@
+              the indexes i such that START1 <= i < END1.  The default for START1 is 0,~@
+              and the default for END1 is NIL, which means the end of the sequence.~@
+              START2 and END2 are bounding index designators.  They determine~@
+              an interval within SEQUENCE-2 that is considered.  This interval contains~@
+              the indexes i such that START2 <= i < END2.  The default for START2 is 0,~@
+              and the default for END2 is NIL, which means the end of the sequence.~@
               ~@
               Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-1 is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-1 is a dotted list~@
+              and the last CONS cell of SEQUENCE-1 is needed in the operation.~@
+              No error is signaled if SEQUENCE-1 is a dotted list and the last CONS cell~@
+              of SEQUENCE-1 is not needed in the operation.~@
+              No error is signaled if SEQUENCE-1 is a circular list.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-2 is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-2 is a dotted list~@
+              and the last CONS cell of SEQUENCE-2 is needed in the operation.~@
+              No error is signaled if SEQUENCE-2 is a dotted list and the last CONS cell~@
+              of SEQUENCE-2 is not needed in the operation.~@
+              No error is signaled if SEQUENCE-2 is a circular list.~@
               ~@
               Portability notes:~@
-              "))
+              The Common Lisp HyperSpec does not explicity mention that SEQUENCE-1 and~@
+              SEQUENCE-2 must be proper sequences, and only says that they have to be~@
+              sequences.  However, section 17.1.1 states that they still have to be~@
+              proper sequences.~@
+              The Common Lisp HyperSpec does not state any exceptional situations for~@
+              SEARCH.  This omission implicitly means that the behavior is undefined~@
+              if SEQUENCE-1 and SEQUENCE-2 are not both proper sequences.  For that~@
+              reason, portable code should not assume that any errors are signaled if~@
+              this restriction is violated.~@
+              Simlarly, this omission means that the behavior is undefined if the~@
+              bounding index designators for any of the sequences are not valid~@
+              or if some of the other arguments are not of the type indicated."))
 
 (fundoc 'concatenate
         (fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
