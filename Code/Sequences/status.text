@@ -32,8 +32,7 @@ What is done:
 
   reverse, nreverse 
 
-  docstrings for all functions except mismatch, replace, concatenate,
-  and merge. 
+  docstrings for all functions except concatenate and merge. 
 
 How to test it:
 
