@@ -906,16 +906,59 @@
               or if some of the other arguments are not of the type indicated."))
 
 (fundoc 'concatenate
-        (fmt "Lambda list: (RESULT-TYPE FUNCTION &rest SEQUENCES)~@
+        (fmt "Lambda list: (RESULT-TYPE &rest SEQUENCES)~@
               ~@
               Description:~@
+              Returns a sequence that is the concatenation of each sequence in~@
+              SEQUENCES, i.e., a sequence that contains every element of every~@
+              sequence in SEQUENCES in the same order as the the sequences in~@
+              SEQUENCES and with the elements in the same order as in each sequence.~@
+              ~@
+              Each sequence in SEQUENCES is copied.  There is never any structure~@
+              sharing between the resulting sequence and any of the sequences in~@
+              SEQUENCES.~@
+              ~@
+              If RESULT-TYPE is a subtype of LIST, then the resulting sequence will~@
+              be a LIST.~@
+              If RESULT-TYPE is a subtype of VECTOR, then if the element type ~@
+              specified for RESULT-TYPE can be determined, the element type of~@
+              the resulting array is the result of upgrading that element type,~@
+              or if it can be determined that the element type is unspecified~@
+              then the element type of the resulting array is T.  Otherwise, an~@
+              error is signaled.~@
               ~@
               Arguments:~@
+              RESULT-TYPE is type specifier that specifies a sequence type.~@
+              SEQUENCES is a (possibly empty) list of proper sequences.~@
               ~@
               Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if any sequence in SEQUENCES~@
+              is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if any sequence in SEQUENCES~@
+              is a dotted list.~@
+              No error is signaled if any sequence in SEQUENCES is a circular list,~@
+              and the computation will not halt in this case.~@
+              An error of type TYPE-ERROR is signaled if RESULT-TYPE is neither a~@
+              recognizable subtype of LIST nor a recognizable subtype of VECTOR.~@
+              An error of type TYPE-ERROR is signaled if RESULT-TYPE specifies a~@
+              size and that size is different from the sum of the lengths of the~@
+              sequences in SEQUENCES.~@
+              An error of type TYPE-ERROR is signaled if any element of any of the~@
+              sequences in SEQUENCES can not be stored in the resulting sequence.~@
               ~@
               Portability notes:~@
-              "))
+              The Common Lisp HyperSpec does not explicity mention that the sequences~@
+              in SEQUENCES must be proper sequences, and only says that they have to be~@
+              sequences.  However, section 17.1.1 states that they still have to be~@
+              proper sequences.~@
+              The Common Lisp HyperSpec does not state what happens if any sequence~@
+              in SEQUENCES is not a proper sequence.  This omission implicitly means~@
+              that the behavior is undefined in this case.  For that reason, portable~@
+              code should not assume that any errors are signaled if this restriction~@
+              is violated.~@
+              The Common Lisp HyperSpec states that it is an error if any element can~@
+              not be stored in the resulting sequence, but that wording is not defined,~@
+              so portable code should assume that the behavior is undefined in this case."))
 
 (fundoc 'merge
         (fmt "Lambda list: (RESULT-TYPE SEQUENCE-1 SEQUENCE-2 PREDICATE &key KEY)~@
