@@ -965,11 +965,43 @@
               ~@
               Description:~@
               ~@
+              If RESULT-TYPE is a subtype of LIST, then the resulting sequence will~@
+              be a LIST.~@
+              If RESULT-TYPE is a subtype of VECTOR, then if the element type ~@
+              specified for RESULT-TYPE can be determined, the element type of~@
+              the resulting array is the result of upgrading that element type,~@
+              or if it can be determined that the element type is unspecified~@
+              then the element type of the resulting array is T.  Otherwise, an~@
+              error is signaled.~@
+              ~@
               Arguments:~@
+              RESULT-TYPE is type specifier that specifies a sequence type.~@
+              SEQUENCE-1 is a proper sequence.~@
+              SEQUENCE-2 is a proper sequence.~@
+              PREDICATE is a designator for a function that must accept two arguments~@
+              and that returns a generalized boolean.~@
+              KEY is a designator for a function that must accept one argument and~@
+              that is applied to the elements of SEQUENCE-1 and of SEQUENCE-2 before~@
+              the test is applied, or KEY could be NIL which means IDENTITY.~@
+              The default value of KEY is NIL.~@
               ~@
               Exceptional situations:~@
+              An error of type TYPE-ERROR is signaled if RESULT-TYPE is neither a~@
+              recognizable subtype of LIST nor a recognizable subtype of VECTOR.~@
+              An error of type TYPE-ERROR is signaled if RESULT-TYPE specifies a~@
+              size and that size is different from the sum of the lengths of~@
+              SEQUENCE-1 and SEQUENCE-2.~@
               ~@
               Portability notes:~@
+              The Common Lisp HyperSpec does not explicity mention that the SEQUENCE-1~@
+              and SEQUENCE-2 must be proper sequences, and only says that they have to be~@
+              sequences.  However, section 17.1.1 states that they still have to be~@
+              proper sequences.~@
+              The Common Lisp HyperSpec does not state what happens if SEQUENCE-1~@
+              or SEQUENCE0-2 is not a proper sequence.  This omission implicitly means~@
+              that the behavior is undefined in this case.  For that reason, portable~@
+              code should not assume that any errors are signaled if this restriction~@
+              is violated.~@
               "))
 
 (fundoc 'remove-duplicates
