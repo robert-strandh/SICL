@@ -32,7 +32,8 @@ What is done:
 
   reverse, nreverse 
 
-  docstrings for all functions except concatenate and merge. 
+  docstrings for all functions except for merge which is incomplete,
+  for (setf elt), and for (setf subseq).
 
 How to test it:
 
