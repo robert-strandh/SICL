@@ -964,6 +964,12 @@
         (fmt "Lambda list: (RESULT-TYPE SEQUENCE-1 SEQUENCE-2 PREDICATE &key KEY)~@
               ~@
               Description:~@
+              If PREDICATE represents the strictly-less-than function of a total order between~@
+              the elements ******, then ********* For PREDICATE to represent such a~@
+              function, it must always return the same value for a given pair of arguments.~@
+              Furthermore, (funcall PREDICATE x y) and (funcall PREDICATE y x) must never~@
+              both return true, and if both return false, then x and y are considired equal~@
+              with respect to the total order.
               ~@
               If RESULT-TYPE is a subtype of LIST, then the resulting sequence will~@
               be a LIST.~@
@@ -973,6 +979,13 @@
               or if it can be determined that the element type is unspecified~@
               then the element type of the resulting array is T.  Otherwise, an~@
               error is signaled.~@
+              ~@
+              If PREDICATE represents the strictly-less-than function of a total order~@
+              of the elements of SEQUENCE-1 and the elements of SEQUENCE-2, and both~@
+              SEQUENCE-1 and SEQUENCE-2 are considered sorted according to PREDICATE~@
+              then if some element in SEQUENCE-1 is equal to some element in SEQUENCE-2~@
+              according to PREDICATE, then the element in SEQUENCE-1 will precede the~@
+              element in SEQUENCE-2 in the resulting sequence.~@
               ~@
               Arguments:~@
               RESULT-TYPE is type specifier that specifies a sequence type.~@
