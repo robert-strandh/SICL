@@ -964,12 +964,33 @@
         (fmt "Lambda list: (RESULT-TYPE SEQUENCE-1 SEQUENCE-2 PREDICATE &key KEY)~@
               ~@
               Description:~@
-              If PREDICATE represents the strictly-less-than function of a total order between~@
-              the elements ******, then ********* For PREDICATE to represent such a~@
-              function, it must always return the same value for a given pair of arguments.~@
-              Furthermore, (funcall PREDICATE x y) and (funcall PREDICATE y x) must never~@
-              both return true, and if both return false, then x and y are considired equal~@
-              with respect to the total order.
+              The resulting sequence is constructed by treating SEQUENCE-1 and SEQUENCE-2~@
+              as two stacks, successively popping one of the two top elements and adding it~@
+              to the end of the resulting sequence.  When both stacks are empty, the resulting~@
+              sequence is returned. If one of the stacks is empty, the other one is popped.~@
+              If neither stack is empty, the top of the stack represented by SEQUENCE-1 is~@
+              used as the first argument of PREDICATE, and the top of the stack represented by~@
+              SEQUENCE-2 is used as the second argument of PREDICATE.  If PREDICATE returns true,~@
+              then the stack represented by SEQUENCE-1 is popped, otherwise, the stack represented~@
+              by SEQUENCE-2 is popped.~@
+              ~@
+              From the description above follows that the resulting sequence contains each element~@
+              of SEQUENCE-1 exactly once, and each element of SEQUENCE-2 exactly once.  Furthermore,~@
+              it follows that the relative order of two elements in SEQUENCE-1 is preserved in the~@
+              resulting sequence, and that the relative order of two elements in SEQUENCE-1 is~@
+              preserved in the resulting sequence.~@
+              ~@
+              Furthermore, it follows that if PREDICATE represents the strictly-less-than function~@
+              of a total order between the elements of SEQUENCE-1 and SEQUENCE-2, and if SEQUENCE-1~@
+              and SEQUENCE-2 are both sorted according to this total order, then the resulting~@
+              sequence will also be sorted according to that order.  In addition, the merge operation~@
+              is stable in this case, i.e., if an element of SEQUENCE-1 is equal to an element of~@
+              SEQUENCE-2 according to this total order, then the element of SEQUENCE-1 will occur~@
+              before the element of SEQUENCE-2 in the resulting sequence.  For PREDICATE to represent~@
+              the strictly-less-than function of a total order, it must always return the same value~@
+              for a given pair of arguments. Also, (funcall PREDICATE x y) and (funcall PREDICATE y x)~@
+              must never both return true, and if both return false, then x and y are considired equal~@
+              with respect to the total order.~@
               ~@
               If RESULT-TYPE is a subtype of LIST, then the resulting sequence will~@
               be a LIST.~@
@@ -986,6 +1007,11 @@
               then if some element in SEQUENCE-1 is equal to some element in SEQUENCE-2~@
               according to PREDICATE, then the element in SEQUENCE-1 will precede the~@
               element in SEQUENCE-2 in the resulting sequence.~@
+              ~@
+              If RESULT-TYPE is a subtype of LIST, then the CONS cells of any of SEQUENCE-1~@
+              and SEQUENCE-2 that is a list will be used to construct the resulting sequence,~@
+              thus destructively modifying it.  Thus, after a MERGE operation, the contents of~@
+              such a sequence will be unpredictable, and should not be used.~@
               ~@
               Arguments:~@
               RESULT-TYPE is type specifier that specifies a sequence type.~@
@@ -1004,6 +1030,12 @@
               An error of type TYPE-ERROR is signaled if RESULT-TYPE specifies a~@
               size and that size is different from the sum of the lengths of~@
               SEQUENCE-1 and SEQUENCE-2.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-1 is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-1 is a dotted list.~@
+              No error is signaled if SEQUENCE-1 is a circular list.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-2 is not a SEQUENCE.~@
+              An error of type TYPE-ERROR is signaled if SEQUENCE-2 is a dotted list.~@
+              No error is signaled if SEQUENCE-2 is a circular list.~@
               ~@
               Portability notes:~@
               The Common Lisp HyperSpec does not explicity mention that the SEQUENCE-1~@
