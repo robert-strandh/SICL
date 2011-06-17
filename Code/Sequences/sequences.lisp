@@ -16169,18 +16169,32 @@
 	((null l2) l1)
 	(t (let (head)
 	     (if (funcall predicate (car l2) (car l1))
+		 ;; Only if the element of the second sequence
+		 ;; is strictly less than the element of the fist
+		 ;; sequence according to the predicate should we
+		 ;; take the element of the second sequence. 
 		 (let ((temp (cdr l2)))
 		   (setf head l2
 			 l2 temp))
+		 ;; Take the element of the first sequence i
+		 ;; it is less than or equal to the element
+		 ;; of the first sequence according to the predicate
 		 (let ((temp (cdr l1)))
 		   (setf head l1
 			 l1 temp)))
 	     (let ((tail head))
 	       (loop until (or (null l1) (null l2))
 		     do (if (funcall predicate (car l2) (car l1))
+			    ;; Only if the element of the second sequence
+			    ;; is strictly less than the element of the fist
+			    ;; sequence according to the predicate should we
+			    ;; take the element of the second sequence. 
 			    (let ((temp (cdr l2)))
 			      (setf (cdr tail) l2
 				    l2 temp))
+			    ;; Take the element of the first sequence i
+			    ;; it is less than or equal to the element
+			    ;; of the first sequence according to the predicate
 			    (let ((temp (cdr l1)))
 			      (setf (cdr tail) l1
 				    l1 temp)))
@@ -16188,6 +16202,116 @@
 	       (setf (cdr tail)
 		     (if (null l1) l2 l1)))
 	     head))))
+
+(defun |merge seq-type-1=list seq-type-2=list result-type=list key=other|
+    (l1 l2 predicate key)
+  (cond ((null l1) l2)
+	((null l2) l1)
+	(t (let (head)
+	     (if (funcall predicate (funcall key (car l2)) (funcall key (car l1)))
+		 ;; Only if the element of the second sequence
+		 ;; is strictly less than the element of the fist
+		 ;; sequence according to the predicate should we
+		 ;; take the element of the second sequence. 
+		 (let ((temp (cdr l2)))
+		   (setf head l2
+			 l2 temp))
+		 ;; Take the element of the first sequence if it
+		 ;; is less than or equal to the element of the
+		 ;; first sequence according to the predicate. 
+		 (let ((temp (cdr l1)))
+		   (setf head l1
+			 l1 temp)))
+	     (let ((tail head))
+	       (loop until (or (null l1) (null l2))
+		     do (if (funcall predicate (funcall key (car l2)) (funcall key (car l1)))
+			    ;; Only if the element of the second sequence
+			    ;; is strictly less than the element of the fist
+			    ;; sequence according to the predicate should we
+			    ;; take the element of the second sequence. 
+			    (let ((temp (cdr l2)))
+			      (setf (cdr tail) l2
+				    l2 temp))
+			    ;; Take the element of the first sequence if it
+			    ;; is less than or equal to the element of the
+			    ;; first sequence according to the predicate. 
+			    (let ((temp (cdr l1)))
+			      (setf (cdr tail) l1
+				    l1 temp)))
+			(setf tail (cdr tail)))
+	       (setf (cdr tail)
+		     (if (null l1) l2 l1)))
+	     head))))
+
+(defun |merge seq-type-1=list seq-type-2=vector result-type=list key=identity|
+    (list vector predicate)
+  (let* ((sentinel (list nil))
+	 (tail sentinel))
+    (loop with length = (length vector)
+          for i from 0
+	  until (or (= i length) (null list))
+	  do (if (funcall predicate (aref vector i) (car list))
+		 ;; Only if the element of the second sequence
+		 ;; is strictly less than the element of the fist
+		 ;; sequence according to the predicate should we
+		 ;; take the element of the second sequence. 
+		 (setf (cdr tail) (list (aref vector i))
+		       i (1+ i)
+		       tail (cdr tail))
+		 ;; Take the element of the first sequence if it
+		 ;; is less than or equal to the element of the
+		 ;; first sequence according to the predicate. 
+		 (let ((temp (cdr list)))
+		   (setf (cdr tail) list
+			 tail list
+			 list temp)))
+	  finally (if (< i length)
+		      ;; There are elements left in the second sequence
+		      ;; that must be appended to the result. 
+		      (loop until (= i length)
+			    do (setf (cdr tail) (list (aref vector i))
+				     i (1+ i)
+				     tail (cdr tail)))
+		      ;; There might be elements left in the fist
+		      ;; sequence.  Share structure with it. 
+		      (setf (cdr tail) list))
+	          (return (cdr sentinel)))))
+
+(defun |merge seq-type-1=list seq-type-2=vector result-type=list key=other|
+    (list vector predicate key)
+  (let* ((sentinel (list nil))
+	 (tail sentinel))
+    (loop with length = (length vector)
+          for i from 0
+	  until (or (= i length) (null list))
+	  do (if (funcall predicate
+			  (funcall key (aref vector i))
+			  (funcall key (car list)))
+		 ;; Only if the element of the second sequence
+		 ;; is strictly less than the element of the fist
+		 ;; sequence according to the predicate should we
+		 ;; take the element of the second sequence. 
+		 (setf (cdr tail) (list (aref vector i))
+		       i (1+ i)
+		       tail (cdr tail))
+		 ;; Take the element of the first sequence if it
+		 ;; is less than or equal to the element of the
+		 ;; first sequence according to the predicate. 
+		 (let ((temp (cdr list)))
+		   (setf (cdr tail) list
+			 tail list
+			 list temp)))
+	  finally (if (< i length)
+		      ;; There are elements left in the second sequence
+		      ;; that must be appended to the result. 
+		      (loop until (= i length)
+			    do (setf (cdr tail) (list (aref vector i))
+				     i (1+ i)
+				     tail (cdr tail)))
+		      ;; There might be elements left in the fist
+		      ;; sequence.  Share structure with it. 
+		      (setf (cdr tail) list))
+	          (return (cdr sentinel)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
