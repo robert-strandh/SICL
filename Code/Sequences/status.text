@@ -107,6 +107,11 @@ What remains to to:
 
       Special version for the case where :end is not given or is nil. 
 
+    merge
+
+      Write compiler macro.
+      Write tests.
+
     map
 
       To get around the problem of not being able to expand
@@ -161,10 +166,6 @@ What remains to to:
       implement gap-buffers used in things like Climacs. 
 
     concatenate
-
-      See map.
-
-    merge
 
       See map.
 
