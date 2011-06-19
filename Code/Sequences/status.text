@@ -51,14 +51,6 @@ What remains to to:
   we can test the functions find-if and find-if-not, and not the
   specialized versions created by the compiler macro.
 
-  We need a subclass of the type-error condition, say
-  not-a-proper-sequence that we can signal in case the sequence is
-  not a proper sequence. 
-
-  We also need a subclass of the type-error condition, say
-  not-a-valid-sequence-index that we can signal in case some index is
-  not a valid sequence index.  
-
   Add more sequence functions.
 
     find
