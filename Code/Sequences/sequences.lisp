@@ -16176,7 +16176,7 @@
 		 (let ((temp (cdr l2)))
 		   (setf head l2
 			 l2 temp))
-		 ;; Take the element of the first sequence i
+		 ;; Take the element of the first sequence if
 		 ;; it is less than or equal to the element
 		 ;; of the first sequence according to the predicate
 		 (let ((temp (cdr l1)))
@@ -16192,7 +16192,7 @@
 			    (let ((temp (cdr l2)))
 			      (setf (cdr tail) l2
 				    l2 temp))
-			    ;; Take the element of the first sequence i
+			    ;; Take the element of the first sequence if
 			    ;; it is less than or equal to the element
 			    ;; of the first sequence according to the predicate
 			    (let ((temp (cdr l1)))
@@ -16460,6 +16460,263 @@
 				     j (1+ j)
 				     tail (cdr tail))))
 	          (return (cdr sentinel)))))
+
+;;; For these special versions, we pass the resulting vector
+;;; as an argument, because it has already been created.  
+;;; Also, we assume that any list argument has been checked
+;;; to be a proper list.
+
+(defun |merge seq-type-1=list seq-type-2=list result-type=vector key=identity|
+    (result l1 l2 predicate)
+  (loop for i from 0
+        until (and (null l1) (null l2))
+	do (if (or (null l1) (funcall predicate (car l2) (car l1)))
+	       ;; Only if the first sequence is empty, or
+	       ;; if the element of the second sequence
+	       ;; is strictly less than the element of the fist
+	       ;; sequence according to the predicate should we
+	       ;; take the element of the second sequence. 
+	       (setf (aref result i) (car l2)
+		     l2 (cdr l2))
+	       ;; Take the element of the first sequence if
+	       ;; the second sequence is empty or if its first
+	       ;; element is less than or equal to the element
+	       ;; of the first sequence according to the predicate.
+	       (setf (aref result i) (car l1)
+		     l1 (cdr l1)))))
+
+(defun |merge seq-type-1=list seq-type-2=list result-type=vector key=other|
+    (result l1 l2 predicate key)
+  (loop for i from 0
+        until (and (null l1) (null l2))
+	do (if (or (null l1) (funcall predicate
+				      (funcall key (car l2))
+				      (funcall key (car l1))))
+	       ;; Only if the first sequence is empty, or
+	       ;; if the element of the second sequence
+	       ;; is strictly less than the element of the fist
+	       ;; sequence according to the predicate should we
+	       ;; take the element of the second sequence. 
+	       (setf (aref result i) (car l2)
+		     l2 (cdr l2))
+	       ;; Take the element of the first sequence if
+	       ;; the second sequence is empty or if its first
+	       ;; element is less than or equal to the element
+	       ;; of the first sequence according to the predicate.
+	       (setf (aref result i) (car l1)
+		     l1 (cdr l1)))))
+
+(defun |merge seq-type-1=list seq-type-2=vector result-type=vector key=identity|
+    (result list vector predicate)
+  (loop with length = (length vector)
+        with j = 0
+        for i from 0
+        until (and (null list) (= j length))
+	do (if (or (null list) (funcall predicate (aref vector j) (car list)))
+	       ;; Only if the first sequence is empty, or
+	       ;; if the element of the second sequence
+	       ;; is strictly less than the element of the fist
+	       ;; sequence according to the predicate should we
+	       ;; take the element of the second sequence. 
+	       (setf (aref result i) (aref vector j)
+		     j (1+ j))
+	       ;; Take the element of the first sequence if
+	       ;; the second sequence is empty or if its first
+	       ;; element is less than or equal to the element
+	       ;; of the first sequence according to the predicate.
+	       (setf (aref result i) (car list)
+		     list (cdr list)))))
+
+(defun |merge seq-type-1=list seq-type-2=vector result-type=vector key=other|
+    (result list vector predicate key)
+  (loop with length = (length vector)
+        with j = 0
+        for i from 0
+        until (and (null list) (= j length))
+	do (if (or (null list) (funcall predicate
+					(funcall key (aref vector j))
+					(funcall key (car list))))
+	       ;; Only if the first sequence is empty, or
+	       ;; if the element of the second sequence
+	       ;; is strictly less than the element of the fist
+	       ;; sequence according to the predicate should we
+	       ;; take the element of the second sequence. 
+	       (setf (aref result i) (aref vector j)
+		     j (1+ j))
+	       ;; Take the element of the first sequence if
+	       ;; the second sequence is empty or if its first
+	       ;; element is less than or equal to the element
+	       ;; of the first sequence according to the predicate.
+	       (setf (aref result i) (car list)
+		     list (cdr list)))))
+
+(defun |merge seq-type-1=vector seq-type-2=list result-type=vector key=identity|
+    (result vector list predicate)
+  (loop with length = (length vector)
+        with j = 0
+        for i from 0
+        until (and (= j length) (null list))
+	do (if (or (= j length) (funcall predicate (car list) (aref vector j)))
+	       ;; Only if the first sequence is empty, or
+	       ;; if the element of the second sequence
+	       ;; is strictly less than the element of the fist
+	       ;; sequence according to the predicate should we
+	       ;; take the element of the second sequence. 
+	       (setf (aref result i) (car list)
+		     list (cdr list))
+	       ;; Take the element of the first sequence if
+	       ;; the second sequence is empty or if its first
+	       ;; element is less than or equal to the element
+	       ;; of the first sequence according to the predicate.
+	       (setf (aref result i) (aref vector j)
+		     j (1+ j)))))
+
+(defun |merge seq-type-1=vector seq-type-2=list result-type=vector key=other|
+    (result vector list predicate key)
+  (loop with length = (length vector)
+        with j = 0
+        for i from 0
+        until (and (= j length) (null list))
+	do (if (or (= j length) (funcall predicate
+					 (funcall key (car list))
+					 (funcall key (aref vector j))))
+	       ;; Only if the first sequence is empty, or
+	       ;; if the element of the second sequence
+	       ;; is strictly less than the element of the fist
+	       ;; sequence according to the predicate should we
+	       ;; take the element of the second sequence. 
+	       (setf (aref result i) (car list)
+		     list (cdr list))
+	       ;; Take the element of the first sequence if
+	       ;; the second sequence is empty or if its first
+	       ;; element is less than or equal to the element
+	       ;; of the first sequence according to the predicate.
+	       (setf (aref result i) (aref vector j)
+		     j (1+ j)))))
+
+(defun |merge seq-type-1=vector seq-type-2=vector result-type=vector key=identity|
+    (result v1 v2 predicate)
+  (loop with length1 = (length v1)
+        with length2 = (length v2)
+        with j = 0
+        with k = 0
+        for i from 0
+        until (and (= j length1) (= k length2))
+	do (if (or (= j length1) (funcall predicate (aref v2 k) (aref v1 j)))
+	       ;; Only if the first sequence is empty, or
+	       ;; if the element of the second sequence
+	       ;; is strictly less than the element of the fist
+	       ;; sequence according to the predicate should we
+	       ;; take the element of the second sequence. 
+	       (setf (aref result i) (aref v2 k)
+		     k (1+ k))
+	       ;; Take the element of the first sequence if
+	       ;; the second sequence is empty or if its first
+	       ;; element is less than or equal to the element
+	       ;; of the first sequence according to the predicate.
+	       (setf (aref result i) (aref v1 j)
+		     j (1+ j)))))
+
+(defun |merge seq-type-1=vector seq-type-2=vector result-type=vector key=other|
+    (result v1 v2 predicate key)
+  (loop with length1 = (length v1)
+        with length2 = (length v2)
+        with j = 0
+        with k = 0
+        for i from 0
+        until (and (= j length1) (= k length2))
+	do (if (or (= j length1) (funcall predicate
+					  (funcall key (aref v2 k))
+					  (funcall key (aref v1 j))))
+	       ;; Only if the first sequence is empty, or
+	       ;; if the element of the second sequence
+	       ;; is strictly less than the element of the fist
+	       ;; sequence according to the predicate should we
+	       ;; take the element of the second sequence. 
+	       (setf (aref result i) (aref v2 k)
+		     k (1+ k))
+	       ;; Take the element of the first sequence if
+	       ;; the second sequence is empty or if its first
+	       ;; element is less than or equal to the element
+	       ;; of the first sequence according to the predicate.
+	       (setf (aref result i) (aref v1 j)
+		     j (1+ j)))))
+
+;;; Compute the length of a proper list, or signal an error if
+;;; the list is not a proper list.
+(defun length-of-proper-list (name list)
+  (loop for remainder = list then (cdr remainder)
+        for length from 0
+        while (consp remainder)
+        finally (if (null remainder)
+		    (return length)
+		    (error 'must-be-proper-list
+			   :name name
+			   :datum list))))
+
+(defun length-of-proper-sequence (name sequence)
+  (if (vectorp sequence)
+      (length sequence)
+      (length-of-proper-list name sequence)))
+
+(defun merge (result-type sequence-1 sequence-2 predicate &key key)
+  (if key
+      (if (subtypep result-type 'list)
+	  (if (listp sequence-1)
+	      (if (listp sequence-2)
+		  (|merge seq-type-1=list seq-type-2=list result-type=list key=other|
+		   sequence-1 sequence-2 predicate key)
+		  (|merge seq-type-1=list seq-type-2=vector result-type=list key=other|
+		   sequence-1 sequence-2 predicate key))
+	      (if (listp sequence-2)
+		  (|merge seq-type-1=vector seq-type-2=list result-type=list key=other|
+		   sequence-1 sequence-2 predicate key)
+		  (|merge seq-type-1=vector seq-type-2=vector result-type=list key=other|
+		   sequence-1 sequence-2 predicate key)))
+	  (let* ((length (+ (length-of-proper-sequence 'merge sequence-1)
+			    (length-of-proper-sequence 'merge sequence-2)))
+		 ;; FIXME: check for incompatible lengths
+		 (result (make-sequence result-type length)))
+	    (if (listp sequence-1)
+		(if (listp sequence-2)
+		    (|merge seq-type-1=list seq-type-2=list result-type=vector key=other|
+		     result sequence-1 sequence-2 predicate key)
+		    (|merge seq-type-1=list seq-type-2=vector result-type=vector key=other|
+		     result sequence-1 sequence-2 predicate key))
+		(if (listp sequence-2)
+		    (|merge seq-type-1=vector seq-type-2=list result-type=vector key=other|
+		     result sequence-1 sequence-2 predicate key)
+		    (|merge seq-type-1=vector seq-type-2=vector result-type=vector key=other|
+		     result sequence-1 sequence-2 predicate key)))
+	    result))
+      (if (subtypep result-type 'list)
+	  (if (listp sequence-1)
+	      (if (listp sequence-2)
+		  (|merge seq-type-1=list seq-type-2=list result-type=list key=identity|
+		   sequence-1 sequence-2 predicate)
+		  (|merge seq-type-1=list seq-type-2=vector result-type=list key=identity|
+		   sequence-1 sequence-2 predicate))
+	      (if (listp sequence-2)
+		  (|merge seq-type-1=vector seq-type-2=list result-type=list key=identity|
+		   sequence-1 sequence-2 predicate)
+		  (|merge seq-type-1=vector seq-type-2=vector result-type=list key=identity|
+		   sequence-1 sequence-2 predicate)))
+	  (let* ((length (+ (length-of-proper-sequence 'merge sequence-1)
+			    (length-of-proper-sequence 'merge sequence-2)))
+		 ;; FIXME: check for incompatible lengths
+		 (result (make-sequence result-type length)))
+	    (if (listp sequence-1)
+		(if (listp sequence-2)
+		    (|merge seq-type-1=list seq-type-2=list result-type=vector key=identity|
+		     result sequence-1 sequence-2 predicate)
+		    (|merge seq-type-1=list seq-type-2=vector result-type=vector key=identity|
+		     result sequence-1 sequence-2 predicate))
+		(if (listp sequence-2)
+		    (|merge seq-type-1=vector seq-type-2=list result-type=vector key=identity|
+		     result sequence-1 sequence-2 predicate)
+		    (|merge seq-type-1=vector seq-type-2=vector result-type=vector key=identity|
+		     result sequence-1 sequence-2 predicate)))
+	    result))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -25180,16 +25437,3 @@
 		 &key key test test-not start1 start2 end1 end2 from-end)
   (declare (ignore sequence-1 sequence-2 key test test-not start1 start2 end1 end2 from-end))
   nil)
-  
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function merge
-
-;;; FIXME: incomplete non-working definition at the moment
-
-(defun merge (result-type sequence-1 sequence-2 predicate &key key)
-  (declare (ignore result-type sequence-1 sequence-2 predicate key))
-  nil)
-
-
