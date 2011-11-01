@@ -87,7 +87,7 @@
 	((atom form)
 	 (make-instance 'constant-ast :form form))
 	(t
-	 (let ((children (map-maybe-dotted-list #'bla form)))
+	 (let ((children (map-maybe-dotted-list #'make-ast form)))
 	   (make-instance 'compound-ast
 			  :children children
 			  :form (map-maybe-dotted-list #'form children))))))
@@ -227,6 +227,11 @@
 			 (environment lexical-environment)
 			 (namespace-name (eql 'go-tag)))
   (lookup-in-namespace name (go-tags environment)))
+  
+(defmethod lookup-level (name
+			 (environment lexical-environment)
+			 (namespace-name (eql 'block-tag)))
+  (lookup-in-namespace name (block-tags environment)))
   
 ;;; The second step is to turn the trivial ast into something more
 ;;; sophisiticated, in which the environment has been consulted to
@@ -444,7 +449,7 @@
 	   :ast ast))
   (make-instance 'return-from-ast
     :form (form ast)
-    :tag (lookup (form (cadr ast)) environment 'block-tag)
+    :tag (lookup (form (cadr (children ast))) environment 'block-tag)
     :result (if (= (length (children ast)) 3)
 		(convert (caddr (children ast)) environment)
 		(make-instance 'constant-ast :form nil))))
