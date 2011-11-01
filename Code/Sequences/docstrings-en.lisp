@@ -149,8 +149,13 @@
               SEQUENCE is a proper sequence.~@
               ~@
               Exceptional situations:~@
-              ~a"
-             *error-not-proper-sequence*))
+              An error of type TYPE-ERROR is signaled if SEQUENCE is not a proper sequence.
+              ~@
+              Portability notes:~@
+              The Common Lisp HyperSpec states that an implementation should be~@
+              prepeared to signal an error if SEQUENCE is not a proper sequence.~@
+              For COPY-SEQ this means in practice that an implementation might not signal~@
+              an error when SEQUENCE is a circular list or a dotted list."))
 
 (fundoc 'elt
         (fmt "Lambda list: (SEQUENCE INDEX)~@
