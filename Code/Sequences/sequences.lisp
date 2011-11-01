@@ -59,88 +59,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Externally visible conditions
-
-;;; This condition is used to mix into other conditions that
-;;; will report the construct (function, macro, etc) in which 
-;;; the condition was signaled. 
-(define-condition name-mixin ()
-  ((%name :initarg :name :reader name)))
-
-;;; This condition is used by functions an macros that require 
-;;; some argument to be a nonnegative integer. 
-(define-condition must-be-nonnegative-integer (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type '(integer 0)))
-
-;;; This condition is used by functions and macros that require
-;;; some argument to be a cons cell.
-(define-condition must-be-cons (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'cons))
-
-;;; This condition is used by functions and macros that require
-;;; some argument to be a list (a cons or nil).
-(define-condition must-be-list (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'list))
-
-;;; This condition is used by functions and macros that require
-;;; some list to be a proper list.  
-(define-condition must-be-proper-list (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'list))
-
-;;; This condition is used by functions that take :test and :test-not
-;;; keyword arguments, and is signaled when both of those are given.
-(define-condition both-test-and-test-not-given (error name-mixin)
-  ())
-
-;;; This condition is used by macros and compiler macrosthat detect
-;;; that there is both a :test and a :test-not, and that detection is
-;;; done at macro-expansion time.
-(define-condition warn-both-test-and-test-not-given (warning name-mixin)
-  ())
-
-(define-condition invalid-sequence-index-type (type-error name-mixin)
-  ())
-
-(define-condition invalid-start-index-type (invalid-sequence-index-type)
-  ())
-
-(define-condition invalid-end-index-type (invalid-sequence-index-type)
-  ())
-
-;;; This is the base class of conditions that need to report
-;;; some problem relative to a particular sequence.
-(define-condition invalid-sequence-index (type-error name-mixin)
-  ((%in-sequence :initarg :in-sequence :reader in-sequence)))
-
-;;; This is the base class of conditions that need to report
-;;; some bounding index to be out of bounds. 
-(define-condition invalid-bounding-index (invalid-sequence-index)
-  ())
-
-;;; This condition is used to indicate in invalid start index
-;;; of some sequence, as given by the :start keyword.
-(define-condition invalid-start-index (invalid-bounding-index)
-  ())
-
-;;; This condition is used to indicate in invalid end index
-;;; of some sequence, as given by the :end keyword.
-(define-condition invalid-end-index (invalid-bounding-index)
-  ())
-
-;;; This condition is used to indicate that, although both
-;;; the start and the end indexes are valid bounding indexes 
-;;; separately, the end index is smaller than the start index. 
-;;; We reuse the datum in the type-error for the start index,
-;;; and add a slot for the end index.
-(define-condition end-less-than-start (invalid-bounding-index)
-  ((end-index :initarg :end-index :reader end-index)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Utilities
 
 ;;; Skip a prefix of a list and signal an error if the list is too
@@ -4584,16 +4502,27 @@
 ;;;
 ;;; Function length
 
-(defun length (sequence)
-  (etypecase sequence
-    (vector
-       (if (array-has-fill-pointer-p sequence)
+;;; Compute the length of a proper list, or signal an error if
+;;; the list is not a proper list.
+(defun length-of-proper-list (name list)
+  (loop for remainder = list then (cdr remainder)
+        for length from 0
+        while (consp remainder)
+        finally (if (null remainder)
+		    (return length)
+		    (error 'must-be-proper-list
+			   :name name
+			   :datum list))))
+
+(defun length-of-proper-sequence (name sequence)
+  (if (vectorp sequence)
+      (if (array-has-fill-pointer-p sequence)
            (fill-pointer sequence)
-           (array-dimension sequence 0)))
-    (list
-       (loop while (not (endp sequence))
-             count t
-             do (pop sequence)))))
+           (array-dimension sequence 0))
+      (length-of-proper-list name sequence)))
+
+(defun length (sequence)
+  (length-of-proper-sequence 'length sequence))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -13432,18 +13361,53 @@
 ;;;
 ;;; Function copy-seq
 
+;;; This code is the same as in the "small" version of this module.
+;;; We need to figure out a way of factoring out common code.
+
+;;; We test for circular lists.
+;;; We can afford to do this because the cost is small compared to
+;;; the cost of allocating and initializing cons cells.
+;;; Furthermore, this is a good idea, because either way, we fail
+;;; on circular lists, so we might as well fail with an error message. 
+
+;;; Break out the core of copy-seq into an auxiliary function
+;;; that can be used by other functions in this module.
+
+(defun copy-seq-aux (client sequence)
+  (cond ((vectorp sequence)
+	 (let ((result (make-array (length sequence)
+				   :element-type (array-element-type sequence))))
+	   (loop for i from 0 below (length sequence)
+		 do (setf (aref result i) (aref sequence i)))
+	   result))
+	((null sequence)
+	 '())
+	((atom sequence)
+	 (error 'must-be-sequence
+		:name client
+		:datum sequence))
+	(t
+	 ;; The sequence is a non-empty list.
+	 (let* ((fast (cdr sequence))
+		(slow sequence)
+		(result (cons (car sequence) nil))
+		(last result))
+	   (loop until (or (eq slow fast) (atom fast))
+		 do (setf (cdr last) (cons (pop fast) nil)
+			  last (cdr last))
+		 until (atom fast)
+		 do (setf (cdr last) (cons (pop fast) nil)
+			  last (cdr last)
+			  slow (cdr slow)))
+	   (cond ((null fast)
+		  result)
+		 (t
+		  (error 'must-be-proper-list
+			 :name client
+			 :datum sequence)))))))
+
 (defun copy-seq (sequence)
-  (if (listp sequence)
-      ;; It is safe to use for ... in here because loop uses endp to
-      ;; test for the end, and that is exactly what we want for
-      ;; copy-seq (as opposed to for copy-list).
-      (loop for element in sequence
-	    collect element)
-      (let ((result (make-array (length sequence)
-				:element-type (array-element-type sequence))))
-	(loop for i from 0 below (length sequence)
-	      do (setf (aref result i) (aref sequence i)))
-	result)))
+  (copy-seq-aux 'copy-seq sequence))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -13458,18 +13422,26 @@
   (if (listp sequence)
       (loop with list = sequence
 	    with save-index = index
-	    until (endp list)
+	    until (atom list)
 	    until (zerop index)
 	    do (setf list (cdr list))
 	       (decf save-index)
-	    finally (if (null list)
-			(error 'invalid-sequence-index
-			       :datum index
-			       :expected-type `(integer 0 ,(- index save-index))
-			       :in-sequence sequence)
-			(return (car list))))
+	    finally (cond ((null list)
+			   (error 'invalid-sequence-index
+				  :name 'elt
+				  :datum index
+				  :expected-type `(integer 0 ,(- index save-index))
+				  :in-sequence sequence))
+			  ((atom list)
+			   (error 'must-be-proper-list
+				  :name 'elt
+				  :datum sequence
+				  :expected-type 'list))
+			  (t
+			   (return (car list)))))
       (if (>= index (length sequence))
 	  (error 'invalid-sequence-index
+		 :name 'elt
 		 :datum index
 		 :expected-type `(integer 0 ,(1- (length sequence)))
 		 :in-sequence sequence)
@@ -13484,18 +13456,26 @@
   (if (listp sequence)
       (loop with list = sequence
 	    with save-index = index
-	    until (endp list)
+	    until (atom list)
 	    until (zerop index)
 	    do (setf list (cdr list))
 	       (decf save-index)
-	    finally (if (null list)
-			(error 'invalid-sequence-index
-			       :datum index
-			       :expected-type `(integer 0 ,(- index save-index))
-			       :in-sequence sequence)
-			(setf (car list) new-object)))
+	    finally (cond ((null list)
+			   (error 'invalid-sequence-index
+				  :name 'elt
+				  :datum index
+				  :expected-type `(integer 0 ,(- index save-index))
+				  :in-sequence sequence))
+			  ((atom list)
+			   (error 'must-be-proper-list
+				  :name 'elt
+				  :datum sequence
+				  :expected-type 'list))
+			  (t
+			   (setf (car list) new-object))))
       (if (>= index (length sequence))
 	  (error 'invalid-sequence-index
+		 :name 'elt
 		 :datum index
 		 :expected-type `(integer 0 ,(1- (length sequence)))
 		 :in-sequence sequence)
@@ -16641,23 +16621,6 @@
 	       ;; of the first sequence according to the predicate.
 	       (setf (aref result i) (aref v1 j)
 		     j (1+ j)))))
-
-;;; Compute the length of a proper list, or signal an error if
-;;; the list is not a proper list.
-(defun length-of-proper-list (name list)
-  (loop for remainder = list then (cdr remainder)
-        for length from 0
-        while (consp remainder)
-        finally (if (null remainder)
-		    (return length)
-		    (error 'must-be-proper-list
-			   :name name
-			   :datum list))))
-
-(defun length-of-proper-sequence (name sequence)
-  (if (vectorp sequence)
-      (length sequence)
-      (length-of-proper-list name sequence)))
 
 (defun merge (result-type sequence-1 sequence-2 predicate &key key)
   (if key
@@ -25334,6 +25297,7 @@
 ;;;
 ;;; Function nreverse
 
+;;; Fixme, don't use endp
 (defun |nreverse seq-type=list|
     (list)
   (let ((result '())
