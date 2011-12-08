@@ -99,5 +99,3 @@
     (maybe-break-on-signals condition)
     (find-and-invoke-handler condition)
     (invoke-debugger condition)))
-
-
