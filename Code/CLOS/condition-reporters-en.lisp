@@ -81,15 +81,23 @@
 	  (name-package (name c))
 	  (type-error-datum c)))
 
-(defmethod report-condition ((c malformed-class-option)
+(defmethod report-condition ((c class-option-must-be-non-empty-list)
 			     stream
 			     (langauge (eql 'en-us)))
   (format stream
 	  "In ~a (in the ~a package):~@
-           A class option must be either~@
-           (:default-initargs <name> <value> <name> <value>...),~@
-           (:documentation <string>), or~@
-           (:metaclass <name>), but~@
+           A class option must be a a non-empty list, but~@
+           ~s was found."
+	  (name c)
+	  (name-package (name c))
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c class-option-name-must-be-symbol)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "In ~a (in the ~a package):~@
+           A class option name must be a symbol, but~@
            ~s was found."
 	  (name c)
 	  (name-package (name c))
