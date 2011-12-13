@@ -147,6 +147,82 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Computing the class precedence list
+
+;;; For a given class, return a list containing the class and all its
+;;; direct and indirect superclasses without any duplicate entries,
+;;; but in no particular order.  We must be careful here, in that we
+;;; might have to handle an incorrect inheritance graph, that might
+;;; contain circular dependencies.
+(defun find-all-superclasses (class)
+  (let ((result '()))
+    (labels ((find-all-supers (class)
+	       (unless (member class all-supers :test #'eq)
+		 (push class all-supers)
+		 (loop for super in (class-direct-superclasses class)
+		       do (find-all-supers super)))))
+      (find-all-supers class))
+    result))
+
+;;; For a given class, compute a precedence relation.  
+;;; This relation is represented as a list of cons cells, 
+;;; where the class in the CAR of the cell takes precedence over
+;;; the class in the CDR of the cell. For a class C with a list of 
+;;; direct superclasses (S1 S2 ... Sn), the relation contains 
+;;; the elements (C . S1) (S1 . S2) ... (Sn-1 . Sn).
+(defun compute-relation (class)
+  (loop for prev = class then super
+        for super in (class-direct-superclasses class)
+        collect (cons prev super)))
+
+(defgeneric compute-class-prececence-list (class))
+
+(defmethod compute-class-prececence-list ((class class))
+  (let* ((all-supers (find-all-superclasses class))
+	 (relation (loop for class in all-supers
+		         append (compute-relation class)))
+	 (reverse-result '()))
+    (flet ((find-candidate ()
+	     (let ((candidates
+		    ;; Start by looking for all remaining classes that
+		    ;; depend on no other clas according to the relation.
+		    (loop for super in all-supers
+			      unless (find super relation :key #'cdr)
+			      collect element)))
+	       ;; If no such class exists, we have a circular dependence,
+	       ;; and so we can't compute the class precedence list.
+	       (when (null candidates)
+		 ;; FIXME: do this better
+		 (error "can't compute class precedence list"))
+	       (if (null (cdr candidates))
+		   ;; A unique candiate, return it.
+		   (car candidates)
+		   ;; Several candidates.  Look for the last class in the
+		   ;; result computed so far (first in the reversed result)
+		   ;; that has one of the candidates as a direct superclass.
+		   ;; Return that candidate.  
+		   ;; There can be at most one, because within a list of
+		   ;; superclasses, there is already a dependency, so that
+		   ;; two different classes in a single list of superclasses
+		   ;; can not both be candidates.
+		   ;; There must be at least one, because ... 
+		   ;; (FIXME: prove it!)
+		   (loop for element in reverse-result
+		         do (loop for candidate in candidates
+			          do (when (member candidate
+						   (class-direct-superclasses
+						    element))
+				       (return-from find-candidate
+					 candidate))))))))
+      (loop until (null all-supers)
+	    do (let ((candidate (find-candidate)))
+		 (push candidate reverse-result)
+		 (setf all-supers (remove candidate all-supers))
+		 (setf relation (remove candidate relation :key #'car)))))
+    reverse-result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Functions ensure-class-using-class and ensure-class.  
 
 (defgeneric ensure-class-using-class (class name
