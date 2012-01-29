@@ -249,6 +249,7 @@
    ;; Other
    #:initialize-low #:interpret
    #:object-from-host-object #:host-object-from-object
+   #:make-skeleton-class #:+unbound+
    ))
 
 
