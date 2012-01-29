@@ -884,14 +884,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Linkage code.
-
-;;; Linkage code for functions.  When this code is called, the
+;;;
+;;; When the linkage code of some object is called, the
 ;;; *program-counter-save* register contains the program counter value
-;;; to be restored when the function returns.  this value has to be
-;;; saved in the dynamic frame on top of the call stack.  Also, the
-;;; operand stack needs to be saved in that frame.  A new dynamic
-;;; frame is allocated and the function code is finally jumped to.
+;;; to be restored when the call has been accomplished.  Before this
+;;; value is restored, the call stack, the constants and the operand
+;;; stack must be restored, should they be modified by the callee.  
 
+;;; Linkage code for functions.  Just accesss the entry point of the
+;;; function.  Count on the function to save and restore registers if
+;;; it is required to do so in order to accomplish its task. 
 (defparameter *linkage-function-instructions*
   '(                                  ; CL ---
     (dup)                             ; CL CL ---
@@ -902,7 +904,10 @@
     (jump)                            ; CL ---
     ))
 
-;;; Linkage code for symbols. 
+;;; Linkage code for symbols.  Find the contents of the
+;;; symbol-function slot of the symbol and then the linkage code of
+;;; the object contained therein, and finally, jump to that linkage
+;;; code, supposedly that of a function. 
 (defparameter *linkage-symbol-instructions*
   '(                                  ; Sym ---
     ;; Find the slot vector.
@@ -930,6 +935,77 @@
 ;;; symbol ERROR so that we can reach the ERROR function. 
 (defparameter *linkage-error-instructions*
   `((halt)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Host function.
+;;;
+;;; The great cheat object.
+
+(defparameter *host-functions* (make-hash-table))
+
+(defparameter *next-available-host-function-number* 0)
+
+(defunbound *class-host-function*)
+
+;;; SYMBOL will be a host symbol to be translated to a target
+;;; symbol.  
+(defun define-host-function (function-or-host-symbol symbol)
+  (let ((fun (if (symbolp function-or-host-symbol)
+		 (symbol-function function-or-host-symbol)
+		 function-or-host-symbol))
+	(target-sym (object-from-host-object symbol)))
+    (setf (gethash *next-available-host-function-number* *host-functions*)
+	  fun)
+    (let ((slot-vector (malloc-words 2)))
+      (memset (+ slot-vector (* 0 +word-size-in-bytes+))
+	      +unbound+)
+      (memset (+ slot-vector (* 1 +word-size-in-bytes+))
+	      *next-available-host-function-number*)
+      (let ((host-function (malloc-words 2)))
+	(memset (+ host-function (* 0 +word-size-in-bytes+))
+		*class-host-function*)
+	(memset (+ host-function (* 1 +word-size-in-bytes+))
+		slot-vector)
+	(setf (scl:symbol-function target-sym)
+	      host-function))))
+  (incf *next-available-host-function-number*))
+
+(defop call-host-function (host-function) (host-function) ()
+  (let* ((untagged (remove-tag host-function))
+	 (slot-vector (memref (+ untagged (* 1 +word-size-in-bytes+))))
+	 (function-number (memref (+ slot-vector (* 1 +word-size-in-bytes+))))
+	 (fun (gethash function-number *host-functions*))
+	 (args (loop for i from 0 below *number-of-arguments*
+		     collect (aref *arguments* i)))
+	 (results (multiple-value-list (apply fun args))))
+    (loop for val in results
+	  for i from 0
+	  do (setf (aref *arguments* i) val))
+    (setf *number-of-arguments* (length results))))
+
+(defunbound *linkage-host-function*)
+
+;;; Linkage code for host functions.  
+(defparameter *linkage-host-function-instructions*
+  `((call-host-function)
+    (link-return)))
+    
+(defun init-host-functions ()
+  (setf *host-functions* (make-hash-table))
+  (setf *next-available-host-function-number* 0)
+  (setunbound *linkage-host-function* (malloc-words 100))
+  (setunbound *class-host-function*
+	      (make-skeleton-class *linkage-host-function*))
+  (fill-linkage *linkage-host-function-instructions*
+		*linkage-host-function*))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test of host functions.
+
+(defun target-print (thing)
+  (format t "printing-target-value: ~s~%" thing))
 
 ;;; The problem this function solves is the following: Before we
 ;;; started allocating target data objects on the heap, we needed the
@@ -1065,6 +1141,7 @@
 		sicl-system:*linkage-error*)
   (make-rudimentary-setf-fdefinition)
   (make-rudimentary-funcall)
+  (init-host-functions)
   )
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
