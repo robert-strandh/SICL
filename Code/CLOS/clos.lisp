@@ -147,6 +147,81 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Functions initialize-instance, reinitialize-instance, shared-initialize
+
+(defgeneric shared-initialize (instance
+			       slot-names
+			       &rest initargs
+			       &key &allow-other-keys))
+
+;;; The spec requires the method on initialize-instance and
+;;; reinitialize-instance specialized for standard-object to call
+;;; shared-initialize as shown below.  The slot-name argument is a
+;;; list of slot-names to be initialized, or t which means all slots.
+;;; A slot is initialized from the initargs if one of its initargs is
+;;; in that list.  Otherwise it is initialized by evaluating the
+;;; corresponding intitform if and only if it is one of the slots to
+;;; be initialized (according to the value of slot-names), and if it
+;;; does not already have a value.  In that case, if no initform
+;;; exists, the slot is left unbound.
+
+(defmethod shared-initialize ((instance standard-object)
+			      slot-names
+			      &rest initargs)
+  (loop for slot in (class-slots (class-of instance))
+        for slot-name = (slot-definition-name slot)
+        do (multiple-value-bind (key value foundp)
+	       ;; Find the first key/value pair in initargs where the
+	       ;; key is one of the initargs of the slot. 
+	       (get-properties initargs (slot-definition-initargs slot))
+	     (declare (ignore key))
+	     (if foundp
+		 ;; Found an explicit initarg in initargs.  Initialize
+		 ;; the slot from its value
+		 (setf (slot-value instance slot-name) value)
+		 ;; No explicit initarg found.  
+		 (when (and (not (slot-boundp instance slot-name))
+			    (not (null (slot-definition-initfunction slot)))
+			    (or (eq slot-names t)
+				(member slot-name slot-names)))
+		   ;; Evaluate the initform by executing the initfunction. 
+		   (setf (slot-value instance slot-name)
+			 (funcall (slot-definition-initfunction slot)))))))
+  instance)
+
+(defgeneric initialize-instance (instance
+				 &rest initargs
+				 &key &allow-other-keys))
+
+;;; The method on initialize-instance specialized for standard-object
+;;; is especially important to bootstrapping, because all important
+;;; metaobject classes are subclasses of standard-object.  So if
+;;; make-instance is used, directly or indirectly (using ensure-class)
+;;; to create a metaobject class, then this method must already be in
+;;; place.
+
+(defmethod initialize-instance ((instance standard-object)
+				&rest initargs
+				&key &allow-other-keys)
+  ;; Call shared-initialize with a slot-list of t, meaning all slots,
+  ;; i.e., for every slot that is not explicitly initialized and which
+  ;; is unbound, evaluate its initform if it has one. 
+  (apply #'shared-initialize instance t initargs))
+
+(defgeneric reinitialize-instance (instance
+				   &rest initargs
+				   &key &allow-other-keys))
+
+(defmethod reinitialize-instance ((instance standard-object)
+				  &rest initargs
+				  &key &allow-other-keys)
+  ;; Call shared-initialize with a slot-list of (), meaning no slot,
+  ;; i.e., only assign values to slots that have explicit
+  ;; initialization arguments in initargs. 
+  (apply #'shared-initialize instance () initargs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Computing the class precedence list
 
 ;;; For a given class, return a list containing the class and all its
@@ -220,6 +295,83 @@
 		 (setf all-supers (remove candidate all-supers))
 		 (setf relation (remove candidate relation :key #'car)))))
     reverse-result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Computing the effective slots of a class.
+
+;;; For a given class, return the class to be used for
+;;; direct slot definitions of that class.
+(defgeneric direct-slot-definition-class (class &rest initargs))
+
+(defmethod direct-slot-definition-class ((class standard-class)
+					 &rest initargs)
+  (declare (ignore initargs))
+  (return (find-class 'standard-direct-slot-definition)))
+  
+(defmethod direct-slot-definition-class ((class funcallable-standard-class)
+					 &rest initargs)
+  (declare (ignore initargs))
+  (return (find-class 'standard-direct-slot-definition)))
+  
+;;; For a given class, return the class to be used for
+;;; effective slot definitions of that class.
+(defgeneric effective-slot-definition-class (class &rest initargs))
+
+(defmethod effective-slot-definition-class ((class standard-class)
+					    &rest initargs)
+  (declare (ignore initargs))
+  (return (find-class 'standard-effective-slot-definition)))
+  
+(defmethod effective-slot-definition-class ((class funcallable-standard-class)
+					    &rest initargs)
+  (declare (ignore initargs))
+  (return (find-class 'standard-effective-slot-definition)))
+  
+(defgeneric compute-effective-slot-definition
+    (class name direct-slot-definitions))
+
+;;; Implement the behavior of compute-effective-slot-definition
+;;; for standard-class and funcallable-standard-class.
+(defun compute-effective-slot-definition-aux (class direct-slot-definitions)
+  (let (allocation initargs initform initfunction type)
+    (setf allocation
+	  (slot-definition-allocation (first direct-slot-definitions)))
+    (setf initargs
+	  (reduce #'union
+		  (mapcar #'slot-definition-initargs direct-slot-definitions)))
+    (let ((first-init (find-if-not #'null direct-slot-definitions
+				   :key #'slot-definition-initfunction)))
+      (unless (null first-init)
+	(setf initform (slot-definition-initform first-init)
+	      initfunction (slot-definition-initfunction first-init))))
+    (setf type
+	  `(and ,@mapcar #'slot-definition-type direct-slot-definitions))
+    (if (null initfunction)
+	(make-instance class
+		       :allocation allocation
+		       :initargs initargs
+		       :type type)
+	(make-instance class
+		       :allocation allocation
+		       :initargs initargs
+		       :initform initform
+		       :initfunction initfunction
+		       :type type))))
+
+(defmethod compute-effective-slot-definition ((class standard-class)
+					      direct-slot-definitions)
+  (compute-effective-slot-definition-aux
+   (effective-slot-definition-class class)
+   direct-slot-definitions))
+
+(defmethod compute-effective-slot-definition ((class funcallable-standard-class)
+					      direct-slot-definitions)
+  (compute-effective-slot-definition-aux
+   (effective-slot-definition-class class)
+   direct-slot-definitions))
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -620,3 +772,178 @@
 
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Bootstrapping issues.
+
+;;; While it is perfectly possible to figure out the structure of each
+;;; class metaobject in advance, and to create all those class
+;;; metaobjects "manually", it would be convenient to use as much as
+;;; possible of the machinery as early as possible in the
+;;; bootstrapping process.
+;;;
+;;; One problem is that standard-class has a bunch of superclasses
+;;; that are nearly all instances of standard-class.  It would appear
+;;; then, that all the classes in that inheritance chain would need to
+;;; exist before standard-class is created, so that all those classed
+;;; need to be created "manually".  However, in order to create an
+;;; instance of a class, all information about that class need not be
+;;; known.  
+;;;
+;;; So, what exactly is needed in order to create an instance of a
+;;; class?  Well, creating an instance of a class using DEFCLASS,
+;;; generates a call to some generic functions, so these generic
+;;; functions must exist, and the dispatch mechanism must function.
+;;; We will discuss this issue below.  
+;;;
+;;; The DEFCLASS macro generates a call to ENSURE-CLASS which
+;;; essentially only calls ENSURE-CLASS-USING-CLASS.  When a new class
+;;; is created, ENSURE-CLASS-USING-CLASS calls MAKE-INSTANCE, which
+;;; creates a standard-instance and then calls INITIALIZE-INSTANCE to
+;;; fill in the slots.  INITIALIZE-INSTANCE calls SHARED-INITIALIZE to
+;;; do most of the job.  SHARED-INITIALIZE uses CLASS-OF to find the
+;;; class of the instance it is initializing, and then calls
+;;; CLASS-SLOTS on that class.  So obviously, CLASS-SLOTS must exist.
+;;; It is an accessor of STANDARD-CLASS.  The method on CLASS-SLOTS
+;;; specialized for STANDARD-CLASS should directly access the slot
+;;; vector using the position of the slot, so no other mechanism is
+;;; needed with respect to STANDARD-CLASS, but obviously, that method
+;;; must be created beforehand somehow.  
+;;;
+;;; The return value of CLASS-SLOTS is a list of instances of the
+;;; class EFFECTIVE-SLOT-DEFINITION.  So this class must exist and we
+;;; must be able to create instance of it.  After SHARED-INITIALIZE
+;;; has found the slots of the class metaobject, it uses accessors
+;;; SLOT-DEFINITION-NAME, SLOT-DEFINITION-INITARGS, and
+;;; SLOT-DEFINITION-INITFUNCTION, so these must exist as well.
+;;;
+;;; Finally, SHARED-INITIALIZE uses SLOT-BOUNDP (SETF SLOT-VALUE).
+;;; These both use CLASS-SLOTS on the class of the instance to find
+;;; the appropriate index of the slot vector of the instance. 
+;;; 
+;;; 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Creating the hierarchy of class metaobjects.
+
+;;; Start by creating every class as a standard instance with
+;;; no slot storage and no metaclass. 
+
+(defmacro make-class (name)
+  `(defparameter ,name (allocate-standard-instance nil nil)))
+
+(make-class *class-t*)
+(make-class *class-standard-object*)
+(make-class *class-funcallable-standard-object*)
+(make-class *class-metaobject*)
+(make-class *class-generic-function*)
+(make-class *class-standard-generic-function*)
+(make-class *class-method*)
+(make-class *class-standard-method*)
+(make-class *class-standard-accessor-method*)
+(make-class *class-standard-reader-method*)
+(make-class *class-standard-writer-method*)
+(make-class *class-method-combination*)
+(make-class *class-slot-definition*)
+(make-class *class-direct-slot-definition*)
+(make-class *class-effective-slot-definition*)
+(make-class *class-standard-slot-definition*)
+(make-class *class-standard-direct-slot-definition*)
+(make-class *class-standard-effective-slot-definition*)
+(make-class *class-specializer*)
+(make-class *class-eql-specializer*)
+(make-class *class-class*)
+(make-class *class-built-in-class*)
+(make-class *class-forward-reference-class*)
+(make-class *class-standard-class*)
+(make-class *class-funcallable-standard-class*)
+
+;;; Make a list of all standard-classes in top-down breadth-first
+;;; order.
+
+(defparameter *standard-classes*
+  (list *class-standard-object*
+	*class-funcallable-standard-object*
+	*class-metaobject*
+	*class-method*
+	*class-standard-method*
+	*class-standard-accessor-method*
+	*class-standard-reader-method*
+	*class-standard-writer-method*
+	*class-method-combination*
+	*class-slot-definition*
+	*class-direct-slot-definition*
+	*class-effective-slot-definition*
+	*class-standard-slot-definition*
+	*class-standard-direct-slot-definition*
+	*class-standard-effective-slot-definition*
+	*class-specializer*
+	*class-eql-specializer*
+	*class-class*
+	*class-built-in-class*
+	*class-forward-reference-class*
+	*class-standard-class*
+	*class-funcallable-standard-class*))
+
+;;; Make a list of all funcallable-standard-classes in top-down
+;;; breadth-first order.
+
+(defparameter *funcallable-standard-classes*
+  (list *class-generic-function* *class-standard-generic-function*)
+
+;;; Now that every class metaobject is allocated, we can fill in the
+;;; metaclass of each class metaobject. 
+
+(defmacro set-class (class metaclass)
+  `(setf (standard-instance class ,class) ,metaclass))
+
+(loop for class in *standard-classes*
+      do (set-class class *class-standard-class*))
+
+(loop for class in *funcallable-standard-classes*
+      do (set-class class *class-funcallable-standard-class*))
+
+(set-class *class-t* *class-built-in-class*)
+
+;;; Before a class metaobject can be used to create instance, it has
+;;; to have a list of effective slot definitions, but those are
+;;; themeselves instances that must be created, and so we have a
+;;; circular dependency.  We fix this problem by starting to allocate
+;;; effective slot definitions "manually", i.e. without the help of
+;;; MAKE-INSTANCE and the machinery that comes with it. 
+
+;;; We cheat by creating a list of descriptions (name and one initarg)
+;;; of the effective slots that we know we would en up with if we had
+;;; used the normal machinery to create the class. 
+
+(defparameter *descriptions-of-slots-of-effective-slot-definition*
+  '(;; Inherited from standard-object.  This information is what
+    ;; allows us to update instances when a class changes. 
+    (%version-information :version-information)
+    (%name :name)
+    (%allocation :allocation)
+    (%type :type)
+    (%location :location)
+    (%initargs :initargs)
+    (%initform :initform)
+    (%initfunction :initfunction)
+    (%readers :readers)
+    (%writers :writers)))
+
+(defun make-effective-slot-definition (&rest initargs
+				       &key &allow-other-keys)
+  (let* ((slot-descriptions *descriptions-of-slots-of-effective-slot-definition*)
+	 (slot-storage (make-array (length slot-descriptions))))
+    (flet ((set-slot-value (initarg value)
+	     (let ((position (position initarg slot-descriptions :key #'cadr)))
+	       (setf (aref slot-storage position) value))))
+      ;; Give default values for :type and :allocation
+      (set-slot-value :type t)
+      (set-slot-value :allocation :instance)
+      (loop for (initarg value) on initargs by #'cddr
+	    do (set-slot-value initarg value)))
+    (allocate-standard-instance *class-effective-slot-definition*
+				slot-storage)))
+
+				       
