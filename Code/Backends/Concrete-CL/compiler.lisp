@@ -329,6 +329,23 @@
 ;;;
 ;;; Our low-level special operators.
 
+(setf (special-operator 'sicl-system:memref)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 1))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (memref)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:memset)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (memset))))
+
 (setf (special-operator 'sicl-system:wu+)
       (lambda (arguments environment)
 	(assert (= (length arguments) 2))
@@ -385,7 +402,9 @@
 	  ,@(compile-form (cadr arguments) environment)
 	  (push-from-arg-immediate 0)
 	  (unsigned-mul)
-	  (pop-to-arg-immediate 0))))
+	  ;; FIXME: is this the right order?
+	  (pop-to-arg-immediate 0)
+	  (pop-to-arg-immediate 1))))
 
 (setf (special-operator 'sicl-system:ws*)
       (lambda (arguments environment)
@@ -395,7 +414,9 @@
 	  ,@(compile-form (cadr arguments) environment)
 	  (push-from-arg-immediate 0)
 	  (signed-mul)
-	  (pop-to-arg-immediate 0))))
+	  ;; FIXME: is this the right order?
+	  (pop-to-arg-immediate 0)
+	  (pop-to-arg-immediate 1))))
 
 (setf (special-operator 'sicl-system:wlogshift)
       (lambda (arguments environment)
