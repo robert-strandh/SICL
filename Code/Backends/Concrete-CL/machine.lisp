@@ -315,6 +315,12 @@
 (defop pop-to-constants (new-constants) () ()
   (setf *constants* new-constants))
 
+;;; We cheat by defining an instruction that does memory
+;;; allocation.  That way, we can put off its detailed 
+;;; implementation until later. 
+(defop malloc (size) (address) ()
+  (setf address (malloc size)))
+
 ;;; The bind stack for specials is organized as follows:
 ;;;
 ;;;   ((special-var-1 binding-1 binding-2 ... binding-n1)

@@ -329,6 +329,14 @@
 ;;;
 ;;; Our low-level special operators.
 
+(setf (special-operator 'sicl-exp-heap:malloc)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 1))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (memalloc)
+	  (pop-to-arg-immediate 0))))
+
 (setf (special-operator 'sicl-system:memref)
       (lambda (arguments environment)
 	(assert (= (length arguments) 1))
