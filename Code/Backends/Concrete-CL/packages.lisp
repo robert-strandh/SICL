@@ -64,23 +64,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; The SICL-EXP-HEAP package.  It contains code for managing the
-;;; heap.  Right now it has only memory allocation.  Later, put the
-;;; garbage collector here.
-
-(defpackage #:sicl-exp-heap
-  (:use #:common-lisp #:sicl-utilities)
-  (:export #:+word-size+ #:+word-size-in-bytes+
-	   #:word
-	   #:word-from-signed-host-number #:signed-host-number-from-word
-	   #:word-from-unsigned-host-number #:unsigned-host-number-from-word
-	   #:malloc #:malloc-words
-	   #:memref #:memset
-	   #:initialize-heap
-	   #:dump-heap))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; The SICL-SYSTEM package.
 ;;;
 ;;; This package contains information about the low-level 
@@ -107,8 +90,7 @@
    #:nil #:null
    #:eq
    )
-  (:use #:common-lisp #:sicl-utilities
-	#:sicl-exp-heap)
+  (:use #:common-lisp #:sicl-utilities)
   (:export
    ;; The value cells of these symbols will contain the corresponding
    ;; class objects.
@@ -128,7 +110,28 @@
    #:*linkage-error*
    #:*linkage-function*
    #:*linkage-symbol*
+   #:+word-size+ #:+word-size-in-bytes+
+   #:word
+   #:word-from-signed-host-number #:signed-host-number-from-word
+   #:word-from-unsigned-host-number #:unsigned-host-number-from-word
+   ;; Machine operations on words
+   #:u+ #:u- #:s+ #:s- #:neg #:u* #:s*
+   #:logshift #:arshift
+   #:band #:bior #:bxor #:bnot
    ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The SICL-EXP-HEAP package.  It contains code for managing the
+;;; heap.  Right now it has only memory allocation.  Later, put the
+;;; garbage collector here.
+
+(defpackage #:sicl-exp-heap
+  (:use #:common-lisp #:sicl-utilities #:sicl-system)
+  (:export #:malloc #:malloc-words
+	   #:memref #:memset
+	   #:initialize-heap
+	   #:dump-heap))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -270,7 +273,9 @@
 ;; ;;; The SICL-MACHINE package.
 
 (defpackage #:sicl-machine
-  (:use #:common-lisp #:sicl-utilities #:sicl-low #:sicl-exp-heap)
+  (:use #:common-lisp #:sicl-utilities
+	#:sicl-system
+	#:sicl-low #:sicl-exp-heap)
   (:export))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -284,7 +289,9 @@
 ;;; in the target environment.  
 
 (defpackage #:sicl-cross-compiler
-  (:use #:common-lisp #:sicl-machine #:sicl-utilities)
+  (:use #:common-lisp
+	#:sicl-system
+	#:sicl-utilities #:sicl-machine)
   (:shadow #:defmacro
 	   #:macro-function
 	   #:macroexpand-1

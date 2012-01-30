@@ -2,43 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Word.
-;;;
-;;; A word is the machine representation of any data item.
-;;; It can be interpreted differently in different situation. 
-;;; As far as the host system is concerned, a word is a positive 
-;;; number between 0 and 2^n-1 where n is the number of bits in
-;;; the word.  To represent negative numbers, we use 2-complement.
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defconstant +word-size+ 64)
-  (defconstant +word-size-in-bytes+ (/ +word-size+ 8)))
-
-(deftype word () `(unsigned-byte ,+word-size+))
-
-(defun word-from-unsigned-host-number (host-number)
-  (assert (<= 0
-	      host-number
-	      (1- (ash 1 +word-size+))))
-  host-number)
-	  
-
-(defun word-from-signed-host-number (host-number)
-  (assert (<= (- (ash 1 (1- +word-size+)))
-	      host-number
-	      (1- (ash 1 (1- +word-size+)))))
-  (if (minusp host-number)
-      (+ host-number (ash 1 +word-size+))
-      host-number))
-
-(defun signed-host-number-from-word (word)
-  (assert (typep word 'word))
-  (if (>= word (ash 1 (1- +word-size+)))
-      (- word (ash 1 +word-size+))
-      word))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Heap management.
 ;;; 
 ;;; The heap is just a bunch of consecutive words.  We assume 

@@ -49,6 +49,9 @@
 ;;; "manually") is restored when a stack is modified. 
 (defunbound *call-stack*)
 
+;;; This register holds the carry bit used in arithmetic operations
+(defparameter *carry* 0)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; VM operations
@@ -187,24 +190,59 @@
 (defop link-return () () ()
   (setf *program-counter* *program-counter-save*))
 
-(defop add (x y) (z) ()
-  (let* ((xx (signed-host-number-from-word x))
-	 (yy (signed-host-number-from-word y)))
-    (setf z (word-from-signed-host-number (+ xx yy)))))
+(defop unsigned-add (x y) (z) ()
+  (multiple-value-bind (result carry)
+      (u+ x y)
+    (setf z result
+	  *carry* carry)))
 
-(defop sub (x y) (z) ()
-  (let* ((xx (signed-host-number-from-word x))
-	 (yy (signed-host-number-from-word y)))
-    (setf z (word-from-signed-host-number (- xx yy)))))
+(defop signed-add (x y) (z) ()
+  (multiple-value-bind (result carry)
+      (s+ x y)
+    (setf z result
+	  *carry* carry)))
 
-(defop mul (x y) (z) ()
-  (let* ((xx (signed-host-number-from-word x))
-	 (yy (signed-host-number-from-word y)))
-    (setf z (word-from-signed-host-number (* xx yy)))))
+(defop unsigned-sub (x y) (z) ()
+  (multiple-value-bind (result carry)
+      (u- x y)
+    (setf z result
+	  *carry* carry)))
+
+(defop signed-sub (x y) (z) ()
+  (multiple-value-bind (result carry)
+      (s- x y)
+    (setf z result
+	  *carry* carry)))
 
 (defop neg (x) (y) ()
-  (let* ((xx (signed-host-number-from-word x)))
-    (setf y (word-from-signed-host-number (- xx)))))
+  (multiple-value-bind (result carry)
+      (neg x)
+    (setf y result
+	  *carry* carry)))
+
+;;; FIXME: introduce signed/unsigned add/sub with carry
+
+(defop unsigned-mul (w x) (y z) ()
+  (multiple-value-bind (low high)
+      (u* w x)
+    ;; Is this the best order?
+    (setf y low
+	  z high)))
+
+(defop signed-mul (w x) (y z) ()
+  (multiple-value-bind (low high)
+      (s* w x)
+    ;; Is this the best order?
+    (setf y low
+	  z high)))
+
+(defop log-shift (x y) (z) ()
+  (setf z (logshift x y)))
+
+(defop ar-shift (x y) (z) ()
+  (setf z (arshift x y)))
+
+;;; Change these.
 
 (defop logior (x y) (z) ()
   (setf z (logior x y)))
@@ -319,7 +357,7 @@
 
 (asm:define-assembly-macro branch-nil (label)
   `((push-nil)
-    (sub)
+    (unsigned-sub)
     (branch-zero ,label)))
 
 ;;; Allocate sequential words and leave the address to the first
@@ -363,7 +401,7 @@
 ;;; sequence.
 (asm:define-assembly-macro address-element-untagged (i)
   `((push-immediate ,(* i +word-size-in-bytes+))
-    (add)))
+    (unsigned-add)))
 
 ;;; Replace the untagged sequence of words on top of the
 ;;; stack by the i:th element of that sequence.
@@ -382,7 +420,7 @@
 (asm:define-assembly-macro cdr ()
   `((remove-tag)
     (push-immediate ,+word-size-in-bytes+)
-    (add)
+    (unsigned-add)
     (memref)))
 
 ;;; Given two elements CAR and CDR, with the CAR on top
@@ -408,14 +446,14 @@
 
 (asm:define-assembly-macro step-up ()
   `(                                        ; X ---
-    (push-immediate ,+word-size-in-bytes+)   ; ws X ---
-    (add)                                   ; X+ws ---
+    (push-immediate ,+word-size-in-bytes+)  ; ws X ---
+    (unsigned-add)                          ; X+ws ---
     ))
 
 (asm:define-assembly-macro step-down ()
   `(                                        ; X ---
-    (push-immediate ,+word-size-in-bytes+)   ; ws X ---
-    (sub)                                   ; X-ws ---
+    (push-immediate ,+word-size-in-bytes+)  ; ws X ---
+    (unsigned-sub)                          ; X-ws ---
     ))
 
 (asm:define-assembly-macro memref-preserve ()
@@ -441,13 +479,13 @@
 ;;; stack so that the top of the operand stack is in the last word of
 ;;; the sequence.
 (asm:define-assembly-macro build-sequence (n)
-  (let ((ws +word-size-in-bytes+))
+  (let ((sh (round (log +word-size-in-bytes+ 2))))
     `(                             ; sn-1 sn-2 ... s1 s0 ---
       (allocate-words ,n)          ; Obj_ sn-1 sn-2 ... s1 s0 ---
-      (push-immediate ,ws)         ; ws Obj_ sn-1 sn-2 ... s1 s0 ---
-      (push-immediate ,n)          ; n ws Obj_ sn-1 sn-2 ... s1 s0 ---
-      (mul)                        ; n*ws Obj_ sn-1 sn-2 ... s1 s0 ---
-      (add)                        ; n*ws+Obj_ sn-1 sn-2 ... s1 s0 ---
+      (push-immediate ,n)          ; n Obj_ sn-1 sn-2 ... s1 s0 ---
+      (push-immediate ,sh)         ; sh n Obj_ sn-1 sn-2 ... s1 s0 ---
+      (ar-shift)                   ; n*ws Obj_ sn-1 sn-2 ... s1 s0 ---
+      (unsigned-add)               ; n*ws+Obj_ sn-1 sn-2 ... s1 s0 ---
       ,@(loop repeat n
 	      append
 	      `(                   ; i*ws+Obj_ si-1 si-2 ... s1 s0 ---
@@ -583,20 +621,21 @@
 ;;; added to the current program counter.  But the current program
 ;;; counter is a bit off, so we need to adjust for that.
 (asm:define-assembly-macro call-subroutine (label)
-  `((push-from-program-counter)           ; PC ---
-    (push-immediate ,label)               ; RelIndex PC ---
-    ;; What was pushed last was the relative index between the next
-    ;; instruction and the first instruction of the subroutine.  But
-    ;; the PC pushed is not that of the next instruction, but that of
-    ;; the previous instruction, which has a length of 2. We need to
-    ;; adjust for that discrepancy.
-    (push-immediate 2)                    ; Adjust RelIndex PC ---
-    (add)                                 ; FinalRelIndex PC ---
-    (push-immediate ,+word-size-in-bytes+); ws FinalRelIndex PC ---
-    (mul)                                 ; FinalRelAddr PC ---
-    (add)                                 ; AbsoluteAddr ---
-    (jump-and-link)
-    ))
+  (let ((sh (round (log +word-size-in-bytes+ 2))))
+    `((push-from-program-counter)           ; PC ---
+      (push-immediate ,label)               ; RelIndex PC ---
+      ;; What was pushed last was the relative index between the next
+      ;; instruction and the first instruction of the subroutine.  But
+      ;; the PC pushed is not that of the next instruction, but that of
+      ;; the previous instruction, which has a length of 2. We need to
+      ;; adjust for that discrepancy.
+      (push-immediate 2)                    ; Adjust RelIndex PC ---
+      (signed-add)                          ; FinalRelIndex PC ---
+      (push-immediate ,sh)                  ; sh FinalRelIndex PC ---
+      (ar-shift)                            ; FinalRelAddr PC ---
+      (signed-add)                          ; AbsoluteAddr ---
+      (jump-and-link)
+      )))
 
 ;;; This macro, in contrast to the previous one, is used to call
 ;;; any object on top of the operand stack.  It finds the linkage
@@ -614,7 +653,7 @@
       (push-immediate 3)                  ; TagMask Obj Obj ---
       (logand)                            ; Tag Obj ---
       (push-immediate 3)                  ; TagHeap Tag Obj ---
-      (sub)                               ; Tag-TagHeap Obj ---
+      (unsigned-sub)                      ; Tag-TagHeap Obj ---
       (branch-zero ,label)                ; Obj ---
       ;; FIXME: Do this better
       (push-immediate #.(char-code #\l))  ; Char Obj ---
@@ -844,42 +883,42 @@
 ;;; Build a function.
 
 (asm:define-assembly-macro enclose (label)
-  `(;; Push the class for later use.
-    (push-constant 'sicl-system:*class-function*)
-                                ; Sym ---
-    (push-symbol-value)         ; Class ---
-    ;; Push the history; NIL for now.
-    (push-nil)                  ; NIL Class ---
-    ;; Get the code object and the environment from the call stack. 
-    (push-from-call-stack)      ; CS NIL Class ---
-    (car)                       ; Frame
-    (remove-tag)                ; Frame_ NIL Class ---
-    (dup)                       ; Frame_ Frame_ NIL Class ---
-    ;; First the code
-    (access-element-untagged 1) ; Code Frame_ NIL Class ---
-    (swap)                      ; Frame_ Code NIL Class ---
-    ;; Then the environment
-    (access-element-untagged 2) ; Env Code NIL
-    ;; Now for the delicate task of computing the absolute
-    ;; address of the beginning of the code for the function. 
-    (push-from-program-counter) ; PC Env Code NIL Class ---
-    (push-immediate ,label)     ; RelIndex PC Env Code NIL Class ---
-    ;; What was pushed last was the relative index between the next
-    ;; instruction and the first instruction of the subroutine.  But
-    ;; the PC pushed is not that of the next instruction, but that of
-    ;; the previous instruction, which has a length of 2. We need to
-    ;; adjust for that discrepancy.
-    (push-immediate 2)          ; Adjust RelIndex PC Env Code NIL Class ---
-    (add)                       ; FinalRelIndex PC Env Code NIL Class ---
-    (push-immediate ,+word-size-in-bytes+) 
-                                ; ws FinalRelIndex PC Env Code NIL Class ---
-    (mul)                       ; FinalRelAddr PC Env Code NIL Class ---
-    (add)                       ; AbsoluteAddr Env Code NIL Class ---
-    ;; Build the slot vector. 
-    (build-sequence 4)          ; SV Class ---
-    (build-sequence 2)          ; Function_ ---
-    (add-heap-tag)              ; Function ---
-    ))
+  (let ((sh (round (log +word-size-in-bytes+ 2))))
+    `(;; Push the class for later use.
+      (push-constant 'sicl-system:*class-function*)
+					; Sym ---
+      (push-symbol-value)         ; Class ---
+      ;; Push the history; NIL for now.
+      (push-nil)                  ; NIL Class ---
+      ;; Get the code object and the environment from the call stack. 
+      (push-from-call-stack)      ; CS NIL Class ---
+      (car)                       ; Frame
+      (remove-tag)                ; Frame_ NIL Class ---
+      (dup)                       ; Frame_ Frame_ NIL Class ---
+      ;; First the code
+      (access-element-untagged 1) ; Code Frame_ NIL Class ---
+      (swap)                      ; Frame_ Code NIL Class ---
+      ;; Then the environment
+      (access-element-untagged 2) ; Env Code NIL
+      ;; Now for the delicate task of computing the absolute
+      ;; address of the beginning of the code for the function. 
+      (push-from-program-counter) ; PC Env Code NIL Class ---
+      (push-immediate ,label)     ; RelIndex PC Env Code NIL Class ---
+      ;; What was pushed last was the relative index between the next
+      ;; instruction and the first instruction of the subroutine.  But
+      ;; the PC pushed is not that of the next instruction, but that of
+      ;; the previous instruction, which has a length of 2. We need to
+      ;; adjust for that discrepancy.
+      (push-immediate 2)          ; Adjust RelIndex PC Env Code NIL Class ---
+      (signed-add)                ; FinalRelIndex PC Env Code NIL Class ---
+      (push-immediate ,sh)        ; sh FinalRelIndex PC Env Code NIL Class ---
+      (ar-shift)                  ; FinalRelAddr PC Env Code NIL Class ---
+      (signed-add)                ; AbsoluteAddr Env Code NIL Class ---
+      ;; Build the slot vector. 
+      (build-sequence 4)          ; SV Class ---
+      (build-sequence 2)          ; Function_ ---
+      (add-heap-tag)              ; Function ---
+      )))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1071,7 +1110,7 @@
 		 (push-immediate ,+tag-mask+)       ; M arg1 arg1 ---
 		 (logand)                           ; T arg1 ---
 		 (push-immediate ,+tag-cons+)       ; TC T arg1 ---
-		 (sub)                              ; T-TC arg1 ---
+		 (unsigned-sub)                     ; T-TC arg1 ---
 		 (branch-zero ,lab1)                ; arg1 ---
 					            ; symbol ---
 		 (remove-tag)                       ; symbol_ ---
@@ -1105,17 +1144,17 @@
 		 ,lab1                              ; i Fun ---
 		 (dup)                              ; i i Fun ---
 		 (push-from-arg-count)              ; AC i i Fun ---
-		 (sub)                              ; i-AC i Fun ---
+		 (unsigned-sub)                     ; i-AC i Fun ---
 		 (branch-zero ,lab2)                
 					; i Fun ---
 		 (dup)                              ; i i Fun ---
 		 (push-from-arg)                    ; argi i Fun ---
 		 (dup2)                             ; i argi i Fun ---
 		 (push-immediate 1)                 ; 1 i argi i Fun ---
-		 (sub)                              ; i-1 argi i Fun ---
+		 (unsigned-sub)                     ; i-1 argi i Fun ---
 		 (pop-to-arg)                       ; i Fun ---
 		 (push-immediate 1)                 ; 1 i Fun ---
-		 (add)                              ; i+1 Fun ---
+		 (unsigned-add)                     ; i+1 Fun ---
 		 (branch ,lab1)                     ; i+1 Fun ---
 		 ,lab2                              ; AC Fun ---
 		 (pop)                              ; Fun ---
