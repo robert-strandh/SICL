@@ -14,31 +14,40 @@
 ;;; At the moment, there is no garbage collection.  Allocation is
 ;;; done linearly from 0 and up.  
 
-(defparameter *memory* (make-array 10000000 :initial-element 0))
+;;; The size of memory in bytes.
+(defconstant +size-of-memory+ 80000000)
+
+(defparameter *memory* (make-array +size-of-memory+
+				   :element-type '(unsigned-byte 8)
+				   :initial-element #xe0))
 
 (defun initialize-memory ()
-  (loop for i from 0 below (length *memory*)
-	do (setf (aref *memory* i) #xe0e0e0e)))
+  (loop for i from 0 below +size-of-memory+
+	do (setf (aref *memory* i) #xe0)))
 
 (defparameter *heap-pointer* 0)
 
-;;; Since we represent the heap as a Common Lisp vector, each
-;;; element of which represents a word, we must translate every
-;;; address to an index of the vector representing the heap.  
-;;; When doing that, we also verify that the address we are given
-;;; is indeed a multiple of the number of words in a byte. 
-(defun address-to-heap-index (address)
-  (assert (zerop (mod address +word-size-in-bytes+)))
-  (ash address #.(- (round (log +word-size-in-bytes+ 2)))))
-
+;;; In this version, we assume a little-endian byte order.
 (defun memref (address)
-  (assert (< address *heap-pointer*))
-  (aref *memory* (address-to-heap-index address)))
+  (declare (type word address))
+  (assert (zerop (mod address +word-size-in-bytes+)))
+  (let ((result 0))
+    (loop for a from address
+	  for shift from 0 by 8
+	  repeat +word-size-in-bytes+
+	  do (setf result
+		   (logior result
+			   (ash (aref *memory* a) shift))))
+    result))
 
 (defun memset (address value)
-  (assert (< address *heap-pointer*))
-  (assert (typep value 'word))
-  (setf (aref *memory* (address-to-heap-index address)) value))
+  (declare (type word address value))
+  (assert (zerop (mod address +word-size-in-bytes+)))
+  (loop for a from address
+	repeat +word-size-in-bytes+
+	do (setf (aref *memory* a)
+		 (logand value #xff))
+	   (setf value (ash value -8))))
 
 ;;; For debugging purposes, we remember the start address of 
 ;;; each allocation unit, so that we have some idea of the 
@@ -54,7 +63,7 @@
     (incf *heap-pointer* 
 	  (* +word-size-in-bytes+
 	     (ceiling size-in-bytes +word-size-in-bytes+)))
-    (when (> *heap-pointer* (length *memory*))
+    (when (> *heap-pointer* +size-of-memory+)
       (error "heap exhausted"))))
 
 (defun malloc-words (size-in-words)
