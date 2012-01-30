@@ -322,12 +322,132 @@
 ;;;
 ;;; Some special operators.
 
-;;; FIXME: create APPENDF allowing us to write
-;;; (appendf code x y z) to mean 
-;;; (setf code (append code x y z))
-
 ;;; FIXME: define a function PROPER-LIST-P
 ;;; to check the code.  Check for circularity too. 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Our low-level special operators.
+
+(setf (special-operator 'sicl-system:wu+)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (unsigned-add)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:ws+)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (signed-add)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:wu-)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (unsigned-sub)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:ws-)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (signed-sub)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:wneg)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 1))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (neg)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:wu*)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (unsigned-mul)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:ws*)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (signed-mul)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:wlogshift)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (log-shift)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:warshift)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (ar-shift)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:wand)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (log-and)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:wior)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 2))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  ,@(compile-form (cadr arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (log-ior)
+	  (pop-to-arg-immediate 0))))
+
+(setf (special-operator 'sicl-system:wnot)
+      (lambda (arguments environment)
+	(assert (= (length arguments) 1))
+	`(,@(compile-form (car arguments) environment)
+	  (push-from-arg-immediate 0)
+	  (log-not)
+	  (pop-to-arg-immediate 0))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Special operators from the Common Lisp HyperSpec.
 
 (setf (special-operator 'scl:quote)
       (lambda (arguments environment)
