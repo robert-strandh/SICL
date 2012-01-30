@@ -14,7 +14,11 @@
 ;;; At the moment, there is no garbage collection.  Allocation is
 ;;; done linearly from 0 and up.  
 
-(defparameter *heap* (make-array 10000000 :initial-element 0))
+(defparameter *memory* (make-array 10000000 :initial-element 0))
+
+(defun initialize-memory ()
+  (loop for i from 0 below (length *memory*)
+	do (setf (aref *memory* i) #xe0e0e0e)))
 
 (defparameter *heap-pointer* 0)
 
@@ -29,12 +33,12 @@
 
 (defun memref (address)
   (assert (< address *heap-pointer*))
-  (aref *heap* (address-to-heap-index address)))
+  (aref *memory* (address-to-heap-index address)))
 
 (defun memset (address value)
   (assert (< address *heap-pointer*))
   (assert (typep value 'word))
-  (setf (aref *heap* (address-to-heap-index address)) value))
+  (setf (aref *memory* (address-to-heap-index address)) value))
 
 ;;; For debugging purposes, we remember the start address of 
 ;;; each allocation unit, so that we have some idea of the 
@@ -50,7 +54,7 @@
     (incf *heap-pointer* 
 	  (* +word-size-in-bytes+
 	     (ceiling size-in-bytes +word-size-in-bytes+)))
-    (when (> *heap-pointer* (length *heap*))
+    (when (> *heap-pointer* (length *memory*))
       (error "heap exhausted"))))
 
 (defun malloc-words (size-in-words)
@@ -62,8 +66,7 @@
 
 (defun initialize-heap ()
   (setf *allocation-points* (make-hash-table))
-  (loop for i from 0 below (length *heap*)
-	do (setf (aref *heap* i) #xe0e0e0e))
+  (initialize-memory)
   (setf *heap-pointer* 0))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
