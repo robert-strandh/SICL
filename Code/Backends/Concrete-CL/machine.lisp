@@ -242,16 +242,11 @@
 (defop ar-shift (x y) (z) ()
   (setf z (warshift x y)))
 
-;;; Change these.
+(defop log-ior (x y) (z) ()
+  (setf z (wior x y)))
 
-(defop logior (x y) (z) ()
-  (setf z (logior x y)))
-
-(defop logand (x y) (z) ()
-  (setf z (logand x y)))
-
-(defop logandc2 (x y) (z) ()
-  (setf z (logandc2 x y)))
+(defop log-and (x y) (z) ()
+  (setf z (wand x y)))
 
 (defop log-not (x) (y) ()
   (setf y (wnot x)))
@@ -376,24 +371,25 @@
 ;;; It is assumed that the element has no tag to start with.
 (asm:define-assembly-macro add-cons-tag ()
   `((push-immediate 1)
-    (logior)))
+    (log-ior)))
 
 ;;; Add an immediate tag to the element on top of the stack
 ;;; It is assumed that the element has no tag to start with.
 (asm:define-assembly-macro add-immediate-tag ()
   `((push-immediate 2)
-    (logior)))
+    (log-ior)))
 
 ;;; Add a heap tag to the element on top of the stack
 ;;; It is assumed that the element has no tag to start with.
 (asm:define-assembly-macro add-heap-tag ()
   `((push-immediate 3)
-    (logior)))
+    (log-ior)))
 
 ;;; Remove the tag from the top element of the stack.
 (asm:define-assembly-macro remove-tag ()
   `((push-immediate 3)
-    (logandc2)))
+    (log-not)
+    (log-and)))
 
 ;;; Replace the untagged sequence of words on top of the
 ;;; stack by the address of the i:th element of that
@@ -650,7 +646,7 @@
       ;; (jump-and-link)                     ; Obj ---
       (dup)                               ; Obj Obj ---
       (push-immediate 3)                  ; TagMask Obj Obj ---
-      (logand)                            ; Tag Obj ---
+      (log-and)                           ; Tag Obj ---
       (push-immediate 3)                  ; TagHeap Tag Obj ---
       (unsigned-sub)                      ; Tag-TagHeap Obj ---
       (branch-zero ,label)                ; Obj ---
@@ -1107,7 +1103,7 @@
 		 (push-from-arg-immediate 1)        ; arg1 ---
 		 (dup)                              ; arg1 arg1 ---
 		 (push-immediate ,+tag-mask+)       ; M arg1 arg1 ---
-		 (logand)                           ; T arg1 ---
+		 (log-and)                          ; T arg1 ---
 		 (push-immediate ,+tag-cons+)       ; TC T arg1 ---
 		 (unsigned-sub)                     ; T-TC arg1 ---
 		 (branch-zero ,lab1)                ; arg1 ---
