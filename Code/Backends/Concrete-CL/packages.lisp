@@ -114,6 +114,8 @@
    #:word
    #:word-from-signed-host-number #:signed-host-number-from-word
    #:word-from-unsigned-host-number #:unsigned-host-number-from-word
+   ;; Memory
+   #:+size-of-memory+ #:initialize-memory #:memref #:memset
    ;; Machine operations on words
    #:wu+ #:wu- #:ws+ #:ws- #:wneg #:wu* #:ws*
    #:wlogshift #:warshift
@@ -129,7 +131,6 @@
 (defpackage #:sicl-exp-heap
   (:use #:common-lisp #:sicl-utilities #:sicl-system)
   (:export #:malloc #:malloc-words
-	   #:memref #:memset
 	   #:initialize-heap
 	   #:dump-heap))
 

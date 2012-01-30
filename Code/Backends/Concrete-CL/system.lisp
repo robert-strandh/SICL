@@ -52,6 +52,43 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Memory.  Here is is a Common Lisp array of unsigned 8-bit bytes. 
+
+;;; The size of memory in bytes.
+(defconstant +size-of-memory+ 80000000)
+
+(defparameter *memory* (make-array +size-of-memory+
+				   :element-type '(unsigned-byte 8)
+				   :initial-element #xe0))
+
+(defun initialize-memory ()
+  (loop for i from 0 below +size-of-memory+
+	do (setf (aref *memory* i) #xe0)))
+
+;;; In this version, we assume a little-endian byte order.
+(defun memref (address)
+  (declare (type word address))
+  (assert (zerop (mod address +word-size-in-bytes+)))
+  (let ((result 0))
+    (loop for a from address
+	  for shift from 0 by 8
+	  repeat +word-size-in-bytes+
+	  do (setf result
+		   (logior result
+			   (ash (aref *memory* a) shift))))
+    result))
+
+(defun memset (address value)
+  (declare (type word address value))
+  (assert (zerop (mod address +word-size-in-bytes+)))
+  (loop for a from address
+	repeat +word-size-in-bytes+
+	do (setf (aref *memory* a)
+		 (logand value #xff))
+	   (setf value (ash value -8))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;;  Machine operations on words
 
 (defun word-from-unsigned-host-number (host-number)
