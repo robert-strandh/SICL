@@ -329,12 +329,23 @@
 ;;;
 ;;; Our low-level special operators.
 
+;;; When we just give a constant number in code, it is
+;;; (correctly) intepreted as a fixnum.  To supress that, we
+;;; can say (sicl-system:word <number>) and it is interpreted
+;;; as an immediate operand.
+(setf (special-operator 'sicl-system:word)
+      (lambda (arguments environment)
+	(declare (ignore environment))
+	(assert (= (length arguments) 1))
+	`((push-immediate ,(car arguments))
+	  (pop-to-arg-immediate 0))))
+
 (setf (special-operator 'sicl-exp-heap:malloc)
       (lambda (arguments environment)
 	(assert (= (length arguments) 1))
 	`(,@(compile-form (car arguments) environment)
 	  (push-from-arg-immediate 0)
-	  (memalloc)
+	  (malloc)
 	  (pop-to-arg-immediate 0))))
 
 (setf (special-operator 'sicl-system:memref)
