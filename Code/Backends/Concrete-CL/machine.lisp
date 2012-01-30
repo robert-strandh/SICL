@@ -192,31 +192,31 @@
 
 (defop unsigned-add (x y) (z) ()
   (multiple-value-bind (result carry)
-      (u+ x y)
+      (wu+ x y)
     (setf z result
 	  *carry* carry)))
 
 (defop signed-add (x y) (z) ()
   (multiple-value-bind (result carry)
-      (s+ x y)
+      (ws+ x y)
     (setf z result
 	  *carry* carry)))
 
 (defop unsigned-sub (x y) (z) ()
   (multiple-value-bind (result carry)
-      (u- x y)
+      (wu- x y)
     (setf z result
 	  *carry* carry)))
 
 (defop signed-sub (x y) (z) ()
   (multiple-value-bind (result carry)
-      (s- x y)
+      (ws- x y)
     (setf z result
 	  *carry* carry)))
 
 (defop neg (x) (y) ()
   (multiple-value-bind (result carry)
-      (neg x)
+      (wneg x)
     (setf y result
 	  *carry* carry)))
 
@@ -224,23 +224,23 @@
 
 (defop unsigned-mul (w x) (y z) ()
   (multiple-value-bind (low high)
-      (u* w x)
+      (wu* w x)
     ;; Is this the best order?
     (setf y low
 	  z high)))
 
 (defop signed-mul (w x) (y z) ()
   (multiple-value-bind (low high)
-      (s* w x)
+      (ws* w x)
     ;; Is this the best order?
     (setf y low
 	  z high)))
 
 (defop log-shift (x y) (z) ()
-  (setf z (logshift x y)))
+  (setf z (wlogshift x y)))
 
 (defop ar-shift (x y) (z) ()
-  (setf z (arshift x y)))
+  (setf z (warshift x y)))
 
 ;;; Change these.
 
@@ -253,9 +253,8 @@
 (defop logandc2 (x y) (z) ()
   (setf z (logandc2 x y)))
 
-;;; wrong
-(defop lognot (x) (y) ()
-  (setf y x))
+(defop log-not (x) (y) ()
+  (setf y (wnot x)))
 
 (defop put-char (x) () ()
   (write-char (code-char x)))

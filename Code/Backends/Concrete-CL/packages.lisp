@@ -115,9 +115,9 @@
    #:word-from-signed-host-number #:signed-host-number-from-word
    #:word-from-unsigned-host-number #:unsigned-host-number-from-word
    ;; Machine operations on words
-   #:u+ #:u- #:s+ #:s- #:neg #:u* #:s*
-   #:logshift #:arshift
-   #:band #:bior #:bxor #:bnot
+   #:wu+ #:wu- #:ws+ #:ws- #:wneg #:wu* #:ws*
+   #:wlogshift #:warshift
+   #:wand #:wior #:wxor #:wnot
    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

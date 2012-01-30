@@ -74,7 +74,7 @@
       (- word (ash 1 +word-size+))
       word))
 
-(defun u+ (x y &optional (carry 0))
+(defun wu+ (x y &optional (carry 0))
   (declare (type word x y)
 	   (type bit carry))
   (let ((sum (+ x y carry)))
@@ -82,7 +82,7 @@
 	(values (- sum (ash 1 +word-size+)) 1)
 	(values sum 0))))
 
-(defun u- (x y &optional (carry 0))
+(defun wu- (x y &optional (carry 0))
   (declare (type word x y)
 	   (type bit carry))
   (let ((diff (- x y carry)))
@@ -90,7 +90,7 @@
 	(values (+ diff (ash 1 +word-size+)) 1)
 	(values diff 0))))
 
-(defun s+ (x y &optional (carry 0))
+(defun ws+ (x y &optional (carry 0))
   (declare (type word x y)
 	   (type bit carry))
   (let ((xh (signed-host-number-from-word x))
@@ -103,7 +103,7 @@
 	    (t
 	     (values sum 0))))))
 
-(defun s- (x y &optional (carry 0))
+(defun ws- (x y &optional (carry 0))
   (declare (type word x y)
 	   (type bit carry))
   (let ((xh (signed-host-number-from-word x))
@@ -116,17 +116,17 @@
 	    (t
 	     (values diff 0))))))
 
-(defun neg (x)
+(defun wneg (x)
   (declare (type word x))
-  (s- 0 x))
+  (ws- 0 x))
 
-(defun u* (x y)
+(defun wu* (x y)
   (declare (type word x y))
   (let ((product (* x y)))
     (values (logand product (1- (ash 1 +word-size+)))
 	    (ash product (- +word-size+)))))
 
-(defun s* (x y)
+(defun ws* (x y)
   (declare (type word x y))
   (let ((xh (signed-host-number-from-word x))
 	(yh (signed-host-number-from-word y)))
@@ -134,29 +134,30 @@
       (values (logand product (1- (ash 1 +word-size+)))
 	      (logand (ash product (- +word-size+)) (1- (ash 1 +word-size+)))))))
 
-(defun logshift (x y)
+(defun wlogshift (x y)
   (declare (type word x y))
   (let ((yh (signed-host-number-from-word y)))
     (logand (ash x yh) (1- (ash 1 +word-size+)))))
 
-(defun arshift (x y)
+(defun warshift (x y)
   (declare (type word x y))
   (let ((xh (signed-host-number-from-word x))
 	(yh (signed-host-number-from-word y)))
     (logand (ash xh yh) (1- (ash 1 +word-size+)))))
 
-(defun band (x y)
+(defun wand (x y)
   (declare (type word x y))
   (logand x y))
 
-(defun bior (x y)
+(defun wior (x y)
   (declare (type word x y))
   (logior x y))
 
-(defun bxor (x y)
+(defun wxor (x y)
   (declare (type word x y))
   (logxor x y))
 
-(defun bnot (x)
+(defun wnot (x)
   (declare (type word x))
-  (lognot x))
+  (logand (lognot x)
+	  (1- (ash 1 +word-size+))))
