@@ -50,23 +50,23 @@
 
 (define-condition multiple-initform-options-not-permitted (type-error name-mixin)
   ()
-  :default-initargs :type 'list)
+  (:default-initargs :type 'list))
 
 (define-condition multiple-documentation-options-not-permitted (type-error name-mixin)
   ()
-  :default-initargs :type 'list)
+  (:default-initargs :type 'list))
 
 (define-condition multiple-allocation-options-not-permitted (type-error name-mixin)
   ()
-  :default-initargs :type 'list)
+  (:default-initargs :type 'list))
 
 (define-condition multiple-type-options-not-permitted (type-error name-mixin)
   ()
-  :default-initargs :type 'list)
+  (:default-initargs :type 'list))
 
 (define-condition slot-documentation-option-must-be-string (type-error name-mixin)
   ()
-  :default-initargs :type 'string)
+  (:default-initargs :type 'string))
 
 (define-condition class-option-must-be-non-empty-list (type-error name-mixin)
   ()
@@ -79,7 +79,7 @@
 ;;; FIXME: This doesn't feel like a type-error
 (define-condition duplicate-class-option-not-allowed (type-error name-mixin)
   ()
-  (:default-initarg :type 'symbol))
+  (:default-initargs :type 'symbol))
 
 (define-condition malformed-documentation-option (type-error name-mixin)
   ()
@@ -107,6 +107,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; The contents of this file should be read sequentially, because the
+;;; bootstrapping issues make it necessary to create functionality
+;;; step by step.  FIXME: elaborate...
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Utility functions
 
 ;;; FIXME: check for circular lists
@@ -122,6 +128,8 @@
 ;;; For now, ignore the environment parameter to FIND-CLASS, and just
 ;;; use a global variable to hold a hash table with class definitions.
 
+;;; Classes use symbols as names, so we create an EQ hash table to map
+;;; class names to classes.  
 (defparameter *classes* (make-hash-table :test #'eq))
 
 (defun find-class (name &optional (errorp t) environment)
@@ -135,277 +143,207 @@
 	    nil)
 	result)))
 
+;;; This function should check the type of its argument, but
+;;; we don't have class types working yet at this point.  
 (defun (setf find-class) (new-class name &optional errorp environment)
   (declare (ignore errorp environment))
   (if (null new-class)
       (remhash name *classes*)
-      (if (not (typep new-class 'class))
-	  (error 'must-be-class-or-nil
-		 :name '(setf find-class)
-		 :datum new-class)
-	  (setf (gethash name *classes*) new-class))))
+      (setf (gethash name *classes*) new-class)))
+
+;;; What we really want to do is this:
+;; (defun (setf find-class) (new-class name &optional errorp environment)
+;;   (declare (ignore errorp environment))
+;;   (if (null new-class)
+;;       (remhash name *classes*)
+;;       (if (not (typep new-class 'class))
+;; 	  (error 'must-be-class-or-nil
+;; 		 :name '(setf find-class)
+;; 		 :datum new-class)
+;; 	  (setf (gethash name *classes*) new-class))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Functions initialize-instance, reinitialize-instance, shared-initialize
+;;; We follow the AMOP and define functions to allocate
+;;; class instances and slot storage.  For now, these
+;;; functions create other Common Lisp objects such as 
+;;; structures and arrays.  In a real implementation, 
+;;; these functions might use lower-level mechanisms
+;;; to allocate these entities.
 
-(defgeneric shared-initialize (instance
-			       slot-names
-			       &rest initargs
-			       &key &allow-other-keys))
+(defstruct standard-instance class slots)
 
-;;; The spec requires the method on initialize-instance and
-;;; reinitialize-instance specialized for standard-object to call
-;;; shared-initialize as shown below.  The slot-name argument is a
-;;; list of slot-names to be initialized, or t which means all slots.
-;;; A slot is initialized from the initargs if one of its initargs is
-;;; in that list.  Otherwise it is initialized by evaluating the
-;;; corresponding intitform if and only if it is one of the slots to
-;;; be initialized (according to the value of slot-names), and if it
-;;; does not already have a value.  In that case, if no initform
-;;; exists, the slot is left unbound.
+(defun allocate-standard-instance (class slot-storage)
+  (make-standard-instance :class class
+			  :slots slot-storage))
 
-(defmethod shared-initialize ((instance standard-object)
-			      slot-names
-			      &rest initargs)
-  (loop for slot in (class-slots (class-of instance))
-        for slot-name = (slot-definition-name slot)
-        do (multiple-value-bind (key value foundp)
-	       ;; Find the first key/value pair in initargs where the
-	       ;; key is one of the initargs of the slot. 
-	       (get-properties initargs (slot-definition-initargs slot))
-	     (declare (ignore key))
-	     (if foundp
-		 ;; Found an explicit initarg in initargs.  Initialize
-		 ;; the slot from its value
-		 (setf (slot-value instance slot-name) value)
-		 ;; No explicit initarg found.  
-		 (when (and (not (slot-boundp instance slot-name))
-			    (not (null (slot-definition-initfunction slot)))
-			    (or (eq slot-names t)
-				(member slot-name slot-names)))
-		   ;; Evaluate the initform by executing the initfunction. 
-		   (setf (slot-value instance slot-name)
-			 (funcall (slot-definition-initfunction slot)))))))
-  instance)
+(defun allocate-slot-storage (size initial-value)
+  (make-array size :initial-element initial-value))
 
-(defgeneric initialize-instance (instance
-				 &rest initargs
-				 &key &allow-other-keys))
-
-;;; The method on initialize-instance specialized for standard-object
-;;; is especially important to bootstrapping, because all important
-;;; metaobject classes are subclasses of standard-object.  So if
-;;; make-instance is used, directly or indirectly (using ensure-class)
-;;; to create a metaobject class, then this method must already be in
-;;; place.
-
-(defmethod initialize-instance ((instance standard-object)
-				&rest initargs
-				&key &allow-other-keys)
-  ;; Call shared-initialize with a slot-list of t, meaning all slots,
-  ;; i.e., for every slot that is not explicitly initialized and which
-  ;; is unbound, evaluate its initform if it has one. 
-  (apply #'shared-initialize instance t initargs))
-
-(defgeneric reinitialize-instance (instance
-				   &rest initargs
-				   &key &allow-other-keys))
-
-(defmethod reinitialize-instance ((instance standard-object)
-				  &rest initargs
-				  &key &allow-other-keys)
-  ;; Call shared-initialize with a slot-list of (), meaning no slot,
-  ;; i.e., only assign values to slots that have explicit
-  ;; initialization arguments in initargs. 
-  (apply #'shared-initialize instance () initargs))
+(defun slot-contents (slot-storage location)
+  (aref slot-storage location))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Computing the class precedence list
+;;; Allocate an instance
 
-;;; For a given class, return a list containing the class and all its
-;;; direct and indirect superclasses without any duplicate entries,
-;;; but in no particular order.  We must be careful here, in that we
-;;; might have to handle an incorrect inheritance graph, that might
-;;; contain circular dependencies.
-(defun find-all-superclasses (class)
-  (let ((result '()))
-    (labels ((find-all-supers (class)
-	       (unless (member class all-supers :test #'eq)
-		 (push class all-supers)
-		 (loop for super in (class-direct-superclasses class)
-		       do (find-all-supers super)))))
-      (find-all-supers class))
-    result))
+(defparameter *secret-unbound-value* (list "slot unbound"))
 
-;;; For a given class, compute a precedence relation.  
-;;; This relation is represented as a list of cons cells, 
-;;; where the class in the CAR of the cell takes precedence over
-;;; the class in the CDR of the cell. For a class C with a list of 
-;;; direct superclasses (S1 S2 ... Sn), the relation contains 
-;;; the elements (C . S1) (S1 . S2) ... (Sn-1 . Sn).
-(defun compute-relation (class)
-  (loop for prev = class then super
-        for super in (class-direct-superclasses class)
-        collect (cons prev super)))
-
-(defgeneric compute-class-prececence-list (class))
-
-(defmethod compute-class-prececence-list ((class class))
-  (let* ((all-supers (find-all-superclasses class))
-	 (relation (loop for class in all-supers
-		         append (compute-relation class)))
-	 (reverse-result '()))
-    (flet ((find-candidate ()
-	     (let ((candidates
-		    ;; Start by looking for all remaining classes that
-		    ;; depend on no other clas according to the relation.
-		    (loop for super in all-supers
-			      unless (find super relation :key #'cdr)
-			      collect element)))
-	       ;; If no such class exists, we have a circular dependence,
-	       ;; and so we can't compute the class precedence list.
-	       (when (null candidates)
-		 ;; FIXME: do this better
-		 (error "can't compute class precedence list"))
-	       (if (null (cdr candidates))
-		   ;; A unique candiate, return it.
-		   (car candidates)
-		   ;; Several candidates.  Look for the last class in the
-		   ;; result computed so far (first in the reversed result)
-		   ;; that has one of the candidates as a direct superclass.
-		   ;; Return that candidate.  
-		   ;; There can be at most one, because within a list of
-		   ;; superclasses, there is already a dependency, so that
-		   ;; two different classes in a single list of superclasses
-		   ;; can not both be candidates.
-		   ;; There must be at least one, because ... 
-		   ;; (FIXME: prove it!)
-		   (loop for element in reverse-result
-		         do (loop for candidate in candidates
-			          do (when (member candidate
-						   (class-direct-superclasses
-						    element))
-				       (return-from find-candidate
-					 candidate))))))))
-      (loop until (null all-supers)
-	    do (let ((candidate (find-candidate)))
-		 (push candidate reverse-result)
-		 (setf all-supers (remove candidate all-supers))
-		 (setf relation (remove candidate relation :key #'car)))))
-    reverse-result))
+(defun allocate-instance (class)
+  (allocate-standard-instance
+   class
+   (allocate-slot-storage (length (class-slots class))
+			  *secret-unbound-value*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Computing the effective slots of a class.
+;;; Allocating direct slot definitions
+;;;
+;;; To create any class metaobject whatsoever, we need to fill its
+;;; DIRECT-SLOTS slot with instances of
+;;; STANDARD-DIRECT-SLOT-DEFININTION.  But
+;;; STANDARD-DIRECT-SLOT-DEFININTION is itself a class metaobject so
+;;; we have a circular dependency.  We fix this problem by allocating
+;;; direct slot definitions "manually", i.e., without the help of
+;;; MAKE-INSTANCE and the machinery that comes with it.
 
-;;; For a given class, return the class to be used for
-;;; direct slot definitions of that class.
-(defgeneric direct-slot-definition-class (class &rest initargs))
+(defparameter *class-standard-direct-slot-definition*
+  (let ((class (allocate-standard-instance nil nil)))
+    (setf (find-class 'standard-direct-slot-definition) class)
+    class))
+    
+;;; REMEMBER: Fill in standard-direct-slot-definition. +
 
-(defmethod direct-slot-definition-class ((class standard-class)
-					 &rest initargs)
-  (declare (ignore initargs))
-  (return (find-class 'standard-direct-slot-definition)))
-  
-(defmethod direct-slot-definition-class ((class funcallable-standard-class)
-					 &rest initargs)
-  (declare (ignore initargs))
-  (return (find-class 'standard-direct-slot-definition)))
-  
-;;; For a given class, return the class to be used for
-;;; effective slot definitions of that class.
-(defgeneric effective-slot-definition-class (class &rest initargs))
+;;; We cheat by creating a list of descriptions (name and one initarg)
+;;; of the direct slots that we know we would en up with if we had
+;;; used the normal machinery to create the class. 
 
-(defmethod effective-slot-definition-class ((class standard-class)
-					    &rest initargs)
-  (declare (ignore initargs))
-  (return (find-class 'standard-effective-slot-definition)))
-  
-(defmethod effective-slot-definition-class ((class funcallable-standard-class)
-					    &rest initargs)
-  (declare (ignore initargs))
-  (return (find-class 'standard-effective-slot-definition)))
-  
-(defgeneric compute-effective-slot-definition
-    (class name direct-slot-definitions))
+(defparameter *standard-direct-slot-definition-slots*
+  '(;; Inherited from standard-object.  This information is what
+    ;; allows us to update instances when a class changes. 
+    (%version-information :version-information)
+    (%name :name)
+    (%allocation :allocation)
+    (%type :type)
+    (%initargs :initargs)
+    (%initform :initform)
+    (%initfunction :initfunction)
+    (%readers :readers)
+    (%writers :writers)))
 
-;;; Implement the behavior of compute-effective-slot-definition
-;;; for standard-class and funcallable-standard-class.
-(defun compute-effective-slot-definition-aux (class direct-slot-definitions)
-  (let (allocation initargs initform initfunction type)
-    (setf allocation
-	  (slot-definition-allocation (first direct-slot-definitions)))
-    (setf initargs
-	  (reduce #'union
-		  (mapcar #'slot-definition-initargs direct-slot-definitions)))
-    (let ((first-init (find-if-not #'null direct-slot-definitions
-				   :key #'slot-definition-initfunction)))
-      (unless (null first-init)
-	(setf initform (slot-definition-initform first-init)
-	      initfunction (slot-definition-initfunction first-init))))
-    (setf type
-	  `(and ,@mapcar #'slot-definition-type direct-slot-definitions))
-    (if (null initfunction)
-	(make-instance class
-		       :allocation allocation
-		       :initargs initargs
-		       :type type)
-	(make-instance class
-		       :allocation allocation
-		       :initargs initargs
-		       :initform initform
-		       :initfunction initfunction
-		       :type type))))
+(defun make-direct-slot-definition (&rest initargs
+				    &key &allow-other-keys)
+  (let* ((slot-descriptions *standard-direct-slot-definition-slots*)
+	 (slot-storage (allocate-slot-storage (length slot-descriptions)
+					      *secret-unbound-value*)))
+    (flet ((set-slot-value (initarg value)
+	     (let ((position (position initarg slot-descriptions :key #'cadr)))
+	       (setf (aref slot-storage position) value))))
+      ;; Give default value for :version-information.  Fill in later.
+      (set-slot-value :version-information nil)
+      ;; Give default values for :type and :allocation
+      (set-slot-value :type t)
+      (set-slot-value :allocation :instance)
+      (loop for (initarg value) on initargs by #'cddr
+	    do (set-slot-value initarg value)))
+    ;; Check that no slot is unbound.
+    (loop for i from 0 below (length slot-descriptions)
+	  do (assert (not (null (slot-contents slot-storage i)))))
+    ;; Allocate and return the final object.
+    (allocate-standard-instance *class-direct-slot-definition*
+				slot-storage)))
 
-(defmethod compute-effective-slot-definition ((class standard-class)
-					      direct-slot-definitions)
-  (compute-effective-slot-definition-aux
-   (effective-slot-definition-class class)
-   direct-slot-definitions))
+;;; REMEMBER: Change make-direct-slot-definition to use make-instance. +
+;;; REMEMBER: Fill in version information of slot-definition-instances. +
 
-(defmethod compute-effective-slot-definition ((class funcallable-standard-class)
-					      direct-slot-definitions)
-  (compute-effective-slot-definition-aux
-   (effective-slot-definition-class class)
-   direct-slot-definitions))
+(defun slot-of-standard-direct-slot-definition (instance slot-name)
+  (slot-contents (standard-instance-slots standard-direct-slot-definition)
+		 (position slot-name
+			   *standard-direct-slot-definition-slots*
+			   :key #'car)))
 
+(defun slot-definition-name (slot-definition)
+  (slot-of-standard-direct-slot-definition slot-definition '%name))
 
+;;; REMEMBER: Change slot-defintion-name to be a reader function. +
+
+(defun slot-definition-allocation (slot-definition)
+  (slot-of-standard-direct-slot-definition slot-definition '%allocation))
+
+;;; REMEMBER: Change slot-defintion-allocation to be a reader function. +
+
+(defun slot-definition-type (slot-definition)
+  (slot-of-standard-direct-slot-definition slot-definition '%type))
+
+;;; REMEMBER: Change slot-defintion-type to be a reader function. +
+
+(defun slot-definition-initargs (slot-definition)
+  (slot-of-standard-direct-slot-definition slot-definition '%initargs))
+
+;;; REMEMBER: Change slot-defintion-initargs to be a reader function. +
+
+(defun slot-definition-initform (slot-definition)
+  (slot-of-standard-direct-slot-definition slot-definition '%initform))
+
+;;; REMEMBER: Change slot-defintion-initform to be a reader function. +
+
+(defun slot-definition-initfunction (slot-definition)
+  (slot-of-standard-direct-slot-definition slot-definition '%initfunction))
+
+;;; REMEMBER: Change slot-defintion-initfunction to be a reader function. +
+
+(defun slot-definition-readers (slot-definition)
+  (slot-of-standard-direct-slot-definition slot-definition '%readers))
+
+;;; REMEMBER: Change slot-defintion-readers to be a reader function. +
+
+(defun slot-definition-writers (slot-definition)
+  (slot-of-standard-direct-slot-definition slot-definition '%writers))
+
+;;; REMEMBER: Change slot-defintion-writers to be a reader function. +
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Functions ensure-class-using-class and ensure-class.  
 
-(defgeneric ensure-class-using-class (class name
-				      &key
-				      direct-default-initargs
-				      direct-slots
-				      direct-superclasses
-				      ;; name ???
-				      metaclass
-				      &allow-other-keys))
+;;; Since we don't have generic functions yet, we define
+;;; ensure-class-using-class as an ordinary function.  Furthermore, we
+;;; only implement its functionality for the case when the class is
+;;; NIL.
 
-(defmethod ensure-class-using-class ((class class) name
-				     &key
-				     metaclass
-				     direct-superclasses
-				     &allow-other-keys)
-  nil)
+(defun method-ensure-class-using-class-null (name &rest keys)
+  (let ((class (apply #'make-instance 'standard-class keys)))
+    (setf (find-class name) class)))
 
-(defmethod ensure-class-using-class ((class forward-referenced-class) name
-				     &key
-				     metaclass
-				     direct-superclasses
-				     &allow-other-keys)
-  nil)
+;; (defgeneric ensure-class-using-class (class name
+;; 				      &key
+;; 				      direct-default-initargs
+;; 				      direct-slots
+;; 				      direct-superclasses
+;; 				      ;; name ???
+;; 				      metaclass
+;; 				      &allow-other-keys))
 
-(defmethod ensure-class-using-class ((class null) name
-				     &key
-				     metaclass
-				     direct-superclasses
-				     &allow-other-keys)
-  nil)
+;; (defmethod ensure-class-using-class ((class class) name
+;; 				     &key
+;; 				     metaclass
+;; 				     direct-superclasses
+;; 				     &allow-other-keys)
+;;   nil)
+
+;; (defmethod ensure-class-using-class ((class forward-referenced-class) name
+;; 				     &key
+;; 				     metaclass
+;; 				     direct-superclasses
+;; 				     &allow-other-keys)
+;;   nil)
+
+;; (defmethod ensure-class-using-class ((class null) name
+;; 				     &key
+;; 				     metaclass
+;; 				     direct-superclasses
+;; 				     &allow-other-keys)
+;;   nil)
 
 (defun ensure-class (name &rest arguments &key &allow-other-keys)
   (unless (symbolp name)
@@ -430,7 +368,7 @@
   class-name)
 
 (defun canonicalize-direct-superclass-names (direct-superclass-names)
-  (unless (proper-list-p direct-superclasses)
+  (unless (proper-list-p direct-superclass-names)
     (error 'superclass-list-must-be-proper-list
 	   :name 'defclass
 	   :datum direct-superclasses))
@@ -489,7 +427,7 @@
 		  (gethash :initarg ht)
 		(when flag
 		  (add :initargs (reverse value))
-		  (remhash :initform ht)))
+		  (remhash :initarg ht)))
 	      ;; Turn :accessor into :reader and :writer
 	      (multiple-value-bind (value flag)
 		  (gethash :accessor ht)
@@ -547,10 +485,10 @@
 	    result)))))
 
 (defun canonicalize-direct-slot-specs (direct-slot-specs)
-  (when (not (proper-list-p direct-slots))
+  (when (not (proper-list-p direct-slot-specs))
     (error 'malformed-slots-list
 	   :name 'defclass
-	   :datum direct-slots))
+	   :datum direct-slot-specs))
   (loop for spec in direct-slot-specs
         collect (canonicalize-direct-slot-spec spec)))
 
@@ -626,12 +564,15 @@
 ;;; additional options are permitted according to the CLHS.  We follow
 ;;; the CLHS.
 
-(defmacro defclass (name direct-superclasses direct-slots &rest options)
-  `(ensure-class ,name
+(defmacro defclass (name
+		    superclass-names
+		    slot-specifiers
+		    &rest options)
+  `(ensure-class ',name
 		 :direct-superclasses 
-		 ,(canonicalize-direct-superclasses direct-superclasses)
+		 ,(canonicalize-direct-superclass-names superclass-names)
 		 :direct-slots
-		 ,(canonicalize-direct-slots direct-slots)
+		 ,(canonicalize-direct-slot-specs slot-specifiers)
 		 ,@(canonicalize-defclass-options options)))
 		 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -643,12 +584,12 @@
 ;;; We also have to create slot meta-objects from the slot property
 ;;; list provided to initialize-instance.
 
-(defmethod initialize-instance :after ((class standard-class)
-				       &key
-				       direct-superclasses
-				       direct-slots)
-  
-
+;;; We implement this functionality as a function at first, because
+;;; we don't have any generic functions to begin with.  Later, 
+;;; we have the real :after method call this function to accomplish
+;;; its work. 
+(defun initialize-instance-after-standard-class
+    (class direct-superclasses direct-slots)
   (let ((superclasses (or direct-superclasses
 			  (list (find-class 'standard-object)))))
     (setf (class-direct-superclasses class) superclasses)
@@ -659,50 +600,17 @@
   (let ((slots (loop for slot-proerties in direct-slots
 		     collect (apply #'make-direct-slot-definition
 				    slot-properties))))
-    (setf (class-direct-slots slots))
-    (loop for slot in slots
-	  do (loop for readers in (slot-definition-readers slot)
-		   do (add-reader-method class
-			                 reader
-					 (slot-definition-name slot)))
-	     (loop for writers in (slot-definition-writers slot)
-		   do (add-writer-method class
-			                 writer
-					 (slot-definition-name slot)))))
-  (finalize-inheritance class))
+    (setf (class-direct-slots slots))))
+    
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; We follow the AMOP and define functions to allocate
-;;; class instances and slot storage.  For now, these
-;;; functions create other Common Lisp objects such as 
-;;; structures and arrays.  In a real implementation, 
-;;; these functions might use lower-level mechanisms
-;;; to allocate these entities.
-
-(defstruct standard-instance class slots)
-
-(defun allocate-standard-instance (class slot-storage)
-  (make-standard-instance :class class
-			  :slots slot-storage))
-
-(defun allocate-slot-storage (size initial-value)
-  (make-array size :initial-element initial-value))
-
-(defun slot-contents (slot-storage location)
-  (aref slot-storage location))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Allocate an instance
-
-(deparameter *secret-unbound-value* (list "slot unbound"))
-
-(defun allocate-instance (class)
-  (allocate-standard-instance
-   class
-   (allocate-slot-storage (length (class-slots class))
-			  *secret-unbound-value*)))
+;;; Now we add the :after method on initialize-instance for
+;;; standard-class.  It just calls the function we defined earlier.
+;; (defmethod initialize-instance :after ((class standard-class)
+;; 				       &key
+;; 				       direct-superclasses
+;; 				       direct-slots)
+;;   (initialize-instance-after-standard-class
+;;    class direct-superclasses direct-slots))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -830,81 +738,81 @@
 ;;; Start by creating every class as a standard instance with
 ;;; no slot storage and no metaclass. 
 
-(defmacro make-class (name)
-  `(defparameter ,name (allocate-standard-instance nil nil)))
+;; (defmacro make-class (name)
+;;   `(defparameter ,name (allocate-standard-instance nil nil)))
 
-(make-class *class-t*)
-(make-class *class-standard-object*)
-(make-class *class-funcallable-standard-object*)
-(make-class *class-metaobject*)
-(make-class *class-generic-function*)
-(make-class *class-standard-generic-function*)
-(make-class *class-method*)
-(make-class *class-standard-method*)
-(make-class *class-standard-accessor-method*)
-(make-class *class-standard-reader-method*)
-(make-class *class-standard-writer-method*)
-(make-class *class-method-combination*)
-(make-class *class-slot-definition*)
-(make-class *class-direct-slot-definition*)
-(make-class *class-effective-slot-definition*)
-(make-class *class-standard-slot-definition*)
-(make-class *class-standard-direct-slot-definition*)
-(make-class *class-standard-effective-slot-definition*)
-(make-class *class-specializer*)
-(make-class *class-eql-specializer*)
-(make-class *class-class*)
-(make-class *class-built-in-class*)
-(make-class *class-forward-reference-class*)
-(make-class *class-standard-class*)
-(make-class *class-funcallable-standard-class*)
+;; (make-class *class-t*)
+;; (make-class *class-standard-object*)
+;; (make-class *class-funcallable-standard-object*)
+;; (make-class *class-metaobject*)
+;; (make-class *class-generic-function*)
+;; (make-class *class-standard-generic-function*)
+;; (make-class *class-method*)
+;; (make-class *class-standard-method*)
+;; (make-class *class-standard-accessor-method*)
+;; (make-class *class-standard-reader-method*)
+;; (make-class *class-standard-writer-method*)
+;; (make-class *class-method-combination*)
+;; (make-class *class-slot-definition*)
+;; (make-class *class-direct-slot-definition*)
+;; (make-class *class-effective-slot-definition*)
+;; (make-class *class-standard-slot-definition*)
+;; (make-class *class-standard-direct-slot-definition*)
+;; (make-class *class-standard-effective-slot-definition*)
+;; (make-class *class-specializer*)
+;; (make-class *class-eql-specializer*)
+;; (make-class *class-class*)
+;; (make-class *class-built-in-class*)
+;; (make-class *class-forward-reference-class*)
+;; (make-class *class-standard-class*)
+;; (make-class *class-funcallable-standard-class*)
 
-;;; Make a list of all standard-classes in top-down breadth-first
-;;; order.
+;; ;;; Make a list of all standard-classes in top-down breadth-first
+;; ;;; order.
 
-(defparameter *standard-classes*
-  (list *class-standard-object*
-	*class-funcallable-standard-object*
-	*class-metaobject*
-	*class-method*
-	*class-standard-method*
-	*class-standard-accessor-method*
-	*class-standard-reader-method*
-	*class-standard-writer-method*
-	*class-method-combination*
-	*class-slot-definition*
-	*class-direct-slot-definition*
-	*class-effective-slot-definition*
-	*class-standard-slot-definition*
-	*class-standard-direct-slot-definition*
-	*class-standard-effective-slot-definition*
-	*class-specializer*
-	*class-eql-specializer*
-	*class-class*
-	*class-built-in-class*
-	*class-forward-reference-class*
-	*class-standard-class*
-	*class-funcallable-standard-class*))
+;; (defparameter *standard-classes*
+;;   (list *class-standard-object*
+;; 	*class-funcallable-standard-object*
+;; 	*class-metaobject*
+;; 	*class-method*
+;; 	*class-standard-method*
+;; 	*class-standard-accessor-method*
+;; 	*class-standard-reader-method*
+;; 	*class-standard-writer-method*
+;; 	*class-method-combination*
+;; 	*class-slot-definition*
+;; 	*class-direct-slot-definition*
+;; 	*class-effective-slot-definition*
+;; 	*class-standard-slot-definition*
+;; 	*class-standard-direct-slot-definition*
+;; 	*class-standard-effective-slot-definition*
+;; 	*class-specializer*
+;; 	*class-eql-specializer*
+;; 	*class-class*
+;; 	*class-built-in-class*
+;; 	*class-forward-reference-class*
+;; 	*class-standard-class*
+;; 	*class-funcallable-standard-class*))
 
 ;;; Make a list of all funcallable-standard-classes in top-down
 ;;; breadth-first order.
 
-(defparameter *funcallable-standard-classes*
-  (list *class-generic-function* *class-standard-generic-function*)
+;; (defparameter *funcallable-standard-classes*
+;;   (list *class-generic-function* *class-standard-generic-function*))
 
 ;;; Now that every class metaobject is allocated, we can fill in the
 ;;; metaclass of each class metaobject. 
 
-(defmacro set-class (class metaclass)
-  `(setf (standard-instance class ,class) ,metaclass))
+;; (defmacro set-class (class metaclass)
+;;   `(setf (standard-instance class ,class) ,metaclass))
 
-(loop for class in *standard-classes*
-      do (set-class class *class-standard-class*))
+;; (loop for class in *standard-classes*
+;;       do (set-class class *class-standard-class*))
 
-(loop for class in *funcallable-standard-classes*
-      do (set-class class *class-funcallable-standard-class*))
+;; (loop for class in *funcallable-standard-classes*
+;;       do (set-class class *class-funcallable-standard-class*))
 
-(set-class *class-t* *class-built-in-class*)
+;; (set-class *class-t* *class-built-in-class*)
 
 ;;; Before a class metaobject can be used to create instance, it has
 ;;; to have a list of effective slot definitions, but those are
@@ -917,33 +825,293 @@
 ;;; of the effective slots that we know we would en up with if we had
 ;;; used the normal machinery to create the class. 
 
-(defparameter *descriptions-of-slots-of-effective-slot-definition*
-  '(;; Inherited from standard-object.  This information is what
-    ;; allows us to update instances when a class changes. 
-    (%version-information :version-information)
-    (%name :name)
-    (%allocation :allocation)
-    (%type :type)
-    (%location :location)
-    (%initargs :initargs)
-    (%initform :initform)
-    (%initfunction :initfunction)
-    (%readers :readers)
-    (%writers :writers)))
+;; (defparameter *descriptions-of-slots-of-effective-slot-definition*
+;;   '(;; Inherited from standard-object.  This information is what
+;;     ;; allows us to update instances when a class changes. 
+;;     (%version-information :version-information)
+;;     (%name :name)
+;;     (%allocation :allocation)
+;;     (%type :type)
+;;     (%location :location)
+;;     (%initargs :initargs)
+;;     (%initform :initform)
+;;     (%initfunction :initfunction)
+;;     (%readers :readers)
+;;     (%writers :writers)))
 
-(defun make-effective-slot-definition (&rest initargs
-				       &key &allow-other-keys)
-  (let* ((slot-descriptions *descriptions-of-slots-of-effective-slot-definition*)
-	 (slot-storage (make-array (length slot-descriptions))))
-    (flet ((set-slot-value (initarg value)
-	     (let ((position (position initarg slot-descriptions :key #'cadr)))
-	       (setf (aref slot-storage position) value))))
-      ;; Give default values for :type and :allocation
-      (set-slot-value :type t)
-      (set-slot-value :allocation :instance)
-      (loop for (initarg value) on initargs by #'cddr
-	    do (set-slot-value initarg value)))
-    (allocate-standard-instance *class-effective-slot-definition*
-				slot-storage)))
+;; (defun make-effective-slot-definition (&rest initargs
+;; 				       &key &allow-other-keys)
+;;   (let* ((slot-descriptions *descriptions-of-slots-of-effective-slot-definition*)
+;; 	 (slot-storage (make-array (length slot-descriptions))))
+;;     (flet ((set-slot-value (initarg value)
+;; 	     (let ((position (position initarg slot-descriptions :key #'cadr)))
+;; 	       (setf (aref slot-storage position) value))))
+;;       ;; Give default values for :type and :allocation
+;;       (set-slot-value :type t)
+;;       (set-slot-value :allocation :instance)
+;;       (loop for (initarg value) on initargs by #'cddr
+;; 	    do (set-slot-value initarg value)))
+;;     (allocate-standard-instance *class-effective-slot-definition*
+;; 				slot-storage)))
 
-				       
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions initialize-instance, reinitialize-instance, shared-initialize
+
+;; (defgeneric shared-initialize (instance
+;; 			       slot-names
+;; 			       &rest initargs
+;; 			       &key &allow-other-keys))
+
+;;; The spec requires the method on initialize-instance and
+;;; reinitialize-instance specialized for standard-object to call
+;;; shared-initialize as shown below.  The slot-name argument is a
+;;; list of slot-names to be initialized, or t which means all slots.
+;;; A slot is initialized from the initargs if one of its initargs is
+;;; in that list.  Otherwise it is initialized by evaluating the
+;;; corresponding intitform if and only if it is one of the slots to
+;;; be initialized (according to the value of slot-names), and if it
+;;; does not already have a value.  In that case, if no initform
+;;; exists, the slot is left unbound.
+
+;; (defmethod shared-initialize ((instance standard-object)
+;; 			      slot-names
+;; 			      &rest initargs)
+;;   (loop for slot in (class-slots (class-of instance))
+;;         for slot-name = (slot-definition-name slot)
+;;         do (multiple-value-bind (key value foundp)
+;; 	       ;; Find the first key/value pair in initargs where the
+;; 	       ;; key is one of the initargs of the slot. 
+;; 	       (get-properties initargs (slot-definition-initargs slot))
+;; 	     (declare (ignore key))
+;; 	     (if foundp
+;; 		 ;; Found an explicit initarg in initargs.  Initialize
+;; 		 ;; the slot from its value
+;; 		 (setf (slot-value instance slot-name) value)
+;; 		 ;; No explicit initarg found.  
+;; 		 (when (and (not (slot-boundp instance slot-name))
+;; 			    (not (null (slot-definition-initfunction slot)))
+;; 			    (or (eq slot-names t)
+;; 				(member slot-name slot-names)))
+;; 		   ;; Evaluate the initform by executing the initfunction. 
+;; 		   (setf (slot-value instance slot-name)
+;; 			 (funcall (slot-definition-initfunction slot)))))))
+;;   instance)
+
+;; (defgeneric initialize-instance (instance
+;; 				 &rest initargs
+;; 				 &key &allow-other-keys))
+
+;;; The method on initialize-instance specialized for standard-object
+;;; is especially important to bootstrapping, because all important
+;;; metaobject classes are subclasses of standard-object.  So if
+;;; make-instance is used, directly or indirectly (using ensure-class)
+;;; to create a metaobject class, then this method must already be in
+;;; place.
+
+;; (defmethod initialize-instance ((instance standard-object)
+;; 				&rest initargs
+;; 				&key &allow-other-keys)
+;;   ;; Call shared-initialize with a slot-list of t, meaning all slots,
+;;   ;; i.e., for every slot that is not explicitly initialized and which
+;;   ;; is unbound, evaluate its initform if it has one. 
+;;   (apply #'shared-initialize instance t initargs))
+
+;; (defgeneric reinitialize-instance (instance
+;; 				   &rest initargs
+;; 				   &key &allow-other-keys))
+
+;; (defmethod reinitialize-instance ((instance standard-object)
+;; 				  &rest initargs
+;; 				  &key &allow-other-keys)
+;;   ;; Call shared-initialize with a slot-list of (), meaning no slot,
+;;   ;; i.e., only assign values to slots that have explicit
+;;   ;; initialization arguments in initargs. 
+;;   (apply #'shared-initialize instance () initargs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Computing the class precedence list
+
+;;; For a given class, return a list containing the class and all its
+;;; direct and indirect superclasses without any duplicate entries,
+;;; but in no particular order.  We must be careful here, in that we
+;;; might have to handle an incorrect inheritance graph, that might
+;;; contain circular dependencies.
+;; (defun find-all-superclasses (class)
+;;   (let ((result '()))
+;;     (labels ((find-all-supers (class)
+;; 	       (unless (member class all-supers :test #'eq)
+;; 		 (push class all-supers)
+;; 		 (loop for super in (class-direct-superclasses class)
+;; 		       do (find-all-supers super)))))
+;;       (find-all-supers class))
+;;     result))
+
+;;; For a given class, compute a precedence relation.  
+;;; This relation is represented as a list of cons cells, 
+;;; where the class in the CAR of the cell takes precedence over
+;;; the class in the CDR of the cell. For a class C with a list of 
+;;; direct superclasses (S1 S2 ... Sn), the relation contains 
+;;; the elements (C . S1) (S1 . S2) ... (Sn-1 . Sn).
+;; (defun compute-relation (class)
+;;   (loop for prev = class then super
+;;         for super in (class-direct-superclasses class)
+;;         collect (cons prev super)))
+
+;; (defgeneric compute-class-prececence-list (class))
+
+;; (defmethod compute-class-prececence-list ((class class))
+;;   (let* ((all-supers (find-all-superclasses class))
+;; 	 (relation (loop for class in all-supers
+;; 		         append (compute-relation class)))
+;; 	 (reverse-result '()))
+;;     (flet ((find-candidate ()
+;; 	     (let ((candidates
+;; 		    ;; Start by looking for all remaining classes that
+;; 		    ;; depend on no other clas according to the relation.
+;; 		    (loop for super in all-supers
+;; 			      unless (find super relation :key #'cdr)
+;; 			      collect element)))
+;; 	       ;; If no such class exists, we have a circular dependence,
+;; 	       ;; and so we can't compute the class precedence list.
+;; 	       (when (null candidates)
+;; 		 ;; FIXME: do this better
+;; 		 (error "can't compute class precedence list"))
+;; 	       (if (null (cdr candidates))
+;; 		   ;; A unique candiate, return it.
+;; 		   (car candidates)
+;; 		   ;; Several candidates.  Look for the last class in the
+;; 		   ;; result computed so far (first in the reversed result)
+;; 		   ;; that has one of the candidates as a direct superclass.
+;; 		   ;; Return that candidate.  
+;; 		   ;; There can be at most one, because within a list of
+;; 		   ;; superclasses, there is already a dependency, so that
+;; 		   ;; two different classes in a single list of superclasses
+;; 		   ;; can not both be candidates.
+;; 		   ;; There must be at least one, because ... 
+;; 		   ;; (FIXME: prove it!)
+;; 		   (loop for element in reverse-result
+;; 		         do (loop for candidate in candidates
+;; 			          do (when (member candidate
+;; 						   (class-direct-superclasses
+;; 						    element))
+;; 				       (return-from find-candidate
+;; 					 candidate))))))))
+;;       (loop until (null all-supers)
+;; 	    do (let ((candidate (find-candidate)))
+;; 		 (push candidate reverse-result)
+;; 		 (setf all-supers (remove candidate all-supers))
+;; 		 (setf relation (remove candidate relation :key #'car)))))
+;;     reverse-result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Computing the effective slots of a class.
+
+;;; For a given class, return the class to be used for
+;;; direct slot definitions of that class.
+;; (defgeneric direct-slot-definition-class (class &rest initargs))
+
+;; (defmethod direct-slot-definition-class ((class standard-class)
+;; 					 &rest initargs)
+;;   (declare (ignore initargs))
+;;   (return (find-class 'standard-direct-slot-definition)))
+  
+;; (defmethod direct-slot-definition-class ((class funcallable-standard-class)
+;; 					 &rest initargs)
+;;   (declare (ignore initargs))
+;;   (return (find-class 'standard-direct-slot-definition)))
+  
+;;; For a given class, return the class to be used for
+;;; effective slot definitions of that class.
+;; (defgeneric effective-slot-definition-class (class &rest initargs))
+
+;; (defmethod effective-slot-definition-class ((class standard-class)
+;; 					    &rest initargs)
+;;   (declare (ignore initargs))
+;;   (return (find-class 'standard-effective-slot-definition)))
+  
+;; (defmethod effective-slot-definition-class ((class funcallable-standard-class)
+;; 					    &rest initargs)
+;;   (declare (ignore initargs))
+;;   (return (find-class 'standard-effective-slot-definition)))
+  
+;; (defgeneric compute-effective-slot-definition
+;;     (class name direct-slot-definitions))
+
+;;; Implement the behavior of compute-effective-slot-definition
+;;; for standard-class and funcallable-standard-class.
+;; (defun compute-effective-slot-definition-aux (class direct-slot-definitions)
+;;   (let (allocation initargs initform initfunction type)
+;;     (setf allocation
+;; 	  (slot-definition-allocation (first direct-slot-definitions)))
+;;     (setf initargs
+;; 	  (reduce #'union
+;; 		  (mapcar #'slot-definition-initargs direct-slot-definitions)))
+;;     (let ((first-init (find-if-not #'null direct-slot-definitions
+;; 				   :key #'slot-definition-initfunction)))
+;;       (unless (null first-init)
+;; 	(setf initform (slot-definition-initform first-init)
+;; 	      initfunction (slot-definition-initfunction first-init))))
+;;     (setf type
+;; 	  `(and ,@mapcar #'slot-definition-type direct-slot-definitions))
+;;     (if (null initfunction)
+;; 	(make-instance class
+;; 		       :allocation allocation
+;; 		       :initargs initargs
+;; 		       :type type)
+;; 	(make-instance class
+;; 		       :allocation allocation
+;; 		       :initargs initargs
+;; 		       :initform initform
+;; 		       :initfunction initfunction
+;; 		       :type type))))
+
+;; (defmethod compute-effective-slot-definition ((class standard-class)
+;; 					      direct-slot-definitions)
+;;   (compute-effective-slot-definition-aux
+;;    (effective-slot-definition-class class)
+;;    direct-slot-definitions))
+
+;; (defmethod compute-effective-slot-definition ((class funcallable-standard-class)
+;; 					      direct-slot-definitions)
+;;   (compute-effective-slot-definition-aux
+;;    (effective-slot-definition-class class)
+;;    direct-slot-definitions))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions ensure-class-using-class and ensure-class.  
+
+;; (defgeneric ensure-class-using-class (class name
+;; 				      &key
+;; 				      direct-default-initargs
+;; 				      direct-slots
+;; 				      direct-superclasses
+;; 				      ;; name ???
+;; 				      metaclass
+;; 				      &allow-other-keys))
+
+;; (defmethod ensure-class-using-class ((class class) name
+;; 				     &key
+;; 				     metaclass
+;; 				     direct-superclasses
+;; 				     &allow-other-keys)
+;;   nil)
+
+;; (defmethod ensure-class-using-class ((class forward-referenced-class) name
+;; 				     &key
+;; 				     metaclass
+;; 				     direct-superclasses
+;; 				     &allow-other-keys)
+;;   nil)
+
+;; (defmethod ensure-class-using-class ((class null) name
+;; 				     &key
+;; 				     metaclass
+;; 				     direct-superclasses
+;; 				     &allow-other-keys)
+;;   nil)
