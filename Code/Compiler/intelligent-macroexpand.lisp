@@ -67,14 +67,14 @@
 	 (cons (car form)
 	       (replace-subform (cdr form) (cdr path) new)))))
 
-;;; return true if path1 is a (not necessarily strict) subpath
+;;; Return true if path1 is a (not necessarily strict) subpath
 ;;; of path2.
 (defun subpath-p (path1 path2)
   (let ((mismatch (mismatch path1 path2)))
     (or (null mismatch)
 	(= mismatch (length path2)))))
 
-;;; return a for that is the result of calling
+;;; Return a form that is the result of calling
 ;;; the transformer on the tree, and also a list
 ;;; of paths in the form that almost certainly came
 ;;; from the tree, together with the path in that 
@@ -83,7 +83,7 @@
   (let* ((form (funcall transformer original-form))
 	 (table (build-subform-table original-form))
 	 (subforms (find-subforms-in-table form original-form)))
-    ;; subforms is s list of elements of the form
+    ;; Subforms is s list of elements of the form
     ;; (path . entry) where we are fairly sure that
     ;; the subform at the path in the transformed form
     ;; came from the original form.
