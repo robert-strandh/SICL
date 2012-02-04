@@ -113,6 +113,275 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; The Metaobject hierarchy.
+
+;;; The Metaobject hierarchy according to the AMOP table 5.1.
+;;;
+;;; Metaobject class                   Direct superclasses
+;;; ----------------                   -------------------
+;;; standard-object                    (t)
+;;; funcallable-standard-object        (standard-object function)
+;;; metaobject                         (standard-object)
+;;; generic-function                   (metaobject
+;;;                                     funcallable-standard-object)
+;;; standard-generic-function          (generic-function)
+;;; method                             (metaobject)
+;;; standard-method                    (method)
+;;; standard-accesssor-method          (standard-method)
+;;; standard-reader-method             (standard-accesssor-method)
+;;; standard-writer-method             (standard-accesssor-method)
+;;; method-combination                 (metaobject)
+;;; slot-definition                    (metaobject)
+;;; direct-slot-definition             (slot-definition)
+;;; effective-slot-definition          (slot-definition)
+;;; standard-slot-definition           (slot-definition)
+;;; standard-direct-slot-definition    (standard-slot-definition 
+;;;                                     direct-slot-definition)
+;;; standard-effective-slot-definition (standard-slot-definition 
+;;;                                     effective-slot-definition)
+;;; specializer                        (metaobject)
+;;; eql-specializer                    (specializer)
+;;; class                              (specializer)
+;;; built-in-class                     (class)
+;;; forward-reference-class            (class)
+;;; standard-class                     (class)
+;;; funcallable-standard-class         (class)
+;;; 
+;;; The class t is an instance of built-in-class.
+;;;
+;;; The classes generic-function and standard-generic-function
+;;; are instances of funcallable-standard-class.
+;;;
+;;; All other other classes are instances of standard-class.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; We give the slot definitions of every metaobject here.
+
+(defun combine-slots (&rest to-combine)
+  (remove-duplicates (reduce #'append to-combine) :from-end t))
+
+;;; Slots for T.
+(defparameter *direct-slots-t*
+  '())
+
+(defparameter *effective-slots-t*
+  *direct-slots-t*)
+
+;;; Slots for STANDARD-OBJECT.
+(defparameter *direct-slots-standard-object*
+  '((%version-information :initarg :version-information :initform nil)))
+
+(defparameter *effective-slots-standard-object*
+  (combine-slots *effective-slots-t*
+		 *direct-slots-standard-object*))
+
+;;; Slots for FUNCTION.
+(defparameter *direct-slots-function*
+  '())
+
+(defparameter *effective-slots-function*
+  *direct-slots-function*)
+
+;;; Slots for FUNCALLABLE-STANDARD-OBJECT.
+(defparameter *direct-slots-funcallable-standard-object*
+  ;; FIXME, maybe add something here? 
+  '())
+
+(defparameter *effective-slots-funcallable-standard-object*
+  (combine-slots *effective-slots-standard-object*
+		 *effective-slots-function*
+		 *direct-slots-funcallable-standard-object*))
+
+;;; Slots for METAOBJECT.
+(defparameter *direct-slots-metaobject*
+  '())
+
+(defparameter *effective-slots-metaobject*
+  (combine-slots *effective-slots-standard-object*
+		 *direct-slots-metaobject*))
+
+;;; Slots for GENERIC-FUNCTION.
+(defparameter *direct-slots-generic-function*
+  ;; FIXME: add more here
+  '())
+
+(defparameter *effective-slots-generic-function*
+  (combine-slots *effective-slots-metaobject*
+		 *effective-slots-funcallable-standard-object*
+		 *direct-slots-generic-function*))
+
+;;; Slots for STANDARD-GENERIC-FUNCTION.
+(defparameter *direct-slots-standard-generic-function*
+  '())
+
+(defparameter *effective-slots-standard-generic-function*
+  (combine-slots *effective-slots-generic-function*
+		 *direct-slots-standard-generic-function*))
+
+;;; Slots for METHOD
+(defparameter *direct-slots-method*
+  '())
+
+(defparameter *effective-slots-method*
+  (combine-slots *effective-slots-metaobject*
+		 *direct-slots-method*))
+
+;;; Slots for STANDARD-METHOD
+(defparameter *direct-slots-standard-method*
+  '())
+
+(defparameter *effective-slots-standard-method*
+  (combine-slots *effective-slots-method*
+		 *direct-slots-standard-method*))
+
+;;; Slots for STANDARD-ACCESSOR-METHOD
+(defparameter *direct-slots-standard-accessor-method*
+  '())
+
+(defparameter *effective-slots-standard-accessor-method*
+  (combine-slots *effective-slots-standard-method*
+		 *direct-slots-standard-accessor-method*))
+
+;;; Slots for STANDARD-READER-METHOD
+(defparameter *direct-slots-standard-reader-method*
+  '())
+
+(defparameter *effective-slots-standard-reader-method*
+  (combine-slots *effective-slots-standard-accessor-method*
+		 *direct-slots-standard-reader-method*))
+
+;;; Slots for STANDARD-WRITER-METHOD
+(defparameter *direct-slots-standard-writer-method*
+  '())
+
+(defparameter *effective-slots-standard-writer-method*
+  (combine-slots *effective-slots-standard-accessor-method*
+		 *direct-slots-standard-writer-method*))
+
+;;; Slots for METHOD-COMBINATION
+(defparameter *direct-slots-method-combination*
+  '())
+
+(defparameter *effective-slots-method-combination*
+  (combine-slots *effective-slots-metaobject*
+		 *direct-slots-method-combination*))
+
+;;; Slots for SLOT-DEFINITION
+(defparameter *direct-slots-slot-definition*
+  '((%name :initarg :name :reader slot-definition-name)
+    (%allocation :initarg :allocation :reader slot-definition-allocation)
+    (%type :initarg :type :reader slot-definition-type)
+    (%initargs :initarg :initargs :reader slot-definition-initargs)
+    (%initform :initarg :initform :reader slot-definition-initform)
+    (%initfunction :accessor slot-definition-initfunction)
+    (%readers :initarg :readers :reader slot-definition-readers)
+    (%writers :initarg :writers :reader slot-definition-writers)))
+
+(defparameter *effective-slots-slot-definition*
+  (combine-slots *effective-slots-metaobject*
+		 *direct-slots-slot-definition*))
+
+;;; Slots for DIRECT-SLOT-DEFINITION
+(defparameter *direct-slots-direct-slot-definition*
+  '())
+
+(defparameter *effective-slots-direct-slot-definition*
+  (combine-slots *effective-slots-slot-definition*
+		 *direct-slots-direct-slot-definition*))
+
+;;; Slots for EFFECTIVE-SLOT-DEFINITION
+(defparameter *direct-slots-effective-slot-definition*
+  '((%position :initarg :position :reader slot-definition-position)))
+
+(defparameter *effective-slots-effective-slot-definition*
+  (combine-slots *effective-slots-slot-definition*
+		 *direct-slots-effective-slot-definition*))
+
+;;; Slots for STANDARD-SLOT-DEFINITION
+(defparameter *direct-slots-standard-slot-definition*
+  '())
+
+(defparameter *effective-slots-standard-slot-definition*
+  (combine-slots *effective-slots-slot-definition*
+		 *direct-slots-standard-slot-definition*))
+
+;;; Slots for STANDARD-DIRECT-SLOT-DEFINITION
+(defparameter *direct-slots-standard-direct-slot-definition*
+  '())
+
+(defparameter *effective-slots-standard-direct-slot-definition*
+  (combine-slots *effective-slots-standard-slot-definition*
+		 *effective-slots-direct-slot-definition*
+		 *direct-slots-standard-direct-slot-definition*))
+
+;;; Slots for STANDARD-EFFECTIVE-SLOT-DEFINITION
+(defparameter *direct-slots-standard-effective-slot-definition*
+  '())
+
+(defparameter *effective-slots-standard-effective-slot-definition*
+  (combine-slots *effective-slots-standard-slot-definition*
+		 *effective-slots-effective-slot-definition*
+		 *direct-slots-standard-effective-slot-definition*))
+
+;;; Slots for SPECIALIZER
+(defparameter *direct-slots-specializer*
+  '())
+
+(defparameter *effective-slots-specializer*
+  (combine-slots *effective-slots-metaobject*
+		 *direct-slots-specializer*))
+
+;;; Slots for EQL-SPECIALIZER
+(defparameter *direct-slots-eql-specializer*
+  '())
+
+(defparameter *effective-slots-eql-specializer*
+  (combine-slots *effective-slots-specializer*
+		 *direct-slots-eql-specializer*))
+
+;;; Slots for CLASS
+(defparameter *direct-slots-class*
+  '())
+
+(defparameter *effective-slots-class*
+  (combine-slots *effective-slots-specializer*
+		 *direct-slots-class*))
+
+;;; Slots for BUILT-IN-CLASS
+(defparameter *direct-slots-built-in-class*
+  '())
+
+(defparameter *effective-slots-built-in-class*
+  (combine-slots *effective-slots-class*
+		 *direct-slots-built-in-class*))
+
+;;; Slots for FORWARD-REFERENCE-CLASS
+(defparameter *direct-slots-forward-reference-class*
+  '())
+
+(defparameter *effective-slots-forward-reference-class*
+  (combine-slots *effective-slots-class*
+		 *direct-slots-forward-reference-class*))
+
+;;; Slots for STANDARD-CLASS
+(defparameter *direct-slots-standard-class*
+  '())
+
+(defparameter *effective-slots-standard-class*
+  (combine-slots *effective-slots-class*
+		 *direct-slots-standard-class*))
+
+;;; Slots for FUNCALLABLE-STANDARD-CLASS
+(defparameter *direct-slots-funcallable-standard-class*
+  '())
+
+(defparameter *effective-slots-funcallable-standard-class*
+  (combine-slots *effective-slots-class*
+		 *direct-slots-funcallable-standard-class*))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Utility functions
 
 ;;; FIXME: check for circular lists
@@ -304,6 +573,51 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class standard-class.
+;;;
+;;; Just as with STANDARD-DIRECT-SLOT-DEFININTION, ... 
+;;; FIXME: explain more.
+
+(defparameter *class-standard-class*
+  (let ((class (allocate-standard-instance nil nil)))
+    (setf (find-class 'standard-class) class)
+    class))
+    
+;;; REMEMBER: Fill in standard-class. +
+
+;;; We cheat by creating a list of descriptions (name and one initarg)
+;;; of the direct slots that we know we would en up with if we had
+;;; used the normal machinery to create the class. 
+
+(defparameter *standard-class-slots*
+  '(;; Inherited from standard-object.  This information is what
+    ;; allows us to update instances when a class changes. 
+    (%version-information :version-information)
+    (%name :name)
+    (%direct-superclasses :direct-superclasses)
+    (%direct-slots)
+    (%direct-subclasses)
+    (%class-precedence-list)
+    (%effective-slot-definitions)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function make-instance.  
+;;;
+;;; For now, we only need MAKE-INSTANCE to make instances of
+;;; STANDARD-CLASS, which is fortunate because we don't have the
+;;; mechanisms in place to implement MAKE-INSTANCE correctly.  So we
+;;; temporarily define it as an ordinary function, and check that it
+;;; is only used to define instances of STANDARD-CLASS.
+
+(defun make-instance (class-name
+		      &key
+			direct-superclasses
+		      &allow-other-keys)
+  nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Functions ensure-class-using-class and ensure-class.  
 
 ;;; Since we don't have generic functions yet, we define
@@ -311,9 +625,20 @@
 ;;; only implement its functionality for the case when the class is
 ;;; NIL.
 
-(defun method-ensure-class-using-class-null (name &rest keys)
+;;; This is the final behavior of the method on
+;;; ENSURE-CLASS-USING-CLASS specialized to NULL.  Therefore, that
+;;; method, once it exists, should call this function.
+(defun ensure-class-using-class-null (name &rest keys)
   (let ((class (apply #'make-instance 'standard-class keys)))
     (setf (find-class name) class)))
+
+;;; REMEMBER: Call ensure-class-using-class-null from method of e-c-u-c. +
+
+(defun ensure-class-using-class (class name &rest keys)
+  (assert (null class))
+  (apply method-ensure-class-using-class-null name keys))
+
+;;; REMEMBER: Redefine ensure-class-using-class as a generic-function. +
 
 ;; (defgeneric ensure-class-using-class (class name
 ;; 				      &key
@@ -345,8 +670,9 @@
 ;; 				     &allow-other-keys)
 ;;   nil)
 
+;;; This is the final definition of ensure-class.
 (defun ensure-class (name &rest arguments &key &allow-other-keys)
-  (unless (symbolp name)
+  (unless (and (symbolp name) (not (null name)))
     (error 'class-name-must-be-non-nil-symbol
 	   :name 'ensure-class
 	   :datum name))
@@ -612,48 +938,6 @@
 ;;   (initialize-instance-after-standard-class
 ;;    class direct-superclasses direct-slots))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; The Metaobject hierarchy.
-
-;;; The Metaobject hierarchy according to the AMOP table 5.1.
-;;;
-;;; Metaobject class                   Direct superclasses
-;;; ----------------                   -------------------
-;;; standard-object                    (t)
-;;; funcallable-standard-object        (standard-object function)
-;;; metaobject                         (standard-object)
-;;; generic-function                   (metaobject
-;;;                                     funcallable-standard-object)
-;;; standard-generic-function          (generic-function)
-;;; method                             (metaobject)
-;;; standard-method                    (method)
-;;; standard-accesssor-method          (standard-method)
-;;; standard-reader-method             (standard-accesssor-method)
-;;; standard-writer-method             (standard-accesssor-method)
-;;; method-combination                 (metaobject)
-;;; slot-definition                    (metaobject)
-;;; direct-slot-definition             (slot-definition)
-;;; effective-slot-definition          (slot-definition)
-;;; standard-slot-definition           (slot-definition)
-;;; standard-direct-slot-definition    (standard-slot-definition 
-;;;                                     direct-slot-definition)
-;;; standard-effective-slot-definition (standard-slot-definition 
-;;;                                     effective-slot-definition)
-;;; specializer                        (metaobject)
-;;; eql-specializer                    (specializer)
-;;; class                              (specializer)
-;;; built-in-class                     (class)
-;;; forward-reference-class            (class)
-;;; standard-class                     (class)
-;;; funcallable-standard-class         (class)
-;;; 
-;;; The class t is an instance of built-in-class.
-;;;
-;;; The classes generic-function and standard-generic-function
-;;; are instances of funcallable-standard-class.
-;;;
-;;; All other other classes are instances of standard-class.
 
 ;;; This fact creates a circular dependency in that standard-class
 ;;; is an instance of standard-class, so it must exist before it is
