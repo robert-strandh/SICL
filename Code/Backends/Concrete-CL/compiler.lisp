@@ -333,6 +333,9 @@
 ;;; (correctly) intepreted as a fixnum.  To supress that, we
 ;;; can say (sicl-system:word <number>) and it is interpreted
 ;;; as an immediate operand.
+;;; FIXME: use (the sicl-system:word <number>) instead.
+;;; FIXME: use (the t <expression>) to return to a Lisp expression.
+;;;        or any valid Lisp type other than sicl-system:word.
 (setf (special-operator 'sicl-system:word)
       (lambda (arguments environment)
 	(declare (ignore environment))
