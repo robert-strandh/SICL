@@ -216,10 +216,21 @@
   '(satisfies consp))
 
 (defun cons (car cdr)
-  (let ((result (malloc-words 2)))
-    (memset (final-address result +offset-cons-car+) car)
-    (memset (final-address result +offset-cons-cdr+) cdr)
-    (logior result +tag-cons+)))
+  (let ((result (the word (malloc (the word #.(* +word-size-in-bytes+ 2))))))
+    (memset (wu+
+	     result
+	     (the word
+		  #.(* +word-size-in-bytes+ +offset-cons-car+)))
+	    car)
+    (memset (wu+
+	     result
+	     (the word
+		  #.(* +word-size-in-bytes+ +offset-cons-cdr+)))
+	    cdr)
+    (the t (wior
+	    result
+	    (the word
+		 #.+tag-cons+)))))
 
 (defun cons-car (cons)
   (declare (type cons cons))
