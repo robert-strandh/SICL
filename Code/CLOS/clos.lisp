@@ -843,15 +843,15 @@
     (error 'class-name-must-be-non-nil-symbol
 	   :name 'defclass
 	   :datum class-name))
-  class-name)
+  `',class-name)
 
 (defun canonicalize-direct-superclass-names (direct-superclass-names)
   (unless (proper-list-p direct-superclass-names)
     (error 'superclass-list-must-be-proper-list
 	   :name 'defclass
 	   :datum direct-superclass-names))
-  (loop for name in direct-superclass-names
-        collect (canonicalize-direct-superclass-name name)))
+  `(list ,@(loop for name in direct-superclass-names
+		 collect (canonicalize-direct-superclass-name name))))
 
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
@@ -897,14 +897,14 @@
 		  (unless (= (length value) 1)
 		    (error 'multiple-initform-options-not-permitted
 			   :datum direct-slot-spec))
-		  (add :initform (car value))
+		  (add :initform `',(car value))
 		  (add :initfunction `(lambda () ,(car value)))
 		  (remhash :initform ht)))
 	      ;; Process :initarg option.
 	      (multiple-value-bind (value flag)
 		  (gethash :initarg ht)
 		(when flag
-		  (add :initargs (reverse value))
+		  (add :initargs `',(reverse value))
 		  (remhash :initarg ht)))
 	      ;; Turn :accessor into :reader and :writer
 	      (multiple-value-bind (value flag)
@@ -918,13 +918,13 @@
 	      (multiple-value-bind (value flag)
 		  (gethash :reader ht)
 		(when flag
-		  (add :readers (reverse value))
+		  (add :readers `',(reverse value))
 		  (remhash :reader ht)))
 	      ;; Process :writer option.
 	      (multiple-value-bind (value flag)
 		  (gethash :writer ht)
 		(when flag
-		  (add :writers (reverse value))
+		  (add :writers `',(reverse value))
 		  (remhash :writer ht)))
 	      ;; Check and process :documentation option.
 	      (multiple-value-bind (value flag)
@@ -960,15 +960,15 @@
 	      (maphash (lambda (name value)
 			 (add name (reverse value)))
 		       ht))
-	    result)))))
+	    `(list ,@result))))))
 
 (defun canonicalize-direct-slot-specs (direct-slot-specs)
   (when (not (proper-list-p direct-slot-specs))
     (error 'malformed-slots-list
 	   :name 'defclass
 	   :datum direct-slot-specs))
-  (loop for spec in direct-slot-specs
-        collect (canonicalize-direct-slot-spec spec)))
+  `(list ,@(loop for spec in direct-slot-specs
+		 collect (canonicalize-direct-slot-spec spec))))
 
 ;;; Make sure each class options is well formed, and check that a
 ;;; class option appears at most once.  Return a list of class
@@ -1053,6 +1053,17 @@
 		 ,(canonicalize-direct-slot-specs slot-specifiers)
 		 ,@(canonicalize-defclass-options options)))
 		 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Defining standard classes.
+;;; 
+;;; We now have everything needed to use DEFCLASS to create instance
+;;; of STANDARD-CLASS.
+
+(defclass standard-object (t)
+  #.*direct-slots-standard-object*)
+
+
 
 ;;; Now we add the :after method on initialize-instance for
 ;;; standard-class.  It just calls the function we defined earlier.
