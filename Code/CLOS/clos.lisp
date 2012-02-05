@@ -280,8 +280,12 @@
 ;;; Slots for SLOT-DEFINITION
 (defparameter *direct-slots-slot-definition*
   '((%name :initarg :name :reader slot-definition-name)
-    (%allocation :initarg :allocation :reader slot-definition-allocation)
-    (%type :initarg :type :reader slot-definition-type)
+    (%allocation :initarg :allocation
+		 :initform :instance
+		 :reader slot-definition-allocation)
+    (%type :initarg :type
+	   :initform t
+	   :reader slot-definition-type)
     (%initargs :initarg :initargs :reader slot-definition-initargs)
     (%initform :initarg :initform :reader slot-definition-initform)
     (%initfunction :accessor slot-definition-initfunction)
