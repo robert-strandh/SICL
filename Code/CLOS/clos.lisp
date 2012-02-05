@@ -614,7 +614,7 @@
 
 (defun make-direct-slot-definition (&rest initargs
 				    &key &allow-other-keys)
-  (let* ((defs *effective-slots-standard-effective-slot-definition*)
+  (let* ((defs *effective-slots-standard-direct-slot-definition*)
 	 (slot-descriptions defs)
 	 (slot-storage (allocate-slot-storage (length slot-descriptions)
 					      *secret-unbound-value*))
@@ -634,7 +634,7 @@
   (slot-value-using-slots
    slot-definition
    '%name
-   *effective-slots-standard-effective-slot-definition*))
+   *effective-slots-standard-direct-slot-definition*))
 
 ;;; REMEMBER: Change slot-defintion-name to be a reader function. +
 
@@ -642,7 +642,7 @@
   (slot-value-using-slots
    slot-definition
    '%allocation
-   *effective-slots-standard-effective-slot-definition*))
+   *effective-slots-standard-direct-slot-definition*))
 
 ;;; REMEMBER: Change slot-defintion-allocation to be a reader function. +
 
@@ -650,7 +650,7 @@
   (slot-value-using-slots
    slot-definition
    '%type
-   *effective-slots-standard-effective-slot-definition*))
+   *effective-slots-standard-direct-slot-definition*))
 
 ;;; REMEMBER: Change slot-defintion-type to be a reader function. +
 
@@ -658,7 +658,7 @@
   (slot-value-using-slots
    slot-definition
    '%initargs
-   *effective-slots-standard-effective-slot-definition*))
+   *effective-slots-standard-direct-slot-definition*))
 
 ;;; REMEMBER: Change slot-defintion-initargs to be a reader function. +
 
@@ -666,7 +666,7 @@
   (slot-value-using-slots
    slot-definition
    '%initform
-   *effective-slots-standard-effective-slot-definition*))
+   *effective-slots-standard-direct-slot-definition*))
 
 ;;; REMEMBER: Change slot-defintion-initform to be a reader function. +
 
@@ -674,7 +674,7 @@
   (slot-value-using-slots
    slot-definition
    '%initfunction
-   *effective-slots-standard-effective-slot-definition*))
+   *effective-slots-standard-direct-slot-definition*))
 
 ;;; REMEMBER: Change slot-defintion-initfunction to be a reader function. +
 
@@ -682,7 +682,7 @@
   (slot-value-using-slots
    slot-definition
    '%readers
-   *effective-slots-standard-effective-slot-definition*))
+   *effective-slots-standard-direct-slot-definition*))
 
 ;;; REMEMBER: Change slot-defintion-readers to be a reader function. +
 
@@ -690,7 +690,7 @@
   (slot-value-using-slots
    slot-definition
    '%writers
-   *effective-slots-standard-effective-slot-definition*))
+   *effective-slots-standard-direct-slot-definition*))
 
 ;;; REMEMBER: Change slot-defintion-writers to be a reader function. +
 
@@ -1057,7 +1057,7 @@
 ;;;
 ;;; Defining standard classes.
 ;;; 
-;;; We now have everything needed to use DEFCLASS to create instance
+;;; We now have everything needed to use DEFCLASS to create instances
 ;;; of STANDARD-CLASS.
 
 (defclass standard-object (t)
@@ -1080,7 +1080,58 @@
 ;;; created.  We break this dependency by bulding the instance of
 ;;; standard-class "manually", i.e. without the use of defclass. 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; DESCRIBE and PRINT
 
+(defun print-object (object stream)
+  (cond ((eq (standard-instance-class object)
+	     (find-class 'standard-class))
+	 (format stream
+		 "<SICL-STANDARD-CLASS ~s>"
+		 (class-name object)))
+	((eq (standard-instance-class object)
+	     *class-standard-direct-slot-definition*)
+	 (format stream
+		 "<STANDARD-DIRECT-SLOT-DEFINITION ~s>"
+		 (slot-definition-name object)))
+	(t
+	 (format stream
+		 "<???>"))))
+
+(cl:defmethod cl:print-object ((object standard-instance) stream)
+  (print-object object stream))
+
+(defun describe-object (object stream)
+  (cond ((eq (standard-instance-class object)
+	     (find-class 'standard-class))
+	 (format stream
+		 "It is the standard class named ~s"
+		 (class-name object)))
+	((eq (standard-instance-class object)
+	     *class-standard-direct-slot-definition*)
+	 (format stream
+		 "It is a standard-direct-slot-definition~@
+                  of a slot named ~s.~@
+                  This slot has allocation ~s,~@
+                  type ~s,~@
+                  initargs ~s,~@
+                  initform ~s,~@
+                  readers ~s,~@
+                  writers ~s.~%"
+		 (slot-definition-name object)
+		 (slot-definition-allocation object)
+		 (slot-definition-type object)
+		 (slot-definition-initargs object)
+		 (slot-definition-initform object)
+		 (slot-definition-readers object)
+		 (slot-definition-writers object)))
+	(t
+	 (format stream "No idea"))))
+	 
+
+(cl:defmethod cl:describe-object ((object standard-instance) stream)
+  (describe-object object stream))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
