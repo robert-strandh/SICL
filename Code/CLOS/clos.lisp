@@ -700,16 +700,20 @@
 
 (setf (find-class 't) (allocate-standard-instance nil nil))
 
+;;; REMEMBER: Patch class T. +
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class standard-class.
 
 (defparameter *class-standard-class*
   (let ((class (allocate-standard-instance nil nil)))
+    ;; STANDARD-CLASS is an instance of itself. 
+    (setf (standard-instance-class class) class)
     (setf (find-class 'standard-class) class)
     class))
     
-;;; REMEMBER: Fill in standard-class. +
+;;; REMEMBER: Patch class STANDARD-CLASS. +
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -752,7 +756,8 @@
 			direct-superclasses
 			direct-slots
 		      &allow-other-keys)
-  (assert (eq class-name 'standard-class))
+  (when (symbolp class)
+    (setf class (find-class class)))
   (let* ((defs *effective-slots-standard-class*)
 	 (slot-storage (allocate-slot-storage (length defs)
 					      *secret-unbound-value*))
@@ -772,17 +777,66 @@
 ;;;
 ;;; Functions ensure-class-using-class and ensure-class.  
 
+(defun subclass-of-class-p (class)
+  (or (eq class *class-standard-class*)
+      (let ((class-class (find-class 'class)))
+	(or (eq class class-class)
+	    (some #'subclass-of-class-p
+		  (class-direct-superclasses class))))))
+
+(defun classp (object)
+  (and (standard-instance-p object)
+       (subclass-of-class-p (standard-instance-class object))))
+
 ;;; Since we don't have generic functions yet, we define
 ;;; ensure-class-using-class as an ordinary function.  Furthermore, we
 ;;; only implement its functionality for the case when the class is
 ;;; NIL.
 
+(defun process-direct-superclasses (direct-superclasses)
+  (unless (proper-list-p direct-superclasses)
+    (error "list of superclasses must be a proper list"))
+  (loop for class-or-name in direct-superclasses
+	collect (cond  ((classp class-or-name)
+			class-or-name)
+		       ((symbolp class-or-name)
+			(let ((class (find-class class-or-name nil)))
+			  (if (null class)
+			      (setf (find-class class-or-name)
+				    (make-instance 'forward-reference-class
+						   :name class-or-name))
+			      class)))
+		       (t
+			(error "~s must be a class or a class name"
+			       class-or-name)))))
+
 ;;; This is the final behavior of the method on
 ;;; ENSURE-CLASS-USING-CLASS specialized to NULL.  Therefore, that
 ;;; method, once it exists, should call this function.
-(defun ensure-class-using-class-null (name &rest keys)
-  (let ((class (apply #'make-instance 'standard-class keys)))
-    (setf (find-class name) class)))
+(defun ensure-class-using-class-null (name
+				      &rest
+					keys
+				      &key
+					direct-superclasses
+					(metaclass 'standard-class)
+				      &allow-other-keys)
+  (setf metaclass
+	(let ((class-metaobject (if (symbolp metaclass)
+				    (find-class metaclass)
+				    metaclass)))
+	  (unless (and (classp class-metaobject)
+		       (subclass-of-class-p class-metaobject))
+	    (error "metaclass must be a class metaobject class"))
+	  class-metaobject))
+  (setf direct-superclasses
+	(process-direct-superclasses direct-superclasses))
+  (let ((remaining-keys (copy-list keys)))
+    (loop while (remf remaining-keys :metaclass))
+    (loop while (remf remaining-keys :direct-superclasses))
+    (setf (find-class name)
+	  (apply #'make-instance metaclass
+		 :direct-superclasses direct-superclasses
+		 remaining-keys))))
 
 ;;; REMEMBER: Call ensure-class-using-class-null from method of e-c-u-c. +
 
@@ -1028,7 +1082,7 @@
 			   :name 'defclass
 			   :datum option))
 		(setf result
-		      (append result `(:metaclass ,(cadr option)))))
+		      (append result `(:metaclass ',(cadr option)))))
 	       (t 
 		(setf result
 		      (append result `(,(car option) ,(cdr option)))))))
@@ -1063,7 +1117,75 @@
 (defclass standard-object (t)
   #.*direct-slots-standard-object*)
 
+;; (defclass metaobject (standard-object)
+;;   #.*direct-slots-metaobject*)
 
+;; (defclass method (metaobject)
+;;   #.*direct-slots-method*)
+
+;; (defclass standard-method (method)
+;;   #,*direct-slots-standard-method*)
+
+;; (defclass standard-accessor-method (standard-method)
+;;   #.*direct-slots-standard-accessor-method*)
+
+;; (defclass standard-reader-method (standard-accessor-method)
+;;   #.*direct-slots-standard-reader-method*)
+
+;; (defclass standard-writer-method (standard-accessor-method)
+;;   #.*direct-slots-standard-writer-method*)
+
+;; (defclass method-combination (metaobject)
+;;   #.*direct-slots-method-combination*)
+
+;; (defclass slot-definition (metaobject)
+;;   #.*direct-slots-slot-definition*)
+
+;; (defclass direct-slot-definition (slot-definition)
+;;   #.*direct-slots-direct-slot-definition*)
+
+;; (defclass effective-slot-definition (slot-definition)
+;;   #.*direct-slots-efficteve-slot-definition*)
+
+;; (defclass standard-slot-definition (slot-definition)
+;;   #.*direct-slots-standard-slot-definition*)
+
+;; (defclass standard-direct-slot-definition (slot-definition)
+;;   #.*direct-slots-standard-direct-slot-definition*)
+
+;; (defclass standard-effective-slot-definition (slot-definition)
+;;   #.*direct-slots-standard-efficteve-slot-definition*)
+
+;; (defclass specializer (metaobject)
+;;   #.*direct-slots-specializer*)
+
+;; (defclass eql-specializer (specializer)
+;;   #.*direct-slots-eql-specializer)
+
+;; (defclass class (specializer)
+;;   #.*direct-slots-class*)
+
+;; (defclass built-in-class (class)
+;;   #.*direct-slots-built-in-class*)
+
+;; (defclass forward-reference-class (class)
+;;   #.*direct-slots-forward-reference-class*)
+
+;; (defclass funcallable-standard-class-class (class)
+;;   #.*direct-slots-funcallable-standard-class-class*)
+
+;; (defclass function (t)
+;;   ()
+;;   (:metaclass built-in-class))
+
+;; (defclass funcallable-standard-object (standard-object function)
+;;   #.*direct-slots-funcallable-standard-object*)
+
+;; (defclass generic-function (metaobject funcallable-standard-objet)
+;;   (:metaclass funcallable-standard-class))
+
+;; (defclass standard-generic-function (generic-function)
+;;   (:metaclass funcallable-standard-class))
 
 ;;; Now we add the :after method on initialize-instance for
 ;;; standard-class.  It just calls the function we defined earlier.
