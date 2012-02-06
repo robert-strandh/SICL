@@ -20,10 +20,13 @@
 	new-value))
 
 (defun class-direct-superclasses (class)
-  (slot-value-using-slots
-   class
-   '%direct-superclasses
-   *effective-slots-standard-class*))
+  ;; FIXME: can this be done better?
+  (if (eq class (find-class t))
+      '()
+      (slot-value-using-slots
+       class
+       '%direct-superclasses
+       *effective-slots-standard-class*)))
 
 (defun (setf class-direct-superclasses)  (new-value class)
   (setf (slot-value-using-slots
@@ -781,7 +784,7 @@
 ;;; looks the same, but with a different name and then we transfer the
 ;;; class and slots from the fake class to the bare standard-instance.
 
-(defclass fake (slot-definition)
+(defclass fake (standard-slot-definition direct-slot-definition)
   #.*direct-slots-standard-direct-slot-definition*)
 
 (let ((to-patch (find-class 'standard-direct-slot-definition))
@@ -795,7 +798,8 @@
 
 ;;; REMEMBER: Patch standard-direct-slot-definition. -
 
-(defclass standard-effective-slot-definition (slot-definition)
+(defclass standard-effective-slot-definition
+    (standard-slot-definition effective-slot-definition)
   #.*direct-slots-standard-effective-slot-definition*)
 
 (defclass specializer (metaobject)
@@ -823,7 +827,7 @@
 ;;; looks the same, but with a different name and then we transfer the
 ;;; slots from the fake class to the bare standard-instance.
 
-(defclass fake (slot-definition)
+(defclass fake (class)
   #.*direct-slots-standard-class*)
 
 (let ((to-patch (find-class 'standard-class))
@@ -871,19 +875,21 @@
 ;;; DESCRIBE and PRINT
 
 (defun print-object (object stream)
-  (cond ((eq (standard-instance-class object)
-	     (find-class 'standard-class))
+  (cond (;; Temporary solution until we can actually print class T.
+	 (eq object (find-class t))
 	 (format stream
-		 "<SICL-STANDARD-CLASS ~s>"
+		 "<SICL-BUILTIN-CLASS SICL-T>"))
+	((classp object)
+	 (format stream
+		 "<SICL-~s SICL-~s>"
+		 (class-name (standard-instance-class object))
 		 (class-name object)))
-	((eq (standard-instance-class object)
-	     *class-standard-direct-slot-definition*)
+	((standard-instance-p object)
 	 (format stream
-		 "<STANDARD-DIRECT-SLOT-DEFINITION ~s>"
-		 (slot-definition-name object)))
+		 "<SICL-~s>"
+		 (class-name (standard-instance-class object))))
 	(t
-	 (format stream
-		 "<???>"))))
+	 (cl:print-object object stream))))
 
 (cl:defmethod cl:print-object ((object standard-instance) stream)
   (print-object object stream))
@@ -1183,15 +1189,15 @@
 ;;; but in no particular order.  We must be careful here, in that we
 ;;; might have to handle an incorrect inheritance graph, that might
 ;;; contain circular dependencies.
-;; (defun find-all-superclasses (class)
-;;   (let ((result '()))
-;;     (labels ((find-all-supers (class)
-;; 	       (unless (member class all-supers :test #'eq)
-;; 		 (push class all-supers)
-;; 		 (loop for super in (class-direct-superclasses class)
-;; 		       do (find-all-supers super)))))
-;;       (find-all-supers class))
-;;     result))
+(defun find-all-superclasses (class)
+  (let ((result '()))
+    (labels ((find-all-supers (class)
+	       (unless (member class result :test #'eq)
+		 (push class result)
+		 (loop for super in (class-direct-superclasses class)
+		       do (find-all-supers super)))))
+      (find-all-supers class))
+    result))
 
 ;;; For a given class, compute a precedence relation.  
 ;;; This relation is represented as a list of cons cells, 
