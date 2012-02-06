@@ -1,109 +1,4 @@
-(in-package :sicl-clos)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Conditions
-
-;;; This condition is used to mix into other conditions that
-;;; will report the construct (function, macro, etc) in which 
-;;; the condition was signaled. 
-(define-condition name-mixin ()
-  ((%name :initarg :name :reader name)))
-
-(define-condition no-such-class-name (type-error name-mixin)
-  ()
-  (:default-initargs :type 'symbol))
-
-(define-condition must-be-class-or-nil (type-error name-mixin)
-  ()
-  (:default-initargs :type '(or class null)))
-
-(define-condition superclass-list-must-be-proper-list
-    (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition class-name-must-be-non-nil-symbol
-    (type-error name-mixin)
-  ()
-  (:default-initargs :type '(and symbol (not null))))
-
-(define-condition malformed-slots-list (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition malformed-slot-spec (type-error name-mixin)
-  ()
-  (:default-initargs :type '(or symbol list)))
-
-(define-condition illegal-slot-name (type-error name-mixin)
-  ()
-  (:default-initargs :type 'symbol))
-
-(define-condition slot-options-must-be-even (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition slot-option-name-must-be-symbol (type-error name-mixin)
-  ()
-  (:default-initargs :type 'symbol))
-
-(define-condition multiple-initform-options-not-permitted (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition multiple-documentation-options-not-permitted (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition multiple-allocation-options-not-permitted (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition multiple-type-options-not-permitted (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition slot-documentation-option-must-be-string (type-error name-mixin)
-  ()
-  (:default-initargs :type 'string))
-
-(define-condition class-option-must-be-non-empty-list (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition class-option-name-must-be-symbol (type-error name-mixin)
-  ()
-  (:default-initargs :type 'symbol))
-
-;;; FIXME: This doesn't feel like a type-error
-(define-condition duplicate-class-option-not-allowed (type-error name-mixin)
-  ()
-  (:default-initargs :type 'symbol))
-
-(define-condition malformed-documentation-option (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition malformed-metaclass-option (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition default-initargs-must-be-proper-list (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition default-initargs-must-have-even-length (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
-
-(define-condition default-initarg-name-must-be-symbol (type-error name-mixin)
-  ()
-  (:default-initargs :type 'symbol))
-
-(define-condition malformed-default-initargs-option (type-error name-mixin)
-  ()
-  (:default-initargs :type 'list))
+(in-package #:sicl-clos)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -111,294 +6,18 @@
 ;;; bootstrapping issues make it necessary to create functionality
 ;;; step by step.  FIXME: elaborate...
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Utility functions
-
-;;; FIXME: check for circular lists
-(defun proper-list-p (object)
-  (or (null object)
-      (and (consp object)
-	   (null (cdr (last object))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; The Metaobject hierarchy.
-
-;;; The Metaobject hierarchy according to the AMOP table 5.1.
-;;;
-;;; Metaobject class                   Direct superclasses
-;;; ----------------                   -------------------
-;;; standard-object                    (t)
-;;; funcallable-standard-object        (standard-object function)
-;;; metaobject                         (standard-object)
-;;; generic-function                   (metaobject
-;;;                                     funcallable-standard-object)
-;;; standard-generic-function          (generic-function)
-;;; method                             (metaobject)
-;;; standard-method                    (method)
-;;; standard-accesssor-method          (standard-method)
-;;; standard-reader-method             (standard-accesssor-method)
-;;; standard-writer-method             (standard-accesssor-method)
-;;; method-combination                 (metaobject)
-;;; slot-definition                    (metaobject)
-;;; direct-slot-definition             (slot-definition)
-;;; effective-slot-definition          (slot-definition)
-;;; standard-slot-definition           (slot-definition)
-;;; standard-direct-slot-definition    (standard-slot-definition 
-;;;                                     direct-slot-definition)
-;;; standard-effective-slot-definition (standard-slot-definition 
-;;;                                     effective-slot-definition)
-;;; specializer                        (metaobject)
-;;; eql-specializer                    (specializer)
-;;; class                              (specializer)
-;;; built-in-class                     (class)
-;;; forward-reference-class            (class)
-;;; standard-class                     (class)
-;;; funcallable-standard-class         (class)
-;;; 
-;;; The class t is an instance of built-in-class.
-;;;
-;;; The classes generic-function and standard-generic-function
-;;; are instances of funcallable-standard-class.
-;;;
-;;; All other other classes are instances of standard-class.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; We give the slot definitions of every metaobject here.
-
-(defun combine-slots (&rest to-combine)
-  (remove-duplicates (reduce #'append to-combine) :from-end t))
-
-;;; Slots for T.
-(defparameter *direct-slots-t*
-  '())
-
-(defparameter *effective-slots-t*
-  *direct-slots-t*)
-
-;;; Slots for STANDARD-OBJECT.
-(defparameter *direct-slots-standard-object*
-  '((%version-information :initarg :version-information :initform nil)))
-
-(defparameter *effective-slots-standard-object*
-  (combine-slots *effective-slots-t*
-		 *direct-slots-standard-object*))
-
-;;; Slots for FUNCTION.
-(defparameter *direct-slots-function*
-  '())
-
-(defparameter *effective-slots-function*
-  *direct-slots-function*)
-
-;;; Slots for FUNCALLABLE-STANDARD-OBJECT.
-(defparameter *direct-slots-funcallable-standard-object*
-  ;; FIXME, maybe add something here? 
-  '())
-
-(defparameter *effective-slots-funcallable-standard-object*
-  (combine-slots *effective-slots-standard-object*
-		 *effective-slots-function*
-		 *direct-slots-funcallable-standard-object*))
-
-;;; Slots for METAOBJECT.
-(defparameter *direct-slots-metaobject*
-  '())
-
-(defparameter *effective-slots-metaobject*
-  (combine-slots *effective-slots-standard-object*
-		 *direct-slots-metaobject*))
-
-;;; Slots for GENERIC-FUNCTION.
-(defparameter *direct-slots-generic-function*
-  ;; FIXME: add more here
-  '())
-
-(defparameter *effective-slots-generic-function*
-  (combine-slots *effective-slots-metaobject*
-		 *effective-slots-funcallable-standard-object*
-		 *direct-slots-generic-function*))
-
-;;; Slots for STANDARD-GENERIC-FUNCTION.
-(defparameter *direct-slots-standard-generic-function*
-  '())
-
-(defparameter *effective-slots-standard-generic-function*
-  (combine-slots *effective-slots-generic-function*
-		 *direct-slots-standard-generic-function*))
-
-;;; Slots for METHOD
-(defparameter *direct-slots-method*
-  '())
-
-(defparameter *effective-slots-method*
-  (combine-slots *effective-slots-metaobject*
-		 *direct-slots-method*))
-
-;;; Slots for STANDARD-METHOD
-(defparameter *direct-slots-standard-method*
-  '())
-
-(defparameter *effective-slots-standard-method*
-  (combine-slots *effective-slots-method*
-		 *direct-slots-standard-method*))
-
-;;; Slots for STANDARD-ACCESSOR-METHOD
-(defparameter *direct-slots-standard-accessor-method*
-  '())
-
-(defparameter *effective-slots-standard-accessor-method*
-  (combine-slots *effective-slots-standard-method*
-		 *direct-slots-standard-accessor-method*))
-
-;;; Slots for STANDARD-READER-METHOD
-(defparameter *direct-slots-standard-reader-method*
-  '())
-
-(defparameter *effective-slots-standard-reader-method*
-  (combine-slots *effective-slots-standard-accessor-method*
-		 *direct-slots-standard-reader-method*))
-
-;;; Slots for STANDARD-WRITER-METHOD
-(defparameter *direct-slots-standard-writer-method*
-  '())
-
-(defparameter *effective-slots-standard-writer-method*
-  (combine-slots *effective-slots-standard-accessor-method*
-		 *direct-slots-standard-writer-method*))
-
-;;; Slots for METHOD-COMBINATION
-(defparameter *direct-slots-method-combination*
-  '())
-
-(defparameter *effective-slots-method-combination*
-  (combine-slots *effective-slots-metaobject*
-		 *direct-slots-method-combination*))
-
-;;; Slots for SLOT-DEFINITION
-(defparameter *direct-slots-slot-definition*
-  '((%name :initarg :name :reader slot-definition-name)
-    (%allocation :initarg :allocation
-		 :initform :instance
-		 :reader slot-definition-allocation)
-    (%type :initarg :type
-	   :initform t
-	   :reader slot-definition-type)
-    (%initargs :initarg :initargs :reader slot-definition-initargs)
-    (%initform :initarg :initform :reader slot-definition-initform)
-    (%initfunction :accessor slot-definition-initfunction)
-    (%readers :initarg :readers :reader slot-definition-readers)
-    (%writers :initarg :writers :reader slot-definition-writers)))
-
-(defparameter *effective-slots-slot-definition*
-  (combine-slots *effective-slots-metaobject*
-		 *direct-slots-slot-definition*))
-
-;;; Slots for DIRECT-SLOT-DEFINITION
-(defparameter *direct-slots-direct-slot-definition*
-  '())
-
-(defparameter *effective-slots-direct-slot-definition*
-  (combine-slots *effective-slots-slot-definition*
-		 *direct-slots-direct-slot-definition*))
-
-;;; Slots for EFFECTIVE-SLOT-DEFINITION
-(defparameter *direct-slots-effective-slot-definition*
-  '((%position :initarg :position :reader slot-definition-position)))
-
-(defparameter *effective-slots-effective-slot-definition*
-  (combine-slots *effective-slots-slot-definition*
-		 *direct-slots-effective-slot-definition*))
-
-;;; Slots for STANDARD-SLOT-DEFINITION
-(defparameter *direct-slots-standard-slot-definition*
-  '())
-
-(defparameter *effective-slots-standard-slot-definition*
-  (combine-slots *effective-slots-slot-definition*
-		 *direct-slots-standard-slot-definition*))
-
-;;; Slots for STANDARD-DIRECT-SLOT-DEFINITION
-(defparameter *direct-slots-standard-direct-slot-definition*
-  '())
-
-(defparameter *effective-slots-standard-direct-slot-definition*
-  (combine-slots *effective-slots-standard-slot-definition*
-		 *effective-slots-direct-slot-definition*
-		 *direct-slots-standard-direct-slot-definition*))
-
-;;; Slots for STANDARD-EFFECTIVE-SLOT-DEFINITION
-(defparameter *direct-slots-standard-effective-slot-definition*
-  '())
-
-(defparameter *effective-slots-standard-effective-slot-definition*
-  (combine-slots *effective-slots-standard-slot-definition*
-		 *effective-slots-effective-slot-definition*
-		 *direct-slots-standard-effective-slot-definition*))
-
-;;; Slots for SPECIALIZER
-(defparameter *direct-slots-specializer*
-  '())
-
-(defparameter *effective-slots-specializer*
-  (combine-slots *effective-slots-metaobject*
-		 *direct-slots-specializer*))
-
-;;; Slots for EQL-SPECIALIZER
-(defparameter *direct-slots-eql-specializer*
-  '())
-
-(defparameter *effective-slots-eql-specializer*
-  (combine-slots *effective-slots-specializer*
-		 *direct-slots-eql-specializer*))
-
-;;; Slots for CLASS
-(defparameter *direct-slots-class*
-  '((%unique-number :initform nil :accessor class-unique-number)))
-
-(defparameter *effective-slots-class*
-  (combine-slots *effective-slots-specializer*
-		 *direct-slots-class*))
-
-;;; Slots for BUILT-IN-CLASS
-(defparameter *direct-slots-built-in-class*
-  '())
-
-(defparameter *effective-slots-built-in-class*
-  (combine-slots *effective-slots-class*
-		 *direct-slots-built-in-class*))
-
-;;; Slots for FORWARD-REFERENCE-CLASS
-(defparameter *direct-slots-forward-reference-class*
-  '())
-
-(defparameter *effective-slots-forward-reference-class*
-  (combine-slots *effective-slots-class*
-		 *direct-slots-forward-reference-class*))
-
-;;; Slots for STANDARD-CLASS
-(defparameter *direct-slots-standard-class*
-  '((%name :initarg :name :accessor class-name)
-    (%direct-superclasses :accessor class-direct-superclasses)
-    (%direct-slots :accessor class-direct-slots)
-    (%precedence-list :initform '() :accessor class-precedence-list)
-    ;; For some reason, this accessor is not called
-    ;; class-effective-slots.
-    (%effective-slots :initform '() :accessor class-slots)
-    (%direct-subclasses :initform '() :accessor class-direct-subclasses)
-    (%direct-methods :initform '() :accessor class-direct-methods)))
-
-(defparameter *effective-slots-standard-class*
-  (combine-slots *effective-slots-class*
-		 *direct-slots-standard-class*))
-
 (defun class-name (class)
   (slot-value-using-slots
    class
    '%name
    *effective-slots-standard-class*))
+
+(defun (setf class-name) (new-value class)
+  (setf (slot-value-using-slots
+	 class
+	 '%name
+	 *effective-slots-standard-class*)
+	new-value))
 
 (defun class-direct-superclasses (class)
   (slot-value-using-slots
@@ -478,14 +97,6 @@
 	 '%direct-methods
 	 *effective-slots-standard-class*)
 	new-value))
-
-;;; Slots for FUNCALLABLE-STANDARD-CLASS
-(defparameter *direct-slots-funcallable-standard-class*
-  '())
-
-(defparameter *effective-slots-funcallable-standard-class*
-  (combine-slots *effective-slots-class*
-		 *direct-slots-funcallable-standard-class*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -610,7 +221,7 @@
     (setf (find-class 'standard-direct-slot-definition) class)
     class))
     
-;;; REMEMBER: Fill in standard-direct-slot-definition. +
+;;; REMEMBER: Patch standard-direct-slot-definition. +
 
 (defun make-direct-slot-definition (&rest initargs
 				    &key &allow-other-keys)
@@ -628,7 +239,7 @@
     instance))
 
 ;;; REMEMBER: Change make-direct-slot-definition to use make-instance. +
-;;; REMEMBER: Fill in version information of slot-definition-instances. +
+;;; REMEMBER: Patch version information of slot-definition-instances. +
 
 (defun slot-definition-name (slot-definition)
   (slot-value-using-slots
@@ -729,7 +340,8 @@
 ;;; we have the real :after method call this function to accomplish
 ;;; its work. 
 (defun initialize-instance-after-standard-class
-    (class direct-superclasses direct-slots)
+    (class name direct-superclasses direct-slots)
+  (setf (class-name class) name)
   (let ((superclasses (or direct-superclasses
 			  (list (find-class 'standard-object)))))
     (setf (class-direct-superclasses class) superclasses))
@@ -749,27 +361,30 @@
 ;;; is only used to define instances of STANDARD-CLASS.
 
 ;;; FIXME: this is pretty much identical to make-direct-slot-definition.
-(defun make-instance (class-name
+(defun make-instance (class
 		      &rest
 			initargs
 		      &key
+			name
 			direct-superclasses
 			direct-slots
 		      &allow-other-keys)
   (when (symbolp class)
     (setf class (find-class class)))
-  (let* ((defs *effective-slots-standard-class*)
-	 (slot-storage (allocate-slot-storage (length defs)
-					      *secret-unbound-value*))
-	 (instance (allocate-standard-instance *class-standard-class*
-					       slot-storage)))
-    (loop for (initarg value) on initargs by #'cddr
-	  do (setf (slot-value-using-slot-initarg instance initarg defs)
-		   value))
-    (initialize-instance-after-standard-class
-     instance direct-superclasses direct-slots)
-    (initialize-unbound-slots instance defs)
-    instance))
+  (if (eq class *class-standard-class*)
+      (let* ((defs *effective-slots-standard-class*)
+	     (slot-storage (allocate-slot-storage (length defs)
+						  *secret-unbound-value*))
+	     (instance (allocate-standard-instance *class-standard-class*
+						   slot-storage)))
+	(loop for (initarg value) on initargs by #'cddr
+	      do (setf (slot-value-using-slot-initarg instance initarg defs)
+		       value))
+	(initialize-instance-after-standard-class
+	 instance name direct-superclasses direct-slots)
+	(initialize-unbound-slots instance defs)
+	instance)
+      (error "can't make instances of other classes yet")))
 
 ;;; REMEMBER: Redefine make-instance as a generic function. +
 
@@ -835,6 +450,7 @@
     (loop while (remf remaining-keys :direct-superclasses))
     (setf (find-class name)
 	  (apply #'make-instance metaclass
+		 :name name
 		 :direct-superclasses direct-superclasses
 		 remaining-keys))))
 
@@ -891,202 +507,206 @@
 ;;;
 ;;; Functions to canonicalize certain parts of the defclass macro
 
-(defun canonicalize-direct-superclass-name (class-name)
-  (unless (and (symbolp class-name)
-	       (not (null class-name)))
-    (error 'class-name-must-be-non-nil-symbol
-	   :name 'defclass
-	   :datum class-name))
-  `',class-name)
+(eval-when (:compile-toplevel :load-toplevel :execute)
 
-(defun canonicalize-direct-superclass-names (direct-superclass-names)
-  (unless (proper-list-p direct-superclass-names)
-    (error 'superclass-list-must-be-proper-list
-	   :name 'defclass
-	   :datum direct-superclass-names))
-  `(list ,@(loop for name in direct-superclass-names
-		 collect (canonicalize-direct-superclass-name name))))
+  (defun canonicalize-direct-superclass-name (class-name)
+    (unless (and (symbolp class-name)
+		 (not (null class-name)))
+      (error 'class-name-must-be-non-nil-symbol
+	     :name 'defclass
+	     :datum class-name))
+    `',class-name)
 
-(defun canonicalize-direct-slot-spec (direct-slot-spec)
-  ;; A direct-slot-spec can be a symbol which is then the
-  ;; name of the slot.
-  (if (symbolp direct-slot-spec)
-      `(:name ',direct-slot-spec)
-      (progn
-	;; If the direct-slot-spec is not a symbol, it must
-	;; be a non-empty proper list.
-	(unless (and (proper-list-p direct-slot-spec)
-		     (consp direct-slot-spec))
-	  (error 'malformed-slot-spec
-		 :name 'defclass
-		 :datum direct-slot-spec))
-	;; In that case, the first element must be the name
-	;; of the slot, which must be a symbol.
-	(unless (symbolp (car direct-slot-spec))
-	  (error 'illegal-slot-name
-		 :name 'defclass
-		 :datum (car direct-slot-spec)))
-	;; The slot options must be a list of even length
-	;; where every other element is the name of a slot
-	;; option and every other element is the value of
-	;; the slot option.
-	(unless (evenp (length (cdr direct-slot-spec)))
-	  (error 'slot-options-must-be-even
-		 :name 'defclass
-		 :datum direct-slot-spec))
-	(let ((ht (make-hash-table :test #'eq)))
-	  (loop for (name value) on (cdr direct-slot-spec) by #'cddr
-	        do (unless (symbolp name)
-		     (error 'slot-option-name-must-be-symbol
-			    :name 'defclass
-			    :datum name))
-	           (push value (gethash name ht '())))
-	  (let ((result `(:name ',(car direct-slot-spec))))
-	    (flet ((add (name value)
-		     (setf result (append result (list name value)))))
-	      ;; Check and process :initform option.
-	      (multiple-value-bind (value flag)
-		  (gethash :initform ht)
-		(when flag
-		  (unless (= (length value) 1)
-		    (error 'multiple-initform-options-not-permitted
-			   :datum direct-slot-spec))
-		  (add :initform `',(car value))
-		  (add :initfunction `(lambda () ,(car value)))
-		  (remhash :initform ht)))
-	      ;; Process :initarg option.
-	      (multiple-value-bind (value flag)
-		  (gethash :initarg ht)
-		(when flag
-		  (add :initargs `',(reverse value))
-		  (remhash :initarg ht)))
-	      ;; Turn :accessor into :reader and :writer
-	      (multiple-value-bind (value flag)
-		  (gethash :accessor ht)
-		(when flag
-		  (loop for accessor in value
-		        do (push accessor (gethash :reader ht '()))
-		           (push `(setf ,accessor) (gethash :writer ht '())))
-		  (remhash :accessor ht)))
-	      ;; Process :reader option.
-	      (multiple-value-bind (value flag)
-		  (gethash :reader ht)
-		(when flag
-		  (add :readers `',(reverse value))
-		  (remhash :reader ht)))
-	      ;; Process :writer option.
-	      (multiple-value-bind (value flag)
-		  (gethash :writer ht)
-		(when flag
-		  (add :writers `',(reverse value))
-		  (remhash :writer ht)))
-	      ;; Check and process :documentation option.
-	      (multiple-value-bind (value flag)
-		  (gethash :documentation ht)
-		(when flag
-		  (unless (= (length value) 1)
-		    (error 'multiple-documentation-options-not-permitted
-			   :datum direct-slot-spec))
-		  (unless (stringp (car value))
-		    (error 'slot-documentation-option-must-be-string
-			   :datum (car value)))
-		  (add :documentation (car value))
-		  (remhash :documentation ht)))
-	      ;; Check and process :allocation option.
-	      (multiple-value-bind (value flag)
-		  (gethash :allocation ht)
-		(when flag
-		  (unless (= (length value) 1)
-		    (error 'multiple-allocation-options-not-permitted
-			   :datum direct-slot-spec))
-		  (add :allocation (car value))
-		  (remhash :allocation ht)))
-	      ;; Check and process :type option.
-	      (multiple-value-bind (value flag)
-		  (gethash :type ht)
-		(when flag
-		  (unless (= (length value) 1)
-		    (error 'multiple-type-options-not-permitted
-			   :datum direct-slot-spec))
-		  (add :type (car value))
-		  (remhash :type ht)))
-	      ;; Add remaining options without checking.
-	      (maphash (lambda (name value)
-			 (add name (reverse value)))
-		       ht))
-	    `(list ,@result))))))
+  (defun canonicalize-direct-superclass-names (direct-superclass-names)
+    (unless (proper-list-p direct-superclass-names)
+      (error 'superclass-list-must-be-proper-list
+	     :name 'defclass
+	     :datum direct-superclass-names))
+    `(list ,@(loop for name in direct-superclass-names
+		   collect (canonicalize-direct-superclass-name name))))
 
-(defun canonicalize-direct-slot-specs (direct-slot-specs)
-  (when (not (proper-list-p direct-slot-specs))
-    (error 'malformed-slots-list
-	   :name 'defclass
-	   :datum direct-slot-specs))
-  `(list ,@(loop for spec in direct-slot-specs
-		 collect (canonicalize-direct-slot-spec spec))))
+  (defun canonicalize-direct-slot-spec (direct-slot-spec)
+    ;; A direct-slot-spec can be a symbol which is then the
+    ;; name of the slot.
+    (if (symbolp direct-slot-spec)
+	`(:name ',direct-slot-spec)
+	(progn
+	  ;; If the direct-slot-spec is not a symbol, it must
+	  ;; be a non-empty proper list.
+	  (unless (and (proper-list-p direct-slot-spec)
+		       (consp direct-slot-spec))
+	    (error 'malformed-slot-spec
+		   :name 'defclass
+		   :datum direct-slot-spec))
+	  ;; In that case, the first element must be the name
+	  ;; of the slot, which must be a symbol.
+	  (unless (symbolp (car direct-slot-spec))
+	    (error 'illegal-slot-name
+		   :name 'defclass
+		   :datum (car direct-slot-spec)))
+	  ;; The slot options must be a list of even length
+	  ;; where every other element is the name of a slot
+	  ;; option and every other element is the value of
+	  ;; the slot option.
+	  (unless (evenp (length (cdr direct-slot-spec)))
+	    (error 'slot-options-must-be-even
+		   :name 'defclass
+		   :datum direct-slot-spec))
+	  (let ((ht (make-hash-table :test #'eq)))
+	    (loop for (name value) on (cdr direct-slot-spec) by #'cddr
+		  do (unless (symbolp name)
+		       (error 'slot-option-name-must-be-symbol
+			      :name 'defclass
+			      :datum name))
+		     (push value (gethash name ht '())))
+	    (let ((result `(:name ',(car direct-slot-spec))))
+	      (flet ((add (name value)
+		       (setf result (append result (list name value)))))
+		;; Check and process :initform option.
+		(multiple-value-bind (value flag)
+		    (gethash :initform ht)
+		  (when flag
+		    (unless (= (length value) 1)
+		      (error 'multiple-initform-options-not-permitted
+			     :datum direct-slot-spec))
+		    (add :initform `',(car value))
+		    (add :initfunction `(lambda () ,(car value)))
+		    (remhash :initform ht)))
+		;; Process :initarg option.
+		(multiple-value-bind (value flag)
+		    (gethash :initarg ht)
+		  (when flag
+		    (add :initargs `',(reverse value))
+		    (remhash :initarg ht)))
+		;; Turn :accessor into :reader and :writer
+		(multiple-value-bind (value flag)
+		    (gethash :accessor ht)
+		  (when flag
+		    (loop for accessor in value
+			  do (push accessor (gethash :reader ht '()))
+			     (push `(setf ,accessor) (gethash :writer ht '())))
+		    (remhash :accessor ht)))
+		;; Process :reader option.
+		(multiple-value-bind (value flag)
+		    (gethash :reader ht)
+		  (when flag
+		    (add :readers `',(reverse value))
+		    (remhash :reader ht)))
+		;; Process :writer option.
+		(multiple-value-bind (value flag)
+		    (gethash :writer ht)
+		  (when flag
+		    (add :writers `',(reverse value))
+		    (remhash :writer ht)))
+		;; Check and process :documentation option.
+		(multiple-value-bind (value flag)
+		    (gethash :documentation ht)
+		  (when flag
+		    (unless (= (length value) 1)
+		      (error 'multiple-documentation-options-not-permitted
+			     :datum direct-slot-spec))
+		    (unless (stringp (car value))
+		      (error 'slot-documentation-option-must-be-string
+			     :datum (car value)))
+		    (add :documentation (car value))
+		    (remhash :documentation ht)))
+		;; Check and process :allocation option.
+		(multiple-value-bind (value flag)
+		    (gethash :allocation ht)
+		  (when flag
+		    (unless (= (length value) 1)
+		      (error 'multiple-allocation-options-not-permitted
+			     :datum direct-slot-spec))
+		    (add :allocation (car value))
+		    (remhash :allocation ht)))
+		;; Check and process :type option.
+		(multiple-value-bind (value flag)
+		    (gethash :type ht)
+		  (when flag
+		    (unless (= (length value) 1)
+		      (error 'multiple-type-options-not-permitted
+			     :datum direct-slot-spec))
+		    (add :type (car value))
+		    (remhash :type ht)))
+		;; Add remaining options without checking.
+		(maphash (lambda (name value)
+			   (add name (reverse value)))
+			 ht))
+	      `(list ,@result))))))
+
+  (defun canonicalize-direct-slot-specs (direct-slot-specs)
+    (when (not (proper-list-p direct-slot-specs))
+      (error 'malformed-slots-list
+	     :name 'defclass
+	     :datum direct-slot-specs))
+    `(list ,@(loop for spec in direct-slot-specs
+		   collect (canonicalize-direct-slot-spec spec))))
 
 ;;; Make sure each class options is well formed, and check that a
 ;;; class option appears at most once.  Return a list of class
 ;;; options, including the corresponding keyword argument, to be
 ;;; spliced into the call to ENSURE-CLASS.
-(defun canonicalize-defclass-options (options)
-  ;; Check that each option is a non-empty list
-  (let ((potential-malformed-option (member-if-not #'consp options)))
-    (unless (null potential-malformed-option)
-      (error 'class-option-must-be-non-empty-list
-	     :name 'defclass
-	     :datum (car potential-malformed-option))))
-  ;; Check that the name of each option is a symbol
-  (let ((potential-malformed-option (member-if-not #'symbolp options :key #'car)))
-    (unless (null potential-malformed-option)
-      (error 'class-option-name-must-be-symbol
-	     :name 'defclass
-	     :datum (car potential-malformed-option))))
-  ;; Check that there are no duplicate option names
-  (let ((reduced-options (remove-duplicates options :key #'car :test #'eq)))
-    (when (< (length reduced-options) (length options))
-      (loop for option in reduced-options
-	    do (when (> (count (car option) options :key #'car :test #'eq) 1)
-		 (error 'duplicate-class-option-not-allowed
-			:name 'defclass
-			:datum (car option))))))
-  (let ((result '()))
-    (loop for option in options
-          do (case (car option)
-	       (:default-initargs
-		(unless (proper-list-p (cdr option))
-		  (error 'default-initargs-must-be-proper-list
-			 :datum option))
-		(unless (evenp (length (cdr option)))
-		  (error 'default-initargs-must-have-even-length
-			 :datum option))
-		(let ((canonicalized-initargs '()))
-		  (loop for (name value) on (cdr option) by #'cddr
-		        do (unless (symbolp name)
-			     (error 'default-initarg-name-must-be-symbol
-				    :datum name))
-		        do (setf canonicalized-initargs
-				 (append canonicalized-initargs
-					 `((,name ,value (lambda () ,value))))))
+  (defun canonicalize-defclass-options (options)
+    ;; Check that each option is a non-empty list
+    (let ((potential-malformed-option (member-if-not #'consp options)))
+      (unless (null potential-malformed-option)
+	(error 'class-option-must-be-non-empty-list
+	       :name 'defclass
+	       :datum (car potential-malformed-option))))
+    ;; Check that the name of each option is a symbol
+    (let ((potential-malformed-option (member-if-not #'symbolp options :key #'car)))
+      (unless (null potential-malformed-option)
+	(error 'class-option-name-must-be-symbol
+	       :name 'defclass
+	       :datum (car potential-malformed-option))))
+    ;; Check that there are no duplicate option names
+    (let ((reduced-options (remove-duplicates options :key #'car :test #'eq)))
+      (when (< (length reduced-options) (length options))
+	(loop for option in reduced-options
+	      do (when (> (count (car option) options :key #'car :test #'eq) 1)
+		   (error 'duplicate-class-option-not-allowed
+			  :name 'defclass
+			  :datum (car option))))))
+    (let ((result '()))
+      (loop for option in options
+	    do (case (car option)
+		 (:default-initargs
+		  (unless (proper-list-p (cdr option))
+		    (error 'default-initargs-must-be-proper-list
+			   :datum option))
+		  (unless (evenp (length (cdr option)))
+		    (error 'default-initargs-must-have-even-length
+			   :datum option))
+		  (let ((canonicalized-initargs '()))
+		    (loop for (name value) on (cdr option) by #'cddr
+			  do (unless (symbolp name)
+			       (error 'default-initarg-name-must-be-symbol
+				      :datum name))
+			  do (setf canonicalized-initargs
+				   (append canonicalized-initargs
+					   `((,name ,value (lambda () ,value))))))
+		    (setf result
+			  (append result `(:default-initargs ,canonicalized-initargs)))))
+		 (:documentation
+		  (unless (null (cddr option))
+		    (error 'malformed-documentation-option
+			   :name 'defclass
+			   :datum option))
 		  (setf result
-			(append result `(:default-initargs ,canonicalized-initargs)))))
-	       (:documentation
-		(unless (null (cddr option))
-		  (error 'malformed-documentation-option
-			 :name 'defclass
-			 :datum option))
-		(setf result
-		      (append result `(:documentation ,(cadr option)))))
-	       (:metaclass
+			(append result `(:documentation ,(cadr option)))))
+		 (:metaclass
 		  (unless (null (cddr option))
 		    (error 'malformed-metaclass-option
 			   :name 'defclass
 			   :datum option))
-		(setf result
-		      (append result `(:metaclass ',(cadr option)))))
-	       (t 
-		(setf result
-		      (append result `(,(car option) ,(cdr option)))))))
-    result))
+		  (setf result
+			(append result `(:metaclass ',(cadr option)))))
+		 (t 
+		  (setf result
+			(append result `(,(car option) ,(cdr option)))))))
+      result))
+
+  ) ; eval-when
 
 ;;; The DEFCLASS macro.  The AMOP is inconsistent with respect to the
 ;;; CLHS.  For instance, it requires the arguments to ENSURE-CLASS to
@@ -1117,62 +737,80 @@
 (defclass standard-object (t)
   #.*direct-slots-standard-object*)
 
-;; (defclass metaobject (standard-object)
-;;   #.*direct-slots-metaobject*)
+(defclass metaobject (standard-object)
+  #.*direct-slots-metaobject*)
 
-;; (defclass method (metaobject)
-;;   #.*direct-slots-method*)
+(defclass method (metaobject)
+  #.*direct-slots-method*)
 
-;; (defclass standard-method (method)
-;;   #,*direct-slots-standard-method*)
+(defclass standard-method (method)
+  #.*direct-slots-standard-method*)
 
-;; (defclass standard-accessor-method (standard-method)
-;;   #.*direct-slots-standard-accessor-method*)
+(defclass standard-accessor-method (standard-method)
+  #.*direct-slots-standard-accessor-method*)
 
-;; (defclass standard-reader-method (standard-accessor-method)
-;;   #.*direct-slots-standard-reader-method*)
+(defclass standard-reader-method (standard-accessor-method)
+  #.*direct-slots-standard-reader-method*)
 
-;; (defclass standard-writer-method (standard-accessor-method)
-;;   #.*direct-slots-standard-writer-method*)
+(defclass standard-writer-method (standard-accessor-method)
+  #.*direct-slots-standard-writer-method*)
 
-;; (defclass method-combination (metaobject)
-;;   #.*direct-slots-method-combination*)
+(defclass method-combination (metaobject)
+  #.*direct-slots-method-combination*)
 
-;; (defclass slot-definition (metaobject)
-;;   #.*direct-slots-slot-definition*)
+(defclass slot-definition (metaobject)
+  #.*direct-slots-slot-definition*)
 
-;; (defclass direct-slot-definition (slot-definition)
-;;   #.*direct-slots-direct-slot-definition*)
+(defclass direct-slot-definition (slot-definition)
+  #.*direct-slots-direct-slot-definition*)
 
-;; (defclass effective-slot-definition (slot-definition)
-;;   #.*direct-slots-efficteve-slot-definition*)
+(defclass effective-slot-definition (slot-definition)
+  #.*direct-slots-effective-slot-definition*)
 
-;; (defclass standard-slot-definition (slot-definition)
-;;   #.*direct-slots-standard-slot-definition*)
+(defclass standard-slot-definition (slot-definition)
+  #.*direct-slots-standard-slot-definition*)
 
-;; (defclass standard-direct-slot-definition (slot-definition)
-;;   #.*direct-slots-standard-direct-slot-definition*)
+;;; We can not use DEFCLASS to create the class named
+;;; STANDARD-DIRECT-SLOT-DEFINITION, because we already created it so
+;;; that we could create instances of it early on.  But when we
+;;; created it, we did so without filling in neither its class nor its
+;;; slots, so it is just a bare standard-instance at the moment. 
+;;;
+;;; We fix the situatio by using DEFCLASS to create a fake class that
+;;; looks the same, but with a different name and then we transfer the
+;;; class and slots from the fake class to the bare standard-instance.
 
-;; (defclass standard-effective-slot-definition (slot-definition)
-;;   #.*direct-slots-standard-efficteve-slot-definition*)
+(defclass fake (slot-definition)
+  #.*direct-slots-standard-direct-slot-definition*)
 
-;; (defclass specializer (metaobject)
-;;   #.*direct-slots-specializer*)
+(let ((to-patch (find-class 'standard-direct-slot-definition))
+      (fake (find-class 'fake)))
+  (setf (standard-instance-class to-patch)
+	(standard-instance-class fake))
+  (setf (standard-instance-slots to-patch)
+	(standard-instance-slots fake))
+  (setf (find-class 'fake) nil))
 
-;; (defclass eql-specializer (specializer)
-;;   #.*direct-slots-eql-specializer)
+(defclass standard-effective-slot-definition (slot-definition)
+  #.*direct-slots-standard-effective-slot-definition*)
 
-;; (defclass class (specializer)
-;;   #.*direct-slots-class*)
+(defclass specializer (metaobject)
+  #.*direct-slots-specializer*)
 
-;; (defclass built-in-class (class)
-;;   #.*direct-slots-built-in-class*)
+(defclass eql-specializer (specializer)
+  #.*direct-slots-eql-specializer*)
 
-;; (defclass forward-reference-class (class)
-;;   #.*direct-slots-forward-reference-class*)
+(defclass class (specializer)
+  #.*direct-slots-class*)
 
-;; (defclass funcallable-standard-class-class (class)
-;;   #.*direct-slots-funcallable-standard-class-class*)
+(defclass built-in-class (class)
+  #.*direct-slots-built-in-class*)
+
+(defclass forward-reference-class (class)
+  #.*direct-slots-forward-reference-class*)
+
+(defclass funcallable-standard-class (class)
+  #.*direct-slots-funcallable-standard-class*)
 
 ;; (defclass function (t)
 ;;   ()

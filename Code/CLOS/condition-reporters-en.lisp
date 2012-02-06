@@ -1,4 +1,4 @@
-(in-package :sicl-clos
+(in-package #:sicl-clos)
 
 ;;;; Copyright (c) 2011
 ;;;;
