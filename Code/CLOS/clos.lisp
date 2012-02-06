@@ -771,10 +771,11 @@
   #.*direct-slots-standard-slot-definition*)
 
 ;;; We can not use DEFCLASS to create the class named
-;;; STANDARD-DIRECT-SLOT-DEFINITION, because we already created it so
-;;; that we could create instances of it early on.  But when we
-;;; created it, we did so without filling in neither its class nor its
-;;; slots, so it is just a bare standard-instance at the moment. 
+;;; STANDARD-DIRECT-SLOT-DEFINITION, because we already created it in
+;;; order to make it posible to create instances of it early on.  But
+;;; when we created it, we did so without filling in neither its class
+;;; nor its slots, so it is just a bare standard-instance at the
+;;; moment.
 ;;;
 ;;; We fix the situatio by using DEFCLASS to create a fake class that
 ;;; looks the same, but with a different name and then we transfer the
@@ -789,7 +790,10 @@
 	(standard-instance-class fake))
   (setf (standard-instance-slots to-patch)
 	(standard-instance-slots fake))
+  (setf (class-name fake) 'standard-direct-slot-definition)
   (setf (find-class 'fake) nil))
+
+;;; REMEMBER: Patch standard-direct-slot-definition. -
 
 (defclass standard-effective-slot-definition (slot-definition)
   #.*direct-slots-standard-effective-slot-definition*)
@@ -808,6 +812,28 @@
 
 (defclass forward-reference-class (class)
   #.*direct-slots-forward-reference-class*)
+
+;;; We can not use DEFCLASS to create the class named STANDARD-CLASS,
+;;; because we already created it in order to make it posible to
+;;; create instances of it early on.  But when we created it, we did
+;;; so without filling in its slots (we did fill in its class,
+;;; though).  Now we need to patch the slots of it.
+;;;
+;;; We fix the situatio by using DEFCLASS to create a fake class that
+;;; looks the same, but with a different name and then we transfer the
+;;; slots from the fake class to the bare standard-instance.
+
+(defclass fake (slot-definition)
+  #.*direct-slots-standard-class*)
+
+(let ((to-patch (find-class 'standard-class))
+      (fake (find-class 'fake)))
+  (setf (standard-instance-slots to-patch)
+	(standard-instance-slots fake))
+  (setf (class-name fake) 'standard-class)
+  (setf (find-class 'fake) nil))
+
+;;; REMEMBER: Patch STANDARD-CLASS. -
 
 (defclass funcallable-standard-class (class)
   #.*direct-slots-funcallable-standard-class*)
