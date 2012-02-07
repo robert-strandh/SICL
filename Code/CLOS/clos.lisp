@@ -2,108 +2,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; The contents of this file should be read sequentially, because the
-;;; bootstrapping issues make it necessary to create functionality
-;;; step by step.  FIXME: elaborate...
-
-(defun class-name (class)
-  (slot-value-using-slots
-   class
-   '%name
-   *effective-slots-standard-class*))
-
-(defun (setf class-name) (new-value class)
-  (setf (slot-value-using-slots
-	 class
-	 '%name
-	 *effective-slots-standard-class*)
-	new-value))
-
-(defun class-direct-superclasses (class)
-  ;; FIXME: can this be done better?
-  (if (eq class (find-class t))
-      '()
-      (slot-value-using-slots
-       class
-       '%direct-superclasses
-       *effective-slots-standard-class*)))
-
-(defun (setf class-direct-superclasses)  (new-value class)
-  (setf (slot-value-using-slots
-	 class
-	 '%direct-superclasses
-	 *effective-slots-standard-class*)
-	new-value))
-
-(defun class-direct-slots (class)
-  (slot-value-using-slots
-   class
-   '%direct-slots
-   *effective-slots-standard-class*))
-
-(defun (setf class-direct-slots) (new-value class)
-  (setf (slot-value-using-slots
-	 class
-	 '%direct-slots
-	 *effective-slots-standard-class*)
-	new-value))
-
-(defun class-precedence-list (class)
-  (slot-value-using-slots
-   class
-   '%precedence-list
-   *effective-slots-standard-class*))
-
-(defun (setf class-precedence-list) (new-value class)
-  (setf (slot-value-using-slots
-	 class
-	 '%precedence-list
-	 *effective-slots-standard-class*)
-	new-value))
-
-;;; For some reason, this accessor is not called class-effective-slots.
-(defun class-slots (class)
-  (slot-value-using-slots
-   class
-   '%effective-slots
-   *effective-slots-standard-class*))
-
-(defun (setf class-slots) (new-value class)
-  (setf (slot-value-using-slots
-	 class
-	 '%effective-slots
-	 *effective-slots-standard-class*)
-	new-value))
-
-(defun class-direct-subclasses (class)
-  (slot-value-using-slots
-   class
-   '%direct-subclasses
-   *effective-slots-standard-class*))
-
-(defun (setf class-direct-subclasses) (new-value class)
-  (setf (slot-value-using-slots
-	 class
-	 '%direct-subclasses
-	 *effective-slots-standard-class*)
-	new-value))
-
-(defun class-direct-methods (class)
-  (slot-value-using-slots
-   class
-   '%direct-methods
-   *effective-slots-standard-class*))
-
-(defun (setf class-direct-methods) (new-value class)
-  (setf (slot-value-using-slots
-	 class
-	 '%direct-methods
-	 *effective-slots-standard-class*)
-	new-value))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Functions find-class and (setf find-class)
+;;;
+;;; These functions manage the database of classes. 
 ;;;
 ;;; For now, ignore the environment parameter to FIND-CLASS, and just
 ;;; use a global variable to hold a hash table with class definitions.
@@ -142,29 +43,106 @@
 ;; 		 :datum new-class)
 ;; 	  (setf (gethash name *classes*) new-class))))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; We follow the AMOP and define functions to allocate
-;;; class instances and slot storage.  For now, these
-;;; functions create other Common Lisp objects such as 
-;;; structures and arrays.  In a real implementation, 
-;;; these functions might use lower-level mechanisms
-;;; to allocate these entities.
+;;; Generating temporary accessors for our metaobjects. 
+;;;
+;;; We take our slot descriptors and generate really stupid and slow
+;;; (but very safe) versions of all the readers and accessors that
+;;; were mentioned in those slot descriptions.  Each reader has the
+;;; following form:
+;;;
+;;;    (defun mumble (x)
+;;;      (let ((class (standard-instance-class x))
+;;;            (slots (standard-instance-slots x)))
+;;;        (cond ((eq class (find-class 'class-1 nil))
+;;;               (slotcontents slots s-1))
+;;;              ((eq class (find-class 'class-2 nil))
+;;;               (slotcontents slots s-2))
+;;;              ...
+;;;              (t (error ...)))))
+;;;
+;;; where s-i is the index in class-i of the slot that is read.
+;;;
+;;; Writers have the analogous structure. 
+;;;
+;;; This means that all our accessors are operational even though
+;;; they are not generic functions of course. 
+(eval-when (:compile-toplevel :load-toplevel)
 
-(defstruct standard-instance class slots)
+  (defun collect-reader (reader)
+    (let ((result '()))
+      (maphash (lambda (class-name slot-descriptors)
+		 (loop for s in slot-descriptors
+		       for i from 0
+		       do (when (or (eq (cadr (member :reader s)) reader)
+				    (eq (cadr (member :accessor s)) reader))
+			    (push `(,class-name ,i) result))))
+	       *effective-slots*)
+      result))
+  
+  (defun collect-writer (writer)
+    (let ((result '()))
+      (maphash (lambda (class-name slot-descriptors)
+		 (loop for s in slot-descriptors
+		       for i from 0
+		       do (when (eq (cadr (member :accessor s)) writer)
+			    (push `(,class-name ,i) result))))
+	       *effective-slots*)
+      result))
+  
+  (let ((readers '())
+	(writers '()))
+    ;; Find all :reader and :accessor slot options
+    (maphash (lambda (class-name slot-descriptors)
+	       (declare (ignore class-name))
+	       (loop for s in slot-descriptors
+		     do (let (temp)
+			  (setf temp (member :reader s))
+			  (when temp
+			    (pushnew (cadr temp) readers))
+			  (setf temp (member :accessor s))
+			  (when temp
+			    (pushnew (cadr temp) readers)
+			    (pushnew (cadr temp) writers)))))
+	     *effective-slots*)
+    ;; For each one, create a function
+    (flet ((make-reader-function-form (name readers)
+	     `(defun ,name (x)
+		(let ((class (standard-instance-class x))
+		      (slots (standard-instance-slots x)))
+		  (cond 
+		    ,@(loop for reader in readers
+			    collect
+			    `((eq class (find-class ',(car reader) nil))
+			      (slot-contents slots ,(cadr reader))))
+		    (t (error "no reader on ~s" ',name))))))
+	   (make-writer-function-form (name writers)
+	     `(defun (setf ,name) (new-value x)
+		(let ((class (standard-instance-class x))
+		      (slots (standard-instance-slots x)))
+		  (cond 
+		    ,@(loop for writer in writers
+			    collect
+			    `((eq class (find-class ',(car writer) nil))
+			      (setf (slot-contents slots ,(cadr writer))
+				    new-value)))
+		    (t (error "no writer on ~s" ',name)))))))
+      (loop for reader in readers
+	    do (eval (make-reader-function-form
+		      reader (collect-reader reader))))
+      (loop for writer in writers
+	    do (eval (make-writer-function-form
+		      writer (collect-writer writer))))))
 
-(defun allocate-standard-instance (class slot-storage)
-  (make-standard-instance :class class
-			  :slots slot-storage))
+  ) ; eval-when
 
-(defun allocate-slot-storage (size initial-value)
-  (make-array size :initial-element initial-value))
-
-(defun slot-contents (slot-storage location)
-  (aref slot-storage location))
-
-(defun (setf slot-contents) (new-value slot-storage location)
-  (setf (aref slot-storage location) new-value))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The contents of this file should be read sequentially, because the
+;;; bootstrapping issues make it necessary to create functionality
+;;; step by step.  FIXME: elaborate...
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -228,7 +206,7 @@
 
 (defun make-direct-slot-definition (&rest initargs
 				    &key &allow-other-keys)
-  (let* ((defs *effective-slots-standard-direct-slot-definition*)
+  (let* ((defs (find-effective-slots 'standard-direct-slot-definition))
 	 (slot-descriptions defs)
 	 (slot-storage (allocate-slot-storage (length slot-descriptions)
 					      *secret-unbound-value*))
@@ -243,70 +221,6 @@
 
 ;;; REMEMBER: Change make-direct-slot-definition to use make-instance. +
 ;;; REMEMBER: Patch version information of slot-definition-instances. +
-
-(defun slot-definition-name (slot-definition)
-  (slot-value-using-slots
-   slot-definition
-   '%name
-   *effective-slots-standard-direct-slot-definition*))
-
-;;; REMEMBER: Change slot-defintion-name to be a reader function. +
-
-(defun slot-definition-allocation (slot-definition)
-  (slot-value-using-slots
-   slot-definition
-   '%allocation
-   *effective-slots-standard-direct-slot-definition*))
-
-;;; REMEMBER: Change slot-defintion-allocation to be a reader function. +
-
-(defun slot-definition-type (slot-definition)
-  (slot-value-using-slots
-   slot-definition
-   '%type
-   *effective-slots-standard-direct-slot-definition*))
-
-;;; REMEMBER: Change slot-defintion-type to be a reader function. +
-
-(defun slot-definition-initargs (slot-definition)
-  (slot-value-using-slots
-   slot-definition
-   '%initargs
-   *effective-slots-standard-direct-slot-definition*))
-
-;;; REMEMBER: Change slot-defintion-initargs to be a reader function. +
-
-(defun slot-definition-initform (slot-definition)
-  (slot-value-using-slots
-   slot-definition
-   '%initform
-   *effective-slots-standard-direct-slot-definition*))
-
-;;; REMEMBER: Change slot-defintion-initform to be a reader function. +
-
-(defun slot-definition-initfunction (slot-definition)
-  (slot-value-using-slots
-   slot-definition
-   '%initfunction
-   *effective-slots-standard-direct-slot-definition*))
-
-;;; REMEMBER: Change slot-defintion-initfunction to be a reader function. +
-
-(defun slot-definition-readers (slot-definition)
-  (slot-value-using-slots
-   slot-definition
-   '%readers
-   *effective-slots-standard-direct-slot-definition*))
-
-;;; REMEMBER: Change slot-defintion-readers to be a reader function. +
-
-(defun slot-definition-writers (slot-definition)
-  (slot-value-using-slots
-   slot-definition
-   '%writers
-   *effective-slots-standard-direct-slot-definition*))
-
-;;; REMEMBER: Change slot-defintion-writers to be a reader function. +
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -355,6 +269,47 @@
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Initialize an instance using slot-descriptions.
+
+(defun sd-initialize-instance (instance slot-descriptions &rest initargs)
+  (let ((slots (standard-instance-slots instance)))
+    (loop for (initarg value) on initargs by #'cddr
+	  do (loop for slot-description in slot-descriptions
+		   for i from 0
+		   do (when (and
+			     ;; The slot has an initarg.
+			     (member :initarg slot-description)
+			     ;; It is the right one.
+			     (eq (cadr (member :initarg slot-description))
+				 initarg)
+			     ;; The slot is still unbound.
+			     (eq (slot-contents slots i) *secret-unbound-value*))
+			;; Initialize the slot from the initarg provided.
+			(setf (slot-contents slots i) value))))
+    ;; Initialize from initforms if any
+    (loop for slot-description in slot-descriptions
+	  for i from 0
+	  do (when (and
+		    ;; The slot has an initform.
+		    (member :initform slot-description)
+		    ;; The slot is still unbound.
+		    (eq (slot-contents slots i) *secret-unbound-value*))
+	       ;; Initialize the slot from the initform.
+	       (setf (slot-contents slots i)
+		     (eval (cadr (member :initform slot-description))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Make an instance using slot-descriptions
+
+(defun sd-make-instance (class slot-descriptions &rest initargs)
+  (let* ((slot-storage (allocate-slot-storage (length slot-descriptions)
+					      *secret-unbound-value*))
+	 (instance (allocate-standard-instance class slot-storage)))
+    (apply #'sd-initialize-instance instance slot-descriptions initargs)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function make-instance.  
 ;;;
 ;;; For now, we only need MAKE-INSTANCE to make instances of
@@ -375,7 +330,7 @@
   (when (symbolp class)
     (setf class (find-class class)))
   (if (eq class *class-standard-class*)
-      (let* ((defs *effective-slots-standard-class*)
+      (let* ((defs (find-effective-slots 'standard-class))
 	     (slot-storage (allocate-slot-storage (length defs)
 						  *secret-unbound-value*))
 	     (instance (allocate-standard-instance *class-standard-class*
@@ -738,40 +693,40 @@
 ;;; of STANDARD-CLASS.
 
 (defclass standard-object (t)
-  #.*direct-slots-standard-object*)
+  #.(find-direct-slots 'standard-object))
 
 (defclass metaobject (standard-object)
-  #.*direct-slots-metaobject*)
+  #.(find-direct-slots 'metaobject))
 
 (defclass method (metaobject)
-  #.*direct-slots-method*)
+  #.(find-direct-slots 'method))
 
 (defclass standard-method (method)
-  #.*direct-slots-standard-method*)
+  #.(find-direct-slots 'standard-method))
 
 (defclass standard-accessor-method (standard-method)
-  #.*direct-slots-standard-accessor-method*)
+  #.(find-direct-slots 'standard-accessor-method))
 
 (defclass standard-reader-method (standard-accessor-method)
-  #.*direct-slots-standard-reader-method*)
+  #.(find-direct-slots 'standard-reader-method))
 
 (defclass standard-writer-method (standard-accessor-method)
-  #.*direct-slots-standard-writer-method*)
+  #.(find-direct-slots 'standard-writer-method))
 
 (defclass method-combination (metaobject)
-  #.*direct-slots-method-combination*)
+  #.(find-direct-slots 'method-combination))
 
 (defclass slot-definition (metaobject)
-  #.*direct-slots-slot-definition*)
+  #.(find-direct-slots 'slot-definition))
 
 (defclass direct-slot-definition (slot-definition)
-  #.*direct-slots-direct-slot-definition*)
+  #.(find-direct-slots 'direct-slot-definition))
 
 (defclass effective-slot-definition (slot-definition)
-  #.*direct-slots-effective-slot-definition*)
+  #.(find-direct-slots 'effective-slot-definition))
 
 (defclass standard-slot-definition (slot-definition)
-  #.*direct-slots-standard-slot-definition*)
+  #.(find-direct-slots 'standard-slot-definition))
 
 ;;; We can not use DEFCLASS to create the class named
 ;;; STANDARD-DIRECT-SLOT-DEFINITION, because we already created it in
@@ -785,7 +740,7 @@
 ;;; class and slots from the fake class to the bare standard-instance.
 
 (defclass fake (standard-slot-definition direct-slot-definition)
-  #.*direct-slots-standard-direct-slot-definition*)
+  #.(find-direct-slots 'standard-direct-slot-definition))
 
 (let ((to-patch (find-class 'standard-direct-slot-definition))
       (fake (find-class 'fake)))
@@ -800,22 +755,22 @@
 
 (defclass standard-effective-slot-definition
     (standard-slot-definition effective-slot-definition)
-  #.*direct-slots-standard-effective-slot-definition*)
+  #.(find-direct-slots 'standard-effective-slot-definition))
 
 (defclass specializer (metaobject)
-  #.*direct-slots-specializer*)
+  #.(find-direct-slots 'specializer))
 
 (defclass eql-specializer (specializer)
-  #.*direct-slots-eql-specializer*)
+  #.(find-direct-slots 'eql-specializer))
 
 (defclass class (specializer)
-  #.*direct-slots-class*)
+  #.(find-direct-slots 'class))
 
 (defclass built-in-class (class)
-  #.*direct-slots-built-in-class*)
+  #.(find-direct-slots 'built-in-class))
 
 (defclass forward-reference-class (class)
-  #.*direct-slots-forward-reference-class*)
+  #.(find-direct-slots 'forward-reference-class))
 
 ;;; We can not use DEFCLASS to create the class named STANDARD-CLASS,
 ;;; because we already created it in order to make it posible to
@@ -828,7 +783,7 @@
 ;;; slots from the fake class to the bare standard-instance.
 
 (defclass fake (class)
-  #.*direct-slots-standard-class*)
+  #.(find-direct-slots 'standard-class))
 
 (let ((to-patch (find-class 'standard-class))
       (fake (find-class 'fake)))
@@ -840,14 +795,14 @@
 ;;; REMEMBER: Patch STANDARD-CLASS. -
 
 (defclass funcallable-standard-class (class)
-  #.*direct-slots-funcallable-standard-class*)
+  #.(find-direct-slots 'funcallable-standard-class))
 
 ;; (defclass function (t)
 ;;   ()
 ;;   (:metaclass built-in-class))
 
 ;; (defclass funcallable-standard-object (standard-object function)
-;;   #.*direct-slots-funcallable-standard-object*)
+;;   #.(find-direct-slots 'funcallable-standard-object))
 
 ;; (defclass generic-function (metaobject funcallable-standard-objet)
 ;;   (:metaclass funcallable-standard-class))
