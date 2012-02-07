@@ -1210,8 +1210,6 @@
         for super in (class-direct-superclasses class)
         collect (cons prev super)))
 
-;; (defgeneric compute-class-prececence-list (class))
-
 (defun compute-class-precedence-list-class (class)
   (let* ((all-supers (find-all-superclasses class))
 	 (relation (loop for class in all-supers
@@ -1256,6 +1254,7 @@
 		 (setf relation (remove candidate relation :key #'car)))))
     (reverse reverse-result)))
   
+;; (defgeneric compute-class-prececence-list (class))
 
 ;; (defmethod compute-class-prececence-list ((class class))
 ;;   (compute-class-precedence-list-class class))
@@ -1266,62 +1265,76 @@
 
 ;;; For a given class, return the class to be used for
 ;;; direct slot definitions of that class.
+
+(defun direct-slot-definition-class (class &rest initargs)
+  (declare (ignore class initargs))
+  (find-class 'standard-direct-slot-definition))
+
+;;; REMEMBER: turn DIRECT-SLOT-DEFINITION-CLASS into a generic function. +
+
 ;; (defgeneric direct-slot-definition-class (class &rest initargs))
 
 ;; (defmethod direct-slot-definition-class ((class standard-class)
 ;; 					 &rest initargs)
 ;;   (declare (ignore initargs))
-;;   (return (find-class 'standard-direct-slot-definition)))
+;;   (find-class 'standard-direct-slot-definition))
   
 ;; (defmethod direct-slot-definition-class ((class funcallable-standard-class)
 ;; 					 &rest initargs)
 ;;   (declare (ignore initargs))
-;;   (return (find-class 'standard-direct-slot-definition)))
+;;   (find-class 'standard-direct-slot-definition))
   
 ;;; For a given class, return the class to be used for
 ;;; effective slot definitions of that class.
+
+(defun effective-slot-definition-class (class &rest initargs)
+  (declare (ignore class initargs))
+  (find-class 'standard-effective-slot-definition))
+
+;;; REMEMBER: turn EFFECTIVE-SLOT-DEFINITION-CLASS into a generic function. +
+
 ;; (defgeneric effective-slot-definition-class (class &rest initargs))
 
 ;; (defmethod effective-slot-definition-class ((class standard-class)
 ;; 					    &rest initargs)
 ;;   (declare (ignore initargs))
-;;   (return (find-class 'standard-effective-slot-definition)))
+;;   (find-class 'standard-effective-slot-definition))
   
 ;; (defmethod effective-slot-definition-class ((class funcallable-standard-class)
 ;; 					    &rest initargs)
 ;;   (declare (ignore initargs))
-;;   (return (find-class 'standard-effective-slot-definition)))
+;;   (find-class 'standard-effective-slot-definition))
   
 ;; (defgeneric compute-effective-slot-definition
 ;;     (class name direct-slot-definitions))
 
 ;;; Implement the behavior of compute-effective-slot-definition
 ;;; for standard-class and funcallable-standard-class.
-;; (defun compute-effective-slot-definition-aux (class direct-slot-definitions)
-;;   (let (allocation initargs initform initfunction type)
-;;     (setf allocation
-;; 	  (slot-definition-allocation (first direct-slot-definitions)))
-;;     (setf initargs
-;; 	  (reduce #'union
-;; 		  (mapcar #'slot-definition-initargs direct-slot-definitions)))
-;;     (let ((first-init (find-if-not #'null direct-slot-definitions
-;; 				   :key #'slot-definition-initfunction)))
-;;       (unless (null first-init)
-;; 	(setf initform (slot-definition-initform first-init)
-;; 	      initfunction (slot-definition-initfunction first-init))))
-;;     (setf type
-;; 	  `(and ,@mapcar #'slot-definition-type direct-slot-definitions))
-;;     (if (null initfunction)
-;; 	(make-instance class
-;; 		       :allocation allocation
-;; 		       :initargs initargs
-;; 		       :type type)
-;; 	(make-instance class
-;; 		       :allocation allocation
-;; 		       :initargs initargs
-;; 		       :initform initform
-;; 		       :initfunction initfunction
-;; 		       :type type))))
+(defun compute-effective-slot-definition-aux (class direct-slot-definitions)
+  (let (allocation initargs initform initfunction type)
+    (setf allocation
+	  (slot-definition-allocation (first direct-slot-definitions)))
+    (setf initargs
+	  (reduce #'union
+		  (mapcar #'slot-definition-initargs direct-slot-definitions)))
+    (let ((first-init (find-if-not #'null direct-slot-definitions
+				   :key #'slot-definition-initfunction)))
+      (unless (null first-init)
+	(setf initform (slot-definition-initform first-init)
+	      initfunction (slot-definition-initfunction first-init))))
+    (setf type
+	  `(and ,@(mapcar #'slot-definition-type direct-slot-definitions)))
+    (if (null initfunction)
+	(make-instance class
+		       :allocation allocation
+		       :initargs initargs
+		       :type type)
+	(make-instance class
+		       :allocation allocation
+		       :initargs initargs
+		       :initform initform
+		       :initfunction initfunction
+		       :type type))))
 
 ;; (defmethod compute-effective-slot-definition ((class standard-class)
 ;; 					      direct-slot-definitions)
