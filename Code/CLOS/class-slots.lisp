@@ -49,117 +49,74 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
 
-(defun combine-slots (&rest to-combine)
-  (remove-duplicates (reduce #'append to-combine) :from-end t))
+;;; Map from names of classes to direct slot descriptors
+(defparameter *direct-slots* (make-hash-table :test #'eq))
 
-;;; Slots for T.
-(defparameter *direct-slots-t*
-  '())
+(defun find-direct-slots (class-name)
+  (gethash class-name *direct-slots*))
 
-(defparameter *effective-slots-t*
-  *direct-slots-t*)
+(defun (setf find-direct-slots) (direct-slots class-name)
+  (setf (gethash class-name *direct-slots*) direct-slots))
 
-;;; Slots for STANDARD-OBJECT.
-(defparameter *direct-slots-standard-object*
+;;; Map from names of classes to effective slot descriptors
+(defparameter *effective-slots* (make-hash-table :test #'eq))
+
+(defun find-effective-slots (class-name)
+  (gethash class-name *effective-slots*))
+
+(defun (setf find-effective-slots) (effective-slots class-name)
+  (setf (gethash class-name *effective-slots*) effective-slots))
+
+(defun define-slots (class-name superclass-names direct-slots)
+  (setf (find-direct-slots class-name) direct-slots)
+  (setf (find-effective-slots class-name)
+	(remove-duplicates
+	 (append (loop for superclass-name in (reverse superclass-names)
+		       append (find-effective-slots superclass-name))
+		 direct-slots)
+	 :from-end t)))
+
+(define-slots 't '() '())
+
+(define-slots 'standard-object '(t)
   '((%version-information :initarg :version-information :initform nil)))
 
-(defparameter *effective-slots-standard-object*
-  (combine-slots *effective-slots-t*
-		 *direct-slots-standard-object*))
-
-;;; Slots for FUNCTION.
-(defparameter *direct-slots-function*
+(define-slots 'function '()
   '())
 
-(defparameter *effective-slots-function*
-  *direct-slots-function*)
-
-;;; Slots for FUNCALLABLE-STANDARD-OBJECT.
-(defparameter *direct-slots-funcallable-standard-object*
+(define-slots 'funcallable-standard-object '()
   ;; FIXME, maybe add something here? 
   '())
 
-(defparameter *effective-slots-funcallable-standard-object*
-  (combine-slots *effective-slots-standard-object*
-		 *effective-slots-function*
-		 *direct-slots-funcallable-standard-object*))
-
-;;; Slots for METAOBJECT.
-(defparameter *direct-slots-metaobject*
+(define-slots 'metaobject '(standard-object)
   '())
 
-(defparameter *effective-slots-metaobject*
-  (combine-slots *effective-slots-standard-object*
-		 *direct-slots-metaobject*))
-
-;;; Slots for GENERIC-FUNCTION.
-(defparameter *direct-slots-generic-function*
+(define-slots 'generic-function '(metaobject funcallable-standard-object)
   ;; FIXME: add more here
   '())
 
-(defparameter *effective-slots-generic-function*
-  (combine-slots *effective-slots-metaobject*
-		 *effective-slots-funcallable-standard-object*
-		 *direct-slots-generic-function*))
-
-;;; Slots for STANDARD-GENERIC-FUNCTION.
-(defparameter *direct-slots-standard-generic-function*
+(define-slots 'standard-generic-function '(generic-function)
   '())
 
-(defparameter *effective-slots-standard-generic-function*
-  (combine-slots *effective-slots-generic-function*
-		 *direct-slots-standard-generic-function*))
-
-;;; Slots for METHOD
-(defparameter *direct-slots-method*
+(define-slots 'method '(metaobject)
   '())
 
-(defparameter *effective-slots-method*
-  (combine-slots *effective-slots-metaobject*
-		 *direct-slots-method*))
-
-;;; Slots for STANDARD-METHOD
-(defparameter *direct-slots-standard-method*
+(define-slots 'standard-method '(method)
   '())
 
-(defparameter *effective-slots-standard-method*
-  (combine-slots *effective-slots-method*
-		 *direct-slots-standard-method*))
-
-;;; Slots for STANDARD-ACCESSOR-METHOD
-(defparameter *direct-slots-standard-accessor-method*
+(define-slots 'standard-accessor-method '(standard-method)
   '())
 
-(defparameter *effective-slots-standard-accessor-method*
-  (combine-slots *effective-slots-standard-method*
-		 *direct-slots-standard-accessor-method*))
-
-;;; Slots for STANDARD-READER-METHOD
-(defparameter *direct-slots-standard-reader-method*
+(define-slots 'standard-reader-method '(standard-accessor-method)
   '())
 
-(defparameter *effective-slots-standard-reader-method*
-  (combine-slots *effective-slots-standard-accessor-method*
-		 *direct-slots-standard-reader-method*))
-
-;;; Slots for STANDARD-WRITER-METHOD
-(defparameter *direct-slots-standard-writer-method*
+(define-slots 'standard-writer-method '(standard-accessor-method)
   '())
 
-(defparameter *effective-slots-standard-writer-method*
-  (combine-slots *effective-slots-standard-accessor-method*
-		 *direct-slots-standard-writer-method*))
-
-;;; Slots for METHOD-COMBINATION
-(defparameter *direct-slots-method-combination*
+(define-slots 'method-combination '(metaobject)
   '())
 
-(defparameter *effective-slots-method-combination*
-  (combine-slots *effective-slots-metaobject*
-		 *direct-slots-method-combination*))
-
-;;; Slots for SLOT-DEFINITION
-(defparameter *direct-slots-slot-definition*
+(define-slots 'slot-definition '(metaobject)
   '((%name :initarg :name :reader slot-definition-name)
     (%allocation :initarg :allocation
 		 :initform :instance
@@ -171,100 +128,44 @@
     (%initform :initarg :initform :reader slot-definition-initform)
     (%initfunction :accessor slot-definition-initfunction)))
 
-(defparameter *effective-slots-slot-definition*
-  (combine-slots *effective-slots-metaobject*
-		 *direct-slots-slot-definition*))
-
-;;; Slots for DIRECT-SLOT-DEFINITION.
-;;;
 ;;; The READERS and WRITERS slots only exist in direct slot
 ;;; definitions, because they are not combined the way other slot
 ;;; properties are when an effective slot definition is computer.
-(defparameter *direct-slots-direct-slot-definition*
+(define-slots 'direct-slot-definition '(slot-definition)
   '((%readers :initarg :readers :reader slot-definition-readers)
     (%writers :initarg :writers :reader slot-definition-writers)))
 
-(defparameter *effective-slots-direct-slot-definition*
-  (combine-slots *effective-slots-slot-definition*
-		 *direct-slots-direct-slot-definition*))
-
-;;; Slots for EFFECTIVE-SLOT-DEFINITION.
-(defparameter *direct-slots-effective-slot-definition*
+(define-slots 'effective-slot-definition '(slot-definition)
   '((%position :initarg :position :reader slot-definition-position)))
 
-(defparameter *effective-slots-effective-slot-definition*
-  (combine-slots *effective-slots-slot-definition*
-		 *direct-slots-effective-slot-definition*))
-
-;;; Slots for STANDARD-SLOT-DEFINITION
-(defparameter *direct-slots-standard-slot-definition*
+(define-slots 'standard-slot-definition '(slot-definition)
   '())
 
-(defparameter *effective-slots-standard-slot-definition*
-  (combine-slots *effective-slots-slot-definition*
-		 *direct-slots-standard-slot-definition*))
-
-;;; Slots for STANDARD-DIRECT-SLOT-DEFINITION
-(defparameter *direct-slots-standard-direct-slot-definition*
+(define-slots 'standard-direct-slot-definition
+  '(slot-definition direct-slot-definition)
   '())
 
-(defparameter *effective-slots-standard-direct-slot-definition*
-  (combine-slots *effective-slots-standard-slot-definition*
-		 *effective-slots-direct-slot-definition*
-		 *direct-slots-standard-direct-slot-definition*))
-
-;;; Slots for STANDARD-EFFECTIVE-SLOT-DEFINITION
-(defparameter *direct-slots-standard-effective-slot-definition*
+(define-slots 'standard-effective-slot-definition
+  '(slot-definition effective-slot-definition)
   '())
 
-(defparameter *effective-slots-standard-effective-slot-definition*
-  (combine-slots *effective-slots-standard-slot-definition*
-		 *effective-slots-effective-slot-definition*
-		 *direct-slots-standard-effective-slot-definition*))
-
-;;; Slots for SPECIALIZER
-(defparameter *direct-slots-specializer*
+(define-slots 'specializer '(metaobject)
   '())
 
-(defparameter *effective-slots-specializer*
-  (combine-slots *effective-slots-metaobject*
-		 *direct-slots-specializer*))
-
-;;; Slots for EQL-SPECIALIZER
-(defparameter *direct-slots-eql-specializer*
+(define-slots 'eql-specializer '(specializer)
   '())
 
-(defparameter *effective-slots-eql-specializer*
-  (combine-slots *effective-slots-specializer*
-		 *direct-slots-eql-specializer*))
-
-;;; Slots for CLASS
-(defparameter *direct-slots-class*
+(define-slots 'class '(specializer)
   '((%unique-number :initform nil :accessor class-unique-number)))
 
-(defparameter *effective-slots-class*
-  (combine-slots *effective-slots-specializer*
-		 *direct-slots-class*))
-
-;;; Slots for BUILT-IN-CLASS
-(defparameter *direct-slots-built-in-class*
+(define-slots 'built-in-class '(class)
   '())
 
-(defparameter *effective-slots-built-in-class*
-  (combine-slots *effective-slots-class*
-		 *direct-slots-built-in-class*))
-
-;;; Slots for FORWARD-REFERENCE-CLASS
-(defparameter *direct-slots-forward-reference-class*
+(define-slots 'forward-reference-class '(class)
   '())
 
-(defparameter *effective-slots-forward-reference-class*
-  (combine-slots *effective-slots-class*
-		 *direct-slots-forward-reference-class*))
-
-;;; Slots for STANDARD-CLASS
-(defparameter *direct-slots-standard-class*
-  '((%name :initarg :name :accessor class-name)
+(define-slots 'standard-class '(class)
+'((%name :initarg :name :accessor class-name)
     (%direct-superclasses :accessor class-direct-superclasses)
     (%direct-slots :accessor class-direct-slots)
     (%precedence-list :initform '() :accessor class-precedence-list)
@@ -274,16 +175,7 @@
     (%direct-subclasses :initform '() :accessor class-direct-subclasses)
     (%direct-methods :initform '() :accessor class-direct-methods)))
 
-(defparameter *effective-slots-standard-class*
-  (combine-slots *effective-slots-class*
-		 *direct-slots-standard-class*))
-
-;; Slots for FUNCALLABLE-STANDARD-CLASS
-(defparameter *direct-slots-funcallable-standard-class*
+(define-slots 'funcallable-standard-class '(class)
   '())
-
-(defparameter *effective-slots-funcallable-standard-class*
-  (combine-slots *effective-slots-class*
-		 *direct-slots-funcallable-standard-class*))
 
 ) ; eval-when
