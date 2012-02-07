@@ -306,7 +306,8 @@
   (let* ((slot-storage (allocate-slot-storage (length slot-descriptions)
 					      *secret-unbound-value*))
 	 (instance (allocate-standard-instance class slot-storage)))
-    (apply #'sd-initialize-instance instance slot-descriptions initargs)))
+    (apply #'sd-initialize-instance instance slot-descriptions initargs)
+    instance))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -351,11 +352,12 @@
 ;;; Functions ensure-class-using-class and ensure-class.  
 
 (defun subclass-of-class-p (class)
-  (or (eq class *class-standard-class*)
-      (let ((class-class (find-class 'class)))
-	(or (eq class class-class)
-	    (some #'subclass-of-class-p
-		  (class-direct-superclasses class))))))
+  (and (not (eq class (find-class 't nil)))
+       (or (eq class *class-standard-class*)
+	   (let ((class-class (find-class 'class)))
+	     (or (eq class class-class)
+		 (some #'subclass-of-class-p
+		       (class-direct-superclasses class)))))))
 
 (defun classp (object)
   (and (standard-instance-p object)
