@@ -169,23 +169,26 @@
 	   :reader slot-definition-type)
     (%initargs :initarg :initargs :reader slot-definition-initargs)
     (%initform :initarg :initform :reader slot-definition-initform)
-    (%initfunction :accessor slot-definition-initfunction)
-    (%readers :initarg :readers :reader slot-definition-readers)
-    (%writers :initarg :writers :reader slot-definition-writers)))
+    (%initfunction :accessor slot-definition-initfunction)))
 
 (defparameter *effective-slots-slot-definition*
   (combine-slots *effective-slots-metaobject*
 		 *direct-slots-slot-definition*))
 
-;;; Slots for DIRECT-SLOT-DEFINITION
+;;; Slots for DIRECT-SLOT-DEFINITION.
+;;;
+;;; The READERS and WRITERS slots only exist in direct slot
+;;; definitions, because they are not combined the way other slot
+;;; properties are when an effective slot definition is computer.
 (defparameter *direct-slots-direct-slot-definition*
-  '())
+  '((%readers :initarg :readers :reader slot-definition-readers)
+    (%writers :initarg :writers :reader slot-definition-writers)))
 
 (defparameter *effective-slots-direct-slot-definition*
   (combine-slots *effective-slots-slot-definition*
 		 *direct-slots-direct-slot-definition*))
 
-;;; Slots for EFFECTIVE-SLOT-DEFINITION
+;;; Slots for EFFECTIVE-SLOT-DEFINITION.
 (defparameter *direct-slots-effective-slot-definition*
   '((%position :initarg :position :reader slot-definition-position)))
 
