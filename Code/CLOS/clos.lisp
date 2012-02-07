@@ -158,6 +158,72 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; We need a way to bootstrap the entire machinery because there are
+;;; numerous circular dependencies.  We break some of these cycles by
+;;; providing a set of functions that work directly on "slot
+;;; descriptors", by which we mean the raw version of the slot
+;;; information of a class as provided to the DEFCLASS macro.  We take
+;;; that information, together with information about superclasses,
+;;; and compute "effective slot descriptor" for each class metaobject.
+;;; Of course, we have to make sure that this information is computed
+;;; in a way consistent with what will eventually be done by the real
+;;; machinery.  Then, we can use this information to allocate
+;;; instances (because we know the length of the list of slot
+;;; descriptors) and initialize instance (we have information about
+;;; initargs and initforms). 
+;;;
+;;; The functions sd-initialize-instance and sd-make-instance are part
+;;; of this bootstrapping machinery.  Using these, we can create
+;;; instances of any metaobject class that can be found using
+;;; FIND-CLASS.  This restriction is minor, because all that has to
+;;; exist is a standard-instance representing the class metaobject
+;;; associated with a name.  We can fill in the details later, as we
+;;; do for STANDARD-CLASS.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Initialize an instance using slot-descriptions.
+
+(defun sd-initialize-instance (instance slot-descriptions &rest initargs)
+  (let ((slots (standard-instance-slots instance)))
+    (loop for (initarg value) on initargs by #'cddr
+	  do (loop for slot-description in slot-descriptions
+		   for i from 0
+		   do (when (and
+			     ;; The slot has an initarg.
+			     (member :initarg slot-description)
+			     ;; It is the right one.
+			     (eq (cadr (member :initarg slot-description))
+				 initarg)
+			     ;; The slot is still unbound.
+			     (eq (slot-contents slots i) *secret-unbound-value*))
+			;; Initialize the slot from the initarg provided.
+			(setf (slot-contents slots i) value))))
+    ;; Initialize from initforms if any
+    (loop for slot-description in slot-descriptions
+	  for i from 0
+	  do (when (and
+		    ;; The slot has an initform.
+		    (member :initform slot-description)
+		    ;; The slot is still unbound.
+		    (eq (slot-contents slots i) *secret-unbound-value*))
+	       ;; Initialize the slot from the initform.
+	       (setf (slot-contents slots i)
+		     (eval (cadr (member :initform slot-description))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Make an instance using slot-descriptions
+
+(defun sd-make-instance (class slot-descriptions &rest initargs)
+  (let* ((slot-storage (allocate-slot-storage (length slot-descriptions)
+					      *secret-unbound-value*))
+	 (instance (allocate-standard-instance class slot-storage)))
+    (apply #'sd-initialize-instance instance slot-descriptions initargs)
+    instance))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Accessing slots using the slot definitions above.
 
 (defun slot-value-using-slots (instance slot-name slots)
@@ -267,48 +333,6 @@
 				    slot-properties))))
     (setf (class-direct-slots class) slots)))
     
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Initialize an instance using slot-descriptions.
-
-(defun sd-initialize-instance (instance slot-descriptions &rest initargs)
-  (let ((slots (standard-instance-slots instance)))
-    (loop for (initarg value) on initargs by #'cddr
-	  do (loop for slot-description in slot-descriptions
-		   for i from 0
-		   do (when (and
-			     ;; The slot has an initarg.
-			     (member :initarg slot-description)
-			     ;; It is the right one.
-			     (eq (cadr (member :initarg slot-description))
-				 initarg)
-			     ;; The slot is still unbound.
-			     (eq (slot-contents slots i) *secret-unbound-value*))
-			;; Initialize the slot from the initarg provided.
-			(setf (slot-contents slots i) value))))
-    ;; Initialize from initforms if any
-    (loop for slot-description in slot-descriptions
-	  for i from 0
-	  do (when (and
-		    ;; The slot has an initform.
-		    (member :initform slot-description)
-		    ;; The slot is still unbound.
-		    (eq (slot-contents slots i) *secret-unbound-value*))
-	       ;; Initialize the slot from the initform.
-	       (setf (slot-contents slots i)
-		     (eval (cadr (member :initform slot-description))))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Make an instance using slot-descriptions
-
-(defun sd-make-instance (class slot-descriptions &rest initargs)
-  (let* ((slot-storage (allocate-slot-storage (length slot-descriptions)
-					      *secret-unbound-value*))
-	 (instance (allocate-standard-instance class slot-storage)))
-    (apply #'sd-initialize-instance instance slot-descriptions initargs)
-    instance))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function make-instance.  
