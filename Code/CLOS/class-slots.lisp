@@ -96,14 +96,16 @@
     (%lambda-list :initarg :lambda-list :accessor generic-function-lambda-list)))
 
 (define-slots 'standard-generic-function '(generic-function)
-  '((%argument-precedence-order
+  '(;; FIXME: use the reader DOCUMENTATION once it exists.
+    (%documentaton :initarg :documentation)
+     (%argument-precedence-order
      :initarg :argument-precedence-order
      :reader generic-function-argument-precedence-order)
     (%declarations :initarg :declarations
      :reader generic-function-declarations)
     (%method-class :initarg :method-class
 		   :reader generic-function-method-class)
-    (%method-combination :initarg :method-class
+    (%method-combination :initarg :method-combination
 			 :reader generic-function-method-combination)
     (%methods :initform '() :accessor generic-function-methods)))
 
