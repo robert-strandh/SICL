@@ -168,7 +168,7 @@
   '())
 
 (define-slots 'eql-specializer '(specializer)
-  '())
+  '((%object :initarg :object :reader eql-specializer-object)))
 
 (define-slots 'class '(specializer)
   '((%unique-number :initform nil :accessor class-unique-number)
