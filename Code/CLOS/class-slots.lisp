@@ -92,20 +92,35 @@
   '())
 
 (define-slots 'generic-function '(metaobject funcallable-standard-object)
-  ;; FIXME: add more here
-  '())
+  '((%name :initarg :name :accessor generic-function-name)
+    (%lambda-list :initarg :lambda-list :accessor generic-function-lambda-list)))
 
 (define-slots 'standard-generic-function '(generic-function)
-  '())
+  '((%argument-precedence-order
+     :initarg :argument-precedence-order
+     :reader generic-function-argument-precedence-order)
+    (%declarations :initarg :declarations
+     :reader generic-function-declarations)
+    (%method-class :initarg :method-class
+		   :reader generic-function-method-class)
+    (%method-combination :initarg :method-class
+			 :reader generic-function-method-combination)
+    (%methods :initform '() :accessor generic-function-methods)))
 
 (define-slots 'method '(metaobject)
   '())
 
 (define-slots 'standard-method '(method)
-  '())
+  '((%function :initarg :function :reader method-function)
+    (%generic-function :initarg :generic-function
+		       :reader method-generic-function)
+    (%lambda-list :initarg :lambda-list :accessor method-lambda-list)
+    (%specializers :initarg :specializers :accessor method-specializers)
+    (%qualifiers :initarg :qualifiers :accessor method-qualifiers)))
 
 (define-slots 'standard-accessor-method '(standard-method)
-  '())
+  '((%slot-definition :initarg :slot-definition
+		      :reader accessor-method-slot-definition)))
 
 (define-slots 'standard-reader-method '(standard-accessor-method)
   '())
@@ -158,7 +173,8 @@
 (define-slots 'class '(specializer)
   '((%unique-number :initform nil :accessor class-unique-number)
     (%name :initarg :name :accessor class-name)
-    (%direct-superclasses :accessor class-direct-superclasses)
+    (%direct-superclasses :initarg :direct-superclasses
+			  :accessor class-direct-superclasses)
     (%precedence-list :initform '() :accessor class-precedence-list)
     (%direct-subclasses :initform '() :accessor class-direct-subclasses)
     (%direct-methods :initform '() :accessor class-direct-methods)))
