@@ -43,6 +43,14 @@
 ;; 		 :datum new-class)
 ;; 	  (setf (gethash name *classes*) new-class))))
 
+;;; This function is only used in the bootstrap code to 
+;;; find the name of a class metaobject
+(defun find-class-reverse (class)
+  (maphash (lambda (name class-metaobject)
+	     (when (eq class-metaobject class)
+	       (return-from find-class-reverse name)))
+	   *classes*)
+  (error "no such class"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -184,6 +192,28 @@
 ;;;
 ;;; Initialize an instance using slot-descriptions.
 
+;;; Provide an :after method on initialize-instance to be used
+;;; when class meta-objects are instantiated.  As the AMOP says,
+;;; we have to provide appropriate default values for the superclasses
+;;; and we have to link the superclasses to this new class meta-object.
+;;; We also have to create slot meta-objects from the slot property
+;;; list provided to initialize-instance.
+
+;;; We implement this functionality as a function at first, because
+;;; we don't have any generic functions to begin with.  Later, 
+;;; we have the real :after method call this function to accomplish
+;;; its work. 
+(defun sd-initialize-instance-after-standard-class
+    (instance &key name direct-superclasses direct-slots &allow-other-keys)
+  (setf (class-name instance) name)
+  (let ((superclasses (or direct-superclasses
+			  (list (find-class 'standard-object)))))
+    (setf (class-direct-superclasses instance) superclasses))
+  (let ((slots (loop for slot-properties in direct-slots
+		     collect (apply #'make-direct-slot-definition
+				    slot-properties))))
+    (setf (class-direct-slots instance) slots)))
+
 (defun sd-initialize-instance (instance slot-descriptions &rest initargs)
   (let ((slots (standard-instance-slots instance)))
     (loop for (initarg value) on initargs by #'cddr
@@ -209,7 +239,12 @@
 		    (eq (slot-contents slots i) *secret-unbound-value*))
 	       ;; Initialize the slot from the initform.
 	       (setf (slot-contents slots i)
-		     (eval (cadr (member :initform slot-description))))))))
+		     (eval (cadr (member :initform slot-description)))))))
+  ;; Call after methods
+  (when (eq (standard-instance-class instance)
+	    (find-class 'standard-class))
+    (apply #'sd-initialize-instance-after-standard-class
+	   instance initargs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -348,26 +383,13 @@
 		      &rest
 			initargs
 		      &key
-			name
-			direct-superclasses
-			direct-slots
 		      &allow-other-keys)
-  (when (symbolp class)
-    (setf class (find-class class)))
-  (if (eq class *class-standard-class*)
-      (let* ((defs (find-effective-slots 'standard-class))
-	     (slot-storage (allocate-slot-storage (length defs)
-						  *secret-unbound-value*))
-	     (instance (allocate-standard-instance *class-standard-class*
-						   slot-storage)))
-	(loop for (initarg value) on initargs by #'cddr
-	      do (setf (slot-value-using-slot-initarg instance initarg defs)
-		       value))
-	(initialize-instance-after-standard-class
-	 instance name direct-superclasses direct-slots)
-	(initialize-unbound-slots instance defs)
-	instance)
-      (error "can't make instances of other classes yet")))
+  (let ((class-name (if (symbolp class) class (find-class-reverse class)))
+	(class-metaobject (if (symbolp class) (find-class class) class)))
+    (apply #'sd-make-instance
+	   class-metaobject
+	   (find-effective-slots class-name)
+	   initargs)))
 
 ;;; REMEMBER: Redefine make-instance as a generic function. +
 
