@@ -156,7 +156,12 @@
   '())
 
 (define-slots 'class '(specializer)
-  '((%unique-number :initform nil :accessor class-unique-number)))
+  '((%unique-number :initform nil :accessor class-unique-number)
+    (%name :initarg :name :accessor class-name)
+    (%direct-superclasses :accessor class-direct-superclasses)
+    (%precedence-list :initform '() :accessor class-precedence-list)
+    (%direct-subclasses :initform '() :accessor class-direct-subclasses)
+    (%direct-methods :initform '() :accessor class-direct-methods)))
 
 (define-slots 'built-in-class '(class)
   '())
@@ -165,15 +170,10 @@
   '())
 
 (define-slots 'standard-class '(class)
-'((%name :initarg :name :accessor class-name)
-    (%direct-superclasses :accessor class-direct-superclasses)
-    (%direct-slots :accessor class-direct-slots)
-    (%precedence-list :initform '() :accessor class-precedence-list)
+  '((%direct-slots :accessor class-direct-slots)
     ;; For some reason, this accessor is not called
     ;; class-effective-slots.
-    (%effective-slots :initform '() :accessor class-slots)
-    (%direct-subclasses :initform '() :accessor class-direct-subclasses)
-    (%direct-methods :initform '() :accessor class-direct-methods)))
+    (%effective-slots :initform '() :accessor class-slots)))
 
 (define-slots 'funcallable-standard-class '(class)
   '())
