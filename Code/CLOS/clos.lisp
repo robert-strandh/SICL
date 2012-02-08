@@ -259,44 +259,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Accessing slots using the slot definitions above.
-
-(defun slot-value-using-slots (instance slot-name slots)
-  (let ((pos (position slot-name slots :key #'car)))
-    (slot-contents (standard-instance-slots instance) pos)))
-
-(defun (setf slot-value-using-slots) (new-value instance slot-name slots)
-  (let ((pos (position slot-name slots :key #'car)))
-    (setf (slot-contents (standard-instance-slots instance) pos) new-value)))
-
-(defun (setf slot-value-using-slot-initarg) (new-value instance initarg slots)
-  (let ((pos (position initarg slots
-		       :key (lambda (slot) (cadr (member :initarg slot))))))
-    (unless (null pos)
-      (setf (slot-contents (standard-instance-slots instance) pos) new-value))))
-
-;;; For each unbound slot, evaluate its initform to obtain a value to
-;;; initialize it with.  We could probably avois using EVAL here
-;;; because, all of the initforms are constant forms anyway, but we do
-;;; not want to take the risk.
-(defun initialize-unbound-slots (instance slots)
-  (loop for slot in slots
-	do (when (eq (slot-value-using-slots instance (car slot) slots)
-		     *secret-unbound-value*)
-	     (setf (slot-value-using-slots instance (car slot) slots)
-		   (eval (cadr (member :initform slot)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Allocating direct slot definitions
-;;;
-;;; To create any class metaobject whatsoever, we need to fill its
-;;; DIRECT-SLOTS slot with instances of
-;;; STANDARD-DIRECT-SLOT-DEFININTION.  But
-;;; STANDARD-DIRECT-SLOT-DEFININTION is itself a class metaobject so
-;;; we have a circular dependency.  We fix this problem by allocating
-;;; direct slot definitions "manually", i.e., without the help of
-;;; MAKE-INSTANCE and the machinery that comes with it.
 
 (defparameter *class-standard-direct-slot-definition*
   (let ((class (allocate-standard-instance nil nil)))
