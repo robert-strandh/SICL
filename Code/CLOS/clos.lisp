@@ -346,30 +346,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Provide an :after method on initialize-instance to be used
-;;; when class meta-objects are instantiated.  As the AMOP says,
-;;; we have to provide appropriate default values for the superclasses
-;;; and we have to link the superclasses to this new class meta-object.
-;;; We also have to create slot meta-objects from the slot property
-;;; list provided to initialize-instance.
-
-;;; We implement this functionality as a function at first, because
-;;; we don't have any generic functions to begin with.  Later, 
-;;; we have the real :after method call this function to accomplish
-;;; its work. 
-(defun initialize-instance-after-standard-class
-    (class name direct-superclasses direct-slots)
-  (setf (class-name class) name)
-  (let ((superclasses (or direct-superclasses
-			  (list (find-class 'standard-object)))))
-    (setf (class-direct-superclasses class) superclasses))
-  (let ((slots (loop for slot-properties in direct-slots
-		     collect (apply #'make-direct-slot-definition
-				    slot-properties))))
-    (setf (class-direct-slots class) slots)))
-    
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function make-instance.  
 ;;;
 ;;; For now, we only need MAKE-INSTANCE to make instances of
