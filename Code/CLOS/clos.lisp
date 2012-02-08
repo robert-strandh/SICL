@@ -745,6 +745,23 @@
 (defclass built-in-class (class)
   #.(find-direct-slots 'built-in-class))
 
+;;; Patch the class T just like we patched the class
+;;; STANDARD-EFFECTIVE-SLOT-DEFINITION above.
+(defclass fake ()
+  ()
+  (:metaclass built-in-class))
+
+(let ((to-patch (find-class 't))
+      (fake (find-class 'fake)))
+  (setf (standard-instance-class to-patch)
+	(standard-instance-class fake))
+  (setf (standard-instance-slots to-patch)
+	(standard-instance-slots fake))
+  (setf (class-name fake) 't)
+  (setf (find-class 'fake) nil))
+
+;;; REMEMBER: Patch class T. -
+
 (defclass forward-reference-class (class)
   #.(find-direct-slots 'forward-reference-class))
 
