@@ -307,20 +307,10 @@
 
 (defun make-direct-slot-definition (&rest initargs
 				    &key &allow-other-keys)
-  (let* ((defs (find-effective-slots 'standard-direct-slot-definition))
-	 (slot-descriptions defs)
-	 (slot-storage (allocate-slot-storage (length slot-descriptions)
-					      *secret-unbound-value*))
-	 (instance (allocate-standard-instance
-		    *class-standard-direct-slot-definition*
-		    slot-storage)))
-    (loop for (initarg value) on initargs by #'cddr
-	  do (setf (slot-value-using-slot-initarg instance initarg defs)
-		   value))
-    (initialize-unbound-slots instance defs)
-    instance))
+  (apply #'make-instance
+	 'standard-direct-slot-definition
+	 initargs))
 
-;;; REMEMBER: Change make-direct-slot-definition to use make-instance. +
 ;;; REMEMBER: Patch version information of slot-definition-instances. +
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -354,7 +344,6 @@
 ;;; temporarily define it as an ordinary function, and check that it
 ;;; is only used to define instances of STANDARD-CLASS.
 
-;;; FIXME: this is pretty much identical to make-direct-slot-definition.
 (defun make-instance (class
 		      &rest
 			initargs
