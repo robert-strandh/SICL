@@ -773,18 +773,20 @@
 (defclass funcallable-standard-class (class)
   #.(find-direct-slots 'funcallable-standard-class))
 
-;; (defclass function (t)
-;;   ()
-;;   (:metaclass built-in-class))
+(defclass function (t)
+  ()
+  (:metaclass built-in-class))
 
-;; (defclass funcallable-standard-object (standard-object function)
-;;   #.(find-direct-slots 'funcallable-standard-object))
+(defclass funcallable-standard-object (standard-object function)
+  #.(find-direct-slots 'funcallable-standard-object))
 
-;; (defclass generic-function (metaobject funcallable-standard-objet)
-;;   (:metaclass funcallable-standard-class))
+(defclass generic-function (metaobject funcallable-standard-objet)
+  #.(find-direct-slots 'generic-function)
+  (:metaclass funcallable-standard-class))
 
-;; (defclass standard-generic-function (generic-function)
-;;   (:metaclass funcallable-standard-class))
+(defclass standard-generic-function (generic-function)
+  #.(find-direct-slots 'standard-generic-function)
+  (:metaclass funcallable-standard-class))
 
 ;;; Now we add the :after method on initialize-instance for
 ;;; standard-class.  It just calls the function we defined earlier.
