@@ -1074,6 +1074,9 @@
 		 (setf all-supers (remove candidate all-supers))
 		 (setf relation (remove candidate relation :key #'car)))))
     (reverse reverse-result)))
+
+(defun compute-class-precedence-list (class)
+  (compute-class-precedence-list-class class))
   
 ;; (defgeneric compute-class-prececence-list (class))
 
@@ -1131,7 +1134,7 @@
 
 ;;; Implement the behavior of compute-effective-slot-definition
 ;;; for standard-class and funcallable-standard-class.
-(defun compute-effective-slot-definition-aux (class direct-slot-definitions)
+(defun compute-effective-slot-definition-aux (class name direct-slot-definitions)
   (let (allocation initargs initform initfunction type)
     (setf allocation
 	  (slot-definition-allocation (first direct-slot-definitions)))
@@ -1145,17 +1148,23 @@
 	      initfunction (slot-definition-initfunction first-init))))
     (setf type
 	  `(and ,@(mapcar #'slot-definition-type direct-slot-definitions)))
-    (if (null initfunction)
-	(make-instance class
-		       :allocation allocation
-		       :initargs initargs
-		       :type type)
-	(make-instance class
-		       :allocation allocation
-		       :initargs initargs
-		       :initform initform
-		       :initfunction initfunction
-		       :type type))))
+    (let ((slot-definition-class (effective-slot-definition-class class)))
+      (if (null initfunction)
+	  (make-instance slot-definition-class
+			 :name name
+			 :allocation allocation
+			 :initargs initargs
+			 :type type)
+	  (make-instance slot-definition-class
+			 :name name
+			 :allocation allocation
+			 :initargs initargs
+			 :initform initform
+			 :initfunction initfunction
+			 :type type)))))
+
+(defun compute-effective-slot-definition (class name direct-slot-definitions)
+  (compute-effective-slot-definition-aux class name direct-slot-definitions))
 
 ;; (defmethod compute-effective-slot-definition ((class standard-class)
 ;; 					      direct-slot-definitions)
@@ -1169,7 +1178,25 @@
 ;;    (effective-slot-definition-class class)
 ;;    direct-slot-definitions))
 
+(defun compute-slots (class)
+  (let* ((superclasses (remove (find-class 't) (class-precedence-list class)))
+	 (direct-slots (mapcar #'class-direct-slots superclasses))
+	 (concatenated (reduce #'append direct-slots))
+	 (names (mapcar #'slot-definition-name concatenated))
+	 (unique (remove-duplicates (reverse names) :from-end t)))
+    (loop for name in unique
+	  collect (compute-effective-slot-definition
+		   class
+		   name
+		   (remove name concatenated
+			   :key #'slot-definition-name
+			   :test-not #'eql)))))
 
+(defun finalize-inheritance (class)
+  (setf (class-precedence-list class)
+	(compute-class-precedence-list class))
+  (setf (class-slots class)
+	(compute-slots class)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
