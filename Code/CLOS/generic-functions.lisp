@@ -10,6 +10,7 @@
   (or (gethash name *generic-functions*)
       (let ((generic-function (apply #'make-instance
 				     'standard-generic-function
+				     :name name
 				     keys)))
 	(setf (gethash name *generic-functions*)
 	      generic-function)
@@ -19,7 +20,7 @@
 (defmacro defgeneric (name lambda-list)
   `(ensure-generic-function
     ',name
-    :lambda-list ,lambda-list))
+    :lambda-list ',lambda-list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
