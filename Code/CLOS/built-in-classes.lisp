@@ -66,14 +66,6 @@
   ()
   (:metaclass built-in-class))
 
-(defclass simple-array (array)
-  ()
-  (:metaclass built-in-class))
-
-(defclass simple-vector (vector simple-array)
-  ()
-  (:metaclass built-in-class))
-
 (defclass bit-vector (vector)
   ()
   (:metaclass built-in-class))
@@ -123,3 +115,22 @@
   (:metaclass built-in-class))
 
 ;;; FIXME: there are some more, but this will do for now.
+
+(defun built-in-class-of (object)
+  (find-class 
+   (cond ((integerp object) 'integer)
+	 ((rationalp object) 'ratio)
+	 ((complexp object) 'complex)
+	 ((floatp object) 'float)
+	 ((characterp object) 'character)
+	 ((null object) 'null)
+	 ((symbolp object) 'symbol)
+	 ((consp object) 'cons)
+	 ((stringp object) 'string)
+	 ((bit-vector-p object) 'bit-vector)
+	 ((vectorp object) 'vector)
+	 ((packagep object) 'package)
+	 ((hash-table-p object) 'hash-table)
+	 ((streamp object) 'stream) ; can't do better
+	 (t nil))))
+
