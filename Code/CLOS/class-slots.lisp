@@ -115,7 +115,7 @@
 (define-slots 'standard-method '(method)
   '((%function :initarg :function :reader method-function)
     (%generic-function :initarg :generic-function
-		       :reader method-generic-function)
+		       :accessor method-generic-function)
     (%lambda-list :initarg :lambda-list :accessor method-lambda-list)
     (%specializers :initarg :specializers :accessor method-specializers)
     (%qualifiers :initarg :qualifiers :accessor method-qualifiers)))
