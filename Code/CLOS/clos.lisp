@@ -1182,8 +1182,10 @@
   (let* ((superclasses (remove (find-class 't) (class-precedence-list class)))
 	 (direct-slots (mapcar #'class-direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
-	 (names (mapcar #'slot-definition-name concatenated))
-	 (unique (remove-duplicates (reverse names) :from-end t)))
+	 (reverse-slots (reverse direct-slots))
+	 (reverse-concatenated (reduce #'append reverse-slots))
+	 (names (mapcar #'slot-definition-name reverse-concatenated))
+	 (unique (remove-duplicates names :from-end t)))
     (loop for name in unique
 	  collect (compute-effective-slot-definition
 		   class
@@ -1193,10 +1195,23 @@
 			   :test-not #'eql)))))
 
 (defun finalize-inheritance (class)
-  (setf (class-precedence-list class)
-	(compute-class-precedence-list class))
-  (setf (class-slots class)
-	(compute-slots class)))
+  (setf (class-precedence-list class) (compute-class-precedence-list class))
+  (setf (class-slots class) (compute-slots class))
+  ;; If the class was one of the ones we computed "by hand" in the
+  ;; bootstrap stage, check that we computed the same slots in the
+  ;; same order this time.
+  (let ((class-name (find-class-reverse class)))
+    (unless (null class-name)
+      (let ((slots (find-effective-slots class-name)))
+	(unless (null slots)
+	  (assert (= (length slots) (length (class-slots class))))
+	  (mapc (lambda (x y)
+		  (unless (eql (car x) (slot-definition-name y))
+		    (error "slot names ~s and ~s do not match"
+			   (car x) (slot-definition-name y))))
+		slots
+		(class-slots class))))))
+  (setf (class-finalized-p class) t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
