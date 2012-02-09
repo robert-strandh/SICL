@@ -794,7 +794,8 @@
   ()
   (:metaclass built-in-class))
 
-(defclass funcallable-standard-object (standard-object function)
+;;; FIXME: this should inherit from FUNCTION as well.
+(defclass funcallable-standard-object (standard-object)
   #.(find-direct-slots 'funcallable-standard-object))
 
 (defclass generic-function (metaobject funcallable-standard-object)
