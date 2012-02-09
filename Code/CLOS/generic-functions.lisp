@@ -12,6 +12,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; CLASS-OF.
+
+(defun class-of (object)
+  (if (standard-instance-p object)
+      (standard-instance-class object)
+      (built-in-class-of object)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; ENSURE-GENERIC-FUNCTION and DEFGENERIC.
 
 (defun ensure-generic-function (name &rest keys)
