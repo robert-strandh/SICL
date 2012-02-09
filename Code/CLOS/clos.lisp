@@ -828,7 +828,7 @@
   (cond (;; Temporary solution until we can actually print class T.
 	 (eq object (find-class t))
 	 (format stream
-		 "<SICL-BUILTIN-CLASS SICL-T>"))
+		 "<SICL-BUILT-IN-CLASS SICL-T>"))
 	((classp object)
 	 (format stream
 		 "<SICL-~s SICL-~s>"
@@ -874,12 +874,6 @@
 
 (cl:defmethod cl:describe-object ((object standard-instance) stream)
   (describe-object object stream))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Builtin classes
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
