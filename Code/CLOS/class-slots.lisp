@@ -98,11 +98,11 @@
 (define-slots 'standard-generic-function '(generic-function)
   '(;; FIXME: use the reader DOCUMENTATION once it exists.
     (%documentaton :initarg :documentation)
-     (%argument-precedence-order
+    (%argument-precedence-order
      :initarg :argument-precedence-order
      :reader generic-function-argument-precedence-order)
     (%declarations :initarg :declarations
-     :reader generic-function-declarations)
+		   :reader generic-function-declarations)
     (%method-class :initarg :method-class
 		   :reader generic-function-method-class)
     (%method-combination :initarg :method-combination
@@ -195,6 +195,9 @@
     (%effective-slots :initform '() :accessor class-slots)))
 
 (define-slots 'funcallable-standard-class '(class)
-  '())
+  '((%direct-slots :accessor class-direct-slots)
+    ;; For some reason, this accessor is not called
+    ;; class-effective-slots.
+    (%effective-slots :initform '() :accessor class-slots)))
 
 ) ; eval-when
