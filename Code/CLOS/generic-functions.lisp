@@ -2,6 +2,14 @@
 
 (defparameter *generic-functions* (make-hash-table :test #'eq))
 
+(defparameter *call-next-method*
+  (lambda (&rest args)
+    (declare (ignore args))
+    (error "not next method")))
+
+(defparameter *next-method-p*
+  (lambda () nil))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; ENSURE-GENERIC-FUNCTION and DEFGENERIC.
@@ -51,7 +59,8 @@
 			(if (consp parameter)
 			    (cadr parameter)
 			    t))
-		      (subseq lambda-list 0 pos))))))
+		      (subseq lambda-list 0 pos))
+	      args))))
 
 (defun add-method (generic-function method)
   (setf (method-generic-function method) generic-function)
@@ -77,7 +86,7 @@
       (ensure-generic-function ',name)
       :lambda-list ',lambda-list
       :qualifiers ',qualifiers
-      :specializers ,(canonicalize-specializers specializers)
+      :specializers ',(canonicalize-specializers specializers)
       :body ',body
       :function (lambda ,lambda-list
 		  (flet ((call-next-method (&rest args)
