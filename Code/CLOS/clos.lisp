@@ -797,7 +797,7 @@
 (defclass funcallable-standard-object (standard-object function)
   #.(find-direct-slots 'funcallable-standard-object))
 
-(defclass generic-function (metaobject funcallable-standard-objet)
+(defclass generic-function (metaobject funcallable-standard-object)
   #.(find-direct-slots 'generic-function)
   (:metaclass funcallable-standard-class))
 
