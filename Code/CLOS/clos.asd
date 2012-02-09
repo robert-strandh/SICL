@@ -23,6 +23,10 @@
 		 "utilities"
 		 "conditions"
 		 "standard-instance"))
+   (:file "built-in-classes"
+    :depends-on ("packages"
+		 "utilities"
+		 "clos"))
    (:file "generic-functions"
     :depends-on ("packages"
 		 "utilities"
