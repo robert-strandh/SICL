@@ -179,7 +179,8 @@
 			  :accessor class-direct-superclasses)
     (%precedence-list :initform '() :accessor class-precedence-list)
     (%direct-subclasses :initform '() :accessor class-direct-subclasses)
-    (%direct-methods :initform '() :accessor class-direct-methods)))
+    (%direct-methods :initform '() :accessor class-direct-methods)
+    (%finalized-p :initform nil :accessor class-finalized-p)))
 
 (define-slots 'built-in-class '(class)
   '())
