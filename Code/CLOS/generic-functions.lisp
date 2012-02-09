@@ -99,7 +99,7 @@
       :body ',body
       :function (lambda ,lambda-list
 		  (flet ((call-next-method (&rest args)
-			   (funcall *call-next-method* args))
+			   (apply *call-next-method* args))
 			 (next-method-p ()
 			   (funcall *next-method-p*)))
 		    ,@body)))))
@@ -176,3 +176,48 @@
 			(generic-function-methods generic-function)))
 	(lambda (method1 method2)
 	  (method-more-specific-p method1 method2 classes-of-arguments))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; COMPUTE-EFFECTIVE-METHOD-FUNCTION.
+
+(defun primary-method-p (method)
+  (null (method-qualifiers method)))
+
+(defun after-method-p (method)
+  (equal (method-qualifiers method) '(:after)))
+
+(defun before-method-p (method)
+  (equal (method-qualifiers method) '(:before)))
+
+(defun wrap-methods (methods)
+  (if (null (cdr methods))
+      `(let ((*call-next-method*
+	       (lambda (&rest new-args)
+		 (declare (ignore new-args))
+		 (error "no next method")))
+	     (*next-method-p* (lambda () nil))
+	     (args (or new-args args)))
+	 (format *trace-output* "args: ~s~%" args)
+	 (apply ,(method-function (car methods)) args))
+      `(let ((*call-next-method*
+	       (lambda (&rest new-args)
+		 ,(wrap-methods (cdr methods))))
+	     (*next-method-p* (lambda () t))
+	     (args (or new-args args)))
+	 (format *trace-output* "args: ~s~%" args)
+	 (apply ,(method-function (car methods)) args))))
+
+(defun compute-effective-method-function (methods)
+  (let ((primary-methods (remove-if-not #'primary-method-p methods))
+	(before-methods (remove-if-not #'before-method-p methods))
+	(after-methods (remove-if-not  #'after-method-p methods)))
+    `(lambda (args)
+       ,@(loop for method in before-methods
+	       collect `(apply ,(method-function method) args))
+       (multiple-value-prog1
+	   (let ((new-args '()))
+	     ,(wrap-methods primary-methods))
+	 ,@(loop for method in (reverse after-methods)
+		 collect `(apply ,(method-function method) args))))))
+	     
