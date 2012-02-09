@@ -22,5 +22,11 @@
     :depends-on ("packages"
 		 "utilities"
 		 "conditions"
-		 "standard-instance"))))
+		 "standard-instance"))
+   (:file "generic-functions"
+    :depends-on ("packages"
+		 "utilities"
+		 "conditions"
+		 "standard-instance"
+		 "clos"))))
 	  
