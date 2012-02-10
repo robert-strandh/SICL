@@ -17,5 +17,6 @@
    #:make-instance
    #:generic-function #:standard-generic-function
    #:defgeneric #:ensure-generic-function
+   #:slot-value #:slot-missing #:slot-boundp #:slot-makunbound
    #:print-object #:describe-object)
   (:use #:common-lisp))
