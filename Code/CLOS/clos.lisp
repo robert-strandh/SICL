@@ -54,6 +54,67 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; SLOT-MISSING.
+
+;;; We do not have generic functions yet ....
+
+;;; Default method for SLOT-MISSING (specializer is class T). 
+(defun s-m-primary-t (object slot-name operation)
+  ;; FIXME: signal a more specific condition
+  (error "The slot ~s is missing in the object ~s when ~s was attempted"
+	 slot-name object operation))
+
+(defun slot-missing (object slot-name operation)
+  (s-m-primary-t object slot-name operation))
+
+;;; REMEMBER: Redefine SLOT-MISSING as a generic function. +
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SLOT-VALUE and SLOT-VALUE-USING-CLASS.
+;;;
+;;; The specification says that the third argument of
+;;; SLOT-VALUE-USING-CLASS is an EFFECTIVE-SLOT-DEFINITION metaobject,
+;;; but the Closette implementation and the rest of the AMOP book
+;;; claims that it is a slot name.  We go with the definition of the
+;;; specification.
+
+;;; SLOT-VALUE-USING-CLASS is a generic function, but we don't have
+;;; generic functions yet.   FIXME: say more...
+(defun slot-value-using-class (class object slot)
+  ;; FIXME: fill it in.
+  (error "can't do this yet"))
+
+;;; What SLOT-VALUE does when the object is an instance of
+;;; STANDARD-CLASS.  We cheat by using slot descriptors
+(defun s-v-standard-class (object slot-name)
+  (let* ((slot-descriptors (find-effective-slots 'standard-class))
+	 ;; We know there are no slots with allocation :class, so
+	 ;; the method used here is safe.
+	 (slot-position (position slot-name slot-descriptors :key #'car))
+	 (slot-storage (standard-instance-slots object)))
+    (when (null slot-position)
+      (slot-missing object slot-name 'slot-value))
+    (slot-contents slot-storage slot-position)))
+
+;;; We cheat and hope that nobody will discover that SLOT-VALUE in
+;;; some cases does not really call SLOT-VALUE-USING-CLASS, say by
+;;; tracing the latter or something like that. 
+(defun slot-value (object slot-name)
+  (if (standard-instance-p object)
+      (let ((class (standard-instance-class object)))
+	(if (eq class (find-class 'standard-class))
+	    (s-v-standard-class object slot-name)
+	    (let* ((slot-definitions (class-slots class))
+		   (slot-definition (find slot-name slot-definitions
+					  :key #'slot-definition-name)))
+	      (when (null slot-definition)
+		(slot-missing object slot-name 'slot-value))
+	      (slot-value-using-class class object slot-definition))))
+      (slot-missing object slot-name 'slot-value)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generating temporary accessors for our metaobjects. 
 ;;;
 ;;; We take our slot descriptors and generate really stupid and slow
