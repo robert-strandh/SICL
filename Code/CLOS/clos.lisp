@@ -71,22 +71,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; SLOT-VALUE and SLOT-VALUE-USING-CLASS.
+;;; SLOT-VALUE-USING-CLASS and (SETF SLOT-VALUE-USING-CLASS).
 ;;;
-;;; The specification says that the third argument of
-;;; SLOT-VALUE-USING-CLASS is an EFFECTIVE-SLOT-DEFINITION metaobject,
-;;; but the Closette implementation and the rest of the AMOP book
-;;; claims that it is a slot name.  We go with the definition of the
-;;; specification.
+;;; These functions are generic functions, but we don't have generic
+;;; functions yet.  FIXME: say more...
 
-;;; SLOT-VALUE-USING-CLASS is a generic function, but we don't have
-;;; generic functions yet.   FIXME: say more...
 (defun slot-value-using-class (class object slot)
   ;; FIXME: fill it in.
   (error "can't do this yet"))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SLOT-VALUE and (SETF SLOT-VALUE).
+;;;
+;;; The specification says that the third argument of
+;;; SLOT-VALUE-USING-CLASS is an EFFECTIVE-SLOT-DEFINITION metaobject,
+;;; but the Closette implementation and the rest of the AMOP book
+;;; claim that it is a slot name.  We go with the definition of the
+;;; specification.
+
+;;; FIXME: it looks like we could do some code factoring here. 
+
 ;;; What SLOT-VALUE does when the object is an instance of
-;;; STANDARD-CLASS.  We cheat by using slot descriptors
+;;; STANDARD-CLASS.  We cheat by using slot descriptors.
 (defun s-v-standard-class (object slot-name)
   (let* ((slot-descriptors (find-effective-slots 'standard-class))
 	 ;; We know there are no slots with allocation :class, so
@@ -101,6 +108,35 @@
 ;;; some cases does not really call SLOT-VALUE-USING-CLASS, say by
 ;;; tracing the latter or something like that. 
 (defun slot-value (object slot-name)
+  (if (standard-instance-p object)
+      (let ((class (standard-instance-class object)))
+	(if (eq class (find-class 'standard-class))
+	    (s-v-standard-class object slot-name)
+	    (let* ((slot-definitions (class-slots class))
+		   (slot-definition (find slot-name slot-definitions
+					  :key #'slot-definition-name)))
+	      (when (null slot-definition)
+		(slot-missing object slot-name 'slot-value))
+	      (slot-value-using-class class object slot-definition))))
+      (slot-missing object slot-name 'slot-value)))
+
+;;; What (SETF SLOT-VALUE) does when the object is an instance of
+;;; STANDARD-CLASS.  We cheat by using slot descriptors.
+(defun (setf s-v-standard-class) (new-value object slot-name)
+  (let* ((slot-descriptors (find-effective-slots 'standard-class))
+	 ;; We know there are no slots with allocation :class, so
+	 ;; the method used here is safe.
+	 (slot-position (position slot-name slot-descriptors :key #'car))
+	 (slot-storage (standard-instance-slots object)))
+    (when (null slot-position)
+      (slot-missing object slot-name 'setf))
+    ;; FIXME: should we check the type of new-value here?
+    (setf (slot-contents slot-storage slot-position) new-value)))
+
+;;; We cheat and hope that nobody will discover that (SETF SLOT-VALUE)
+;;; in some cases does not really call (SETF SLOT-VALUE-USING-CLASS),
+;;; say by tracing the latter or something like that.
+(defun (setf slot-value) (object slot-name)
   (if (standard-instance-p object)
       (let ((class (standard-instance-class object)))
 	(if (eq class (find-class 'standard-class))
