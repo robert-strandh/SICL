@@ -122,35 +122,27 @@
 		 (slot-value-using-class class object slot-definition)))))
       (slot-missing object slot-name 'slot-value)))
 
-;;; What (SETF SLOT-VALUE) does when the object is an instance of
-;;; STANDARD-CLASS.  We cheat by using slot descriptors.
-(defun (setf s-v-standard-class) (new-value object slot-name)
-  (let* ((slot-descriptors (find-effective-slots 'standard-class))
-	 ;; We know there are no slots with allocation :class, so
-	 ;; the method used here is safe.
-	 (slot-position (position slot-name slot-descriptors :key #'car))
-	 (slot-storage (standard-instance-slots object)))
-    (when (null slot-position)
-      (slot-missing object slot-name 'setf))
-    ;; FIXME: should we check the type of new-value here?
-    (setf (slot-contents slot-storage slot-position) new-value)))
-
-;;; We cheat and hope that nobody will discover that (SETF SLOT-VALUE)
-;;; in some cases does not really call (SETF SLOT-VALUE-USING-CLASS),
-;;; say by tracing the latter or something like that.
 (defun (setf slot-value) (new-value object slot-name)
   (if (standard-instance-p object)
-      (let ((class (standard-instance-class object)))
-	(if (eq class (find-class 'standard-class))
-	    (setf (s-v-standard-class object slot-name) new-value)
-	    (let* ((slot-definitions (class-slots class))
-		   (slot-definition (find slot-name slot-definitions
-					  :key #'slot-definition-name)))
-	      (when (null slot-definition)
-		(slot-missing object slot-name 'setf))
-	      (setf (slot-value-using-class class object slot-definition)
-		    new-value))))
-      (slot-missing object slot-name 'setf)))
+      (let* ((class (standard-instance-class object))
+	     (name (find-class-reverse class))
+	     (slot-descriptors (find-effective-slots name)))
+	(cond ((not (null slot-descriptors))
+	       (let ((slot-position (position slot-name slot-descriptors :key #'car))
+		     (slot-storage (standard-instance-slots object)))
+		 (when (null slot-position)
+		   (slot-missing object slot-name 'slot-value))
+		 (setf (slot-contents slot-storage slot-position)
+		       new-value)))
+	      (t
+	       (let* ((slot-definitions (class-slots class))
+		      (slot-definition (find slot-name slot-definitions
+					     :key #'slot-definition-name)))
+		 (when (null slot-definition)
+		   (slot-missing object slot-name 'slot-value))
+		 (setf (slot-value-using-class class object slot-definition)
+		       new-value)))))
+      (slot-missing object slot-name 'slot-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -310,7 +302,7 @@
 	   ;; finalized before BUILT-IN-CLASS can be finalized.  This
 	   ;; is a vicious cycle, so be break it here.
 	   (eq object (find-class 't))
-	   '())
+	   (list (find-class 't)))
 	  ((or (eq class (find-class 'standard-class))
 	       (eq class (find-class 'funcallable-standard-class))
 	       (eq class (find-class 'built-in-class)))
@@ -1206,10 +1198,13 @@
 (defun make-built-in-class
     (name direct-superclasses precedence-list)
   (setf (find-class name)
-	(make-instance (find-class 'built-in-class)
-		       :name name
-		       :direct-superclasses direct-superclasses
-		       :precedence-list precedence-list)))
+	(make-instance
+	 (find-class 'built-in-class)
+	 :name name
+	 :direct-superclasses (mapcar #'find-class direct-superclasses)
+	 :precedence-list (mapcar #'find-class precedence-list)))
+  ;; Add the class itself first on its precedence list
+  (push (find-class name) (slot-value (find-class name) '%precedence-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
