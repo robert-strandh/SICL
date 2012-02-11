@@ -4,115 +4,32 @@
 ;;;
 ;;; Built-in classes
 
-(defclass number (t)
-  ()
-  (:metaclass built-in-class))
-
-(defclass real (number)
-  ()
-  (:metaclass built-in-class))
-
-
-(defclass rational (real)
-  ()
-  (:metaclass built-in-class))
-
-
-(defclass integer (rational)
-  ()
-  (:metaclass built-in-class))
-  
-(defclass ratio (rational)
-  ()
-  (:metaclass built-in-class))
-  
-(defclass float (real)
-  ()
-  (:metaclass built-in-class))
-  
-(defclass complex (number)
-  ()
-  (:metaclass built-in-class))
-
-(defclass character (t)
-  ()
-  (:metaclass built-in-class))
-
-(defclass symbol (t)
-  ()
-  (:metaclass built-in-class))
-
-(defclass sequence (t)
-  ()
-  (:metaclass built-in-class))
-
-(defclass list (sequence)
-  ()
-  (:metaclass built-in-class))
-
-(defclass null (symbol list)
-  ()
-  (:metaclass built-in-class))
-
-(defclass cons (list)
-  ()
-  (:metaclass built-in-class))
-
-(defclass array (t)
-  ()
-  (:metaclass built-in-class))
-
-(defclass vector (array sequence)
-  ()
-  (:metaclass built-in-class))
-
-(defclass bit-vector (vector)
-  ()
-  (:metaclass built-in-class))
-
-(defclass string (vector)
-  ()
-  (:metaclass built-in-class))
-
-(defclass package (t)
-  ()
-  (:metaclass built-in-class))
-
-(defclass hash-table (t)
-  ()
-  (:metaclass built-in-class))
-
-(defclass stream (t)
-  ()
-  (:metaclass built-in-class))
-
-(defclass broadcast-stream (stream)
-  ()
-  (:metaclass built-in-class))
-
-(defclass concatenated-stream (stream)
-  ()
-  (:metaclass built-in-class))
-
-(defclass echo-stream (stream)
-  ()
-  (:metaclass built-in-class))
-
-(defclass file-stream (stream)
-  ()
-  (:metaclass built-in-class))
-
-(defclass string-stream (stream)
-  ()
-  (:metaclass built-in-class))
-
-(defclass synonym-stream (stream)
-  ()
-  (:metaclass built-in-class))
-
-(defclass two-way-stream (stream)
-  ()
-  (:metaclass built-in-class))
+(make-built-in-class 'number '(t) '(t))
+(make-built-in-class 'real '(number) '(number t))
+(make-built-in-class 'rational '(real) '(real number t))
+(make-built-in-class 'integer '(rational) '(rational real number t))
+(make-built-in-class 'ratio '(rational) '(rational real number t))
+(make-built-in-class 'float '(real) '(real number t))
+(make-built-in-class 'complex '(number) '(number t))
+(make-built-in-class 'character '(t) '(t))
+(make-built-in-class 'symbol '(t) '(t))
+(make-built-in-class 'sequence '(t) '(t))
+(make-built-in-class 'list '(sequence) '(sequence t))
+(make-built-in-class 'null '(symbol list) '(symbol list sequence t))
+(make-built-in-class 'cons '(list sequence) '(list sequence t))
+(make-built-in-class 'array '(t) '(t))
+(make-built-in-class 'vector '(array sequence) '(array sequence t))
+(make-built-in-class 'bit-vector '(vector) '(vector array sequence t))
+(make-built-in-class 'string '(vector) '(vector array sequence t))
+(make-built-in-class 'package '(t) '(t))
+(make-built-in-class 'hash-table '(t) '(t))
+(make-built-in-class 'stream '(t) '(t))
+(make-built-in-class 'broadcast-stream '(t) '(stream t))
+(make-built-in-class 'concatenated-stream '(t) '(stream t))
+(make-built-in-class 'echo-stream '(t) '(stream t))
+(make-built-in-class 'file-stream '(t) '(stream t))
+(make-built-in-class 'synonym-stream '(t) '(stream t))
+(make-built-in-class 'two-way-stream '(t) '(stream t))
 
 ;;; FIXME: there are some more, but this will do for now.
 
