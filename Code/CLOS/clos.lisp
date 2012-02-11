@@ -739,7 +739,7 @@
 ;;; we have the real :after method call this function to accomplish
 ;;; its work. 
 (defun sd-initialize-instance-after-standard-class
-    (instance &key name direct-superclasses direct-slots &allow-other-keys)
+    (instance &key name direct-superclasses &allow-other-keys)
   (let ((superclasses (cond ((not (null direct-superclasses))
 			     direct-superclasses)
 			    ;; When we create the class
@@ -1737,17 +1737,17 @@
   ;; If the class was one of the ones we computed "by hand" in the
   ;; bootstrap stage, check that we computed the same slots in the
   ;; same order this time.
-  ;; (let ((class-name (find-class-reverse class)))
-  ;;   (unless (null class-name)
-  ;;     (let ((slots (find-effective-slots class-name)))
-  ;; 	(unless (null slots)
-  ;; 	  (assert (= (length slots) (length (class-slots class))))
-  ;; 	  (mapc (lambda (x y)
-  ;; 		  (unless (eql (car x) (slot-definition-name y))
-  ;; 		    (error "slot names ~s and ~s do not match"
-  ;; 			   (car x) (slot-definition-name y))))
-  ;; 		slots
-  ;; 		(class-slots class))))))
+  (let ((class-name (find-class-reverse class)))
+    (unless (null class-name)
+      (let ((slots (find-effective-slots class-name)))
+  	(unless (null slots)
+  	  (assert (= (length slots) (length (class-slots class))))
+  	  (mapc (lambda (x y)
+  		  (unless (eql (car x) (slot-definition-name y))
+  		    (error "slot names ~s and ~s do not match"
+  			   (car x) (slot-definition-name y))))
+  		slots
+  		(class-slots class))))))
   (setf (class-finalized-p class) t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
