@@ -77,8 +77,20 @@
 ;;; functions yet.  FIXME: say more...
 
 (defun slot-value-using-class (class object slot)
-  ;; FIXME: fill it in.
-  (error "can't do this yet"))
+  (let* ((slot-definitions (class-slots class))
+	 ;; Is this safe?
+	 (slot-position (position slot slot-definitions))
+	 (slot-storage (standard-instance-slots object)))
+    (assert (not (null slot-position)))
+    (slot-contents slot-storage slot-position)))
+
+(defun (setf slot-value-using-class) (new-value class object slot)
+  (let* ((slot-definitions (class-slots class))
+	 ;; Is this safe?
+	 (slot-position (position slot slot-definitions))
+	 (slot-storage (standard-instance-slots object)))
+    (assert (not (null slot-position)))
+    (setf (slot-contents slot-storage slot-position) new-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -90,34 +102,24 @@
 ;;; claim that it is a slot name.  We go with the definition of the
 ;;; specification.
 
-;;; FIXME: it looks like we could do some code factoring here. 
-
-;;; What SLOT-VALUE does when the object is an instance of
-;;; STANDARD-CLASS.  We cheat by using slot descriptors.
-(defun s-v-standard-class (object slot-name)
-  (let* ((slot-descriptors (find-effective-slots 'standard-class))
-	 ;; We know there are no slots with allocation :class, so
-	 ;; the method used here is safe.
-	 (slot-position (position slot-name slot-descriptors :key #'car))
-	 (slot-storage (standard-instance-slots object)))
-    (when (null slot-position)
-      (slot-missing object slot-name 'slot-value))
-    (slot-contents slot-storage slot-position)))
-
-;;; We cheat and hope that nobody will discover that SLOT-VALUE in
-;;; some cases does not really call SLOT-VALUE-USING-CLASS, say by
-;;; tracing the latter or something like that. 
 (defun slot-value (object slot-name)
   (if (standard-instance-p object)
-      (let ((class (standard-instance-class object)))
-	(if (eq class (find-class 'standard-class))
-	    (s-v-standard-class object slot-name)
-	    (let* ((slot-definitions (class-slots class))
-		   (slot-definition (find slot-name slot-definitions
-					  :key #'slot-definition-name)))
-	      (when (null slot-definition)
-		(slot-missing object slot-name 'slot-value))
-	      (slot-value-using-class class object slot-definition))))
+      (let* ((class (standard-instance-class object))
+	     (name (find-class-reverse class))
+	     (slot-descriptors (find-effective-slots name)))
+	(cond ((not (null slot-descriptors))
+	       (let ((slot-position (position slot-name slot-descriptors :key #'car))
+		     (slot-storage (standard-instance-slots object)))
+		 (when (null slot-position)
+		   (slot-missing object slot-name 'slot-value))
+		 (slot-contents slot-storage slot-position)))
+	      (t
+	       (let* ((slot-definitions (class-slots class))
+		      (slot-definition (find slot-name slot-definitions
+					     :key #'slot-definition-name)))
+		 (when (null slot-definition)
+		   (slot-missing object slot-name 'slot-value))
+		 (slot-value-using-class class object slot-definition)))))
       (slot-missing object slot-name 'slot-value)))
 
 ;;; What (SETF SLOT-VALUE) does when the object is an instance of
@@ -136,112 +138,548 @@
 ;;; We cheat and hope that nobody will discover that (SETF SLOT-VALUE)
 ;;; in some cases does not really call (SETF SLOT-VALUE-USING-CLASS),
 ;;; say by tracing the latter or something like that.
-(defun (setf slot-value) (object slot-name)
+(defun (setf slot-value) (new-value object slot-name)
   (if (standard-instance-p object)
       (let ((class (standard-instance-class object)))
 	(if (eq class (find-class 'standard-class))
-	    (s-v-standard-class object slot-name)
+	    (setf (s-v-standard-class object slot-name) new-value)
 	    (let* ((slot-definitions (class-slots class))
 		   (slot-definition (find slot-name slot-definitions
 					  :key #'slot-definition-name)))
 	      (when (null slot-definition)
-		(slot-missing object slot-name 'slot-value))
-	      (slot-value-using-class class object slot-definition))))
-      (slot-missing object slot-name 'slot-value)))
+		(slot-missing object slot-name 'setf))
+	      (setf (slot-value-using-class class object slot-definition)
+		    new-value))))
+      (slot-missing object slot-name 'setf)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generating temporary accessors for our metaobjects. 
-;;;
-;;; We take our slot descriptors and generate really stupid and slow
-;;; (but very safe) versions of all the readers and accessors that
-;;; were mentioned in those slot descriptions.  Each reader has the
-;;; following form:
-;;;
-;;;    (defun mumble (x)
-;;;      (let ((class (standard-instance-class x))
-;;;            (slots (standard-instance-slots x)))
-;;;        (cond ((eq class (find-class 'class-1 nil))
-;;;               (slotcontents slots s-1))
-;;;              ((eq class (find-class 'class-2 nil))
-;;;               (slotcontents slots s-2))
-;;;              ...
-;;;              (t (error ...)))))
-;;;
-;;; where s-i is the index in class-i of the slot that is read.
-;;;
-;;; Writers have the analogous structure. 
-;;;
-;;; This means that all our accessors are operational even though
-;;; they are not generic functions of course. 
-(eval-when (:compile-toplevel :load-toplevel)
+;;; Accessors for class metaobjects.
 
-  (defun collect-reader (reader)
-    (let ((result '()))
-      (maphash (lambda (class-name slot-descriptors)
-		 (loop for s in slot-descriptors
-		       for i from 0
-		       do (when (or (eq (cadr (member :reader s)) reader)
-				    (eq (cadr (member :accessor s)) reader))
-			    (push `(,class-name ,i) result))))
-	       *effective-slots*)
-      result))
-  
-  (defun collect-writer (writer)
-    (let ((result '()))
-      (maphash (lambda (class-name slot-descriptors)
-		 (loop for s in slot-descriptors
-		       for i from 0
-		       do (when (eq (cadr (member :accessor s)) writer)
-			    (push `(,class-name ,i) result))))
-	       *effective-slots*)
-      result))
-  
-  (let ((readers '())
-	(writers '()))
-    ;; Find all :reader and :accessor slot options
-    (maphash (lambda (class-name slot-descriptors)
-	       (declare (ignore class-name))
-	       (loop for s in slot-descriptors
-		     do (let (temp)
-			  (setf temp (member :reader s))
-			  (when temp
-			    (pushnew (cadr temp) readers))
-			  (setf temp (member :accessor s))
-			  (when temp
-			    (pushnew (cadr temp) readers)
-			    (pushnew (cadr temp) writers)))))
-	     *effective-slots*)
-    ;; For each one, create a function
-    (flet ((make-reader-function-form (name readers)
-	     `(defun ,name (x)
-		(let ((class (standard-instance-class x))
-		      (slots (standard-instance-slots x)))
-		  (cond 
-		    ,@(loop for reader in readers
-			    collect
-			    `((eq class (find-class ',(car reader) nil))
-			      (slot-contents slots ,(cadr reader))))
-		    (t (error "no reader on ~s" ',name))))))
-	   (make-writer-function-form (name writers)
-	     `(defun (setf ,name) (new-value x)
-		(let ((class (standard-instance-class x))
-		      (slots (standard-instance-slots x)))
-		  (cond 
-		    ,@(loop for writer in writers
-			    collect
-			    `((eq class (find-class ',(car writer) nil))
-			      (setf (slot-contents slots ,(cadr writer))
-				    new-value)))
-		    (t (error "no writer on ~s" ',name)))))))
-      (loop for reader in readers
-	    do (eval (make-reader-function-form
-		      reader (collect-reader reader))))
-      (loop for writer in writers
-	    do (eval (make-writer-function-form
-		      writer (collect-writer writer))))))
+(defun class-default-initargs (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-default-initargs" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (slot-value object '%default-initargs))
+	  ((eq class (find-class 'forward-reference-class))
+	   (error "called CLASS-DEFAULT-INITARGS on a forward-reference-class"))
+	  ((eq class (find-class 'built-in-class))
+	   '())
+	  (t (error "no method for ~s on class-default-initargs"
+		    object)))))
 
-  ) ; eval-when
+(defun (setf class-default-initargs) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf class-default-initargs)" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (setf (slot-value object '%default-initargs) new-value))
+	  (t (error "no method for ~s on (setf class-default-initargs)"
+		    object)))))
+
+(defun class-direct-default-initargs (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-direct-default-initargs" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (slot-value object '%direct-default-initargs))
+	  ((or (eq class (find-class 'forward-reference-class))
+	       (eq class (find-class 'built-in-class)))
+	   '())
+	  (t (error "no method for ~s on class-direct-default-initargs"
+		    object)))))
+
+(defun class-direct-slots (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-direct-slots" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (slot-value object '%direct-slots))
+	  ((or (eq class (find-class 'forward-reference-class))
+	       (eq class (find-class 'built-in-class)))
+	   '())
+	  (t (error "no method for ~s on class-direct-slots"
+		    object)))))
+
+(defun (setf class-direct-slots) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-direct-slots" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (setf (slot-value object '%direct-slots) new-value))
+	  (t (error "no method for ~s on class-direct-slots"
+		    object)))))
+
+(defun class-direct-subclasses (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-direct-subclasses" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class))
+	       (eq class (find-class 'forward-reference-class))
+	       (eq class (find-class 'built-in-class)))
+	   (slot-value object '%direct-subclasses))
+	  (t (error "no method for ~s on class-direct-subclasses"
+		    object)))))
+
+(defun (setf class-direct-subclasses) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-direct-subclasses" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class))
+	       (eq class (find-class 'forward-reference-class))
+	       (eq class (find-class 'built-in-class)))
+	   (setf (slot-value object '%direct-subclasses) new-value))
+	  (t (error "no method for ~s on class-direct-subclasses"
+		    object)))))
+
+(defun class-direct-superclasses (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-direct-superclasses" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class))
+	       (eq class (find-class 'built-in-class)))
+	   (slot-value object '%direct-superclasses))
+	  ((eq class (find-class 'forward-reference-class))
+	   '())
+	  (t (error "no method for ~s on class-direct-superclasses"
+		    object)))))
+
+(defun (setf class-direct-superclasses) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-direct-superclasses" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (setf (slot-value object '%direct-superclasses) new-value))
+	  (t (error "no method for ~s on class-direct-superclasses"
+		    object)))))
+
+(defun class-finalized-p (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-finalized-p" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (slot-value object '%finalized-p))
+	  ((eq class (find-class 'forward-reference-class))
+	   nil)
+	  ((eq class (find-class 'built-in-class))
+	   t)
+	  (t (error "no method for ~s on class-finalized-p"
+		    object)))))
+
+(defun (setf class-finalized-p) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-finalized-p" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (setf (slot-value object '%finalized-p) new-value))
+	  (t (error "no method for ~s on class-finalized-p"
+		    object)))))
+
+(defun class-name (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-name" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class))
+	       (eq class (find-class 'forward-reference-class))
+	       (eq class (find-class 'built-in-class)))
+	   (slot-value object '%name))
+	  (t (error "no method for ~s on class-name"
+		    object)))))
+
+(defun class-precedence-list (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-precedence-list" object))
+  (let ((class (standard-instance-class object)))
+    (cond (;; We need to special-case this one because the
+	   ;; BUILT-IN-CLASS metaobject needs to be finalized before
+	   ;; we can do a slot-value of a builtin-class, and the
+	   ;; BUILT-IN-CLASS class is a subclass of T so T needs to be
+	   ;; finalized before BUILT-IN-CLASS can be finalized.  This
+	   ;; is a vicious cycle, so be break it here.
+	   (eq object (find-class 't))
+	   '())
+	  ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class))
+	       (eq class (find-class 'built-in-class)))
+	   (slot-value object '%precedence-list))
+	  ((eq class (find-class 'forward-reference-class))
+	   (error "called CLASS-PRECEDENCE-LIST on a forward-reference-class"))
+	  (t (error "no method for ~s on class-precedence-list"
+		    object)))))
+
+(defun (setf class-precedence-list) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf class-precedence-list)" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (setf (slot-value object '%precedence-list) new-value))
+	  (t (error "no method for ~s on (setf class-precedence-list)"
+		    object)))))
+
+(defun class-slots (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-slots" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (slot-value object '%effective-slots))
+	  ((eq class (find-class 'forward-reference-class))
+	   (error "called CLASS-SLOTS on a forward-reference-class"))
+	  ((eq class (find-class 'built-in-class))
+	   '())
+	  (t (error "no method for ~s on class-slots"
+		    object)))))
+
+(defun (setf class-slots) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf class-slots)" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class)))
+	   (setf (slot-value object '%effective-slots) new-value))
+	  (t (error "no method for ~s on (setf class-slots)"
+		    object)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Accessors for slot-definition metaobjects.
+
+(defun slot-definition-name (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on slot-definition-name" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-direct-slot-definition))
+	       (eq class (find-class 'standard-effective-slot-definition)))
+	   (slot-value object '%name))
+	  (t
+	   (error "no method for ~s on slot-definition-name"
+		  object)))))
+
+(defun slot-definition-allocation (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on slot-definition-allocation" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-direct-slot-definition))
+	       (eq class (find-class 'standard-effective-slot-definition)))
+	   (slot-value object '%name))
+	  (t
+	   (error "no method for ~s on slot-definition-allocation"
+		  object)))))
+
+(defun slot-definition-type (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on slot-definition-type" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-direct-slot-definition))
+	       (eq class (find-class 'standard-effective-slot-definition)))
+	   (slot-value object '%name))
+	  (t
+	   (error "no method for ~s on slot-definition-type"
+		  object)))))
+
+(defun slot-definition-initargs (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on slot-definition-initargs" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-direct-slot-definition))
+	       (eq class (find-class 'standard-effective-slot-definition)))
+	   (slot-value object '%name))
+	  (t
+	   (error "no method for ~s on slot-definition-initargs"
+		  object)))))
+
+(defun slot-definition-initform (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on slot-definition-initform" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-direct-slot-definition))
+	       (eq class (find-class 'standard-effective-slot-definition)))
+	   (slot-value object '%name))
+	  (t
+	   (error "no method for ~s on slot-definition-initform"
+		  object)))))
+
+(defun slot-definition-initfunction (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on slot-definition-initfunction" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-direct-slot-definition))
+	       (eq class (find-class 'standard-effective-slot-definition)))
+	   (slot-value object '%name))
+	  (t
+	   (error "no method for ~s on slot-definition-initfunction"
+		  object)))))
+
+(defun slot-definition-readers (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on slot-definition-readers" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-direct-slot-definition))
+	   (slot-value object '%name))
+	  (t
+	   (error "no method for ~s on slot-definition-readers"
+		  object)))))
+
+(defun slot-definition-writers (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on slot-definition-writers" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-direct-slot-definition))
+	   (slot-value object '%name))
+	  (t
+	   (error "no method for ~s on slot-definition-writers"
+		  object)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Accessors for generic-function metaobjects.
+
+(defun generic-function-argument-precedence-order (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-argument-precedence-order"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value '%argument-precedence-order object))
+	  (t
+	   (error
+	    "no method for ~s on generic-function-argument-precedence-order"
+	    object)))))
+
+(defun generic-function-declarations (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-declarations"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value '%declarations object))
+	  (t
+	   (error
+	    "no method for ~s on generic-function-declarations"
+	    object)))))
+
+(defun generic-function-lambda-list (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-lambda-list"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value '%lambda-list object))
+	  (t
+	   (error
+	    "no method for ~s on generic-function-lambda-list"
+	    object)))))
+
+(defun generic-function-method-combination (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-method-combination"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value '%method-combination object))
+	  (t
+	   (error
+	    "no method for ~s on generic-function-method-combination"
+	    object)))))
+
+(defun generic-function-method-class (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-method-class"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value '%method-class object))
+	  (t
+	   (error
+	    "no method for ~s on generic-function-method-class"
+	    object)))))
+
+(defun generic-function-name (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-name"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value '%name object))
+	  (t
+	   (error
+	    "no method for ~s on generic-function-name"
+	    object)))))
+
+(defun (setf generic-function-name) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf generic-function-name)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (setf (slot-value '%name object) new-value))
+	  (t
+	   (error
+	    "no method for ~s on (setf generic-function-name)"
+	    object)))))
+
+(defun generic-function-discriminating-function (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-discriminating-function"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value '%discriminating-function object))
+	  (t
+	   (error
+	    "no method for ~s on generic-function-discriminating-function"
+	    object)))))
+
+(defun (setf generic-function-discriminating-function) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf generic-function-discriminating-function)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (setf (slot-value '%discriminating-function object) new-value))
+	  (t
+	   (error
+	    "no method for ~s on (setf generic-function-discriminating-function)"
+	    object)))))
+
+(defun generic-function-methods (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-methods"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value '%methods object))
+	  (t
+	   (error
+	    "no method for ~s on generic-function-methods"
+	    object)))))
+
+(defun (setf generic-function-methods) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf generic-function-methods)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (setf (slot-value '%methods object) new-value))
+	  (t
+	   (error
+	    "no method for ~s on (setf generic-function-methods)"
+	    object)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Accessors for method metaobjects.
+
+(defun method-qualifiers (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf method-qualifiers)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-method))
+	       (eq class (find-class 'standard-reader-method))
+	       (eq class (find-class 'standard-writer-method)))
+	   (slot-value object '%qualifiers))
+	  (t
+	   (error
+	    "no method for ~s on method-qualifiers"
+	    object)))))
+	   
+(defun method-lambda-list (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf method-lambda-list)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-method))
+	       (eq class (find-class 'standard-reader-method))
+	       (eq class (find-class 'standard-writer-method)))
+	   (slot-value object '%lambda-list))
+	  (t
+	   (error
+	    "no method for ~s on method-lambda-list"
+	    object)))))
+	   
+(defun method-specializers (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf method-specializers)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-method))
+	       (eq class (find-class 'standard-reader-method))
+	       (eq class (find-class 'standard-writer-method)))
+	   (slot-value object '%specializers))
+	  (t
+	   (error
+	    "no method for ~s on method-specializers"
+	    object)))))
+	   
+(defun method-function (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf method-function)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-method))
+	       (eq class (find-class 'standard-reader-method))
+	       (eq class (find-class 'standard-writer-method)))
+	   (slot-value object '%function))
+	  (t
+	   (error
+	    "no method for ~s on method-function"
+	    object)))))
+	   
+(defun method-generic-function (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf method-generic-function)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-method))
+	       (eq class (find-class 'standard-reader-method))
+	       (eq class (find-class 'standard-writer-method)))
+	   (slot-value object '%generic-function))
+	  (t
+	   (error
+	    "no method for ~s on method-generic-function"
+	    object)))))
+	   
+(defun (setf method-generic-function) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf method-generic-function)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-method))
+	       (eq class (find-class 'standard-reader-method))
+	       (eq class (find-class 'standard-writer-method)))
+	   (setf (slot-value object '%generic-function) new-value))
+	  (t
+	   (error
+	    "no method for ~s on (setf method-generic-function)"
+	    object)))))
+	   
+(defun accessor-method-slot-definition (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf accessor-method-slot-definition)"
+	   object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-reader-method))
+	       (eq class (find-class 'standard-writer-method)))
+	   (slot-value object '%slot-definition))
+	  (t
+	   (error
+	    "no method for ~s on accessor-method-slot-definition"
+	    object)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -302,14 +740,20 @@
 ;;; its work. 
 (defun sd-initialize-instance-after-standard-class
     (instance &key name direct-superclasses direct-slots &allow-other-keys)
-  (setf (class-name instance) name)
-  (let ((superclasses (or direct-superclasses
-			  (list (find-class 'standard-object)))))
-    (setf (class-direct-superclasses instance) superclasses))
-  (let ((slots (loop for slot-properties in direct-slots
-		     collect (apply #'make-direct-slot-definition
-				    slot-properties))))
-    (setf (class-direct-slots instance) slots)))
+  (let ((superclasses (cond ((not (null direct-superclasses))
+			     direct-superclasses)
+			    ;; When we create the class
+			    ;; STANDARD-OBJECT, the
+			    ;; direct-superclasses argument is the
+			    ;; empty list (it will be patched later),
+			    ;; but we naturally do not want to attemp
+			    ;; to include itself among its own
+			    ;; superclasses.
+			    ((eq name 'standard-object)
+			     '())
+			    (t
+			     (list (find-class 'standard-object))))))
+    (setf (class-direct-superclasses instance) superclasses)))
 
 (defun sd-initialize-instance (instance slot-descriptions &rest initargs)
   (let ((slots (standard-instance-slots instance)))
@@ -372,14 +816,6 @@
 	 initargs))
 
 ;;; REMEMBER: Patch version information of slot-definition-instances. +
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class T, so that we can allocate the class STANDARD-INSTANCE.
-
-(setf (find-class 't) (allocate-standard-instance nil nil))
-
-;;; REMEMBER: Patch class T. +
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -463,6 +899,7 @@
 				      &rest
 					keys
 				      &key
+					direct-slots
 					direct-superclasses
 					(metaclass 'standard-class)
 				      &allow-other-keys)
@@ -479,10 +916,14 @@
   (let ((remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
+    (loop while (remf remaining-keys :direct-slots))
     (setf (find-class name)
 	  (apply #'make-instance metaclass
 		 :name name
 		 :direct-superclasses direct-superclasses
+		 :direct-slots (mapcar (lambda (x)
+					 (apply #'make-direct-slot-definition x))
+				       direct-slots)
 		 remaining-keys))))
 
 ;;; REMEMBER: Call ensure-class-using-class-null from method of e-c-u-c. +
@@ -760,13 +1201,27 @@
 		 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Creating built-in classes
+
+(defun make-built-in-class
+    (name direct-superclasses precedence-list)
+  (setf (find-class name)
+	(make-instance (find-class 'built-in-class)
+		       :name name
+		       :direct-superclasses direct-superclasses
+		       :precedence-list precedence-list)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Defining standard classes.
 ;;; 
 ;;; We now have everything needed to use DEFCLASS to create instances
 ;;; of STANDARD-CLASS.
 
-(defclass standard-object (t)
+(defclass standard-object ()
   #.(find-direct-slots 'standard-object))
+
+;;; REMEMBER: Include T in superclasses of STANDARD-OBJECT. +
 
 (defclass metaobject (standard-object)
   #.(find-direct-slots 'metaobject))
@@ -821,7 +1276,8 @@
 	(standard-instance-class fake))
   (setf (standard-instance-slots to-patch)
 	(standard-instance-slots fake))
-  (setf (class-name fake) 'standard-direct-slot-definition)
+  (setf (slot-value fake '%name)
+	'standard-direct-slot-definition)
   (setf (find-class 'fake) nil))
 
 ;;; REMEMBER: Patch standard-direct-slot-definition. -
@@ -842,22 +1298,12 @@
 (defclass built-in-class (class)
   #.(find-direct-slots 'built-in-class))
 
-;;; Patch the class T just like we patched the class
-;;; STANDARD-EFFECTIVE-SLOT-DEFINITION above.
-(defclass fake ()
-  ()
-  (:metaclass built-in-class))
+(make-built-in-class 't '() '())
 
-(let ((to-patch (find-class 't))
-      (fake (find-class 'fake)))
-  (setf (standard-instance-class to-patch)
-	(standard-instance-class fake))
-  (setf (standard-instance-slots to-patch)
-	(standard-instance-slots fake))
-  (setf (class-name fake) 't)
-  (setf (find-class 'fake) nil))
+(setf (slot-value (find-class 'standard-object) '%direct-superclasses)
+     (list (find-class 't)))
 
-;;; REMEMBER: Patch class T. -
+;;; REMEMBER: Include T in superclasses of STANDARD-OBJECT. -
 
 (defclass forward-reference-class (class)
   #.(find-direct-slots 'forward-reference-class))
@@ -879,7 +1325,8 @@
       (fake (find-class 'fake)))
   (setf (standard-instance-slots to-patch)
 	(standard-instance-slots fake))
-  (setf (class-name fake) 'standard-class)
+  (setf (slot-value fake '%name)
+	'standard-class)
   (setf (find-class 'fake) nil))
 
 ;;; REMEMBER: Patch STANDARD-CLASS. -
@@ -887,9 +1334,7 @@
 (defclass funcallable-standard-class (class)
   #.(find-direct-slots 'funcallable-standard-class))
 
-(defclass function (t)
-  ()
-  (:metaclass built-in-class))
+;;; FIXME: create built-in class FUNCTION here.
 
 ;;; FIXME: this should inherit from FUNCTION as well.
 (defclass funcallable-standard-object (standard-object)
@@ -1103,21 +1548,6 @@
 ;;;
 ;;; Computing the class precedence list
 
-;;; For a given class, return a list containing the class and all its
-;;; direct and indirect superclasses without any duplicate entries,
-;;; but in no particular order.  We must be careful here, in that we
-;;; might have to handle an incorrect inheritance graph, that might
-;;; contain circular dependencies.
-(defun find-all-superclasses (class)
-  (let ((result '()))
-    (labels ((find-all-supers (class)
-	       (unless (member class result :test #'eq)
-		 (push class result)
-		 (loop for super in (class-direct-superclasses class)
-		       do (find-all-supers super)))))
-      (find-all-supers class))
-    result))
-
 ;;; For a given class, compute a precedence relation.  
 ;;; This relation is represented as a list of cons cells, 
 ;;; where the class in the CAR of the cell takes precedence over
@@ -1130,7 +1560,16 @@
         collect (cons prev super)))
 
 (defun compute-class-precedence-list-class (class)
-  (let* ((all-supers (find-all-superclasses class))
+  ;; Make sure all the direct superclasses are already finalized so
+  ;; that we can use their precedence lists.
+  (loop for super in (class-direct-superclasses class)
+	do (unless (class-finalized-p super)
+	    (finalize-inheritance super)))
+  (let* ((all-supers (cons class
+			   (remove-duplicates
+			    (reduce #'append
+				    (mapcar #'class-precedence-list
+					    (class-direct-superclasses class))))))
 	 (relation (loop for class in all-supers
 		         append (compute-relation class)))
 	 (reverse-result '()))
@@ -1277,7 +1716,7 @@
 ;;    direct-slot-definitions))
 
 (defun compute-slots (class)
-  (let* ((superclasses (remove (find-class 't) (class-precedence-list class)))
+  (let* ((superclasses (class-precedence-list class))
 	 (direct-slots (mapcar #'class-direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
 	 (reverse-slots (reverse direct-slots))
@@ -1298,17 +1737,17 @@
   ;; If the class was one of the ones we computed "by hand" in the
   ;; bootstrap stage, check that we computed the same slots in the
   ;; same order this time.
-  (let ((class-name (find-class-reverse class)))
-    (unless (null class-name)
-      (let ((slots (find-effective-slots class-name)))
-	(unless (null slots)
-	  (assert (= (length slots) (length (class-slots class))))
-	  (mapc (lambda (x y)
-		  (unless (eql (car x) (slot-definition-name y))
-		    (error "slot names ~s and ~s do not match"
-			   (car x) (slot-definition-name y))))
-		slots
-		(class-slots class))))))
+  ;; (let ((class-name (find-class-reverse class)))
+  ;;   (unless (null class-name)
+  ;;     (let ((slots (find-effective-slots class-name)))
+  ;; 	(unless (null slots)
+  ;; 	  (assert (= (length slots) (length (class-slots class))))
+  ;; 	  (mapc (lambda (x y)
+  ;; 		  (unless (eql (car x) (slot-definition-name y))
+  ;; 		    (error "slot names ~s and ~s do not match"
+  ;; 			   (car x) (slot-definition-name y))))
+  ;; 		slots
+  ;; 		(class-slots class))))))
   (setf (class-finalized-p class) t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
