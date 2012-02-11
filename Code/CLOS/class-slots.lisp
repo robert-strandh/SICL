@@ -93,12 +93,13 @@
 
 (define-slots 'generic-function '(metaobject funcallable-standard-object)
   '((%name :initarg :name :accessor generic-function-name)
-    (%lambda-list :initarg :lambda-list :accessor generic-function-lambda-list)))
+    (%lambda-list :initarg :lambda-list :accessor generic-function-lambda-list)
+    ;; FIXME: use the reader DOCUMENTATION once it exists.
+    (%documentaton :initarg :documentation)
+    (%discriminating-function :accessor generic-function-discriminating-function)))
 
 (define-slots 'standard-generic-function '(generic-function)
-  '(;; FIXME: use the reader DOCUMENTATION once it exists.
-    (%documentaton :initarg :documentation)
-    (%argument-precedence-order
+  '((%argument-precedence-order
      :initarg :argument-precedence-order
      :reader generic-function-argument-precedence-order)
     (%declarations :initarg :declarations
@@ -175,27 +176,43 @@
 (define-slots 'class '(specializer)
   '((%unique-number :initform nil :accessor class-unique-number)
     (%name :initarg :name :accessor class-name)
-    (%direct-superclasses :initarg :direct-superclasses
-			  :accessor class-direct-superclasses)
-    (%precedence-list :initform '() :accessor class-precedence-list)
     (%direct-subclasses :initform '() :accessor class-direct-subclasses)
-    (%direct-methods :initform '() :accessor class-direct-methods)
-    (%finalized-p :initform nil :accessor class-finalized-p)))
+    (%direct-methods :initform '() :accessor class-direct-methods)))
 
 (define-slots 'built-in-class '(class)
-  '())
+  '((%direct-superclasses :initarg :direct-superclasses
+			  :accessor class-direct-superclasses)
+    (%documentation :initarg :documentation :reader documentation)
+    (%precedence-list :initarg :precedence-list :reader class-precedence-list)))
 
 (define-slots 'forward-reference-class '(class)
   '())
 
+;;; FIXME: it looks like some code factoring would be useful here.
 (define-slots 'standard-class '(class)
-  '((%direct-slots :accessor class-direct-slots)
+  '((%direct-default-initargs :initarg :direct-default-initargs
+			      :reader class-direct-default-initargs)
+    (%direct-slots :initarg :direct-slots :accessor class-direct-slots)
+    (%direct-superclasses :initarg :direct-superclasses
+			  :accessor class-direct-superclasses)
+    (%documentation :initarg :documentation :reader documentation)
+    (%finalized-p :initform nil :accessor class-finalized-p)
+    (%precedence-list :initform '() :accessor class-precedence-list)
+    (%default-initargs :accessor class-default-initargs)
     ;; For some reason, this accessor is not called
     ;; class-effective-slots.
     (%effective-slots :initform '() :accessor class-slots)))
 
 (define-slots 'funcallable-standard-class '(class)
-  '((%direct-slots :accessor class-direct-slots)
+  '((%direct-default-initargs :initarg :direct-default-initargs
+			      :reader class-direct-default-initargs)
+    (%direct-slots :initarg :direct-slots :accessor class-direct-slots)
+    (%direct-superclasses :initarg :direct-superclasses
+			  :accessor class-direct-superclasses)
+    (%documentation :initarg :documentation :reader documentation)
+    (%finalized-p :initform nil :accessor class-finalized-p)
+    (%precedence-list :initform '() :accessor class-precedence-list)
+    (%default-initargs :accessor class-default-initargs)
     ;; For some reason, this accessor is not called
     ;; class-effective-slots.
     (%effective-slots :initform '() :accessor class-slots)))
