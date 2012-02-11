@@ -18,5 +18,5 @@
    #:generic-function #:standard-generic-function
    #:defgeneric #:ensure-generic-function
    #:slot-value #:slot-missing #:slot-boundp #:slot-makunbound
-   #:print-object #:describe-object)
+   #:print-object #:describe-object #:documentation)
   (:use #:common-lisp))
