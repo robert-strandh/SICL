@@ -1329,10 +1329,9 @@
 (defclass funcallable-standard-class (class)
   #.(find-direct-slots 'funcallable-standard-class))
 
-;;; FIXME: create built-in class FUNCTION here.
+(make-built-in-class 'function '(t) '(t))
 
-;;; FIXME: this should inherit from FUNCTION as well.
-(defclass funcallable-standard-object (standard-object)
+(defclass funcallable-standard-object (standard-object function)
   #.(find-direct-slots 'funcallable-standard-object))
 
 (defclass generic-function (metaobject funcallable-standard-object)
@@ -1778,3 +1777,116 @@
 ;; 				     direct-superclasses
 ;; 				     &allow-other-keys)
 ;;   nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests.
+
+(defun test-structure ()
+  ;; Check that the class of everything is what it is supposed to be.
+  (flet ((test-class-of (a b)
+	   (assert (eq (standard-instance-class (find-class a))
+		       (find-class b)))))
+    (test-class-of 't
+		   'built-in-class)
+    (test-class-of 'standard-object
+		   'standard-class)
+    (test-class-of 'funcallable-standard-object
+		   'standard-class)
+    (test-class-of 'metaobject
+		   'standard-class)
+    (test-class-of 'generic-function
+		   'funcallable-standard-class)
+    (test-class-of 'standard-generic-function
+		   'funcallable-standard-class)
+    (test-class-of 'method
+		   'standard-class)
+    (test-class-of 'standard-method
+		   'standard-class)
+    (test-class-of 'standard-accessor-method
+		   'standard-class)
+    (test-class-of 'standard-reader-method
+		   'standard-class)
+    (test-class-of 'standard-writer-method
+		   'standard-class)
+    (test-class-of 'method-combination
+		   'standard-class)
+    (test-class-of 'slot-definition
+		   'standard-class)
+    (test-class-of 'direct-slot-definition
+		   'standard-class)
+    (test-class-of 'effective-slot-definition
+		   'standard-class)
+    (test-class-of 'standard-direct-slot-definition
+		   'standard-class)
+    (test-class-of 'standard-effective-slot-definition
+		   'standard-class)
+    (test-class-of 'specializer
+		   'standard-class)
+    (test-class-of 'eql-specializer
+		   'standard-class)
+    (test-class-of 'class
+		   'standard-class)
+    (test-class-of 'built-in-class
+		   'standard-class)
+    (test-class-of 'forward-reference-class
+		   'standard-class)
+    (test-class-of 'standard-class
+		   'standard-class)
+    (test-class-of 'funcallable-standard-class
+		   'standard-class))
+  (flet ((test-superclasses (class supers)
+	   (let ((real-supers (class-direct-superclasses (find-class class)))
+		 (required-supers (mapcar #'find-class supers)))
+	     (assert (equal real-supers required-supers)))))
+    (test-superclasses 't
+		       '())
+    (test-superclasses 'standard-object
+		       '(t))
+    (test-superclasses 'funcallable-standard-object
+		       '(standard-object function))
+    (test-superclasses 'metaobject
+		       '(standard-object))
+    (test-superclasses 'generic-function
+		       '(metaobject funcallable-standard-object))
+    (test-superclasses 'standard-generic-function
+		       '(generic-function))
+    (test-superclasses 'method
+		       '(metaobject))
+    (test-superclasses 'standard-method
+		       '(method))
+    (test-superclasses 'standard-accessor-method
+		       '(standard-method))
+    (test-superclasses 'standard-reader-method
+		       '(standard-accessor-method))
+    (test-superclasses 'standard-writer-method
+		       '(standard-accessor-method))
+    (test-superclasses 'method-combination
+		       '(metaobject))
+    (test-superclasses 'slot-definition
+		       '(metaobject))
+    (test-superclasses 'direct-slot-definition
+		       '(slot-definition))
+    (test-superclasses 'effective-slot-definition
+		       '(slot-definition))
+    (test-superclasses 'standard-slot-definition
+		       '(slot-definition))
+    (test-superclasses 'standard-direct-slot-definition
+		       '(standard-slot-definition direct-slot-definition))
+    (test-superclasses 'standard-effective-slot-definition
+		       '(standard-slot-definition effective-slot-definition))
+    (test-superclasses 'specializer
+		       '(metaobject))
+    (test-superclasses 'eql-specializer
+		       '(specializer))
+    (test-superclasses 'class
+		       '(specializer))
+    (test-superclasses 'built-in-class
+		       '(class))
+    (test-superclasses 'forward-reference-class
+		       '(class))
+    (test-superclasses 'standard-class
+		       '(class))
+    (test-superclasses 'funcallable-standard-class
+		       '(class))))
+		       
