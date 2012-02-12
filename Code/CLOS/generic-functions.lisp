@@ -22,6 +22,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Lambda list functions.
+;;;
+;;; FIXME: check syntax of lambda list (but not of specializers) in
+;;; both these functions according to the MOP.
 
 (defun extract-lambda-list (specialized-lambda-list)
   (loop for rest = specialized-lambda-list then (cdr rest)
@@ -221,26 +224,66 @@
 		 (error "no next method")))
 	     (*next-method-p* (lambda () nil))
 	     (args (or new-args args)))
-	 (format *trace-output* "args: ~s~%" args)
 	 (apply ,(method-function (car methods)) args))
       `(let ((*call-next-method*
 	       (lambda (&rest new-args)
 		 ,(wrap-methods (cdr methods))))
 	     (*next-method-p* (lambda () t))
 	     (args (or new-args args)))
-	 (format *trace-output* "args: ~s~%" args)
 	 (apply ,(method-function (car methods)) args))))
 
 (defun compute-effective-method-function (methods)
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
 	(before-methods (remove-if-not #'before-method-p methods))
 	(after-methods (remove-if-not  #'after-method-p methods)))
-    `(lambda (args)
-       ,@(loop for method in before-methods
-	       collect `(apply ,(method-function method) args))
-       (multiple-value-prog1
-	   (let ((new-args '()))
-	     ,(wrap-methods primary-methods))
-	 ,@(loop for method in (reverse after-methods)
-		 collect `(apply ,(method-function method) args))))))
+    (compile nil
+	     `(lambda (&rest args)
+		,@(loop for method in before-methods
+			collect `(apply ,(method-function method) args))
+		(multiple-value-prog1
+		    (let ((new-args '()))
+		      ,(wrap-methods primary-methods))
+		  ,@(loop for method in (reverse after-methods)
+			  collect `(apply ,(method-function method) args)))))))
 	     
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; COMPUTE-DISCRIMINATING-FUNCTION.
+
+(defun compute-real-lambda (generic-function)
+  (let ((number-of-required
+	  (length
+	   (extract-specizlier-names
+	    (generic-function-lambda-list generic-function)))))
+    `(lambda (&rest args)
+       (locally (declare (special *cache* *generic-function*))
+	 (let* ((cache *cache*)
+		(required (subseq args 0 ,number-of-required))
+		(classes (mapcar #'class-of required))
+		(effective-method (gethash classes cache)))
+	   (when (null effective-method)
+	     (let* ((applicable-methods
+		      (compute-applicable-methods-using-classes
+		       *generic-function* classes)))
+	       (setf effective-method
+		     (compute-effective-method-function
+		      applicable-methods))
+	       (setf (gethash classes cache)
+		     effective-method)))
+	   (apply effective-method args))))))
+
+(defun compute-discriminating-function (generic-function)
+  (let ((real-function
+	  (compile nil (compute-real-lambda generic-function)))
+	(cache (make-hash-table :test #'equal)))
+    (lambda (&rest args)
+      (let ((*generic-function* generic-function)
+	    (*cache* cache))
+	(declare (special *cache* *generic-function*))
+	(apply real-function args)))))
+
+(defun sd-initialize-instance-after-standard-generic-function
+    (instance &key &allow-other-keys)
+  (let ((fun (compute-discriminating-function instance)))
+    (setf (generic-function-discriminating-function instance) fun)
+    (setf (fdefinition (generic-function-name instance)) fun)))
