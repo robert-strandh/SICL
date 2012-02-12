@@ -21,6 +21,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Lambda list functions.
+
+(defun extract-lambda-list (specialized-lambda-list)
+  (loop for rest = specialized-lambda-list then (cdr rest)
+	until (or (atom rest)
+		  (member (car rest) lambda-list-keywords))
+	collect (if (consp (car rest))
+		    (caar rest)
+		    (car rest))
+	  into required
+	finally (return (append required rest))))
+
+(defun extract-specizlier-names (specialized-lambda-list)
+  (loop for rest = specialized-lambda-list then (cdr rest)
+	until (or (atom rest)
+		  (member (car rest) lambda-list-keywords))
+	collect (if (consp (car rest))
+		    (cadar rest)
+		    t)))
+  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; ENSURE-GENERIC-FUNCTION and DEFGENERIC.
 
 (defun ensure-generic-function (name &rest keys)
