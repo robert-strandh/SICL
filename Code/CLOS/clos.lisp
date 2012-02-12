@@ -446,7 +446,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (slot-value '%argument-precedence-order object))
+	   (slot-value object '%argument-precedence-order))
 	  (t
 	   (error
 	    "no method for ~s on generic-function-argument-precedence-order"
@@ -458,7 +458,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (slot-value '%declarations object))
+	   (slot-value object '%declarations))
 	  (t
 	   (error
 	    "no method for ~s on generic-function-declarations"
@@ -470,7 +470,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (slot-value '%lambda-list object))
+	   (slot-value object '%lambda-list))
 	  (t
 	   (error
 	    "no method for ~s on generic-function-lambda-list"
@@ -482,7 +482,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (slot-value '%method-combination object))
+	   (slot-value object '%method-combination))
 	  (t
 	   (error
 	    "no method for ~s on generic-function-method-combination"
@@ -494,7 +494,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (slot-value '%method-class object))
+	   (slot-value object '%method-class))
 	  (t
 	   (error
 	    "no method for ~s on generic-function-method-class"
@@ -506,7 +506,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (slot-value '%name object))
+	   (slot-value object '%name))
 	  (t
 	   (error
 	    "no method for ~s on generic-function-name"
@@ -518,7 +518,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (setf (slot-value '%name object) new-value))
+	   (setf (slot-value object '%name) new-value))
 	  (t
 	   (error
 	    "no method for ~s on (setf generic-function-name)"
@@ -530,7 +530,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (slot-value '%discriminating-function object))
+	   (slot-value object '%discriminating-function))
 	  (t
 	   (error
 	    "no method for ~s on generic-function-discriminating-function"
@@ -542,7 +542,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (setf (slot-value '%discriminating-function object) new-value))
+	   (setf (slot-value object '%discriminating-function) new-value))
 	  (t
 	   (error
 	    "no method for ~s on (setf generic-function-discriminating-function)"
@@ -554,7 +554,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (slot-value '%methods object))
+	   (slot-value object '%methods))
 	  (t
 	   (error
 	    "no method for ~s on generic-function-methods"
@@ -566,7 +566,7 @@
 	   object))
   (let ((class (standard-instance-class object)))
     (cond ((eq class (find-class 'standard-generic-function))
-	   (setf (slot-value '%methods object) new-value))
+	   (setf (slot-value object '%methods) new-value))
 	  (t
 	   (error
 	    "no method for ~s on (setf generic-function-methods)"
@@ -747,6 +747,11 @@
 			     (list (find-class 'standard-object))))))
     (setf (class-direct-superclasses instance) superclasses)))
 
+(defun sd-initialize-instance-after-standard-generic-function
+    (instance &key &allow-other-keys)
+  (declare (ignore instance))
+  nil)
+
 (defun sd-initialize-instance (instance slot-descriptions &rest initargs)
   (let ((slots (standard-instance-slots instance)))
     (loop for (initarg value) on initargs by #'cddr
@@ -774,10 +779,16 @@
 	       (setf (slot-contents slots i)
 		     (eval (cadr (member :initform slot-description)))))))
   ;; Call after methods
-  (when (eq (standard-instance-class instance)
-	    (find-class 'standard-class))
-    (apply #'sd-initialize-instance-after-standard-class
-	   instance initargs)))
+  (cond ((eq (standard-instance-class instance)
+	     (find-class 'standard-class))
+	 (apply #'sd-initialize-instance-after-standard-class
+		instance initargs))
+	((eq (standard-instance-class instance)
+	     (find-class 'standard-generic-function nil))
+	 (apply #'sd-initialize-instance-after-standard-generic-function
+		instance initargs))
+	(t
+	 nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
