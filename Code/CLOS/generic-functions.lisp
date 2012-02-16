@@ -236,15 +236,19 @@
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
 	(before-methods (remove-if-not #'before-method-p methods))
 	(after-methods (remove-if-not  #'after-method-p methods)))
-    (compile nil
-	     `(lambda (&rest args)
-		,@(loop for method in before-methods
-			collect `(apply ,(method-function method) args))
-		(multiple-value-prog1
-		    (let ((new-args '()))
-		      ,(wrap-methods primary-methods))
-		  ,@(loop for method in (reverse after-methods)
-			  collect `(apply ,(method-function method) args)))))))
+    (if (and (null before-methods)
+	     (null after-methods)
+	     (= (length primary-methods) 1))
+	(car primary-methods)
+	(compile nil
+		 `(lambda (&rest args)
+		    ,@(loop for method in before-methods
+			    collect `(apply ,(method-function method) args))
+		    (multiple-value-prog1
+			(let ((new-args '()))
+			  ,(wrap-methods primary-methods))
+		      ,@(loop for method in (reverse after-methods)
+			      collect `(apply ,(method-function method) args))))))))
 	     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -287,3 +291,249 @@
   (let ((fun (compute-discriminating-function instance)))
     (setf (generic-function-discriminating-function instance) fun)
     (setf (fdefinition (generic-function-name instance)) fun)))
+
+;;; An EFFECTIVE METHOD COMPONENTS object is an object that represents
+;;; an effective method in a way that it can be compared with EQUAL.
+;;; It is a list, the elements of which are defined with respect to a
+;;; particular method combination.  Each element represents a
+;;; permissible qualifier for the method combiation.  For the standard
+;;; method combination, there are thus four elements, the first one
+;;; representing the primary methods, the second one the :before
+;;; methods, the third one the :after methods and the fourth one the
+;;; :around methods.  Each such element is a list of methods, ordered
+;;; from most specific to least specific.  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Call record.
+;;;
+;;; A CALL PROFILE (or a PROFILE for short) of a particular call to a
+;;; generic function is a list of unique numbers of classes of
+;;; specialized required arguments used in that call.  The length of a
+;;; call profile is that of the number of required arguments that are
+;;; specialized.  The list is ordered from left to right, i.e., the
+;;; first element of the list corresponds to the leftmost specialized
+;;; required argument, etc.
+;;;
+;;; A CALL RECORD is a CONS cell where the CAR is a call profile, and
+;;; the CDR is an effective method.
+
+(defun make-call-record (profile effective-method)
+  (cons profile effective-method))
+
+(defun call-record-profile (call-record)
+  (car call-record))
+
+(defun call-record-effective-method (call-record)
+  (cdr call-record))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Call history.
+;;;
+;;; We maintain a CALL HISTORY of the generic function.  This call
+;;; history is a list of call records.  Whenever a call is made to the
+;;; generic function with some call profile that has not yet been used
+;;; in a call, we compute the effective method to use, and we add a
+;;; call record to the call history.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Effective method automaton.
+
+;;; To determine the effective method to run from the classes of the
+;;; required arguments, we use an automaton, but a particularly simple
+;;; one.  From the start state to a final state of the automaton there
+;;; are as many state transitions as there are specialized parameters
+;;; of the generic function.  Each transition is based on the unique
+;;; number of the class of the corresponding specialized argument.  
+;;;
+;;; The automaton is created every time a new combination of classes
+;;; of required arguments is seen.  It is computed from the call
+;;; history of the generic function.
+
+(defun make-state (&optional name info)
+  (list name info))
+
+(defun state-name (state)
+  (car state))
+
+(defun (setf state-name) (name state)
+  (setf (car state) name))
+
+(defun state-info (state)
+  (cadr state))
+
+(defun (setf state-info) (info state)
+  (setf (cadr state) info))
+
+(defun state-transitions (state)
+  (cddr state))
+
+(defun (setf state-transitions) (transitions state)
+  (setf (cddr state) transitions))
+
+(defun make-transition (number target)
+  (cons number target))
+
+(defun transition-number (transition)
+  (car transition))
+
+(defun transition-target (transition)
+  (cdr transition))
+
+(defun (setf transition-target) (target transition)
+  (setf (cdr transition) target))
+
+(defun transitions-equal (transition1 transition2)
+  (and (eql (transition-number transition1)
+	    (transition-number transition2))
+       (eq (transition-target transition1)
+	   (transition-target transition2))))
+
+(defun add-path (state path final-state)
+  (if (null (cdr path))
+      ;; by construction, we have no transition yet
+      (push (make-transition (car path) final-state)
+	    (state-transitions state))
+      (let ((transition (find (car path)
+			      (state-transitions state)
+			      :key #'transition-number)))
+	(if (null transition)
+	    (let ((new-state (make-state)))
+	      (push (make-transition (car path) new-state)
+		    (state-transitions state))
+	      (add-path new-state (cdr path) final-state))
+	    (add-path (transition-target transition)
+		      (cdr path)
+		      final-state)))))
+
+(defun states-equivalent-p (state1 state2)
+  (unless (= (length (state-transitions state1))
+	     (length (state-transitions state2)))
+    (return-from states-equivalent-p nil))
+  (setf (state-transitions state1)
+	(sort (state-transitions state1) #'< :key #'transition-number))
+  (setf (state-transitions state2)
+	(sort (state-transitions state2) #'< :key #'transition-number))
+  (every #'transitions-equal
+	 (state-transitions state1)
+	 (state-transitions state2)))	
+
+(defun compute-layers (start-state)
+  (let ((result (list start-state)))
+    (loop until (null (state-transitions (car result)))
+	  do (push (remove-duplicates
+		    (loop for state in (car result)
+			  append (mapcar #'transition-target
+					 (state-transitions state))))
+		   result))
+    (reverse result)))
+
+(defun minimize-layer (layer)
+  (loop for rest on layer
+	for state1 = (car rest)
+	do (when (null (state-info state1))
+	     (loop for state2 in (cdr rest)
+		   do (when (and (null (state-info state2))
+				 (states-equivalent-p state1 state2))
+			(setf (state-info state2) state1))))))
+
+(defun adjust-transition (transition)
+  (unless (null (state-info (transition-target transition)))
+    (setf (transition-target transition)
+	  (state-info (transition-target transition)))))
+
+(defun adjust-state (state)
+  (mapc #'adjust-transition (state-transitions state)))
+
+(defun adjust-layer (layer)
+  (mapc #'adjust-state layer))
+
+(defun minimize-automaton (start-state)
+  (let ((layers (compute-layers start-state)))
+    (loop for rest = (cdr (reverse layers)) then (cdr rest)
+	  until (null (cdr rest))
+	  do (minimize-layer (car rest))
+	     (adjust-layer (cadr rest))))
+  start-state)
+
+(defun make-intervals (transitions)
+  (loop with trs = (sort (copy-list transitions) #'<
+			 :key #'transition-number)
+	with first = (car trs)
+	with rest = (cdr trs)
+	with result = (list (cons (cons (transition-number first)
+					(1+ (transition-number first)))
+				  (transition-target first)))
+	for tr in rest
+	do (if (and (eq (transition-target tr)
+			(cdr (car result)))
+		    (= (transition-number tr)
+		       (cdr (car (car result)))))
+	       (incf (cdr (car (car result))))
+	       (push (cons (cons (transition-number tr)
+				 (1+ (transition-number tr)))
+			   (transition-target tr))
+		     result))
+	finally (return (reverse result))))
+
+(defun compute-test-tree (var intervals open-inf-p open-sup-p)
+  (let ((length (length intervals)))
+    (if (= length 1)
+	(let* ((interval (car intervals))
+	       (start (car (car interval)))
+	       (end (cdr (car interval)))
+	       (target (cdr interval)))
+	  (if open-inf-p
+	      (if open-sup-p
+		  `(if (< ,var ,start)
+		       (go err)
+		       (if (< ,var ,end)
+			   (go ,target)
+			   (go err)))
+		  `(if (< ,var ,start)
+		       (go err)
+		       (go ,target)))
+	      (if open-sup-p
+		  `(if (< ,var ,end)
+		       (go ,target)
+		       (go err))
+		  `(go ,target))))
+	(let* ((half (floor length 2))
+	       (left (subseq intervals 0 half))
+	       (right (subseq intervals half))
+	       (open-p (/= (cdr (car (car (last left))))
+			   (car (car (car right))))))
+	  `(if (< ,var ,(car (car (car right))))
+	       ,(compute-test-tree var left open-inf-p open-p)
+	       ,(compute-test-tree var right nil open-sup-p))))))
+
+(defun test-automaton ()
+  (let ((fs (loop for info in '(w x y z) collect (make-state nil info)))
+	(ps (remove-duplicates (loop repeat 200
+				     collect (loop repeat 4
+						   collect (random 8)))
+			       :test #'equal))
+	(ss (make-state)))
+    (loop for p in ps
+	  do (add-path ss p (elt fs (random (length fs)))))
+    (minimize-automaton ss)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Meters.
+;;;
+;;; Generic function invocation is an excellent opportunity for
+;;; Multics-style meters.
+;;;
+;;; For instance, we could record:
+;;;
+;;;  * Total number of calls.
+;;;  * Number of calls resulting in a cache miss.
+;;;  * Total time computing a new cache.
+;;;  * Number of times the call record was destroyed.
+;;;
+;;; With this information, we can compute some very interesting
+;;; statistics, such as the average overhead per call as a result of
+;;; computing the cache. Etc.
