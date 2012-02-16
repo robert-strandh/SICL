@@ -1900,4 +1900,3 @@
 		       '(class))
     (test-superclasses 'funcallable-standard-class
 		       '(class))))
-		       
