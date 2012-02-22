@@ -11,6 +11,8 @@
    #:string-designator
    #:pathname-designator
    #:package-designator
+   #:setf-function-name
+   #:function-name
    #:function-designator
    #:extended-function-designator
    #:keyfun #:keyfun-designator

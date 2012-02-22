@@ -113,9 +113,22 @@
 ;;; Maybe remove this one?
 (deftype nonnegative-fixnum () '(and fixnum unsigned-byte))
 
+(defun setf-function-name-p (object)
+  (and (consp object)
+       (consp (cdr object))
+       (null (cddr object))
+       (eq (car object) 'setf)
+       (symbolp (cadr object))))
+
+(deftype setf-function-name ()
+  `(satisfies setf-function-name-p))
+
+(deftype function-name ()
+  `(or symbol setf-function-name))
+
 (deftype function-designator () '(or function symbol))
 
-(deftype extended-function-designator () '(or function symbol list))
+(deftype extended-function-designator () '(or function function-name))
 
 (deftype string-designator () '(or character symbol string))
 
