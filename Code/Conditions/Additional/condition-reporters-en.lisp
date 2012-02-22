@@ -98,6 +98,18 @@
   (format stream
 	  "Both keyword arguments :test and :test-not were given."))
 
+(defmethod report-condition
+    ((c sicl-unbound-variable) stream (language (eql 'en-us)))
+  (format stream
+	  "The variable named ~s in unbound."
+	  (cell-error-name c)))
+
+(defmethod report-condition
+    ((c sicl-undefined-function) stream (language (eql 'en-us)))
+  (format stream
+	  "The funcation named ~s in undefined."
+	  (cell-error-name c)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile time conditions. 

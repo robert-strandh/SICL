@@ -23,6 +23,9 @@
 (define-condition sicl-style-warning (sicl-condition style-warning) ())
 (define-condition sicl-error (sicl-condition  error) ())
 (define-condition sicl-type-error (sicl-condition type-error) ())
+(define-condition sicl-cell-error (sicl-condition cell-error) ())
+(define-condition sicl-unbound-variable (sicl-condition unbound-variable) ())
+(define-condition sicl-undefined-function (sicl-condition undefined-function) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
