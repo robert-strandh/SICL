@@ -231,112 +231,229 @@
 ;;; Lexical environments
 
 (defclass delta-environment (environment)
-  ((%parent :initarg :parent :reader parent)
-   (%identifier :initarg :identifier :reader identifier)
-   (%declarations :initarg :declarations :reader declarations)))
+  ((%parent :initarg :parent :reader parent)))
 
-(defclass variable-environment (delta-environment) ())
-(defclass function-environment (delta-environment) ())
+;;; A binding environment is an environment that reflects the
+;;; creation of some kind of binding.
+(defclass binding-environment (delta-environment)
+  ((%name :initarg :name :reader name)))
+
+;;; An environment that contains a declaration. 
+(defclass declaration-environment (delta-environment)
+  ((%item :initarg :item :reader item)))
+
+;;; A referencing declaration is one of dynamic-extent, ftype,
+;;; ignorable, ignore, inline, notinline, special, or type.  It can
+;;; also be an implementation-defined declaration referring to some
+;;; name.  The target is the binding to which the declaration
+;;; applies.
+(defclass referencing-declaration-environment (declaration-environment)
+  ((%target :initarg :target :reader target)))
+
+(defclass pure-declaration-envirionment (declaration-environment)())
+
+;;; This mixin is used for environments that will require runtime
+;;; allocation.
+(defclass allocating-environment-mixin () ())
+
+;;; A variable environment is a binding environment that has to do with
+;;; the namespace of variables. 
+(defclass variable-environment (binding-environment)
+  ())
+
+(defclass lexical-variable-environment
+    (variable-environment allocating-environment-mixin)
+  ())
+
+(defclass special-variable-environment (variable-environment)
+  ())
+
+(defclass symbol-macro-environment (variable-environment)
+  ((%definition :initarg :definition :reader definition)))
+
+;;; A function environment is a binding environment that has to do with
+;;; the namespace of functions. 
+(defclass function-environment (binding-environment)
+  ())
+
+(defclass lexical-function-environment
+    (function-environment allocating-environment-mixin)
+  ())
 
 (defclass macro-environment (function-environment)
   ((%expander :initarg expander :reader expander)))
 
-(defclass binding-environment-mixin () ())
+(defclass block-environment (binding-environment allocating-environment-mixin)
+  ())
 
-(defun find-binding (identifier environment type)
-  (labels ((aux (environment level)
-	     (cond ((typep environment 'global-environment)
+(defclass tag-environment (binding-environment allocating-environment-mixin)
+  ())
+
+(defun find-global-environment (environment)
+  (loop for env = environment then (parent env)
+	when (typep env 'global-environment)
+	  return env))
+
+(defun variable-information (name &optional env)
+  (labels ((find-binding (env)
+	     (cond ((typep env 'global-environment)
+		    (or (gethash name (special-variables env))
+			(gethash name (constant-variables env))))
+		   ((and (typep env 'variable-environment)
+			 (eq name (name env)))
+		    env)
+		   (t
+		    (find-binding (parent env)))))
+	   (find-declarations (env binding)
+	     (cond ((typep env 'global-environment)
+		    (cdr (or (gethash name (special-variables env))
+			     (gethash name (constant-variables env)))))
+		   ((eq env binding)
+		    '())
+		   ((and (typep env 'referencing-declaration-environment)
+			 (eq (target env) binding))
+		    (cons (item env)
+			  (find-declarations (parent env) binding)))
+		   (t
+		    (find-declarations (parent env) binding)))))
+    (let ((binding (find-binding env))
+	  (global (find-global-environment env)))
+      (if (null binding)
+	  (values nil nil '())
+	  (let ((declarations (find-declarations env binding)))
+	    (cond ((consp binding)
+		   (if (eq binding
+			   (gethash name (special-variables global)))
+		       (values :special nil declarations)
+		       (values :constant nil '())))
+		  ((typep binding 'symbol-macro-environment)
+		   (values :symbol-macro binding '()))
+		  ((typep binding 'special-variable-environment)
+		   (values :special binding declarations))
+		  ((typep binding 'lexical-variable-environment)
+		   (values :lexical binding declarations))
+		  (t
+		   (assert nil))))))))
+
+(defun function-information (name &optional env)
+  (labels ((find-binding (env)
+	     (cond ((typep env 'global-environment)
+		    (or (and (consp name)
+			     (gethash (cadr name) (setf-functions env)))
+			(gethash name (symbol-functions env))
+			(gethash name (macros env))
+			(gethash name (special-operators env))))
+		   ((and (typep env 'function-environment)
+			 (equal name (name env)))
+		    env)
+		   (t
+		    (find-binding (parent env)))))
+	   (find-declarations (env binding)
+	     (cond ((typep env 'global-environment)
+		    (cdr (or (and (consp name)
+				  (gethash (cadr name) (setf-functions env)))
+			     (gethash name (symbol-functions env))
+			     (gethash name (macros env))
+			     (gethash name (special-operators env)))))
+		   ((eq env binding)
+		    '())
+		   ((and (typep env 'referencing-declaration-environment)
+			 (eq (target env) binding))
+		    (cons (item env)
+			  (find-declarations (parent env) binding)))
+		   (t
+		    (find-declarations (parent env) binding)))))
+    (let ((binding (find-binding env))
+	  (global (find-global-environment env)))
+      (if (null binding)
+	  (values nil nil '())
+	  (let ((declarations (find-declarations env binding)))
+	    (cond ((consp binding)
+		   (cond ((or (and (consp binding)
+				   (eq binding
+				       (gethash (cadr name) (setf-functions global))))
+			      (gethash name (symbol-functions global)))
+			  (values :function nil declarations))
+			 ((eq binding
+			      (gethash name (macros global)))
+			  (values :macro nil declarations))
+			 (t
+			  (values :special-operator nil declarations))))
+		  ((typep binding 'macro-environment)
+		   (values :macro binding declarations))
+		  ((typep binding 'lexical-function-environment)
+		   (values :function binding declarations))
+		  (t
+		   (assert nil))))))))
+
+(defun block-information (name &optional env)
+  (labels ((find-binding (env)
+	     (cond ((typep env 'global-environment)
 		    nil)
-		   ((and (typep environment type)
-			 (eq identifier (identifier environment)))
-		    level)
-		   ((typep environment 'binding-environment-mixin)
-		    (aux (parent environment) (1+ level)))
-		   (t (aux (parent environment) level)))))
-    (aux environment 0)))
-  
+		   ((and (typep env 'block-environment)
+			 (equal name (name env)))
+		    env)
+		   (t
+		    (find-binding (parent env))))))
+    (let ((binding (find-binding env)))
+      (if (null binding)
+	  (values nil nil '())
+	  (values :block binding '())))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Variable environment
+(defun tag-information (name &optional env)
+  (labels ((find-binding (env)
+	     (cond ((typep env 'global-environment)
+		    nil)
+		   ((and (typep env 'tag-environment)
+			 (equal name (name env)))
+		    env)
+		   (t
+		    (find-binding (parent env))))))
+    (let ((binding (find-binding env)))
+      (if (null binding)
+	  (values nil nil '())
+	  (values :tag binding '())))))
 
-(defclass lexical-variable-environment
-    (variable-environment binding-environment-mixin)
-  ())
-
-(defgeneric variable-information-using-class (identifier env))
-
-(defmethod variable-information-using-class (identifier env)
-  (variable-information-using-class identifier (parent env)))
-
-(defmethod variable-information-using-class (identifier (env variable-environment))
-  (values :lexical env '()))
-
-;;; FIXME: Clearly wrong.
-(defmethod variable-information-using-class (identifier (env global-environment))
-  (let ((constant (gethash identifier (constant-variables env))))
-    (if (not (null constant))
-	(values :constant nil '((type . t)))
-	(let ((special (gethash identifier (special-variables env))))
-	  (if (not (null special))
-	      (values :special nil '((type . t)))
-	      (values nil nil nil))))))
-
-(defun variable-information (identifier &optional env)
-  (variable-information-using-class identifier (or env *compiler-environment*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function environment
-
-(defclass lexical-function-environment
-    (function-environment binding-environment-mixin)
-  ())
-
-(defgeneric function-information-using-class (identifier env))
-
-(defmethod function-information-using-class (identifier env)
-  (function-information-using-class identifier (parent env)))
-
-(defmethod function-information-using-class (identifier (env function-environment))
-  (values :function env '()))
-
-(defmethod function-information-using-class (identifier (env macro-environment))
-  (values :macro env '()))
-
-;;; FIXME: Clearly wrong.
-(defmethod function-information-using-class (identifier (env global-environment))
-  (let ((macro (gethash identifier (macros env))))
-    (if (not (null macro))
-	(values :macro nil '((type . t)))
-	(let ((function (gethash identifier (symbol-functions env))))
-	  (if (not (null function))
-	      (values :function nil '((type . t)))
-	      (let ((special-form (gethash identifier (special-operators env))))
-		(if (not (null special-form))
-		    (values :special-form nil '((type . t)))
-		    (values nil nil nil))))))))
-  
-(defun function-information (identifier &optional env)
-  (function-information-using-class identifier (or env *compiler-environment*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Block environment
-
-(defclass block-environment (delta-environment binding-environment-mixin) ())
-
-(defgeneric block-information-using-class (identifier env))
-
-(defmethod block-information-using-class (identifier env)
-  (block-information-using-class identifier (parent env)))
-
-(defmethod block-information-using-class (identifier (env block-environment))
-  (values :block env '()))
-
-(defmethod block-information-using-class (identifier (env global-environment))
-  (values nil nil ()))
-
-(defun block-information (identifier &optional env)
-  (block-information-using-class identifier (or env *compiler-environment*)))
-
+;;; FIXME: do more error checking here
+(defun augment-environment (env
+			    &key
+			      ((:variable variables))
+			      ((:symbol-macro symbol-macros))
+			      ((:function functions))
+			      ((:macro macros))
+			      ((:block blocks))
+			      ((:tag tags))
+			      ((:declare declares)))
+  (let ((result env))
+    (loop for variable in variables
+	  do (setf env (make-instance 'lexical-variable-environment
+				      :parent env
+				      :name variable)))
+    (loop for function in functions
+	  do (setf env (make-instance 'lexical-function-environment
+				      :parent env
+				      :name function)))
+    (loop for symbol-macro in symbol-macros
+	  do (setf env (make-instance 'symbol-macro-environment
+				      :parent env
+				      :name (car symbol-macro)
+				      :definition (cadr symbol-macro))))
+    (loop for macro in macros
+	  do (setf env (make-instance 'macro-environment
+				      :parent env
+				      :name (car macro)
+				      :definition (cadr macro))))
+    (loop for block in blocks
+	  do (setf env (make-instance 'block-environment
+				      :parent env
+				      :name block)))
+    (loop for tag in tags
+	  do (setf env (make-instance 'lexical-function-environment
+				      :parent env
+				      :name tag)))
+;;; FIXME: distinguish between pure and referencing declarations
+    (loop for item in declares
+	  do (setf env (make-instance 'declaration-environment
+				      :parent env
+				      :item item)))
+    result))
