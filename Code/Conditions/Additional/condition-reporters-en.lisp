@@ -235,6 +235,44 @@
 	  (code c)))
 
 (defmethod report-condition
+    ((c empty-body) stream (language (eql 'en-us)))
+  (format stream
+	  "The body of this form is empty:~@
+           ~s"
+	  (code c)))
+
+(defmethod report-condition
+    ((c numeric-catch-tag) stream (language (eql 'en-us)))
+  (format stream
+	  "CATCH tags are compared with EQ so using a numeric~@
+           CATCH tag may not work as expected:~@
+           ~s"
+	  (code c)))
+
+(defmethod report-condition
+    ((c load-time-value-read-only-p-not-evaluated)
+     stream
+     (language (eql 'en-us)))
+  (format stream
+	  "The second (optional) argument (read-only-p) is not evaluated,~@
+           so a boolean value (T or NIL) was expected.~@
+           But the following was found instead:~@
+           ~s"
+	  (code c)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;  Lambda list conditions.
+
+(defmethod report-condition
+    ((c lambda-list-must-be-list) stream (language (eql 'en-us)))
+  (format stream
+	  "A lambda list must be a list.~@
+           But the following was found instead:~@
+           ~s"
+	  (code c)))
+
+(defmethod report-condition
     ((c lambda-list-must-not-be-circular) stream (language (eql 'en-us)))
   (format stream
 	  "A lambda list must not be a circular list.~@
@@ -304,6 +342,30 @@
 	  (code c)))
 
 (defmethod report-condition
+    ((c rest/body-must-be-followed-by-variable) stream (language (eql 'en-us)))
+  (format stream
+	  "The lambda list keyword &rest or &body must be followed by a variable.~@
+           But this is not the case in this lambda list:~@
+           ~s"
+	  (code c)))
+
+(defmethod report-condition
+    ((c atomic-lambda-list-tail-must-be-variable) stream (language (eql 'en-us)))
+  (format stream
+	  "The atomic tail of a lambda list must be a variable.~@
+           But this is not the case in this lambda list:~@
+           ~s"
+	  (code c)))
+
+(defmethod report-condition
+    ((c whole-must-be-followed-by-variable) stream (language (eql 'en-us)))
+  (format stream
+	  "The lambda list keyword &whole must be followed by a variable.~@
+           But this is not the case in this lambda list:~@
+           ~s"
+	  (code c)))
+
+(defmethod report-condition
     ((c whole-must-appear-first) stream (language (eql 'en-us)))
   (format stream
 	  "If &whole is used in a lambda list, it must appear first.~@
@@ -336,27 +398,153 @@
 	  (code c)))
 
 (defmethod report-condition
-    ((c empty-body) stream (language (eql 'en-us)))
+    ((c malformed-specialized-required) stream (language (eql 'en-us)))
   (format stream
-	  "The body of this form is empty:~@
-           ~s"
-	  (code c)))
-
-(defmethod report-condition
-    ((c numeric-catch-tag) stream (language (eql 'en-us)))
-  (format stream
-	  "CATCH tags are compared with EQ so using a numeric~@
-           CATCH tag may not work as expected:~@
-           ~s"
-	  (code c)))
-
-(defmethod report-condition
-    ((c load-time-value-read-only-p-not-evaluated)
-     stream
-     (language (eql 'en-us)))
-  (format stream
-	  "The second (optional) argument (read-only-p) is not evaluated,~@
-           so a boolean value (T or NIL) was expected.~@
+	  "In this type of lambda list, a required parameter must~@
+           have one of the following forms:~@
+           - var~@
+           - (var)~@
+           - (var class-name)~@
+           - (var (eql form))~@
+           where var is a symbol that is not also the name of ~@
+           a constant variable, and class-name is a symbol.~@
            But the following was found instead:~@
            ~s"
-	  (code c)))
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-ordinary-optional) stream (language (eql 'en-us)))
+  (format stream
+	  "In this type of lambda list, an item following the &optional~@
+           lambda-list keyword must have one of the following forms:~@
+           - var~@
+           - (var)~@
+           - (var init-form)~@
+           - (var init-form supplied-parameter-p)~@
+           where var and supplied-parameter-p are symbols that are not~@
+           also names of constant variables.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-defgeneric-optional) stream (language (eql 'en-us)))
+  (format stream
+	  "In this type of lambda list, an item following the &optional~@
+           lambda-list keyword must have one of the following forms:~@
+           - var~@
+           - (var)~@
+           where var is a symbol that is not~@
+           also the name of a constant variable.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-destructuring-optional) stream (language (eql 'en-us)))
+  (format stream
+	  "In this type of lambda list, an item following the &optional~@
+           lambda-list keyword must have one of the following forms:~@
+           - var~@
+           - (pattern)~@
+           - (pattern init-form)~@
+           - (pattern init-form supplied-parameter-p)~@
+           where var and supplied-parameter-p are symbols that are not also~@
+           names of constant variables, and pattern is a destructuring pattern.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-ordinary-key) stream (language (eql 'en-us)))
+  (format stream
+	  "In this type of lambda list, an item following the &key~@
+           lambda-list keyword must have one of the following forms:~@
+           - var~@
+           - (var)~@
+           - (var init-form)~@
+           - (var init-form supplied-parameter-p)~@
+           - ((keyword var))~@
+           - ((keyword var) init-form)~@
+           - ((keyword var) init-form supplied-parameter-p)~@
+           where var and supplied-parameter-p are symbols that are not~@
+           also names of constant variables, and keyword is a symbol.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-defgeneric-key) stream (language (eql 'en-us)))
+  (format stream
+	  "In this type of lambda list, an item following the &key~@
+           lambda-list keyword must have one of the following forms:~@
+           - var~@
+           - (var)~@
+           - ((keyword var))~@
+           where var is a symbol that is not~@
+           also the name of a constant variable, and keyword is a symbol.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-destructuring-key) stream (language (eql 'en-us)))
+  (format stream
+	  "In this type of lambda list, an item following the &key~@
+           lambda-list keyword must have one of the following forms:~@
+           - var~@
+           - (var)~@
+           - (var init-form)~@
+           - (var init-form supplied-parameter-p)~@
+           - ((keyword pattern))~@
+           - ((keyword pattern) init-form)~@
+           - ((keyword pattern) init-form supplied-parameter-p)~@
+           where var and supplied-parameter-p are symbols that are not also~@
+           names of constant variables, keyword is a symbol and~@
+           pattern is a destructuring pattern.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-aux) stream (language (eql 'en-us)))
+  (format stream
+	  "In a lambda list, an item following the &aux~@
+           lambda-list keyword must have one of the following forms:~@
+           - var~@
+           - (var)~@
+           - (var init-form)~@
+           where var is a symbol that is not~@
+           also the name of a constant variable, and keyword is a symbol.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-destructuring-tree) stream (language (eql 'en-us)))
+  (format stream
+	  "A destructuring tree can only contain CONS cells and~@
+           symbols that are also not names of contstants.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c malformed-lambda-list-pattern) stream (language (eql 'en-us)))
+  (format stream
+	  "A lambda-list pattern must be either a tree containing only~@
+           CONS cells and symbols that are also not names of contstants,~@
+           or a list containing lambda-list keywords.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+
+(defmethod report-condition
+    ((c required-must-be-variable) stream (language (eql 'en-us)))
+  (format stream
+	  "In this type of lambda list, the required parameter must~@
+           be a variable which is also not the name of a constant.~@
+           But the following was found instead:~@
+           ~s"
+          (code c)))
+

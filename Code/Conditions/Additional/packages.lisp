@@ -32,6 +32,7 @@
    #:setq-must-have-even-number-arguments
    #:setq-variable-must-be-symbol
    #:tagbody-element-must-be-symbol-integer-or-compound-form
+   #:lambda-list-must-be-list
    #:lambda-list-must-not-be-circular
    #:lambda-list-must-be-proper-list
    #:lambda-list-keyword-not-allowed
@@ -39,6 +40,9 @@
    #:multiple-occurrences-of-lambda-list-keyword
    #:incorrect-keyword-order
    #:both-rest-and-body-occur-in-lambda-list
+   #:atomic-lambda-list-tail-must-be-variable
+   #:rest/body-must-be-followed-by-variable
+   #:whole-must-be-followed-by-variable
    #:whole-must-appear-first
    #:whole-must-be-followed-by-variable
    #:environment-must-be-followed-by-variable
@@ -48,5 +52,16 @@
    #:deprecated-eval-when-situation
    #:load-time-value-read-only-p-not-evaluated
    #:suspect-lambda-list-keyword
+   #:malformed-specialized-required
+   #:malformed-ordinary-optional
+   #:malformed-defgeneric-optional
+   #:malformed-destructuring-optional
+   #:malformed-ordinary-key
+   #:malformed-defgeneric-key
+   #:malformed-destructuring-key
+   #:malformed-destructuring-tree
+   #:malformed-aux
+   #:malformed-lambda-list-pattern
+   #:required-must-be-variable
    #:sicl-unbound-variable
    #:sicl-unbound-function))

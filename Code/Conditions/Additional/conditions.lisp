@@ -116,6 +116,13 @@
     (sicl-program-error)
   ())
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;  Lambda list conditions.
+
+(define-condition lambda-list-must-be-list (sicl-program-error)
+  ())
+
 (define-condition lambda-list-must-not-be-circular (sicl-program-error)
   ())
 
@@ -140,6 +147,15 @@
 (define-condition both-rest-and-body-occur-in-lambda-list (sicl-program-error)
   ())
 
+(define-condition rest/body-must-be-followed-by-variable (sicl-program-error)
+  ())
+
+(define-condition atomic-lambda-list-tail-must-be-variable (sicl-program-error)
+  ())
+
+(define-condition whole-must-be-followed-by-variable (sicl-program-error)
+  ())
+
 (define-condition whole-must-appear-first (sicl-program-error)
   ())
 
@@ -150,6 +166,82 @@
   ())
 
 (define-condition environment-can-appear-at-most-once (sicl-program-error)
+  ())
+
+(define-condition malformed-specialized-required (sicl-program-error)
+  ())
+
+;;; This condition is used to indicate that there is a malformed item
+;;; following the &optional lambda-list keyword in an ordinary lambda
+;;; list, a specialized lambda list, a boa lambda list, a defsetf
+;;; lambda list, a define-modify-macro lambda list, or a
+;;; define-method-combination lambda list.  These lambda lists allow
+;;; the following form for such an item:
+;;;
+;;;   * var
+;;;   * (var)
+;;;   * (var init-form)
+;;;   * (var init-form supplied-p-parameter)
+;;;
+;;; where var and supplied-p-parameter are symbols that are not names
+;;; of constants.
+(define-condition malformed-ordinary-optional (sicl-program-error)
+  ())
+
+;;; This condition is used to indicate that there is a malformed item
+;;; following the &optional lambda-list keyword in a defgeneric lambda
+;;; list.  This lambda list allows the following form for such an item:
+;;;
+;;;   * var
+;;;   * (var)
+;;;
+;;; where var is a symbol that is not a name of a constant.
+(define-condition malformed-defgeneric-optional (sicl-program-error)
+  ())
+
+;;; This condition is used to indicate that there is a malformed item
+;;; following the &optional lambda-list keyword in a macro lambda
+;;; list, a desstructuring lambda list, or a deftype lambda list.
+;;; These lambda lists allow the following form for such an item:
+;;;
+;;;   * var
+;;;   * (pattern)
+;;;   * (pattern init-form)
+;;;   * (pattern init-form supplied-p-parameter)
+;;;
+;;; where var and supplied-p-parameter are symbols that are not names
+;;; of constants, and pattern is any destructuring pattern.
+(define-condition malformed-destructuring-optional (sicl-program-error)
+  ())
+
+(define-condition malformed-ordinary-key (sicl-program-error)
+  ())
+
+(define-condition malformed-defgeneric-key (sicl-program-error)
+  ())
+
+(define-condition malformed-destructuring-key (sicl-program-error)
+  ())
+
+(define-condition malformed-aux (sicl-program-error)
+  ())
+
+;;; This condition is used to indicate that a destructuring tree
+;;; contains some item other than a CONS cell or a symbol which is not
+;;; also the name of a constant. 
+(define-condition malformed-destructuring-tree (sicl-program-error)
+  ())
+
+;;; This condition is used to indicate that something that ought
+;;; to be either a destructuring tree or a list with lambda-list
+;;; keywords in fact is something else, such as a constant or some
+;;; illegal atomic object.
+(define-condition malformed-lambda-list-pattern (sicl-program-error)
+  ())
+
+;;; This condition is used to indicate that in a (non destructuring)
+;;; lambda list, the required parameter must be a variable
+(define-condition required-must-be-variable (sicl-program-error)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
