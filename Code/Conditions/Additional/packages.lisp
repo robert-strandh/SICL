@@ -64,4 +64,28 @@
    #:malformed-lambda-list-pattern
    #:required-must-be-variable
    #:sicl-unbound-variable
-   #:sicl-unbound-function))
+   #:sicl-unbound-function
+   #:no-such-class-name
+   #:must-be-class-or-nil
+   #:superclass-list-must-be-proper-list
+   #:class-name-must-be-non-nil-symbol
+   #:malformed-slots-list
+   #:malformed-slot-spec
+   #:illegal-slot-name
+   #:slot-options-must-be-even
+   #:slot-option-name-must-be-symbol
+   #:multiple-initform-options-not-permitted
+   #:multiple-documentation-options-not-permitted
+   #:multiple-allocation-options-not-permitted
+   #:multiple-type-options-not-permitted
+   #:slot-documentation-option-must-be-string
+   #:class-option-must-be-non-empty-list
+   #:class-option-name-must-be-symbol
+   #:duplicate-class-option-not-allowed
+   #:malformed-documentation-option
+   #:malformed-metaclass-option
+   #:malformed-default-initargs-option
+   #:default-initargs-option-once
+   #:documentation-option-once
+   #:metaclass-option-once
+   #:unknown-class-option))

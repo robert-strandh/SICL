@@ -548,3 +548,196 @@
            ~s"
           (code c)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; CLOS/MOP-related conditions.
+
+(defmethod report-condition  ((c no-such-class-name)
+			      stream
+			      (language (eql 'en-us)))
+  (format stream
+	  "There is no class with the name ~s."
+	  (type-error-datum c)))
+
+(defmethod report-condition  ((c must-be-class-or-nil)
+			      stream
+			      (language (eql 'en-us)))
+  (format stream
+	  "A class object or NIL was expected, but
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c superclass-list-must-be-proper-list)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "The list of superclasses must be a proper list, but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c class-name-must-be-non-nil-symbol)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "A class name must be a non-nil symbol, but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c malformed-slots-list)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "The direct-slots must be a proper list of slot specs, but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c malformed-slot-spec)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "Malformed slot specification.~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c illegal-slot-name)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "Illegal slot name~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c slot-options-must-be-even)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "There must be an even number of slot options.~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c slot-option-name-must-be-symbol)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "The name of a slot option must be a symbol, but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c multiple-initform-options-not-permitted)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "A slot can not have multiple :initform options.~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c multiple-documentation-options-not-permitted)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "A slot can not have multiple :documentation options.~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c multiple-allocation-options-not-permitted)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "A slot can not have multiple :allocation options.~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c multiple-type-options-not-permitted)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "A slot can not have multiple :type options.~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c slot-documentation-option-must-be-string)
+			     stream
+			     (language (eql 'en-us)))
+  (format stream
+	  "The :documentation option of a slot must have a string argument, but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c class-option-must-be-non-empty-list)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "A class option must be a a non-empty list, but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c class-option-name-must-be-symbol)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "A class option name must be a symbol, but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c malformed-documentation-option)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "A documentation option must have the form~@
+           (:documentation <name>), but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c malformed-metaclass-option)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "A documentation option must have the form~@
+           (:documentation <name>), but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c malformed-default-initargs-option)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "The DEFAULT-INITARG option takes the form~@
+           (:default-initargs <name> <value> <name> <value>...), but~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c default-initargs-option-once)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "The default-initargs option can appear only once in the~@
+           list of class options, but a second such option:~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c documentation-option-once)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "The documentation option can appear only once in the~@
+           list of class options, but a second such option:~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c metaclass-option-once)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "The metaclass option can appear only once in the~@
+           list of class options, but a second such option:~@
+           ~s was found."
+	  (type-error-datum c)))
+
+(defmethod report-condition ((c unknown-class-option)
+			     stream
+			     (langauge (eql 'en-us)))
+  (format stream
+	  "A class option is either ~@
+           :default-initargs, :documentation, or :metaclass, but~@
+           ~s was found."
+	  (type-error-datum c)))

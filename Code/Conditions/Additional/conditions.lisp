@@ -246,6 +246,109 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; CLOS/MOP-related conditions. 
+
+(define-condition no-such-class-name (sicl-type-error)
+  ()
+  (:default-initargs :type 'symbol))
+
+(define-condition must-be-class-or-nil (sicl-type-error)
+  ()
+  (:default-initargs :type '(or class null)))
+
+(define-condition superclass-list-must-be-proper-list
+    (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition class-name-must-be-non-nil-symbol
+    (sicl-type-error)
+  ()
+  (:default-initargs :type '(and symbol (not null))))
+
+(define-condition malformed-slots-list (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition malformed-slot-spec (sicl-type-error)
+  ()
+  (:default-initargs :type '(or symbol list)))
+
+(define-condition illegal-slot-name (sicl-type-error)
+  ()
+  (:default-initargs :type 'symbol))
+
+(define-condition slot-options-must-be-even (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition slot-option-name-must-be-symbol (sicl-type-error)
+  ()
+  (:default-initargs :type 'symbol))
+
+(define-condition multiple-initform-options-not-permitted (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition multiple-documentation-options-not-permitted (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition multiple-allocation-options-not-permitted (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition multiple-type-options-not-permitted (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition slot-documentation-option-must-be-string (sicl-type-error)
+  ()
+  (:default-initargs :type 'string))
+
+(define-condition class-option-must-be-non-empty-list (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition class-option-name-must-be-symbol (sicl-type-error)
+  ()
+  (:default-initargs :type 'symbol))
+
+;;; FIXME: This doesn't feel like a type-error
+(define-condition duplicate-class-option-not-allowed (sicl-type-error)
+  ()
+  (:default-initargs :type 'symbol))
+
+(define-condition malformed-documentation-option (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition malformed-metaclass-option (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition malformed-default-initargs-option (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition default-initargs-option-once (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition documentation-option-once (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition metaclass-option-once (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+(define-condition unknown-class-option (sicl-type-error)
+  ()
+  (:default-initargs :type 'list))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Warnings
 
 (define-condition empty-body (sicl-style-warning)
@@ -263,3 +366,4 @@
 
 (define-condition suspect-lambda-list-keyword (sicl-style-warning)
   ((%keyword :initarg :keyword :reader lambda-list-keyword)))
+
