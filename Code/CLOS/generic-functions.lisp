@@ -522,6 +522,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Lambda lists.
+;;;
+;;; There are several different lambda lists involved in generic functions.
+;;;
+;;; From the programmer's perspective, there are only two kinds of
+;;; lambda lists: the lambda list of the generic function, either
+;;; explicitly mentioned when the generic function was created, or
+;;; automatically generated from a method definition, and the lambda
+;;; lists of individual methods as explicitly mentioned in the
+;;; method-defining forms.
+;;;
+;;; From our perspective, the situation is more complicated.  First of
+;;; all, there are a few more lambda lists involved.  There is the
+;;; lambda list of the effective method function which is derived from
+;;; the lambda lists of the applicable methods that make up the
+;;; effective method.  Then there is the lambda list of the function
+;;; that gets invoked when a method calls call-next-method.
+;;;
+;;; Furthermore, we can alter or replace the explicitly supplied
+;;; lambda lists as long as this is transparent to the programmer.
+;;; And we might want to do that for performance reasons.
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Meters.
 ;;;
 ;;; Generic function invocation is an excellent opportunity for
