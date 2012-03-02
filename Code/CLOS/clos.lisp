@@ -1147,10 +1147,10 @@
 	    do (case (car option)
 		 (:default-initargs
 		  (unless (proper-list-p (cdr option))
-		    (error 'default-initargs-must-be-proper-list
+		    (error 'malformed-default-initargs
 			   :datum option))
 		  (unless (evenp (length (cdr option)))
-		    (error 'default-initargs-must-have-even-length
+		    (error 'malformed-default-initargs
 			   :datum option))
 		  (let ((canonicalized-initargs '()))
 		    (loop for (name value) on (cdr option) by #'cddr
