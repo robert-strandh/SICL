@@ -271,12 +271,34 @@
 
 (defun (setf class-finalized-p) (new-value object)
   (when (not (standard-instance-p object))
-    (error "no method for ~s on class-finalized-p" object))
+    (error "no method for ~s on (setf class-finalized-p)" object))
   (let ((class (standard-instance-class object)))
     (cond ((or (eq class (find-class 'standard-class))
 	       (eq class (find-class 'funcallable-standard-class)))
 	   (setf (slot-value object '%finalized-p) new-value))
 	  (t (error "no method for ~s on class-finalized-p"
+		    object)))))
+
+(defun class-unique-number (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on class-unique-number" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class))
+	       (eq class (find-class 'built-in-class)))
+	   (slot-value object '%unique-number))
+	  (t (error "no method for ~s on class-unique-number"
+		    object)))))
+
+(defun (setf class-unique-number) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf class-unique-number)" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((or (eq class (find-class 'standard-class))
+	       (eq class (find-class 'funcallable-standard-class))
+	       (eq class (find-class 'built-in-class)))
+	   (setf (slot-value object '%unique-number) new-value))
+	  (t (error "no method for ~s on class-unique-number"
 		    object)))))
 
 (defun class-name (object)
@@ -1754,6 +1776,21 @@
   		slots
   		(class-slots class))))))
   (setf (class-finalized-p class) t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Unique class numbers.
+
+(defparameter *next-number* 0)
+
+(defun ensure-class-number (class)
+  (or (class-unique-number class)
+      (progn
+	;; Number the superclasses first.
+	(loop for super in (class-direct-superclasses class)
+	      do (ensure-class-number super))
+	(setf (class-unique-number class)
+	      (prog1 *next-number* (incf *next-number*))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
