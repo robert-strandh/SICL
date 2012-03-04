@@ -200,12 +200,12 @@
 
 (defun (setf class-direct-slots) (new-value object)
   (when (not (standard-instance-p object))
-    (error "no method for ~s on class-direct-slots" object))
+    (error "no method for ~s on (setf class-direct-slots)" object))
   (let ((class (standard-instance-class object)))
     (cond ((or (eq class (find-class 'standard-class))
 	       (eq class (find-class 'funcallable-standard-class)))
 	   (setf (slot-value object '%direct-slots) new-value))
-	  (t (error "no method for ~s on class-direct-slots"
+	  (t (error "no method for ~s on (setf class-direct-slots)"
 		    object)))))
 
 (defun class-direct-subclasses (object)
@@ -222,14 +222,14 @@
 
 (defun (setf class-direct-subclasses) (new-value object)
   (when (not (standard-instance-p object))
-    (error "no method for ~s on class-direct-subclasses" object))
+    (error "no method for ~s on (setf class-direct-subclasses)" object))
   (let ((class (standard-instance-class object)))
     (cond ((or (eq class (find-class 'standard-class))
 	       (eq class (find-class 'funcallable-standard-class))
 	       (eq class (find-class 'forward-reference-class))
 	       (eq class (find-class 'built-in-class)))
 	   (setf (slot-value object '%direct-subclasses) new-value))
-	  (t (error "no method for ~s on class-direct-subclasses"
+	  (t (error "no method for ~s on (setf class-direct-subclasses)"
 		    object)))))
 
 (defun class-direct-superclasses (object)
@@ -247,12 +247,12 @@
 
 (defun (setf class-direct-superclasses) (new-value object)
   (when (not (standard-instance-p object))
-    (error "no method for ~s on class-direct-superclasses" object))
+    (error "no method for ~s on (setf class-direct-superclasses)" object))
   (let ((class (standard-instance-class object)))
     (cond ((or (eq class (find-class 'standard-class))
 	       (eq class (find-class 'funcallable-standard-class)))
 	   (setf (slot-value object '%direct-superclasses) new-value))
-	  (t (error "no method for ~s on class-direct-superclasses"
+	  (t (error "no method for ~s on (setf class-direct-superclasses)"
 		    object)))))
 
 (defun class-finalized-p (object)
@@ -276,7 +276,7 @@
     (cond ((or (eq class (find-class 'standard-class))
 	       (eq class (find-class 'funcallable-standard-class)))
 	   (setf (slot-value object '%finalized-p) new-value))
-	  (t (error "no method for ~s on class-finalized-p"
+	  (t (error "no method for ~s on (setf class-finalized-p)"
 		    object)))))
 
 (defun class-unique-number (object)
@@ -298,7 +298,7 @@
 	       (eq class (find-class 'funcallable-standard-class))
 	       (eq class (find-class 'built-in-class)))
 	   (setf (slot-value object '%unique-number) new-value))
-	  (t (error "no method for ~s on class-unique-number"
+	  (t (error "no method for ~s on (setf class-unique-number)"
 		    object)))))
 
 (defun class-name (object)
