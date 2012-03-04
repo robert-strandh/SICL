@@ -660,6 +660,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Making slot-value and (setf slot-value) faster.
+;;;
+;;; Probably not an original idea, but still: Pretend that every slot
+;;; has a reader and a writer generic function.  These functions are
+;;; stored in two hash tables, one for readers and one for writers
+;;; using the slot name as a key.
+;;;
+;;; Use a compiler macro so that whenever either SLOT-VALUE or (SETF
+;;; SLOT-VALUE) is used with a constant slot name, the corresponding
+;;; form gets replaced by a call to the particular generic function
+;;; for that slot name.  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Avoiding consing during generic-function invocation.
+;;;
+;;; The standard protocol requires that &rest arguments be used and
+;;; lists of arguments to be passed around from the generic function
+;;; to its effective methods, and between different applicable
+;;; methods.  But when neither &rest nor &key is used, this seems
+;;; wasteful, because in that case, memory will be allocated and then
+;;; discarded immediately after the end of the call. 
+;;;
+;;; Here is an idea to try to avoid that wasted memory: Use a (small)
+;;; pool of CONS cells to use for such calls.  Allocate them upon
+;;; entry to the generic function and discard them on exit.  When the
+;;; pool is empty, allocate as usual using CONS.
+;;;
+;;; Notice that we can't use a fixed list per generic function because
+;;; of the presence of threads.  Two threads can simultaneously call
+;;; one generic function with different augments, so each thread needs
+;;; a different argument list.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Meters.
 ;;;
 ;;; Generic function invocation is an excellent opportunity for
