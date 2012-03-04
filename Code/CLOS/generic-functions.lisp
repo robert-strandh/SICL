@@ -431,6 +431,24 @@
 ;;; in a call, we compute the effective method to use, and we add a
 ;;; call record to the call history.
 
+(defun generic-function-call-history (object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on generic-function-call-history" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (slot-value object '%call-history))
+	  (t (error "no method for ~s on generic-function-call-history"
+		    object)))))
+
+(defun (setf generic-function-call-history) (new-value object)
+  (when (not (standard-instance-p object))
+    (error "no method for ~s on (setf generic-function-call-history)" object))
+  (let ((class (standard-instance-class object)))
+    (cond ((eq class (find-class 'standard-generic-function))
+	   (setf (slot-value object '%call-history) new-value))
+	  (t (error "no method for ~s on (setf generic-function-call-history)"
+		    object)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Effective method automaton.
