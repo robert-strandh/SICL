@@ -108,7 +108,8 @@
 		   :reader generic-function-method-class)
     (%method-combination :initarg :method-combination
 			 :reader generic-function-method-combination)
-    (%methods :initform '() :accessor generic-function-methods)))
+    (%methods :initform '() :accessor generic-function-methods)
+    (%call-history :initform '() :accessor generic-function-call-history)))
 
 (define-slots 'method '(metaobject)
   '())
