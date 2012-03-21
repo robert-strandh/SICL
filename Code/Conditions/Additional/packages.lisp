@@ -4,6 +4,7 @@
   (:use #:common-lisp #:sicl-additional-types #:sicl-internationalization)
   (:export
    #:signaler-mixin
+   #:with-signaler
    #:sicl-condition
    #:sicl-warning
    #:sicl-style-warning

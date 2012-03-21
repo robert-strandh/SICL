@@ -12,11 +12,34 @@
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
 
-;;; This condition is used to mix into other conditions that
-;;; will report the construct (function, macro, etc) in which 
-;;; the condition was signaled. 
+;;; We use a special variable *signaler* which holds the name of the
+;;; outermost entity to have wrapped WITH-SIGNALER around a call to
+;;; error. 
+
+(defparameter *signaler* nil)
+
+;;; Clients that might signal errors can wrap a call to this macro
+;;; around the code that signals an error.  This macro makes sure that
+;;; the signaler that gets reported is the outermost entity that uses
+;;; it.
+(defmacro with-signaler (signaler &body body)
+  (let ((local-function-name (gensym)))
+    `(flet ((,local-function-name ()
+	      ,@body))
+       (if (null *signaler*)
+	   (let ((*signaler* ,signaler))
+	     (,local-function-name))
+	   (,local-function-name)))))
+
+;;; This condition is used to mix into other conditions that will
+;;; report the construct (function, macro, etc) in which the condition
+;;; was signaled.  Code would typically rely on the value of
+;;; *SIGNALER* to initialize the corresponding slot.  Code that wants
+;;; to override the value of *SIGNALER* can use the :SIGNALER initarg.
 (define-condition signaler-mixin ()
-  ((%signaler :initform nil :initarg :signaler :reader signaler)))
+  ((%signaler :initform *signaler*
+	      :initarg :signaler
+	      :reader signaler)))
 
 (define-condition sicl-condition (signaler-mixin condition) ())
 (define-condition sicl-warning (sicl-condition warning) ())
