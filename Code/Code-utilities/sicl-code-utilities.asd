@@ -7,5 +7,6 @@
   ((:file "packages")
    (:file "general" :depends-on ("packages"))
    (:file "lambda-lists" :depends-on ("packages"))
+   (:file "destructuring" :depends-on ("packages"))
    (:file "declarations" :depends-on ("packages"))
    (:file "environment" :depends-on ("packages"))))
