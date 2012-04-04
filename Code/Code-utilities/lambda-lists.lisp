@@ -94,20 +94,16 @@
        (eql (char (symbol-name object) 0) #\&)))
 
 ;;; Use this function for lambda lists that can be proper or dotted.
-(defun check-lambda-list-not-circular (lambda-list processor processee)
+(defun check-lambda-list-not-circular (lambda-list)
   (when (eq (nth-value 1 (list-structure lambda-list)) :circular)
     (error 'lambda-list-must-not-be-circular
-	   :form lambda-list
-	   :processor processor
-	   :processee processee)))
+	   :form lambda-list)))
 
 ;;; Use this function for lambda lists that must be proper lists.
-(defun check-lambda-list-proper (lambda-list processor processee)
+(defun check-lambda-list-proper (lambda-list)
   (unless (eq (nth-value 1 (list-structure lambda-list)) :proper)
     (error 'lambda-list-must-be-proper-list
-	   :form lambda-list
-	   :processor processor
-	   :processee processee)))
+	   :form lambda-list)))
 
 ;;; Check for restrictions common to all lambda lists.
 ;;;
@@ -143,7 +139,7 @@
 ;;;
 ;;;  * We do not check the nature of the arguments to the lambda list
 ;;;    keywords.  The parser for each type of lambda list must do that. 
-(defun check-lambda-list-keywords (lambda-list keywords processor processee)
+(defun check-lambda-list-keywords (lambda-list keywords)
   ;; We assume that KEYWORDS is a subset of LAMBDA-LIST-KEYWORDS, in
   ;; other words that we are given only valid lambda list keywords as
   ;; defined by the system.
@@ -179,29 +175,21 @@
     (unless (null forbidden)
 	(error 'lambda-list-keyword-not-allowed
 	       :form lambda-list
-	       :keyword (car forbidden)
-	       :processor processor
-	       :processee processee))
+	       :keyword (car forbidden)))
     ;; Check for suspect keywords.
     (unless (null suspect)
       (warn 'suspect-lambda-list-keyword
 	    :form lambda-list
-	    :keyword (car suspect)
-	    :processor processor
-	    :processee processee))
+	    :keyword (car suspect)))
     ;; Check for multiple occurrences.
     (loop for keyword in to-process
 	  do (when (> (count keyword to-process) 1)
 	       (error 'multiple-occurrences-of-lambda-list-keyword
 		      :form lambda-list
-		      :keyword keyword
-		      :processor processor
-		      :processee processee)))
+		      :keyword keyword)))
     (when (> (+ (count '&body to-process) (count '&rest to-process)) 1)
       (error 'both-rest-and-body-occur-in-lambda-list
-	     :form lambda-list
-	     :processor processor
-	     :processee processee))
+	     :form lambda-list))
     ;; Check the order of keywords.
     (loop for rem = to-process then (cdr rem)
 	  until (null (cdr rem))
@@ -210,9 +198,7 @@
 	       (error 'incorrect-keyword-order
 		      :form lambda-list
 		      :keyword1 (car rem)
-		      :keyword2 (cadr rem)
-		      :processor processor
-		      :processee processee)))
+		      :keyword2 (cadr rem))))
     ;; Check arities.
     (flet ((check-arity (keyword number-of-args)
 	     (if (eq keyword '&whole)
@@ -778,10 +764,10 @@
 	when (member (car rest) allowed)
 	  collect i))
 
-(defun parse-ordinary-lambda-list (lambda-list processor processee)
+(defun parse-ordinary-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body &key &allow-other-keys &aux)))
-    (check-lambda-list-proper lambda-list processor processee)
-    (check-lambda-list-keywords lambda-list allowed processor processee)
+    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
       (setf (required result)
@@ -804,10 +790,10 @@
 	(error "something is seriously wrong here"))
       result)))
 	
-(defun parse-generic-function-lambda-list (lambda-list processor processee)
+(defun parse-generic-function-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body &key &allow-other-keys)))
-    (check-lambda-list-proper lambda-list processor processee)
-    (check-lambda-list-keywords lambda-list allowed processor processee)
+    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
       (setf (required result)
@@ -828,10 +814,10 @@
 	(error "something is seriously wrong here"))
       result)))
 	
-(defun parse-specialized-lambda-list (lambda-list processor processee)
+(defun parse-specialized-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body &key &allow-other-keys &aux)))
-    (check-lambda-list-proper lambda-list processor processee)
-    (check-lambda-list-keywords lambda-list allowed processor processee)
+    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
       (setf (required result)
@@ -854,7 +840,7 @@
 	(error "something is seriously wrong here"))
       result)))
 	
-(defun parse-macro-lambda-list  (lambda-list processor processee)
+(defun parse-macro-lambda-list  (lambda-list)
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
       (error 'lambda-list-must-not-be-circular
@@ -865,7 +851,7 @@
 	    (error 'lambda-list-must-be-list
 		   :code lambda-list))
 	  (let ((allowed '(&whole &environment &optional)))
-	    (check-lambda-list-keywords lambda-list allowed processor processee)
+	    (check-lambda-list-keywords lambda-list allowed)
 	    (let ((positions (compute-keyword-positions lambda-list allowed))
 		  (result (make-instance 'lambda-list)))
 	      (if (eq (car lambda-list) '&whole)
@@ -922,7 +908,7 @@
 	(progn
 	  (let ((allowed '(&whole &environment &optional &rest &body
 			   &key &allow-other-keys &aux)))
-	    (check-lambda-list-keywords lambda-list allowed processor processee)
+	    (check-lambda-list-keywords lambda-list allowed)
 	    (let ((positions (compute-keyword-positions lambda-list allowed))
 		  (result (make-instance 'lambda-list)))
 	      (if (eq (car lambda-list) '&whole)
@@ -984,7 +970,7 @@
 		(error "something is seriously wrong here"))
 	      result))))))
 
-(defun parse-destructuring-lambda-list  (lambda-list processor processee)
+(defun parse-destructuring-lambda-list  (lambda-list)
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
       (error 'lambda-list-must-not-be-circular
@@ -995,7 +981,7 @@
 	    (error 'lambda-list-must-be-list
 		   :code lambda-list))
 	  (let ((allowed '(&whole &optional)))
-	    (check-lambda-list-keywords lambda-list allowed processor processee)
+	    (check-lambda-list-keywords lambda-list allowed)
 	    (let ((positions (compute-keyword-positions lambda-list allowed))
 		  (result (make-instance 'lambda-list)))
 	      (if (eq (car lambda-list) '&whole)
@@ -1028,7 +1014,7 @@
 	(progn
 	  (let ((allowed '(&whole &optional &rest &body
 			   &key &allow-other-keys &aux)))
-	    (check-lambda-list-keywords lambda-list allowed processor processee)
+	    (check-lambda-list-keywords lambda-list allowed)
 	    (let ((positions (compute-keyword-positions lambda-list allowed))
 		  (result (make-instance 'lambda-list)))
 	      (if (eq (car lambda-list) '&whole)
@@ -1060,7 +1046,7 @@
 
 ;;; FIXME: there is considerable code duplication between this one
 ;;; and the macro lambda list. 
-(defun parse-deftype-lambda-list  (lambda-list processor processee)
+(defun parse-deftype-lambda-list  (lambda-list)
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
       (error 'lambda-list-must-not-be-circular
@@ -1071,7 +1057,7 @@
 	    (error 'lambda-list-must-be-list
 		   :code lambda-list))
 	  (let ((allowed '(&whole &environment &optional)))
-	    (check-lambda-list-keywords lambda-list allowed processor processee)
+	    (check-lambda-list-keywords lambda-list allowed)
 	    (let ((positions (compute-keyword-positions lambda-list allowed))
 		  (result (make-instance 'lambda-list)))
 	      (if (eq (car lambda-list) '&whole)
@@ -1128,7 +1114,7 @@
 	(progn
 	  (let ((allowed '(&whole &environment &optional &rest &body
 			   &key &allow-other-keys &aux)))
-	    (check-lambda-list-keywords lambda-list allowed processor processee)
+	    (check-lambda-list-keywords lambda-list allowed)
 	    (let ((positions (compute-keyword-positions lambda-list allowed))
 		  (result (make-instance 'lambda-list)))
 	      (if (eq (car lambda-list) '&whole)
@@ -1190,10 +1176,10 @@
 		(error "something is seriously wrong here"))
 	      result))))))
 
-(defun parse-defsetf-lambda-list (lambda-list processor processee)
+(defun parse-defsetf-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body &key &allow-other-keys &environment)))
-    (check-lambda-list-proper lambda-list processor processee)
-    (check-lambda-list-keywords lambda-list allowed processor processee)
+    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
       ;; FIXME: check that if &environment occurs, then it is last.
@@ -1217,10 +1203,10 @@
 	(error "something is seriously wrong here"))
       result)))
 	
-(defun parse-define-modify-macro-lambda-list (lambda-list processor processee)
+(defun parse-define-modify-macro-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body)))
-    (check-lambda-list-proper lambda-list processor processee)
-    (check-lambda-list-keywords lambda-list allowed processor processee)
+    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
       (setf (required result)
@@ -1237,10 +1223,10 @@
       result)))
 
 (defun parse-define-method-combination-arguments-lambda-list
-    (lambda-list processor processee)
+    (lambda-list)
   (let ((allowed '(&whole &optional &rest &body &key &allow-other-keys &aux)))
-    (check-lambda-list-proper lambda-list processor processee)
-    (check-lambda-list-keywords lambda-list allowed processor processee)
+    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
       (setf (required result)
@@ -1362,3 +1348,125 @@
 		   (destructure-pattern (cdr pattern) temp2))))
 	(t
 	 (destructure-lambda-list pattern var))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Check that a lambda list of a geneneric function and a
+;;; lambda list from a method are congruent.
+;;;
+;;; The CLHS section 7.6.4 says that:
+;;;
+;;; 1. Each lambda list must have the same number of required
+;;;    parameters.
+;;;   
+;;; 2. Each lambda list must have the same number of optional
+;;;    parameters.  Each method can supply its own default for an
+;;;    optional parameter.
+;;;
+;;; 3. If any lambda list mentions &rest or &key, each lambda list
+;;;    must mention one or both of them.
+;;;
+;;; 4. If the generic function lambda list mentions &key, each method
+;;;    must accept all of the keyword names mentioned after &key,
+;;;    either by accepting them explicitly, by specifying
+;;;    &allow-other-keys, or by specifying &rest but not &key. Each
+;;;    method can accept additional keyword arguments of its own. The
+;;;    checking of the validity of keyword names is done in the
+;;;    generic function, not in each method. A method is invoked as if
+;;;    the keyword argument pair whose name is :allow-other-keys and
+;;;    whose value is true were supplied, though no such argument pair
+;;;    will be passed.
+;;;
+;;; 5. The use of &allow-other-keys need not be consistent across
+;;;    lambda lists. If &allow-other-keys is mentioned in the lambda
+;;;    list of any applicable method or of the generic function, any
+;;;    keyword arguments may be mentioned in the call to the generic
+;;;    function.
+;;;
+;;; 6. The use of &aux need not be consistent across methods. 
+
+;;; Check rule number 1.
+(defun congruent-required-p (lambda-list-1 lambda-list-2)
+  (= (length (required lambda-list-1))
+     (length (required lambda-list-2))))
+
+;;; Check rule number 2.
+(defun congruent-optionals-p (lambda-list-1 lambda-list-2)
+  (or (and (eq (optionals lambda-list-1) :none)
+	   (eq (optionals lambda-list-2) :none))
+      (and (listp (optionals lambda-list-1))
+	   (listp (optionals lambda-list-2))
+	   (= (length (optionals lambda-list-1))
+	      (length (optionals lambda-list-2))))))
+
+;;; Check rule number 3.
+(defun congruent-key-rest-p (lambda-list-1 lambda-list-2)
+  (or (and (eq (rest-body lambda-list-1) :none)
+	   (eq (keys lambda-list-1) :none)
+	   (eq (rest-body lambda-list-2) :none)
+	   (eq (keys lambda-list-2) :none))
+      (and (or (not (eq (rest-body lambda-list-1) :none))
+	       (not (eq (keys lambda-list-1) :none)))
+	   (or (not (eq (rest-body lambda-list-2) :none))
+	       (not (eq (keys lambda-list-2) :none))))))
+
+(defun same-keys-accepted-p 
+    (generic-function-lambda-list method-lambda-list)
+  (or (eq (keys generic-function-lambda-list) :none)
+      (null (set-exclusive-or
+	     (keys generic-function-lambda-list)
+	     (keys method-lambda-list)
+	     :test #'eq 
+	     :key #'caar))
+      (not (eq (allow-other-keys method-lambda-list) :none))
+      (and (not (eq (rest-body method-lambda-list) :none))
+	   (eq (keys method-lambda-list) :none))))
+
+(defun lambda-lists-congruent-p
+    (generic-function-lambda-list method-lambda-list)
+  (and (congruent-required-p
+	generic-function-lambda-list method-lambda-list)
+       (congruent-optionals-p
+	generic-function-lambda-list method-lambda-list)
+       (congruent-key-rest-p
+	generic-function-lambda-list method-lambda-list)
+       (same-keys-accepted-p
+	generic-function-lambda-list method-lambda-list)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Create a generic function lambda list that is congruent with a
+;;; given method lambda list.
+;;;
+;;; The CLHS section 7.6.4 says that:
+;;;
+;;; If a method-defining operator that cannot specify generic function
+;;; options creates a generic function, and if the lambda list for the
+;;; method mentions keyword arguments, the lambda list of the generic
+;;; function will mention &key (but no keyword arguments).
+;;;
+;;; We return 2 values, the unparsed and the parsed lambda list.
+
+(defun generate-congruent-lambda-list (method-lambda-list)
+  (let* ((parsed-lambda-list
+	   (make-instance
+	    'lambda-list
+	    :required (required method-lambda-list)
+	    :optionals (optionals method-lambda-list)
+	    :rest (rest-body method-lambda-list)
+	    :keys (if (eq (keys method-lambda-list) :none)
+		      :none
+		      '())))
+	 (unparsed-lambda-list
+	   `(,(required parsed-lambda-list)
+	     ,@(if (eq (optionals parsed-lambda-list) :none)
+		   '()
+		   `(&optional ,@(optionals parsed-lambda-list)))
+	     ,@(if (eq (rest-body parsed-lambda-list) :none)
+		   '()
+		   `(&rest ,@(rest-body parsed-lambda-list)))
+	     ,@(if (eq (keys parsed-lambda-list) :none)
+		   '()
+		   `(&key)))))
+    (values unparsed-lambda-list
+	    parsed-lambda-list)))
