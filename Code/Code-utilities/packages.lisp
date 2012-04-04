@@ -5,6 +5,7 @@
 	#:sicl-additional-types
 	#:sicl-additional-conditions)
   (:export #:list-structure
+	   #:proper-list-p
 	   #:lambda-list
 	   #:required
 	   #:environment
@@ -22,5 +23,8 @@
 	   #:parse-deftype-lambda-list
 	   #:parse-defsetf-lambda-list
 	   #:parse-define-modify-macro-lambda-list
-	   #:parse-define-method-combination-arguments-lambda-list))
+	   #:parse-define-method-combination-arguments-lambda-list
+	   #:destruture-lambda-list
+	   #:lambda-lists-congruent-p
+	   #:generate-congruent-lambda-list))
 
