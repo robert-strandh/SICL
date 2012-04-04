@@ -25,6 +25,7 @@
 	   #:parse-define-modify-macro-lambda-list
 	   #:parse-define-method-combination-arguments-lambda-list
 	   #:destruture-lambda-list
+	   #:parse-macro
 	   #:lambda-lists-congruent-p
 	   #:generate-congruent-lambda-list))
 
