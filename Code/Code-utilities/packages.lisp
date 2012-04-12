@@ -6,6 +6,11 @@
 	#:sicl-additional-conditions)
   (:export #:list-structure
 	   #:proper-list-p
+	   #:proper-list-length
+	   #:dotted-list-p
+	   #:dotted-list-length
+	   #:proper-or-dotted-list-length
+	   #:circular-list-p
 	   #:lambda-list
 	   #:required
 	   #:environment
