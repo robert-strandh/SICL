@@ -82,6 +82,36 @@
 (define-condition warn-both-test-and-test-not-given (sicl-warning)
   ())
 
+;;; This condition is used by sequence functions when a list has been
+;;; given as the sequence, but the list has been found not to be a
+;;; proper list.
+(define-condition list-as-sequence-must-be-proper (sicl-type-error)
+  ())
+
+;;; Provide :initarg :SEQUENCE and a :reader SEQUENCE
+(define-condition sequence-error-mixin ()
+  ((%sequence :initarg :sequence :reader sequence)))
+
+;;; This condition is used by sequence functions when the bounding
+;;; indexes are invalid as a pair, but separately valid, typically,
+;;; when START is greater than END.
+(define-condition invalid-bouding-indexes (sicl-type-error sequence-error-mixin)
+  ())
+
+;;; This condition is used by sequence functions when the START
+;;; bounding indexes is invalid.  This can be because it is not an
+;;; integer, or because it is less than 0 or greater than the length
+;;; of the sequence.
+(define-condition invalid-start-index (sicl-type-error sequence-error-mixin)
+  ())
+
+;;; This condition is used by sequence functions when the END bounding
+;;; indexes is invalid.  This can be because it is neither an integer
+;;; nor NIL, or because it is less than 0 or greater than the length
+;;; of the sequence.
+(define-condition invalid-end-index (sicl-type-error sequence-error-mixin)
+  ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile time conditions. 

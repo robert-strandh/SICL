@@ -16,6 +16,10 @@
    #:at-least-one-argument-required
    #:lists-must-have-the-same-length
    #:warn-both-test-and-test-not-given
+   #:list-as-sequence-must-be-proper
+   #:invalid-bounding-indexes
+   #:invalid-start-index
+   #:invalid-end-index
    #:sicl-program-error
    #:sicl-program-warning
    #:sicl-program-style-warning
