@@ -1,6 +1,6 @@
-;;;; Copyright (c) 2008, 2009, 2010, 2011
+;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012
 ;;;;
-;;;;     Robert Strandh (strandh@labri.fr)
+;;;;     Robert Strandh (strandh@gmail.com)
 ;;;;
 ;;;; all rights reserved. 
 ;;;;
@@ -17,7 +17,8 @@
 (in-package #:cl-user)
 
 (asdf:defsystem :sicl-conditionals
-    :components
+  :depends-on (:sicl-code-utilities)
+  :components
   ((:file "packages" :depends-on ())
    (:file "conditionals" :depends-on ("packages"))
    (:file "condition-reporters-en" :depends-on ("packages" "conditionals"))
