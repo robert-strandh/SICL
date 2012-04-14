@@ -75,24 +75,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Utilities
-
-;;; Check that an object is a proper list.
-;;; We could have used the AND macro here, but
-;;; we would have had to move this utility then,
-;;; so we expand the AND macro manually.
-(eval-when (:compile-toplevel :load-toplevel)
-
-  (defun proper-list-p (object)
-    (if (null object)
-	t
-	(if (consp object)
-	    (proper-list-p (cdr object))
-	    nil)))
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Implementation of the macros
 
 ;;; FIXME: This is a bit wasteful because we call proper-list-p for
