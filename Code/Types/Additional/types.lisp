@@ -140,3 +140,10 @@
 
 (deftype radix () '(integer 2 36))
 
+(defun end-is-not-less-than-start-p (pair)
+  (>= (cdr pair) (car pair)))
+
+(deftype bunding-indexes (&optional length)
+  `(or (cons (integer 0 (,length)) null)
+       (and (cons (integer 0 (,length)) (integer 0 (,length)))
+	    (satisfies end-is-not-less-than-start-p))))
