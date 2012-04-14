@@ -1,22 +1,3 @@
-;;; This type is introduced just for documentation purposes.
-(deftype generalized-boolean () t)
-
-;;; A general predicate is a function that takes an 
-;;; arbitrary object, and returns a generalized boolean.
-;;; We also require that a general predicate is pure, i.e.
-;;; that it no observable effect on the environment, and 
-;;; that its return value depends only on its argument.
-(deftype general-predicate () '(function (t) generalized-boolean))
-
-;;; A symbol predicate is like a general predicate, but its argument
-;;; must be of type symbol. 
-(deftype symbol-predicate () '(function (symbol) generalized-boolean))
-
-;;; This function is used in the definition of the type 
-;;; character-designator 
-(defun name-of-length-1 (symbol)
-  (= 1 (length (symbol-name symbol))))
-
 (declaim (ftype symbol-predicate name-of-length-1))
 
 (deftype character-designator ()
