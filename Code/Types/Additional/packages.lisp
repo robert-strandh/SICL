@@ -21,4 +21,5 @@
    #:radix
    #:nonnegative-fixnum ; Maybe remove this one?
    #:byte-specifier
+   #:bounding-indexes
    ))
