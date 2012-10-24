@@ -2,6 +2,7 @@
 
 (asdf:defsystem #:sicl-clos
   :depends-on (#:sicl-additional-types
+	       #:sicl-code-utilities
 	       #:sicl-additional-conditions)
   :components
   ((:file "packages"
