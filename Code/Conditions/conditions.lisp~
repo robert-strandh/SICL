@@ -1,9 +1,0 @@
-;;; Assume the type CONDITION is defined by the system
-
-(define-condition serious-condition ()
-  ())
-
-(define-condition warning ()
-  ())
-
-(define-condition style-warning (
