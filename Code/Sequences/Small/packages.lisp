@@ -6,7 +6,10 @@
 ;;; reader label on the list (<string1> <string2> ...) we need to
 ;;; express that as (:shadow . (<string1> <string2> ...)) instead. 
 (defpackage #:sicl-sequences-small
-    (:use #:cl)
+    (:use #:common-lisp
+	  #:sicl-additional-types
+	  #:sicl-additional-conditions
+	  #:sicl-code-utilities)
   (:shadow . #1=(#:find #:find-if #:find-if-not
                  #:position #:position-if #:position-if-not
                  #:length #:subseq

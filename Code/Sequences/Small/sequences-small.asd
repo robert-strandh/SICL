@@ -1,7 +1,10 @@
 (in-package #:cl-user)
 
 (asdf:defsystem :sicl-sequences-small
-    :components
+  :depends-on ("sicl-additional-types"
+	       "sicl-additional-conditions"
+	       "sicl-code-utilities")
+  :components
   ((:file "packages" :depends-on ())
    (:file "sequences" :depends-on ("packages"))))
 
