@@ -6,7 +6,8 @@
 ;;; reader label on the list (<string1> <string2> ...) we need to
 ;;; express that as (:shadow . (<string1> <string2> ...)) instead. 
 (defpackage #:sicl-loop
-    (:use #:cl)
+  (:use #:common-lisp
+	#:sicl-additional-conditions)
   (:shadow . #1=(#:loop))
   (:export . #1#))
 
@@ -19,7 +20,7 @@
 ;;; have the reader produce that list, hence the use of the #. reader
 ;;; macro and again of the consing dot followed by a list. 
 (defpackage #:sicl-loop-test
-    (:shadowing-import-from #:sicl-loop .
-                            #.(package-shadowing-symbols '#:sicl-loop))
-    (:use #:sicl-loop #:cl #:lisp-unit))
+  (:shadowing-import-from #:sicl-loop .
+			  #.(package-shadowing-symbols '#:sicl-loop))
+  (:use #:sicl-loop #:cl #:lisp-unit))
 
