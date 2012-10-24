@@ -695,6 +695,107 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Metastability issues.
+;;;
+;;; In the AMOP book, a few metastability issues are mentioned.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SLOT-VALUE.
+;;;
+;;; Calling SLOT-VALUE involves finding where the slot is located
+;;; which requires accessing the EFFECTIVE-SLOTS slot of
+;;; STANDARD-CLASS.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; COMPUTE-DISCRIMINATING-FUNCTION.
+;;;
+;;; If the generic function COMPUTE-DISCRIMINATING-FUNCTION were to be
+;;; modified, for instance a method might be added, then its own
+;;; discriminating function might need to be recomputed.  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method reader functions.
+;;;
+;;; The method reader functions are: METHOD-FUNCTION,
+;;; METHOD-GENERIC-FUNCTION, METHOD-LAMBDA-LIST, METHOD-SPECIALIZERS,
+;;; METHOD-QUALIFIERS, and ACCESSOR-METHOD-SLOT-DEFINITION.  The last
+;;; one only applies to subclasses of STANDARD-ACCESSOR-METHOD.  The
+;;; other ones apply to subclasses of the class METHOD.  Initially,
+;;; ACCESSOR-METHOD-SLOT-DEFINITION has a method specialized to
+;;; STANDARD-ACCESSOR-METHOD, and the others each have a method
+;;; specialized to STANDARD-METHOD.  Each one of those methods is an
+;;; instance of STANDARD-READER-METHOD.
+;;;
+;;; We assume that each reader function stores a CALL HISTORY, which
+;;; consists of a list of entries, where each entry associates the
+;;; class of the argument with an effective method to be called for
+;;; that class.  The call history is used to build a CACHE, but that
+;;; is unimportant to this discussion, because the cache can be built
+;;; by using only the call history, and the representation of the
+;;; cache can vary from one generic function to another, and even for
+;;; the same generic function according to the complexity of the call
+;;; history.
+;;;
+;;; The following can happen:
+;;;
+;;;  1. The function is called with an argument whose class is not in
+;;;     the call history, so the call history needs to be added to,
+;;;     but what is already in the call history is valid.
+;;;
+;;;  2. A method is removed. 
+;;; 
+;;;  3. A method is added.
+;;;
+;;; For situation number 1, we must assume that the call history of
+;;; each method reader function contains an entry for each method
+;;; subclass that has instances on any of these method reader
+;;; functions.  In practice, this means that the call history must
+;;; contain entries for the classes STANDARD-METHOD and
+;;; STANDARD-READER-METHOD.  When the function is called with an
+;;; argument of a class that is not in the call history, a call is
+;;; made to COMPUTE-EFFECTIVE-METHOD which will call the method reader
+;;; functions on each method of this reader function.  By the
+;;; assumption above, these calls will work.
+;;;
+;;; Situation 2 is more complicated.  We cannot simply trash the call
+;;; history and hope that it will automatically be rebuilt, because
+;;; once the call history is trashed, the function will not work for
+;;; any arguments, and, in order to rebuild the call history, we need
+;;; for the function to work, at least for some arguments.  So instead
+;;; of trashing the call history, we compute a new one, while letting
+;;; the old one remain in place.  This allows us to make recursive
+;;; calls to the function, and those recursive calls will use the old
+;;; call history.  Only when the new call history has been completely
+;;; recomputed do we replace the old one.  Notice that if the initial
+;;; method (see above) is removed, then nothing will work after that,
+;;; so we must prevent this from happening.
+;;;
+;;; Situation 3 is similar to situation 2, as long as the method added
+;;; is one that can already be handled by the reader function.  In
+;;; other words, if the method added is an instance of STANDARD-METHOD
+;;; or STANDARD-READER-METHOD, then the existing call history can
+;;; handle the recursive calls required to rebuild a new one.
+;;;
+;;; It is not possible to add a new method to any of the method reader
+;;; functions if that new method is not an instance of STANDARD-METHOD
+;;; or STANDARD-READER-METHOD.  It can not even be a subclass of any
+;;; of those classes.  Here is why: The method reader functions would
+;;; have to be called recursively on the new method in order to add to
+;;; the call history, but that would require that the method reader
+;;; function already work for the new type of method.
+;;;
+;;; Notice that the restriction in the previous paragraph does not
+;;; prevent users from creating subclasses of STANDARD-METHOD,
+;;; STANDARD-READER-METHOD, or even of METHOD, as long as methods on
+;;; those subclasses for the method reader functions are themselves
+;;; instances of STANDARD-METHOD or STANDARD-READER-METHOD. 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Meters.
 ;;;
 ;;; Generic function invocation is an excellent opportunity for
