@@ -185,8 +185,8 @@
       (error "no such function"))
     (binding entry)))
 
-(defun make-environment-entry (canonicalized-delcaration-specifier environment)
-  (destructuring-bind (head . rest) canonicalized-delcaration-specifier
+(defun make-environment-entry (canonicalized-declaration-specifier environment)
+  (destructuring-bind (head . rest) canonicalized-declaration-specifier
     (case head
       (declaration
        (make-instance 'declaration-declaration-entry
@@ -792,6 +792,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LOCALLY.
+
+(define-condition locally-special-form-must-be-proper-list 
+    (compilation-program-error)
+  ())
+
+(defmethod convert-compound
+    ((symbol (eql 'locally)) form environment)
+  (unless (sicl-code-utilities:proper-list-p form)
+    (error 'locally-special-form-must-be-proper-list
+	   :expr form))
+  (multiple-value-bind (declarations forms)
+      (sicl-code-utilities:separate-ordinary-body (cdr form))
+    (let* ((declaration-specifiers
+	     (sicl-code-utilities:canonicalize-declaration-specifiers
+	      (reduce #'append (mapcar #'cdr declarations))))
+	   (entries (mapcar #'make-environment-entry declaration-specifiers))
+	   (new-environment (append entries environment)))
+      (make-instance 'progn-ast
+		     :forms (convert-sequence forms new-environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
