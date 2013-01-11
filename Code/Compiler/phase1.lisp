@@ -418,8 +418,7 @@
 	(make-instance 'function-call-ast
 		       :binding binding
 		       :type (find-type binding environment)
-		       :arguments (loop for arg in (cdr form)
-					collect (convert arg environment))))))
+		       :arguments (convert-sequence (cdr form) environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -542,10 +541,6 @@
 ;;;
 ;;; Converting FUNCTION.
 
-(defclass function-ast (ast)
-  ((%binding :initarg :binding :reader binding)
-   (%type :initarg :type :reader type)))
-
 (defclass close-ast (ast)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body :initarg :body :reader body)))
@@ -570,7 +565,7 @@
 			  environment)))
     (if (null binding)
 	(warn "undefined function: ~s" name)
-	(make-instance 'function-ast
+	(make-instance 'variable-ast
 		       :binding binding
 		       :type (find-type binding environment)))))
 
@@ -586,8 +581,7 @@
 			 collect (make-instance 'lexical-variable-entry
 						:name var))
 		   environment)))
-    (let ((body (loop for form in (cddr lambda-form)
-		      collect (convert form new-environment))))
+    (let ((body (convert-sequence (cddr lambda-form) new-environment)))
       (make-instance 'close-ast
 		     ;; FIXME: Need to convert the lambda list first.
 		     :lambda-list parsed-lambda-list
@@ -828,8 +822,7 @@
     (error 'progn-special-form-must-be-proper-list
 	   :expr form))
   (make-instance 'progn-ast
-		 :forms (loop for subform in (cdr form)
-			      collect (convert subform environment))))
+		 :forms (convert-sequence (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1052,3 +1045,26 @@
 ;;;
 ;;; Converting UNWIND-PROTECT.
 
+(defclass unwind-protect-ast (ast)
+  ((%protected-form :initarg :protected-form :reader protected-form)
+   (%cleanup-forms :initarg :cleanup-forms :reader cleanup-forms)))
+
+(define-condition unwind-protect-special-form-must-be-proper-list 
+    (compilation-program-error)
+  ())
+
+(define-condition unwind-protect-must-have-at-least-one-argument
+    (compilation-program-error)
+  ())
+
+(defmethod convert-compound
+    ((symbol (eql 'unwind-protect)) form environment)
+  (unless (sicl-code-utilities:proper-list-p form)
+    (error 'unwind-protect-special-form-must-be-proper-list
+	   :expr form))
+  (unless (>= (length form) 2)
+    (error 'unwind-protect-must-have-at-least-one-argument
+	   :expr form))
+  (make-instance 'unwind-protect-ast
+		 :protected-form (convert (cadr form) environment)
+		 :cleanup-forms (convert-sequence (cddr form) environment)))
