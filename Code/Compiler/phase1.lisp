@@ -8,6 +8,24 @@
 	   #:*macroexpand-hook*
 	   #:constantp)
   (:export
+   #:ast
+   #:constant-ast
+   #:variable-ast
+   #:function-call-ast
+   #:block-ast
+   #:catch-ast
+   #:eval-when-ast
+   #:function-ast
+   #:go-ast
+   #:if-ast
+   #:load-time-value-ast
+   #:progn-ast
+   #:return-from-ast
+   #:setq-ast
+   #:tagbody-ast
+   #:the-ast
+   #:throw-ast
+   #:unwind-protect-ast
    ))
 
 (in-package #:sicl-compiler-phase-1)
@@ -352,7 +370,7 @@
 
 (defun convert-variable (form environment)
   (let ((binding (find-if (lambda (entry)
-			    (and (typep entry 'variable)
+			    (and (typep entry 'variable-entry)
 				 (eq (name entry) form)))
 			  environment)))
     (if (null binding)
@@ -528,6 +546,10 @@
   ((%binding :initarg :binding :reader binding)
    (%type :initarg :type :reader type)))
 
+(defclass close-ast (ast)
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%body :initarg :body :reader body)))
+
 (define-condition function-special-form-must-be-proper-list 
     (compilation-program-error)
   ())
@@ -535,6 +557,42 @@
 (define-condition function-must-have-exactly-one-argument
     (compilation-program-error)
   ())
+
+(define-condition lambda-must-be-proper-list
+    (compilation-program-error)
+  ())
+
+
+(defun convert-named-function (name environment)
+  (let ((binding (find-if (lambda (entry)
+			    (and (typep entry 'function-entry)
+				 (eq (name entry) name)))
+			  environment)))
+    (if (null binding)
+	(warn "undefined function: ~s" name)
+	(make-instance 'function-ast
+		       :binding binding
+		       :type (find-type binding environment)))))
+
+(defun convert-lambda-function (lambda-form environment)
+  (unless (sicl-code-utilities:proper-list-p lambda-form)
+    (error 'lambda-must-be-proper-list
+	   :expr lambda-form))
+  (let* ((parsed-lambda-list
+	   (sicl-code-utilities:parse-ordinary-lambda-list (cadr lambda-form)))
+	 (vars (sicl-code-utilities:lambda-list-variables parsed-lambda-list))
+	 (new-environment
+	   (append (loop for var in vars
+			 collect (make-instance 'lexical-variable-entry
+						:name var))
+		   environment)))
+    (let ((body (loop for form in (cddr lambda-form)
+		      collect (convert form new-environment))))
+      (make-instance 'close-ast
+		     ;; FIXME: Need to convert the lambda list first.
+		     :lambda-list parsed-lambda-list
+		     :body (make-instance 'progn-ast
+					  :forms body)))))
 
 (defmethod convert-compound
     ((symbol (eql 'function)) form environment)
@@ -544,15 +602,9 @@
   (unless (= (length form) 2)
     (error 'function-must-have-exactly-one-argument
 	   :expr form))
-  (let ((binding (find-if (lambda (entry)
-			    (and (typep entry 'function-entry)
-				 (eq (name entry) form)))
-			  environment)))
-    (if (null binding)
-	(warn "undefined function: ~s" form)
-	(make-instance 'function-ast
-		       :binding binding
-		       :type (find-type binding environment)))))
+  (if (symbolp (cadr form))
+      (convert-named-function (cadr form) environment)
+      (convert-lambda-function (cadr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
