@@ -1013,6 +1013,30 @@
 ;;;
 ;;; Converting THE.
 
+(defclass the-ast (ast)
+  ((%value-type :initarg :value-type :reader value-type)
+   (%form :initarg :form :reader form)))
+
+(define-condition the-special-form-must-be-proper-list 
+    (compilation-program-error)
+  ())
+
+(define-condition the-must-have-exactly-two-arguments
+    (compilation-program-error)
+  ())
+
+(defmethod convert-compound
+    ((symbol (eql 'the)) form environment)
+  (unless (sicl-code-utilities:proper-list-p form)
+    (error 'the-special-form-must-be-proper-list
+	   :expr form))
+  (unless (= (length form) 3)
+    (error 'the-must-have-exactly-two-arguments
+	   :expr form))
+  (make-instance 'the-ast
+		 :value-type (cadr form)
+		 :form (convert (caddr form) environment)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting THROW.
