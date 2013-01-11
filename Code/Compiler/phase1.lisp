@@ -822,7 +822,7 @@
 
 (defclass multiple-value-call-ast (ast)
   ((%function-form :initarg :function-form :reader function-form)
-   (%forms :initarg :forms :reader forms))
+   (%forms :initarg :forms :reader forms)))
 
 (define-condition multiple-value-call-special-form-must-be-proper-list 
     (compilation-program-error)
@@ -850,7 +850,7 @@
 
 (defclass multiple-value-prog1-ast (ast)
   ((%first-form :initarg :first-form :reader first-form)
-   (%forms :initarg :forms :reader forms))
+   (%forms :initarg :forms :reader forms)))
 
 (define-condition multiple-value-prog1-special-form-must-be-proper-list 
     (compilation-program-error)
@@ -894,6 +894,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting PROGV.
+
+(defclass progv-ast (ast)
+  ((%symbols :initarg :symbols :reader symbols)
+   (%vals :initarg :vals :reader vals)
+   (%body :initarg :body :reader body)))
+
+(define-condition progv-special-form-must-be-proper-list 
+    (compilation-program-error)
+  ())
+
+(define-condition progv-must-have-at-least-two-arguments
+    (compilation-program-error)
+  ())
+
+(defmethod convert-compound
+    ((symbol (eql 'progv)) form environment)
+  (unless (sicl-code-utilities:proper-list-p form)
+    (error 'progv-special-form-must-be-proper-list
+	   :expr form))
+  (unless (>= (length form) 3)
+    (error 'progv-must-have-at-least-two-arguments
+	   :expr form))
+  (let ((body (make-instance 'progn-ast
+		:forms (convert-sequence (cdddr form) environment))))
+    (make-instance 'progv-ast
+		   :symbols (convert (cadr form) environment)
+		   :vals (convert (caddr form) environment)
+		   :body body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
