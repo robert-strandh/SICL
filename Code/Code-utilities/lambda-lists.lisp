@@ -950,6 +950,12 @@
 	      (when (eq (environment result) :none)
 		(setf (values (environment result) positions)
 		      (parse-environment lambda-list positions)))
+	      (setf (values (rest-body result) positions)
+		    (parse-rest/body lambda-list positions))
+	      ;; The environment may follow the rest/body.
+	      (when (eq (environment result) :none)
+		(setf (values (environment result) positions)
+		      (parse-environment lambda-list positions)))
 	      (setf (values (keys result) positions)
 		    (parse-all-keys
 		     lambda-list positions #'parse-destructuring-key))
