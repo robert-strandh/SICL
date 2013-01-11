@@ -777,7 +777,7 @@
 	    (parse-all-optionals
 	     lambda-list positions #'parse-ordinary-optional))
       (setf (values (rest-body result) positions)
-	    (values (parse-rest/body lambda-list positions)))
+	    (parse-rest/body lambda-list positions))
       (setf (values (keys result) positions)
 	    (parse-all-keys
 	     lambda-list positions #'parse-ordinary-key))
@@ -1255,6 +1255,72 @@
 	(error "something is seriously wrong here"))
       result)))
 	
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; From a lambda list, exctract a list of all the varibles
+;;; that it introduces.
+
+(defun pattern-variables (pattern)
+  (cond ((null pattern)
+	 '())
+	((symbolp pattern)
+	 (list pattern))
+	((consp pattern)
+	 (append (pattern-variables (car pattern))
+		 (pattern-variables (cdr pattern))))
+	(t
+	 (lambda-list-variables pattern))))
+
+(defun required-variables (required)
+  (if (eq required :none)
+      '()
+      (reduce #'append (mapcar #'pattern-variables required))))
+
+(defun environment-variables (environment)
+  (if (eq environment :none)
+      '()
+      (list environment)))
+
+(defun whole-variables (whole)
+  (if (eq whole :none)
+      '()
+      (pattern-variables whole)))
+
+(defun optional-variables (optionals)
+  (if (eq optionals :none)
+      '()
+      (loop for entry in optionals
+	    append (pattern-variables (car entry))
+	    unless (null (cddr entry))
+	      collect (caddr entry))))
+
+(defun rest-body-variables (rest-body)
+  (if (eq rest-body :none)
+      '()
+      (pattern-variables rest-body)))
+
+(defun key-variables (keys)
+  (if (eq keys :none)
+      '()
+      (loop for entry in keys
+	    append (pattern-variables (cadr (car entry)))
+	    unless (null (cddr entry))
+	      collect (caddr entry))))
+
+(defun aux-variables (aux)
+  (if (eq aux :none)
+      '()
+      (mapcar #'car aux)))
+
+(defun lambda-list-variables (lambda-list)
+  (append (required-variables (required lambda-list))
+	  (environment-variables (environment lambda-list))
+	  (whole-variables (whole lambda-list))
+	  (optional-variables (optionals lambda-list))
+	  (rest-body-variables (rest-body lambda-list))
+	  (key-variables (keys lambda-list))
+	  (aux-variables (aux lambda-list))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Check that a lambda list of a geneneric function and a
