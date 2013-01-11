@@ -820,9 +820,57 @@
 ;;;
 ;;; Converting MULTIPLE-VALUE-CALL.
 
+(defclass multiple-value-call-ast (ast)
+  ((%function-form :initarg :function-form :reader function-form)
+   (%forms :initarg :forms :reader forms))
+
+(define-condition multiple-value-call-special-form-must-be-proper-list 
+    (compilation-program-error)
+  ())
+
+(define-condition multiple-value-call-must-have-at-least-one-argument
+    (compilation-program-error)
+  ())
+
+(defmethod convert-compound
+    ((symbol (eql 'multiple-value-call)) form environment)
+  (unless (sicl-code-utilities:proper-list-p form)
+    (error 'multiple-value-call-special-form-must-be-proper-list
+	   :expr form))
+  (unless (>= (length form) 2)
+    (error 'multiple-value-call-must-have-at-least-one-argument
+	   :expr form))
+  (make-instance 'multiple-value-call-ast
+		 :function-form (convert (cadr form) environment)
+		 :forms (convert-sequence (cddr form) environment)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting MULTIPLE-VALUE-PROG1.
+
+(defclass multiple-value-prog1-ast (ast)
+  ((%first-form :initarg :first-form :reader first-form)
+   (%forms :initarg :forms :reader forms))
+
+(define-condition multiple-value-prog1-special-form-must-be-proper-list 
+    (compilation-program-error)
+  ())
+
+(define-condition multiple-value-prog1-must-have-at-least-one-argument
+    (compilation-program-error)
+  ())
+
+(defmethod convert-compound
+    ((symbol (eql 'multiple-value-prog1)) form environment)
+  (unless (sicl-code-utilities:proper-list-p form)
+    (error 'multiple-value-prog1-special-form-must-be-proper-list
+	   :expr form))
+  (unless (>= (length form) 2)
+    (error 'multiple-value-prog1-must-have-at-least-one-argument
+	   :expr form))
+  (make-instance 'multiple-value-prog1-ast
+		 :first-form (convert (cadr form) environment)
+		 :forms (convert-sequence (cddr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
