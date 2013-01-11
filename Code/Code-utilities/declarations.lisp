@@ -76,8 +76,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Separate an ordinary body such as a let or let* body that may
-;;; contain declarations (but no documentation) into the forms of the
-;;; declarations and the executable forms. 
+;;; contain declarations (but no documentation) into the declarations
+;;; and the executable forms.
 ;;;
 ;;; If there are declarations after the first executable form (which
 ;;; is a syntax error), then those declarations will be considered
@@ -93,3 +93,30 @@
     (if (null pos)
 	(values body '())
 	(values (subseq body 0 pos) (subseq body pos)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Separate a body such as a defun, flet, or lables that may contain
+;;; both declarations and a documentation string into the
+;;; declarations, the documentation, and the executable forms.
+
+(defun separate-function-body (body)
+  (unless (proper-list-p body)
+    (error "body must be a proper list"))
+  (let ((declarations '())
+	(documentation nil)
+	(forms '()))
+    (loop for (expr . rest) on body
+	  do (cond ((not (null forms))
+		    (push expr forms))
+		   ((and (consp expr) (eq (car expr) 'declare))
+		    (push expr declarations))
+		   ((stringp expr)
+		    (if (or (null rest)
+			    (not (null documentation))
+			    (not (null forms)))
+			(push expr forms)
+			(setf documentation expr)))
+		   (t
+		    (push expr forms))))
+    (values (nreverse declarations) documentation (nreverse forms))))

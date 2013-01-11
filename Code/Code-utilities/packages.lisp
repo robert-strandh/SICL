@@ -35,5 +35,6 @@
 	   #:lambda-lists-congruent-p
 	   #:generate-congruent-lambda-list
 	   #:canonicalize-declaration-specifiers
-	   #:separate-ordinary-body))
+	   #:separate-ordinary-body
+	   #:separate-function-body))
 
