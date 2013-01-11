@@ -111,7 +111,8 @@
   (let* ((parsed-lambda-list (parse-macro-lambda-list lambda-list))
 	 (env-var (environment parsed-lambda-list))
 	 (final-env-var (if (eq env-var :none) (gensym) env-var))
-	 (form-var (gensym)))
+	 (form-var (gensym))
+	 (args-var (gensym)))
     `(lambda (,form-var ,final-env-var)
        ;; If the lambda list does not contain &environment, then
        ;; we IGNORE the GENSYMed parameter to avoid warnings.
@@ -121,9 +122,10 @@
        ,@(if (eq env-var :none)
 	     `((declare (ignore ,final-env-var)))
 	     `())
-       (let* ,(destructure-lambda-list parsed-lambda-list form-var)
-	 ;; FIXME: insert ignorable variables introduced by
-	 ;; destrucuring here.
-	 ,@body))))
+       (let ((,args-var (cdr ,form-var)))
+	 (let* ,(destructure-lambda-list parsed-lambda-list args-var)
+	   ;; FIXME: insert ignorable variables introduced by
+	   ;; destrucuring here.
+	   ,@body)))))
 
 	 
