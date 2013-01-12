@@ -537,6 +537,83 @@
 ;;;
 ;;; Converting FLET.
 
+(defun augment-environment-with-declarations (declarations environment)
+  (let* ((declaration-specifiers
+	   (sicl-code-utilities:canonicalize-declaration-specifiers
+	    (reduce #'append (mapcar #'cdr declarations))))
+	 (entries (mapcar #'make-environment-entry declaration-specifiers)))
+    (append entries environment)))
+
+(define-condition flet-special-form-must-be-proper-list 
+    (compilation-program-error)
+  ())
+
+(define-condition flet-must-have-at-least-one-argument
+    (compilation-program-error)
+  ())
+
+(define-condition flet-functions-must-be-proper-list
+    (compilation-program-error)
+  ())
+
+(define-condition functions-body-must-be-proper-list
+    (compilation-program-error)
+  ())
+
+(defun convert-function (lambda-list body environment)
+  (let* ((parsed-lambda-list
+	   (sicl-code-utilities:parse-ordinary-lambda-list lambda-list))
+	 (vars (sicl-code-utilities:lambda-list-variables parsed-lambda-list)))
+    (multiple-value-bind (declarations documentation forms)
+	(sicl-code-utilities:separate-function-body body)
+      (declare (ignore documentation))
+      (let* ((new-environment
+	       (augment-environment-with-declarations
+		declarations
+		(append (loop for var in vars
+			      collect (make-instance 'lexical-variable-entry
+						    :name var))
+			environment)))
+	     (body-asts (convert-sequence forms new-environment)))
+	(make-instance 'close-ast
+		       ;; FIXME: Need to convert the lambda list first.
+		       :lambda-list parsed-lambda-list
+		       :body (make-instance 'progn-ast
+					    :forms body-asts))))))
+
+(defmethod convert-compound
+    ((symbol (eql 'flet)) form environment)
+  (unless (sicl-code-utilities:proper-list-p form)
+    (error 'flet-special-form-must-be-proper-list
+	   :expr form))
+  (unless (>= (length form) 2)
+    (error 'flet-must-have-at-least-one-argument
+	   :expr form))
+  (unless (sicl-code-utilities:proper-list-p (cadr form))
+    (error 'flet-functions-must-be-proper-list
+	   :expr form))
+  (multiple-value-bind (local-vars local-functions)
+      (loop for (name lambda-list body) in (cadr form)
+	    collect (make-instance 'lexical-variable-entry :name name)
+	      into vars
+	    collect (convert-function lambda-list body environment)
+	      into funs
+	    finally (return (values vars funs)))
+    (multiple-value-bind (declarations forms)
+	(sicl-code-utilities:separate-ordinary-body (cddr form))
+      (let* ((new-environment
+	       (augment-environment-with-declarations
+		declarations
+		(append local-vars environment)))
+	     (body-asts (convert-sequence forms new-environment))
+	     (init-asts (loop for var in local-vars
+			      for fun in local-functions
+			      collect (make-instance 'setq-ast
+						     :binding var
+						     :value fun))))
+	(make-instance 'progn-ast
+		       :forms (append init-asts body-asts))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FUNCTION.
