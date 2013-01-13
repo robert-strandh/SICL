@@ -20,19 +20,6 @@
 ;;; of a type and a handler. 
 (defparameter *handler-stack* '())
 
-;;; Find a handler for a particular condition.
-;;; If a handler is found, return two values:
-;;; the handler, and the bind stack that just
-;;; excludes the handler bind in which the 
-;;; appropriate handler was found.  If a handler 
-;;; is not found, return NIL.
-(defun find-handler (condition handler-stack)
-  (loop for remaining-stack on handler-stack
-	do (loop for binding in (car remaining-stack)
-		 when (typep condition (car binding))
-		   do (return-from find-handler
-			(values (cdr binding) (cdr remaining-stack))))))
-
 (defmacro handler-bind (bindings &body body)
   `(let ((*handler-stack* (cons (list ,@(loop for (type handler) in bindings
 					      collect `(cons ',type ,handler)))
@@ -73,29 +60,24 @@
 ;;; Return NIL if no handler handles. 
 (defun find-and-invoke-handler (condition)
   (let ((handler-stack *handler-stack*))
-    (loop do (multiple-value-bind (handler remaining-handler-stack)
-		 (find-handler condition handler-stack)
-	       (when (null handler)
-		 (return nil))
-	       ;; We have a handler.  
-	       ;; Call it, excluding the current
-	       ;; handler bind.
-	       (let ((*handler-stack* remaining-handler-stack))
-		 (funcall handler condition))
-	       ;; Come here if handler declined, i.e. returned.
-	       ;; Continue the search.
-	       (setf handler-stack remaining-handler-stack)))))
+    (loop for (frame . rest) on *handler-stack*
+	  do (loop for (type . handler) in frame
+		   do (when (typep condition type)
+			(let ((*handler-stack* rest))
+			  (funcall handler condition)))))))
 
 (defun signal (datum &rest arguments)
   (let ((condition
-	 (make-condition-from-datum-and-arguments datum arguments 'simple-condition)))
+	 (make-condition-from-datum-and-arguments
+	  datum arguments 'simple-condition)))
     (maybe-break-on-signals condition)
     (find-and-invoke-handler condition)
     nil))
 
 (defun error (datum &rest arguments)
   (let ((condition
-	 (make-condition-from-datum-and-arguments datum arguments 'simple-condition)))
+	 (make-condition-from-datum-and-arguments
+	  datum arguments 'simple-error)))
     (maybe-break-on-signals condition)
     (find-and-invoke-handler condition)
     (invoke-debugger condition)))
