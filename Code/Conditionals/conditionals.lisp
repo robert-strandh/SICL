@@ -1,6 +1,6 @@
-;;;; Copyright (c) 2008, 2009, 2010, 2011
+;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013
 ;;;;
-;;;;     Robert Strandh (strandh@labri.fr)
+;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
 ;;;; all rights reserved. 
 ;;;;
@@ -57,6 +57,32 @@
 (define-condition malformed-typecase-clause (program-error name-mixin)
   ((%clause :initarg :clause :reader clause)))
      
+(define-condition form-must-be-proper-list (program-error)
+  ((%form :initarg :form :reader form)))
+
+(defun check-form-proper-list (form)
+  (unless (proper-list-p form)
+    (error 'form-must-be-proper-list :form form)))
+
+;;; A max-argcount of NIL means no upper bound.
+(define-condition invalid-number-of-arguments (program-error)
+  ((%form :initarg :form :reader form)
+   (%min-argcount :initarg :min-argcount :reader min-argcount)
+   (%max-argcount :initarg :max-argcount :reader max-argcount)))
+
+(defun check-argcount (form min-argcount max-argcount)
+  (when (< (length (cdr form)) min-argcount)
+    (error 'invalid-number-of-arguments
+	   :form form
+	   :min-argcount min-argcount
+	   :max-argcount max-argcount))
+  (when (and (not (null max-argcount))
+	     (> (length (cdr form)) max-argcount)
+    (error 'invalid-number-of-arguments
+	   :form form
+	   :min-argcount min-argcount
+	   :max-argcount max-argcount))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Conditions used at runtime
@@ -77,47 +103,47 @@
 ;;;
 ;;; Implementation of the macros
 
-;;; FIXME: This is a bit wasteful because we call proper-list-p for
-;;; each sublist of the forms.
-(defmacro or (&rest forms)
-  (unless (proper-list-p forms)
-    (error 'malformed-body :name 'or :body forms))
-  (if (null forms)
-      nil
-      (if (null (cdr forms))
-	  (car forms)
-	  (let ((temp-var (gensym)))
-	    `(let ((,temp-var ,(car forms)))
-	       (if ,temp-var
-		   ,temp-var
-		   (or ,@(cdr forms))))))))
+(defmacro or (&whole form &rest args)
+  (check-form-proper-list form)
+  (labels ((aux (forms)
+	     (if (null (cdr forms))
+		 (car forms)
+		 (let ((temp-var (gensym)))
+		   `(let ((,temp-var ,(car forms)))
+		      (if ,temp-var
+			  ,temp-var
+			  ,(aux (cdr forms))))))))
+    (if (null args)
+	nil
+	(aux args))))
 
-;;; FIXME: This is a bit wasteful because we call proper-list-p for
-;;; each sublist of the forms.
-(defmacro and (&rest forms)
-  (unless (proper-list-p forms)
-    (error 'malformed-body :name 'or :body forms))
-  (if (null forms)
-      t
-      (if (null (cdr forms))
-	  (car forms)
-	  `(if ,(car forms)
-	       (and ,@(cdr forms))
-	       nil))))
+(defmacro and (&whole form &rest args)
+  (check-form-proper-list form)
+  (labels ((aux (forms)
+	     (if (null (cdr forms))
+		 (car forms)
+		 `(if ,(car forms)
+		      ,(aux (cdr forms))
+		      nil))))
+    (if (null args)
+	t
+	(aux args))))
 
-(defmacro when (form &body body)
-  (if (not (proper-list-p body))
-      (error 'malformed-body :name 'when :body body)
-      `(if ,form
-	   (progn ,@body)
-	   nil)))
+(defmacro when (&whole form &rest args)
+  (check-form-proper-list form)
+  (check-argcount form 1 nil)
+  (destructuring-bind (test . body) args
+    `(if ,test
+	 (progn ,@body)
+	 nil)))
 
-(defmacro unless (form &body body)
-  (if (not (proper-list-p body))
-      (error 'malformed-body :name 'unless :body body)
-      `(if ,form
-	   nil
-	   (progn ,@body))))
+(defmacro unless (@whole form &rest args)
+  (check-form-proper-list form)
+  (check-argcount form 1 nil)
+  (destructuring-bind (test . body) args
+    `(if ,test
+	 nil
+	 (progn ,@body))))
 
 (defmacro cond (&rest clauses)
   (if (not (proper-list-p clauses))
