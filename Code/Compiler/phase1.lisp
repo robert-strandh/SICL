@@ -45,6 +45,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Specific condition classes.
+
+(define-condition special-form-must-be-proper-list
+    (compilation-program-error)
+  ())
+
+(defun check-special-form-proper-list (form)
+  (unless (sicl-code-utilities:proper-list-p form)
+    (error 'special-form-must-be-proper-list
+	   :expr form)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Environment entries.
 
 (defclass environment-entry ()
@@ -428,10 +441,6 @@
   ((%binding :initarg :binding :reader binding)
    (%forms :initarg :forms :reader forms)))
 
-(define-condition block-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition block-must-have-at-least-one-argument
     (compilation-program-error)
   ())
@@ -442,9 +451,7 @@
 
 (defmethod convert-compound
     ((symbol (eql 'block)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'block-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'block-must-have-at-least-one-argument
 	   :expr form))
@@ -465,19 +472,13 @@
   ((%tag :initarg :tag :reader tag)
    (%forms :initarg :forms :reader forms)))
 
-(define-condition catch-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition catch-must-have-at-least-one-argument
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'catch)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'catch-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'catch-must-have-at-least-one-argument
 	   :expr form))
@@ -493,10 +494,6 @@
   ((%situations :initarg :situations :reader situations)
    (%forms :initarg :forms :reader forms)))
 
-(define-condition eval-when-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition eval-when-must-have-at-least-one-argument
     (compilation-program-error)
   ())
@@ -511,9 +508,7 @@
 
 (defmethod convert-compound
     ((symbol (eql 'eval-when)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'eval-when-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'eval-when-must-have-at-least-one-argument
 	   :expr form))
@@ -543,10 +538,6 @@
 	    (reduce #'append (mapcar #'cdr declarations))))
 	 (entries (mapcar #'make-environment-entry declaration-specifiers)))
     (append entries environment)))
-
-(define-condition flet-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
 
 (define-condition flet-must-have-at-least-one-argument
     (compilation-program-error)
@@ -583,9 +574,7 @@
 
 (defmethod convert-compound
     ((symbol (eql 'flet)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'flet-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'flet-must-have-at-least-one-argument
 	   :expr form))
@@ -621,10 +610,6 @@
 (defclass close-ast (ast)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body :initarg :body :reader body)))
-
-(define-condition function-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
 
 (define-condition function-must-have-exactly-one-argument
     (compilation-program-error)
@@ -667,9 +652,7 @@
 
 (defmethod convert-compound
     ((symbol (eql 'function)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'function-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (= (length form) 2)
     (error 'function-must-have-exactly-one-argument
 	   :expr form))
@@ -684,19 +667,13 @@
 (defclass go-ast (ast)
   ((%binding :initarg :binding :reader binding)))
 
-(define-condition go-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition go-must-have-exactly-one-argument
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'go)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'go-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (= (length form) 2)
     (error 'go-must-have-exactly-one-argument
 	   :expr form))
@@ -718,19 +695,13 @@
    (%then :initarg :then :reader then)
    (%else :initarg :else :reader else)))
 
-(define-condition if-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition if-must-have-three-or-four-arguments
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'if)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'if-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (<= 3 (length form) 4)
     (error 'if-must-have-three-or-four-arguments
 	   :expr form))
@@ -748,10 +719,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LET.
-
-(define-condition let-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
 
 (define-condition let-must-have-at-least-one-argument
     (compilation-program-error)
@@ -799,9 +766,7 @@
 ;;; FIXME: handle declarations.
 (defmethod convert-compound
     ((symbol (eql 'let)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'let-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'let-must-have-at-least-one-argument
 	   :expr form))
@@ -836,10 +801,6 @@
   ((%form :initarg :form :reader form)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
-(define-condition load-time-value-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition load-time-value-must-have-one-or-two-arguments
     (compilation-program-error)
   ())
@@ -850,9 +811,7 @@
 
 (defmethod convert-compound
     ((symbol (eql 'load-time-value)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'load-time-value-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (<= 2 (length form) 3)
     (error 'load-time-value-must-have-one-or-two-arguments
 	   :expr form))
@@ -870,15 +829,9 @@
 ;;;
 ;;; Converting LOCALLY.
 
-(define-condition locally-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (defmethod convert-compound
     ((symbol (eql 'locally)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'locally-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (multiple-value-bind (declarations forms)
       (sicl-code-utilities:separate-ordinary-body (cdr form))
     (let* ((declaration-specifiers
@@ -901,19 +854,13 @@
   ((%function-form :initarg :function-form :reader function-form)
    (%forms :initarg :forms :reader forms)))
 
-(define-condition multiple-value-call-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition multiple-value-call-must-have-at-least-one-argument
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'multiple-value-call)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'multiple-value-call-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'multiple-value-call-must-have-at-least-one-argument
 	   :expr form))
@@ -929,19 +876,13 @@
   ((%first-form :initarg :first-form :reader first-form)
    (%forms :initarg :forms :reader forms)))
 
-(define-condition multiple-value-prog1-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition multiple-value-prog1-must-have-at-least-one-argument
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'multiple-value-prog1)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'multiple-value-prog1-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'multiple-value-prog1-must-have-at-least-one-argument
 	   :expr form))
@@ -956,15 +897,9 @@
 (defclass progn-ast (ast)
   ((%forms :initarg :forms :reader forms)))
 
-(define-condition progn-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (defmethod convert-compound
     ((head (eql 'progn)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'progn-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (make-instance 'progn-ast
 		 :forms (convert-sequence (cdr form) environment)))
 
@@ -977,19 +912,13 @@
    (%vals :initarg :vals :reader vals)
    (%body :initarg :body :reader body)))
 
-(define-condition progv-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition progv-must-have-at-least-two-arguments
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'progv)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'progv-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 3)
     (error 'progv-must-have-at-least-two-arguments
 	   :expr form))
@@ -1017,10 +946,6 @@
   ((%binding :initarg :binding :reader binding)
    (%form :initarg :form :reader form)))
 
-(define-condition return-from-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition return-from-must-have-one-or-two-arguments
     (compilation-program-error)
   ())
@@ -1035,9 +960,7 @@
 
 (defmethod convert-compound
     ((symbol (eql 'return-from)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'return-from-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (<= 2 (length form) 3)
     (error 'return-from-must-have-one-or-two-arguments
 	   :expr form))
@@ -1062,10 +985,6 @@
 (defclass setq-ast (ast)
   ((%binding :initarg :binding :reader binding)
    (%value :initarg :value :reader value)))
-
-(define-condition setq-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
 
 (define-condition setq-must-have-even-number-of-arguments
     (compilation-program-error)
@@ -1110,9 +1029,7 @@
   
 (defmethod convert-compound
     ((symbol (eql 'setq)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'setq-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (oddp (length form))
     (error 'setq-must-have-even-number-of-arguments
 	   :expr form))
@@ -1125,19 +1042,13 @@
 ;;;
 ;;; Converting SYMBOL-MACROLET.
 
-(define-condition macrolet-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition macrolet-must-have-at-least-one-argument
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((head (eql 'symbol-macrolet)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'macrolet-special-form-must-be-proper-list
-	   :form form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'macrolet-must-have-at-least-one-argument
 	   :form form))
@@ -1159,15 +1070,9 @@
 (defclass tagbody-ast (ast)
   ((%items :initarg :items :reader items)))
 
-(define-condition tagbody-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (defmethod convert-compound
     ((symbol (eql 'tagbody)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'tagbody-special-form-must-be-proper-list
-	   :form))
+  (check-special-form-proper-list form)
   (let ((tag-entries
 	  (loop for item in (cdr form)
 		when (symbolp item)
@@ -1189,19 +1094,13 @@
   ((%value-type :initarg :value-type :reader value-type)
    (%form :initarg :form :reader form)))
 
-(define-condition the-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition the-must-have-exactly-two-arguments
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'the)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'the-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (= (length form) 3)
     (error 'the-must-have-exactly-two-arguments
 	   :expr form))
@@ -1217,19 +1116,13 @@
   ((%tag :initarg :tag :reader tag)
    (%form :initarg :form :reader form)))
 
-(define-condition throw-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition throw-must-have-exactly-two-arguments
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'throw)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'throw-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (= (length form) 3)
     (error 'throw-must-have-exactly-two-arguments
 	   :expr form))
@@ -1245,19 +1138,13 @@
   ((%protected-form :initarg :protected-form :reader protected-form)
    (%cleanup-forms :initarg :cleanup-forms :reader cleanup-forms)))
 
-(define-condition unwind-protect-special-form-must-be-proper-list 
-    (compilation-program-error)
-  ())
-
 (define-condition unwind-protect-must-have-at-least-one-argument
     (compilation-program-error)
   ())
 
 (defmethod convert-compound
     ((symbol (eql 'unwind-protect)) form environment)
-  (unless (sicl-code-utilities:proper-list-p form)
-    (error 'unwind-protect-special-form-must-be-proper-list
-	   :expr form))
+  (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'unwind-protect-must-have-at-least-one-argument
 	   :expr form))
