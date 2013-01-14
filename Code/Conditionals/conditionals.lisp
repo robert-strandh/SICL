@@ -101,7 +101,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Implementation of the macros
+;;; Implementation of the macros.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro OR.
 
 (defmacro or (&whole form &rest args)
   (check-form-proper-list form)
@@ -117,6 +121,10 @@
 	nil
 	(aux args))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro AND.
+
 (defmacro and (&whole form &rest args)
   (check-form-proper-list form)
   (labels ((aux (forms)
@@ -129,6 +137,10 @@
 	t
 	(aux args))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro WHEN.
+
 (defmacro when (&whole form &rest args)
   (check-form-proper-list form)
   (check-argcount form 1 nil)
@@ -136,6 +148,10 @@
     `(if ,test
 	 (progn ,@body)
 	 nil)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro UNLESS.
 
 (defmacro unless (@whole form &rest args)
   (check-form-proper-list form)
@@ -145,23 +161,32 @@
 	 nil
 	 (progn ,@body))))
 
-(defmacro cond (&rest clauses)
-  (if (not (proper-list-p clauses))
-      (error 'malformed-cond-clauses :name 'cond :clauses clauses)
-      (if (null clauses)
-	  nil
-	  (let ((clause (car clauses)))
-	    (if (not (and (proper-list-p clause)
-			  (not (null clause))))
-		(error 'malformed-cond-clause
-		       :name 'cond
-		       :clause clause)
-		(if (null (cdr clause))
-		    `(or ,(car clause)
-			 (cond ,@(cdr clauses)))
-		    `(if ,(car clause)
-			 (progn ,@(cdr clause))
-			 (cond ,@(cdr clauses)))))))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro COND.
+
+(defmacro cond (&whole form &rest clauses)
+  (check-form-proper-list form)
+  (labels ((aux (clauses)
+	     (if (null clauses)
+		 nil
+		 (let ((clause (car clauses)))
+		   (if (not (and (proper-list-p clause)
+				 (not (null clause))))
+		       (error 'malformed-cond-clause
+			      :name 'cond
+			      :clause clause)
+		       (if (null (cdr clause))
+			   `(or ,(car clause)
+				,(aux (cdr clauses)))
+			   `(if ,(car clause)
+				(progn ,@(cdr clause))
+				,(aux (cdr clauses)))))))))
+    (aux clauses)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro CASE.
 
 ;;; Take a list of keys (known to be a proper list), and the name of a
 ;;; variable, and produce a list of forms (eql <variable> key).
