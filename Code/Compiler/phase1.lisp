@@ -1,28 +1,23 @@
 (defpackage #:sicl-compiler-phase-1
   (:use #:common-lisp)
-  (:shadow #:proclaim
-	   #:macroexpand
-	   #:macroexpand-1
-	   #:type
-	   #:macro-function
-	   #:*macroexpand-hook*
-	   #:constantp)
+  (:shadow #:type
+   )
   (:export
    #:ast
-   #:constant-ast
-   #:variable-ast
-   #:function-call-ast
-   #:block-ast
+   #:constant-ast #:value
+   #:typed-location-ast
+   #:function-call-ast #:binding #:arguments
+   #:block-ast #:binding #:body
    #:catch-ast
    #:eval-when-ast
    #:function-ast
    #:go-ast
-   #:if-ast
+   #:if-ast #:test #:then #:else
    #:load-time-value-ast
-   #:progn-ast
-   #:return-from-ast
+   #:progn-ast #:forms
+   #:return-from-ast #:form
    #:setq-ast
-   #:tagbody-ast
+   #:tagbody-ast #:items
    #:the-ast
    #:throw-ast
    #:unwind-protect-ast
@@ -56,299 +51,6 @@
     (error 'special-form-must-be-proper-list
 	   :expr form)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Environment entries.
-
-(defclass environment-entry ()
-  ())
-
-(defclass dummy-entry (environment-entry)
-  ())
-
-(defclass global-mixin ()
-  ())
-
-(defclass local-mixin ()
-  ())
-
-(defclass binding-entry (environment-entry)
-  ((%name :initarg :name :reader name)))
-
-(defclass variable-entry (binding-entry)
-  ())
-
-(defclass constant-variable-entry (variable-entry)
-  ((%value :initarg :value :reader value)))
-
-(defclass special-variable-entry (variable-entry)
-  ())
-
-(defclass global-special-variable-entry (special-variable-entry global-mixin)
-  ())
-
-(defclass local-special-variable-entry (special-variable-entry local-mixin)
-  ())
-
-(defclass lexical-variable-entry (variable-entry)
-  ((%storage :initform (list nil) :reader storage)))
-
-(defclass symbol-macro-entry (variable-entry)
-  ((%expander :initarg :expander :accessor expander)))
-
-(defclass global-symbol-macro-entry (symbol-macro-entry global-mixin)
-  ())
-
-(defclass local-symbol-macro-entry (symbol-macro-entry local-mixin)
-  ())
-
-(defclass function-or-macro-entry (binding-entry)
-  ())
-
-(defclass function-entry (function-or-macro-entry)
-  ((%storage :initform (list nil) :reader storage)))
-
-(defclass global-function-entry (function-entry global-mixin)
-  ())
-  
-(defclass local-function-entry (function-entry local-mixin)
-  ())
-  
-(defclass macro-entry (function-or-macro-entry)
-  ((%expander :initarg :expander :accessor expander)))
-
-(defclass global-macro-entry (macro-entry global-mixin)
-  ())
-  
-(defclass local-macro-entry (macro-entry local-mixin)
-  ())
-  
-(defclass block-entry (binding-entry)
-  ((%storage :initform (list nil) :reader storage)))
-
-(defclass go-tag-entry (binding-entry)
-  ((%storage :initform (list nil) :reader storage)))
-
-(defclass declaration-entry (environment-entry) ())
-
-(defclass binding-declaration-entry (declaration-entry)
-  ((%binding :initarg :binding :reader binding)))
-
-(defclass type-declaration-entry (binding-declaration-entry)
-  ((%type :initarg :type :reader type)))
-
-(defclass inline-or-notinline-declaration-entry (binding-declaration-entry)
-  ())
-
-(defclass inline-declaration-entry (inline-or-notinline-declaration-entry)
-  ())
-
-(defclass notinline-declaration-entry (inline-or-notinline-declaration-entry)
-  ())
-
-(defclass dynamic-extent-declaration-entry (binding-declaration-entry)
-  ())
-
-(defclass ignore-declaration-entry (binding-declaration-entry)
-  ())
-
-(defclass ignorable-declaration-entry (binding-declaration-entry)
-  ())
-
-(defclass autonomous-declaration-entry (declaration-entry)
-  ())
-
-(defclass optimize-declaration-entry (autonomous-declaration-entry)
-  ((%quality :initarg :quality)
-   (%value :initarg :value)))
-
-(defclass declaration-declaration-entry (autonomous-declaration-entry)
-  ((%name :initarg :name :reader name)))
-
-(defparameter *global-environment*
-  (list (make-instance 'dummy-entry)))
-
-(defun add-to-global-environment (entry)
-  (push entry (cdr *global-environment*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Create an environment entry from a canonicalized declaration
-;;; specifier.
-
-(defun find-variable-binding (name environment)
-  (let ((entry (find-if (lambda (entry)
-			  (and (or (typep entry 'lexical-variable-entry)
-				   (typep entry 'special-variable-entry)
-				   (typep entry 'constant-variable-entry))
-			       (eq (name entry) name)))
-			environment)))
-    (when (null entry)
-      ;; FIXME: do this better
-      (error "no such variable"))
-    (binding entry)))
-
-(defun find-function-binding (name environment)
-  (let ((entry (find-if (lambda (entry)
-			  (and (typep entry 'function-entry)
-			       (eq (name entry) name)))
-			environment)))
-    (when (null entry)
-      ;; FIXME: do this better
-      (error "no such function"))
-    (binding entry)))
-
-(defun make-environment-entry (canonicalized-declaration-specifier environment)
-  (destructuring-bind (head . rest) canonicalized-declaration-specifier
-    (case head
-      (declaration
-       (make-instance 'declaration-declaration-entry
-		      :name (car rest)))
-      (dynamic-extent
-       (let ((binding (if (consp (car rest))
-			  (find-function-binding (cadr (car rest)) environment)
-			  (find-variable-binding (car rest) environment))))
-	 (make-instance 'dynamic-extent-declaration-entry
-			:binding binding)))
-      (ftype
-       (let ((binding (find-function-binding (cadr rest) environment)))
-	 (make-instance 'type-declaration-entry
-			:binding binding
-			:type (car rest))))
-      (ignorable
-       (let ((binding (if (consp (car rest))
-			  (find-function-binding (cadr (car rest)) environment)
-			  (find-variable-binding (car rest) environment))))
-	 (make-instance 'ignorable-declaration-entry
-			:binding binding)))
-      (ignore
-       (let ((binding (if (consp (car rest))
-			  (find-function-binding (cadr (car rest)) environment)
-			  (find-variable-binding (car rest) environment))))
-	 (make-instance 'ignore-declaration-entry
-			:binding binding)))
-      (inline
-       (let ((binding (find-function-binding (car rest) environment)))
-	 (make-instance 'inline-declaration-entry
-			:binding binding)))
-      (notinline
-       (let ((binding (find-function-binding (car rest) environment)))
-	 (make-instance 'notinline-declaration-entry
-			:binding binding)))
-      (optimize
-       (make-instance 'optimize-declaration-entry
-		      :quality (car (car rest))
-		      :value (cadr (car rest))))
-      (special
-       (make-instance 'special-variable-entry
-		      :name (car rest)))
-      (type
-       (let ((binding (find-variable-binding (cadr rest) environment)))
-	 (make-instance 'type-declaration-entry
-			:binding binding
-			:type (car rest)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function PROCLAIM.
-
-(defun proclaim-declaration (name)
-  (unless (find-if (lambda (entry)
-		     (and (typep entry 'declaration-declaration-entry)
-			  (eq (name entry) name)))
-		   *global-environment*)
-    (add-to-global-environment
-     (make-instance 'declaration-declaration-entry
-		    :name name))))
-
-(defun proclaim-ftype (name type)
-  (let ((binding (find-if (lambda (binding)
-			    (and (typep binding 'global-function-entry)
-				 (eq (name binding) name)))
-			  *global-environment*)))
-    (when (null binding)
-      (error "no function by that name"))
-    (let ((existing-declaration
-	    (find-if (lambda (decl)
-		       (and (typep decl 'type-declaration-entry)
-			    (eq (binding decl) binding)))
-		     *global-environment*)))
-      (cond ((null existing-declaration)
-	     (add-to-global-environment
-	      (make-instance 'type-declaration-entry
-			     :binding binding
-			     :type type)))
-	    ((equal (type existing-declaration) type)
-	     nil)
-	    (t
-	     ;; make that an error for now
-	     (error "function already has a type proclamation"))))))
-	  
-
-(defun proclaim (declaration-specifier)
-  (case (car declaration-specifier)
-    (declaration
-     (mapc #'proclaim-declaration
-	   (cdr declaration-specifier)))
-    (ftype
-     (mapc (lambda (name) (proclaim-ftype name (cadr declaration-specifier)))
-	   (cddr declaration-specifier)))
-    ;; FIXME: handle more proclamations
-    ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro expansion.
-
-(defun macro-function (symbol &optional environment)
-  (when (null environment)
-    (setf environment *global-environment*))
-  (let ((binding (find-if (lambda (entry)
-			    (and (typep entry 'macro-entry)
-				 (eq (name entry) symbol)))
-			  environment)))
-    (if (null binding)
-	nil
-	(expander binding))))
-
-(defparameter *macroexpand-hook*
-  (lambda (macro-function macro-form environment)
-    (funcall macro-function macro-form environment)))
-
-(defun macroexpand-1 (form &optional environment)
-  (when (null environment)
-    (setf environment *global-environment*))
-  (let ((expander nil))
-    (cond ((and (consp form) (symbolp (car form)))
-	   (setf expander (macro-function (car form) environment)))
-	  ((symbolp form)
-	   (let ((binding (find-if (lambda (entry)
-				     (and (typep entry 'symbol-macro-entry)
-					  (eq (name entry) form)))
-				   environment)))
-	     (if (null binding)
-		 nil
-		 (setf expander (expander binding)))))
-	  (t nil))
-    (if expander
-	(values (funcall (coerce *macroexpand-hook* 'function)
-			 expander
-			 form
-			 environment)
-		t)
-	(values form nil))))
-
-(defun macroexpand (form &optional environment)
-  (multiple-value-bind (expansion expanded-p)
-      (macroexpand-1 form environment)
-    (if expanded-p
-	(loop while (multiple-value-bind (new-expansion expanded-p)
-			(macroexpand-1 expansion environment)
-		      (setf expansion new-expansion)
-		      expanded-p)
-	      finally (return (values expansion t)))
-	(values form nil))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting code to an abstract syntax tree.
@@ -358,45 +60,38 @@
 (defclass constant-ast (ast)
   ((%value :initarg :value :reader value)))
 
-(defclass variable-ast (ast)
-  ((%binding :initarg :binding :reader binding)
+(defclass typed-location-ast (ast)
+  ((%location :initarg :location :reader location)
    (%type :initarg :type :reader type)))
-
-(defun constantp (form &optional environment)
-  ;; FIXME: consult the environment for
-  ;; constants defined with defconstant.
-  (when (null environment)
-    (setf environment *global-environment*))
-  (or (keywordp form)
-      (member form '(nil t))
-      (and (atom form) (not (symbolp form)))
-      (and (consp form) (eq (car form) 'quote))))
 
 (defun convert-constant (form)
   (make-instance 'constant-ast :value form))
 
-(defun find-type (binding environment)
-  `(and ,@(loop for entry in environment
-		when (and (typep entry 'type-declaration-entry)
-			  (eq (binding entry) binding))
-		  collect (type entry))))
-
-(defun convert-variable (form environment)
-  (let ((binding (find-if (lambda (entry)
-			    (and (typep entry 'variable-entry)
-				 (eq (name entry) form)))
-			  environment)))
-    (if (null binding)
-	(warn "undefined variable: ~s" form)
-	(make-instance 'variable-ast
-		       :binding binding
-		       :type (find-type binding environment)))))
+(defun convert-variable (form env)
+  (let ((entry (sicl-env:find-variable form env)))
+    (cond ((null entry)
+	   (warn "undefined variable: ~s" form))
+	  ((typep entry 'sicl-env:constant-variable-entry)
+	   (make-instance 'constant-ast
+	     :value (sicl-env:definition entry)))
+	  (t
+	   (let* ((location (sicl-env:location entry))
+		  (type (sicl-env:find-type location env)))
+	     (make-instance 'typed-location-ast
+			    :location location 
+			    :type type))))))
 
 (defgeneric convert-compound (head form environment))
 
 (defun convert (form environment)
-  (setf form (macroexpand form environment))
-  (cond ((constantp form environment)
+  (setf form (sicl-env:macroexpand form environment))
+  (cond ((or (and (not (consp form))
+		  (not (symbolp form)))
+	     (and (symbolp form)
+		  (or (keywordp form)
+		      (member form '(t nil))))
+	     (and (consp form)
+		  (eq (car form) 'quote)))
 	 (convert-constant form))
 	((symbolp form)
 	 (convert-variable form environment))
@@ -417,29 +112,27 @@
 ;;; Converting a function call.
 
 (defclass function-call-ast (ast)
-  ((%binding :initarg :binding :reader binding)
+  ((%function-location :initarg :function-location :reader function-location)
    (%type :initarg :type :reader type)
    (%arguments :initarg :arguments :reader arguments)))
 
-(defmethod convert-compound ((head symbol) form environment)
-  (let ((binding (find-if (lambda (entry)
-			    (and (typep entry 'function-entry)
-				 (eq (name entry) head)))
-			  environment)))
-    (if (null binding)
+(defmethod convert-compound ((head symbol) form env)
+  (let* ((entry (sicl-env:find-function head env)))
+    (if (null entry)
 	(warn "no such function")
-	(make-instance 'function-call-ast
-		       :binding binding
-		       :type (find-type binding environment)
-		       :arguments (convert-sequence (cdr form) environment)))))
+	(let* ((location (sicl-env:location entry))
+	       (type (sicl-env:find-ftype location env)))
+	  (make-instance 'function-call-ast
+	    :function-location location
+	    :type type
+	    :arguments (convert-sequence (cdr form) env))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting BLOCK.
 
 (defclass block-ast (ast)
-  ((%binding :initarg :binding :reader binding)
-   (%forms :initarg :forms :reader forms)))
+  ((%body :initarg :body :reader body)))
 
 (define-condition block-must-have-at-least-one-argument
     (compilation-program-error)
@@ -450,7 +143,7 @@
   ())
 
 (defmethod convert-compound
-    ((symbol (eql 'block)) form environment)
+    ((symbol (eql 'block)) form env)
   (check-special-form-proper-list form)
   (unless (>= (length form) 2)
     (error 'block-must-have-at-least-one-argument
@@ -458,11 +151,11 @@
   (unless (symbolp (cadr form))
     (error 'block-name-must-be-a-symbol
 	   :expr (cadr form)))
-  (let ((binding (make-instance 'block-entry
-				:name (cadr form))))
+  (let* ((entry (sicl-env:make-block-entry (cadr form)))
+	 (new-env (sicl-env:augment-environment env entry))
+	 (forms (convert-sequence (cddr form) new-env)))
     (make-instance 'block-ast
-      :name binding
-      :forms (convert-sequence (cddr form) (cons binding environment)))))
+      :body (make-instance 'progn-ast :forms forms))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -470,7 +163,7 @@
 
 (defclass catch-ast (ast)
   ((%tag :initarg :tag :reader tag)
-   (%forms :initarg :forms :reader forms)))
+   (%body :initarg :body :reader body)))
 
 (define-condition catch-must-have-at-least-one-argument
     (compilation-program-error)
@@ -482,9 +175,10 @@
   (unless (>= (length form) 2)
     (error 'catch-must-have-at-least-one-argument
 	   :expr form))
-  (make-instance 'catch-ast
-		 :tag (convert (cadr form) environment)
-		 :forms (convert-sequence (cddr form) environment)))
+  (let ((forms (convert-sequence (cddr form) environment)))
+    (make-instance 'catch-ast
+      :tag (convert (cadr form) environment)
+      :body (make-instance 'progn-ast :forms forms))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -492,7 +186,7 @@
 
 (defclass eval-when-ast (ast)
   ((%situations :initarg :situations :reader situations)
-   (%forms :initarg :forms :reader forms)))
+   (%body :initarg :body :reader body)))
 
 (define-condition eval-when-must-have-at-least-one-argument
     (compilation-program-error)
@@ -524,9 +218,10 @@
 	     ;; FIXME: perhaps we should warn about the deprecated situations
 	     (error 'invalid-eval-when-situation
 		    :expr situation)))
-  (make-instance 'eval-when-ast
-		 :situations (cadr form)
-		 :forms (convert-sequence (cddr form) environment)))
+  (let ((forms (convert-sequence (cddr form) environment)))
+    (make-instance 'eval-when-ast
+		   :situations (cadr form)
+		   :body (make-instance 'progn-ast :forms forms))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -627,7 +322,7 @@
 			  environment)))
     (if (null binding)
 	(warn "undefined function: ~s" name)
-	(make-instance 'variable-ast
+	(make-instance 'typed-location-ast
 		       :binding binding
 		       :type (find-type binding environment)))))
 
