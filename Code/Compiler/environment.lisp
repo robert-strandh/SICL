@@ -45,6 +45,7 @@
    #:find-ftype
    #:find-fype  ; remove later
    #:augment-environment
+   #:augment-environment-with-declarations
    ))
 
 (in-package #:sicl-compiler-environment)
@@ -529,6 +530,13 @@
 
 (defun augment-environment (environment entry)
   (cons entry environment))
+
+(defun augment-environment-with-declarations (declarations environment)
+  (let* ((declaration-specifiers
+	   (sicl-code-utilities:canonicalize-declaration-specifiers
+	    (reduce #'append (mapcar #'cdr declarations))))
+	 (entries (mapcar #'make-environment-entry declaration-specifiers)))
+    (append entries environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
