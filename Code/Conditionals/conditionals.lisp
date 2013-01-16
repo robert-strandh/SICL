@@ -57,32 +57,6 @@
 (define-condition malformed-typecase-clause (program-error name-mixin)
   ((%clause :initarg :clause :reader clause)))
      
-(define-condition form-must-be-proper-list (program-error)
-  ((%form :initarg :form :reader form)))
-
-(defun check-form-proper-list (form)
-  (unless (proper-list-p form)
-    (error 'form-must-be-proper-list :form form)))
-
-;;; A max-argcount of NIL means no upper bound.
-(define-condition invalid-number-of-arguments (program-error)
-  ((%form :initarg :form :reader form)
-   (%min-argcount :initarg :min-argcount :reader min-argcount)
-   (%max-argcount :initarg :max-argcount :reader max-argcount)))
-
-(defun check-argcount (form min-argcount max-argcount)
-  (when (< (length (cdr form)) min-argcount)
-    (error 'invalid-number-of-arguments
-	   :form form
-	   :min-argcount min-argcount
-	   :max-argcount max-argcount))
-  (when (and (not (null max-argcount))
-	     (> (length (cdr form)) max-argcount)
-    (error 'invalid-number-of-arguments
-	   :form form
-	   :min-argcount min-argcount
-	   :max-argcount max-argcount))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Conditions used at runtime
@@ -108,7 +82,7 @@
 ;;; Macro OR.
 
 (defmacro or (&whole form &rest args)
-  (check-form-proper-list form)
+  (sicl-code-utilities:check-form-proper-list form)
   (labels ((aux (forms)
 	     (if (null (cdr forms))
 		 (car forms)
@@ -126,7 +100,7 @@
 ;;; Macro AND.
 
 (defmacro and (&whole form &rest args)
-  (check-form-proper-list form)
+  (sicl-code-utilities:check-form-proper-list form)
   (labels ((aux (forms)
 	     (if (null (cdr forms))
 		 (car forms)
@@ -142,8 +116,8 @@
 ;;; Macro WHEN.
 
 (defmacro when (&whole form &rest args)
-  (check-form-proper-list form)
-  (check-argcount form 1 nil)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 nil)
   (destructuring-bind (test . body) args
     `(if ,test
 	 (progn ,@body)
@@ -153,9 +127,9 @@
 ;;;
 ;;; Macro UNLESS.
 
-(defmacro unless (@whole form &rest args)
-  (check-form-proper-list form)
-  (check-argcount form 1 nil)
+(defmacro unless (&whole form &rest args)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 nil)
   (destructuring-bind (test . body) args
     `(if ,test
 	 nil
@@ -166,12 +140,12 @@
 ;;; Macro COND.
 
 (defmacro cond (&whole form &rest clauses)
-  (check-form-proper-list form)
+  (sicl-code-utilities:check-form-proper-list form)
   (labels ((aux (clauses)
 	     (if (null clauses)
 		 nil
 		 (let ((clause (car clauses)))
-		   (if (not (and (proper-list-p clause)
+		   (if (not (and (sicl-code-utilities:proper-list-p clause)
 				 (not (null clause))))
 		       (error 'malformed-cond-clause
 			      :name 'cond
@@ -208,7 +182,7 @@
 		 :name 'case
 		 :clauses clauses)
 	  (let ((clause (car clauses)))
-	    (unless (and (proper-list-p clause)
+	    (unless (and (sicl-code-utilities:proper-list-p clause)
 			 (not (null clause)))
 	      (error 'malformed-case-clause
 		     :name 'case
@@ -228,7 +202,7 @@
 		      `(if (eql ,variable ,keys)
 			   (progn ,@forms)
 			   ,(expand-case-clauses (cdr clauses) variable))
-		      (if (not (proper-list-p keys))
+		      (if (not (sicl-code-utilities:proper-list-p keys))
 			  (error 'malformed-keys
 				 :name 'case
 				 :keys keys)
@@ -251,7 +225,7 @@
 	 (if (and (atom keys)
 		  (not (null keys)))
 	     (list keys)
-	     (if (not (proper-list-p keys))
+	     (if (not (sicl-code-utilities:proper-list-p keys))
 		 (error 'malformed-keys
 			:name name
 			:keys keys)
@@ -270,7 +244,7 @@
 		 :name name
 		 :clauses clauses)
 	  (let ((clause (car clauses)))
-	    (unless (and (proper-list-p clause)
+	    (unless (and (sicl-code-utilities:proper-list-p clause)
 			 (not (null clause)))
 	      (error 'malformed-case-clause
 		     :name name
@@ -351,7 +325,7 @@
 		 :name 'typecase
 		 :clauses clauses)
 	  (let ((clause (car clauses)))
-	    (unless (and (proper-list-p clause)
+	    (unless (and (sicl-code-utilities:proper-list-p clause)
 			 (not (null clause)))
 	      (error 'malformed-typecase-clause
 		     :name 'typecase
@@ -396,7 +370,7 @@
 		 :name name
 		 :clauses clauses)
 	  (let ((clause (car clauses)))
-	    (unless (and (proper-list-p clause)
+	    (unless (and (sicl-code-utilities:proper-list-p clause)
 			 (not (null clause)))
 	      (error 'malformed-typecase-clause
 		     :name name
