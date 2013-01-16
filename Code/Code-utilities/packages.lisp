@@ -10,6 +10,10 @@
 	   #:dotted-list-p
 	   #:dotted-list-length
 	   #:proper-or-dotted-list-length
+	   #:form-must-be-proper-list
+	   #:check-form-proper-list
+	   #:invalid-number-of-arguments
+	   #:check-argcount
 	   #:circular-list-p
 	   #:lambda-list
 	   #:required
