@@ -382,35 +382,35 @@
 	     (error 'variable-must-be-a-symbol
 		    :expr (car binding-form)))))
 
-(defun init-form (binding-form)
-  (if (or (symbolp binding-form) (null (cdr binding-form)))
+(defun init-form (binding)
+  (if (or (symbolp binding) (null (cdr binding)))
       nil
-      (cadr binding-form)))
+      (cadr binding)))
 
 ;;; FIXME: handle special variables.
 ;;; FIXME: handle declarations.
 (defmethod convert-compound
-    ((symbol (eql 'let)) form environment)
+    ((symbol (eql 'let)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   (check-binding-forms (cadr form))
-  (let ((inits (loop for if in (cadr form)
-		     collect (convert (init-form if) environment)))
-	(bindings (loop for if in (cadr form)
-			collect (make-instance 'lexical-variable-entry
-					       :name (if (symbolp if)
-							 if
-							 (car if)))))
-	(new-environment environment))
-    (loop for binding in bindings
-	  do (push binding new-environment))
-    (let ((forms (loop for binding in bindings
-		       for init in inits
-		       collect (make-instance 'setq-ast
-					      :binding binding
-					      :value init))))
+  (let* ((inits (loop for binding in (cadr form)
+		      collect (convert (init-form binding) env)))
+	 (entries (loop for binding in (cadr form)
+			collect (sicl-env:make-lexical-variable-entry
+				 (if (symbolp binding) binding (car binding)))))
+	 
+	 (new-env (sicl-env:augment-environment env entries)))
+    (let ((forms1 (loop for entry in entries
+			for init in inits
+			collect (make-instance 'setq-ast
+					       :location (location entry)
+					       :value init)))
+	  (forms2 (loop for body-form in (cddr form)
+			collect (convert body-form new-env))))
+	  
       (make-instance 'progn-ast
-		     :forms forms))))
+		     :forms (append forms1 forms2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -421,7 +421,7 @@
 ;;; Converting LOAD-TIME-VALUE.
 
 (defclass load-time-value-ast (ast)
-  ((%form :initarg :form :reader form)
+  ((%form-ast :initarg :form-ast :reader form-ast)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
 (define-condition load-time-value-must-have-one-or-two-arguments
@@ -435,9 +435,7 @@
 (defmethod convert-compound
     ((symbol (eql 'load-time-value)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
-  (unless (<= 2 (length form) 3)
-    (error 'load-time-value-must-have-one-or-two-arguments
-	   :expr form))
+  (sicl-code-utilities:check-argcount form 1 2)
   (unless (null (cddr form))
     ;; The HyperSpec specifically requires a "boolean"
     ;; and not a "generalized boolean".
@@ -445,7 +443,7 @@
       (error 'read-only-p-must-be-boolean
 	     :expr (caddr form))))
   (make-instance 'load-time-value-ast
-		 :form (convert (cadr form) environment)
+		 :form-ast (convert (cadr form) environment)
 		 :read-only-p (caddr form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -453,14 +451,14 @@
 ;;; Converting LOCALLY.
 
 (defmethod convert-compound
-    ((symbol (eql 'locally)) form environment)
+    ((symbol (eql 'locally)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (multiple-value-bind (declarations forms)
       (sicl-code-utilities:separate-ordinary-body (cdr form))
-    (let ((new-environment (sicl-env:augment-environment-with-declarations
-			    environment declarations)))
+    (let ((new-env (sicl-env:augment-environment-with-declarations
+		    env declarations)))
       (make-instance 'progn-ast
-		     :forms (convert-sequence forms new-environment)))))
+		     :forms (convert-sequence forms new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -471,65 +469,65 @@
 ;;; Converting MULTIPLE-VALUE-CALL.
 
 (defclass multiple-value-call-ast (ast)
-  ((%function-form :initarg :function-form :reader function-form)
-   (%forms :initarg :forms :reader forms)))
+  ((%function-ast :initarg :function-ast :reader function-ast)
+   (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
 (defmethod convert-compound
     ((symbol (eql 'multiple-value-call)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   (make-instance 'multiple-value-call-ast
-		 :function-form (convert (cadr form) environment)
-		 :forms (convert-sequence (cddr form) environment)))
+		 :function-ast (convert (cadr form) environment)
+		 :argument-asts (convert-sequence (cddr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting MULTIPLE-VALUE-PROG1.
 
 (defclass multiple-value-prog1-ast (ast)
-  ((%first-form :initarg :first-form :reader first-form)
-   (%forms :initarg :forms :reader forms)))
+  ((%first-ast :initarg :first-ast :reader first-ast)
+   (%body-asts :initarg :body-asts :reader body-asts)))
 
 (defmethod convert-compound
     ((symbol (eql 'multiple-value-prog1)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   (make-instance 'multiple-value-prog1-ast
-		 :first-form (convert (cadr form) environment)
-		 :forms (convert-sequence (cddr form) environment)))
+		 :first-ast (convert (cadr form) environment)
+		 :body-asts (convert-sequence (cddr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting PROGN.
 
 (defclass progn-ast (ast)
-  ((%forms :initarg :forms :reader forms)))
+  ((%form-asts :initarg :form-asts :reader form-asts)))
 
 (defmethod convert-compound
     ((head (eql 'progn)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (make-instance 'progn-ast
-		 :forms (convert-sequence (cdr form) environment)))
+		 :form-asts (convert-sequence (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting PROGV.
 
 (defclass progv-ast (ast)
-  ((%symbols :initarg :symbols :reader symbols)
-   (%vals :initarg :vals :reader vals)
-   (%body :initarg :body :reader body)))
+  ((%symbols-ast :initarg :symbols-ast :reader symbols-ast)
+   (%vals-ast :initarg :vals-ast :reader vals-ast)
+   (%body-ast :initarg :body-ast :reader body-ast)))
 
 (defmethod convert-compound
     ((symbol (eql 'progv)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 nil)
-  (let ((body (make-instance 'progn-ast
-		:forms (convert-sequence (cdddr form) environment))))
+  (let ((body-ast (make-instance 'progn-ast
+		    :form-asts (convert-sequence (cdddr form) environment))))
     (make-instance 'progv-ast
-		   :symbols (convert (cadr form) environment)
-		   :vals (convert (caddr form) environment)
-		   :body body)))
+		   :symbols-ast (convert (cadr form) environment)
+		   :vals-ast (convert (caddr form) environment)
+		   :body-ast body-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -546,7 +544,7 @@
 
 (defclass return-from-ast (ast)
   ((%block-ast :initarg :block-ast :reader block-ast)
-   (%form :initarg :form :reader form)))
+   (%form-ast :initarg :form-ast :reader form-ast)))
 
 (define-condition return-from-tag-must-be-symbol
     (compilation-program-error)
@@ -570,15 +568,15 @@
 	     :expr (cadr form)))
     (make-instance 'return-from-ast
 		   :block-ast (sicl-env:definition entry)
-		   :form (convert (cadr form) environment))))
+		   :form-ast (convert (cadr form) environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting SETQ.
 
 (defclass setq-ast (ast)
-  ((%binding :initarg :binding :reader binding)
-   (%value :initarg :value :reader value)))
+  ((%location :initarg :location :reader location)
+   (%value-ast :initarg :value-ast :reader value-ast)))
 
 (define-condition setq-must-have-even-number-of-arguments
     (compilation-program-error)
@@ -600,22 +598,19 @@
   (unless (symbolp var)
     (error 'setq-var-must-be-symbol
 	   :expr var))
-  (let ((entry (find-if (lambda (entry)
-			  (and (or (typep entry 'variable-entry))
-			       (eq (name entry) var)))
-			environment)))
+  (let ((entry (sicl-env:find-variable var environment)))
     (cond ((null entry)
 	   (error 'setq-unknown-variable
 		  :form var))
-	  ((typep entry 'constant-variable-entry)
+	  ((typep entry 'sicl-env:constant-variable-entry)
 	   (error 'setq-constant-variable
 		  :form var))
-	  ((or (typep entry 'lexical-variable-entry)
-	       (typep entry 'special-variable-entry))
+	  ((or (typep entry 'sicl-env:lexical-variable-entry)
+	       (typep entry 'sicl-env:special-variable-entry))
 	   (make-instance 'setq-ast
-			  :binding (binding entry)
-			  :form form))
-	  ((typep entry 'symbol-macro-entry)
+			  :location (location entry)
+			  :value-ast (convert form environment)))
+	  ((typep entry 'sicl-env:symbol-macro-entry)
 	   (convert `(setf ,(macroexpand var environment) form)
 		    environment))
 	  (t
@@ -627,29 +622,29 @@
   (unless (oddp (length form))
     (error 'setq-must-have-even-number-of-arguments
 	   :expr form))
-  (let ((forms (loop for (var form) on (cdr form) by #'cddr
-		     collect (convert-elementary-setq var form environment))))
+  (let ((form-asts (loop for (var form) on (cdr form) by #'cddr
+			 collect (convert-elementary-setq
+				  var form environment))))
     (make-instance 'progn-ast
-		   :forms forms)))
+		   :form-asts form-asts)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting SYMBOL-MACROLET.
 
 (defmethod convert-compound
-    ((head (eql 'symbol-macrolet)) form environment)
+    ((head (eql 'symbol-macrolet)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   ;; FIXME: syntax check bindings
-  (let ((new-environment environment))
-    (loop for (name expansion) in (cadr form)
-	  do (push (make-instance 'local-symbol-macro-entry
-		     :name name
-		     :expander (lambda (form environment)
-				 (declare (ignore form environment))
-				 expansion))
-		   new-environment))
-    (convert `(progn ,@(cddr form)) new-environment)))
+  (let* ((entries (loop for (name expansion) in (cadr form)
+			collect (sicl-env:make-symbol-macro-entry
+				 name 
+				 (lambda (form env)
+				   (declare (ignore form env))
+				   expansion))))
+	 (new-env (sicl-env:augment-environment env entries)))
+    (convert `(progn ,@(cddr form)) new-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -686,7 +681,7 @@
 
 (defclass the-ast (ast)
   ((%value-type :initarg :value-type :reader value-type)
-   (%form :initarg :form :reader form)))
+   (%form-ast :initarg :form-ast :reader form-ast)))
 
 (defmethod convert-compound
     ((symbol (eql 'the)) form environment)
@@ -694,36 +689,36 @@
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 'the-ast
 		 :value-type (cadr form)
-		 :form (convert (caddr form) environment)))
+		 :form-ast (convert (caddr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting THROW.
 
 (defclass throw-ast (ast)
-  ((%tag :initarg :tag :reader tag)
-   (%form :initarg :form :reader form)))
+  ((%tag-ast :initarg :tag-ast :reader tag-ast)
+   (%form-ast :initarg :form-ast :reader form-ast)))
 
 (defmethod convert-compound
     ((symbol (eql 'throw)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 'throw-ast
-		 :tag (convert (cadr form) environment)
-		 :form (convert-sequence (caddr form) environment)))
+		 :tag-ast (convert (cadr form) environment)
+		 :form-ast (convert (caddr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting UNWIND-PROTECT.
 
 (defclass unwind-protect-ast (ast)
-  ((%protected-form :initarg :protected-form :reader protected-form)
-   (%cleanup-forms :initarg :cleanup-forms :reader cleanup-forms)))
+  ((%protected-ast :initarg :protected-ast :reader protected-ast)
+   (%cleanup-form-asts :initarg :cleanup-form-asts :reader cleanup-form-asts)))
 
 (defmethod convert-compound
     ((symbol (eql 'unwind-protect)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   (make-instance 'unwind-protect-ast
-		 :protected-form (convert (cadr form) environment)
-		 :cleanup-forms (convert-sequence (cddr form) environment)))
+		 :protected-ast (convert (cadr form) environment)
+		 :cleanup-form-asts (convert-sequence (cddr form) environment)))
