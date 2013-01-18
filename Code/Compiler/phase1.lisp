@@ -119,7 +119,7 @@
 ;;; Converting BLOCK.
 
 (defclass block-ast (ast)
-  ((%body :initarg :body :reader body)))
+  ((%body :initarg :body :accessor body)))
 
 (define-condition block-name-must-be-a-symbol
     (compilation-program-error)
@@ -132,11 +132,13 @@
   (unless (symbolp (cadr form))
     (error 'block-name-must-be-a-symbol
 	   :expr (cadr form)))
-  (let* ((entry (sicl-env:make-block-entry (cadr form)))
-	 (new-env (sicl-env:augment-environment env entry))
+  (let* ((ast (make-instance 'block-ast))
+	 (entry (sicl-env:make-block-entry (cadr form) ast))
+	 (new-env (sicl-env:augment-environment env (list entry)))
 	 (forms (convert-sequence (cddr form) new-env)))
-    (make-instance 'block-ast
-      :body (make-instance 'progn-ast :forms forms))))
+    (setf (body ast)
+	  (make-instance 'progn-ast :forms forms))
+    ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -204,26 +206,25 @@
     (compilation-program-error)
   ())
 
-(defun convert-function (lambda-list body environment)
+(defun convert-function (lambda-list body env)
   (let* ((parsed-lambda-list
 	   (sicl-code-utilities:parse-ordinary-lambda-list lambda-list))
-	 (vars (sicl-code-utilities:lambda-list-variables parsed-lambda-list)))
+	 (vars (sicl-code-utilities:lambda-list-variables parsed-lambda-list))
+	 (entries (loop for var in vars
+			collect (sicl-env:make-lexical-variable-entry var))))
     (multiple-value-bind (declarations documentation forms)
 	(sicl-code-utilities:separate-function-body body)
       (declare (ignore documentation))
-      (let* ((new-environment
-	       (sicl-env:augment-environment-with-declarations
-		declarations
-		(append (loop for var in vars
-			      collect (make-instance 'lexical-variable-entry
-						    :name var))
-			environment)))
-	     (body-asts (convert-sequence forms new-environment)))
-	(make-instance 'close-ast
-		       ;; FIXME: Need to convert the lambda list first.
-		       :lambda-list parsed-lambda-list
-		       :body (make-instance 'progn-ast
-					    :forms body-asts))))))
+      (let ((new-env (sicl-env:augment-environment env entries)))
+	(setf new-env
+	      (sicl-env:augment-environment-with-declarations
+	       new-env declarations))
+	(let ((body-asts (convert-sequence forms new-env)))
+	  (make-instance 'close-ast
+			 ;; FIXME: Need to convert the lambda list first.
+			 :lambda-list parsed-lambda-list
+			 :body (make-instance 'progn-ast
+					      :forms body-asts)))))))
 
 (defmethod convert-compound
     ((symbol (eql 'flet)) form environment)
@@ -234,7 +235,7 @@
 	   :expr form))
   (multiple-value-bind (local-vars local-functions)
       (loop for (name lambda-list body) in (cadr form)
-	    collect (make-instance 'lexical-variable-entry :name name)
+	    collect (sicl-env:make-lexical-variable-entry name)
 	      into vars
 	    collect (convert-function lambda-list body environment)
 	      into funs
@@ -243,8 +244,8 @@
 	(sicl-code-utilities:separate-ordinary-body (cddr form))
       (let* ((new-environment
 	       (sicl-env:augment-environment-with-declarations
-		declarations
-		(append local-vars environment)))
+		(sicl-env:augment-environment environment local-vars)
+		declarations))
 	     (body-asts (convert-sequence forms new-environment))
 	     (init-asts (loop for var in local-vars
 			      for fun in local-functions
@@ -266,36 +267,34 @@
     (compilation-program-error)
   ())
 
-
 (defun convert-named-function (name environment)
-  (let ((binding (find-if (lambda (entry)
-			    (and (typep entry 'function-entry)
-				 (eq (name entry) name)))
-			  environment)))
-    (if (null binding)
-	(warn "undefined function: ~s" name)
-	(make-instance 'typed-location-ast
-		       :binding binding
-		       :type (find-type binding environment)))))
+  (let ((entry (sicl-env:find-function name environment)))
+    (make-instance 'typed-location-ast
+		   :location (sicl-env:location entry)
+		   :type (sicl-env:find-type entry environment))))
 
-(defun convert-lambda-function (lambda-form environment)
+(defun convert-lambda-function (lambda-form env)
   (unless (sicl-code-utilities:proper-list-p lambda-form)
     (error 'lambda-must-be-proper-list
 	   :expr lambda-form))
   (let* ((parsed-lambda-list
 	   (sicl-code-utilities:parse-ordinary-lambda-list (cadr lambda-form)))
 	 (vars (sicl-code-utilities:lambda-list-variables parsed-lambda-list))
-	 (new-environment
-	   (append (loop for var in vars
-			 collect (make-instance 'lexical-variable-entry
-						:name var))
-		   environment)))
-    (let ((body (convert-sequence (cddr lambda-form) new-environment)))
-      (make-instance 'close-ast
-		     ;; FIXME: Need to convert the lambda list first.
-		     :lambda-list parsed-lambda-list
-		     :body (make-instance 'progn-ast
-					  :forms body)))))
+	 (entries (loop for var in vars
+			collect (sicl-env:make-lexical-variable-entry var))))
+    (multiple-value-bind (declarations documentation forms)
+	(sicl-code-utilities:separate-function-body (cddr lambda-form))
+      (declare (ignore documentation))
+      (let ((new-env (sicl-env:augment-environment env entries)))
+	(setf new-env
+	      (sicl-env:augment-environment-with-declarations
+	       new-env declarations))
+	(let ((body-asts (convert-sequence forms new-env)))
+	  (make-instance 'close-ast
+			 ;; FIXME: Need to convert the lambda list first.
+			 :lambda-list parsed-lambda-list
+			 :body (make-instance 'progn-ast
+					      :forms body-asts)))))))
 
 (defmethod convert-compound
     ((symbol (eql 'function)) form environment)
@@ -310,20 +309,17 @@
 ;;; Converting GO.
 
 (defclass go-ast (ast)
-  ((%binding :initarg :binding :reader binding)))
+  ((%tag-ast :initarg :tag-ast :reader tag-ast)))
 
 (defmethod convert-compound
     ((symbol (eql 'go)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (let ((binding (find-if (lambda (entry)
-			    (and (typep entry 'go-tag-entry)
-				 (eq (name entry) (cadr form))))
-			  environment)))
-    (if (null binding)
+  (let ((entry (sicl-env:find-go-tag (cadr form) environment)))
+    (if (null entry)
 	(warn "undefined go tag: ~s" form)
 	(make-instance 'go-ast
-		       :binding binding))))
+		       :tag-ast (sicl-env:definition entry)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -461,11 +457,8 @@
   (sicl-code-utilities:check-form-proper-list form)
   (multiple-value-bind (declarations forms)
       (sicl-code-utilities:separate-ordinary-body (cdr form))
-    (let* ((declaration-specifiers
-	     (sicl-code-utilities:canonicalize-declaration-specifiers
-	      (reduce #'append (mapcar #'cdr declarations))))
-	   (entries (mapcar #'make-environment-entry declaration-specifiers))
-	   (new-environment (append entries environment)))
+    (let ((new-environment (sicl-env:augment-environment-with-declarations
+			    environment declarations)))
       (make-instance 'progn-ast
 		     :forms (convert-sequence forms new-environment)))))
 
@@ -552,7 +545,7 @@
 ;;; Converting RETURN-FROM.
 
 (defclass return-from-ast (ast)
-  ((%binding :initarg :binding :reader binding)
+  ((%block-ast :initarg :block-ast :reader block-ast)
    (%form :initarg :form :reader form)))
 
 (define-condition return-from-tag-must-be-symbol
@@ -570,15 +563,13 @@
   (unless (symbolp (cadr form))
     (error 'return-from-tag-must-be-symbol
 	   :expr (cadr form)))
-  (let ((entry (find-if (lambda (entry)
-			  (typep entry 'block-entry)
-			  (eq (name entry) (cadr form)))
-			environment)))
+  (let ((entry (sicl-env:find-block (cadr form) environment)))
+    ;; FIXME: this currently can't happen, but maybe it should.
     (when (null entry)
       (error 'return-from-tag-unknown
 	     :expr (cadr form)))
     (make-instance 'return-from-ast
-		   :binding (binding entry)
+		   :block-ast (sicl-env:definition entry)
 		   :form (convert (cadr form) environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -664,24 +655,30 @@
 ;;;
 ;;; Converting TAGBODY.
 
+(defclass tag-ast (ast)
+  ((%name :initarg :name :reader name)))
+
 (defclass tagbody-ast (ast)
   ((%items :initarg :items :reader items)))
 
 (defmethod convert-compound
-    ((symbol (eql 'tagbody)) form environment)
+    ((symbol (eql 'tagbody)) form env)
   (sicl-code-utilities:check-form-proper-list form)
-  (let ((tag-entries
-	  (loop for item in (cdr form)
-		when (symbolp item)
-		  collect (make-instance 'go-tag-entry
-					 :name item))))
-    (let ((new-environment (append tag-entries environment)))
-      (let ((items (loop for item in (cdr form)
-			 collect (if (symbolp item)
-				     (pop tag-entries)
-				     (convert item new-environment)))))
-	(make-instance 'tagbody-ast
-		       :items items)))))
+  (let* ((tag-asts
+	   (loop for item in (cdr form)
+		 when (symbolp item)
+		   collect (make-instance 'tag-ast
+					  :name item)))
+	 (entries
+	   (loop for ast in tag-asts
+		 collect (sicl-env:make-go-tag-entry (name ast) ast))))
+    (let* ((new-env (sicl-env:augment-environment env entries))
+	   (items (loop for item in (cdr form)
+			collect (if (symbolp item)
+				    (pop tag-asts)
+				    (convert item new-env)))))
+      (make-instance 'tagbody-ast
+		     :items items))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
