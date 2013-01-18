@@ -207,23 +207,25 @@
 ;;;
 ;;; Class BLOCK-ENTRY.
 
-(defclass block-entry (block-space named-entry)
+(defclass block-entry (block-space definition-entry)
   ())
   
-(defun make-block-entry (name)
+(defun make-block-entry (name block)
   (make-instance 'block-entry
-		 :name name))
+		 :name name
+		 :definition block))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class GO-TAG-ENTRY.
 
-(defclass go-tag-entry (tag-space named-entry)
+(defclass go-tag-entry (tag-space definition-entry)
   ())
 
-(defun make-go-tag-entry (name)
+(defun make-go-tag-entry (name tag)
   (make-instance 'go-tag-entry
-		 :name name))
+		 :name name
+		 :definition tag))
 
 (defclass declaration-entry (environment-entry) ())
 
@@ -353,7 +355,7 @@
 			environment)))
     (when (null entry)
       ;; FIXME: do this better
-      (error "no such variable"))
+      (error "no such name ~s" name))
     entry))
   
 (defun find-variable (name environment)
@@ -528,15 +530,17 @@
 			  (eq (location entry) location))
 		  collect (type entry))))
 
-(defun augment-environment (environment entry)
-  (cons entry environment))
+(defun augment-environment (environment entries)
+  (append entries environment))
 
-(defun augment-environment-with-declarations (declarations environment)
-  (let* ((declaration-specifiers
-	   (sicl-code-utilities:canonicalize-declaration-specifiers
-	    (reduce #'append (mapcar #'cdr declarations))))
-	 (entries (mapcar #'make-environment-entry declaration-specifiers)))
-    (append entries environment)))
+(defun augment-environment-with-declarations (environment declarations)
+  (let ((declaration-specifiers
+	  (sicl-code-utilities:canonicalize-declaration-specifiers
+	   (reduce #'append (mapcar #'cdr declarations)))))
+    (augment-environment
+     environment
+     (loop for spec in declaration-specifiers
+	   collect (make-entry-from-declaration spec environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
