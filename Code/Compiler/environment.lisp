@@ -28,7 +28,7 @@
    #:optimize-declaration-entry #:make-optimize-declaration-entry
    #:declaration-declaration-entry #:make-declaration-declaration-entry
    #:definition
-   #:location
+   #:location #:lexical-location
    #:storage
    #:name
    #:type
@@ -351,7 +351,7 @@
 (defun find-in-namespace (name environment namespace)
   (let ((entry (find-if (lambda (entry)
 			  (and (typep entry namespace)
-			       (eq (name entry) name)))
+			       (equal (name entry) name)))
 			environment)))
     (when (null entry)
       ;; FIXME: do this better
@@ -554,6 +554,12 @@
 
 (add-to-global-environment
  (make-global-function-entry 'car))
+
+(add-to-global-environment
+ (make-global-function-entry '(setf fdefinition)))
+
+(add-to-global-environment
+ (make-global-function-entry 'funcall))
 
 (add-to-global-environment
  (make-macro-entry 'when
