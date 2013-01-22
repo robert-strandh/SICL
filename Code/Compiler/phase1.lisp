@@ -6,21 +6,23 @@
    #:ast
    #:constant-ast #:value
    #:typed-location-ast
-   #:function-call-ast #:binding #:arguments
+   #:function-call-ast #:binding #:arguments #:function-location
    #:block-ast #:binding #:body
    #:catch-ast
    #:eval-when-ast
    #:function-ast
-   #:go-ast
+   #:go-ast #:tag-ast
    #:if-ast #:test #:then #:else
    #:load-time-value-ast
-   #:progn-ast #:forms
-   #:return-from-ast #:form
+   #:progn-ast #:form-asts
+   #:return-from-ast #:form #:form-ast
    #:setq-ast
    #:tagbody-ast #:items
    #:the-ast
    #:throw-ast
    #:unwind-protect-ast
+   #:convert #:convert-compound
+   #:draw-ast #:id
    ))
 
 (in-package #:sicl-compiler-phase-1)
@@ -116,6 +118,102 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Convert an ordinary lambda list to compiled form.
+
+;;; An &optional entry is one of:
+;;;
+;;;  * (lexical-location init-form-ast)
+;;;  * (lexical-location init-form-ast lexical-location)
+;;;
+;;; Here, init-form-ast is an AST resulting from the conversion of an
+;;; initialization form.  In the second variant, the last lexical
+;;; location is assigned a Boolean value according to whether an
+;;; optional argument was given.
+;;;
+;;; A &key entry is one of:
+;;;
+;;;  * ((keyword lexical-location) init-form-ast)
+;;;  * ((keyword lexical-location) init-form-ast lexical-location)
+;;;
+;;; As with the &optional entry, init-form-ast is an AST resulting
+;;; from the conversion of an initialization form.  In the second
+;;; variant, the last lexical location is assigned a Boolean value
+;;; according to whether an optional argument was given.
+;;; 
+;;; An &aux entry is of the form:
+;;;
+;;;  * (lexical-location init-form-ast)
+
+;;; FIXME: handle special variables in lambda list. 
+
+(defclass lambda-list ()
+  (;; A possibly empty list of lexical locations.
+   (%required :initarg :required :reader required)
+   ;; A possibly empty list of optional entries. 
+   (%optional :initarg :optional :reader optional)
+   ;; Either NIL or a single lexical location. 
+   (%rest-body :initarg :rest-body :reader rest-body)
+   ;; Either:
+   ;;  * :none, meaning &key was not given at all,
+   ;;  * a possibly empty list of &key entries.
+   (%keys :initarg :keys :reader keys)
+   ;; Either:
+   ;;  * nil, meaning &allow-other-keys was not given at all,
+   ;;  * t, meaning &allow-other-keys was given.
+   (%allow-other-keys :initarg :allow-other-keys :reader allow-other-keys)
+   ;; A possibly empty list of &aux entries.
+   (%aux :initarg :aux :reader aux)))
+
+;;; The main tricky part about converting a lambda list is that any
+;;; init-form in &optional, &key, or &aux entries may refer to
+;;; variables in parameter specifiers to the left of the one it
+;;; appears in.
+;;;
+;;; A question (that the HyperSpec does not seem to be addressing as
+;;; far as I can tell) is whether the lambda list may contain multiple
+;;; entries of the same symbol.  It kind of makes sense that this
+;;; would be possible, given what was said in the paragraph above, so
+;;; a lambda list might be for instance: (x &key (x x)) which would
+;;; mean that the variable x takes on the value of the :x keyword
+;;; argument if given, and of the required arguement if no keyword
+;;; argument was given.  It is probably easier to allow this than to
+;;; check for it.
+
+;;; FIXME: for now, we handle only required parameters.
+(defun convert-lambda-list (ordinary-lambda-list env)
+  (let* ((required-vars (sicl-code-utilities:required ordinary-lambda-list))
+	 (required-entries
+	   (loop for var in required-vars
+		 collect (sicl-env:make-lexical-variable-entry var)))
+	 (new-env (sicl-env:augment-environment env required-entries)))
+    (values
+     (make-instance 'lambda-list
+		    :required (mapcar #'sicl-env:location required-entries))
+     new-env)))
+
+(defclass code-ast (ast)
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%body-ast :initarg :body-ast :reader body-ast)))
+
+(defun convert-code (lambda-list body env)
+  (let* ((parsed-lambda-list
+	   (sicl-code-utilities:parse-ordinary-lambda-list lambda-list)))
+    (multiple-value-bind (compiled-lambda-list new-env)
+	(convert-lambda-list parsed-lambda-list env)
+      (multiple-value-bind (declarations documentation forms)
+	  (sicl-code-utilities:separate-function-body body)
+	(declare (ignore documentation))
+	(setf new-env
+	      (sicl-env:augment-environment-with-declarations
+	       new-env declarations))
+	(let ((body-asts (convert-sequence forms new-env)))
+	  (make-instance 'code-ast
+			 :lambda-list compiled-lambda-list
+			 :body-ast (make-instance 'progn-ast
+						  :form-asts body-asts)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting BLOCK.
 
 (defclass block-ast (ast)
@@ -137,7 +235,7 @@
 	 (new-env (sicl-env:augment-environment env (list entry)))
 	 (forms (convert-sequence (cddr form) new-env)))
     (setf (body ast)
-	  (make-instance 'progn-ast :forms forms))
+	  (make-instance 'progn-ast :form-asts forms))
     ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -155,7 +253,7 @@
   (let ((forms (convert-sequence (cddr form) environment)))
     (make-instance 'catch-ast
       :tag (convert (cadr form) environment)
-      :body (make-instance 'progn-ast :forms forms))))
+      :body (make-instance 'progn-ast :form-asts forms))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -192,7 +290,7 @@
   (let ((forms (convert-sequence (cddr form) environment)))
     (make-instance 'eval-when-ast
 		   :situations (cadr form)
-		   :body (make-instance 'progn-ast :forms forms))))
+		   :body (make-instance 'progn-ast :form-asts forms))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -206,64 +304,50 @@
     (compilation-program-error)
   ())
 
-(defun convert-function (lambda-list body env)
-  (let* ((parsed-lambda-list
-	   (sicl-code-utilities:parse-ordinary-lambda-list lambda-list))
-	 (vars (sicl-code-utilities:lambda-list-variables parsed-lambda-list))
-	 (entries (loop for var in vars
-			collect (sicl-env:make-lexical-variable-entry var))))
-    (multiple-value-bind (declarations documentation forms)
-	(sicl-code-utilities:separate-function-body body)
-      (declare (ignore documentation))
-      (let ((new-env (sicl-env:augment-environment env entries)))
-	(setf new-env
-	      (sicl-env:augment-environment-with-declarations
-	       new-env declarations))
-	(let ((body-asts (convert-sequence forms new-env)))
-	  (make-instance 'close-ast
-			 ;; FIXME: Need to convert the lambda list first.
-			 :lambda-list parsed-lambda-list
-			 :body (make-instance 'progn-ast
-					      :forms body-asts)))))))
-
 (defmethod convert-compound
-    ((symbol (eql 'flet)) form environment)
+    ((symbol (eql 'flet)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   (unless (sicl-code-utilities:proper-list-p (cadr form))
     (error 'flet-functions-must-be-proper-list
 	   :expr form))
-  (multiple-value-bind (local-vars local-functions)
-      (loop for (name lambda-list body) in (cadr form)
-	    collect (sicl-env:make-lexical-variable-entry name)
+  (multiple-value-bind (local-vars local-codes)
+      (loop for (name lambda-list . body) in (cadr form)
+	    collect (sicl-env:make-local-function-entry name)
 	      into vars
-	    collect (convert-function lambda-list body environment)
-	      into funs
-	    finally (return (values vars funs)))
+	    collect (convert-code lambda-list body env)
+	      into codes
+	    finally (return (values vars codes)))
     (multiple-value-bind (declarations forms)
 	(sicl-code-utilities:separate-ordinary-body (cddr form))
-      (let* ((new-environment
+      (let* ((new-env
 	       (sicl-env:augment-environment-with-declarations
-		(sicl-env:augment-environment environment local-vars)
+		(sicl-env:augment-environment env local-vars)
 		declarations))
-	     (body-asts (convert-sequence forms new-environment))
+	     (body-asts (convert-sequence forms new-env))
 	     (init-asts (loop for var in local-vars
-			      for fun in local-functions
+			      for location = (sicl-env:location var)
+			      for code in local-codes
+			      for fun = (make-instance 'close-ast
+						       :code-ast code)
 			      collect (make-instance 'setq-ast
-						     :binding var
-						     :value fun))))
+						     :location location
+						     :value-ast fun))))
 	(make-instance 'progn-ast
-		       :forms (append init-asts body-asts))))))
+		       :form-asts (append init-asts body-asts))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FUNCTION.
 
 (defclass close-ast (ast)
-  ((%lambda-list :initarg :lambda-list :reader lambda-list)
-   (%body :initarg :body :reader body)))
+  ((%code-ast :initarg :code-ast :reader code-ast)))
 
 (define-condition lambda-must-be-proper-list
+    (compilation-program-error)
+  ())
+
+(define-condition function-argument-must-be-function-name-or-lambda-expression
     (compilation-program-error)
   ())
 
@@ -277,30 +361,26 @@
   (unless (sicl-code-utilities:proper-list-p lambda-form)
     (error 'lambda-must-be-proper-list
 	   :expr lambda-form))
-  (let* ((parsed-lambda-list
-	   (sicl-code-utilities:parse-ordinary-lambda-list (cadr lambda-form)))
-	 (vars (sicl-code-utilities:lambda-list-variables parsed-lambda-list))
-	 (entries (loop for var in vars
-			collect (sicl-env:make-lexical-variable-entry var))))
-    (multiple-value-bind (declarations documentation forms)
-	(sicl-code-utilities:separate-function-body (cddr lambda-form))
-      (declare (ignore documentation))
-      (let ((new-env (sicl-env:augment-environment env entries)))
-	(setf new-env
-	      (sicl-env:augment-environment-with-declarations
-	       new-env declarations))
-	(let ((body-asts (convert-sequence forms new-env)))
-	  (make-instance 'close-ast
-			 ;; FIXME: Need to convert the lambda list first.
-			 :lambda-list parsed-lambda-list
-			 :body (make-instance 'progn-ast
-					      :forms body-asts)))))))
+  (let ((code (convert-code (cadr lambda-form) (cddr lambda-form) env)))
+    (make-instance 'close-ast :code-ast code)))
+
+(defun proper-function-name-p (name)
+  (or (symbolp name)
+      (and (sicl-code-utilities:proper-list-p name)
+	   (= (length name) 2)
+	   (eq (car name) 'setf)
+	   (symbolp (cadr name)))))
 
 (defmethod convert-compound
     ((symbol (eql 'function)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (if (symbolp (cadr form))
+  (unless (or (proper-function-name-p (cadr form))
+	      (and (consp (cadr form))
+		   (eq (car (cadr form)) 'lambda)))
+    (error 'function-argument-must-be-function-name-or-lambda-expression
+	   :expr (cadr form)))
+  (if (proper-function-name-p (cadr form))
       (convert-named-function (cadr form) environment)
       (convert-lambda-function (cadr form) environment)))
 
@@ -404,13 +484,13 @@
     (let ((forms1 (loop for entry in entries
 			for init in inits
 			collect (make-instance 'setq-ast
-					       :location (location entry)
-					       :value init)))
+					       :location (sicl-env:location entry)
+					       :value-ast init)))
 	  (forms2 (loop for body-form in (cddr form)
 			collect (convert body-form new-env))))
 	  
       (make-instance 'progn-ast
-		     :forms (append forms1 forms2)))))
+		     :form-asts (append forms1 forms2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -458,7 +538,7 @@
     (let ((new-env (sicl-env:augment-environment-with-declarations
 		    env declarations)))
       (make-instance 'progn-ast
-		     :forms (convert-sequence forms new-env)))))
+		     :form-asts (convert-sequence forms new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -568,7 +648,7 @@
 	     :expr (cadr form)))
     (make-instance 'return-from-ast
 		   :block-ast (sicl-env:definition entry)
-		   :form-ast (convert (cadr form) environment))))
+		   :form-ast (convert (caddr form) environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -722,3 +802,136 @@
   (make-instance 'unwind-protect-ast
 		 :protected-ast (convert (cadr form) environment)
 		 :cleanup-form-asts (convert-sequence (cddr form) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Drawing an AST.
+
+(defparameter *table* nil)
+
+(defun id (ast)
+  (symbol-name (gethash ast *table*)))
+
+(defgeneric draw-ast (ast stream))
+
+(defun draw (ast filename)
+  (with-open-file (stream filename :direction :output :if-exists :supersede)
+    (format stream "digraph G {~%   ordering = out;~%")
+    (let ((*table* (make-hash-table :test #'eq)))
+      (draw-ast ast stream))
+    (format stream "}~%")))
+
+(defmethod draw-ast :around (ast stream)
+  (when (null (gethash ast *table*))
+    (setf (gethash ast *table*) (gensym))
+    (format stream "  ~a [shape = box];~%"
+	    (id ast))
+    (call-next-method)))
+
+(defmethod draw-ast ((ast constant-ast) stream)
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (value ast)))
+
+(defun draw-location (location stream)
+  (when (null (gethash location *table*))
+    (setf (gethash location *table*) (gensym))
+    (format stream "  ~a [shape = circle];~%" (id location))
+    (format stream "  ~a [label = \"\"];~%" (id location))))
+
+(defmethod draw-ast ((ast typed-location-ast) stream)
+  (format stream "   ~a [label = \"location\"];~%"
+	  (id ast))
+  (draw-location (location ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (location ast))))
+  
+(defmethod draw-ast ((ast if-ast) stream)
+  (format stream "   ~a [label = \"if\"];~%"
+	  (id ast))
+  (draw-ast (test ast) stream)
+  (draw-ast (then ast) stream)
+  (draw-ast (else ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (test ast)))
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (then ast)))
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (else ast))))
+
+(defmethod draw-ast ((ast progn-ast) stream)
+  (format stream "   ~a [label = \"progn\"];~%"
+	  (id ast))
+  (loop for child in (form-asts ast)
+	do (draw-ast child stream)
+	   (format stream "   ~a -> ~a~%"
+		   (id ast) (id child))))
+
+(defmethod draw-ast ((ast function-call-ast) stream)
+  (format stream "   ~a [label = \"funcall\"];~%"
+	  (id ast))
+  (let ((location (function-location ast)))
+    (draw-location location stream)
+    (format stream "   ~a -> ~a~%" (id ast) (id location)))
+  (loop for child in (arguments ast)
+	do (draw-ast child stream)
+	   (format stream "   ~a -> ~a~%"
+		   (id ast) (id child))))
+
+(defmethod draw-ast ((ast block-ast) stream)
+  (format stream "   ~a [label = \"block\"];~%"
+	  (id ast))
+  (draw-ast (body ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (body ast))))
+  
+(defmethod draw-ast ((ast return-from-ast) stream)
+  (format stream "   ~a [label = \"return-from\"];~%"
+	  (id ast))
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (block-ast ast)))
+  (draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast))))
+  
+(defmethod draw-ast ((ast setq-ast) stream)
+  (format stream "   ~a [label = \"setq\"];~%"
+	  (id ast))
+  (draw-location (location ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (location ast)))
+  (draw-ast (value-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (value-ast ast))))
+  
+(defmethod draw-ast ((ast code-ast) stream)
+  (format stream "   ~a [label = \"code\"];~%"
+	  (id ast))
+  (loop for location in (required (lambda-list ast))
+	do (draw-location location stream))
+  (loop for location in (required (lambda-list ast))
+	do (format stream "   ~a -> ~a~%"
+		   (id ast)
+		   (id location)))
+  (draw-ast (body-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (body-ast ast))))
+  
+(defmethod draw-ast ((ast close-ast) stream)
+  (format stream "   ~a [label = \"close\"];~%"
+	  (id ast))
+  (draw-ast (code-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (code-ast ast))))
+  
