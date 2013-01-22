@@ -1,6 +1,7 @@
 (defpackage #:sicl-compiler-phase-2
   (:use #:common-lisp #:sicl-compiler-phase-1)
   (:export
+   #:compile-ast
    ))
 
 (in-package #:sicl-compiler-phase-2)
@@ -37,7 +38,7 @@
 
 (defclass variable-assignment-instruction (single-successor-instruction)
   ((%target :initarg :target :accessor target)
-   (%variable :initarg :variable :accessor variable)))
+   (%source :initarg :source :accessor source)))
 
 (defclass value-assignment-instruction (single-successor-instruction)
   ((%target :initarg :target :accessor target)
@@ -50,22 +51,18 @@
   ((%fun :initarg :fun :accessor fun)
    (%arguments :initarg :arguments :accessor arguments)))
 
-(defclass out-instruction (single-successor-instruction)
-  ((%value-number :initarg :value-number :accessor value-number)
-   (%variable :initarg :variable :accessor variable)))
+(defclass enter-instruction (single-successor-instruction)
+  ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
-(defclass value-count-instruction (single-successor-instruction)
-  ((%value-count :initarg :value-count :accessor value-count)))
+(defclass leave-instruction (single-successor-instruction)
+  ((%sources :initarg :sources :accessor sources)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile an abstract syntax tree.
 
 (defun new-temporary ()
-  (make-instance 'variable-ast
-    :binding (make-instance 'lexical-variable-entry
-			    :name 'temp)
-    :type t))
+  (make-instance 'sicl-env:lexical-location))
 
 (defun nil-fill (value-context successor)
   (let ((next successor))
@@ -88,16 +85,13 @@
 	   (make-instance 'constant-assignment-instruction
 	     :target temp
 	     :constant (value ast)
-	     :next (make-instance 'out-instruction
-	             :value-number 0
-		     :variable temp
-		     :next (make-instance 'value-count-instruction
-		             :value-count 1
-			     :next successor)))))
+	     :next (make-instance 'leave-instruction
+		     :sources (list temp)
+		     :next successor))))
 	(t
 	 (make-instance 'constant-assignment-instruction
 	   :target (car value-context)
-	   :value (value ast)
+	   :constant (value ast)
 	   :next (nil-fill (cdr value-context) successor)))))
 
 (defmethod compile-ast ((ast if-ast) value-context successor)
@@ -111,23 +105,24 @@
 	(compile-ast (test ast) (list test-temp) test)))))
 
 (defmethod compile-ast ((ast progn-ast) value-context successor)
-  (let ((next (compile-ast (car (last (forms ast))) value-context successor)))
-    (loop for sub-ast in (cdr (reverse (forms ast)))
+  (let ((next (compile-ast (car (last (form-asts ast)))
+			   value-context successor)))
+    (loop for sub-ast in (cdr (reverse (form-asts ast)))
 	  do (setf next (compile-ast sub-ast '() next)))
     next))
 
 (defparameter *block-info* nil)
 
 (defmethod compile-ast ((ast block-ast) value-context successor)
-  (setf (gethash (binding ast) *block-info*)
+  (setf (gethash ast *block-info*)
 	(list value-context successor))
   (compile-ast (body ast) value-context successor))
 
 (defmethod compile-ast ((ast return-from-ast) value-context successor)
   (declare (ignore value-context successor))
   (destructuring-bind (value-context successor)
-      (gethash (binding ast) *block-info*)
-    (compile-ast (form ast) value-context successor)))
+      (gethash (block-ast ast) *block-info*)
+    (compile-ast (form-ast ast) value-context successor)))
 
 (defparameter *go-info* nil)
 
@@ -150,7 +145,7 @@
 
 (defmethod compile-ast ((ast go-ast) value-context successor)
   (declare (ignore value-context successor))
-  (gethash (binding ast) *go-info*))
+  (gethash (tag-ast ast) *go-info*))
 
 (defmethod compile-ast ((ast function-call-ast) value-context successor)
   (let ((next successor))
@@ -166,7 +161,7 @@
 		      collect (new-temporary))))
       (setf next
 	    (make-instance 'funcall-instruction
-	      :fun (binding ast)
+	      :fun (function-location ast)
 	      :arguments temps
 	      :next next))
       (loop for temp in (reverse temps)
