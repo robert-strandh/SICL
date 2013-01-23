@@ -103,6 +103,7 @@
    #:draw-instruction
    #:draw-flowchart
    #:id
+   #:*instruction-table*
    ))
 
 (defpackage #:sicl-word
