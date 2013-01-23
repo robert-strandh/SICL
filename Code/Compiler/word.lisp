@@ -1,28 +1,3 @@
-(defpackage #:sicl-word
-  (:use #:common-lisp)
-  (:import-from #:sicl-compiler-phase-1
-		#:convert
-		#:convert-compound
-		#:ast
-		#:draw-ast #:id)
-  (:import-from #:sicl-compiler-phase-2
-		#:compile-ast
-		#:instruction
-		#:no-successor-instruction
-		#:single-successor-instruction
-		#:dual-successor-instruction
-		#:multiple-successor-instruction
-		#:leave-instruction
-		#:new-temporary)
-  (:export
-   #:memalloc #:memref #:memset
-   #:u+ #:u- #:s+ #:s- #:neg
-   #:u* #:s*
-   #:lshift #:ashift
-   #:& #:ior #:xor #:~
-   #:== #:s< #:s<= #:u< #:u<=
-   ))
-
 (in-package #:sicl-word)
 
 (defclass arguments-mixin ()
@@ -30,32 +5,28 @@
 
 (defun convert-arguments (arguments env)
   (loop for argument in arguments
-	collect (convert argument env)))
-
-(defclass in-out-mixin ()
-  ((%inputs :initarg :inputs :reader inputs)
-   (%outputs :initarg :outputs :reader outputs)))
+	collect (p1:convert argument env)))
 
 (defun adapt-value-context (desired min-supplied max-supplied successor)
   (cond ((eq desired t)
-	 (let ((context (loop repeat max-supplied collect (new-temporary))))
+	 (let ((context (loop repeat max-supplied collect (p2:new-temporary))))
 	   (values context
-		   (make-instance 'leave-instruction
-				  :sources context
-				  :next successor))))
+		   (make-instance 'p2:leave-instruction
+				  :inputs context
+				  :successors (list successor)))))
 	((<= min-supplied (length desired) max-supplied)
 	 (values desired successor))
 	(t
 	 (error "incorrect number of values expected"))))
 
 (defun make-temps (arguments)
-  (loop repeat (length arguments) collect (new-temporary)))
+  (loop repeat (length arguments) collect (p2:new-temporary)))
 
 (defun compile-arguments (arguments temps successor)
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
-	do (setf succ (compile-ast arg (list temp) succ))
+	do (setf succ (p2:compile-ast arg (list temp) succ))
 	finally (return succ)))
 
 ;;; There is lots of code duplication in this file at the moment.
@@ -75,26 +46,26 @@
 ;;;
 ;;;   * A pointer to the first byte allocated.
 
-(defclass memalloc-ast (ast arguments-mixin)
+(defclass memalloc-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'memalloc)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'memalloc)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
   (make-instance 'memalloc-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast memalloc-ast) stream)
+(defmethod p1:draw-ast ((ast memalloc-ast) stream)
   (format stream "   ~a [label = \"memalloc\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass memalloc-instruction (single-successor-instruction in-out-mixin)
+(defclass memalloc-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast memalloc-ast) value-context successor)
+(defmethod p2:compile-ast ((ast memalloc-ast) value-context successor)
   ;; Allow only for a value context with a single value.
   (unless (and (list value-context)
 	       (= (length value-context) 1))
@@ -105,7 +76,7 @@
 	   (instruction (make-instance 'memalloc-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -122,33 +93,33 @@
 ;;;  
 ;;;   * The contents of memory at that address. 
 
-(defclass memref-ast (ast arguments-mixin)
+(defclass memref-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'memref)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'memref)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
   (make-instance 'memref-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast memref-ast) stream)
+(defmethod p1:draw-ast ((ast memref-ast) stream)
   (format stream "   ~a [label = \"memref\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass memref-instruction (single-successor-instruction in-out-mixin)
+(defclass memref-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast memref-ast) value-context successor)
+(defmethod p2:compile-ast ((ast memref-ast) value-context successor)
   (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'memref-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -164,33 +135,33 @@
 ;;;
 ;;; No values.
 
-(defclass memset-ast (ast arguments-mixin)
+(defclass memset-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'memset)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'memset)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 'memset-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast memset-ast) stream)
+(defmethod p1:draw-ast ((ast memset-ast) stream)
   (format stream "   ~a [label = \"memset\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass memset-instruction (single-successor-instruction in-out-mixin)
+(defclass memset-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast memset-ast) value-context successor)
+(defmethod p2:compile-ast ((ast memset-ast) value-context successor)
   (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 0 0 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'memset-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -210,33 +181,33 @@
 ;;;   * The sum of the first two operands modulo word size
 ;;;   * A Boolean indicating carry out.
 
-(defclass u+-ast (ast arguments-mixin)
+(defclass u+-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'u+)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'u+)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 3)
   (make-instance 'u+-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast u+-ast) stream)
+(defmethod p1:draw-ast ((ast u+-ast) stream)
   (format stream "   ~a [label = \"u+\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass u+-instruction (single-successor-instruction in-out-mixin)
+(defclass u+-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast u+-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast u+-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 2 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'u+-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -256,33 +227,33 @@
 ;;;   * The difference of the first two operands modulo word size
 ;;;   * A Boolean indicating carry out.
 
-(defclass u--ast (ast arguments-mixin)
+(defclass u--ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'u-)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'u-)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 3)
   (make-instance 'u--ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast u--ast) stream)
+(defmethod p1:draw-ast ((ast u--ast) stream)
   (format stream "   ~a [label = \"u-\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass u--instruction (single-successor-instruction in-out-mixin)
+(defclass u--instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast u--ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast u--ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 2 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'u--instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -301,33 +272,33 @@
 ;;;   * The sum of the first two operands modulo word size
 ;;;   * A Boolean indicating overflow.
 
-(defclass s+-ast (ast arguments-mixin)
+(defclass s+-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 's+)) form env)
+(defmethod p1:convert-compound ((symbol (eql 's+)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 's+-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast s+-ast) stream)
+(defmethod p1:draw-ast ((ast s+-ast) stream)
   (format stream "   ~a [label = \"s+\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass s+-instruction (single-successor-instruction in-out-mixin)
+(defclass s+-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast s+-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast s+-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 2 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 's+-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -346,33 +317,33 @@
 ;;;   * The difference of the first two operands modulo word size
 ;;;   * A Boolean indicating overflow.
 
-(defclass s--ast (ast arguments-mixin)
+(defclass s--ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 's-)) form env)
+(defmethod p1:convert-compound ((symbol (eql 's-)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 's--ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast s--ast) stream)
+(defmethod p1:draw-ast ((ast s--ast) stream)
   (format stream "   ~a [label = \"s-\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass s--instruction (single-successor-instruction in-out-mixin)
+(defclass s--instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast s--ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast s--ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 2 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 's--instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 
@@ -391,33 +362,33 @@
 ;;;   * The negative value of the argument. 
 ;;;   * A Boolean indicating overflow.
 
-(defclass neg-ast (ast arguments-mixin)
+(defclass neg-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'neg)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'neg)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
   (make-instance 'neg-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast neg-ast) stream)
+(defmethod p1:draw-ast ((ast neg-ast) stream)
   (format stream "   ~a [label = \"neg\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass neg-instruction (single-successor-instruction in-out-mixin)
+(defclass neg-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast neg-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast neg-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 2 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'neg-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -435,33 +406,33 @@
 ;;;
 ;;;   * The bitwise logical AND between the two words.
 
-(defclass &-ast (ast arguments-mixin)
+(defclass &-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql '&)) form env)
+(defmethod p1:convert-compound ((symbol (eql '&)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance '&-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast &-ast) stream)
+(defmethod p1:draw-ast ((ast &-ast) stream)
   (format stream "   ~a [label = \"&\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass &-instruction (single-successor-instruction in-out-mixin)
+(defclass &-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast &-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast &-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance '&-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -479,33 +450,33 @@
 ;;;
 ;;;   * The bitwise logical inclusive OR between the two words.
 
-(defclass ior-ast (ast arguments-mixin)
+(defclass ior-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'ior)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'ior)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 'ior-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast ior-ast) stream)
+(defmethod p1:draw-ast ((ast ior-ast) stream)
   (format stream "   ~a [label = \"ior\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass ior-instruction (single-successor-instruction in-out-mixin)
+(defclass ior-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast ior-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast ior-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'ior-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -523,33 +494,33 @@
 ;;;
 ;;;   * The bitwise logical exclusive OR between the two words.
 
-(defclass xor-ast (ast arguments-mixin)
+(defclass xor-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'xor)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'xor)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 'xor-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast xor-ast) stream)
+(defmethod p1:draw-ast ((ast xor-ast) stream)
   (format stream "   ~a [label = \"xor\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass xor-instruction (single-successor-instruction in-out-mixin)
+(defclass xor-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast xor-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast xor-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'xor-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -566,33 +537,33 @@
 ;;;
 ;;;   * The bitwise logical inverse of the argument.
 
-(defclass ~-ast (ast arguments-mixin)
+(defclass ~-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql '~)) form env)
+(defmethod p1:convert-compound ((symbol (eql '~)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance '~-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast ~-ast) stream)
+(defmethod p1:draw-ast ((ast ~-ast) stream)
   (format stream "   ~a [label = \"~\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass ~-instruction (single-successor-instruction in-out-mixin)
+(defclass ~-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast ~-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast ~-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance '~-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -610,33 +581,33 @@
 ;;;
 ;;;   * A Boolean indicating whether the two are the same.
 
-(defclass ==-ast (ast arguments-mixin)
+(defclass ==-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql '==)) form env)
+(defmethod p1:convert-compound ((symbol (eql '==)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance '==-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast ==-ast) stream)
+(defmethod p1:draw-ast ((ast ==-ast) stream)
   (format stream "   ~a [label = \"==\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass ==-instruction (single-successor-instruction in-out-mixin)
+(defclass ==-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast ==-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast ==-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance '==-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -654,33 +625,33 @@
 ;;;
 ;;;   * A Boolean indicating whether the first is less than the second.
 
-(defclass s<-ast (ast arguments-mixin)
+(defclass s<-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 's<)) form env)
+(defmethod p1:convert-compound ((symbol (eql 's<)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 's<-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast s<-ast) stream)
+(defmethod p1:draw-ast ((ast s<-ast) stream)
   (format stream "   ~a [label = \"s<\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass s<-instruction (single-successor-instruction in-out-mixin)
+(defclass s<-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast s<-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast s<-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 's<-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -699,33 +670,33 @@
 ;;;   * A Boolean indicating whether the first is less than or equal
 ;;;     to the second. 
 
-(defclass s<=-ast (ast arguments-mixin)
+(defclass s<=-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 's<=)) form env)
+(defmethod p1:convert-compound ((symbol (eql 's<=)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 's<=-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast s<=-ast) stream)
+(defmethod p1:draw-ast ((ast s<=-ast) stream)
   (format stream "   ~a [label = \"s<=\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass s<=-instruction (single-successor-instruction in-out-mixin)
+(defclass s<=-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast s<=-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast s<=-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 's<=-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -743,33 +714,33 @@
 ;;;
 ;;;   * A Boolean indicating whether the first is less than the second.
 
-(defclass u<-ast (ast arguments-mixin)
+(defclass u<-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'u<)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'u<)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 'u<-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast u<-ast) stream)
+(defmethod p1:draw-ast ((ast u<-ast) stream)
   (format stream "   ~a [label = \"u<\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass u<-instruction (single-successor-instruction in-out-mixin)
+(defclass u<-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast u<-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast u<-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'u<-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -788,32 +759,32 @@
 ;;;   * A Boolean indicating whether the first is less than or equal
 ;;;     to the second. 
 
-(defclass u<=-ast (ast arguments-mixin)
+(defclass u<=-ast (p1:ast arguments-mixin)
   ())
 
-(defmethod convert-compound ((symbol (eql 'u<=)) form env)
+(defmethod p1:convert-compound ((symbol (eql 'u<=)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (make-instance 'u<=-ast
 		 :arguments (convert-arguments (cdr form) env)))
 
-(defmethod draw-ast ((ast u<=-ast) stream)
+(defmethod p1:draw-ast ((ast u<=-ast) stream)
   (format stream "   ~a [label = \"u<=\"];~%"
-	  (id ast))
+	  (p1:id ast))
   (loop for argument-ast in (arguments ast)
-	do (draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	do (p1:draw-ast argument-ast stream)
+	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
-(defclass u<=-instruction (single-successor-instruction in-out-mixin)
+(defclass u<=-instruction (p2:instruction)
   ())
 
-(defmethod compile-ast ((ast u<=-ast) value-context successor)
-  (multiple-value-bind (new-successor new-value-context)
+(defmethod p2:compile-ast ((ast u<=-ast) value-context successor)
+  (multiple-value-bind (new-value-context new-successor)
       (adapt-value-context value-context 1 1 successor)
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'u<=-instruction
 				       :inputs temps
 				       :outputs new-value-context
-				       :next new-successor)))
+				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 

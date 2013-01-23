@@ -1,30 +1,3 @@
-(defpackage #:sicl-compiler-phase-1
-  (:use #:common-lisp)
-  (:shadow #:type
-   )
-  (:export
-   #:ast
-   #:constant-ast #:value
-   #:typed-location-ast
-   #:function-call-ast #:binding #:arguments #:function-location
-   #:block-ast #:binding #:body
-   #:catch-ast
-   #:eval-when-ast
-   #:function-ast
-   #:go-ast #:tag-ast
-   #:if-ast #:test #:then #:else
-   #:load-time-value-ast
-   #:progn-ast #:form-asts
-   #:return-from-ast #:form #:form-ast
-   #:setq-ast
-   #:tagbody-ast #:items
-   #:the-ast
-   #:throw-ast
-   #:unwind-protect-ast
-   #:convert #:convert-compound
-   #:draw-ast #:id
-   ))
-
 (in-package #:sicl-compiler-phase-1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
