@@ -2,6 +2,13 @@
   (:use #:common-lisp #:sicl-compiler-phase-1)
   (:export
    #:compile-ast
+   #:instruction
+   #:no-successor-instruction
+   #:single-successor-instruction
+   #:dual-successor-instruction
+   #:multiple-successor-instruction
+   #:leave-instruction
+   #:new-temporary
    ))
 
 (in-package #:sicl-compiler-phase-2)
