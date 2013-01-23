@@ -79,6 +79,10 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction memalloc-instruction) stream)
+  (format stream "   ~a [label = \"memalloc\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation MEMREF.
@@ -122,6 +126,10 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction memref-instruction) stream)
+  (format stream "   ~a [label = \"memref\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation MEMSET.
@@ -163,6 +171,10 @@
 				       :outputs new-value-context
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
+
+(defmethod p2:draw-instruction ((instruction memset-instruction) stream)
+  (format stream "   ~a [label = \"memset\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -210,6 +222,10 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction u+-instruction) stream)
+  (format stream "   ~a [label = \"u+\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation U-.
@@ -256,6 +272,10 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction u--instruction) stream)
+  (format stream "   ~a [label = \"u-\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation S+.
@@ -300,6 +320,10 @@
 				       :outputs new-value-context
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
+
+(defmethod p2:draw-instruction ((instruction s+-instruction) stream)
+  (format stream "   ~a [label = \"s+\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -347,6 +371,10 @@
       (compile-arguments (arguments ast) temps instruction))))
 
 
+(defmethod p2:draw-instruction ((instruction s--instruction) stream)
+  (format stream "   ~a [label = \"s-\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation NEG.
@@ -390,6 +418,10 @@
 				       :outputs new-value-context
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
+
+(defmethod p2:draw-instruction ((instruction neg-instruction) stream)
+  (format stream "   ~a [label = \"neg\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -435,6 +467,10 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction &-instruction) stream)
+  (format stream "   ~a [label = \"&\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation IOR.
@@ -478,6 +514,10 @@
 				       :outputs new-value-context
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
+
+(defmethod p2:draw-instruction ((instruction ior-instruction) stream)
+  (format stream "   ~a [label = \"ior\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -523,6 +563,10 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction xor-instruction) stream)
+  (format stream "   ~a [label = \"xor\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation ~.
@@ -565,6 +609,10 @@
 				       :outputs new-value-context
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
+
+(defmethod p2:draw-instruction ((instruction ~-instruction) stream)
+  (format stream "   ~a [label = \"~\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -610,6 +658,10 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction ==-instruction) stream)
+  (format stream "   ~a [label = \"==\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation s<.
@@ -653,6 +705,10 @@
 				       :outputs new-value-context
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
+
+(defmethod p2:draw-instruction ((instruction s<-instruction) stream)
+  (format stream "   ~a [label = \"s<\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -699,6 +755,10 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction s<=-instruction) stream)
+  (format stream "   ~a [label = \"s<=\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation u<.
@@ -742,6 +802,10 @@
 				       :outputs new-value-context
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
+
+(defmethod p2:draw-instruction ((instruction u<-instruction) stream)
+  (format stream "   ~a [label = \"u<\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -788,3 +852,6 @@
 				       :successors (list new-successor))))
       (compile-arguments (arguments ast) temps instruction))))
 
+(defmethod p2:draw-instruction ((instruction u<=-instruction) stream)
+  (format stream "   ~a [label = \"u<=\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
