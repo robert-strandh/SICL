@@ -12,6 +12,7 @@
 		#:single-successor-instruction
 		#:dual-successor-instruction
 		#:multiple-successor-instruction
+		#:leave-instruction
 		#:new-temporary)
   (:export
    #:memalloc #:memref #:memset
@@ -34,6 +35,31 @@
 (defclass in-out-mixin ()
   ((%inputs :initarg :inputs :reader inputs)
    (%outputs :initarg :outputs :reader outputs)))
+
+(defun adapt-value-context (desired min-supplied max-supplied successor)
+  (cond ((eq desired t)
+	 (let ((context (loop repeat max-supplied collect (new-temporary))))
+	   (values context
+		   (make-instance 'leave-instruction
+				  :sources context
+				  :next successor))))
+	((<= min-supplied (length desired) max-supplied)
+	 (values desired successor))
+	(t
+	 (error "incorrect number of values expected"))))
+
+(defun make-temps (arguments)
+  (loop repeat (length arguments) collect (new-temporary)))
+
+(defun compile-arguments (arguments temps successor)
+  (loop with succ = successor
+	for arg in (reverse arguments)
+	for temp in (reverse temps)
+	do (setf succ (compile-ast arg (list temp) succ))
+	finally (return succ)))
+
+;;; There is lots of code duplication in this file at the moment.
+;;; Need to figure out how to factor it properly.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -69,15 +95,18 @@
   ())
 
 (defmethod compile-ast ((ast memalloc-ast) value-context successor)
+  ;; Allow only for a value context with a single value.
   (unless (and (list value-context)
 	       (= (length value-context) 1))
     (error "invalid value context"))
-  (let ((temp (new-temporary)))
-    (let ((instruction (make-instance 'memalloc-instruction
-				      :inputs (list temp)
-				      :outputs (list (car value-context))
-				      :next successor)))
-      (compile-ast (car (arguments ast)) (list temp) instruction))))
+  (multiple-value-bind (new-value-context new-successor)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'memalloc-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -113,15 +142,14 @@
   ())
 
 (defmethod compile-ast ((ast memref-ast) value-context successor)
-  (unless (and (list value-context)
-	       (= (length value-context) 1))
-    (error "invalid value context"))
-  (let ((temp (new-temporary)))
-    (let ((instruction (make-instance 'memref-instruction
-				      :inputs (list temp)
-				      :outputs (list (car value-context))
-				      :next successor)))
-      (compile-ast (car (arguments ast)) (list temp) instruction))))
+  (multiple-value-bind (new-value-context new-successor)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'memref-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -156,19 +184,14 @@
   ())
 
 (defmethod compile-ast ((ast memset-ast) value-context successor)
-  (unless (null value-context)
-    (error "invalid value context"))
-  (let ((temp1 (new-temporary))
-	(temp2 (new-temporary)))
-    (let ((instruction (make-instance 'memset-instruction
-				      :inputs (list temp1 temp2)
-				      :outputs '()
-				      :next successor)))
-      (compile-ast (car (arguments ast))
-		   (list temp1)
-		   (compile-ast (cadr (arguments ast))
-				(list temp2)
-				instruction)))))
+  (multiple-value-bind (new-value-context new-successor)
+      (adapt-value-context value-context 0 0 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'memset-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -207,20 +230,14 @@
   ())
 
 (defmethod compile-ast ((ast u+-ast) value-context successor)
-  (unless (and (list value-context)
-	       (member (length value-context) '(1 2)))
-    (error "invalid value context"))
-  (let ((temp1 (new-temporary))
-	(temp2 (new-temporary)))
-    (let ((instruction (make-instance 'u+-instruction
-				      :inputs (list temp1 temp2)
-				      :outputs (car value-context)
-				      :next successor)))
-      (compile-ast (car (arguments ast))
-		   (list temp1)
-		   (compile-ast (cadr (arguments ast))
-				(list temp2)
-				instruction)))))
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 2 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'u+-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -259,20 +276,14 @@
   ())
 
 (defmethod compile-ast ((ast u--ast) value-context successor)
-  (unless (and (list value-context)
-	       (member (length value-context) '(1 2)))
-    (error "invalid value context"))
-  (let ((temp1 (new-temporary))
-	(temp2 (new-temporary)))
-    (let ((instruction (make-instance 'u--instruction
-				      :inputs (list temp1 temp2)
-				      :outputs (car value-context)
-				      :next successor)))
-      (compile-ast (car (arguments ast))
-		   (list temp1)
-		   (compile-ast (cadr (arguments ast))
-				(list temp2)
-				instruction)))))
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 2 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'u--instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -309,6 +320,16 @@
 (defclass s+-instruction (single-successor-instruction in-out-mixin)
   ())
 
+(defmethod compile-ast ((ast s+-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 2 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 's+-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation S-.
@@ -344,6 +365,17 @@
 (defclass s--instruction (single-successor-instruction in-out-mixin)
   ())
 
+(defmethod compile-ast ((ast s--ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 2 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 's--instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation NEG.
@@ -377,6 +409,16 @@
 
 (defclass neg-instruction (single-successor-instruction in-out-mixin)
   ())
+
+(defmethod compile-ast ((ast neg-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 2 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'neg-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -412,6 +454,16 @@
 (defclass &-instruction (single-successor-instruction in-out-mixin)
   ())
 
+(defmethod compile-ast ((ast &-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance '&-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation IOR.
@@ -445,6 +497,16 @@
 
 (defclass ior-instruction (single-successor-instruction in-out-mixin)
   ())
+
+(defmethod compile-ast ((ast ior-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'ior-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -480,6 +542,16 @@
 (defclass xor-instruction (single-successor-instruction in-out-mixin)
   ())
 
+(defmethod compile-ast ((ast xor-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'xor-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation ~.
@@ -512,6 +584,16 @@
 
 (defclass ~-instruction (single-successor-instruction in-out-mixin)
   ())
+
+(defmethod compile-ast ((ast ~-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance '~-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -547,6 +629,16 @@
 (defclass ==-instruction (single-successor-instruction in-out-mixin)
   ())
 
+(defmethod compile-ast ((ast ==-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance '==-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation s<.
@@ -580,6 +672,16 @@
 
 (defclass s<-instruction (single-successor-instruction in-out-mixin)
   ())
+
+(defmethod compile-ast ((ast s<-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 's<-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -616,6 +718,16 @@
 (defclass s<=-instruction (single-successor-instruction in-out-mixin)
   ())
 
+(defmethod compile-ast ((ast s<=-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 's<=-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation u<.
@@ -649,6 +761,16 @@
 
 (defclass u<-instruction (single-successor-instruction in-out-mixin)
   ())
+
+(defmethod compile-ast ((ast u<-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'u<-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -684,4 +806,14 @@
 
 (defclass u<=-instruction (single-successor-instruction in-out-mixin)
   ())
+
+(defmethod compile-ast ((ast u<=-ast) value-context successor)
+  (multiple-value-bind (new-successor new-value-context)
+      (adapt-value-context value-context 1 1 successor)
+    (let* ((temps (make-temps (arguments ast)))
+	   (instruction (make-instance 'u<=-instruction
+				       :inputs temps
+				       :outputs new-value-context
+				       :next new-successor)))
+      (compile-arguments (arguments ast) temps instruction))))
 
