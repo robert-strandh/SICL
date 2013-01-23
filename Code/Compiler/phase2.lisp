@@ -30,6 +30,9 @@
 (defclass enter-instruction (instruction)
   ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
+(defmethod outputs ((instruction enter-instruction))
+  (p1:required (lambda-list instruction)))
+
 (defclass leave-instruction (instruction)
   ())
 
@@ -134,7 +137,7 @@
     (unless (eq value-context t)
       (setf next
 	    (make-instance 'enter-instruction
-	      :lambda-list (make-instance 'lambda-list
+	      :lambda-list (make-instance 'p1:lambda-list
 			     :required value-context)
 	      :successors (list successor))))
     (let ((temps (loop for arg in (p1:arguments ast)
@@ -218,7 +221,6 @@
 		   (gethash instruction *instruction-table*)
 		   (gethash next *instruction-table*))))
   
-
 (defmethod draw-instruction (instruction stream)
   (format stream "   ~a [label = \"~a\"];~%"
 	  (gethash instruction *instruction-table*)
@@ -240,12 +242,12 @@
 (defmethod draw-instruction :after (instruction stream)
   (loop for location in (inputs instruction)
 	do (draw-location location stream)
-	   (format stream "  ~a -> ~a~%"
-		   (gethash instruction *instruction-table*)
-		   (gethash location *instruction-table*)))
+	   (format stream "  ~a -> ~a [color = red];~%"
+		   (gethash location *instruction-table*)
+		   (gethash instruction *instruction-table*)))
   (loop for location in (outputs instruction)
 	do (draw-location location stream)
-	   (format stream "  ~a -> ~a~%"
+	   (format stream "  ~a -> ~a [color = blue];~%"
 		   (gethash instruction *instruction-table*)
 		   (gethash location *instruction-table*))))
   
@@ -253,9 +255,44 @@
   (format stream "   ~a [label = \"close\"];~%"
 	  (gethash instruction *instruction-table*))
   (draw-instruction (code instruction) stream)
-  (format stream "  ~a -> ~a~%"
-	  (gethash instruction *instruction-table*)
-	  (gethash (code instruction) *instruction-table*)))
+  (format stream "  ~a -> ~a [color = pink];~%"
+	  (gethash (code instruction) *instruction-table*)
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction enter-instruction) stream)
+  (format stream "   ~a [label = \"enter\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction
+    ((instruction constant-assignment-instruction) stream)
+  (format stream "   ~a [label = \"<=\"];~%"
+	  (gethash instruction *instruction-table*))
+  (let ((name (gensym)))
+    (format stream "   ~a [label = \"~a\"];~%"
+	    name
+	    (constant instruction))
+    (format stream "   ~a [fillcolor = pink];~%"
+	    name)
+    (format stream "   ~a -> ~a [color = pink];~%"
+	    name
+	    (gethash instruction *instruction-table*))))
+
+(defmethod draw-instruction
+    ((instruction variable-assignment-instruction) stream)
+  (format stream "   ~a [label = \"<-\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction leave-instruction) stream)
+  (format stream "   ~a [label = \"leave\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction return-instruction) stream)
+  (format stream "   ~a [label = \"ret\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction end-instruction) stream)
+  (format stream "   ~a [label = \"end\"];~%"
+	  (gethash instruction *instruction-table*)))
 
 (defun draw-flowchart (start filename)
   (with-open-file (stream filename
