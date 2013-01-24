@@ -908,3 +908,17 @@
 	  (id ast)
 	  (id (code-ast ast))))
   
+(defmethod draw-ast ((ast tagbody-ast) stream)
+  (format stream "   ~a [label = \"tagbody\"];~%"
+	  (id ast))
+  (loop for item in (items ast)
+	do (draw-ast item stream)
+	   (format stream "   ~a -> ~a~%"
+		   (id ast) (id item))))
+
+(defmethod draw-ast ((ast go-ast) stream)
+  (format stream "   ~a [label = \"go\"];~%"
+	  (id ast))
+  (draw-ast (tag-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast) (id (tag-ast ast))))
