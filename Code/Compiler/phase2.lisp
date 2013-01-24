@@ -22,7 +22,7 @@
   ())
 
 (defclass test-instruction (instruction)
-  ((%test :initarg :test :accessor test)))
+  ())
 
 (defclass funcall-instruction (instruction)
   ((%fun :initarg :fun :accessor fun)))
@@ -100,7 +100,7 @@
     (let ((then-branch (compile-ast (p1:then ast) value-context successor))
 	  (else-branch (compile-ast (p1:else ast) value-context successor)))
       (let ((test (make-instance 'test-instruction
-		    :test test-temp
+		    :inputs (list test-temp)
 		    :successors (list then-branch else-branch))))
 	(compile-ast (p1:test ast) (list test-temp) test)))))
 
@@ -265,6 +265,10 @@
   (format stream "   ~a [label = \"?\"];~%"
 	  (gethash location *instruction-table*)))
 
+(defmethod draw-location ((location sicl-env:global-location) stream)
+  (format stream "   ~a [label = \"?\", style = filled, fillcolor = green];~%"
+	  (gethash location *instruction-table*)))
+
 (defmethod draw-instruction :after (instruction stream)
   (loop for location in (inputs instruction)
 	do (draw-location location stream)
@@ -306,7 +310,7 @@
   (format stream "   ~a [label = \"<=\"];~%"
 	  (gethash instruction *instruction-table*))
   (let ((name (gensym)))
-    (format stream "   ~a [label = \"~a\"];~%"
+    (format stream "   ~a [label = \"~a\", style = filled, fillcolor = pink];~%"
 	    name
 	    (constant instruction))
     (format stream "   ~a [fillcolor = pink];~%"
@@ -341,11 +345,19 @@
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction ((instruction funcall-instruction) stream)
+  (draw-location (fun instruction) stream)
   (format stream "   ~a [label = \"funcall\"];~%"
+	  (gethash instruction *instruction-table*))
+  (format stream "   ~a -> ~a [color = red, style = dashed];~%"
+	  (gethash (fun instruction) *instruction-table*)
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction ((instruction go-instruction) stream)
   (format stream "   ~a [label = \"go\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction test-instruction) stream)
+  (format stream "   ~a [label = \"test\"];~%"
 	  (gethash instruction *instruction-table*)))
 
 (defun draw-flowchart (start filename)
