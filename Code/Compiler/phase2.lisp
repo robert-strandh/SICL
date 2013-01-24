@@ -55,6 +55,9 @@
   ((%target :initarg :target :accessor target)
    (%code :initarg :code :accessor code)))  
 
+(defclass go-instruction (instruction)
+  ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile an abstract syntax tree.
@@ -125,24 +128,25 @@
 
 (defmethod compile-ast ((ast p1:tagbody-ast) value-context successor)
   (loop for item in (p1:items ast)
-	do (unless (typep item 'p1:ast)
+	do (when (typep item 'p1:tag-ast)
 	     (setf (gethash item *go-info*)
 		   (make-instance 'nop-instruction))))
-  (let ((next (compile-ast (make-instance 'constant-ast :value nil)
+  (let ((next (compile-ast (make-instance 'p1:constant-ast :value nil)
 			   value-context
 			   successor)))
     (loop for item in (reverse (p1:items ast))
 	  do (setf next
-		   (if (typep item 'p1:ast)
-		       (compile-ast item '() next)
+		   (if (typep item 'p1:tag-ast)
 		       (let ((instruction (gethash item *go-info*)))
 			 (setf (successors instruction) (list next))
-			 instruction))))
+			 instruction)
+		       (compile-ast item '() next))))
     next))
 
 (defmethod compile-ast ((ast p1:go-ast) value-context successor)
   (declare (ignore value-context successor))
-  (gethash (p1:tag-ast ast) *go-info*))
+  (make-instance 'go-instruction
+		 :successors (list (gethash (p1:tag-ast ast) *go-info*))))
 
 (defmethod compile-ast ((ast p1:function-call-ast) value-context successor)
   (let ((next successor))
@@ -239,7 +243,7 @@
 	do (draw-instruction next stream))
   (loop for next in (successors instruction)
 	do (format stream
-		   "  ~a -> ~a~%"
+		   "  ~a -> ~a [style = bold];~%"
 		   (gethash instruction *instruction-table*)
 		   (gethash next *instruction-table*))))
   
@@ -264,12 +268,12 @@
 (defmethod draw-instruction :after (instruction stream)
   (loop for location in (inputs instruction)
 	do (draw-location location stream)
-	   (format stream "  ~a -> ~a [color = red];~%"
+	   (format stream "  ~a -> ~a [color = red, style = dashed];~%"
 		   (gethash location *instruction-table*)
 		   (gethash instruction *instruction-table*)))
   (loop for location in (outputs instruction)
 	do (draw-location location stream)
-	   (format stream "  ~a -> ~a [color = blue];~%"
+	   (format stream "  ~a -> ~a [color = blue, style = dashed];~%"
 		   (gethash instruction *instruction-table*)
 		   (gethash location *instruction-table*))))
   
@@ -277,7 +281,7 @@
   (format stream "   ~a [label = \"close\"];~%"
 	  (gethash instruction *instruction-table*))
   (draw-instruction (code instruction) stream)
-  (format stream "  ~a -> ~a [color = pink];~%"
+  (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
 	  (gethash (code instruction) *instruction-table*)
 	  (gethash instruction *instruction-table*)))
 
@@ -307,7 +311,7 @@
 	    (constant instruction))
     (format stream "   ~a [fillcolor = pink];~%"
 	    name)
-    (format stream "   ~a -> ~a [color = pink];~%"
+    (format stream "   ~a -> ~a [color = pink, style = dashed];~%"
 	    name
 	    (gethash instruction *instruction-table*))))
 
@@ -332,6 +336,18 @@
   (format stream "   ~a [label = \"end\"];~%"
 	  (gethash instruction *instruction-table*)))
 
+(defmethod draw-instruction ((instruction nop-instruction) stream)
+  (format stream "   ~a [label = \"nop\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction funcall-instruction) stream)
+  (format stream "   ~a [label = \"funcall\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction go-instruction) stream)
+  (format stream "   ~a [label = \"go\"];~%"
+	  (gethash instruction *instruction-table*)))
+
 (defun draw-flowchart (start filename)
   (with-open-file (stream filename
 			  :direction :output
@@ -340,7 +356,3 @@
 	(format stream "digraph G {~%")
 	(draw-instruction start stream)
 	(format stream "}~%"))))
-
-	
-		    
-		   
