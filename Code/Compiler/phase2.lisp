@@ -27,11 +27,23 @@
 (defclass funcall-instruction (instruction)
   ((%fun :initarg :fun :accessor fun)))
 
-(defclass enter-instruction (instruction)
+(defclass get-arguments-instruction (instruction)
   ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
-(defmethod outputs ((instruction enter-instruction))
+(defclass get-values-instruction (instruction)
+  ())
+
+(defclass put-arguments-instruction (instruction)
+  ())
+
+(defclass put-values-instruction (instruction)
+  ())
+
+(defmethod outputs ((instruction get-arguments-instruction))
   (p1:required (lambda-list instruction)))
+
+(defclass enter-instruction (instruction)
+  ())
 
 (defclass leave-instruction (instruction)
   ())
@@ -71,7 +83,7 @@
 	   (make-instance 'constant-assignment-instruction
 	     :outputs (list temp)
 	     :constant (p1:value ast)
-	     :successors (list (make-instance 'leave-instruction
+	     :successors (list (make-instance 'put-values-instruction
 				 :inputs (list temp)
 				 :successors (list successor))))))
 	(t
@@ -136,15 +148,17 @@
   (let ((next successor))
     (unless (eq value-context t)
       (setf next
-	    (make-instance 'enter-instruction
-	      :lambda-list (make-instance 'p1:lambda-list
-			     :required value-context)
+	    (make-instance 'get-values-instruction
+	      :outputs value-context
 	      :successors (list successor))))
     (let ((temps (loop for arg in (p1:arguments ast)
 		      collect (new-temporary))))
       (setf next
 	    (make-instance 'funcall-instruction
 	      :fun (p1:function-location ast)
+	      :successors (list next)))
+      (setf next
+	    (make-instance 'put-arguments-instruction
 	      :inputs temps
 	      :successors (list next)))
       (loop for temp in (reverse temps)
@@ -154,20 +168,28 @@
     next))
 
 (defmethod compile-ast ((ast p1:code-ast) value-context successor)
-  (make-instance 'enter-instruction
-    :lambda-list (p1:lambda-list ast)
-    :successors (list (compile-ast (p1:body-ast ast) value-context successor))))
+  (declare (ignore value-context successor))
+  (let ((next (make-instance 'return-instruction)))
+    (setf next
+	  (make-instance 'leave-instruction
+			 :successors (list next)))
+    (setf next
+	  (compile-ast (p1:body-ast ast) t next))
+    (setf next
+	  (make-instance 'get-arguments-instruction
+			 :lambda-list (p1:lambda-list ast)
+			 :successors (list next)))
+    (make-instance 'enter-instruction
+		   :successors (list next))))
 
 (defmethod compile-ast ((ast p1:close-ast) value-context successor)
-  (let ((code (compile-ast (p1:code-ast ast)
-			   t
-			   (make-instance 'return-instruction))))
+  (let ((code (compile-ast (p1:code-ast ast) nil nil)))
     (cond ((eq value-context t)
 	   (let ((temp (new-temporary)))
 	     (make-instance 'close-instruction
 	       :outputs (list temp)
 	       :code code
-	       :successors (list (make-instance 'leave-instruction
+	       :successors (list (make-instance 'put-values-instruction
 		                   :inputs (list temp)
 				   :successors (list successor))))))
 	  ((null value-context)
@@ -180,7 +202,7 @@
 
 (defmethod compile-ast ((ast p1:typed-location-ast) value-context successor)
   (cond ((eq value-context t)
-	 (make-instance 'leave-instruction
+	 (make-instance 'put-values-instruction
 	   :inputs (list (p1:location ast))
 	   :successors (list successor)))
 	((null value-context)
@@ -259,8 +281,20 @@
 	  (gethash (code instruction) *instruction-table*)
 	  (gethash instruction *instruction-table*)))
 
-(defmethod draw-instruction ((instruction enter-instruction) stream)
-  (format stream "   ~a [label = \"enter\"];~%"
+(defmethod draw-instruction ((instruction get-arguments-instruction) stream)
+  (format stream "   ~a [label = \"get-arguments\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction get-values-instruction) stream)
+  (format stream "   ~a [label = \"get-values\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction put-arguments-instruction) stream)
+  (format stream "   ~a [label = \"put-values\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction put-values-instruction) stream)
+  (format stream "   ~a [label = \"put-values\"];~%"
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction
@@ -280,6 +314,10 @@
 (defmethod draw-instruction
     ((instruction variable-assignment-instruction) stream)
   (format stream "   ~a [label = \"<-\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+(defmethod draw-instruction ((instruction enter-instruction) stream)
+  (format stream "   ~a [label = \"enter\"];~%"
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction ((instruction leave-instruction) stream)

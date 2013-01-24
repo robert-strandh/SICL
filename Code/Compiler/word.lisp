@@ -11,7 +11,7 @@
   (cond ((eq desired t)
 	 (let ((context (loop repeat max-supplied collect (p2:new-temporary))))
 	   (values context
-		   (make-instance 'p2:leave-instruction
+		   (make-instance 'p2:put-values-instruction
 				  :inputs context
 				  :successors (list successor)))))
 	((<= min-supplied (length desired) max-supplied)

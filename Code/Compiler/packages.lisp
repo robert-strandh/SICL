@@ -93,7 +93,11 @@
    #:variable-assignment-instruction
    #:test-instruction #:test
    #:funcall-instruction #:fun
-   #:enter-instruction #:lambda-list
+   #:get-arguments-instruction #:lambda-list
+   #:get-values-instruction
+   #:put-arguments-instruction
+   #:put-values-instruction
+   #:enter-instruction
    #:leave-instruction
    #:return-instruction
    #:close-instruction
