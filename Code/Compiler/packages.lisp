@@ -28,7 +28,7 @@
    #:optimize-declaration-entry #:make-optimize-declaration-entry
    #:declaration-declaration-entry #:make-declaration-declaration-entry
    #:definition
-   #:location #:lexical-location
+   #:location #:lexical-location #:global-location #:special-location
    #:storage
    #:name
    #:type
