@@ -318,7 +318,7 @@
   (find-in-namespace name environment 'block-space))
 
 (defun find-go-tag (name environment)
-  (find-in-namespace name environment 'go-tag-space))
+  (find-in-namespace name environment 'tag-space))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
