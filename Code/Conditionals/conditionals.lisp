@@ -76,13 +76,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Implementation of the macros.
+;;;
+;;; We have a dilemma here.  
+;;;
+;;; On the one hand, we would like for macros to do as much error
+;;; checking as possible on the form to be expanded.  This objective
+;;; suggests using a lambda list that will always work, such as
+;;; (&whole form &rest args) and then do the error checking on the
+;;; form, and the arguments inside the macro function.  In particular,
+;;; if we use the entire form to report errors, there is a good chance
+;;; that source tracking can figure out where it came from so that
+;;; error reporting can show the source location.
+;;;
+;;; On the other hand, the development environment, in particular
+;;; SLIME, might use the lambda list to give the programmer some hints
+;;; as to what arguments to supply to the form.  If we use a lambda
+;;; list such as (&whole form &rest args) for the macros, then we will
+;;; render this tool completely useless, which we don't want.
+;;;
+;;; The solution is as follows: We use a destructuring lambda list in
+;;; order to give the programmer hints through the development
+;;; environment.  We then use a compiler macro to do the error
+;;; checking.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro OR.
 
-(defmacro or (&whole form &rest args)
-  (sicl-code-utilities:check-form-proper-list form)
+(defmacro or (&rest forms)
   (labels ((aux (forms)
 	     (if (null (cdr forms))
 		 (car forms)
@@ -91,56 +112,70 @@
 		      (if ,temp-var
 			  ,temp-var
 			  ,(aux (cdr forms))))))))
-    (if (null args)
+    (if (null forms)
 	nil
-	(aux args))))
+	(aux forms))))
+
+(define-compiler-macro or (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro AND.
 
-(defmacro and (&whole form &rest args)
-  (sicl-code-utilities:check-form-proper-list form)
+(defmacro and (&rest forms)
   (labels ((aux (forms)
 	     (if (null (cdr forms))
 		 (car forms)
 		 `(if ,(car forms)
 		      ,(aux (cdr forms))
 		      nil))))
-    (if (null args)
+    (if (null forms)
 	t
-	(aux args))))
+	(aux forms))))
+
+(define-compiler-macro and (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro WHEN.
 
-(defmacro when (&whole form &rest args)
+(defmacro when (test &body body)
+  `(if ,test
+       (progn ,@body)
+       nil))
+
+(define-compiler-macro when (&whole form &rest args)
+  (declare (ignore args))
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
-  (destructuring-bind (test . body) args
-    `(if ,test
-	 (progn ,@body)
-	 nil)))
+  form)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro UNLESS.
 
-(defmacro unless (&whole form &rest args)
+(defmacro unless (test &body body)
+  `(if ,test
+       nil
+       (progn ,@body)))
+
+(define-compiler-macro unless (&whole form &rest args)
+  (declare (ignore args))
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
-  (destructuring-bind (test . body) args
-    `(if ,test
-	 nil
-	 (progn ,@body))))
+  form)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro COND.
 
-(defmacro cond (&whole form &rest clauses)
-  (sicl-code-utilities:check-form-proper-list form)
+(defmacro cond (&rest clauses)
   (labels ((aux (clauses)
 	     (if (null clauses)
 		 nil
@@ -157,6 +192,11 @@
 				(progn ,@(cdr clause))
 				,(aux (cdr clauses)))))))))
     (aux clauses)))
+
+(define-compiler-macro cond (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
