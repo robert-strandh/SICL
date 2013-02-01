@@ -200,7 +200,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro CASE.
+;;; Macros CASE, ECASE, CCASE.
+;;;
+;;; A normal CASE/ECASE/CCASE clause has the form (KEYS FORM*) where
+;;; KEYS is a designator for a list of objects, except that for CASE,
+;;; the symbols T and OTHERWISE may not be used as such.  Instead,
+;;; when T or OTHERWISE are present in the CAR of a clause, then they
+;;; do not designate a list of objects, and instead that clause is an
+;;; otherwise-clause.  For ECASE and CCASE, T and OTHERWISE can be
+;;; used as as designators for lists, and they then designate the
+;;; singleton list containing itself. 
+;;;
+;;; In the glossary of the HyperSpec (under "list designator"), we
+;;; learn that a list designator is ether a non-NIL atom, in which
+;;; case the denoted list is the list containing that one atom, or
+;;; else it is a proper list, and the denoted list is that list.  In
+;;; particular, this means that if NIL (or equivalently `()') is used
+;;; in the CAR of a CASE clause, then the denoted list is the empty
+;;; list and NOT the list containing NIL.  Thus, to obtain the
+;;; singleton list containing NIL, the user has to use `(NIL)'. 
 
 ;;; Take a list of keys (known to be a proper list), and the name of a
 ;;; variable, and produce a list of forms (eql <variable> key).
@@ -254,6 +272,11 @@
   (let ((variable (gensym)))
     `(let ((,variable ,keyform))
        ,(expand-case-clauses clauses variable))))
+
+(define-compiler-macro case (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
 
 ;;; Collect a list of all the keys for ecase or ccase 
 ;;; to be used as the `exptected type' in error reporting.
@@ -311,6 +334,11 @@
     `(let ((,variable ,keyform))
        ,(expand-e/ccase-clauses clauses variable final 'ecase))))
 
+(define-compiler-macro ecase (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
+
 ;;; This function is does the same thing as
 ;;; (mapcar #'list vars vals), but since we are not
 ;;; using mapping functions here, we have to 
@@ -353,6 +381,11 @@
 	      ,label
 	      ,(expand-e/ccase-clauses clauses (car store-vars) final 'ccase)))))))
 
+(define-compiler-macro ccase (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
+
 ;;; Turn a list of TYPECASE clauses into nested IFs.  We check that
 ;;; the list of clauses is a proper list, that each clause is a proper
 ;;; list as well, and that, if there is an otherwise clause, it is the
@@ -388,6 +421,11 @@
   (let ((variable (gensym)))
     `(let ((,variable ,keyform))
        ,(expand-typecase-clauses clauses variable))))
+
+(define-compiler-macro typecase (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
 
 ;;; Collect a list of all the types for etypecase or ctypecase 
 ;;; to be used as the `exptected type' in error reporting.
@@ -432,6 +470,11 @@
     `(let ((,variable ,keyform))
        ,(expand-e/ctypecase-clauses clauses variable final 'etypecase))))
 
+(define-compiler-macro etypecase (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
+
 ;;; As with CCASE, the default for CTYPECASE is is to signal a
 ;;; correctable error, and to allow the value to be altered by the
 ;;; STORE-VALUE restart.
@@ -460,3 +503,9 @@
 	   (tagbody
 	      ,label
 	      ,(expand-e/ctypecase-clauses clauses (car store-vars) final 'ctypecase)))))))
+
+(define-compiler-macro ctypecase (&whole form &rest args)
+  (declare (ignore args))
+  (sicl-code-utilities:check-form-proper-list form)
+  form)
+
