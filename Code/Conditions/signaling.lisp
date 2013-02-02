@@ -8,16 +8,118 @@
 	   #:ignore-errors
 	   #:invoke-debugger
 	   #:*debugger-hook*
-	   #:*break-on-signals*))
+	   #:*break-on-signals*
+	   #:restart
+	   #:restart-bind
+	   #:restart-case
+	   #:restart-name
+	   #:with-condition-restarts
+	   #:compute-restarts
+	   )
+  (:export #:error
+	   #:cerror
+	   #:signal
+	   #:handler-bind
+	   #:handler-case
+	   #:ignore-errors
+	   #:invoke-debugger
+	   #:*debugger-hook*
+	   #:*break-on-signals*
+	   #:restart
+	   #:restart-bind
+	   #:restart-case
+	   #:restart-name
+	   #:with-condition-restarts
+	   #:compute-restarts
+	   ))
 
 (in-package #:sicl-condition-signaling)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Restarts.
+
+(defclass restart ()
+  ((%name :initarg :name :reader restart-name)
+   (%function :initarg :function :reader restart-function)
+   (%interactive-function
+    :initarg :interactive-function :reader interactive-function)
+   (%report-function
+    :initarg :report-function :reader report-function)
+   (%test-function
+    :initarg :test-function :reader test-function)))
+
+;;; The stack of active restarts is a list of restarts ordered from
+;;; most recent to least recent.
+
+(defparameter *restart-stack* '())
+
+;;; FIXME: do more syntax checks.
+(defmacro restart-bind ((&rest bindings) &body body)
+  (flet ((make-restart (binding)
+	   (destructuring-bind (name function
+				&rest args
+				&key
+				  interactive-function
+				  report-function
+				  test-function)
+	       binding
+	     (make-instance 'restart
+			    :name name
+			    :function function
+			    :interactive-function interactive-function
+			    :report-function report-function
+			    :test-function test-function))))
+    `(let ((*restart-stack*
+	     (append (mapcar #'make-restart ,bindings))))
+       ,@body)))
+
+;;; The associations between restarts and conditions are represented
+;;; as a list of CONS cells, each one representing a single such
+;;; association.  The CAR of the CONS cell representing an association
+;;; is the restart, and the CDR of the CONS cell is the condition.
+;;; There is no way to disassociate a restart and a condition (other
+;;; than having its extent expire), so the set of associations can
+;;; only grow.  Therefore, a restart is associated with a condition if
+;;; and only if in the value of this list in the current dynamic
+;;; context contains the association at all. 
+(defparameter *restart-condition-associations* '())
+
+;;; FIXME: do a lot more syntax verification. 
+(defmacro with-condition-restarts
+    (condition-form restarts-form &body body)
+  (let ((condition-var (gensym)))
+    `(let* ((,condition-var ,condition-form)
+	    (*restart-condition-associations*
+	      (append (loop for restart in ,restarts-form
+			    collect (cons restart ,condition-var)))
+	      *restart-condition-associations*))
+       ,@body)))
+
+(defun association-exists-p (restart condition)
+  (loop for (r . c) in *restart-condition-associations*
+	when (and (eq restart r) (eq condition c))
+	  return t))
+
+(defun compute-restarts (&optional condition)
+  (flet ((restart-valid-p (restart)
+	   (if (null condition)
+	       (null (find restart *restart-condition-associations*
+			   :key #'car :test #'eq))
+	       (association-exists-p restart condition))))
+    (loop for restart in *restart-stack*
+	  when (restart-valid-p restart)
+	    collect restart)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Condition signaling
+
 (defparameter *break-on-signals* nil)
 
-;;; The stack of condition handlers is a Lisp list of
-;;; of "handler binds".  A handler bind is a list of 
-;;; "handler bindings".  A handler binding is a cons
-;;; of a type and a handler. 
+;;; The stack of condition handlers is a Lisp list of of "handler
+;;; groups".  A handler group is a list of "handler bindings".  A
+;;; handler binding is a cons of a type and a handler.
 (defparameter *handler-stack* '())
 
 (defmacro handler-bind (bindings &body body)
@@ -81,3 +183,4 @@
     (maybe-break-on-signals condition)
     (find-and-invoke-handler condition)
     (invoke-debugger condition)))
+
