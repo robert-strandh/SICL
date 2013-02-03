@@ -78,6 +78,8 @@
    (%type :initarg :type :reader type)
    (%arguments :initarg :arguments :reader arguments)))
 
+;;; Default method when there is not a more specific method for
+;;; the head symbol.
 (defmethod convert-compound ((head symbol) form env)
   (let* ((entry (sicl-env:find-function head env)))
     (if (null entry)
@@ -88,6 +90,20 @@
 	    :function-location location
 	    :type type
 	    :arguments (convert-sequence (cdr form) env))))))
+
+;;; Method to be used when the head of a compound form is a
+;;; CONS.  Then the head must be a lambda expression.
+;;; We replace a call such as ((lambda (params) . body) . args)
+;;; by (flet ((temp (params) . body)) (temp . args))
+;;;
+;;; FIXME: do some more error checking.
+(defmethod convert-compound ((head cons) form env)
+  (destructuring-bind ((lambda params &rest body) &rest args) form
+    (declare (ignore lambda))
+    (let ((temp (gensym)))
+      (convert `(flet ((,temp ,params ,@body))
+		  (,temp ,@args))
+	       env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -164,7 +180,7 @@
 		    :required (mapcar #'sicl-env:location required-entries))
      new-env)))
 
-(defclass code-ast (ast)
+(defclass function-ast (ast)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
@@ -180,7 +196,7 @@
 	      (sicl-env:augment-environment-with-declarations
 	       new-env declarations))
 	(let ((body-asts (convert-sequence forms new-env)))
-	  (make-instance 'code-ast
+	  (make-instance 'function-ast
 			 :lambda-list compiled-lambda-list
 			 :body-ast (make-instance 'progn-ast
 						  :form-asts body-asts)))))))
@@ -300,9 +316,7 @@
 	     (body-asts (convert-sequence forms new-env))
 	     (init-asts (loop for var in local-vars
 			      for location = (sicl-env:location var)
-			      for code in local-codes
-			      for fun = (make-instance 'close-ast
-						       :code-ast code)
+			      for fun in local-codes
 			      collect (make-instance 'setq-ast
 						     :location location
 						     :value-ast fun))))
@@ -312,9 +326,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FUNCTION.
-
-(defclass close-ast (ast)
-  ((%code-ast :initarg :code-ast :reader code-ast)))
 
 (define-condition lambda-must-be-proper-list
     (compilation-program-error)
@@ -334,8 +345,7 @@
   (unless (sicl-code-utilities:proper-list-p lambda-form)
     (error 'lambda-must-be-proper-list
 	   :expr lambda-form))
-  (let ((code (convert-code (cadr lambda-form) (cddr lambda-form) env)))
-    (make-instance 'close-ast :code-ast code)))
+  (convert-code (cadr lambda-form) (cddr lambda-form) env))
 
 (defun proper-function-name-p (name)
   (or (symbolp name)
@@ -440,34 +450,34 @@
       nil
       (cadr binding)))
 
-;;; FIXME: handle special variables.
-;;; FIXME: handle declarations.
+;;; FIXME: We convert the LET to a function call with a lambda
+;;; expression in the CAR, but this might not be quite right because a
+;;; lambda expression may have documentation in it, whereas a LET may
+;;; not.  This of course is a problem only when the LET form contains
+;;; a string literal in a context where no value is required.  We may
+;;; solve the problem by adding an empty comment in this case. 
+;;;
+;;; FIXME: If we are going to do it like this, we might as well turn
+;;; LET into a macro, which is allowed by the HyperSpec.
 (defmethod convert-compound
     ((symbol (eql 'let)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
-  (check-binding-forms (cadr form))
-  (let* ((inits (loop for binding in (cadr form)
-		      collect (convert (init-form binding) env)))
-	 (entries (loop for binding in (cadr form)
-			collect (sicl-env:make-lexical-variable-entry
-				 (if (symbolp binding) binding (car binding)))))
-	 
-	 (new-env (sicl-env:augment-environment env entries)))
-    (let ((forms1 (loop for entry in entries
-			for init in inits
-			collect (make-instance 'setq-ast
-					       :location (sicl-env:location entry)
-					       :value-ast init)))
-	  (forms2 (loop for body-form in (cddr form)
-			collect (convert body-form new-env))))
-	  
-      (make-instance 'progn-ast
-		     :form-asts (append forms1 forms2)))))
+  (destructuring-bind (bindings &rest body) (cdr form)
+    (check-binding-forms bindings)
+    (convert `((lambda ,(mapcar (lambda (v) (if (symbolp v) v (car v)))
+			 bindings)
+		 ,@body)
+	       ,(mapcar #'init-form bindings))
+	     env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LET*.
+;;;
+;;; LET* can be converted to nested LETs, but one has to be careful to
+;;; take apart the declarations and associate each one with the
+;;; correct LET form.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -886,8 +896,8 @@
 	  (id ast)
 	  (id (value-ast ast))))
   
-(defmethod draw-ast ((ast code-ast) stream)
-  (format stream "   ~a [label = \"code\"];~%"
+(defmethod draw-ast ((ast function-ast) stream)
+  (format stream "   ~a [label = \"function\"];~%"
 	  (id ast))
   (loop for location in (required (lambda-list ast))
 	do (draw-location location stream))
@@ -899,14 +909,6 @@
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (body-ast ast))))
-  
-(defmethod draw-ast ((ast close-ast) stream)
-  (format stream "   ~a [label = \"close\"];~%"
-	  (id ast))
-  (draw-ast (code-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (code-ast ast))))
   
 (defmethod draw-ast ((ast tagbody-ast) stream)
   (format stream "   ~a [label = \"tagbody\"];~%"
