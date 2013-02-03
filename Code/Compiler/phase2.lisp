@@ -52,8 +52,7 @@
   ())
 
 (defclass close-instruction (instruction)
-  ((%target :initarg :target :accessor target)
-   (%code :initarg :code :accessor code)))  
+  ((%code :initarg :code :accessor code)))  
 
 (defclass go-instruction (instruction)
   ())
@@ -171,23 +170,15 @@
 		     (compile-ast arg (list temp) next))))
     next))
 
-(defmethod compile-ast ((ast p1:code-ast) value-context successor)
-  (declare (ignore value-context successor))
+(defun compile-function (lambda-list body-ast)
   (let ((next (make-instance 'return-instruction)))
-    (setf next
-	  (make-instance 'leave-instruction
-			 :successors (list next)))
-    (setf next
-	  (compile-ast (p1:body-ast ast) t next))
-    (setf next
-	  (make-instance 'get-arguments-instruction
-			 :lambda-list (p1:lambda-list ast)
-			 :successors (list next)))
-    (make-instance 'enter-instruction
+    (setf next (compile-ast body-ast t next))
+    (make-instance 'get-arguments-instruction
+		   :lambda-list lambda-list
 		   :successors (list next))))
-
-(defmethod compile-ast ((ast p1:close-ast) value-context successor)
-  (let ((code (compile-ast (p1:code-ast ast) nil nil)))
+  
+(defmethod compile-ast ((ast p1:function-ast) value-context successor)
+  (let ((code (compile-function (p1:lambda-list ast) (p1:body-ast ast))))
     (cond ((eq value-context t)
 	   (let ((temp (new-temporary)))
 	     (make-instance 'close-instruction
