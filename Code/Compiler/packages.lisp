@@ -61,7 +61,7 @@
    #:block-ast #:body
    #:catch-ast #:tag 
    #:eval-when-ast #:situations
-   #:close-ast #:code-ast #:body-ast
+   #:function-ast #:body-ast
    #:go-ast #:tag-ast
    #:if-ast #:test #:then #:else
    #:load-time-value-ast #:read-only-p
@@ -100,7 +100,8 @@
    #:enter-instruction
    #:leave-instruction
    #:return-instruction
-   #:close-instruction
+   #:close-instruction #:code
+   #:go-instruction
    #:compile-ast
    #:compile-toplevel
    #:new-temporary
