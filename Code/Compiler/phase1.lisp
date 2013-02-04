@@ -75,7 +75,6 @@
 
 (defclass function-call-ast (ast)
   ((%function-location :initarg :function-location :reader function-location)
-   (%type :initarg :type :reader type)
    (%arguments :initarg :arguments :reader arguments)))
 
 ;;; Default method when there is not a more specific method for
@@ -87,8 +86,9 @@
 	(let* ((location (sicl-env:location entry))
 	       (type (sicl-env:find-ftype location env)))
 	  (make-instance 'function-call-ast
-	    :function-location location
-	    :type type
+	    :function-location (make-instance 'typed-location-ast
+					      :location location
+					      :type type)
 	    :arguments (convert-sequence (cdr form) env))))))
 
 ;;; Method to be used when the head of a compound form is a
@@ -315,7 +315,9 @@
 		declarations))
 	     (body-asts (convert-sequence forms new-env))
 	     (init-asts (loop for var in local-vars
-			      for location = (sicl-env:location var)
+			      for location = (make-instance 'typed-location-ast
+					       :type t
+					       :location (sicl-env:location var))
 			      for fun in local-codes
 			      collect (make-instance 'setq-ast
 						     :location location
@@ -819,8 +821,14 @@
 (defun draw-location (location stream)
   (when (null (gethash location *table*))
     (setf (gethash location *table*) (gensym))
-    (format stream "  ~a [shape = circle];~%" (id location))
-    (format stream "  ~a [label = \"\"];~%" (id location))))
+    (format stream "  ~a [shape = circle, label = \"\"];~%" (id location))
+    (format stream "  ~a [style = filled, fillcolor = ~a];~%"
+	    (id location)
+	    (typecase location
+	      (sicl-env:global-location "green")
+	      (sicl-env:special-location "red")
+	      (sicl-env:lexical-location "yellow")
+	      (t "blue")))))
 
 (defmethod draw-ast ((ast typed-location-ast) stream)
   (format stream "   ~a [label = \"location\"];~%"
@@ -858,7 +866,7 @@
   (format stream "   ~a [label = \"funcall\"];~%"
 	  (id ast))
   (let ((location (function-location ast)))
-    (draw-location location stream)
+    (draw-ast location stream)
     (format stream "   ~a -> ~a~%" (id ast) (id location)))
   (loop for child in (arguments ast)
 	do (draw-ast child stream)
@@ -887,7 +895,7 @@
 (defmethod draw-ast ((ast setq-ast) stream)
   (format stream "   ~a [label = \"setq\"];~%"
 	  (id ast))
-  (draw-location (location ast) stream)
+  (draw-ast (location ast) stream)
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (location ast)))
