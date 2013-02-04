@@ -824,11 +824,10 @@
     (format stream "  ~a [shape = circle, label = \"\"];~%" (id location))
     (format stream "  ~a [style = filled, fillcolor = ~a];~%"
 	    (id location)
-	    (typecase location
+	    (etypecase location
 	      (sicl-env:global-location "green")
 	      (sicl-env:special-location "red")
-	      (sicl-env:lexical-location "yellow")
-	      (t "blue")))))
+	      (sicl-env:lexical-location "yellow")))))
 
 (defmethod draw-ast ((ast typed-location-ast) stream)
   (format stream "   ~a [label = \"location\"];~%"
