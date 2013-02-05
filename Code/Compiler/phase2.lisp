@@ -62,7 +62,13 @@
 ;;; Compile an abstract syntax tree.
 
 (defun new-temporary ()
-  (make-instance 'sicl-env:lexical-location))
+  (make-instance 'sicl-env:lexical-location-info
+		 :name (gensym)
+		 :location (make-instance 'sicl-env:lexical-location)
+		 :type t
+		 :inline-info nil
+		 :ignore-info nil
+		 :dynamic-extent-p nil))
 
 (defun nil-fill (value-context successor)
   (let ((next successor))
@@ -78,7 +84,7 @@
 
 (defmethod compile-ast ((ast p1:constant-ast) value-context successor)
   (cond ((null value-context)
-	 (warn "Constant found in a context where no value required")
+	 (error "Constant found in a context where no value required")
 	 successor)
 	((eq value-context t)
 	 (let ((temp (new-temporary)))
@@ -195,17 +201,33 @@
 	     :code code
 	     :successors (list (nil-fill (cdr value-context) successor)))))))
 
-(defmethod compile-ast ((ast p1:typed-location-ast) value-context successor)
+(defmethod compile-ast
+    ((ast sicl-env:lexical-location-info) value-context successor)
   (cond ((eq value-context t)
 	 (make-instance 'put-values-instruction
-	   :inputs (list (p1:location ast))
+	   :inputs (list ast)
 	   :successors (list successor)))
 	((null value-context)
 	 (warn "variable compiled in a context with no values"))
 	(t
 	 (make-instance 'variable-assignment-instruction
 	   :outputs (list (car value-context))
-	   :inputs (list (p1:location ast))
+	   :inputs (list ast)
+	   :successors (list (nil-fill (cdr value-context) successor))))))
+
+;;; This might be wrong.
+(defmethod compile-ast
+    ((ast sicl-env:global-location-info) value-context successor)
+  (cond ((eq value-context t)
+	 (make-instance 'put-values-instruction
+	   :inputs (list ast)
+	   :successors (list successor)))
+	((null value-context)
+	 (warn "variable compiled in a context with no values"))
+	(t
+	 (make-instance 'variable-assignment-instruction
+	   :outputs (list (car value-context))
+	   :inputs (list ast)
 	   :successors (list (nil-fill (cdr value-context) successor))))))
 
 (defun compile-toplevel (ast)
@@ -243,35 +265,57 @@
 	  (gethash instruction *instruction-table*)
 	  (class-name (class-of instruction))))
 
-(defgeneric draw-location (location stream))
+(defgeneric draw-location (location stream &optional name))
 
-(defmethod draw-location :around (location stream)
+(defmethod draw-location :around (location stream &optional name)
+  (declare (ignore name))
   (when (null (gethash location *instruction-table*))
     (setf (gethash location *instruction-table*) (gensym))
-    (format stream "  ~a [shape = circle];~%"
+    (format stream "  ~a [shape = ellipse];~%"
 	    (gethash location *instruction-table*))
     (call-next-method)))
 
-(defmethod draw-location (location stream)
-  (format stream "   ~a [label = \"?\"];~%"
-	  (gethash location *instruction-table*)))
+(defmethod draw-location (location stream &optional (name "?"))
+  (format stream
+	  "   ~a [label = \"~a\"];~%"
+	  (gethash location *instruction-table*)
+	  name))
 
-(defmethod draw-location ((location sicl-env:global-location) stream)
-  (format stream "   ~a [label = \"?\", style = filled, fillcolor = green];~%"
-	  (gethash location *instruction-table*)))
+(defmethod draw-location
+    ((location sicl-env:global-location) stream &optional (name "?"))
+  (format stream "   ~a [label = \"~a\", style = filled, fillcolor = green];~%"
+	  (gethash location *instruction-table*)
+	  name))
+
+(defmethod draw-location
+    ((location sicl-env:lexical-location) stream &optional (name "?"))
+  (format stream "   ~a [label = \"~a\", style = filled, fillcolor = yellow];~%"
+	  (gethash location *instruction-table*)
+	  name))
+
+(defun draw-location-info (info stream)
+  (when (null (gethash info *instruction-table*))
+    (setf (gethash info *instruction-table*) (gensym))
+    (draw-location (sicl-env:location info) stream (sicl-env:name info))
+    (format stream "  ~a [shape = box, label = \"~a\"]~%" 
+	    (gethash info *instruction-table*)
+	    (sicl-env:name info))
+    (format stream "  ~a -> ~a [color = green]~%"
+	    (gethash info *instruction-table*)
+	    (gethash (sicl-env:location info) *instruction-table*))))
 
 (defmethod draw-instruction :after (instruction stream)
   (loop for location in (inputs instruction)
-	do (draw-location location stream)
+	do (draw-location-info location stream)
 	   (format stream "  ~a -> ~a [color = red, style = dashed];~%"
 		   (gethash location *instruction-table*)
 		   (gethash instruction *instruction-table*)))
   (loop for location in (outputs instruction)
-	do (draw-location location stream)
+	do (draw-location-info location stream)
 	   (format stream "  ~a -> ~a [color = blue, style = dashed];~%"
 		   (gethash instruction *instruction-table*)
 		   (gethash location *instruction-table*))))
-  
+
 (defmethod draw-instruction ((instruction close-instruction) stream)
   (format stream "   ~a [label = \"close\"];~%"
 	  (gethash instruction *instruction-table*))
@@ -336,7 +380,7 @@
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction ((instruction funcall-instruction) stream)
-  (draw-location (fun instruction) stream)
+  (draw-location-info (fun instruction) stream)
   (format stream "   ~a [label = \"funcall\"];~%"
 	  (gethash instruction *instruction-table*))
   (format stream "   ~a -> ~a [color = red, style = dashed];~%"
@@ -355,7 +399,8 @@
   (with-open-file (stream filename
 			  :direction :output
 			  :if-exists :supersede)
-    (let ((*instruction-table* (make-hash-table :test #'eq)))
+    (let ((*instruction-table* (make-hash-table :test #'eq))
+	  (p1::*table* (make-hash-table :test #'eq)))
 	(format stream "digraph G {~%")
 	(draw-instruction start stream)
 	(format stream "}~%"))))
