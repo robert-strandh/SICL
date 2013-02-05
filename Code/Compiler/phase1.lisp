@@ -30,18 +30,10 @@
   (make-instance 'constant-ast :value form))
 
 (defun convert-variable (form env)
-  (let ((entry (sicl-env:find-variable form env)))
-    (cond ((null entry)
-	   (warn "undefined variable: ~s" form))
-	  ((typep entry 'sicl-env:constant-variable-entry)
-	   (make-instance 'constant-ast
-	     :value (sicl-env:definition entry)))
-	  (t
-	   (let* ((location (sicl-env:location entry))
-		  (type (sicl-env:find-type location env)))
-	     (make-instance 'typed-location-ast
-			    :location location 
-			    :type type))))))
+  (let ((info (sicl-env:variable-info form env)))
+    (if (null info)
+	(error "undefined variable: ~s" form)
+	info)))
 
 (defgeneric convert-compound (head form environment))
 
@@ -80,16 +72,12 @@
 ;;; Default method when there is not a more specific method for
 ;;; the head symbol.
 (defmethod convert-compound ((head symbol) form env)
-  (let* ((entry (sicl-env:find-function head env)))
-    (if (null entry)
-	(warn "no such function")
-	(let* ((location (sicl-env:location entry))
-	       (type (sicl-env:find-ftype location env)))
-	  (make-instance 'function-call-ast
-	    :function-location (make-instance 'typed-location-ast
-					      :location location
-					      :type type)
-	    :arguments (convert-sequence (cdr form) env))))))
+  (let* ((info (sicl-env:function-info head env)))
+    (if (null info)
+	(error "no such function ~s" head)
+	(make-instance 'function-call-ast
+		       :function-location info
+		       :arguments (convert-sequence (cdr form) env)))))
 
 ;;; Method to be used when the head of a compound form is a
 ;;; CONS.  Then the head must be a lambda expression.
@@ -171,14 +159,13 @@
 ;;; FIXME: for now, we handle only required parameters.
 (defun convert-lambda-list (ordinary-lambda-list env)
   (let* ((required-vars (sicl-code-utilities:required ordinary-lambda-list))
-	 (required-entries
-	   (loop for var in required-vars
-		 collect (sicl-env:make-lexical-variable-entry var)))
-	 (new-env (sicl-env:augment-environment env required-entries)))
-    (values
-     (make-instance 'lambda-list
-		    :required (mapcar #'sicl-env:location required-entries))
-     new-env)))
+	 (new-env env))
+    (loop for var in required-vars
+	  do (setf new-env (sicl-env:add-lexical-variable-entry new-env var)))
+    (values (make-instance 'lambda-list
+	      :required (loop for var in required-vars
+			      collect (sicl-env:variable-info var new-env)))
+	    new-env)))
 
 (defclass function-ast (ast)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
@@ -220,8 +207,7 @@
     (error 'block-name-must-be-a-symbol
 	   :expr (cadr form)))
   (let* ((ast (make-instance 'block-ast))
-	 (entry (sicl-env:make-block-entry (cadr form) ast))
-	 (new-env (sicl-env:augment-environment env (list entry)))
+	 (new-env (sicl-env:add-block-entry env (cadr form) ast))
 	 (forms (convert-sequence (cddr form) new-env)))
     (setf (body ast)
 	  (make-instance 'progn-ast :form-asts forms))
@@ -293,37 +279,29 @@
     (compilation-program-error)
   ())
 
-(defmethod convert-compound
-    ((symbol (eql 'flet)) form env)
+(defmethod convert-compound ((symbol (eql 'flet)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   (unless (sicl-code-utilities:proper-list-p (cadr form))
     (error 'flet-functions-must-be-proper-list
 	   :expr form))
-  (multiple-value-bind (local-vars local-codes)
-      (loop for (name lambda-list . body) in (cadr form)
-	    collect (sicl-env:make-local-function-entry name)
-	      into vars
-	    collect (convert-code lambda-list body env)
-	      into codes
-	    finally (return (values vars codes)))
-    (multiple-value-bind (declarations forms)
-	(sicl-code-utilities:separate-ordinary-body (cddr form))
-      (let* ((new-env
-	       (sicl-env:augment-environment-with-declarations
-		(sicl-env:augment-environment env local-vars)
-		declarations))
-	     (body-asts (convert-sequence forms new-env))
-	     (init-asts (loop for var in local-vars
-			      for location = (make-instance 'typed-location-ast
-					       :type t
-					       :location (sicl-env:location var))
-			      for fun in local-codes
-			      collect (make-instance 'setq-ast
-						     :location location
-						     :value-ast fun))))
+  (let ((new-env env))
+    ;; Create a new environment with the additional names.
+    (loop for def in (cadr form)
+	  for name = (car def)
+	  do (setf new-env (sicl-env:add-local-function-entry new-env name)))
+    (let ((init-asts
+	    (loop for (name lambda-list . body) in (cadr form)
+		  for fun = (convert-code lambda-list body env)
+		  collect (make-instance 'setq-ast
+			    :location (sicl-env:function-info name new-env)
+			    :value-ast fun))))
+      (multiple-value-bind (declarations forms)
+	  (sicl-code-utilities:separate-ordinary-body (cddr form))
+	(setf new-env (sicl-env:augment-environment-with-declarations
+		       new-env declarations))
 	(make-instance 'progn-ast
-		       :form-asts (append init-asts body-asts))))))
+	  :form-asts (append init-asts (convert-sequence forms new-env)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -338,10 +316,10 @@
   ())
 
 (defun convert-named-function (name environment)
-  (let ((entry (sicl-env:find-function name environment)))
-    (make-instance 'typed-location-ast
-		   :location (sicl-env:location entry)
-		   :type (sicl-env:find-type entry environment))))
+  (let ((info (sicl-env:function-info name environment)))
+    (if (null info)
+	(error "no such function ~s" name)
+	info)))
 
 (defun convert-lambda-function (lambda-form env)
   (unless (sicl-code-utilities:proper-list-p lambda-form)
@@ -356,8 +334,7 @@
 	   (eq (car name) 'setf)
 	   (symbolp (cadr name)))))
 
-(defmethod convert-compound
-    ((symbol (eql 'function)) form environment)
+(defmethod convert-compound ((symbol (eql 'function)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
   (unless (or (proper-function-name-p (cadr form))
@@ -366,8 +343,8 @@
     (error 'function-argument-must-be-function-name-or-lambda-expression
 	   :expr (cadr form)))
   (if (proper-function-name-p (cadr form))
-      (convert-named-function (cadr form) environment)
-      (convert-lambda-function (cadr form) environment)))
+      (convert-named-function (cadr form) env)
+      (convert-lambda-function (cadr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -376,15 +353,14 @@
 (defclass go-ast (ast)
   ((%tag-ast :initarg :tag-ast :reader tag-ast)))
 
-(defmethod convert-compound
-    ((symbol (eql 'go)) form environment)
+(defmethod convert-compound ((symbol (eql 'go)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (let ((entry (sicl-env:find-go-tag (cadr form) environment)))
-    (if (null entry)
-	(warn "undefined go tag: ~s" form)
+  (let ((info (sicl-env:tag-info (cadr form) env)))
+    (if (null info)
+	(error "undefined go tag: ~s" form)
 	(make-instance 'go-ast
-		       :tag-ast (sicl-env:definition entry)))))
+		       :tag-ast (sicl-env:definition info)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -395,16 +371,15 @@
    (%then :initarg :then :reader then)
    (%else :initarg :else :reader else)))
 
-(defmethod convert-compound
-    ((symbol (eql 'if)) form environment)
+(defmethod convert-compound ((symbol (eql 'if)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 3)
   (make-instance 'if-ast
-		 :test (convert (cadr form) environment)
-		 :then (convert (caddr form) environment)
+		 :test (convert (cadr form) env)
+		 :then (convert (caddr form) env)
 		 :else (if (null (cdddr form))
 			   (convert-constant nil)
-			   (convert (cadddr form) environment))))
+			   (convert (cadddr form) env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -611,29 +586,23 @@
   ((%block-ast :initarg :block-ast :reader block-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(define-condition return-from-tag-must-be-symbol
+(define-condition block-name-unknown
     (compilation-program-error)
   ())
 
-(define-condition return-from-tag-unknown
-    (compilation-program-error)
-  ())
-
-(defmethod convert-compound
-    ((symbol (eql 'return-from)) form environment)
+(defmethod convert-compound ((symbol (eql 'return-from)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 2)
   (unless (symbolp (cadr form))
-    (error 'return-from-tag-must-be-symbol
+    (error 'block-name-must-be-a-symbol
 	   :expr (cadr form)))
-  (let ((entry (sicl-env:find-block (cadr form) environment)))
-    ;; FIXME: this currently can't happen, but maybe it should.
-    (when (null entry)
-      (error 'return-from-tag-unknown
-	     :expr (cadr form)))
-    (make-instance 'return-from-ast
-		   :block-ast (sicl-env:definition entry)
-		   :form-ast (convert (caddr form) environment))))
+  (let ((info (sicl-env:block-info (cadr form) env)))
+    (if (null info)
+	(error 'block-name-unknown
+	       :expr (cadr form))
+	(make-instance 'return-from-ast
+		       :block-ast (sicl-env:definition info)
+		       :form-ast (convert (caddr form) env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -659,25 +628,24 @@
     (compilation-program-error)
   ())
 
-(defun convert-elementary-setq (var form environment)
+(defun convert-elementary-setq (var form env)
   (unless (symbolp var)
     (error 'setq-var-must-be-symbol
 	   :expr var))
-  (let ((entry (sicl-env:find-variable var environment)))
-    (cond ((null entry)
+  (let ((info (sicl-env:variable-info var env)))
+    (cond ((null info)
 	   (error 'setq-unknown-variable
 		  :form var))
-	  ((typep entry 'sicl-env:constant-variable-entry)
+	  ((typep info 'sicl-env:constant-variable-info)
 	   (error 'setq-constant-variable
 		  :form var))
-	  ((or (typep entry 'sicl-env:lexical-variable-entry)
-	       (typep entry 'sicl-env:special-variable-entry))
+	  ((or (typep info 'sicl-env:lexical-location-info)
+	       (typep info 'sicl-env:special-location-info))
 	   (make-instance 'setq-ast
-			  :location (location entry)
-			  :value-ast (convert form environment)))
-	  ((typep entry 'sicl-env:symbol-macro-entry)
-	   (convert `(setf ,(macroexpand var environment) form)
-		    environment))
+			  :location info
+			  :value-ast (convert form env)))
+	  ((typep info 'sicl-env:symbol-macro-info)
+	   (convert `(setf ,(macroexpand var env) form) env))
 	  (t
 	   (error "this should not happen")))))
   
@@ -702,13 +670,10 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   ;; FIXME: syntax check bindings
-  (let* ((entries (loop for (name expansion) in (cadr form)
-			collect (sicl-env:make-symbol-macro-entry
-				 name 
-				 (lambda (form env)
-				   (declare (ignore form env))
-				   expansion))))
-	 (new-env (sicl-env:augment-environment env entries)))
+  (let ((new-env env))
+    (loop for (name expansion) in (cadr form)
+	  do (setf new-env
+		   (sicl-env:add-symbol-macro-entry new-env name expansion)))
     (convert `(progn ,@(cddr form)) new-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -724,19 +689,18 @@
 (defmethod convert-compound
     ((symbol (eql 'tagbody)) form env)
   (sicl-code-utilities:check-form-proper-list form)
-  (let* ((tag-asts
-	   (loop for item in (cdr form)
-		 when (symbolp item)
-		   collect (make-instance 'tag-ast
-					  :name item)))
-	 (entries
-	   (loop for ast in tag-asts
-		 collect (sicl-env:make-go-tag-entry (name ast) ast))))
-    (let* ((new-env (sicl-env:augment-environment env entries))
-	   (items (loop for item in (cdr form)
-			collect (if (symbolp item)
-				    (pop tag-asts)
-				    (convert item new-env)))))
+  (let ((tag-asts
+	  (loop for item in (cdr form)
+		when (symbolp item)
+		  collect (make-instance 'tag-ast
+					 :name item)))
+	(new-env env))
+    (loop for ast in tag-asts
+	  do (setf new-env (sicl-env:add-go-tag-entry new-env (name ast) ast)))
+    (let ((items (loop for item in (cdr form)
+		       collect (if (symbolp item)
+				   (pop tag-asts)
+				   (convert item new-env)))))
       (make-instance 'tagbody-ast
 		     :items items))))
 
@@ -818,16 +782,15 @@
 	  (id ast)
 	  (value ast)))
 
-(defun draw-location (location stream)
+(defun draw-location (location stream &optional (color "blue") (name "?"))
   (when (null (gethash location *table*))
     (setf (gethash location *table*) (gensym))
-    (format stream "  ~a [shape = circle, label = \"\"];~%" (id location))
-    (format stream "  ~a [style = filled, fillcolor = ~a];~%"
-	    (id location)
-	    (etypecase location
-	      (sicl-env:global-location "green")
-	      (sicl-env:special-location "red")
-	      (sicl-env:lexical-location "yellow")))))
+    (format stream
+	    "  ~a [label = \"~a\"];~%"
+	    (id location) name)
+    (format stream
+	    "  ~a [style = filled, fillcolor = ~a];~%"
+	    (id location) color)))
 
 (defmethod draw-ast ((ast typed-location-ast) stream)
   (format stream "   ~a [label = \"location\"];~%"
@@ -836,6 +799,30 @@
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (location ast))))
+  
+(defmethod draw-ast ((ast sicl-env:special-location-info) stream)
+  (format stream "   ~a [label = \"special\"];~%"
+	  (id ast))
+  (draw-location (sicl-env:location ast) stream "red" (sicl-env:name ast))
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (sicl-env:location ast))))
+  
+(defmethod draw-ast ((ast sicl-env:lexical-location-info) stream)
+  (format stream "   ~a [label = \"lexical\"];~%"
+	  (id ast))
+  (draw-location (sicl-env:location ast) stream "yellow" (sicl-env:name ast))
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (sicl-env:location ast))))
+  
+(defmethod draw-ast ((ast sicl-env:global-location-info) stream)
+  (format stream "   ~a [label = \"global\"];~%"
+	  (id ast))
+  (draw-location (sicl-env:location ast) stream "green" (sicl-env:name ast))
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (sicl-env:location ast))))
   
 (defmethod draw-ast ((ast if-ast) stream)
   (format stream "   ~a [label = \"if\"];~%"
@@ -906,12 +893,11 @@
 (defmethod draw-ast ((ast function-ast) stream)
   (format stream "   ~a [label = \"function\"];~%"
 	  (id ast))
-  (loop for location in (required (lambda-list ast))
-	do (draw-location location stream))
-  (loop for location in (required (lambda-list ast))
-	do (format stream "   ~a -> ~a~%"
+  (loop for param in (required (lambda-list ast))
+	do (draw-ast param stream)
+	   (format stream "   ~a -> ~a~%"
 		   (id ast)
-		   (id location)))
+		   (id param)))
   (draw-ast (body-ast ast) stream)
   (format stream "   ~a -> ~a~%"
 	  (id ast)
