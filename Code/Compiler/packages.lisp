@@ -9,24 +9,6 @@
 	   #:*macroexpand-hook*
 	   )
   (:export
-   #:constant-variable-entry #:make-constant-variable-entry
-   #:special-variable-entry #:make-special-variable-entry
-   #:lexical-variable-entry #:make-lexical-variable-entry
-   #:symbol-macro-entry #:make-symbol-macro-entry
-   #:global-function-entry #:make-global-function-entry
-   #:local-function-entry #:make-local-function-entry
-   #:macro-entry #:make-macro-entry
-   #:block-entry #:make-block-entry
-   #:go-tag-entry #:make-go-tag-entry
-   #:type-declaration-entry #:make-type-declaration-entry
-   #:ftype-declaration-entry #:make-ftype-declaration-entry
-   #:inline-declaration-entry #:make-inline-declaration-entry
-   #:notinline-declaration-entry #:make-notinline-declaration-entry
-   #:dynamic-extent-declaration-entry #:make-dynamic-extent-declaration-entry
-   #:ignore-decalration-entry #:make-ignore-decalration-entry
-   #:ignorable-declaration-entry #:make-ignorable-declaration-entry
-   #:optimize-declaration-entry #:make-optimize-declaration-entry
-   #:declaration-declaration-entry #:make-declaration-declaration-entry
    #:definition
    #:location #:lexical-location #:global-location #:special-location
    #:storage
@@ -43,9 +25,27 @@
    #:macroexpand
    #:find-type
    #:find-ftype
-   #:find-fype  ; remove later
    #:augment-environment
    #:augment-environment-with-declarations
+   #:add-constant-variable-entry
+   #:add-special-variable-entry
+   #:add-lexical-variable-entry
+   #:add-symbol-macro-entry
+   #:add-global-function-entry
+   #:add-local-function-entry
+   #:add-macro-entry
+   #:add-block-entry
+   #:add-go-tag-entry
+   #:constant-variable-info
+   #:macro-info
+   #:symbol-macro-info
+   #:block-info
+   #:tag-info
+   #:special-location-info
+   #:lexical-location-info
+   #:global-location-info
+   #:function-info
+   #:variable-info
    ))
 
 (defpackage #:sicl-compiler-phase-1
