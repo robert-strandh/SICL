@@ -1,5 +1,26 @@
 (in-package #:sicl-compiler-environment)
 
+;;;; An environment is represented as a list of entries. 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Augmenting an environment.
+
+(defun add-to-environment (environment entry)
+  (cons entry environment))
+
+(defun augment-environment (environment entries)
+  (append entries environment))
+
+(defun augment-environment-with-declarations (environment declarations)
+  (let ((declaration-specifiers
+	  (sicl-code-utilities:canonicalize-declaration-specifiers
+	   (reduce #'append (mapcar #'cdr declarations)))))
+    (augment-environment
+     environment
+     (loop for spec in declaration-specifiers
+	   collect (make-entry-from-declaration spec environment)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Environment entries.
@@ -56,7 +77,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; The different types of entries. 
+;;; Constant variable entry.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -74,6 +95,13 @@
 		 :name name
 		 :definition definition))
 
+(defun add-constant-variable-entry (env name definition)
+  (add-to-environment env (make-constant-variable-entry name definition)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Location entries.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SPECIAL-VARIABLE-ENTRY.
@@ -88,6 +116,9 @@
 		 :location (make-instance 'special-location
 					  :name name)))
 
+(defun add-special-variable-entry (env name)
+  (add-to-environment env (make-special-variable-entry name)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LEXICAL-VARIABLE-ENTRY.
@@ -100,6 +131,9 @@
   (make-instance 'lexical-variable-entry
 		 :name name
 		 :location (make-instance 'lexical-location)))
+
+(defun add-lexical-variable-entry (env name)
+  (add-to-environment env (make-lexical-variable-entry name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -117,6 +151,9 @@
 		   :name name
 		   :definition expander)))
 
+(defun add-symbol-macro-entry (env name expansion)
+  (add-to-environment env (make-symbol-macro-entry name expansion)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class GLOBAL-FUNCTION-ENTRY.
@@ -128,6 +165,9 @@
   (make-instance 'global-function-entry
 		 :name name
 		 :location (make-instance 'global-location)))
+
+(defun add-global-function-entry (env name)
+  (add-to-environment env (make-global-function-entry name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -141,6 +181,9 @@
 		 :name name
 		 :location (make-instance 'lexical-location)))
 
+(defun add-local-function-entry (env name)
+  (add-to-environment env (make-local-function-entry name)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class MACRO-ENTRY.
@@ -152,6 +195,9 @@
   (make-instance 'macro-entry
 		 :name name
 		 :definition expander))
+
+(defun add-macro-entry (env name expander)
+  (add-to-environment env (make-macro-entry name expander)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -165,6 +211,9 @@
 		 :name name
 		 :definition block))
 
+(defun add-block-entry (env name block)
+  (add-to-environment env (make-block-entry name block)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class GO-TAG-ENTRY.
@@ -177,6 +226,13 @@
 		 :name name
 		 :definition tag))
 
+(defun add-go-tag-entry (env name tag)
+  (add-to-environment env (make-go-tag-entry name tag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Declaration entries.
+
 (defclass declaration-entry (environment-entry) ())
 
 (defclass location-declaration-entry (declaration-entry)
@@ -185,6 +241,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TYPE-DECLARATION-ENTRY.
+;;;
+;;; We do not have a separate declaration entry for FTYPE.
 
 (defclass type-declaration-entry (location-declaration-entry)
   ((%type :initarg :type :reader type)))
@@ -193,21 +251,6 @@
   (make-instance 'type-declaration-entry
 		 :location (location location-entry)
 		 :type type))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class FTYPE-DECLARATION-ENTRY.
-
-(defclass ftype-declaration-entry (location-declaration-entry)
-  ((%type :initarg :type :reader type)))
-
-(defun make-ftype-declaration-entry (location-entry type)
-  (make-instance 'ftype-declaration-entry
-		 :location (location location-entry)
-		 :type type))
-
-(defclass inline-or-notinline-declaration-entry (location-declaration-entry)
-  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -292,22 +335,221 @@
   (make-instance 'declaration-declaration-entry
 		 :name name))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Info classes.
+;;;
+;;; We return an instance of an info class as a result of a query. 
+
+(defclass info () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Definition info classes.
+
+(defclass definition-info (info)
+  ((%name :initarg :name :reader name)
+   (%definition :initarg :definition :reader definition)))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class CONSTANT-VARIABLE-INFO.
+
+(defclass constant-variable-info (definition-info)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class MACRO-INFO.
+
+(defclass macro-info (definition-info)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SYMBOL-MACRO-INFO.
+;;;
+;;; The HyperSpec says that it is allowed to declare the type of a
+;;; symbol macro.  Such a declaration is "equivalent to wrapping a THE
+;;; expression around the expansion of that symbol, although the
+;;; symbol's macro expansion is not actually affected."
+
+(defclass symbol-macro-info (info)
+  ((%type :initarg :type :reader type)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class BLOCK-INFO.
+
+(defclass block-info (definition-info)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class TAG-INFO.
+
+(defclass tag-info (definition-info)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Location info classes.
+;;;
+;;; These classes represent information about a location.
+
+(defclass location-info (info)
+  ((%name :initarg :name :reader name)
+   (%location :initarg :location :reader location)
+   (%type :initarg :type :reader type)
+   (%inline-info :initarg :inline-info :reader inline-info)
+   (%ignore-info :initarg :ignore-info :reader ignore-info)
+   (%dynamic-extent-p :initarg :dynamic-extent-p :reader dynamic-extent-p)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SPECIAL-LOCATION-INFO.
+
+(defclass special-location-info (location-info)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LEXICAL-LOCATION-INFO.
+
+(defclass lexical-location-info (location-info)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class GLOBAL-LOCATION-INFO.
+
+(defclass global-location-info (location-info)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Querying the environment.
+
+(defun find-in-namespace (name environment namespace)
+  (find-if (lambda (entry)
+	     (and (typep entry namespace)
+		  (equal (name entry) name)))
+	   environment))
+
+(defun find-type (entry env)
+  `(and ,@(loop for e in env
+		when (and (typep e 'type-declaration-entry)
+			  (eq (location e) entry))
+		  collect (type e))))
+
+(defun find-inline-info (entry env)
+  (loop for e in env
+	do (when (and (typep e 'inline-or-notinline-declaration-entry)
+		      (eq (location e) entry))
+	     (return (if (typep e 'inline-declaration-entry)
+			 :inline
+			 :notinline)))))
+
+(defun find-ignore-info (entry env)
+  (cond ((loop for e in env
+	       when (and (typep e 'ignore-declaration-entry)
+			 (eq (location e) entry))
+		 return t)
+	 :ignore)
+	((loop for e in env
+	       when (and (typep e 'ignorable-declaration-entry)
+			 (eq (location e) entry))
+		 return t)
+	 :ignorable)
+	(t nil)))
+
+(defun find-dynamic-extent-info (entry env)
+  (loop for e in env
+	when (and (typep e 'dynamic-extent-declaration-entry)
+		  (eq (location e) entry))
+	  return t))
+
+(defun variable-info (name env)
+  (let ((entry (find-in-namespace name env 'variable-space)))
+    (cond ((null entry)
+	   nil)
+	  ((typep entry 'constant-variable-entry)
+	   (make-instance 'constant-variable-info
+			  :name (name entry)
+			  :definition (definition entry)))
+	  ((typep entry 'symbol-macro-entry)
+	   (make-instance 'symbol-macro-info
+			  :name (name entry)
+			  :definition (definition entry)
+			  :type (find-type entry env)))
+	  (t
+	   (let ((type (find-type entry env))
+		 (inline-info (find-inline-info entry env))
+		 (ignore-info (find-ignore-info entry env))
+		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
+	     (make-instance (if (typep entry 'special-variable-entry)
+				'special-location-info
+				'lexical-location-info)
+			    :name name
+			    :location (location entry)
+			    :type type
+			    :inline-info inline-info
+			    :ignore-info ignore-info
+			    :dynamic-extent-p dynamic-extent-p))))))
+
+(defun function-info (name env)
+  (let ((entry (find-in-namespace name env 'function-space)))
+    (cond ((null entry)
+	   nil)
+	  ((typep entry 'macro-entry)
+	   (make-instance 'macro-info
+			  :name (name entry)
+			  :definition (definition entry)))
+	  (t
+	   (let ((type (find-type entry env))
+		 (inline-info (find-inline-info entry env))
+		 (ignore-info (find-ignore-info entry env))
+		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
+	     (make-instance (if (typep entry 'global-function-entry)
+				'global-location-info
+				'lexical-location-info)
+			    :name name
+			    :location (location entry)
+			    :type type
+			    :inline-info inline-info
+			    :ignore-info ignore-info
+			    :dynamic-extent-p dynamic-extent-p))))))
+
+(defun block-info (name env)
+  (let ((entry (find-in-namespace name env 'block-space)))
+    (if (null entry)
+	nil
+	(make-instance 'block-info
+		       :name (name entry)
+		       :definition (definition entry)))))
+
+(defun tag-info (name env)
+  (let ((entry (find-in-namespace name env 'tag-space)))
+    (if (null entry)
+	nil
+	(make-instance 'tag-info
+		       :name (name entry)
+		       :definition (definition entry)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The global environment.
+;;;
+;;; The first entry of the global environment is always a dummy entry,
+;;; so that it is possible to side-effect the global environment by
+;;; modifying the CDR of it.
+
 (defparameter *global-environment*
   (list (make-instance 'dummy-entry)))
 
 (defun add-to-global-environment (entry)
   (push entry (cdr *global-environment*)))
 
-(defun find-in-namespace (name environment namespace)
-  (let ((entry (find-if (lambda (entry)
-			  (and (typep entry namespace)
-			       (equal (name entry) name)))
-			environment)))
-    (when (null entry)
-      ;; FIXME: do this better
-      (error "no such name ~s" name))
-    entry))
-  
 (defun find-variable (name environment)
   (find-in-namespace name environment 'variable-space))
 
@@ -338,7 +580,7 @@
 	 (make-dynamic-extent-declaration-entry entry)))
       (ftype
        (let ((entry (find-function (cadr rest) environment)))
-	 (make-ftype-declaration-entry entry (car rest))))
+	 (make-type-declaration-entry entry (car rest))))
       (ignorable
        (let ((entry (if (consp (car rest))
 			  (find-function (cadr (car rest)) environment)
@@ -392,13 +634,12 @@
 		     *global-environment*)))
       (cond ((null existing-declaration)
 	     (add-to-global-environment
-	      (make-ftype-declaration-entry entry type)))
+	      (make-type-declaration-entry entry type)))
 	    ((equal (type existing-declaration) type)
 	     nil)
 	    (t
 	     ;; make that an error for now
 	     (error "function already has a type proclamation"))))))
-	  
 
 (defun proclaim (declaration-specifier)
   (case (car declaration-specifier)
@@ -466,34 +707,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Find the type declarations associated with an entry.
-
-(defun find-type (location environment)
-  `(and ,@(loop for entry in environment
-		when (and (typep entry 'type-declaration-entry)
-			  (eq (location entry) location))
-		  collect (type entry))))
-
-(defun find-ftype (location environment)
-  `(and ,@(loop for entry in environment
-		when (and (typep entry 'ftype-declaration-entry)
-			  (eq (location entry) location))
-		  collect (type entry))))
-
-(defun augment-environment (environment entries)
-  (append entries environment))
-
-(defun augment-environment-with-declarations (environment declarations)
-  (let ((declaration-specifiers
-	  (sicl-code-utilities:canonicalize-declaration-specifiers
-	   (reduce #'append (mapcar #'cdr declarations)))))
-    (augment-environment
-     environment
-     (loop for spec in declaration-specifiers
-	   collect (make-entry-from-declaration spec environment)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Put some stuff in the global environment.
 
 (add-to-global-environment
@@ -504,6 +717,9 @@
 
 (add-to-global-environment
  (make-global-function-entry 'car))
+
+(add-to-global-environment
+ (make-global-function-entry 'error))
 
 (add-to-global-environment
  (make-global-function-entry '(setf fdefinition)))
