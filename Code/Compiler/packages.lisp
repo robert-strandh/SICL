@@ -86,7 +86,9 @@
   (:nicknames #:p2)
   (:use #:common-lisp)
   (:export
+   #:context #:results #:false-required-p
    #:instruction #:successors #:inputs #:outputs
+   #:nil-fill
    #:end-instruction
    #:nop-instruction
    #:constant-assignment-instruction #:constant
@@ -100,7 +102,7 @@
    #:enter-instruction
    #:leave-instruction
    #:return-instruction
-   #:close-instruction #:code
+   #:enclose-instruction #:code
    #:go-instruction
    #:compile-ast
    #:compile-toplevel

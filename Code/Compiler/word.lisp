@@ -7,13 +7,32 @@
   (loop for argument in arguments
 	collect (p1:convert argument env)))
 
-(defun adapt-value-context (desired min-supplied max-supplied successor)
+;;; This function provides the glue between a DESIRED results
+;;; and an instruction that can only generate between MIN-SUPPLIED and
+;;; MAX-SUPPLIED values.
+;;;
+;;; Return two values.  The first value is the new context to be used
+;;; in place of the first one, and the second value is a successor
+;;; instruction to be used by the requesting instruction.
+;;;
+;;; If the desired results is T, i.e., all the values are
+;;; required, then we generate a PUT-VALUES-INSTRUCTION that takes the
+;;; maximum number of arguments that the instruction can generate.
+;;; 
+;;; If the results is not T, and it contains fewer elements than
+;;; the minimum number that the instruction generates or more elements
+;;; than the maximum number that the instruction generates, then we
+;;; signal an error.
+;;;
+;;; Otherwise, no adaptation is required and we return the desired
+;;; results that we recieved and the successor of the instruction. 
+(defun adapt-results (desired min-supplied max-supplied successor)
   (cond ((eq desired t)
-	 (let ((context (loop repeat max-supplied collect (p2:new-temporary))))
-	   (values context
+	 (let ((temps (loop repeat max-supplied collect (p2:new-temporary))))
+	   (values temps
 		   (make-instance 'p2:put-values-instruction
-				  :inputs context
-				  :successors (list successor)))))
+		     :inputs temps
+		     :successors (list successor)))))
 	((<= min-supplied (length desired) max-supplied)
 	 (values desired successor))
 	(t
@@ -26,11 +45,8 @@
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
-	do (setf succ (p2:compile-ast arg (list temp) succ))
+	do (setf succ (p2:compile-ast arg (p2:context (list temp) (list succ))))
 	finally (return succ)))
-
-;;; There is lots of code duplication in this file at the moment.
-;;; Need to figure out how to factor it properly.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -45,6 +61,10 @@
 ;;; Values (1):
 ;;;
 ;;;   * A pointer to the first byte allocated.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Convert a MEMALLOC form into a MEMALLOC-AST.
 
 (defclass memalloc-ast (p1:ast arguments-mixin)
   ())
@@ -62,21 +82,34 @@
 	do (p1:draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MEMALLOC-AST.
+;;;
+;;; Allow only a context in which the RESULTS has exactly one
+;;; element and in which there is a single successor.
+;;;
+;;; Allowing a results of T would mean that the result of this
+;;; AST could be returned from a function, but since the result of
+;;; this AST is not a tagged object, but a raw pointer, we cannot
+;;; allow it to escape from the lexical locations of the function. 
+
 (defclass memalloc-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast memalloc-ast) value-context successor)
-  ;; Allow only for a value context with a single value.
-  (unless (and (list value-context)
-	       (= (length value-context) 1))
-    (error "invalid value context"))
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
+(defmethod p2:compile-ast ((ast memalloc-ast) context)
+  (with-accessors ((results p2:results)
+		   (successors p2:successors))
+      context
+    (unless (and (listp results)
+		 (= (length results) 1)
+		 (= (length successors) 1))
+      (error "Invalid results for memalloc."))
     (let* ((temps (make-temps (arguments ast)))
 	   (instruction (make-instance 'memalloc-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
+			  :inputs temps
+			  :outputs results
+			  :successors successors)))
       (compile-arguments (arguments ast) temps instruction))))
 
 (defmethod p2:draw-instruction ((instruction memalloc-instruction) stream)
@@ -97,6 +130,10 @@
 ;;;  
 ;;;   * The contents of memory at that address. 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Convert a MEMREF form into a MEMREF-AST.
+
 (defclass memref-ast (p1:ast arguments-mixin)
   ())
 
@@ -113,17 +150,52 @@
 	do (p1:draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (p1:id ast) (p1:id argument-ast))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MEMREF-AST.
+;;;
+
 (defclass memref-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast memref-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
+(defmethod p2:compile-ast ((ast memref-ast) context)
+  (with-accessors ((results p2:results)
+		   (successors p2:successors))
+      context
     (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'memref-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "MEMREF operation in a context of no results.")
+			   next)
+			  ((eq results t)
+			   (setf next 
+				 (make-instance 'p2:put-values-instruction
+				   :inputs temps
+				   :successors (list next)))
+			   (make-instance 'memref-instruction
+			     :inputs temps
+			     :successors (list next)))
+			  (t
+			   (setf next (p2:nil-fill (cdr results) next))
+			   (make-instance 'memref-instruction
+			     :inputs temps
+			     :successors (list next))))))
+	       (2 (if (eq results t)
+		      (error "Illegal context for memref")
+		      (let* ((location (if (null results)
+					   (p2:new-temporary)
+					   (car results)))
+			     (next (make-instance 'p2:test-instruction
+				     :inputs (list location)
+				     :outputs '()
+				     :successors successors)))
+			(setf next
+			      (make-instance 'memref-instruction
+				:inputs temps
+				:successors (list next)))
+			(p2:nil-fill (cdr results) next)))))))
       (compile-arguments (arguments ast) temps instruction))))
 
 (defmethod p2:draw-instruction ((instruction memref-instruction) stream)
@@ -162,19 +234,59 @@
 (defclass memset-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast memset-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 0 0 successor)
+(defmethod p2:compile-ast ((ast memset-ast) context)
+  (with-accessors ((results p2:results)
+		   (successors p2:successors))
+      context
+    (unless (and (= (length successors) 1)
+		 (zerop (length results)))
+      (error "Illegal context for memset."))
     (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'memset-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
+	   (instruction
+	     (make-instance 'memset-instruction
+	       :inputs temps
+	       :outputs '()
+	       :successors successors)))
       (compile-arguments (arguments ast) temps instruction))))
 
 (defmethod p2:draw-instruction ((instruction memset-instruction) stream)
   (format stream "   ~a [label = \"memset\"];~%"
 	  (gethash instruction p2:*instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compiling a simple arithmetic operation.
+
+(defun compile-simple-arithmetic (arguments instruction-class context)
+  (with-accessors ((results p2:results)
+		   (successors p2:successors))
+      context
+    (let* ((temps (make-temps arguments))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "Arithmetic operation in a context of no results.")
+			   next)
+			  ((eq results t)
+			   (setf next 
+				 (make-instance 'p2:put-values-instruction
+				   :inputs temps
+				   :successors (list next)))
+			   (make-instance instruction-class
+			     :inputs temps
+			     :successors (list next)))
+			  (t
+			   (setf next (p2:nil-fill (cdr results) next))
+			   (make-instance instruction-class
+			     :inputs temps
+			     :successors (list next))))))
+	       (2 (if (or (eq results t) (> (length results) 1))
+		      (error "Illegal context for simple arithmetic.")
+		      (make-instance instruction-class
+			:inputs temps
+			:successors successors))))))
+      (compile-arguments arguments temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -212,15 +324,8 @@
 (defclass u+-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast u+-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 2 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'u+-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast u+-ast) context)
+  (compile-simple-arithmetic (arguments ast) 'u+-instruction context))
 
 (defmethod p2:draw-instruction ((instruction u+-instruction) stream)
   (format stream "   ~a [label = \"u+\"];~%"
@@ -262,19 +367,8 @@
 (defclass u--instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast u--ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 2 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'u--instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
-
-(defmethod p2:draw-instruction ((instruction u--instruction) stream)
-  (format stream "   ~a [label = \"u-\"];~%"
-	  (gethash instruction p2:*instruction-table*)))
+(defmethod p2:compile-ast ((ast u--ast) context)
+  (compile-simple-arithmetic (arguments ast) 'u--instruction context))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -311,15 +405,8 @@
 (defclass s+-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast s+-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 2 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 's+-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast s+-ast) context)
+  (compile-simple-arithmetic (arguments ast) 'u--instruction context))
 
 (defmethod p2:draw-instruction ((instruction s+-instruction) stream)
   (format stream "   ~a [label = \"s+\"];~%"
@@ -360,16 +447,8 @@
 (defclass s--instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast s--ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 2 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 's--instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
-
+(defmethod p2:compile-ast ((ast s--ast) context)
+  (compile-simple-arithmetic (arguments ast) 'u--instruction context))
 
 (defmethod p2:draw-instruction ((instruction s--instruction) stream)
   (format stream "   ~a [label = \"s-\"];~%"
@@ -409,20 +488,54 @@
 (defclass neg-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast neg-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 2 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'neg-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast neg-ast) context)
+  (compile-simple-arithmetic (arguments ast) 'u--instruction context))
 
 (defmethod p2:draw-instruction ((instruction neg-instruction) stream)
   (format stream "   ~a [label = \"neg\"];~%"
 	  (gethash instruction p2:*instruction-table*)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a logic operation.
+;;;
+;;; Logic operations are characterized by the fact that they compute a
+;;; single value and that this value can not generate an overflow or a
+;;; carry.  Therefore, the corresponding instruction must have a
+;;; single successor.
+;;;
+;;; We can not exclude that the result of a logic operation is a
+;;; tagged Lisp object, so we must be prepared for all possible
+;;; result contexts. 
+
+(defun compile-logic (arguments instruction-class context)
+  (with-accessors ((results p2:results)
+		   (successors p2:successors))
+      context
+    (unless (= (length successors) 1)
+      (error "Logic operation must have a single successor."))
+    (let* ((next (car successors))
+	   (temps (make-temps arguments))
+	   (instruction
+	     (cond ((null results)
+		    (warn "Logic operation in a context of no results.")
+		    next)
+		   ((eq results t)
+		    (setf next 
+			  (make-instance 'p2:put-values-instruction
+			    :inputs temps
+			    :successors (list next)))
+		    (make-instance instruction-class
+		      :inputs temps
+		      :successors (list next)))
+		   (t
+		    (setf next (p2:nil-fill (cdr results) next))
+		    (make-instance instruction-class
+		      :inputs temps
+		      :successors (list next))))))
+      (compile-arguments arguments temps instruction))))
+
+      
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Word operation &.
@@ -457,15 +570,8 @@
 (defclass &-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast &-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance '&-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast &-ast) context)
+  (compile-logic (arguments ast) '&-instruction context))
 
 (defmethod p2:draw-instruction ((instruction &-instruction) stream)
   (format stream "   ~a [label = \"&\"];~%"
@@ -505,15 +611,8 @@
 (defclass ior-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast ior-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'ior-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast ior-ast) context)
+  (compile-logic (arguments ast) 'ior-instruction context))
 
 (defmethod p2:draw-instruction ((instruction ior-instruction) stream)
   (format stream "   ~a [label = \"ior\"];~%"
@@ -553,15 +652,8 @@
 (defclass xor-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast xor-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'xor-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast xor-ast) context)
+  (compile-logic (arguments ast) 'xor-instruction context))
 
 (defmethod p2:draw-instruction ((instruction xor-instruction) stream)
   (format stream "   ~a [label = \"xor\"];~%"
@@ -600,19 +692,69 @@
 (defclass ~-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast ~-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance '~-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast ~-ast) context)
+  (compile-logic (arguments ast) '~-instruction context))
 
 (defmethod p2:draw-instruction ((instruction ~-instruction) stream)
   (format stream "   ~a [label = \"~\"];~%"
 	  (gethash instruction p2:*instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a test.
+
+(defun make-boolean (boolean result successor)
+  (make-instance 'p2:constant-assignment-instruction
+    :outputs result
+    :constant boolean
+    :successors (list successor)))
+
+(defun compile-test (arguments instruction-class context)
+  (with-accessors ((results p2:results)
+		   (successors p2:successors)
+		   (false-required-p p2:false-required-p ))
+      context
+    (let* ((temps (make-temps arguments))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "Compilation of a test that is not used.")
+			   next)
+			  ((eq results t)
+			   (setf next 
+				 (make-instance 'p2:put-values-instruction
+				   :inputs temps
+				   :successors (list next)))
+			   (let ((false (make-boolean nil (car results) next))
+				 (true (make-boolean t (car results) next)))
+			     (make-instance instruction-class
+			       :inputs temps
+			       :outputs '()
+			       :successors (list false true))))
+			  (t
+			   (setf next (p2:nil-fill (cdr results) next))
+			   (let ((false (make-boolean nil (car results) next))
+				 (true (make-boolean t (car results) next)))
+			     (make-instance instruction-class
+			       :inputs temps
+			       :outputs '()
+			       :successors (list false true)))))))
+	       (2 (progn
+		    (let ((next (make-instance instruction-class
+				  :inputs temps
+				  :outputs '()
+				  :successors successors)))
+		      (setf next (p2:nil-fill (cdr results) next))
+		      (let ((false (if false-required-p
+				       (make-boolean nil (car results) next)
+				       next))
+			    (true (make-boolean t (car results) next)))
+			(make-instance instruction-class
+			  :inputs temps
+			  :outputs '()
+			  :successors (list false true)))))))))
+      (compile-arguments arguments temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -648,15 +790,8 @@
 (defclass ==-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast ==-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance '==-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast ==-ast) context)
+  (compile-test (arguments ast) '==-instruction context))
 
 (defmethod p2:draw-instruction ((instruction ==-instruction) stream)
   (format stream "   ~a [label = \"==\"];~%"
@@ -696,15 +831,8 @@
 (defclass s<-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast s<-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 's<-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast s<-ast) context)
+  (compile-test (arguments ast) 's<-instruction context))
 
 (defmethod p2:draw-instruction ((instruction s<-instruction) stream)
   (format stream "   ~a [label = \"s<\"];~%"
@@ -745,15 +873,8 @@
 (defclass s<=-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast s<=-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 's<=-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast s<=-ast) context)
+  (compile-test (arguments ast) 's<=-instruction context))
 
 (defmethod p2:draw-instruction ((instruction s<=-instruction) stream)
   (format stream "   ~a [label = \"s<=\"];~%"
@@ -793,15 +914,8 @@
 (defclass u<-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast u<-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'u<-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast u<-ast) context)
+  (compile-test (arguments ast) 'u<-instruction context))
 
 (defmethod p2:draw-instruction ((instruction u<-instruction) stream)
   (format stream "   ~a [label = \"u<\"];~%"
@@ -842,15 +956,8 @@
 (defclass u<=-instruction (p2:instruction)
   ())
 
-(defmethod p2:compile-ast ((ast u<=-ast) value-context successor)
-  (multiple-value-bind (new-value-context new-successor)
-      (adapt-value-context value-context 1 1 successor)
-    (let* ((temps (make-temps (arguments ast)))
-	   (instruction (make-instance 'u<=-instruction
-				       :inputs temps
-				       :outputs new-value-context
-				       :successors (list new-successor))))
-      (compile-arguments (arguments ast) temps instruction))))
+(defmethod p2:compile-ast ((ast u<=-ast) context)
+  (compile-test (arguments ast) 'u<=-instruction context))
 
 (defmethod p2:draw-instruction ((instruction u<=-instruction) stream)
   (format stream "   ~a [label = \"u<=\"];~%"
