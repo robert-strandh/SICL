@@ -9,6 +9,13 @@
    (%inputs :initform '() :initarg :inputs :reader inputs)
    (%outputs :initform '() :initarg :outputs :reader outputs)))
 
+(defmethod initialize-instance :after ((obj instruction) &key &allow-other-keys)
+  (unless (and (listp (successors obj))
+	       (every (lambda (successor)
+			(typep successor 'instruction))
+		      (successors obj)))
+    (error "successors must be a list of instructions")))
+
 (defclass end-instruction (instruction)
   ())
 
@@ -130,6 +137,17 @@
    (%false-required-p :initarg :false-required-p :reader false-required-p)))
 
 (defun context (results successors &optional (false-required-p t))
+  (unless (or (eq results t)
+	      (and (listp results)
+		   (every (lambda (result)
+			    (typep result 'sicl-env:lexical-location-info))
+			  results)))
+    (error "illegal results: ~s" results))
+  (unless (and (listp successors)
+	       (every (lambda (successor)
+			(typep successor 'instruction))
+		      successors))
+    (error "illegal successors: ~s" results))
   (if (and (= (length successors) 2)
 	   (eq results t))
       (error "Illegal combination of results and successors")
@@ -405,8 +423,8 @@
       context
     (let ((code (compile-function (p1:lambda-list ast) (p1:body-ast ast)))
 	  (next (if (= (length successors) 2)
-		    (car successors)
-		    (cadr successors))))
+		    (cadr successors)
+		    (car successors))))
       (cond ((eq results t)
 	     (let ((temp (new-temporary)))
 	       (make-instance 'enclose-instruction

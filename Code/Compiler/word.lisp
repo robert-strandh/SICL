@@ -269,17 +269,20 @@
 			   (warn "Arithmetic operation in a context of no results.")
 			   next)
 			  ((eq results t)
-			   (setf next 
-				 (make-instance 'p2:put-values-instruction
-				   :inputs temps
-				   :successors (list next)))
-			   (make-instance instruction-class
-			     :inputs temps
-			     :successors (list next)))
+			   (let ((temp (p2:new-temporary)))
+			     (setf next 
+				   (make-instance 'p2:put-values-instruction
+				     :inputs (list temp)
+				     :successors (list next)))
+			     (make-instance instruction-class
+			       :inputs temps
+			       :outputs (list temp)
+			       :successors (list next))))
 			  (t
 			   (setf next (p2:nil-fill (cdr results) next))
 			   (make-instance instruction-class
 			     :inputs temps
+			     :outputs (list (car results))
 			     :successors (list next))))))
 	       (2 (if (or (eq results t) (> (length results) 1))
 		      (error "Illegal context for simple arithmetic.")
@@ -369,6 +372,10 @@
 
 (defmethod p2:compile-ast ((ast u--ast) context)
   (compile-simple-arithmetic (arguments ast) 'u--instruction context))
+
+(defmethod p2:draw-instruction ((instruction u--instruction) stream)
+  (format stream "   ~a [label = \"u-\"];~%"
+	  (gethash instruction p2:*instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -532,6 +539,7 @@
 		    (setf next (p2:nil-fill (cdr results) next))
 		    (make-instance instruction-class
 		      :inputs temps
+		      :outputs (list (car results))
 		      :successors (list next))))))
       (compile-arguments arguments temps instruction))))
 
@@ -722,16 +730,17 @@
 			   (warn "Compilation of a test that is not used.")
 			   next)
 			  ((eq results t)
-			   (setf next 
-				 (make-instance 'p2:put-values-instruction
-				   :inputs temps
-				   :successors (list next)))
-			   (let ((false (make-boolean nil (car results) next))
-				 (true (make-boolean t (car results) next)))
-			     (make-instance instruction-class
-			       :inputs temps
-			       :outputs '()
-			       :successors (list false true))))
+			   (let ((temp (p2:new-temporary)))
+			     (setf next 
+				   (make-instance 'p2:put-values-instruction
+				     :inputs (list temp)
+				     :successors (list next)))
+			     (let ((false (make-boolean nil temp next))
+				   (true (make-boolean t temp next)))
+			       (make-instance instruction-class
+				 :inputs temps
+				 :outputs '()
+				 :successors (list false true)))))
 			  (t
 			   (setf next (p2:nil-fill (cdr results) next))
 			   (let ((false (make-boolean nil (car results) next))
@@ -740,20 +749,24 @@
 			       :inputs temps
 			       :outputs '()
 			       :successors (list false true)))))))
-	       (2 (progn
-		    (let ((next (make-instance instruction-class
-				  :inputs temps
-				  :outputs '()
-				  :successors successors)))
-		      (setf next (p2:nil-fill (cdr results) next))
-		      (let ((false (if false-required-p
-				       (make-boolean nil (car results) next)
-				       next))
-			    (true (make-boolean t (car results) next)))
-			(make-instance instruction-class
-			  :inputs temps
-			  :outputs '()
-			  :successors (list false true)))))))))
+	       (2 (if (null results)
+		      (make-instance instruction-class
+			:inputs temps
+			:outputs '()
+			:successors successors)
+		      (let ((next (make-instance instruction-class
+				    :inputs temps
+				    :outputs '()
+				    :successors successors)))
+			(setf next (p2:nil-fill (cdr results) next))
+			(let ((false (if false-required-p
+					 (make-boolean nil (car results) next)
+					 next))
+			      (true (make-boolean t (car results) next)))
+			  (make-instance instruction-class
+			    :inputs temps
+			    :outputs '()
+			    :successors (list false true)))))))))
       (compile-arguments arguments temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
