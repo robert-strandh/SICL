@@ -124,3 +124,8 @@
    #:== #:s< #:s<= #:u< #:u<=
    ))
 
+(defpackage #:sicl-optimize
+  (:use #:common-lisp)
+  (:export
+   ))
+
