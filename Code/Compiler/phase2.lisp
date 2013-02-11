@@ -614,7 +614,7 @@
 		   (gethash location *instruction-table*))))
 
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
-  (format stream "   ~a [label = \"close\"];~%"
+  (format stream "   ~a [label = \"enclose\"];~%"
 	  (gethash instruction *instruction-table*))
   (draw-instruction (code instruction) stream)
   (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
@@ -622,7 +622,7 @@
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction ((instruction get-arguments-instruction) stream)
-  (format stream "   ~a [label = \"get-arguments\"];~%"
+  (format stream "   ~a [label = \"get-args\"];~%"
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction ((instruction get-values-instruction) stream)
@@ -630,7 +630,7 @@
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction ((instruction put-arguments-instruction) stream)
-  (format stream "   ~a [label = \"put-values\"];~%"
+  (format stream "   ~a [label = \"put-args\"];~%"
 	  (gethash instruction *instruction-table*)))
 
 (defmethod draw-instruction ((instruction put-values-instruction) stream)
