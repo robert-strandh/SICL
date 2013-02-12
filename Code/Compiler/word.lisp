@@ -170,17 +170,20 @@
 			   (warn "MEMREF operation in a context of no results.")
 			   next)
 			  ((eq results t)
-			   (setf next 
-				 (make-instance 'p2:put-values-instruction
-				   :inputs temps
-				   :successors (list next)))
-			   (make-instance 'memref-instruction
-			     :inputs temps
-			     :successors (list next)))
+			   (let ((temp (p2:new-temporary)))
+			     (setf next 
+				   (make-instance 'p2:put-values-instruction
+				     :inputs (list temp)
+				     :successors (list next)))
+			     (make-instance 'memref-instruction
+			       :inputs temps
+			       :outputs (list temp)
+			       :successors (list next))))
 			  (t
 			   (setf next (p2:nil-fill (cdr results) next))
 			   (make-instance 'memref-instruction
 			     :inputs temps
+			     :outputs (car results)
 			     :successors (list next))))))
 	       (2 (if (eq results t)
 		      (error "Illegal context for memref")
