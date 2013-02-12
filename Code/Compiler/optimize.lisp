@@ -125,8 +125,11 @@
 (defclass program ()
   ((%initial-instruction
     :initarg :initial-instruction :accessor initial-instruction)
-   ;; This table maps each instruction of the program to 
-   ;; the code object to which the instruction belongs. 
+   ;; This table maps each instruction to a list of predecessor
+   ;; instructions. 
+   (%predecessors :initform nil :accessor predecessors)
+   ;; This table maps each instruction of the program to
+   ;; the code object to which the instruction belongs.
    (%instruction-code :initform nil :accessor instruction-code)
    ;; This table maps each location of the program to the code object
    ;; to which the location belongs.
@@ -177,6 +180,30 @@
 (defun instruction-owner (instruction program)
   (ensure-instruction-ownership program)
   (gethash instruction (instruction-code program)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Determine the predecessors of every instruction in a program
+
+(defun compute-predecessors (program)
+  (ensure-instruction-ownership program)
+  (with-accessors ((instruction-code instruction-code)
+		   (predecessors predecessors))
+      program
+    (setf predecessors (make-hash-table :test #'eq))
+    (maphash (lambda (instruction code)
+	       (declare (ignore code))
+	       (loop for successor in (p2:successors instruction)
+		     do (push instruction (gethash successor predecessors))))
+	      instruction-code)))
+
+(defun ensure-predecessors (program)
+  (when (null (predecessors program))
+    (compute-predecessors program)))
+
+(defun instruction-predecessors (instruction program)
+  (ensure-predecessors program)
+  (gethash instruction (predecessors program)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
