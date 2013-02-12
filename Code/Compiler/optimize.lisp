@@ -134,6 +134,12 @@
    ;; This table maps each location of the program to the code object
    ;; to which the location belongs.
    (%location-code :initform nil :accessor location-code)
+   ;; For each instruction, give a set of locations together with
+   ;; their use distance immediately before the instruction.
+   (%pre-locations :initform nil :accessor pre-locations)
+   ;; For each instruction, give a set of locations together with
+   ;; their use distance immediately after the instruction.
+   (%post-locations :initform nil :accessor post-locations)
    ;; All the code objects of this program.
    (%code-objects :initform '() :accessor code-objects)))
 
@@ -261,4 +267,85 @@
 (defun ensure-lexical-depths (program)
   (when (member nil (code-objects program) :key #'lexical-depth)
     (compute-lexical-depths program)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Determine pre-locations and post-locations for each instruction.
+;;;
+;;; In this context, a LOCATION SET is a list of CONS cells.  The CAR
+;;; of each CONS cell is a location, and the CDR is a non-negative
+;;; integer indicating the distance (in number of instructions) to the
+;;; next use of the location.  Each location can be present at most
+;;; once in the list.  
+
+(defun location-sets-equal-p (set1 set2)
+  (and (= (length set1) (length set2))
+       (null (set-difference set1 set2 :test #'equal))
+       (null (set-difference set2 set1 :test #'equal))))
+
+(defun combine-location-sets (set1 set2)
+  (let ((result '()))
+    (loop for element in (append set1 set2)
+	  do (let ((existing (find (car element) result :key #'car :test #'eq)))
+	       (if (null existing)
+		   (push element result)
+		   (setf (cdr existing)
+			 (min (cdr existing) (cdr element))))))
+    result))
+
+(defun pre-from-post (instruction program)
+  (with-accessors ((pre-locations pre-locations)
+		   (post-locations post-locations))
+      program
+    (let ((in-locations (mapcar #'sicl-env:location (p2:inputs instruction)))
+	  (out-locations (mapcar #'sicl-env:location (p2:outputs instruction)))
+	  (post (gethash instruction post-locations)))
+      (let ((result post))
+	;; Remove the locations that are created by this instruction.
+	(loop for out in out-locations
+	      do (setf result (remove out result :key #'car)))
+	;; Increment the distance of the remaining ones.
+	(loop for location in result
+	      do (incf (cdr location)))
+	;; Combine with inputs.
+	(setf (gethash instruction pre-locations)
+	      (combine-location-sets
+	       result
+	       (loop for in in in-locations
+		     collect (cons in 0))))))))
+
+(defun compute-pre-post-locations (program)
+  (ensure-instruction-ownership program)
+  (ensure-predecessors program)
+  (with-accessors ((instruction-code instruction-code)
+		   (predecessors predecessors)
+		   (pre-locations pre-locations)
+		   (post-locations post-locations))
+      program
+    (setf pre-locations (make-hash-table :test #'eq))
+    (setf post-locations (make-hash-table :test #'eq))
+    (let ((worklist '()))
+      ;; Start by putting every instruction on the worklist.
+      (maphash (lambda (instruction code)
+		 (declare (ignore code))
+		 (push instruction worklist))
+	       instruction-code)
+      (loop until (null worklist)
+	    for instruction = (pop worklist)
+	    do (pre-from-post instruction program)
+	       (loop with pre = (gethash instruction pre-locations)
+		     for pred in (gethash instruction predecessors)
+		     for post = (gethash pred post-locations)
+		     for combined = (combine-location-sets pre post)
+		     do (unless (location-sets-equal-p post combined)
+			  (setf (gethash pred post-locations)
+				combined)
+			  (unless (member pred worklist :test #'eq)
+			    (if (= (length (p2:successors pred)) 1)
+				(push pred worklist)
+				(setf worklist
+				      (append worklist (list pred)))))))))))
+			  
+				 
+			  
 
