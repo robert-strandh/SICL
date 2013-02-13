@@ -39,7 +39,10 @@
 	 (error "incorrect number of values expected"))))
 
 (defun make-temps (arguments)
-  (loop repeat (length arguments) collect (p2:new-temporary)))
+  (loop for argument in arguments
+	collect (if (typep argument 'sicl-env:lexical-location-info)
+		    argument
+		    (p2:new-temporary))))
 
 (defun compile-arguments (arguments temps successor)
   (loop with succ = successor

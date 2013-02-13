@@ -470,13 +470,15 @@
 	       ((null results)
 		(warn "variable compiled in a context with no values")
 		(car successors))
+	       ((eq ast (car results))
+		(nil-fill (cdr results) (car successors)))
 	       (t
 		(make-instance 'variable-assignment-instruction
 		  :inputs (list ast)
 		  :outputs (list (car results))
 		  :successors (list (nil-fill (cdr results)
 					      (car successors)))))))
-      (2 (if (null results)
+      (2 (if (or (null results) (eq ast (car results)))
 	     (make-instance 'test-instruction
 	       :inputs (list ast)
 	       :outputs '()
