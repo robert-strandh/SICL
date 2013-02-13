@@ -272,18 +272,18 @@
 ;;;
 ;;; Determine pre-locations and post-locations for each instruction.
 ;;;
-;;; In this context, a LOCATION SET is a list of CONS cells.  The CAR
+;;; In this context, a FUTURE SET is a list of CONS cells.  The CAR
 ;;; of each CONS cell is a location, and the CDR is a non-negative
 ;;; integer indicating the distance (in number of instructions) to the
 ;;; next use of the location.  Each location can be present at most
 ;;; once in the list.  
 
-(defun location-sets-equal-p (set1 set2)
+(defun future-sets-equal-p (set1 set2)
   (and (= (length set1) (length set2))
        (null (set-difference set1 set2 :test #'equal))
        (null (set-difference set2 set1 :test #'equal))))
 
-(defun combine-location-sets (set1 set2)
+(defun combine-future-sets (set1 set2)
   (let ((result '()))
     (loop for element in (append set1 set2)
 	  do (let ((existing (find (car element) result :key #'car :test #'eq)))
@@ -309,7 +309,7 @@
 	      do (incf (cdr location)))
 	;; Combine with inputs.
 	(setf (gethash instruction pre-locations)
-	      (combine-location-sets
+	      (combine-future-sets
 	       result
 	       (loop for in in in-locations
 		     collect (cons in 0))))))))
@@ -336,8 +336,8 @@
 	       (loop with pre = (gethash instruction pre-locations)
 		     for pred in (gethash instruction predecessors)
 		     for post = (gethash pred post-locations)
-		     for combined = (combine-location-sets pre post)
-		     do (unless (location-sets-equal-p post combined)
+		     for combined = (combine-future-sets pre post)
+		     do (unless (future-sets-equal-p post combined)
 			  (setf (gethash pred post-locations)
 				combined)
 			  (unless (member pred worklist :test #'eq)
@@ -346,6 +346,153 @@
 				(setf worklist
 				      (append worklist (list pred)))))))))))
 			  
-				 
-			  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;;
 
+(defclass assignment ()
+  ((%free-regs :initarg :free-regs :reader free-regs)
+   ;; A list of CONS cells (location . reg).
+   (%in-regs :initarg :in-regs :reader in-regs)
+   ;; A list of CONS cells (location . pos).
+   (%on-stack :initarg :on-stack :reader on-stack)))
+
+(defun make-assignment (free-regs in-regs on-stack)
+  (make-instance 'assignment
+    :free-regs free-regs
+    :in-regs in-regs
+    :on-stack on-stack))
+
+;;; From a particular assignment and a future set, return two values:
+;;; a new assignment which has at least one free register in it, and
+;;; either a save instrution or nil if no saving is necessary.
+(defun free-up-a-register (assignment future)
+  (with-accessors ((free-regs free-regs)
+		   (in-regs in-regs)
+		   (on-stack on-stack))
+      assignment
+    (if (null free-regs)
+	(let ((location-reg nil))
+	  (loop with max = 0
+		for loc in in-regs
+		for time = (cdr (find (car loc) future :test #'eq :key #'car))
+		do (when (> time max)
+		     (setf max time)
+		     (setf location-reg loc)))
+	  ;; Check whether the location found is also on the stack
+	  (if (member (car location-reg) on-stack :test #'eq :key #'car)
+	      ;; If it is, then no saving is necessary.
+	      (values 
+	       (make-assignment (list (cdr location-reg))
+				(remove location-reg in-regs :test #'eq)
+				on-stack)
+	       nil)
+	      ;; If not, we need to save it.
+	      (let ((pos (loop for pos from 0
+			       unless (member pos on-stack :key #'cdr)
+				 return pos)))
+		(values
+		 (make-assignment (list (cdr location-reg))
+				  (remove location-reg in-regs :test #'eq)
+				  (cons (cons (car location-reg) pos) on-stack))
+		 `(save ,(cdr location-reg) ,pos)))))
+	(values assignment nil))))
+		 
+;;; From a particular assignment, return two values: a new assignment
+;;; in which all registers are free and a list of save instructions or
+;;; nil if no saving is necessary.
+(defun free-all-registers (assignment)
+  (with-accessors ((free-regs free-regs)
+		   (in-regs in-regs)
+		   (on-stack on-stack))
+      assignment
+    (let ((instructions '())
+	  (new-stack on-stack))
+      (loop for loc in in-regs
+	    do (unless (member (car loc) new-stack :test #'eq :key #'car)
+		 (let ((pos (loop for pos from 0
+				  unless (member pos new-stack :key #'cdr)
+				    return pos)))
+		   (push `(save ,(cdr loc) . ,pos) instructions)
+		   (push `(,(car loc) . ,pos) new-stack))))
+      (values
+       (make-assignment (append (mapcar #'cdr in-regs) free-regs)
+			'()
+			new-stack)
+       instructions))))
+	  
+;;; From a particular assignment and a future set, return a new
+;;; assignment that is filtred so that only locations in the future
+;;; set are on the stack or in registers.
+(defun filter-assignment (assignment future)
+  (with-accessors ((free-regs free-regs)
+		   (in-regs in-regs)
+		   (on-stack on-stack))
+      assignment
+    (let ((new-free-regs free-regs)
+	  (new-in-regs '())
+	  (new-stack '()))
+      (loop for loc in in-regs
+	    do (if (member (car loc) future :test #'eq :key #'car)
+		   (push loc new-in-regs)
+		   (push (cdr loc) new-free-regs)))
+      (loop for loc in on-stack
+	    do (when (member (car loc) future :test #'eq :key #'car)
+		 (push loc new-stack)))
+      (make-assignment new-free-regs
+		       new-in-regs
+		       new-stack))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Basic blocks.
+
+(defclass basic-block ()
+  ((%initial :initarg :initial :accessor initial)
+   (%final :initarg :final :accessor final)))
+
+(defun compute-basic-blocks-for-code-object (code-object program)
+  (ensure-instruction-ownership program)
+  (ensure-predecessors program)
+  (with-accessors ((instructions instructions)
+		   (basic-blocks basic-blocks))
+      code-object
+    (let ((remaining instructions))
+      (flet ((one-block (instruction)
+	       (let ((initial instruction)
+		     (final instruction))
+		 (loop for preds = (instruction-predecessors initial program)
+		       while (= (length preds) 1)
+		       for pred = (car preds)
+		       while (eq (instruction-owner pred program) code-object)
+		       for succs = (p2:successors pred)
+		       while (= (length succs) 1)
+		       do (setf initial pred)
+			  (setf remaining (remove pred remaining :test #'eq)))
+		 (loop for succs = (p2:successors final)
+		       while (= (length succs) 1)
+		       for succ = (car succs)
+		       while (eq (instruction-owner succ program) code-object)
+		       for preds = (instruction-predecessors succ program)
+		       while (= (length preds) 1)
+		       do (setf final succ)
+			  (setf remaining (remove succ remaining :test #'eq)))
+		 (make-instance 'basic-block
+		   :initial initial
+		   :final final))))
+	(loop until (null remaining)
+	      do (push (one-block (pop remaining)) basic-blocks))))))
+
+(defun ensure-basic-block-for-code-object (code-object program)
+  (when (null (basic-blocks code-object))
+    (compute-basic-blocks-for-code-object code-object program)))
+
+(defun compute-basic-blocks (program)
+  (ensure-instruction-ownership program)
+  (loop for code-object in (code-objects program)
+	do (compute-basic-blocks-for-code-object code-object program)))
+  
+(defun ensure-basic-blocks (program)
+  (ensure-instruction-ownership program)
+  (loop for code-object in (code-objects program)
+	do (ensure-basic-block-for-code-object code-object program)))
