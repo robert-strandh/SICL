@@ -2,67 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction graph.
-
-(defclass instruction ()
-  ((%successors :initform '() :initarg :successors :accessor successors)
-   (%inputs :initform '() :initarg :inputs :reader inputs)
-   (%outputs :initform '() :initarg :outputs :reader outputs)))
-
-(defmethod initialize-instance :after ((obj instruction) &key &allow-other-keys)
-  (unless (and (listp (successors obj))
-	       (every (lambda (successor)
-			(typep successor 'instruction))
-		      (successors obj)))
-    (error "successors must be a list of instructions")))
-
-(defclass end-instruction (instruction)
-  ())
-
-(defclass nop-instruction (instruction)
-  ())
-
-(defclass constant-assignment-instruction (instruction)
-  ((%constant :initarg :constant :accessor constant)))
-
-(defclass variable-assignment-instruction (instruction)
-  ())
-
-(defclass test-instruction (instruction)
-  ())
-
-(defclass funcall-instruction (instruction)
-  ((%fun :initarg :fun :accessor fun)))
-
-(defclass get-arguments-instruction (instruction)
-  ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
-
-(defclass get-values-instruction (instruction)
-  ())
-
-(defclass put-arguments-instruction (instruction)
-  ())
-
-(defclass put-values-instruction (instruction)
-  ())
-
-(defmethod outputs ((instruction get-arguments-instruction))
-  (p1:required (lambda-list instruction)))
-
-(defclass enter-instruction (instruction)
-  ())
-
-(defclass leave-instruction (instruction)
-  ())
-
-(defclass return-instruction (instruction)
-  ())
-
-(defclass enclose-instruction (instruction)
-  ((%code :initarg :code :accessor code)))  
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compilation context.
 ;;;
 ;;; Each AST is compiled in a particular COMPILATION CONTEXT or
@@ -133,7 +72,7 @@
 
 (defclass context ()
   ((%results :initarg :results :reader results)
-   (%successors :initarg :successors :reader successors)
+   (%successors :initarg :successors :accessor successors)
    (%false-required-p :initarg :false-required-p :reader false-required-p)))
 
 (defun context (results successors &optional (false-required-p t))
@@ -145,7 +84,7 @@
     (error "illegal results: ~s" results))
   (unless (and (listp successors)
 	       (every (lambda (successor)
-			(typep successor 'instruction))
+			(typep successor 'sicl-mir:instruction))
 		      successors))
     (error "illegal successors: ~s" results))
   (if (and (= (length successors) 2)
@@ -180,19 +119,21 @@
   (let ((next successor))
     (loop for value in results
 	  do (setf next
-		   (make-instance 'constant-assignment-instruction
-				  :outputs (list value)
-				  :constant nil
-				  :successors (list next)))
+		   (sicl-mir:make-constant-assignment-instruction
+		    value next nil))
 	  finally (return next))))
 
 (defgeneric compile-ast (ast context))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile ASTs that represent Common Lisp operations. 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a CONSTANT-AST.  
 
-(defmethod compile-ast ((ast p1:constant-ast) context)
+(defmethod compile-ast ((ast sicl-ast:constant-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -204,29 +145,27 @@
 		(error "Constant found in a context where no value required."))
 	       ((eq results t)
 		(let ((temp (new-temporary)))
-		  (make-instance 'constant-assignment-instruction
-		    :outputs (list temp)
-		    :constant (p1:value ast)
-		    :successors (list (make-instance 'put-values-instruction
-				        :inputs (list temp)
-					:successors successors)))))
+		  (sicl-mir:make-constant-assignment-instruction
+		   temp
+		   (sicl-mir:make-put-values-instruction
+		    (list temp) (car successors))
+		   (sicl-ast:value ast))))
 	       (t
-		(make-instance 'constant-assignment-instruction
-	          :outputs (list (car results))
-		  :constant (p1:value ast)
-		  :successors (list (nil-fill (cdr results)
-					      (car successors)))))))
-      (2 (cond ((null (p1:value ast))
+		(sicl-mir:make-constant-assignment-instruction
+		 (car results)
+		 (nil-fill (cdr results) (car successors))
+		 (sicl-ast:value ast)))))
+      (2 (cond ((null (sicl-ast:value ast))
 		(car successors))
 	       ((null results)
 		(cadr successors))
 	       (t
-		(make-instance 'constant-assignment-instruction
-	          :outputs (list (car results))
-		  :constant (p1:value ast)
-		  :successors (cadr successors))))))))
+		(sicl-mir:make-constant-assignment-instruction
+		 (car results)
+		 (cadr successors)
+		 (sicl-ast:value ast))))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile an IF-AST.  
 ;;;
@@ -235,13 +174,13 @@
 ;;; branch.  The two branches are compiled in the same context as the
 ;;; IF-AST itself.
 
-(defmethod compile-ast ((ast p1:if-ast) context)
-  (let ((then-branch (compile-ast (p1:then ast) context))
-	(else-branch (compile-ast (p1:else ast) context)))
-    (compile-ast (p1:test ast)
+(defmethod compile-ast ((ast sicl-ast:if-ast) context)
+  (let ((then-branch (compile-ast (sicl-ast:then-ast ast) context))
+	(else-branch (compile-ast (sicl-ast:else-ast ast) context)))
+    (compile-ast (sicl-ast:test-ast ast)
 		 (context '() (list else-branch then-branch)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a PROGN-AST.
 ;;;
@@ -250,13 +189,13 @@
 ;;; required, and with the code for the following form as a single
 ;;; successor.
 
-(defmethod compile-ast ((ast p1:progn-ast) context)
-  (let ((next (compile-ast (car (last (p1:form-asts ast))) context)))
-    (loop for sub-ast in (cdr (reverse (p1:form-asts ast)))
+(defmethod compile-ast ((ast sicl-ast:progn-ast) context)
+  (let ((next (compile-ast (car (last (sicl-ast:form-asts ast))) context)))
+    (loop for sub-ast in (cdr (reverse (sicl-ast:form-asts ast)))
 	  do (setf next (compile-ast sub-ast (context '() (list next)))))
     next))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a BLOCK-AST.
 ;;;
@@ -268,11 +207,11 @@
 
 (defparameter *block-info* nil)
 
-(defmethod compile-ast ((ast p1:block-ast) context)
+(defmethod compile-ast ((ast sicl-ast:block-ast) context)
   (setf (gethash ast *block-info*) context)
-  (compile-ast (p1:body ast) context))
+  (compile-ast (sicl-ast:body-ast ast) context))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a RETURN-FROM-AST.
 ;;;
@@ -282,12 +221,12 @@
 ;;; in the same context as the corresponding BLOCK-AST was compiled
 ;;; in.
 
-(defmethod compile-ast ((ast p1:return-from-ast) context)
+(defmethod compile-ast ((ast sicl-ast:return-from-ast) context)
   (declare (ignore context))
-  (let ((block-context (gethash (p1:block-ast ast) *block-info*)))
-    (compile-ast (p1:form-ast ast) block-context)))
+  (let ((block-context (gethash (sicl-ast:block-ast ast) *block-info*)))
+    (compile-ast (sicl-ast:form-ast ast) block-context)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a TAGBODY-AST.
 ;;;
@@ -311,25 +250,25 @@
 
 (defparameter *go-info* nil)
 
-(defmethod compile-ast ((ast p1:tagbody-ast) context)
-  (loop for item in (p1:items ast)
-	do (when (typep item 'p1:tag-ast)
+(defmethod compile-ast ((ast sicl-ast:tagbody-ast) context)
+  (loop for item in (sicl-ast:items ast)
+	do (when (typep item 'sicl-ast:tag-ast)
 	     (setf (gethash item *go-info*)
-		   (make-instance 'nop-instruction))))
+		   (sicl-mir:make-nop-instruction nil))))
   (let ((next (if (null (results context))
 		  (car (successors context))
-		  (compile-ast (make-instance 'p1:constant-ast :value nil)
+		  (compile-ast (sicl-ast:make-constant-ast nil)
 			       context))))
-    (loop for item in (reverse (p1:items ast))
+    (loop for item in (reverse (sicl-ast:items ast))
 	  do (setf next
-		   (if (typep item 'p1:tag-ast)
+		   (if (typep item 'sicl-ast:tag-ast)
 		       (let ((instruction (gethash item *go-info*)))
 			 (setf (successors instruction) (list next))
 			 instruction)
 		       (compile-ast item (context '() (list next))))))
     next))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a GO-AST.
 ;;;
@@ -337,11 +276,11 @@
 ;;; instruction that was entered into the hash table *GO-INFO* when
 ;;; the TAGBODY-AST was compiled.
 
-(defmethod compile-ast ((ast p1:go-ast) context)
+(defmethod compile-ast ((ast sicl-ast:go-ast) context)
   (declare (ignore context))
-  (gethash (p1:tag-ast ast) *go-info*))
+  (gethash (sicl-ast:tag-ast ast) *go-info*))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a FUNCTION-CALL-AST.
 ;;;
@@ -359,32 +298,29 @@
 ;;; received and selects a successor based on whether that value is
 ;;; NIL or something else.
 
-(defmethod compile-ast ((ast p1:function-call-ast) context)
+(defmethod compile-ast ((ast sicl-ast:call-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
     (let ((next (if (eq results t)
 		    (car successors)
-		    (make-instance 'get-values-instruction
-				   :outputs results
-				   :successors successors))))
-      (let ((temps (loop for arg in (p1:arguments ast)
+		    (sicl-mir:make-get-values-instruction
+		     results (car successors)))))
+      (let ((temps (loop for arg in (sicl-ast:arguments ast)
 			 collect (new-temporary))))
 	(setf next
-	      (make-instance 'funcall-instruction
-			     :fun (p1:function-location ast)
-			     :successors (list next)))
+	      ;; FIXME: probably not right because the callee might
+	      ;; need to be compiled.
+	      (sicl-mir:make-funcall-instruction next (sicl-ast:callee ast)))
 	(setf next
-	      (make-instance 'put-arguments-instruction
-			     :inputs temps
-			     :successors (list next)))
+	      (sicl-mir:make-put-arguments-instruction temps next))
 	(loop for temp in (reverse temps)
-	      for arg in (reverse (p1:arguments ast))
+	      for arg in (reverse (sicl-ast:arguments ast))
 	      do (setf next
 		       (compile-ast arg (context (list temp) (list next))))))
       next)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a function consisting of an ordinary LAMBDA-LIST and a
 ;;; BODY-AST.  
@@ -395,13 +331,11 @@
 ;;; with a RETURN-INSTRUCTION which has no successors. 
 
 (defun compile-function (lambda-list body-ast)
-  (let ((next (make-instance 'return-instruction)))
+  (let ((next (sicl-mir:make-return-instruction)))
     (setf next (compile-ast body-ast (p2:context t (list next))))
-    (make-instance 'get-arguments-instruction
-		   :lambda-list lambda-list
-		   :successors (list next))))
+    (sicl-mir:make-get-arguments-instruction next lambda-list)))
   
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a FUNCTION-AST.
 ;;;
@@ -417,31 +351,30 @@
 ;;; is more than one successor, chose the second one for the true
 ;;; value. 
 
-(defmethod compile-ast ((ast p1:function-ast) context)
+(defmethod compile-ast ((ast sicl-ast:function-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let ((code (compile-function (p1:lambda-list ast) (p1:body-ast ast)))
+    (let ((code (compile-function (sicl-ast:lambda-list ast)
+				  (sicl-ast:body-ast ast)))
 	  (next (if (= (length successors) 2)
 		    (cadr successors)
 		    (car successors))))
       (cond ((eq results t)
 	     (let ((temp (new-temporary)))
-	       (make-instance 'enclose-instruction
-		 :outputs (list temp)
-		 :code code
-		 :successors (list (make-instance 'put-values-instruction
-				     :inputs (list temp)
-				     :successors (list next))))))
+	       (sicl-mir:make-enclose-instruction
+		temp
+		(sicl-mir:make-put-values-instruction (list temp) next)
+		code)))
 	    ((null results)
 	     (warn "closure compiled in a context with no values"))
 	    (t
-	     (make-instance 'enclose-instruction
-	       :outputs (list (car results))
-	       :code code
-	       :successors (list (nil-fill (cdr results) next))))))))
+	     (sicl-mir:make-enclose-instruction
+	      (car results)
+	      (nil-fill (cdr results) next)
+	      code))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a LEXICAL-LOCATION-INFO object. 
 ;;;
@@ -464,34 +397,26 @@
       context
     (ecase (length successors)
       (1 (cond ((eq results t)
-		(make-instance 'put-values-instruction
-		  :inputs (list ast)
-		  :successors successors))
+		(sicl-mir:make-put-values-instruction
+		 (list ast) (car successors)))
 	       ((null results)
 		(warn "variable compiled in a context with no values")
 		(car successors))
 	       ((eq ast (car results))
 		(nil-fill (cdr results) (car successors)))
 	       (t
-		(make-instance 'variable-assignment-instruction
-		  :inputs (list ast)
-		  :outputs (list (car results))
-		  :successors (list (nil-fill (cdr results)
-					      (car successors)))))))
+		(sicl-mir:make-variable-assignment-instruction
+		 ast
+		 (car results) 
+		 (nil-fill (cdr results) (car successors))))))
       (2 (if (or (null results) (eq ast (car results)))
-	     (make-instance 'test-instruction
-	       :inputs (list ast)
-	       :outputs '()
-	       :successors successors)
-	     (make-instance 'variable-assignment-instruction
-	       :inputs (list ast)
-	       :outputs (list (car results))
-	       :successors (list (make-instance 'test-instruction
-				   :inputs (list ast)
-				   :outputs '()
-				   :successors successors))))))))
+	     (sicl-mir:make-test-instruction ast successors)
+	     (sicl-mir:make-variable-assignment-instruction
+	      ast
+	      (car results)
+	      (sicl-mir:make-test-instruction ast successors)))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a GLOBAL-LOCATION-INFO object.
 ;;;
@@ -504,198 +429,303 @@
       context
     (ecase (length successors)
       (1 (cond ((eq results t)
-		(make-instance 'put-values-instruction
-		  :inputs (list ast)
-		  :successors successors))
+		(sicl-mir:make-put-values-instruction
+		 (list ast) (car successors)))
 	       ((null results)
 		(warn "variable compiled in a context with no values")
 		(car successors))
 	       (t
-		(make-instance 'variable-assignment-instruction
-		  :inputs (list ast)
-		  :outputs (list (car results))
-		  :successors (list (nil-fill (cdr results)
-					      (car successors)))))))
+		(sicl-mir:make-variable-assignment-instruction
+		 ast
+		 (car results)
+		 (nil-fill (cdr results) (car successors))))))
       (2 (if (null results)
-	     (make-instance 'test-instruction
-	       :inputs (list ast)
-	       :outputs '()
-	       :successors successors)
-	     (make-instance 'variable-assignment-instruction
-	       :inputs (list ast)
-	       :outputs (list (car results))
-	       :successors (list (make-instance 'test-instruction
-				   :inputs (list ast)
-				   :outputs '()
-				   :successors successors))))))))
+	     (sicl-mir:make-test-instruction ast successors)
+	     (sicl-mir:make-variable-assignment-instruction
+	      ast (car results) successors))))))
 
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
-	(end (make-instance 'end-instruction)))
+	(end (sicl-mir:make-end-instruction)))
     (compile-ast ast (context t (list end)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing instructions.
+;;; Compile ASTs that represent low-level operations.
 
-(defparameter *instruction-table* nil)
+(defun make-temp (argument)
+  (if (typep argument 'sicl-env:lexical-location-info)
+      argument
+      (new-temporary)))
 
-(defgeneric draw-instruction (instruction stream))
-  
-(defmethod draw-instruction :around (instruction stream)
-  (when (null (gethash instruction *instruction-table*))
-    (setf (gethash instruction *instruction-table*) (gensym))
-    (format stream "  ~a [shape = box];~%"
-	    (gethash instruction *instruction-table*))
-    (call-next-method)))
+(defun make-temps (arguments)
+  (loop for argument in arguments
+	collect (make-temp argument)))
 
-(defmethod draw-instruction :before ((instruction instruction) stream)
-  (loop for next in (successors instruction)
-	do (draw-instruction next stream))
-  (loop for next in (successors instruction)
-	do (format stream
-		   "  ~a -> ~a [style = bold];~%"
-		   (gethash instruction *instruction-table*)
-		   (gethash next *instruction-table*))))
-  
-(defmethod draw-instruction (instruction stream)
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (gethash instruction *instruction-table*)
-	  (class-name (class-of instruction))))
+(defun compile-arguments (arguments temps successor)
+  (loop with succ = successor
+	for arg in (reverse arguments)
+	for temp in (reverse temps)
+	do (setf succ (compile-ast arg (context (list temp) (list succ))))
+	finally (return succ)))
 
-(defgeneric draw-location (location stream &optional name))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MEMALLOC-AST.
+;;;
+;;; Allow only a context in which the RESULTS has exactly one
+;;; element and in which there is a single successor.
+;;;
+;;; Allowing a results of T would mean that the result of this
+;;; AST could be returned from a function, but since the result of
+;;; this AST is not a tagged object, but a raw pointer, we cannot
+;;; allow it to escape from the lexical locations of the function. 
 
-(defmethod draw-location :around (location stream &optional name)
-  (declare (ignore name))
-  (when (null (gethash location *instruction-table*))
-    (setf (gethash location *instruction-table*) (gensym))
-    (format stream "  ~a [shape = ellipse];~%"
-	    (gethash location *instruction-table*))
-    (call-next-method)))
+(defmethod compile-ast ((ast sicl-ast:memalloc-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (and (listp results)
+		 (= (length results) 1)
+		 (= (length successors) 1))
+      (error "Invalid results for memalloc."))
+    (let* ((temp (make-temp (car (sicl-ast:arguments ast))))
+	   (instruction (sicl-mir:make-memalloc-instruction
+			 temp (car results) (car successors))))
+      (compile-arguments (sicl-ast:arguments ast) (list temp) instruction))))
 
-(defmethod draw-location (location stream &optional (name "?"))
-  (format stream
-	  "   ~a [label = \"~a\"];~%"
-	  (gethash location *instruction-table*)
-	  name))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MEMREF-AST.
+;;;
 
-(defmethod draw-location
-    ((location sicl-env:global-location) stream &optional (name "?"))
-  (format stream "   ~a [label = \"~a\", style = filled, fillcolor = green];~%"
-	  (gethash location *instruction-table*)
-	  name))
+(defmethod compile-ast ((ast sicl-ast:memref-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (let* ((temp1 (make-temp (car (sicl-ast:arguments ast))))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "MEMREF operation in a context of no results.")
+			   next)
+			  ((eq results t)
+			   (let ((temp2 (new-temporary)))
+			     (setf next 
+				   (sicl-mir:make-put-values-instruction
+				    (list temp2) next))
+			     (sicl-mir:make-memref-instruction
+			      temp1 temp2 next)))
+			  (t
+			   (setf next (nil-fill (cdr results) next))
+			   (sicl-mir:make-memref-instruction
+			    temp1 (car results) next)))))
+	       (2 (if (eq results t)
+		      (error "Illegal context for memref")
+		      (let* ((location (if (null results)
+					   (new-temporary)
+					   (car results)))
+			     (next (sicl-mir:make-test-instruction
+				    location successors)))
+			(setf next
+			      (sicl-mir:make-memref-instruction
+			       temp1 location next))
+			(nil-fill (cdr results) next)))))))
+      (compile-arguments (sicl-ast:arguments ast) temp1 instruction))))
 
-(defmethod draw-location
-    ((location sicl-env:lexical-location) stream &optional (name "?"))
-  (format stream "   ~a [label = \"~a\", style = filled, fillcolor = yellow];~%"
-	  (gethash location *instruction-table*)
-	  name))
+(defmethod compile-ast ((ast sicl-ast:memset-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (and (= (length successors) 1)
+		 (zerop (length results)))
+      (error "Illegal context for memset."))
+    (let* ((temps (make-temps (sicl-ast:arguments ast)))
+	   (instruction
+	     (sicl-mir:make-memset-instruction
+	      temps (car successors))))
+      (compile-arguments (sicl-ast:arguments ast) temps instruction))))
 
-(defun draw-location-info (info stream)
-  (when (null (gethash info *instruction-table*))
-    (setf (gethash info *instruction-table*) (gensym))
-    (draw-location (sicl-env:location info) stream (sicl-env:name info))
-    (format stream "  ~a [shape = box, label = \"~a\"]~%" 
-	    (gethash info *instruction-table*)
-	    (sicl-env:name info))
-    (format stream "  ~a -> ~a [color = green]~%"
-	    (gethash info *instruction-table*)
-	    (gethash (sicl-env:location info) *instruction-table*))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compiling a simple arithmetic operation.
 
-(defmethod draw-instruction :after (instruction stream)
-  (loop for location in (inputs instruction)
-	do (draw-location-info location stream)
-	   (format stream "  ~a -> ~a [color = red, style = dashed];~%"
-		   (gethash location *instruction-table*)
-		   (gethash instruction *instruction-table*)))
-  (loop for location in (outputs instruction)
-	do (draw-location-info location stream)
-	   (format stream "  ~a -> ~a [color = blue, style = dashed];~%"
-		   (gethash instruction *instruction-table*)
-		   (gethash location *instruction-table*))))
+(defun compile-simple-arithmetic (arguments constructor context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (let* ((temps (make-temps arguments))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "Arithmetic operation in a context of no results.")
+			   next)
+			  ((eq results t)
+			   (let ((temp (new-temporary)))
+			     (setf next 
+				   (sicl-mir:make-put-values-instruction
+				    (list temp) next))
+			     (funcall constructor temps temp (list next))))
+			  (t
+			   (setf next (nil-fill (cdr results) next))
+			   (funcall constructor
+				    temps (car results) (list next))))))
+	       (2 (if (or (eq results t) (> (length results) 1))
+		      (error "Illegal context for simple arithmetic.")
+		      (funcall constructor temps successors))))))
+      (compile-arguments arguments temps instruction))))
 
-(defmethod draw-instruction ((instruction enclose-instruction) stream)
-  (format stream "   ~a [label = \"enclose\"];~%"
-	  (gethash instruction *instruction-table*))
-  (draw-instruction (code instruction) stream)
-  (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
-	  (gethash (code instruction) *instruction-table*)
-	  (gethash instruction *instruction-table*)))
+(defmethod compile-ast ((ast sicl-ast:u+-ast) context)
+  (compile-simple-arithmetic (sicl-ast:arguments ast)
+			     #'sicl-mir:make-u+-instruction
+			     context))
 
-(defmethod draw-instruction ((instruction get-arguments-instruction) stream)
-  (format stream "   ~a [label = \"get-args\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defmethod compile-ast ((ast sicl-ast:u--ast) context)
+  (compile-simple-arithmetic (sicl-ast:arguments ast)
+			     #'sicl-mir:make-u--instruction
+			     context))
 
-(defmethod draw-instruction ((instruction get-values-instruction) stream)
-  (format stream "   ~a [label = \"get-values\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defmethod compile-ast ((ast sicl-ast:s+-ast) context)
+  (compile-simple-arithmetic (sicl-ast:arguments ast)
+			     #'sicl-mir:make-u--instruction
+			     context))
 
-(defmethod draw-instruction ((instruction put-arguments-instruction) stream)
-  (format stream "   ~a [label = \"put-args\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defmethod compile-ast ((ast sicl-ast:s--ast) context)
+  (compile-simple-arithmetic (sicl-ast:arguments ast)
+			     #'sicl-mir:make-u--instruction
+			     context))
 
-(defmethod draw-instruction ((instruction put-values-instruction) stream)
-  (format stream "   ~a [label = \"put-values\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defmethod compile-ast ((ast sicl-ast:neg-ast) context)
+  (compile-simple-arithmetic (sicl-ast:arguments ast)
+			     #'sicl-mir:make-u--instruction
+			     context))
 
-(defmethod draw-instruction
-    ((instruction constant-assignment-instruction) stream)
-  (format stream "   ~a [label = \"<=\"];~%"
-	  (gethash instruction *instruction-table*))
-  (let ((name (gensym)))
-    (format stream "   ~a [label = \"~a\", style = filled, fillcolor = pink];~%"
-	    name
-	    (constant instruction))
-    (format stream "   ~a [fillcolor = pink];~%"
-	    name)
-    (format stream "   ~a -> ~a [color = pink, style = dashed];~%"
-	    name
-	    (gethash instruction *instruction-table*))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a logic operation.
+;;;
+;;; Logic operations are characterized by the fact that they compute a
+;;; single value and that this value can not generate an overflow or a
+;;; carry.  Therefore, the corresponding instruction must have a
+;;; single successor.
+;;;
+;;; We can not exclude that the result of a logic operation is a
+;;; tagged Lisp object, so we must be prepared for all possible
+;;; result contexts. 
 
-(defmethod draw-instruction
-    ((instruction variable-assignment-instruction) stream)
-  (format stream "   ~a [label = \"<-\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defun compile-logic (arguments constructor context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (= (length successors) 1)
+      (error "Logic operation must have a single successor."))
+    (let* ((next (car successors))
+	   (temps (make-temps arguments))
+	   (instruction
+	     (cond ((null results)
+		    (warn "Logic operation in a context of no results.")
+		    next)
+		   ((eq results t)
+		    (let ((temp (new-temporary)))
+		      (setf next 
+			    (sicl-mir:make-put-values-instruction
+			     (list temp) next))
+		      (funcall constructor temps temp next)))
+		   (t
+		    (setf next (nil-fill (cdr results) next))
+		    (funcall constructor temps (car results) next)))))
+      (compile-arguments arguments temps instruction))))
 
-(defmethod draw-instruction ((instruction enter-instruction) stream)
-  (format stream "   ~a [label = \"enter\"];~%"
-	  (gethash instruction *instruction-table*)))
+      
+(defmethod compile-ast ((ast sicl-ast:&-ast) context)
+  (compile-logic (sicl-ast:arguments ast)
+		 #'sicl-mir:make-&-instruction
+		 context))
 
-(defmethod draw-instruction ((instruction leave-instruction) stream)
-  (format stream "   ~a [label = \"leave\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defmethod compile-ast ((ast sicl-ast:ior-ast) context)
+  (compile-logic (sicl-ast:arguments ast)
+		 #'sicl-mir:make-ior-instruction
+		 context))
 
-(defmethod draw-instruction ((instruction return-instruction) stream)
-  (format stream "   ~a [label = \"ret\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defmethod compile-ast ((ast sicl-ast:xor-ast) context)
+  (compile-logic (sicl-ast:arguments ast)
+		 #'sicl-mir:make-xor-instruction
+		 context))
 
-(defmethod draw-instruction ((instruction end-instruction) stream)
-  (format stream "   ~a [label = \"end\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defmethod compile-ast ((ast sicl-ast:~-ast) context)
+  (compile-logic (sicl-ast:arguments ast)
+		 #'sicl-mir:make-~-instruction
+		 context))
 
-(defmethod draw-instruction ((instruction nop-instruction) stream)
-  (format stream "   ~a [label = \"nop\"];~%"
-	  (gethash instruction *instruction-table*)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a test.
 
-(defmethod draw-instruction ((instruction funcall-instruction) stream)
-  (draw-location-info (fun instruction) stream)
-  (format stream "   ~a [label = \"funcall\"];~%"
-	  (gethash instruction *instruction-table*))
-  (format stream "   ~a -> ~a [color = red, style = dashed];~%"
-	  (gethash (fun instruction) *instruction-table*)
-	  (gethash instruction *instruction-table*)))
+(defun make-boolean (boolean result successor)
+  (sicl-mir:make-constant-assignment-instruction
+   result successor boolean))
 
-(defmethod draw-instruction ((instruction test-instruction) stream)
-  (format stream "   ~a [label = \"test\"];~%"
-	  (gethash instruction *instruction-table*)))
+(defun compile-test (arguments constructor context)
+  (with-accessors ((results results)
+		   (successors successors)
+		   (false-required-p false-required-p ))
+      context
+    (let* ((temps (make-temps arguments))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "Compilation of a test that is not used.")
+			   next)
+			  ((eq results t)
+			   (let ((temp (new-temporary)))
+			     (setf next 
+				   (sicl-mir:make-put-values-instruction
+				    (list temp) next))
+			     (let ((false (make-boolean nil temp next))
+				   (true (make-boolean t temp next)))
+			       (funcall constructor temps (list false true)))))
+			  (t
+			   (setf next (nil-fill (cdr results) next))
+			   (let ((false (make-boolean nil (car results) next))
+				 (true (make-boolean t (car results) next)))
+			     (funcall constructor temps (list false true)))))))
+	       (2 (if (null results)
+		      (funcall constructor temps successors)
+		      (let ((next (funcall constructor temps successors)))
+			(setf next (nil-fill (cdr results) next))
+			(let ((false (if false-required-p
+					 (make-boolean nil (car results) next)
+					 next))
+			      (true (make-boolean t (car results) next)))
+			  (funcall constructor temps (list false true)))))))))
+      (compile-arguments arguments temps instruction))))
 
-(defun draw-flowchart (start filename)
-  (with-open-file (stream filename
-			  :direction :output
-			  :if-exists :supersede)
-    (let ((*instruction-table* (make-hash-table :test #'eq))
-	  (p1::*table* (make-hash-table :test #'eq)))
-	(format stream "digraph G {~%")
-	(draw-instruction start stream)
-	(format stream "}~%"))))
+(defmethod compile-ast ((ast sicl-ast:==-ast) context)
+  (compile-test (sicl-ast:arguments ast)
+		#'sicl-mir:make-==-instruction
+		context))
+
+(defmethod compile-ast ((ast sicl-ast:s<-ast) context)
+  (compile-test (sicl-ast:arguments ast)
+		#'sicl-mir:make-s<-instruction
+		context))
+
+(defmethod compile-ast ((ast sicl-ast:s<=-ast) context)
+  (compile-test (sicl-ast:arguments ast)
+		#'sicl-mir:make-s<=-instruction
+		context))
+
+(defmethod compile-ast ((ast sicl-ast:u<-ast) context)
+  (compile-test (sicl-ast:arguments ast)
+		#'sicl-mir:make-u<-instruction
+		context))
+
+(defmethod compile-ast ((ast sicl-ast:u<=-ast) context)
+  (compile-test (sicl-ast:arguments ast)
+		#'sicl-mir:make-u<=-instruction
+		context))
+

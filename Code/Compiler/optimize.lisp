@@ -137,59 +137,59 @@
    ;; immediatly after this instruction.
    (%post-locations :initform nil :accessor post-locations)))
 
-(defmethod predecessors ((instruction p2:instruction))
+(defmethod predecessors ((instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (predecessors (gethash instruction (instruction-info *program*))))
 
-(defmethod (setf predecessors) (new (instruction p2:instruction))
+(defmethod (setf predecessors) (new (instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (setf (predecessors (gethash instruction (instruction-info *program*)))
 	new))
 
-(defmethod procedure ((instruction p2:instruction))
+(defmethod procedure ((instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (procedure (gethash instruction (instruction-info *program*))))
 
-(defmethod (setf procedure) (new (instruction p2:instruction))
+(defmethod (setf procedure) (new (instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (setf (procedure (gethash instruction (instruction-info *program*)))
 	new))
 
-(defmethod basic-block ((instruction p2:instruction))
+(defmethod basic-block ((instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (basic-block (gethash instruction (instruction-info *program*))))
 
-(defmethod (setf basic-block) (new (instruction p2:instruction))
+(defmethod (setf basic-block) (new (instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (setf (basic-block (gethash instruction (instruction-info *program*)))
 	new))
 
-(defmethod pre-locations ((instruction p2:instruction))
+(defmethod pre-locations ((instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (pre-locations (gethash instruction (instruction-info *program*))))
 
-(defmethod (setf pre-locations) (new (instruction p2:instruction))
+(defmethod (setf pre-locations) (new (instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (setf (pre-locations (gethash instruction (instruction-info *program*)))
 	new))
 
-(defmethod post-locations ((instruction p2:instruction))
+(defmethod post-locations ((instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (post-locations (gethash instruction (instruction-info *program*))))
 
-(defmethod (setf post-locations) (new (instruction p2:instruction))
+(defmethod (setf post-locations) (new (instruction sicl-mir:instruction))
   (assert (not (null *program*)))
   (setf (post-locations (gethash instruction (instruction-info *program*)))
 	new))
 
 (defun successors (instruction)
-  (p2:successors instruction))
+  (sicl-mir:successors instruction))
 
 (defun inputs (instruction)
-  (p2:inputs instruction))
+  (sicl-mir:inputs instruction))
 
 (defun outputs (instruction)
-  (p2:outputs instruction))
+  (sicl-mir:outputs instruction))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -290,9 +290,9 @@
 			(setf (gethash instruction instruction-info)
 			      (make-instance 'instruction-info))
 			(setf (procedure instruction) procedure)
-			(when (typep instruction 'p2:enclose-instruction)
+			(when (typep instruction 'sicl-mir:enclose-instruction)
 			  (let ((new (make-procedure
-				      (p2:code instruction)
+				      (sicl-mir:code instruction)
 				      (1+ (nesting-depth procedure)))))
 			    (push new procedures)
 			    (setf worklist (append worklist (list new)))))
@@ -402,8 +402,8 @@
     result))
 
 (defun pre-from-post (instruction)
-  (let ((in-locations (mapcar #'sicl-env:location (p2:inputs instruction)))
-	(out-locations (mapcar #'sicl-env:location (p2:outputs instruction))))
+  (let ((in-locations (mapcar #'sicl-env:location (sicl-mir:inputs instruction)))
+	(out-locations (mapcar #'sicl-env:location (sicl-mir:outputs instruction))))
     (let ((result (post-locations instruction)))
       ;; Remove the locations that are created by this instruction.
       (loop for out in out-locations
@@ -538,6 +538,19 @@
 		       new-in-regs
 		       new-stack))))
 
+;;; From a paricular assignment and a location, return two values: a
+;;; new assignment in which the location is in a register and a list
+;;; of load and store instructions required to obtain the new
+;;; assignment.
+;; (defun ensure-location-in-register (assignment location)
+;;   (with-accessors ((free-regs free-regs)
+;; 		   (in-regs in-regs)
+;; 		   (on-stack on-stack))
+;;       assignment
+;;     (cond ((member location in-regs :test #:eq :key #'car)
+;; 	   (values assignment nil))
+;; 	  ((
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Basic blocks.
@@ -590,3 +603,15 @@
   (ensure-instruction-ownership program)
   (loop for procedure in (procedures program)
 	do (ensure-basic-block-for-procedure procedure program)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Main entry point.
+
+(defun post-process (initial-instruction)
+  (let* ((program (make-instance 'program
+		    :initial-instruction initial-instruction))
+	 (*program* program))
+    (compute-instruction-ownership program)
+    (compute-basic-blocks program)
+    program))

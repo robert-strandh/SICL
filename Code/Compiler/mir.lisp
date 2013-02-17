@@ -1,487 +1,631 @@
-(defclass mir-instruction () ())
+(in-package #:sicl-mir)
 
-(defmethod print-object :around ((instruction mir-instruction) stream)
-  (format stream "[")
-  (call-next-method)
-  (format stream "]"))
+(defclass instruction ()
+  ((%successors :initform '() :initarg :successors :accessor successors)
+   (%inputs :initform '() :initarg :inputs :reader inputs)
+   (%outputs :initform '() :initarg :outputs :reader outputs)))
 
-(defclass mir-has-left-mixin ()
-  ((%left :initarg :left :reader left)))
+(defmethod initialize-instance :after ((obj instruction) &key &allow-other-keys)
+  (unless (and (listp (successors obj))
+	       (every (lambda (successor)
+			(typep successor 'instruction))
+		      (successors obj)))
+    (error "successors must be a list of instructions")))
 
-(defclass mir-operation-mixin ()
-  ((%operation :initarg :operation :reader operation)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Drawing instructions.
 
-(defclass mir-binary-expression-mixin ()
-  ((%operand1 :initarg :operand1 :reader operand1)
-   (%operand2 :initarg :operand1 :reader operand2)))
+(defparameter *instruction-table* nil)
 
-(defclass mir-unary-expression-mixin ()
-  ((%operand :initarg :operand :reader operand)))
+(defgeneric draw-instruction (instruction stream))
+  
+(defmethod draw-instruction :around (instruction stream)
+  (when (null (gethash instruction *instruction-table*))
+    (setf (gethash instruction *instruction-table*) (gensym))
+    (format stream "  ~a [shape = box];~%"
+	    (gethash instruction *instruction-table*))
+    (call-next-method)))
 
-(defclass mir-list-expression-mixin ()
+(defmethod draw-instruction :before ((instruction instruction) stream)
+  (loop for next in (successors instruction)
+	do (draw-instruction next stream))
+  (loop for next in (successors instruction)
+	do (format stream
+		   "  ~a -> ~a [style = bold];~%"
+		   (gethash instruction *instruction-table*)
+		   (gethash next *instruction-table*))))
+  
+(defmethod draw-instruction (instruction stream)
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (gethash instruction *instruction-table*)
+	  (class-name (class-of instruction))))
+
+(defgeneric draw-location (location stream &optional name))
+
+(defmethod draw-location :around (location stream &optional name)
+  (declare (ignore name))
+  (when (null (gethash location *instruction-table*))
+    (setf (gethash location *instruction-table*) (gensym))
+    (format stream "  ~a [shape = ellipse];~%"
+	    (gethash location *instruction-table*))
+    (call-next-method)))
+
+(defmethod draw-location (location stream &optional (name "?"))
+  (format stream
+	  "   ~a [label = \"~a\"];~%"
+	  (gethash location *instruction-table*)
+	  name))
+
+(defmethod draw-location
+    ((location sicl-env:global-location) stream &optional (name "?"))
+  (format stream "   ~a [label = \"~a\", style = filled, fillcolor = green];~%"
+	  (gethash location *instruction-table*)
+	  name))
+
+(defmethod draw-location
+    ((location sicl-env:lexical-location) stream &optional (name "?"))
+  (format stream "   ~a [label = \"~a\", style = filled, fillcolor = yellow];~%"
+	  (gethash location *instruction-table*)
+	  name))
+
+(defun draw-location-info (info stream)
+  (when (null (gethash info *instruction-table*))
+    (setf (gethash info *instruction-table*) (gensym))
+    (draw-location (sicl-env:location info) stream (sicl-env:name info))
+    (format stream "  ~a [shape = box, label = \"~a\"]~%" 
+	    (gethash info *instruction-table*)
+	    (sicl-env:name info))
+    (format stream "  ~a -> ~a [color = green]~%"
+	    (gethash info *instruction-table*)
+	    (gethash (sicl-env:location info) *instruction-table*))))
+
+(defmethod draw-instruction :after (instruction stream)
+  (loop for location in (inputs instruction)
+	do (draw-location-info location stream)
+	   (format stream "  ~a -> ~a [color = red, style = dashed];~%"
+		   (gethash location *instruction-table*)
+		   (gethash instruction *instruction-table*)))
+  (loop for location in (outputs instruction)
+	do (draw-location-info location stream)
+	   (format stream "  ~a -> ~a [color = blue, style = dashed];~%"
+		   (gethash instruction *instruction-table*)
+		   (gethash location *instruction-table*))))
+
+(defun draw-flowchart (start filename)
+  (with-open-file (stream filename
+			  :direction :output
+			  :if-exists :supersede)
+    (let ((*instruction-table* (make-hash-table :test #'eq)))
+	(format stream "digraph G {~%")
+	(draw-instruction start stream)
+	(format stream "}~%"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instructions for Common Lisp operators.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction END-INSTRUCTION.
+
+(defclass end-instruction (instruction)
   ())
 
-(defclass mir-no-expression-mixin ()
+(defun make-end-instruction ()
+  (make-instance 'end-instruction))
+
+(defmethod draw-instruction ((instruction end-instruction) stream)
+  (format stream "   ~a [label = \"end\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction NOP-INSTRUCTION.
+
+(defclass nop-instruction (instruction)
   ())
 
-(defclass mir-transfer-mixin ()
-  ((%label :initarg :label :accessor label)))
+(defun make-nop-instruction (successors)
+  (make-instance 'nop-instruction
+    :successors successors))
 
-(defclass mir-trap-mixin ()
-  ((%trap-number :initarg :trap-number :reader trap-number)))
+(defmethod draw-instruction ((instruction nop-instruction) stream)
+  (format stream "   ~a [label = \"nop\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defclass mir-label (mir-instruction mir-no-expression-mixin)
-  ((%name :initarg :name :reader name)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction CONSTANT-ASSIGNMENT-INSTRUCTION.
 
-(defmethod print-object ((instruction mir-label) stream)
-  (format stream "~a:" (name instruction)))
+(defclass constant-assignment-instruction (instruction)
+  ((%constant :initarg :constant :accessor constant)))
 
-(defclass mir-receive (mir-instruction mir-has-left-mixin)
-  ((%parameter-type :initarg :parameter-type :reader parameter-type)))
+(defun make-constant-assignment-instruction (output successor constant)
+  (make-instance 'constant-assignment-instruction
+    :outputs (list output)
+    :successors (list successor)
+    :constant constant))
 
-(defmethod print-object ((instruction mir-receive) stream)
-  (format stream "receive ~a (~a)" 
-          (left instruction)
-          (name (parameter-type instruction))))
+(defmethod draw-instruction
+    ((instruction constant-assignment-instruction) stream)
+  (format stream "   ~a [label = \"<=\"];~%"
+	  (gethash instruction *instruction-table*))
+  (let ((name (gensym)))
+    (format stream "   ~a [label = \"~a\", style = filled, fillcolor = pink];~%"
+	    name
+	    (constant instruction))
+    (format stream "   ~a [fillcolor = pink];~%"
+	    name)
+    (format stream "   ~a -> ~a [color = pink, style = dashed];~%"
+	    name
+	    (gethash instruction *instruction-table*))))
 
-(defclass mir-binary-assign (mir-instruction
-                             mir-has-left-mixin
-                             mir-binary-expression-mixin
-                             mir-operation-mixin)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction VARIABLE-ASSIGNMENT-INSTRUCTION.
+
+(defclass variable-assignment-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-binary-assign) stream)
-  (format stream "~a <- ~a ~a ~a"
-          (left instruction)
-          (operand1 instruction)
-          (operation instruction)
-          (operand2 instruction)))
+(defun make-variable-assignment-instruction (input output successor)
+  (make-instance 'variable-assignment-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
 
-(defclass mir-unary-assign (mir-instruction
-                            mir-has-left-mixin
-                            mir-unary-expression-mixin
-                            mir-operation-mixin)
+(defmethod draw-instruction
+    ((instruction variable-assignment-instruction) stream)
+  (format stream "   ~a [label = \"<-\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction TEST-INSTRUCTION.
+
+(defclass test-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-unary-assign) stream)
-  (format stream "~a <- ~a ~a"
-          (left instruction)
-          (operation instruction)
-          (operand instruction)))
+(defun make-test-instruction (input successors)
+  (make-instance 'test-instruction
+    :inputs (list input)
+    :successors successors))
 
-(defclass mir-value-assign (mir-instruction
-                            mir-has-left-mixin
-                            mir-unary-expression-mixin)
+(defmethod draw-instruction ((instruction test-instruction) stream)
+  (format stream "   ~a [label = \"test\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction FUNCALL-INSTRUCTION.
+
+(defclass funcall-instruction (instruction)
+  ((%fun :initarg :fun :accessor fun)))
+
+(defun make-funcall-instruction (successor fun)
+  (make-instance 'funcall-instruction
+    :successors (list successor)
+    :fun fun))
+
+(defmethod draw-instruction ((instruction funcall-instruction) stream)
+  (draw-location-info (fun instruction) stream)
+  (format stream "   ~a [label = \"funcall\"];~%"
+	  (gethash instruction *instruction-table*))
+  (format stream "   ~a -> ~a [color = red, style = dashed];~%"
+	  (gethash (fun instruction) *instruction-table*)
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction GET-ARGUMENTS-INSTRUCTION.
+
+(defclass get-arguments-instruction (instruction)
+  ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
+
+(defun make-get-arguments-instruction (successor lambda-list)
+  (make-instance 'get-arguments-instruction
+    :successors (list successor)
+    :lambda-list lambda-list))
+
+(defmethod outputs ((instruction get-arguments-instruction))
+  (p1:required (lambda-list instruction)))
+
+(defmethod draw-instruction ((instruction get-arguments-instruction) stream)
+  (format stream "   ~a [label = \"get-args\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction GET-VALUES-INSTRUCTION.
+
+(defclass get-values-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-value-assign) stream)
-  (format stream "~a <- ~a"
-          (left instruction)
-          (operand instruction)))
+(defun make-get-values-instruction (outputs successor)
+  (make-instance 'get-values-instruction
+    :outputs outputs
+    :successors (list successor)))
 
-(defclass mir-conditional-assign (mir-instruction
-                                  mir-has-left-mixin
-                                  mir-unary-expression-mixin)
-  ((%condition-var :initarg :condition-var :reader condition-var)))
+(defmethod draw-instruction ((instruction get-values-instruction) stream)
+  (format stream "   ~a [label = \"get-values\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defmethod print-object ((instruction mir-conditional-assign) stream)
-  (format stream "~a <- (~a)? ~a"
-          (left instruction)
-          (condition-var instruction)
-          (operand instruction)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction PUT-ARGUMENTS-INSTRUCTION.
 
-(defclass mir-cast-assign (mir-instruction
-                           mir-has-left-mixin
-                           mir-unary-expression-mixin)
-  ((%type-name :initarg :type-name :reader type-name)))
-
-(defmethod print-object ((instruction mir-cast-assign) stream)
-  (format stream "~a <- (~a) ~a"
-          (left instruction)
-          (type-name instruction)
-          (operand instruction)))
-
-(defclass mir-indirect-assign (mir-instruction
-                               mir-has-left-mixin
-                               mir-unary-expression-mixin)
+(defclass put-arguments-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-indirect-assign) stream)
-  (format stream "*~a <- ~a"
-          (left instruction)
-          (operand instruction)))
+(defun make-put-arguments-instruction (inputs successor)
+  (make-instance 'put-arguments-instruction
+    :inputs inputs
+    :successors (list successor)))
 
-(defclass mir-element-assign (mir-instruction
-                              mir-has-left-mixin
-                              mir-unary-expression-mixin)
-  ((%element-name :initarg :element-name :reader element-name)))
+(defmethod draw-instruction ((instruction put-arguments-instruction) stream)
+  (format stream "   ~a [label = \"put-args\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defmethod print-object ((instruction mir-element-assign) stream)
-  (format stream "~a.~a <- ~a"
-          (left instruction)
-          (element-name instruction)
-          (operand instruction)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction PUT-VALUES-INSTRUCTION.
 
-(defclass mir-indirect-element-assign (mir-instruction
-                                       mir-has-left-mixin
-                                       mir-unary-expression-mixin)
-  ((%element-name :initarg :element-name :reader element-name)))
-
-(defmethod print-object ((instruction mir-indirect-element-assign) stream)
-  (format stream "*~a.~a <- ~a"
-          (left instruction)
-          (element-name instruction)
-          (operand instruction)))
-
-(defclass mir-goto (mir-instruction
-                    mir-no-expression-mixin
-                    mir-transfer-mixin)
+(defclass put-values-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-goto) stream)
-  (format stream "Goto ~a"
-          (label instruction)))
+(defun make-put-values-instruction (inputs successor)
+  (make-instance 'put-values-instruction
+    :inputs inputs
+    :successors (list successor)))
 
-(defclass mir-binary-if (mir-instruction
-                         mir-binary-expression-mixin
-                         mir-operation-mixin
-                         mir-transfer-mixin)
+(defmethod draw-instruction ((instruction put-values-instruction) stream)
+  (format stream "   ~a [label = \"put-values\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction ENTER-INSTRUCTION.
+;;;
+;;; FIXME: maybe remove.
+
+(defclass enter-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-binary-assign) stream)
-  (format stream "~If ~a ~a ~a Goto ~a"
-          (operand1 instruction)
-          (operation instruction)
-          (operand2 instruction)
-          (label instruction)))
+(defmethod draw-instruction ((instruction enter-instruction) stream)
+  (format stream "   ~a [label = \"enter\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defclass mir-unary-if (mir-instruction
-                        mir-unary-expression-mixin
-                        mir-operation-mixin
-                        mir-transfer-mixin)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LEAVE-INSTRUCTION.
+;;;
+;;; FIXME: maybe remove.
+
+(defclass leave-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-unary-if) stream)
-  (format stream "If ~a ~a Goto ~a"
-          (operation instruction)
-          (operand instruction)
-          (label instruction)))
+(defmethod draw-instruction ((instruction leave-instruction) stream)
+  (format stream "   ~a [label = \"leave\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defclass mir-value-if (mir-instruction
-                        mir-unary-expression-mixin)
-  ((%label :initarg :label :reader label)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction RETURN-INSTRUCTION.
 
-(defmethod print-object ((instruction mir-value-if) stream)
-  (format stream "If ~a Goto ~a" 
-          (operand instruction)
-          (label instruction)))
-
-(defclass mir-binary-trap (mir-instruction
-                           mir-binary-expression-mixin
-                           mir-operation-mixin
-                           mir-trap-mixin)
+(defclass return-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-binary-assign) stream)
-  (format stream "~If ~a ~a ~a Trap ~a"
-          (operand1 instruction)
-          (operation instruction)
-          (operand2 instruction)
-          (trap-number instruction)))
+(defun make-return-instruction ()
+  (make-instance 'return-instruction))
 
-(defclass mir-unary-trap (mir-instruction
-                          mir-unary-expression-mixin
-                          mir-operation-mixin
-                          mir-trap-mixin)
+(defmethod draw-instruction ((instruction return-instruction) stream)
+  (format stream "   ~a [label = \"ret\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction ENCLOSE-INSTRUCTION.
+
+(defclass enclose-instruction (instruction)
+  ((%code :initarg :code :accessor code)))  
+
+(defun make-enclose-instruction (output successor code)
+  (make-instance 'enclose-instruction
+    :outputs (list output)
+    :successors (list successor)
+    :code code))
+
+(defmethod draw-instruction ((instruction enclose-instruction) stream)
+  (format stream "   ~a [label = \"enclose\"];~%"
+	  (gethash instruction *instruction-table*))
+  (draw-instruction (code instruction) stream)
+  (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
+	  (gethash (code instruction) *instruction-table*)
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instructions for low-level operators.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction MEMALLOC-INSTRUCTION.
+
+(defclass memalloc-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-unary-trap) stream)
-  (format stream "If ~a ~a Trap ~a"
-          (operation instruction)
-          (operand instruction)
-          (trap-number instruction)))
+(defun make-memalloc-instruction (input output successor)
+  (make-instance 'memalloc-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
 
-(defclass mir-value-trap (mir-instruction
-                          mir-unary-expression-mixin
-                          mir-trap-mixin)
+(defmethod draw-instruction ((instruction memalloc-instruction) stream)
+  (format stream "   ~a [label = \"memalloc\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction MEMREF-INSTRUCTION.
+
+(defclass memref-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-binary-assign) stream)
-  (format stream "If ~a Trap ~a"
-          (operand instruction)
-          (trap-number instruction)))
+(defun make-memref-instruction (input output successor)
+  (make-instance 'memref-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
 
-(defclass mir-call (mir-instruction mir-list-expression-mixin)
-  ((%procedure-name :initarg :procedure-name :reader procedure-name)
-   (%arguments :initarg :arguments :reader arguments)))
+(defmethod draw-instruction ((instruction memref-instruction) stream)
+  (format stream "   ~a [label = \"memref\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defmethod print-object ((instruction mir-call) stream)
-  (format stream "~a(" (procedure-name instruction))
-  (loop for argument in (arguments instruction)
-        do (format stream "[~a : ~a] " (first argument) (second argument)))
-  (format stream ")"))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction MEMSET-INSTRUCTION.
 
-(defclass mir-call-assign (mir-instruction
-                           mir-has-left-mixin
-                           mir-list-expression-mixin)
-  ((%procedure-name :initarg :procedure-name :reader procedure-name)
-   (%arguments :initarg :arguments :reader arguments)))
-
-(defmethod print-object ((instruction mir-call-assign) stream)
-  (format stream "~a <- ~a("
-          (left instruction)
-          (procedure-name instruction))
-  (loop for argument in (arguments instruction)
-        do (format stream "[~a : ~a] "
-                          (first argument)
-                          (second argument)))
-  (format stream ")"))
-
-(defclass mir-return (mir-instruction mir-no-expression-mixin)
+(defclass memset-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-return) stream)
-  (format stream "return"))
+(defun make-memset-instruction (inputs successor)
+  (make-instance 'memset-instruction
+    :inputs inputs
+    :successors (list successor)))
 
-(defclass mir-return-value (mir-instruction mir-unary-expression-mixin)
+(defmethod draw-instruction ((instruction memset-instruction) stream)
+  (format stream "   ~a [label = \"memset\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction U+-INSTRUCTION.
+
+(defclass u+-instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-return-value) stream)
-  (format stream "return ~a" (operand instruction)))
+(defun make-u+-instruction (inputs output successors)
+  (make-instance 'u+-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors successors))
 
-(defclass mir-sequence (mir-instruction mir-no-expression-mixin)
+(defmethod draw-instruction ((instruction u+-instruction) stream)
+  (format stream "   ~a [label = \"u+\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction U--INSTRUCTION.
+
+(defclass u--instruction (instruction)
   ())
 
-(defmethod print-object ((instruction mir-sequence) stream)
-  (format stream "sequence"))
+(defun make-u--instruction (inputs output successors)
+  (make-instance 'u--instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors successors))
 
-(defclass mir-operand ()
+(defmethod draw-instruction ((instruction u--instruction) stream)
+  (format stream "   ~a [label = \"u-\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction S+-INSTRUCTION.
+
+(defclass s+-instruction (instruction)
   ())
 
-(defclass mir-variable (mir-operand)
-  ((%name :initarg :name :reader name)))
+(defun make-s+-instruction (inputs output successors)
+  (make-instance 's+-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors successors))
 
-(defmethod print-object ((variable mir-variable) stream)
-  (format stream "~a" (name variable)))
+(defmethod draw-instruction ((instruction s+-instruction) stream)
+  (format stream "   ~a [label = \"s+\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defclass mir-constant (mir-operand)
-  ((%value :initarg :value :reader value)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction S--INSTRUCTION.
 
-(defmethod print-object ((constant mir-constant) stream)
-  (format stream "~a" (value constant)))
+(defclass s--instruction (instruction)
+  ())
 
-(defclass mir-parameter-type (mir-operand)
-  ((%name :initarg :name :reader name)))
+(defun make-s--instruction (inputs output successors)
+  (make-instance 's--instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors successors))
 
-(defmethod print-object ((type mir-parameter-type) stream)
-  (format stream "~a" (name type)))
+(defmethod draw-instruction ((instruction s--instruction) stream)
+  (format stream "   ~a [label = \"s-\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defclass mir-operator ()
-  ((%name :initarg :name :reader name)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction NEG-INSTRUCTION.
 
-(defmethod print-object ((operator mir-operator) stream)
-  (format stream "~a" (name operator)))
+(defclass neg-instruction (instruction)
+  ())
 
-;;; all the operators
+(defun make-neg-instruction (inputs output successors)
+  (make-instance 'neg-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors successors))
 
-(defmacro make-mir-operator (varname opname)
-  `(defparameter ,varname (make-instance 'mir-operator :name ',opname)))
+(defmethod draw-instruction ((instruction neg-instruction) stream)
+  (format stream "   ~a [label = \"neg\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(make-mir-operator +mir-operator-add+ +)
-(make-mir-operator +mir-operator-subtract+ -)
-(make-mir-operator +mir-operator-multiply+ *)
-(make-mir-operator +mir-operator-divide+ /)
-(make-mir-operator +mir-operator-modulo+ mod)
-(make-mir-operator +mir-operator-min+ min)
-(make-mir-operator +mir-operator-max+ max)
-(make-mir-operator +mir-operator-equal+ =)
-(make-mir-operator +mir-operator-not-equal+ !=)
-(make-mir-operator +mir-operator-less+ <)
-(make-mir-operator +mir-operator-less-or-equal+ <=)
-(make-mir-operator +mir-operator-greater+ >)
-(make-mir-operator +mir-operator-greater-or-equal+ >=)
-(make-mir-operator +mir-operator-shift-left+ shl)
-(make-mir-operator +mir-operator-shift-right+ shr)
-(make-mir-operator +mir-operator-shift-right-arithmetic+ shra)
-(make-mir-operator +mir-operator-and+ and)
-(make-mir-operator +mir-operator-or+ or)
-(make-mir-operator +mir-operator-exclusive-or+ xor)
-(make-mir-operator +mir-operator-element+ elt)
-(make-mir-operator +mir-operator-indirection+ *)
-(make-mir-operator +mir-operator-negation+ -)
-(make-mir-operator +mir-operator-not+ !)
-(make-mir-operator +mir-operator-address+ addr)
-(make-mir-operator +mir-operator-cast+ *)
-(make-mir-operator +mir-operator-indirect-assignment+ lind)
-(make-mir-operator +mir-operator-conditional-assignment+ lcond)
-(make-mir-operator +mir-operator-indirect-element-assignment+ lindelt)
-(make-mir-operator +mir-operator-element-assignment+ lelt)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction &-INSTRUCTION.
 
-(defparameter +mir-type-t+ (make-instance 'mir-parameter-type :name t))
+(defclass &-instruction (instruction)
+  ())
 
-;;; A small test compiler
+(defun make-&-instruction (inputs output successor)
+  (make-instance '&-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (list successor)))
 
-(defun compile-to-mir (expr result)
-  (cond ((symbolp expr)
-         (list (make-instance 'mir-value-assign
-                              :left result
-                              :operand (make-instance 'mir-variable :name expr))))
-        ((numberp expr)
-         (list (make-instance 'mir-value-assign
-                              :left result
-                              :operand (make-instance 'mir-constant :value expr))))
-        ((eq (first expr) 'if)
-         (let ((outlabel (make-instance 'mir-label :name (gensym)))
-               (elselabel (make-instance 'mir-label :name (gensym)))
-               (condresult (make-instance 'mir-variable :name (gensym))))
-           (append (compile-to-mir (second expr) condresult)
-                   (list (make-instance 'mir-unary-if
-                                        :operation +mir-operator-not+
-                                        :operand condresult
-                                        :label elselabel))
-                   (compile-to-mir (third expr) result)
-                   (list (make-instance 'mir-goto
-                                        :label outlabel)
-                         elselabel)
-                   (compile-to-mir (fourth expr) result)
-                   (list outlabel))))
-        ((eq (first expr) 'defun)
-         (append (mapcar (lambda (var)
-                           (make-instance 'mir-receive
-                                          :left (make-instance 'mir-variable
-                                                               :name var)
-                                          :parameter-type +mir-type-t+))
-                         (third expr))
-                 (compile-to-mir (fourth expr) result)
-                 (list (make-instance 'mir-return-value
-                                      :operand result))))
-        (t
-         (let ((results (loop for arg in (rest expr)
-                              collect (make-instance 'mir-variable
-                                           :name (gensym)))))
-           (append
-            (loop for arg in (rest expr)
-                  for new-result in results
-                  append (compile-to-mir arg new-result))
-            (list (make-instance
-                   'mir-call-assign
-                   :left result
-                   :procedure-name (first expr)
-                   :arguments
-                   (loop for arg in results
-                         collect (list arg +mir-type-t+)))))))))
+(defmethod draw-instruction ((instruction &-instruction) stream)
+  (format stream "   ~a [label = \"&\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-;;; Computing basic blocks
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction IOR-INSTRUCTION.
 
-(defclass basic-block ()
-  ((%instructions :initform '() :initarg :instructions :accessor instructions)
-   (%successors :initform '() :initarg :successors :accessor successors)
-   (%predecessors :initform '() :initarg :predecessors :accessor predecessors)))
+(defclass ior-instruction (instruction)
+  ())
 
-(defclass mir-program ()
-  ((%basic-blocks :initform '() :initarg :basic-blocks :accessor basic-blocks)))
+(defun make-ior-instruction (inputs output successor)
+  (make-instance 'ior-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (list successor)))
 
-(defun make-blocks (instructions)
-  (let ((pos (position-if (lambda (x) (typep x 'mir-label))
-                          instructions
-                          :start 1)))
-    (if (null pos)
-        (list (make-instance 'basic-block
-                             :instructions instructions))
-        (cons (make-instance 'basic-block
-                             :instructions (subseq instructions 0 pos))
-              (make-blocks (subseq instructions pos))))))
+(defmethod draw-instruction ((instruction ior-instruction) stream)
+  (format stream "   ~a [label = \"ior\"];~%"
+	  (gethash instruction *instruction-table*)))
 
-(defun make-program (instructions)
-  ;; Make sure that there are not two consecutive labels. 
-  ;; If two consecutive labels are found, eliminate the first
-  ;; one and replace tansfers to it by transfers to the second one. 
-  (setf instructions
-        (loop for (i1 i2) on instructions
-              if (and (typep i1 'mir-label)
-                      (typep i2 'mir-label))
-                do (loop for instruction in instructions
-                         do (when (and (typep instruction 'mir-transfer-mixin)
-                                       (eq (label instruction) i1))
-                              (setf (label instruction) i2)))
-              else
-                collect i1))
-  ;; eliminate any label that is not the target of any Goto
-  (let ((targets (loop for instruction in instructions
-                       when (typep instruction 'mir-transfer-mixin)
-                         collect (label instruction))))
-    (setf instructions
-          (remove-if (lambda (instruction)
-                       (and (typep instruction 'mir-label)
-                            (not (member instruction targets))))
-                     instructions)))
-  ;; Eliminate unlabeled instructions following a goto
-  (setf instructions
-        (loop with collecting = t
-              for instruction in instructions
-              do (when (typep instruction 'mir-label)
-                   (setf collecting t))
-              when collecting
-              collect instruction
-              do (when (typep instruction 'mir-goto)
-                   (setf collecting nil))))
-  ;; Make sure a sequence of IFs is followed by a goto or a return.
-  (setf instructions 
-        (loop for (i1 i2) on instructions
-              collect i1
-              when (and (typep i1 'mir-transfer-mixin)
-                        (not (typep i1 'mir-goto))
-                        (not (typep i2 'mir-transfer-mixin))
-                        (not (typep i2 'mir-return))
-                        (not (typep i2 'mir-return-value)))
-                append (let ((label (make-instance 'mir-label
-                                                   :name (gensym))))
-                         (list (make-instance 'mir-goto :label label)
-                               label))))
-  ;; Make sure  there are no fall-througs
-  (setf instructions
-        (loop for (i1 i2) on instructions
-              collect i1
-              when (and (typep i2 'mir-label)
-                        (not (typep i1 'mir-goto)))
-                collect (make-instance 'mir-goto :label i2)))
-  (let* ((label (make-instance 'mir-label :name (gensym)))
-         (blocks (append (cons (make-instance
-                                'basic-block ; the entry block
-                                :instructions (list (make-instance
-                                                     'mir-goto
-                                                     :label label)))
-                               (make-blocks
-                                (cons label instructions)))
-                         (list (make-instance
-                                'basic-block ; the exit block
-                                :instructions '())))))
-    ;; Add the exit block as a successor to any block that
-    ;; ends with a return instruction, and add that block as
-    ;; a predecessor to the exit block.
-    (loop with exit-block = (car (last blocks))
-          for block in blocks
-          do (let ((last-instruction (car (last (instructions block)))))
-               (when (or (typep last-instruction 'mir-return)
-                         (typep last-instruction 'mir-return-value))
-                 (push exit-block (successors block))
-                 (push block (predecessors exit-block)))))
-    ;; For any two blocks b1 and b2 such that b1 has a a transfer
-    ;; to a label that is the first instruction of b2, add
-    ;; b2 as a successor of b1 and b1 as a predecessor of b2, and
-    ;; replace the label of the transfer by b2 itself
-    (loop for b1 in blocks
-          do (loop for instruction in (instructions b1)
-                   do (when (typep instruction 'mir-transfer-mixin)
-                        (let ((b2 (find (label instruction)
-                                        blocks
-                                        :key (lambda (b)
-                                               (first (instructions b))))))
-                          (setf (label instruction) b2)
-                          (push b2 (successors b1))
-                          (push b1 (predecessors b1))))))
-    ;; Finally remove all label instructions
-    (loop for block in blocks
-          do (when (typep (first (instructions block)) 'mir-label)
-               (pop (instructions block))))
-    blocks))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction XOR-INSTRUCTION.
+
+(defclass xor-instruction (instruction)
+  ())
+
+(defun make-xor-instruction (inputs output successor)
+  (make-instance 'xor-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (list successor)))
+
+(defmethod draw-instruction ((instruction xor-instruction) stream)
+  (format stream "   ~a [label = \"xor\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction ~-INSTRUCTION.
+
+(defclass ~-instruction (instruction)
+  ())
+
+(defun make-~-instruction (inputs output successor)
+  (make-instance '~-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (list successor)))
+
+(defmethod draw-instruction ((instruction ~-instruction) stream)
+  (format stream "   ~a [label = \"~\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction ==-INSTRUCTION.
+
+(defclass ==-instruction (instruction)
+  ())
+
+(defun make-==-instruction (inputs successors)
+  (make-instance '==-instruction
+    :inputs inputs
+    :successors successors))
+
+(defmethod draw-instruction ((instruction ==-instruction) stream)
+  (format stream "   ~a [label = \"==\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction S<-INSTRUCTION.
+
+(defclass s<-instruction (instruction)
+  ())
+
+(defun make-s<-instruction (inputs successors)
+  (make-instance 's<-instruction
+    :inputs inputs
+    :successors successors))
+
+(defmethod draw-instruction ((instruction s<-instruction) stream)
+  (format stream "   ~a [label = \"s<\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction S<=-INSTRUCTION.
+
+(defclass s<=-instruction (instruction)
+  ())
+
+(defun make-s<=-instruction (inputs successors)
+  (make-instance 's<=-instruction
+    :inputs inputs
+    :successors successors))
+
+(defmethod draw-instruction ((instruction s<=-instruction) stream)
+  (format stream "   ~a [label = \"s<=\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction U<-INSTRUCTION.
+
+(defclass u<-instruction (instruction)
+  ())
+
+(defun make-u<-instruction (inputs successors)
+  (make-instance 'u<-instruction
+    :inputs inputs
+    :successors successors))
+
+(defmethod draw-instruction ((instruction u<-instruction) stream)
+  (format stream "   ~a [label = \"u<\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction U<=-INSTRUCTION.
+
+(defclass u<=-instruction (instruction)
+  ())
+
+(defun make-u<=-instruction (inputs successors)
+  (make-instance 'u<=-instruction
+    :inputs inputs
+    :successors successors))
+
+(defmethod draw-instruction ((instruction u<=-instruction) stream)
+  (format stream "   ~a [label = \"u<=\"];~%"
+	  (gethash instruction *instruction-table*)))

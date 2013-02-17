@@ -5,14 +5,11 @@
 (defmethod children ((ast constant-ast))
   '())
 
-(defmethod children ((ast typed-location-ast))
-  '())
-
 (defmethod children ((ast sicl-env:global-location))
   '())
 
-(defmethod children ((ast function-call-ast))
-  (cons (function-location ast)
+(defmethod children ((ast call-ast))
+  (cons (callee ast)
 	(arguments ast)))
 
 (defmethod children ((ast function-ast))
@@ -113,13 +110,13 @@
     (values ins outs)))
 
 (defun inline-call-p (ast-info funcall-ast)
-  (let ((function-location (function-location funcall-ast))
+  (let ((callee (callee funcall-ast))
 	(ins (ins ast-info))
 	(outs (outs ast-info)))
-    (or (typep function-location 'constant-ast)
-	(and (typep (location function-location) 'sicl-env:lexical-location)
-	     (= 1 (length (gethash (location function-location) ins)))
-	     (= 1 (length (gethash (location function-location) outs)))))))
+    (or (typep callee 'constant-ast)
+	(and (typep (location callee) 'sicl-env:lexical-location)
+	     (= 1 (length (gethash (location callee) ins)))
+	     (= 1 (length (gethash (location callee) outs)))))))
 
 (defun find-value (ast-info lexical-location)
   (let ((ast (find-if (lambda (ast)
@@ -128,16 +125,16 @@
 		      (all-asts ast-info))))
     (value-ast ast)))
 
-(defun function-to-inline (ast-info function-location)
-  (cond ((typep function-location 'function-ast)
-	 function-location)
-	((typep (location function-location) 'sicl-env:lexical-location)
-	 (find-value ast-info (location function-location)))
+(defun function-to-inline (ast-info callee)
+  (cond ((typep callee 'function-ast)
+	 callee)
+	((typep (location callee) 'sicl-env:lexical-location)
+	 (find-value ast-info (location callee)))
 	(t
 	 nil)))
 
 (defun inline-function-call (ast-info funcall-ast)
-  (let ((fun (function-to-inline ast-info (function-location funcall-ast))))
+  (let ((fun (function-to-inline ast-info (callee funcall-ast))))
     (change-class funcall-ast 'progn-ast
       :form-asts
       (append (loop for param in (required (lambda-list fun))
