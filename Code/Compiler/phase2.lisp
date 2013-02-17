@@ -533,7 +533,7 @@
 			      (sicl-mir:make-memref-instruction
 			       temp1 location next))
 			(nil-fill (cdr results) next)))))))
-      (compile-arguments (sicl-ast:arguments ast) temp1 instruction))))
+      (compile-arguments (sicl-ast:arguments ast) (list temp1) instruction))))
 
 (defmethod compile-ast ((ast sicl-ast:memset-ast) context)
   (with-accessors ((results results)

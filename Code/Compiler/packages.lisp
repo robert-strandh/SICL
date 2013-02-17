@@ -63,7 +63,7 @@
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
    #:multiple-value-call-ast
    #:make-multiple-value-call-ast #:function-ast #:argument-asts
-   #:lambda-list
+   #:lambda-list #:required
    #:multiple-value-prog1-ast
    #:make-multiple-value-prog1-ast #:first-ast #:body-asts
    #:progn-ast #:make-progn-ast #:form-asts

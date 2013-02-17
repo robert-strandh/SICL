@@ -228,7 +228,7 @@
     :lambda-list lambda-list))
 
 (defmethod outputs ((instruction get-arguments-instruction))
-  (p1:required (lambda-list instruction)))
+  (sicl-ast:required (lambda-list instruction)))
 
 (defmethod draw-instruction ((instruction get-arguments-instruction) stream)
   (format stream "   ~a [label = \"get-args\"];~%"
