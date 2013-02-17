@@ -139,31 +139,30 @@
 ;;;
 ;;; The callee can be a function-ast or a location.  An argument can
 ;;; be any AST. 
-;;; FIXME: rename callee to callee-ast and arguments to argument-asts.
 
 (defclass call-ast (ast)
-  ((%callee :initarg :callee :reader callee)
-   (%arguments :initarg :arguments :reader arguments)))
+  ((%callee-ast :initarg :callee-ast :reader callee-ast)
+   (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
-(defun make-call-ast (callee arguments)
+(defun make-call-ast (callee-ast argument-asts)
   (make-instance 'call-ast
-    :callee callee
-    :arguments arguments))
+    :callee-ast callee-ast
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast call-ast) stream)
-  (format stream "   ~a [label = \"funcall\"];~%"
+  (format stream "   ~a [label = \"call\"];~%"
 	  (id ast))
-  (let ((location (callee ast)))
+  (let ((location (callee-ast ast)))
     (stream-draw-ast location stream)
     (format stream "   ~a -> ~a~%" (id ast) (id location)))
-  (loop for child in (arguments ast)
+  (loop for child in (argument-asts ast)
 	do (stream-draw-ast child stream)
 	   (format stream "   ~a -> ~a~%"
 		   (id ast) (id child))))
 
 (defmethod children ((ast call-ast))
-  (cons (callee ast)
-	(arguments ast)))
+  (cons (callee-ast ast)
+	(argument-asts ast)))
 
 ;;; An &optional entry is one of:
 ;;;
@@ -680,10 +679,10 @@
 ;;;
 
 (defclass arguments-mixin ()
-  ((%arguments :initarg :arguments :accessor arguments)))
+  ((%argument-asts :initarg :argument-asts :accessor argument-asts)))
 
 (defmethod children ((ast arguments-mixin))
-  (arguments ast))
+  (argument-asts ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -702,14 +701,14 @@
 (defclass memalloc-ast (ast arguments-mixin)
   ())
 
-(defun make-memalloc-ast (arguments)
+(defun make-memalloc-ast (argument-asts)
   (make-instance 'memalloc-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast memalloc-ast) stream)
   (format stream "   ~a [label = \"memalloc\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -730,14 +729,14 @@
 (defclass memref-ast (ast arguments-mixin)
   ())
 
-(defun make-memref-ast (arguments)
+(defun make-memref-ast (argument-asts)
   (make-instance 'memref-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast memref-ast) stream)
   (format stream "   ~a [label = \"memref\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -757,14 +756,14 @@
 (defclass memset-ast (ast arguments-mixin)
   ())
 
-(defun make-memset-ast (arguments)
+(defun make-memset-ast (argument-asts)
   (make-instance 'memset-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast memset-ast) stream)
   (format stream "   ~a [label = \"memset\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -783,14 +782,14 @@
 (defclass u+-ast (ast arguments-mixin)
   ())
 
-(defun make-u+-ast (arguments)
+(defun make-u+-ast (argument-asts)
   (make-instance 'u+-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast u+-ast) stream)
   (format stream "   ~a [label = \"u+\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -814,14 +813,14 @@
 (defclass u--ast (ast arguments-mixin)
   ())
 
-(defun make-u--ast (arguments)
+(defun make-u--ast (argument-asts)
   (make-instance 'u--ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast u--ast) stream)
   (format stream "   ~a [label = \"u-\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -844,14 +843,14 @@
 (defclass s+-ast (ast arguments-mixin)
   ())
 
-(defun make-s+-ast (arguments)
+(defun make-s+-ast (argument-asts)
   (make-instance 's+-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast s+-ast) stream)
   (format stream "   ~a [label = \"s+\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -874,14 +873,14 @@
 (defclass s--ast (ast arguments-mixin)
   ())
 
-(defun make-s--ast (arguments)
+(defun make-s--ast (argument-asts)
   (make-instance 's--ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast s--ast) stream)
   (format stream "   ~a [label = \"s-\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -903,14 +902,14 @@
 (defclass neg-ast (ast arguments-mixin)
   ())
 
-(defun make-neg-ast (arguments)
+(defun make-neg-ast (argument-asts)
   (make-instance 'neg-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast neg-ast) stream)
   (format stream "   ~a [label = \"neg\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -932,14 +931,14 @@
 (defclass &-ast (ast arguments-mixin)
   ())
 
-(defun make-&-ast (arguments)
+(defun make-&-ast (argument-asts)
   (make-instance '&-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast &-ast) stream)
   (format stream "   ~a [label = \"&\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -961,14 +960,14 @@
 (defclass ior-ast (ast arguments-mixin)
   ())
 
-(defun make-ior-ast (arguments)
+(defun make-ior-ast (argument-asts)
   (make-instance 'ior-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast ior-ast) stream)
   (format stream "   ~a [label = \"ior\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -990,14 +989,14 @@
 (defclass xor-ast (ast arguments-mixin)
   ())
 
-(defun make-xor-ast (arguments)
+(defun make-xor-ast (argument-asts)
   (make-instance 'xor-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast xor-ast) stream)
   (format stream "   ~a [label = \"xor\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -1018,14 +1017,14 @@
 (defclass ~-ast (ast arguments-mixin)
   ())
 
-(defun make-~-ast (arguments)
+(defun make-~-ast (argument-asts)
   (make-instance '~-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast ~-ast) stream)
   (format stream "   ~a [label = \"~\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -1047,14 +1046,14 @@
 (defclass ==-ast (ast arguments-mixin)
   ())
 
-(defun make-==-ast (arguments)
+(defun make-==-ast (argument-asts)
   (make-instance '==-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast ==-ast) stream)
   (format stream "   ~a [label = \"==\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -1076,14 +1075,14 @@
 (defclass s<-ast (ast arguments-mixin)
   ())
 
-(defun make-s<-ast (arguments)
+(defun make-s<-ast (argument-asts)
   (make-instance 's<-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast s<-ast) stream)
   (format stream "   ~a [label = \"s<\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -1106,14 +1105,14 @@
 (defclass s<=-ast (ast arguments-mixin)
   ())
 
-(defun make-s<=-ast (arguments)
+(defun make-s<=-ast (argument-asts)
   (make-instance 's<=-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast s<=-ast) stream)
   (format stream "   ~a [label = \"s<=\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -1135,14 +1134,14 @@
 (defclass u<-ast (ast arguments-mixin)
   ())
 
-(defun make-u<-ast (arguments)
+(defun make-u<-ast (argument-asts)
   (make-instance 'u<-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast u<-ast) stream)
   (format stream "   ~a [label = \"u<\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 
@@ -1165,14 +1164,14 @@
 (defclass u<=-ast (ast arguments-mixin)
   ())
 
-(defun make-u<=-ast (arguments)
+(defun make-u<=-ast (argument-asts)
   (make-instance 'u<=-ast
-    :arguments arguments))
+    :argument-asts argument-asts))
 
 (defmethod stream-draw-ast ((ast u<=-ast) stream)
   (format stream "   ~a [label = \"u<=\"];~%"
 	  (id ast))
-  (loop for argument-ast in (arguments ast)
+  (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
 

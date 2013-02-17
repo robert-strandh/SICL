@@ -53,7 +53,7 @@
   (:export
    #:ast
    #:constant-ast #:make-constant-ast #:value
-   #:call-ast #:make-call-ast #:callee #:arguments
+   #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
    #:catch-ast #:make-catch-ast #:tag 
    #:eval-when-ast #:make-eval-when-ast #:situations
@@ -107,30 +107,7 @@
    )
   (:export
    #:ast
-   #:constant-ast #:value
-   #:call-ast #:callee #:arguments
-   #:block-ast #:body
-   #:catch-ast #:tag 
-   #:eval-when-ast #:situations
-   #:function-ast #:body-ast
-   #:go-ast #:tag-ast
-   #:if-ast #:test #:then #:else
-   #:load-time-value-ast #:read-only-p
-   #:multiple-value-call-ast #:function-ast #:argument-asts
-   #:multiple-value-prog1-ast #:first-ast #:body-asts
-   #:progn-ast #:form-asts
-   #:progv-ast #:symbols-ast #:vals-ast
-   #:return-from-ast #:form-ast
-   #:setq-ast #:location-ast #:value-ast
-   #:tagbody-ast #:items
-   #:tag-ast #:name
-   #:the-ast #:value-type
-   #:throw-ast
-   #:unwind-protect-ast #:protected-ast #:cleanup-form-asts
-   #:lambda-list #:required #:optional #:rest-body
-   #:keys #:allow-other-keys #:aux
    #:convert #:convert-compound
-   #:draw-ast #:id
    ))
 
 (defpackage #:sicl-mir

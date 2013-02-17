@@ -306,16 +306,17 @@
 		    (car successors)
 		    (sicl-mir:make-get-values-instruction
 		     results (car successors)))))
-      (let ((temps (loop for arg in (sicl-ast:arguments ast)
+      (let ((temps (loop for arg in (sicl-ast:argument-asts ast)
 			 collect (new-temporary))))
 	(setf next
 	      ;; FIXME: probably not right because the callee might
 	      ;; need to be compiled.
-	      (sicl-mir:make-funcall-instruction next (sicl-ast:callee ast)))
+	      (sicl-mir:make-funcall-instruction
+	       next (sicl-ast:callee-ast ast)))
 	(setf next
 	      (sicl-mir:make-put-arguments-instruction temps next))
 	(loop for temp in (reverse temps)
-	      for arg in (reverse (sicl-ast:arguments ast))
+	      for arg in (reverse (sicl-ast:argument-asts ast))
 	      do (setf next
 		       (compile-ast arg (context (list temp) (list next))))))
       next)))
@@ -490,10 +491,10 @@
 		 (= (length results) 1)
 		 (= (length successors) 1))
       (error "Invalid results for memalloc."))
-    (let* ((temp (make-temp (car (sicl-ast:arguments ast))))
+    (let* ((temp (make-temp (car (sicl-ast:argument-asts ast))))
 	   (instruction (sicl-mir:make-memalloc-instruction
 			 temp (car results) (car successors))))
-      (compile-arguments (sicl-ast:arguments ast) (list temp) instruction))))
+      (compile-arguments (sicl-ast:argument-asts ast) (list temp) instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -504,7 +505,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((temp1 (make-temp (car (sicl-ast:arguments ast))))
+    (let* ((temp1 (make-temp (car (sicl-ast:argument-asts ast))))
 	   (instruction
 	     (ecase (length successors)
 	       (1 (let ((next (car successors)))
@@ -533,7 +534,7 @@
 			      (sicl-mir:make-memref-instruction
 			       temp1 location next))
 			(nil-fill (cdr results) next)))))))
-      (compile-arguments (sicl-ast:arguments ast) (list temp1) instruction))))
+      (compile-arguments (sicl-ast:argument-asts ast) (list temp1) instruction))))
 
 (defmethod compile-ast ((ast sicl-ast:memset-ast) context)
   (with-accessors ((results results)
@@ -542,21 +543,21 @@
     (unless (and (= (length successors) 1)
 		 (zerop (length results)))
       (error "Illegal context for memset."))
-    (let* ((temps (make-temps (sicl-ast:arguments ast)))
+    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
 	   (instruction
 	     (sicl-mir:make-memset-instruction
 	      temps (car successors))))
-      (compile-arguments (sicl-ast:arguments ast) temps instruction))))
+      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compiling a simple arithmetic operation.
 
-(defun compile-simple-arithmetic (arguments constructor context)
+(defun compile-simple-arithmetic (argument-asts constructor context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((temps (make-temps arguments))
+    (let* ((temps (make-temps argument-asts))
 	   (instruction
 	     (ecase (length successors)
 	       (1 (let ((next (car successors)))
@@ -576,30 +577,30 @@
 	       (2 (if (or (eq results t) (> (length results) 1))
 		      (error "Illegal context for simple arithmetic.")
 		      (funcall constructor temps successors))))))
-      (compile-arguments arguments temps instruction))))
+      (compile-arguments argument-asts temps instruction))))
 
 (defmethod compile-ast ((ast sicl-ast:u+-ast) context)
-  (compile-simple-arithmetic (sicl-ast:arguments ast)
+  (compile-simple-arithmetic (sicl-ast:argument-asts ast)
 			     #'sicl-mir:make-u+-instruction
 			     context))
 
 (defmethod compile-ast ((ast sicl-ast:u--ast) context)
-  (compile-simple-arithmetic (sicl-ast:arguments ast)
+  (compile-simple-arithmetic (sicl-ast:argument-asts ast)
 			     #'sicl-mir:make-u--instruction
 			     context))
 
 (defmethod compile-ast ((ast sicl-ast:s+-ast) context)
-  (compile-simple-arithmetic (sicl-ast:arguments ast)
+  (compile-simple-arithmetic (sicl-ast:argument-asts ast)
 			     #'sicl-mir:make-u--instruction
 			     context))
 
 (defmethod compile-ast ((ast sicl-ast:s--ast) context)
-  (compile-simple-arithmetic (sicl-ast:arguments ast)
+  (compile-simple-arithmetic (sicl-ast:argument-asts ast)
 			     #'sicl-mir:make-u--instruction
 			     context))
 
 (defmethod compile-ast ((ast sicl-ast:neg-ast) context)
-  (compile-simple-arithmetic (sicl-ast:arguments ast)
+  (compile-simple-arithmetic (sicl-ast:argument-asts ast)
 			     #'sicl-mir:make-u--instruction
 			     context))
 
@@ -616,14 +617,14 @@
 ;;; tagged Lisp object, so we must be prepared for all possible
 ;;; result contexts. 
 
-(defun compile-logic (arguments constructor context)
+(defun compile-logic (argument-asts constructor context)
   (with-accessors ((results results)
 		   (successors successors))
       context
     (unless (= (length successors) 1)
       (error "Logic operation must have a single successor."))
     (let* ((next (car successors))
-	   (temps (make-temps arguments))
+	   (temps (make-temps argument-asts))
 	   (instruction
 	     (cond ((null results)
 		    (warn "Logic operation in a context of no results.")
@@ -637,26 +638,26 @@
 		   (t
 		    (setf next (nil-fill (cdr results) next))
 		    (funcall constructor temps (car results) next)))))
-      (compile-arguments arguments temps instruction))))
+      (compile-arguments argument-asts temps instruction))))
 
       
 (defmethod compile-ast ((ast sicl-ast:&-ast) context)
-  (compile-logic (sicl-ast:arguments ast)
+  (compile-logic (sicl-ast:argument-asts ast)
 		 #'sicl-mir:make-&-instruction
 		 context))
 
 (defmethod compile-ast ((ast sicl-ast:ior-ast) context)
-  (compile-logic (sicl-ast:arguments ast)
+  (compile-logic (sicl-ast:argument-asts ast)
 		 #'sicl-mir:make-ior-instruction
 		 context))
 
 (defmethod compile-ast ((ast sicl-ast:xor-ast) context)
-  (compile-logic (sicl-ast:arguments ast)
+  (compile-logic (sicl-ast:argument-asts ast)
 		 #'sicl-mir:make-xor-instruction
 		 context))
 
 (defmethod compile-ast ((ast sicl-ast:~-ast) context)
-  (compile-logic (sicl-ast:arguments ast)
+  (compile-logic (sicl-ast:argument-asts ast)
 		 #'sicl-mir:make-~-instruction
 		 context))
 
@@ -668,12 +669,12 @@
   (sicl-mir:make-constant-assignment-instruction
    result successor boolean))
 
-(defun compile-test (arguments constructor context)
+(defun compile-test (argument-asts constructor context)
   (with-accessors ((results results)
 		   (successors successors)
 		   (false-required-p false-required-p ))
       context
-    (let* ((temps (make-temps arguments))
+    (let* ((temps (make-temps argument-asts))
 	   (instruction
 	     (ecase (length successors)
 	       (1 (let ((next (car successors)))
@@ -702,30 +703,30 @@
 					 next))
 			      (true (make-boolean t (car results) next)))
 			  (funcall constructor temps (list false true)))))))))
-      (compile-arguments arguments temps instruction))))
+      (compile-arguments argument-asts temps instruction))))
 
 (defmethod compile-ast ((ast sicl-ast:==-ast) context)
-  (compile-test (sicl-ast:arguments ast)
+  (compile-test (sicl-ast:argument-asts ast)
 		#'sicl-mir:make-==-instruction
 		context))
 
 (defmethod compile-ast ((ast sicl-ast:s<-ast) context)
-  (compile-test (sicl-ast:arguments ast)
+  (compile-test (sicl-ast:argument-asts ast)
 		#'sicl-mir:make-s<-instruction
 		context))
 
 (defmethod compile-ast ((ast sicl-ast:s<=-ast) context)
-  (compile-test (sicl-ast:arguments ast)
+  (compile-test (sicl-ast:argument-asts ast)
 		#'sicl-mir:make-s<=-instruction
 		context))
 
 (defmethod compile-ast ((ast sicl-ast:u<-ast) context)
-  (compile-test (sicl-ast:arguments ast)
+  (compile-test (sicl-ast:argument-asts ast)
 		#'sicl-mir:make-u<-instruction
 		context))
 
 (defmethod compile-ast ((ast sicl-ast:u<=-ast) context)
-  (compile-test (sicl-ast:arguments ast)
+  (compile-test (sicl-ast:argument-asts ast)
 		#'sicl-mir:make-u<=-instruction
 		context))
 
