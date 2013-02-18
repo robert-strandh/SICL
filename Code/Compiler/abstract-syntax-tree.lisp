@@ -192,7 +192,7 @@
 
 (defclass lambda-list ()
   (;; A possibly empty list of lexical locations.
-   (%required :initarg :required :reader required)
+   (%required :initarg :required :accessor required)
    ;; A possibly empty list of optional entries. 
    (%optional :initarg :optional :reader optional)
    ;; Either NIL or a single lexical location. 
@@ -218,7 +218,7 @@
 
 (defclass function-ast (ast)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
-   (%body-ast :initarg :body-ast :reader body-ast)))
+   (%body-ast :initarg :body-ast :accessor body-ast)))
 
 (defun make-function-ast (lambda-list body-ast)
   (make-instance 'function-ast
