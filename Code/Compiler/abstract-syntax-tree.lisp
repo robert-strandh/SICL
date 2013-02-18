@@ -394,28 +394,28 @@
 ;;; Class SETQ-AST.
 
 (defclass setq-ast (ast)
-  ((%location :initarg :location :reader location)
+  ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-setq-ast (location value-ast)
+(defun make-setq-ast (lhs-ast value-ast)
   (make-instance 'setq-ast
-    :location location
+    :lhs-ast lhs-ast
     :value-ast value-ast))
 
 (defmethod stream-draw-ast ((ast setq-ast) stream)
   (format stream "   ~a [label = \"setq\"];~%"
 	  (id ast))
-  (stream-draw-ast (location ast) stream)
+  (stream-draw-ast (lhs-ast ast) stream)
   (format stream "   ~a -> ~a~%"
 	  (id ast)
-	  (id (location ast)))
+	  (id (lhs-ast ast)))
   (stream-draw-ast (value-ast ast) stream)
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (value-ast ast))))
 
 (defmethod children ((ast setq-ast))
-  (list (location ast)
+  (list (lhs-ast ast)
 	(value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -630,12 +630,12 @@
 ;;; SPECIAL-LOCATION-INFO objects from the environment, because they
 ;;; can be elements of an AST.
 
-(defun draw-location (location stream &optional (color "blue") (name "?"))
+(defun draw-location (location stream &optional (color "blue"))
   (when (null (gethash location *table*))
     (setf (gethash location *table*) (gensym))
     (format stream
 	    "  ~a [label = \"~a\"];~%"
-	    (id location) name)
+	    (id location) (sicl-env:name location))
     (format stream
 	    "  ~a [style = filled, fillcolor = ~a];~%"
 	    (id location) color)))
@@ -643,7 +643,7 @@
 (defmethod stream-draw-ast ((ast sicl-env:lexical-location-info) stream)
   (format stream "   ~a [label = \"lexical\"];~%"
 	  (id ast))
-  (draw-location (sicl-env:location ast) stream "yellow" (sicl-env:name ast))
+  (draw-location (sicl-env:location ast) stream "yellow")
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (sicl-env:location ast))))
@@ -654,7 +654,7 @@
 (defmethod stream-draw-ast ((ast sicl-env:global-location-info) stream)
   (format stream "   ~a [label = \"global\"];~%"
 	  (id ast))
-  (draw-location (sicl-env:location ast) stream "green" (sicl-env:name ast))
+  (draw-location (sicl-env:location ast) stream "green")
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (sicl-env:location ast))))
@@ -665,7 +665,7 @@
 (defmethod stream-draw-ast ((ast sicl-env:special-location-info) stream)
   (format stream "   ~a [label = \"special\"];~%"
 	  (id ast))
-  (draw-location (sicl-env:location ast) stream "red" (sicl-env:name ast))
+  (draw-location (sicl-env:location ast) stream "red")
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (sicl-env:location ast))))
@@ -701,11 +701,14 @@
   ((%value :initarg :value :reader value)))
 
 (defun make-word-ast (value)
-  (make-instance 'word :value value))
+  (make-instance 'word-ast :value value))
+
+(defmethod children ((ast word-ast))
+  '())
 
 (defmethod stream-draw-ast ((ast word-ast) stream)
   (format stream "   ~a [label = \"~d\"];~%" (id ast) (value ast))
-  (format stream "   ~a [style = filled; fillcolor = blue];~%" (id ast)))
+  (format stream "   ~a [style = filled, fillcolor = blue];~%" (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

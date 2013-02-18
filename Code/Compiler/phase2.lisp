@@ -104,14 +104,14 @@
 ;;; compilation of the entire AST.
 
 (defun new-temporary ()
-  (make-instance 'sicl-env:lexical-location-info
-		 :name (gensym)
-		 :location (make-instance 'sicl-env:lexical-location)
-		 :type t
-		 :inline-info nil
-		 :ignore-info nil
-		 :dynamic-extent-p nil))
-
+  (let ((name (gensym)))
+    (make-instance 'sicl-env:lexical-location-info
+      :location (sicl-env:make-lexical-location name)
+      :type t
+      :inline-info nil
+      :ignore-info nil
+      :dynamic-extent-p nil)))
+  
 ;;; Given a list of results and a successor, generate a sequence of
 ;;; instructions preceding that successor, and that assign NIL to each
 ;;; result in the list.

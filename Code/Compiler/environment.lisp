@@ -54,23 +54,31 @@
 
 ;;; For entries representing places that need
 ;;; to be accessed at runtime. 
-(defclass location () ())
+(defclass location ()
+  ((%name :initarg :name :reader name)))
 
 ;;; Every use of the environment must get the same
 ;;; place, so the storage is allocated here. 
 (defclass global-location (location)
   ((%storage :initform (list nil) :reader storage)))
 
-;;; For special locations, we give the symbol which
-;;; must then be used at runtime to access the value. 
-(defclass special-location (location)
-  ((%name :initarg :name :reader name)))
+(defun make-global-location (name)
+  (make-instance 'global-location :name name))
 
-;;; For a lexical location, we do not determine the
-;;; place for it at all.  This is done by the register 
-;;; allocator and other backend functions.
+;;; For special locations, the name is the symbol which must be used
+;;; at runtime to access the value.
+(defclass special-location (location)
+  ())
+
+(defun make-special-location (name)
+  (make-instance 'special-location :name name))
+
+;;; The name of a lexical location is just used to display it.
 (defclass lexical-location (location)
   ())
+
+(defun make-lexical-location (name)
+  (make-instance 'lexical-location :name name))
 
 (defclass location-entry (entry named-entry)
   ((%location :initarg :location :reader location)))
@@ -113,8 +121,7 @@
 (defun make-special-variable-entry (name)
   (make-instance 'special-variable-entry
 		 :name name
-		 :location (make-instance 'special-location
-					  :name name)))
+		 :location (make-special-location name)))
 
 (defun add-special-variable-entry (env name)
   (add-to-environment env (make-special-variable-entry name)))
@@ -130,7 +137,7 @@
 (defun make-lexical-variable-entry (name)
   (make-instance 'lexical-variable-entry
 		 :name name
-		 :location (make-instance 'lexical-location)))
+		 :location (make-lexical-location name)))
 
 (defun add-lexical-variable-entry (env name)
   (add-to-environment env (make-lexical-variable-entry name)))
@@ -164,7 +171,7 @@
 (defun make-global-function-entry (name)
   (make-instance 'global-function-entry
 		 :name name
-		 :location (make-instance 'global-location)))
+		 :location (make-global-location name)))
 
 (defun add-global-function-entry (env name)
   (add-to-environment env (make-global-function-entry name)))
@@ -179,7 +186,7 @@
 (defun make-local-function-entry (name)
   (make-instance 'local-function-entry
 		 :name name
-		 :location (make-instance 'lexical-location)))
+		 :location (make-lexical-location name)))
 
 (defun add-local-function-entry (env name)
   (add-to-environment env (make-local-function-entry name)))
@@ -398,8 +405,7 @@
 ;;; These classes represent information about a location.
 
 (defclass location-info (info)
-  ((%name :initarg :name :reader name)
-   (%location :initarg :location :reader location)
+  ((%location :initarg :location :reader location)
    (%type :initarg :type :reader type)
    (%inline-info :initarg :inline-info :reader inline-info)
    (%ignore-info :initarg :ignore-info :reader ignore-info)
@@ -490,7 +496,6 @@
 	     (make-instance (if (typep entry 'special-variable-entry)
 				'special-location-info
 				'lexical-location-info)
-			    :name name
 			    :location (location entry)
 			    :type type
 			    :inline-info inline-info
@@ -513,7 +518,6 @@
 	     (make-instance (if (typep entry 'global-function-entry)
 				'global-location-info
 				'lexical-location-info)
-			    :name name
 			    :location (location entry)
 			    :type type
 			    :inline-info inline-info

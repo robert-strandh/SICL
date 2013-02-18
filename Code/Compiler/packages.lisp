@@ -10,7 +10,10 @@
 	   )
   (:export
    #:definition
-   #:location #:lexical-location #:global-location #:special-location
+   #:location
+   #:lexical-location #:make-lexical-location
+   #:global-location #:make-global-location
+   #:special-location #:make-special-location
    #:storage
    #:name
    #:type
@@ -69,7 +72,7 @@
    #:progn-ast #:make-progn-ast #:form-asts
    #:progv-ast #:make-progv-ast #:symbols-ast #:vals-ast
    #:return-from-ast #:make-return-from-ast #:form-ast
-   #:setq-ast #:make-setq-ast #:location-ast #:value-ast
+   #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
    #:tagbody-ast #:make-tagbody-ast #:items
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast #:value-type
