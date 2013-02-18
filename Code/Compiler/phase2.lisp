@@ -306,19 +306,16 @@
 		    (car successors)
 		    (sicl-mir:make-get-values-instruction
 		     results (car successors)))))
-      (let ((temps (loop for arg in (sicl-ast:argument-asts ast)
-			 collect (new-temporary))))
+      (let* ((all-args (cons (sicl-ast:callee-ast ast)
+			     (sicl-ast:argument-asts ast)))
+	     (temps (make-temps all-args)))
 	(setf next
-	      ;; FIXME: probably not right because the callee might
-	      ;; need to be compiled.
 	      (sicl-mir:make-funcall-instruction
-	       next (sicl-ast:callee-ast ast)))
+	       (car temps) next))
 	(setf next
-	      (sicl-mir:make-put-arguments-instruction temps next))
-	(loop for temp in (reverse temps)
-	      for arg in (reverse (sicl-ast:argument-asts ast))
-	      do (setf next
-		       (compile-ast arg (context (list temp) (list next))))))
+	      (sicl-mir:make-put-arguments-instruction (cdr temps) next))
+	(setf next
+	      (compile-arguments all-args temps next)))
       next)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -374,6 +371,24 @@
 	      (car results)
 	      (nil-fill (cdr results) next)
 	      code))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a SETQ-AST.
+
+(defmethod compile-ast ((ast sicl-ast:setq-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    ;; FIXME: handle more situations here.
+    (unless (and (null results)
+		 (= (length successors) 1))
+      (error "illegal context for setq"))
+    (compile-ast (sicl-ast:value-ast ast)
+		 (make-instance 'context
+		   :successors successors
+		   :results (list (sicl-ast:lhs-ast ast))
+		   :false-required-p nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -456,9 +471,12 @@
 ;;; Compile ASTs that represent low-level operations.
 
 (defun make-temp (argument)
-  (if (typep argument 'sicl-env:lexical-location-info)
-      argument
-      (new-temporary)))
+  (cond ((typep argument 'sicl-env:lexical-location-info)
+	 argument)
+	((typep argument 'sicl-ast:word-ast)
+	 (sicl-mir:make-immediate-input (sicl-ast:value argument)))
+	(t
+	 (new-temporary))))
 
 (defun make-temps (arguments)
   (loop for argument in arguments
@@ -468,8 +486,29 @@
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
-	do (setf succ (compile-ast arg (context (list temp) (list succ))))
+	do (unless (typep temp 'sicl-mir:immediate-input)
+	     (setf succ (compile-ast arg (context (list temp) (list succ)))))
 	finally (return succ)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a WORD-AST.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:word-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (and (listp results)
+		 (= (length results) 1)
+		 (= (length successors) 1))
+      (error "Invalid results for word."))
+    (if (eq ast (car results))
+	(car successors)
+	(sicl-mir:make-constant-assignment-instruction
+	 (car results)
+	 (car successors)
+	 (sicl-ast:value ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -491,10 +530,10 @@
 		 (= (length results) 1)
 		 (= (length successors) 1))
       (error "Invalid results for memalloc."))
-    (let* ((temp (make-temp (car (sicl-ast:argument-asts ast))))
+    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
 	   (instruction (sicl-mir:make-memalloc-instruction
-			 temp (car results) (car successors))))
-      (compile-arguments (sicl-ast:argument-asts ast) (list temp) instruction))))
+			 (car temps) (car results) (car successors))))
+      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -505,7 +544,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((temp1 (make-temp (car (sicl-ast:argument-asts ast))))
+    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
 	   (instruction
 	     (ecase (length successors)
 	       (1 (let ((next (car successors)))
@@ -518,11 +557,11 @@
 				   (sicl-mir:make-put-values-instruction
 				    (list temp2) next))
 			     (sicl-mir:make-memref-instruction
-			      temp1 temp2 next)))
+			      (car temps) temp2 next)))
 			  (t
 			   (setf next (nil-fill (cdr results) next))
 			   (sicl-mir:make-memref-instruction
-			    temp1 (car results) next)))))
+			    (car temps) (car results) next)))))
 	       (2 (if (eq results t)
 		      (error "Illegal context for memref")
 		      (let* ((location (if (null results)
@@ -532,9 +571,9 @@
 				    location successors)))
 			(setf next
 			      (sicl-mir:make-memref-instruction
-			       temp1 location next))
+			       (car temps) location next))
 			(nil-fill (cdr results) next)))))))
-      (compile-arguments (sicl-ast:argument-asts ast) (list temp1) instruction))))
+      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
 
 (defmethod compile-ast ((ast sicl-ast:memset-ast) context)
   (with-accessors ((results results)
