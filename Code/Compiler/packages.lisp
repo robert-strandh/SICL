@@ -78,6 +78,7 @@
    #:make-unwind-protect-ast #:protected-ast #:cleanup-form-asts
    #:draw-ast
    #:children
+   #:word-ast #:make-word-ast
    #:memalloc-ast #:make-memalloc-ast
    #:memref-ast #:make-memref-ast
    #:memset-ast #:make-memset-ast
@@ -171,6 +172,14 @@
    #:& #:ior #:xor #:~
    #:== #:s< #:s<= #:u< #:u<=
    ))
+
+(defpackage #:sicl-procedure-integration
+  (:use #:common-lisp)
+  (:export #:integrate-procedures))
+
+(defpackage #:externals-elimination
+  (:use #:common-lisp)
+  (:export #:eliminate-externals))
 
 (defpackage #:sicl-optimize
   (:use #:common-lisp)

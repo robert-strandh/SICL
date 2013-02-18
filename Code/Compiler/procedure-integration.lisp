@@ -1,7 +1,3 @@
-(defpackage #:sicl-procedure-integration
-  (:use #:common-lisp)
-  (:export #:integrate-procedures))
-
 (in-package #:sicl-procedure-integration)
 
 (defun integrate-procedure-p (ast)
