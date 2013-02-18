@@ -1,5 +1,12 @@
 (in-package #:sicl-mir)
 
+(defclass immediate-input ()
+  ((%value :initarg :value :reader value)))
+
+(defun make-immediate-input (value)
+  (make-instance 'immediate-input
+    :value value))
+
 (defclass instruction ()
   ((%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :reader inputs)
@@ -60,7 +67,18 @@
   (format stream "   ~a [fillcolor = yellow];~%"
 	  (gethash location *instruction-table*)))
 
-(defun draw-location-info (info stream)
+(defgeneric draw-location-info (info stream))
+
+(defmethod draw-location-info ((info immediate-input) stream)
+  (when (null (gethash info *instruction-table*))
+    (setf (gethash info *instruction-table*) (gensym))
+    (format stream "   ~a [shape = ellipse, style = filled, fillcolor = pink]~%"
+	    (gethash info *instruction-table*))
+    (format stream "   ~a label = \"~a\"]~%"
+	    (gethash info *instruction-table*)
+	    (value info))))
+
+(defmethod draw-location-info ((info sicl-env:location-info) stream)
   (when (null (gethash info *instruction-table*))
     (setf (gethash info *instruction-table*) (gensym))
     (draw-location (sicl-env:location info) stream)
@@ -191,19 +209,15 @@
 ;;; Instruction FUNCALL-INSTRUCTION.
 
 (defclass funcall-instruction (instruction)
-  ((%fun :initarg :fun :accessor fun)))
+  ())
 
-(defun make-funcall-instruction (successor fun)
+(defun make-funcall-instruction (input successor)
   (make-instance 'funcall-instruction
-    :successors (list successor)
-    :fun fun))
+    :inputs (list input)
+    :successors (list successor)))
 
 (defmethod draw-instruction ((instruction funcall-instruction) stream)
-  (draw-location-info (fun instruction) stream)
   (format stream "   ~a [label = \"funcall\"];~%"
-	  (gethash instruction *instruction-table*))
-  (format stream "   ~a -> ~a [color = red, style = dashed];~%"
-	  (gethash (fun instruction) *instruction-table*)
 	  (gethash instruction *instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
