@@ -96,6 +96,14 @@
 	     (mapc #'traverse (sicl-ast:children ast))))
     (traverse ast)))
 
+(defun make-lexical-location-info (location)
+  (make-instance 'sicl-env:lexical-location-info
+    :dynamic-extent-p nil
+    :ignore-info nil
+    :inline-info nil
+    :type t
+    :location location))
+
 (defun replace-setq (ast table)
   (let* ((lhs-ast (sicl-ast:lhs-ast ast))
 	 (location (cdr (assoc (sicl-env:location lhs-ast) table))))
@@ -103,12 +111,7 @@
      ast 'sicl-ast:memset-ast
      :argument-asts
      (list (sicl-ast:make-u--ast
-	    (list (make-instance 'sicl-env:lexical-location-info
-		    :dynamic-extent-p nil
-		    :ignore-info nil
-		    :inline-info nil
-		    :type t
-		    :location location)
+	    (list (make-lexical-location-info location)
 		  (sicl-ast:make-word-ast 1)))
 	   (sicl-ast:value ast)))))
 
@@ -118,12 +121,7 @@
      ast 'sicl-ast:memref-ast
      :argument-asts
      (list (sicl-ast:make-u--ast
-	    (list (make-instance 'sicl-env:lexical-location-info
-		    :dynamic-extent-p nil
-		    :ignore-info nil
-		    :inline-info nil
-		    :type t
-		    :location location)
+	    (list (make-lexical-location-info location)
 		  (sicl-ast:make-word-ast 1)))))))
 
 (defun replace-globals (ast table)
@@ -140,7 +138,16 @@
 	     (mapc #'traverse (sicl-ast:children ast))))
     (traverse ast)))
 
+(defun make-assignment (in-loc offset out-loc)
+  (sicl-ast:make-setq-ast
+   (make-lexical-location-info out-loc)
+   (sicl-ast:make-memref-ast
+    (list (sicl-ast:make-u+-ast
+	   (list (make-lexical-location-info in-loc)
+		 (sicl-ast:make-word-ast offset)))))))
+
 (defun eliminate-externals (ast)
+  (check-type ast sicl-ast:function-ast)
   (let* ((constants (build-constants ast))
 	 (constants-table
 	   (loop for constant in constants
@@ -152,7 +159,16 @@
 		 collect (cons global
 			       (sicl-env:make-lexical-location (gensym))))))
     (replace-constants ast constants-table)
-    (replace-globals ast globals-table)))
-	   
-    
-    
+    (replace-globals ast globals-table)
+    (let* ((externals-location (sicl-env:make-lexical-location (gensym)))
+	   (externals-in (make-lexical-location-info externals-location)))
+      (push externals-in (sicl-ast:required (sicl-ast:lambda-list ast)))
+      (setf (sicl-ast:body-ast ast)
+	    (sicl-ast:make-progn-ast
+	     (append (loop for entry in (append constants-table
+						globals-table)
+			   for loc = (cdr entry)
+			   for offset from 0 by 4
+			   collect (make-assignment
+				    externals-location offset loc))
+		     (list (sicl-ast:body-ast ast))))))))
