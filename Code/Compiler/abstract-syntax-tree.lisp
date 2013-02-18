@@ -686,6 +686,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class WORD.
+;;;
+;;; Immediate word value. 
+;;;
+;;; No arguments.
+;;;
+;;; Values: (1):
+;;;
+;;;   * The positive or negative value truncated to the 
+;;;     number of bits in a word on the target platform.
+
+(defclass word-ast (ast)
+  ((%value :initarg :value :reader value)))
+
+(defun make-word-ast (value)
+  (make-instance 'word :value value))
+
+(defmethod stream-draw-ast ((ast word-ast) stream)
+  (format stream "   ~a [label = \"~d\"];~%" (id ast) (value ast))
+  (format stream "   ~a [style = filled; fillcolor = blue];~%" (id ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class MEMALLOC-AST.
 ;;;
 ;;; Allocate a sequence of bytes of memory.
