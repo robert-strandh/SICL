@@ -44,6 +44,7 @@
    #:symbol-macro-info
    #:block-info
    #:tag-info
+   #:location-info
    #:special-location-info
    #:lexical-location-info
    #:global-location-info
@@ -117,6 +118,7 @@
 (defpackage #:sicl-mir
   (:use #:common-lisp)
   (:export
+   #:immediate-input #:make-immediate-input
    #:instruction #:successors #:inputs #:outputs
    #:end-instruction #:make-end-instruction
    #:nop-instruction #:make-nop-instruction
