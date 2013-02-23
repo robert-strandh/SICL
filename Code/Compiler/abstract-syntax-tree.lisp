@@ -445,7 +445,7 @@
     :read-only-p read-only-p))
 
 (defmethod stream-draw-ast ((ast load-time-value-ast) stream)
-  (format stream "   ~a [label = \"LTV: ~s\"];~%"
+  (format stream "   ~a [label = \"~s\"];~%"
 	  (id ast) (form-ast ast))
   (format stream "   ~a [style = filled, fillcolor = pink];~%"
 	  (id ast)))
