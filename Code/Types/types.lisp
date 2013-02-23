@@ -1,4 +1,6 @@
-(declaim (ftype symbol-predicate name-of-length-1))
+(in-package #:sicl-type-proclamations)
+
+(proclaim '(ftype symbol-predicate name-of-length-1))
 
 (deftype character-designator ()
   '(or character (string 1) (and symbol (satisfies name-of-length-1))))
@@ -15,7 +17,7 @@
 (deftype testfun1-designator () '(or testfun1 symbol))
 
 ;;; Used for two-argument tests
-(deftype testfun2 () (function (t t) 'generalized-boolean))
+(deftype testfun2 () '(function (t t) generalized-boolean))
 
 (deftype testfun2-designator () '(or testfun2 symbol))
 
@@ -35,562 +37,561 @@
 
 (deftype radix () '(integer 2 36))
 
-(declaim (ftype (function (&optional (or null condition)) nil)
-                abort))
+(proclaim '(ftype (function (&optional (or null condition)) nil)
+	    abort))
 
-(declaim (ftype (function (number) (real 0.0))
-                abs))
+(proclaim '(ftype (function (number) (real 0.0))
+	    abs))
 
-(declaim (ftype (function (t t list) list)
-                acons))
+(proclaim '(ftype (function (t t list) list)
+	    acons))
 
-(declaim (ftype (function (number) number)
-                acos))
+(proclaim '(ftype (function (number) number)
+	    acos))
 
-(declaim (ftype (function (number) number)
-                acosh))
+(proclaim '(ftype (function (number) number)
+	    acosh))
 
-(declaim (ftype (function (function method) function)
-                add-method))
+(proclaim '(ftype (function (function method) function)
+	    add-method))
 
-(declaim (ftype (function (t list
-                           &key (key keyfun)
-                                (test testfun2-designator)
-                                (test-not testfun2-designator)))
-                adjoin))
+(proclaim '(ftype (function (t list
+			     &key (key keyfun)
+			     (test testfun2-designator)
+			     (test-not testfun2-designator)))
+	    adjoin))
 
-(declaim (ftype (function (array (or fixnum list)
-                           &key (element-type t)
-                                (initial-element t)
-                                (initial-contents t)
-                                (fill-pointer nonnegative-fixnum)
-                                (displaced-to (or array null))
-                                (displaced-index-offset nonnegative-fixnum))
-                          array)
-                adjust-array))
+(proclaim '(ftype (function (array (or fixnum list)
+			     &key (element-type t)
+			     (initial-element t)
+			     (initial-contents t)
+			     (fill-pointer nonnegative-fixnum)
+			     (displaced-to (or array null))
+			     (displaced-index-offset nonnegative-fixnum))
+		   array)
+	    adjust-array))
 
-(declaim (ftype (function (array) t)
-                adjustable-array-p))
+(proclaim '(ftype (function (array) t)
+	    adjustable-array-p))
 
-(declaim (ftype (function (class &rest list &key &allow-other-keys) t)
-                allocate-instance))
+(proclaim '(ftype (function (class &rest list &key &allow-other-keys) t)
+	    allocate-instance))
 
-(declaim (ftype (function (character) t)
-                alpha-char-p))
+(proclaim '(ftype (function (character) t)
+	    alpha-char-p))
 
-(declaim (ftype (function (character) t)
-                alphanumericp))
+(proclaim '(ftype (function (character) t)
+	    alphanumericp))
 
-(declaim (ftype (function (&rest list) t)
-                append))
+(proclaim '(ftype (function (&rest list) t)
+	    append))
 
-(declaim (ftype (function (function-designator &rest args) t)
-                apply))
+(proclaim '(ftype (function (function-designator &rest args) t)
+	    apply))
 
-(declaim (ftype (function (string-designator
-                           &optional package-designator)
-                          nil)
-                apropos))
+(proclaim '(ftype (function (string-designator
+			     &optional package-designator)
+		   nil)
+	    apropos))
 
-(declaim (ftype (function (string-designator
-                           &optional package-designator)
-                          list)
-                apropos-list))
+(proclaim '(ftype (function (string-designator
+			     &optional package-designator)
+		   list)
+	    apropos-list))
 
-(declaim (ftype (function (array &rest list) t)
-                aref))
+(proclaim '(ftype (function (array &rest list) t)
+	    aref))
 
-(declaim (ftype (function (array (integer 0)) (integer 0))
-                array-dimension))
+(proclaim '(ftype (function (array (integer 0)) (integer 0))
+	    array-dimension))
 
-(declaim (ftype (function (array) list)
-                array-dimensions))
+(proclaim '(ftype (function (array) list)
+	    array-dimensions))
 
-(declaim (ftype (function (array)
-                          (values (or array nil)
-                                  (and fixnum (integer 0))))
-                array-displacement))
+(proclaim '(ftype (function (array)
+		   (values (or array nil)
+		    (and fixnum (integer 0))))
+	    array-displacement))
 
-(declaim (ftype (function (array)
-                          (or symbol list class))
-                array-element-type))
+(proclaim '(ftype (function (array)
+		   (or symbol list class))
+	    array-element-type))
 
-(declaim (ftype (function (array) t)
-                array-has-fill-pointer-p))
+(proclaim '(ftype (function (array) t)
+	    array-has-fill-pointer-p))
 
-(declaim (ftype (function (array &rest list) t)
-                (array-in-bounds-p)))
+(proclaim '(ftype (function (array &rest list) t)
+	    array-in-bounds-p))
 
-(declaim (ftype (function (array) (integer 0))
-                array-rank))
+(proclaim '(ftype (function (array) (integer 0))
+	    array-rank))
 
-(declaim (ftype (function (array &rest list) (and fixnum (integer 0)))
-                array-row-major-index))
+(proclaim '(ftype (function (array &rest list) (and fixnum (integer 0)))
+	    array-row-major-index))
 
-(declaim (ftype (function (array) (integer 0))
-                array-total-size))
+(proclaim '(ftype (function (array) (integer 0))
+	    array-total-size))
 
-(declaim (ftype (function (array) t)
-                arrayp))
+(proclaim '(ftype (function (array) t)
+	    arrayp))
 
-(declaim (ftype (function (integer integer) integer)
-                ash))
-         
-(declaim (ftype (function (t list
-                           &key (key keyfun-designator)
-                                (test testfun2-designator)
-                                (test-not testfun2-designator))
-                          (or cons nil))
-                assoc))
+(proclaim '(ftype (function (integer integer) integer)
+	    ash))
 
-(declaim (ftype (function (testfun1-designator
-                           list
-                           &key (key keyfun-designator)
-                                (test testfun1-designator)
-                                (test-not testfun1-designator))
-                          (or cons nil))
-                assoc-if
-                assoc-if-not))
+(proclaim '(ftype (function (t list
+			     &key (key keyfun-designator)
+			     (test testfun2-designator)
+			     (test-not testfun2-designator))
+		   (or cons nil))
+	    assoc))
 
-(declaim (ftype (function (number) number)
-                asin
-                asinh
-                atanh
-                cosh
-                sinh
-                tanh))
+(proclaim '(ftype (function (testfun1-designator
+			     list
+			     &key (key keyfun-designator)
+			     (test testfun1-designator)
+			     (test-not testfun1-designator))
+		   (or cons nil))
+	    assoc-if
+	    assoc-if-not))
 
-(declaim (ftype (or (function (number) number)
-                    (function (real real) number))
-                atan))
+(proclaim '(ftype (function (number) number)
+	    asin
+	    asinh
+	    atanh
+	    cosh
+	    sinh
+	    tanh))
 
-(declaim (ftype general-predicate
-                atom))
+(proclaim '(ftype (or (function (number) number)
+		   (function (real real) number))
+	    atan))
 
-(declaim (ftype (function ((array bit) &rest list) bit)
-                bit))
+(proclaim '(ftype general-predicate
+	    atom))
+
+(proclaim '(ftype (function ((array bit) &rest list) bit)
+	    bit))
 
 
-(declaim (ftype (function ((array bit) (array bit)
-                           &optional (or (array bit) (member t nil)))
-                          (array bit))
-                bit-and
-                bit-andc1
-                bit-andc2
-                bit-eqv
-                bit-ior
-                bit-nand
-                bit-nor
-                bit-orc1
-                bit-orc2
-                bit-xor))
+(proclaim '(ftype (function ((array bit) (array bit)
+			     &optional (or (array bit) (member t nil)))
+		   (array bit))
+	    bit-and
+	    bit-andc1
+	    bit-andc2
+	    bit-eqv
+	    bit-ior
+	    bit-nand
+	    bit-nor
+	    bit-orc1
+	    bit-orc2
+	    bit-xor))
 
-(declaim (ftype (function ((array bit)
-                           &optional (or (array bit) (member t nil)))
-                          (array bit))
-                bit-not))
+(proclaim '(ftype (function ((array bit)
+			     &optional (or (array bit) (member t nil)))
+		   (array bit))
+	    bit-not))
 
-(declaim (ftype general-predicate
-                bit-vector-p))
+(proclaim '(ftype general-predicate
+	    bit-vector-p))
 
 ;;; This could be done better for any particular implementation.
-(declaim (ftype (function (t integer integer)
-                          integer)
-                boole))
+(proclaim '(ftype (function (t integer integer)
+		   integer)
+	    boole))
 
-(declaim (ftype (function (character) t)
-                upper-case-p
-                lower-case-p
-                both-case-p))
+(proclaim '(ftype (function (character) t)
+	    upper-case-p
+	    lower-case-p
+	    both-case-p))
 
-(declaim (ftype (function (symbol) t)
-                boundp))
+(proclaim '(ftype (function (symbol) t)
+	    boundp))
 
-(declaim (ftype (function (&optional (or string function)) &rest list) null
-                break))
+(proclaim '(ftype (function (&optional (or string function)) &rest list) null
+	    break))
 
-(declaim (ftype (function (broadcast-stream) list)
-                broadcast-stream-streams))
+(proclaim '(ftype (function (broadcast-stream) list)
+	    broadcast-stream-streams))
 
-(declaim (ftype (function ((integer 0) (integer 0)) t)
-                byte))
+(proclaim '(ftype (function ((integer 0) (integer 0)) t)
+	    byte))
 
-(declaim (ftype (function (t) (integer 0))
-                byte-size
-                byte-position))
+(proclaim '(ftype (function (t) (integer 0))
+	    byte-size
+	    byte-position))
 
-(declaim (ftype (function (list) t)
-                car
-                cdr
-                caar
-                cadr
-                cdar
-                cddr
-                caaar
-                caadr
-                cadar
-                caddr
-                cdaar
-                cdadr
-                cddar
-                cdddr
-                caaaar
-                caaadr
-                caadar
-                caaddr
-                cadaar
-                cadadr
-                caddar
-                cadddr
-                cdaaar
-                cdaadr
-                cdadar
-                cdaddr
-                cddaar
-                cddadr
-                cdddar
-                cddddr))
+(proclaim '(ftype (function (list) t)
+	    car
+	    cdr
+	    caar
+	    cadr
+	    cdar
+	    cddr
+	    caaar
+	    caadr
+	    cadar
+	    caddr
+	    cdaar
+	    cdadr
+	    cddar
+	    cdddr
+	    caaaar
+	    caaadr
+	    caadar
+	    caaddr
+	    cadaar
+	    cadadr
+	    caddar
+	    cadddr
+	    cdaaar
+	    cdaadr
+	    cdadar
+	    cdaddr
+	    cddaar
+	    cddadr
+	    cdddar
+	    cddddr))
 
-(declaim (ftype (function (number &optional (real 0))
-                          (values integer real))
-                floor
-                ceiling
-                truncate
-                round))
+(proclaim '(ftype (function (number &optional (real 0))
+		   (values integer real))
+	    floor
+	    ceiling
+	    truncate
+	    round))
 
-(declaim (ftype (function (cell-error) t)
-                cell-error-name))
+(proclaim '(ftype (function (cell-error) t)
+	    cell-error-name))
 
-(declaim (ftype (function ((or string function) &rest list) null)
-                cerror))
+(proclaim '(ftype (function ((or string function) &rest list) null)
+	    cerror))
 
-(declaim (ftype (function (t (or symbol class) &key &allow-other-keys) t)
-                change-class))
+(proclaim '(ftype (function (t (or symbol class) &key &allow-other-keys) t)
+	    change-class))
 
-(declaim (ftype (function (string (integer 0)) character)
-                char))
+(proclaim '(ftype (function (string (integer 0)) character)
+	    char))
 
-(declaim (ftype (function (character) t)
-                char-code))
+(proclaim '(ftype (function (character) t)
+	    char-code))
 
-(declaim (ftype (function (character) character)
-                char-upcase char-downcase))
+(proclaim '(ftype (function (character) character)
+	    char-upcase char-downcase))
 
-(declaim (ftype (function (&rest list) t)
-                char=
-                char/=
-                char<
-                char>
-                char<=
-                char>=
-                char-equal
-                char-not-equal
-                char-lessp
-                char-greaterp
-                char-not-greaterp
-                char-not-lessp))
+(proclaim '(ftype (function (&rest list) t)
+	    char=
+	    char/=
+	    char<
+	    char>
+	    char<=
+	    char>=
+	    char-equal
+	    char-not-equal
+	    char-lessp
+	    char-greaterp
+	    char-not-greaterp
+	    char-not-lessp))
 
-(declaim (ftype (function (character) (integer 0))
-                char-int))
+(proclaim '(ftype (function (character) (integer 0))
+	    char-int))
 
-(declaim (ftype (function (character) (or string null))
-                char-name))
+(proclaim '(ftype (function (character) (or string null))
+	    char-name))
 
-(declaim (ftype (function (character-designator)
-                          character)
-                character))
+(proclaim '(ftype (function (character-designator)
+		   character)
+	    character))
 
-(declaim (ftype general-predicate
-                characterp))
+(proclaim '(ftype general-predicate
+	    characterp))
 
-(declaim (ftype (function (real) complex)
-                cis))
+(proclaim '(ftype (function (real) complex)
+	    cis))
 
-(declaim (ftype (function (class) symbol)
-                class-name))
+(proclaim '(ftype (function (class) symbol)
+	    class-name))
 
-(declaim (ftype (function (t) class)
-                class-of))
+(proclaim '(ftype (function (t) class)
+	    class-of))
 
-(declaim (ftype (function (&optional (or (member t nil) stream)) null)
-                clear-input
-                clear-output
-                finish-output
-                force-output))
+(proclaim '(ftype (function (&optional (or (member t nil) stream)) null)
+	    clear-input
+	    clear-output
+	    finish-output
+	    force-output))
 
-(declaim (ftype (function (stream &key (abort t)) t)
-                close))
+(proclaim '(ftype (function (stream &key (abort t)) t)
+	    close))
 
-(declaim (ftype (function (hash-table) hash-table)
-                clrhash))
+(proclaim '(ftype (function (hash-table) hash-table)
+	    clrhash))
 
-(declaim (ftype (function (t) (or character null)) code-char))
+(proclaim '(ftype (function (t) (or character null)) code-char))
 
-(declaim (ftype (function (t t) t)
-                coerce))
+(proclaim '(ftype (function (t t) t)
+	    coerce))
 
-(declaim (ftype (function (t &optional t)
-                          (values t t t))
-                compile))
-         
+(proclaim '(ftype (function (t &optional t)
+		   (values t t t))
+	    compile))
 
-(declaim (ftype (function (t &key
+
+(proclaim '(ftype (function (t &key
                              (output-file t)
                              (verbose t)
                              (print t)
                              (external-format t))
-                          (values t t t))
-                compile-file))
-                
-(declaim (ftype (function (t &key (output-file t)) t)
-                compile-file-pathname))
+		   (values t t t))
+	    compile-file))
 
-(declaim (ftype general-predicate
-                compiled-function-p))
+(proclaim '(ftype (function (t &key (output-file t)) t)
+	    compile-file-pathname))
 
-(declaim (ftype (function (t &optional t) (or function null))
-                compiler-macro-function))
+(proclaim '(ftype general-predicate
+	    compiled-function-p))
 
-(declaim (ftype (function (function) function)
-                complement))
+(proclaim '(ftype (function (t &optional t) (or function null))
+	    compiler-macro-function))
 
-(declaim (ftype (function (real &optional real) complex)
-                (or rational complex)
-                complex))
+(proclaim '(ftype (function (function) function)
+	    complement))
 
-(declaim (ftype (function (t) t) complexp))
+(proclaim '(ftype (function (real &optional real) (or rational complex))
+	    complex))
 
-(declaim (ftype (function (function list) list)
-                compute-applicable-methods))
+(proclaim '(ftype (function (t) t) complexp))
 
-(declaim (ftype (function (t &rest list) sequence)
-                concatenate))
+(proclaim '(ftype (function (function list) list)
+	    compute-applicable-methods))
 
-(declaim (ftype (function (concatenated-stream) list)
-                concatenated-stream-streams))
+(proclaim '(ftype (function (t &rest list) sequence)
+	    concatenate))
 
-(declaim (ftype (function (number) number)
-                conjugate))
+(proclaim '(ftype (function (concatenated-stream) list)
+	    concatenated-stream-streams))
 
-(declaim (ftype (function (t t) cons)
-                cons))
+(proclaim '(ftype (function (number) number)
+	    conjugate))
 
-(declaim (ftype general-predicate
-                consp))
+(proclaim '(ftype (function (t t) cons)
+	    cons))
 
-(declaim (ftype (function (t) (function ()))
-                constantly))
+(proclaim '(ftype general-predicate
+	    consp))
 
-(declaim (ftype general-predicate
-                constantp))
+(proclaim '(ftype (function (t) (function ()))
+	    constantly))
 
-(declaim (ftype (function (&optional (or condition null)) null)
-                continue))
+(proclaim '(ftype general-predicate
+	    constantp))
 
-(declaim (ftype (function (list) list)
-                copy-alist
-                copy-list))
+(proclaim '(ftype (function (&optional (or condition null)) null)
+	    continue))
 
-(declaim (ftype (function (&optional t) t)
-                copy-pprint-dispatch))
+(proclaim '(ftype (function (list) list)
+	    copy-alist
+	    copy-list))
 
-(declaim (ftype (function (&optional (or null readtable) (or null readtable))
-                          (or null readtable))
-                copy-readtable))
+(proclaim '(ftype (function (&optional t) t)
+	    copy-pprint-dispatch))
 
-(declaim (ftype (function (sequence) sequence)
-                copy-seq))
+(proclaim '(ftype (function (&optional (or null readtable) (or null readtable))
+		   (or null readtable))
+	    copy-readtable))
 
-(declaim (ftype (function (structure-object) structure-object) copy-structure))
+(proclaim '(ftype (function (sequence) sequence)
+	    copy-seq))
 
-(declaim (ftype (function (symbol &optional t) symbol)
-                copy-symbol))
+(proclaim '(ftype (function (structure-object) structure-object) copy-structure))
 
-(declaim (ftype (function (t) t)
-                copy-tree))
+(proclaim '(ftype (function (symbol &optional t) symbol)
+	    copy-symbol))
 
-(declaim (ftype (function (t
-                           sequence
-                           &key
-                           (from-end generalized-boolean)
-                           (start (integer 0))
-                           (end (or null (integer 0)))
-                           (key keyfun-designator)
-                           (test testfun2-designator)
-                           (test-not testfun2-designator)))
-                count))
+(proclaim '(ftype (function (t) t)
+	    copy-tree))
 
-(declaim (ftype (function (testfun1-designator
-                           sequence
-                           &key
-                           (from-end generalized-boolean)
-                           (start (integer 0))
-                           (end (or null (integer 0)))
-                           (key keyfun-designator)))
-                count-if
-                count-if-not))
+(proclaim '(ftype (function (t
+			     sequence
+			     &key
+			     (from-end generalized-boolean)
+			     (start (integer 0))
+			     (end (or null (integer 0)))
+			     (key keyfun-designator)
+			     (test testfun2-designator)
+			     (test-not testfun2-designator)))
+	    count))
 
-(declaim (ftype (or (function (short-float)
-                              (values short-float integer (member 1S0 -1S0)))
-                    (function (single-float)
-                              (values single-float integer (member 1F0 -1F0)))
-                    (function (double-float)
-                              (values double-float integer (member 1D0 -1D0)))
-                    (function (long-float)
-                              (values long-float integer (member 1L0 -1L0))))
-                decode-float))
+(proclaim '(ftype (function (testfun1-designator
+			     sequence
+			     &key
+			     (from-end generalized-boolean)
+			     (start (integer 0))
+			     (end (or null (integer 0)))
+			     (key keyfun-designator)))
+	    count-if
+	    count-if-not))
 
-(declaim (ftype (function ((integer 0))
-                          (values (integer 0 59)
-                                  (integer 0 59)
-                                  (integer 0 23)
-                                  (integer 1 31)
-                                  (integer 1 12)
-                                  (integer 1900)
-                                  (ingeter 0 6)
-                                  generalized-boolean
-                                  rational))
-                decode-universal-time))
+(proclaim '(ftype (or (function (short-float)
+		       (values short-float integer (member 1S0 -1S0)))
+		   (function (single-float)
+		    (values single-float integer (member 1F0 -1F0)))
+		   (function (double-float)
+		    (values double-float integer (member 1D0 -1D0)))
+		   (function (long-float)
+		    (values long-float integer (member 1L0 -1L0))))
+	    decode-float))
 
-(declaim (ftype (function (t
-                           sequence
-                           &key
-                           (from-end generalized-boolean)
-                           (test testfun2-designator)
-                           (test-not testfun2-designator)
-                           (start (integer 0))
-                           (end (or null (integer 0)))
-                           (count (or null integer))
-                           (key keyfun-designator)))
-                delete
-                remove))
+(proclaim '(ftype (function ((integer 0))
+		   (values (integer 0 59)
+		    (integer 0 59)
+		    (integer 0 23)
+		    (integer 1 31)
+		    (integer 1 12)
+		    (integer 1900)
+		    (ingeter 0 6)
+		    generalized-boolean
+		    rational))
+	    decode-universal-time))
 
-(declaim (ftype (function (testfun1-designator
-                           sequence
-                           &key
-                           (from-end generalized-boolean)
-                           (start (integer 0))
-                           (end (or null (integer 0)))
-                           (count (or null integer))
-                           (key keyfun-designator)))
-                delete-if
-                delete-if-not
-                remove-if
-                remove-if-not))
+(proclaim '(ftype (function (t
+			     sequence
+			     &key
+			     (from-end generalized-boolean)
+			     (test testfun2-designator)
+			     (test-not testfun2-designator)
+			     (start (integer 0))
+			     (end (or null (integer 0)))
+			     (count (or null integer))
+			     (key keyfun-designator)))
+	    delete
+	    remove))
 
-(declaim (ftype (function (sequence
-                           &key
-                           (from-end generalized-boolean)
-                           (test testfun2-designator)
-                           (test-not testfun2-designator)
-                           (start (integer 0))
-                           (end (or null (integer 0)))
-                           (key keyfun-designator)))
-                delete-duplicates
-                remove-duplicates))
+(proclaim '(ftype (function (testfun1-designator
+			     sequence
+			     &key
+			     (from-end generalized-boolean)
+			     (start (integer 0))
+			     (end (or null (integer 0)))
+			     (count (or null integer))
+			     (key keyfun-designator)))
+	    delete-if
+	    delete-if-not
+	    remove-if
+	    remove-if-not))
 
-(declaim (ftype (function (pathname-designator) (member t))
-                delete-file))
+(proclaim '(ftype (function (sequence
+			     &key
+			     (from-end generalized-boolean)
+			     (test testfun2-designator)
+			     (test-not testfun2-designator)
+			     (start (integer 0))
+			     (end (or null (integer 0)))
+			     (key keyfun-designator)))
+	    delete-duplicates
+	    remove-duplicates))
 
-(declaim (ftype (function (package-designator) generalized-boolean)
-                delete-package))
+(proclaim '(ftype (function (pathname-designator) (member t))
+	    delete-file))
 
-(declaim (ftype (function (rational) integer)
-                denominator
-                numerator))
+(proclaim '(ftype (function (package-designator) generalized-boolean)
+	    delete-package))
 
-(declaim (ftype (function (integer byte-specifier integer) integer)
-                deposit-field))
+(proclaim '(ftype (function (rational) integer)
+	    denominator
+	    numerator))
 
-(declaim (ftype (function (t &optional stream) (values))
-                describe))
+(proclaim '(ftype (function (integer byte-specifier integer) integer)
+	    deposit-field))
 
-(declaim (ftype (function (t stream) t)
-                describe-object))
+(proclaim '(ftype (function (t &optional stream) (values))
+	    describe))
 
-(declaim (ftype (function ((integer 0) &optional radix) (or character null))
-                digit-char))
+(proclaim '(ftype (function (t stream) t)
+	    describe-object))
 
-(declaim (ftype (function (character &optional radix) (or (integer 0) null))
-                digit-char-p))
+(proclaim '(ftype (function ((integer 0) &optional radix) (or character null))
+	    digit-char))
 
-(declaim (ftype (function (pathname-designator) list)
-                directory))
+(proclaim '(ftype (function (character &optional radix) (or (integer 0) null))
+	    digit-char-p))
 
-(declaim (ftype (function (pathname-designator) (or string null))
-                directory-namestring
-                file-namestring
-                host-namestring
-                namestring))
+(proclaim '(ftype (function (pathname-designator) list)
+	    directory))
 
-(declaim (ftype (function (extended-function-designator) null)
-                disassemble))
+(proclaim '(ftype (function (pathname-designator) (or string null))
+	    directory-namestring
+	    file-namestring
+	    host-namestring
+	    namestring))
 
-(declaim (ftype (function (integer byte-specifier integer) integer)
-                dpb))
+(proclaim '(ftype (function (extended-function-designator) null)
+	    disassemble))
 
-(declaim (ftype (function (&optional pathname-designator) t)
-                dribble))
+(proclaim '(ftype (function (integer byte-specifier integer) integer)
+	    dpb))
 
-(declaim (ftype (function (pathname-designator &optional pathname-designator)
-                          (or string null))
-                enough-namestring))
+(proclaim '(ftype (function (&optional pathname-designator) t)
+	    dribble))
 
-(declaim (ftype (function (float) integer)
-                float-radix))
+(proclaim '(ftype (function (pathname-designator &optional pathname-designator)
+		   (or string null))
+	    enough-namestring))
 
-(declaim (ftype (or (function (short-float) short-float)
-                    (function (single-float) single-float)
-                    (function (double-float) double-float)
-                    (function (long-float) long-float))
-                    (function (short-float short-float) short-float)
-                    (function (short-float single-float) single-float)
-                    (function (short-float double-float) double-float)
-                    (function (short-float long-float) long-float)
-                    (function (single-float short-float) single-float)
-                    (function (single-float single-float) single-float)
-                    (function (single-float double-float) double-float)
-                    (function (single-float long-float) long-float)
-                    (function (double-float short-float) double-float)
-                    (function (double-float single-float) double-float)
-                    (function (double-float double-float) double-float)
-                    (function (double-float long-float) long-float)
-                    (function (long-float short-float) long-float)
-                    (function (long-float single-float) long-float)
-                    (function (long-float double-float) long-float)
-                    (function (long-float long-float) long-float))
-         float-sign)
+(proclaim '(ftype (function (float) integer)
+	    float-radix))
 
-(declaim (ftype (function (float) (integer 0))
-                float-digits))
+(proclaim '(ftype (or (function (short-float) short-float)
+		   (function (single-float) single-float)
+		   (function (double-float) double-float)
+		   (function (long-float) long-float)
+		   (function (short-float short-float) short-float)
+		   (function (short-float single-float) single-float)
+		   (function (short-float double-float) double-float)
+		   (function (short-float long-float) long-float)
+		   (function (single-float short-float) single-float)
+		   (function (single-float single-float) single-float)
+		   (function (single-float double-float) double-float)
+		   (function (single-float long-float) long-float)
+		   (function (double-float short-float) double-float)
+		   (function (double-float single-float) double-float)
+		   (function (double-float double-float) double-float)
+		   (function (double-float long-float) long-float)
+		   (function (long-float short-float) long-float)
+		   (function (long-float single-float) long-float)
+		   (function (long-float double-float) long-float)
+		   (function (long-float long-float) long-float))
+	    float-sign))
 
-(declaim (ftype (function (float) (integer 0))
-                float-precision))
+(proclaim '(ftype (function (float) (integer 0))
+	    float-digits))
 
-(declaim (ftype (function (number &optional (real 0))
-                          (values (real 0) real))
-                ffloor fceiling ftruncate fround))
+(proclaim '(ftype (function (float) (integer 0))
+	    float-precision))
 
-(declaim (ftype (or (function (short-float)
-                              (values short-float integer (member -1 1)))
-                    (function (single-float)
-                              (values single-float integer (member -1 1)))
-                    (function (double-float)
-                              (values double-float integer (member -1 1)))
-                    (function (long-float)
-                              (values long-float integer (member -1 1))))
-                integer-decode-float))
+(proclaim '(ftype (function (number &optional (real 0))
+		   (values (real 0) real))
+	    ffloor fceiling ftruncate fround))
 
-(declaim (ftype (function (simple-string (integer 0)) character)
-                schar))
+(proclaim '(ftype (or (function (short-float)
+		       (values short-float integer (member -1 1)))
+		   (function (single-float)
+		    (values single-float integer (member -1 1)))
+		   (function (double-float)
+		    (values double-float integer (member -1 1)))
+		   (function (long-float)
+		    (values long-float integer (member -1 1))))
+	    integer-decode-float))
 
-(declaim (ftype (function ((simple-array bit) &rest list) bit)
-                sbit))
+(proclaim '(ftype (function (simple-string (integer 0)) character)
+	    schar))
 
-(declaim (ftype (or (function (short-float integer) short-float)
-                    (function (single-float integer) single-float)
-                    (function (double-float integer) double-float)
-                    (function (long-float integer) long-float))
-                scale-float))
+(proclaim '(ftype (function ((simple-array bit) &rest list) bit)
+	    sbit))
+
+(proclaim '(ftype (or (function (short-float integer) short-float)
+		   (function (single-float integer) single-float)
+		   (function (double-float integer) double-float)
+		   (function (long-float integer) long-float))
+	    scale-float))
 
 
