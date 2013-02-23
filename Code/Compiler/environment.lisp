@@ -508,13 +508,11 @@
 ;;;
 ;;; Macro expansion.
 
-(defun macro-function (symbol &optional environment)
-  (when (null environment)
-    (setf environment *global-environment*))
+(defun macro-function (symbol &optional env)
   (let ((entry (find-if (lambda (entry)
 			  (and (typep entry 'macro-entry)
 			       (eq (name entry) symbol)))
-			environment)))
+			(append env (functions *global-environment*)))))
     (if (null entry)
 	nil
 	(definition entry))))
@@ -523,17 +521,15 @@
   (lambda (macro-function macro-form environment)
     (funcall macro-function macro-form environment)))
 
-(defun macroexpand-1 (form &optional environment)
-  (when (null environment)
-    (setf environment *global-environment*))
+(defun macroexpand-1 (form &optional env)
   (let ((expander nil))
     (cond ((and (consp form) (symbolp (car form)))
-	   (setf expander (macro-function (car form) environment)))
+	   (setf expander (macro-function (car form) env)))
 	  ((symbolp form)
 	   (let ((entry (find-if (lambda (entry)
 				   (and (typep entry 'symbol-macro-entry)
 					(eq (name entry) form)))
-				 environment)))
+				 (append env (variables *global-environment*)))))
 	     (if (null entry)
 		 nil
 		 (setf expander (definition entry)))))
@@ -542,7 +538,7 @@
 	(values (funcall (coerce *macroexpand-hook* 'function)
 			 expander
 			 form
-			 environment)
+			 env)
 		t)
 	(values form nil))))
 
