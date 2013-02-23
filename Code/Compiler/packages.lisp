@@ -2,11 +2,15 @@
   (:nicknames #:sicl-env)
   (:use #:common-lisp)
   (:shadow #:type
+	   #:package
 	   #:proclaim
 	   #:macroexpand-1
 	   #:macroexpand
 	   #:macro-function
 	   #:*macroexpand-hook*
+	   #:fdefinition
+	   #:fboundp
+	   #:fmakunbound
 	   )
   (:export
    #:definition
@@ -36,7 +40,7 @@
    #:add-symbol-macro-entry
    #:add-global-function-entry
    #:add-local-function-entry
-   #:add-macro-entry
+   #:add-local-macro-entry
    #:add-block-entry
    #:add-go-tag-entry
    #:constant-variable-info
@@ -50,6 +54,9 @@
    #:global-location-info
    #:function-info
    #:variable-info
+   #:fdefinition
+   #:fboundp
+   #:fmakunbound
    ))
 
 (defpackage #:sicl-ast
@@ -59,7 +66,6 @@
    #:constant-ast #:make-constant-ast #:value
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
-   #:catch-ast #:make-catch-ast #:tag 
    #:eval-when-ast #:make-eval-when-ast #:situations
    #:function-ast #:make-function-ast #:body-ast
    #:go-ast #:make-go-ast #:tag-ast
@@ -77,9 +83,6 @@
    #:tagbody-ast #:make-tagbody-ast #:items
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast #:value-type
-   #:throw-ast #:make-throw-ast
-   #:unwind-protect-ast
-   #:make-unwind-protect-ast #:protected-ast #:cleanup-form-asts
    #:draw-ast
    #:children
    #:word-ast #:make-word-ast
@@ -103,7 +106,8 @@
    #:s<-ast #:make-s<-ast
    #:s<=-ast #:make-s<=-ast
    #:u<-ast #:make-u<-ast
-   #:u<=-ast #:make-u<=-ast))
+   #:u<=-ast #:make-u<=-ast
+   #:halt-ast #:make-halt-ast))
 
 (defpackage #:sicl-compiler-phase-1
   (:nicknames #:p1)
@@ -176,6 +180,7 @@
    #:lshift #:ashift
    #:& #:ior #:xor #:~
    #:== #:s< #:s<= #:u< #:u<=
+   #:halt
    ))
 
 (defpackage #:sicl-procedure-integration
