@@ -1,5 +1,35 @@
 (in-package #:sicl-compiler-environment)
 
+;;;; An environment contains ENTRIES of various kinds.  An entry can
+;;;; be a BASE ENTRY.  This is the kind of entry used for variables,
+;;;; functions, and macros, but also for autonomous declarations such
+;;;; as OPTIMIZE.  Other entries are AUXILIARY entries, in that they
+;;;; provide additioal information about other entries.  This type of
+;;;; entry is used for declarations of type, inline, and dynamic
+;;;; extent.  The class of a BASE ENTRY determines for which namespace
+;;;; it is relevant.  
+;;;;
+;;;; When the information about some entity is wanted at some point in
+;;;; the compilation process, the current environment is first
+;;;; searched for a BASE ENTRY.  Then, it is searched again for
+;;;; auxiliary entries that provide additional information about the
+;;;; particular base entry that was found.  All this information is
+;;;; then combined into an object called an INFO object which is
+;;;; finally returned.
+;;;;
+;;;; An environment is divided into disconneted parts.  
+;;;;
+;;;; One part is always the same, and that is the global environment,
+;;;; which is the value of the variable *global-environment*.  The
+;;;; global environment is a class instance and it is divided into
+;;;; namespaces.  
+;;;;
+;;;; For compilation, another part consists of the extensions to the
+;;;; startup environment that happen when lexial variables, functions,
+;;;; macros etc, are introduced during the compilation of a form.
+;;;; This part is represented as a simply linked list of entries, with
+;;;; no regard to namespaces.  Each entry 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Augmenting an environment.
@@ -476,185 +506,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Querying the environment.
-
-(defun find-in-namespace (name environment namespace)
-  (find-if (lambda (entry)
-	     (and (typep entry namespace)
-		  (equal (name entry) name)))
-	   environment))
-
-(defun find-type (entry env)
-  `(and ,@(loop for e in env
-		when (and (typep e 'type-declaration-entry)
-			  (eq (location e) entry))
-		  collect (type e))))
-
-(defun find-inline-info (entry env)
-  (loop for e in env
-	do (when (and (typep e 'inline-or-notinline-declaration-entry)
-		      (eq (location e) entry))
-	     (return (if (typep e 'inline-declaration-entry)
-			 :inline
-			 :notinline)))))
-
-(defun find-ignore-info (entry env)
-  (cond ((loop for e in env
-	       when (and (typep e 'ignore-declaration-entry)
-			 (eq (location e) entry))
-		 return t)
-	 :ignore)
-	((loop for e in env
-	       when (and (typep e 'ignorable-declaration-entry)
-			 (eq (location e) entry))
-		 return t)
-	 :ignorable)
-	(t nil)))
-
-(defun find-dynamic-extent-info (entry env)
-  (loop for e in env
-	when (and (typep e 'dynamic-extent-declaration-entry)
-		  (eq (location e) entry))
-	  return t))
-
-(defun variable-info (name env)
-  (let ((entry (find-in-namespace name env 'variable-space)))
-    (cond ((null entry)
-	   nil)
-	  ((typep entry 'constant-variable-entry)
-	   (make-instance 'constant-variable-info
-			  :name (name entry)
-			  :definition (definition entry)))
-	  ((typep entry 'symbol-macro-entry)
-	   (make-instance 'symbol-macro-info
-			  :name (name entry)
-			  :definition (definition entry)
-			  :type (find-type entry env)))
-	  (t
-	   (let ((type (find-type entry env))
-		 (inline-info (find-inline-info entry env))
-		 (ignore-info (find-ignore-info entry env))
-		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
-	     (make-instance (if (typep entry 'special-variable-entry)
-				'special-location-info
-				'lexical-location-info)
-			    :location (location entry)
-			    :type type
-			    :inline-info inline-info
-			    :ignore-info ignore-info
-			    :dynamic-extent-p dynamic-extent-p))))))
-
-(defun function-info (name env)
-  (let ((entry (find-in-namespace name env 'function-space)))
-    (cond ((null entry)
-	   nil)
-	  ((typep entry 'local-macro-entry)
-	   (make-instance 'macro-info
-			  :name (name entry)
-			  :definition (definition entry)))
-	  (t
-	   (let ((type (find-type entry env))
-		 (inline-info (find-inline-info entry env))
-		 (ignore-info (find-ignore-info entry env))
-		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
-	     (make-instance (if (typep entry 'global-function-entry)
-				'global-location-info
-				'lexical-location-info)
-			    :location (location entry)
-			    :type type
-			    :inline-info inline-info
-			    :ignore-info ignore-info
-			    :dynamic-extent-p dynamic-extent-p))))))
-
-(defun block-info (name env)
-  (let ((entry (find-in-namespace name env 'block-space)))
-    (if (null entry)
-	nil
-	(make-instance 'block-info
-		       :name (name entry)
-		       :definition (definition entry)))))
-
-(defun tag-info (name env)
-  (let ((entry (find-in-namespace name env 'tag-space)))
-    (if (null entry)
-	nil
-	(make-instance 'tag-info
-		       :name (name entry)
-		       :definition (definition entry)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; The global environment.
-;;;
-;;; The first entry of the global environment is always a dummy entry,
-;;; so that it is possible to side-effect the global environment by
-;;; modifying the CDR of it.
-
-(defparameter *global-environment*
-  (list (make-instance 'dummy-entry)))
-
-(defun add-to-global-environment (entry)
-  (push entry (cdr *global-environment*)))
-
-(defun find-variable (name environment)
-  (find-in-namespace name environment 'variable-space))
-
-(defun find-function (name environment)
-  (find-in-namespace name environment 'function-space))
-
-(defun find-block (name environment)
-  (find-in-namespace name environment 'block-space))
-
-(defun find-go-tag (name environment)
-  (find-in-namespace name environment 'tag-space))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Create an environment entry from a canonicalized declaration
-;;; specifier.
-
-(defun make-entry-from-declaration
-    (canonicalized-declaration-specifier environment)
-  (destructuring-bind (head . rest) canonicalized-declaration-specifier
-    (case head
-      (declaration
-       (make-declaration-declaration-entry (car rest)))
-      (dynamic-extent
-       (let ((entry (if (consp (car rest))
-			(find-function (cadr (car rest)) environment)
-			(find-variable (car rest) environment))))
-	 (make-dynamic-extent-declaration-entry entry)))
-      (ftype
-       (let ((entry (find-function (cadr rest) environment)))
-	 (make-type-declaration-entry entry (car rest))))
-      (ignorable
-       (let ((entry (if (consp (car rest))
-			  (find-function (cadr (car rest)) environment)
-			  (find-variable (car rest) environment))))
-	 (make-ignorable-declaration-entry entry)))
-      (ignore
-       (let ((entry (if (consp (car rest))
-			(find-function (cadr (car rest)) environment)
-			(find-variable (car rest) environment))))
-	 (make-ignore-declaration-entry entry)))
-      (inline
-       (let ((entry (find-function (car rest) environment)))
-	 (make-inline-declaration-entry entry)))
-      (notinline
-       (let ((entry (find-function (car rest) environment)))
-	 (make-notinline-declaration-entry entry)))
-      (optimize
-       (make-optimize-declaration-entry
-	(car (car rest)) (cadr (car rest))))
-      (special
-       ;; FIXME: is this right?
-       (make-special-variable-entry (car rest)))
-      (type
-       (let ((entry (find-variable (cadr rest) environment)))
-	 (make-type-declaration-entry entry (car rest)))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro expansion.
 
 (defun macro-function (symbol &optional environment)
@@ -734,15 +585,173 @@
    ;; macros and functions.
    ;; FIXME: what about compiler macros?
    (%functions :initform '() :accessor functions)
-   (%proclamations :initform '() :accessor proclamaitions)))
+   (%proclamations :initform '() :accessor proclamations)))
 
-(defun function-name-p (object)
-  (or (symbolp function-name)
-      (and (consp function-name)
-	   (eq (car function-name) 'setf)
-	   (consp (cdr function-name))
-	   (symbolp (cadr function-name))
-	   (null (cddr function-name)))))
+(defparameter *global-environment*
+  (make-instance 'global-environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Querying the environment.
+
+(defun find-in-namespace (name environment namespace)
+  (find-if (lambda (entry)
+	     (and (typep entry namespace)
+		  (equal (name entry) name)))
+	   environment))
+
+(defun find-variable (name environment)
+  (find-in-namespace name
+		     (append environment (variables *global-environment*))
+		     'variable-space))
+
+(defun find-function (name environment)
+  (find-in-namespace name
+		     (append environment (functions *global-environment*))
+		     'function-space))
+
+(defun find-type (entry env)
+  `(and ,@(loop for e in (append env (proclamations *global-environment*))
+		when (and (typep e 'type-declaration-entry)
+			  (eq (location e) entry))
+		  collect (type e))))
+
+(defun find-inline-info (entry env)
+  (loop for e in (append env (proclamations *global-environment*))
+	do (when (and (typep e 'inline-or-notinline-declaration-entry)
+		      (eq (location e) entry))
+	     (return (if (typep e 'inline-declaration-entry)
+			 :inline
+			 :notinline)))))
+
+(defun find-ignore-info (entry env)
+  (cond ((loop for e in (append env (proclamations *global-environment*))
+	       when (and (typep e 'ignore-declaration-entry)
+			 (eq (location e) entry))
+		 return t)
+	 :ignore)
+	((loop for e in (append env (proclamations *global-environment*))
+	       when (and (typep e 'ignorable-declaration-entry)
+			 (eq (location e) entry))
+		 return t)
+	 :ignorable)
+	(t nil)))
+
+(defun find-dynamic-extent-info (entry env)
+  (loop for e in (append env (proclamations *global-environment*))
+	when (and (typep e 'dynamic-extent-declaration-entry)
+		  (eq (location e) entry))
+	  return t))
+
+(defun variable-info (name env)
+  (let ((entry (find-variable name env)))
+    (cond ((null entry)
+	   nil)
+	  ((typep entry 'constant-variable-entry)
+	   (make-instance 'constant-variable-info
+			  :name (name entry)
+			  :definition (definition entry)))
+	  ((typep entry 'symbol-macro-entry)
+	   (make-instance 'symbol-macro-info
+			  :name (name entry)
+			  :definition (definition entry)
+			  :type (find-type entry env)))
+	  (t
+	   (let ((type (find-type entry env))
+		 (inline-info (find-inline-info entry env))
+		 (ignore-info (find-ignore-info entry env))
+		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
+	     (make-instance (if (typep entry 'special-variable-entry)
+				'special-location-info
+				'lexical-location-info)
+			    :location (location entry)
+			    :type type
+			    :inline-info inline-info
+			    :ignore-info ignore-info
+			    :dynamic-extent-p dynamic-extent-p))))))
+
+(defun function-info (name env)
+  (let ((entry (find-function name env)))
+    (cond ((null entry)
+	   nil)
+	  ((typep entry 'local-macro-entry)
+	   (make-instance 'macro-info
+			  :name (name entry)
+			  :definition (definition entry)))
+	  (t
+	   (let ((type (find-type entry env))
+		 (inline-info (find-inline-info entry env))
+		 (ignore-info (find-ignore-info entry env))
+		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
+	     (make-instance (if (typep entry 'global-function-entry)
+				'global-location-info
+				'lexical-location-info)
+			    :location (location entry)
+			    :type type
+			    :inline-info inline-info
+			    :ignore-info ignore-info
+			    :dynamic-extent-p dynamic-extent-p))))))
+
+(defun block-info (name env)
+  (let ((entry (find-in-namespace name env 'block-space)))
+    (if (null entry)
+	nil
+	(make-instance 'block-info
+		       :name (name entry)
+		       :definition (definition entry)))))
+
+(defun tag-info (name env)
+  (let ((entry (find-in-namespace name env 'tag-space)))
+    (if (null entry)
+	nil
+	(make-instance 'tag-info
+		       :name (name entry)
+		       :definition (definition entry)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Create an environment entry from a canonicalized declaration
+;;; specifier.
+
+(defun make-entry-from-declaration
+    (canonicalized-declaration-specifier environment)
+  (destructuring-bind (head . rest) canonicalized-declaration-specifier
+    (case head
+      (declaration
+       (make-declaration-declaration-entry (car rest)))
+      (dynamic-extent
+       (let ((entry (if (consp (car rest))
+			(find-function (cadr (car rest)) environment)
+			(find-variable (car rest) environment))))
+	 (make-dynamic-extent-declaration-entry entry)))
+      (ftype
+       (let ((entry (find-function (cadr rest) environment)))
+	 (make-type-declaration-entry entry (car rest))))
+      (ignorable
+       (let ((entry (if (consp (car rest))
+			  (find-function (cadr (car rest)) environment)
+			  (find-variable (car rest) environment))))
+	 (make-ignorable-declaration-entry entry)))
+      (ignore
+       (let ((entry (if (consp (car rest))
+			(find-function (cadr (car rest)) environment)
+			(find-variable (car rest) environment))))
+	 (make-ignore-declaration-entry entry)))
+      (inline
+       (let ((entry (find-function (car rest) environment)))
+	 (make-inline-declaration-entry entry)))
+      (notinline
+       (let ((entry (find-function (car rest) environment)))
+	 (make-notinline-declaration-entry entry)))
+      (optimize
+       (make-optimize-declaration-entry
+	(car (car rest)) (cadr (car rest))))
+      (special
+       ;; FIXME: is this right?
+       (make-special-variable-entry (car rest)))
+      (type
+       (let ((entry (find-variable (cadr rest) environment)))
+	 (make-type-declaration-entry entry (car rest)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -758,14 +767,21 @@
 ;;; code can not count on anything else, we might as well just return
 ;;; T.
 
+(defun function-name-p (object)
+  (or (symbolp object)
+      (and (consp object)
+	   (eq (car object) 'setf)
+	   (consp (cdr object))
+	   (symbolp (cadr object))
+	   (null (cddr object)))))
+
 (defun fboundp (function-name)
   (unless (function-name-p function-name)
     (error "not a function name ~s" function-name))
   (let ((entry (find function-name
 		     (functions *global-environment*)
 		     :key #'name
-		     :test #'equal)
-	       (functions *global-environment*)))
+		     :test #'equal)))
     (typecase entry
       ((or global-function-entry global-macro-entry)
        (bound entry))
@@ -801,8 +817,7 @@
   (let ((entry (find function-name
 		     (functions *global-environment*)
 		     :key #'name
-		     :test #'equal)
-	       (functions *global-environment*)))
+		     :test #'equal)))
     (unless (or (null entry)
 		(typep entry 'special-operator-entry))
       (setf (bound entry) nil))))
@@ -832,8 +847,7 @@
   (let ((entry (find function-name
 		     (functions *global-environment*)
 		     :key #'name
-		     :test #'equal)
-	       (functions *global-environment*)))
+		     :test #'equal)))
     (typecase entry
       (global-function-entry
        (if (bound entry)
@@ -876,8 +890,7 @@
   (let ((entry (find function-name
 		     (functions *global-environment*)
 		     :key #'name
-		     :test #'equal)
-	       (functions *global-environment*)))
+		     :test #'equal)))
     (cond ((null entry)
 	   (push (make-instance 'global-function-entry
 		   :name function-name
@@ -909,8 +922,8 @@
     (error 'type-error :datum symbol :expected-type 'symbol))
   (let ((entry (find-if (lambda (entry)
 			  (and (typep entry 'special-operator-entry)
-			       (eq (name entry) symbol))))
-	       (functions *global-environment*)))
+			       (eq (name entry) symbol)))
+			(functions *global-environment*))))
     (not (null entry))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -935,7 +948,7 @@
 
 (defun (setf macro-function) (new-function symbol &optional environment)
   (unless (null environment)
-    (error 'type-error :datum environment :expected-type null))
+    (error 'type-error :datum environment :expected-type 'null))
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
   (unless (functionp new-function)
@@ -944,7 +957,7 @@
 	(remove-if (lambda (entry)
 		     (and (or (typep entry 'global-function-entry)
 			      (typep entry 'global-macro-entry))
-			  (eq (name entry))))
+			  (eq (name entry) symbol)))
 		   (functions *global-environment*)))
   (push (make-instance 'global-macro-entry
 	  :name symbol
@@ -960,10 +973,10 @@
   (unless (find-if (lambda (entry)
 		     (and (typep entry 'declaration-declaration-entry)
 			  (eq (name entry) name)))
-		   *global-environment*)
-    (add-to-global-environment
-     (make-instance 'declaration-declaration-entry
-		    :name name))))
+		   (proclamations *global-environment*))
+    (push (make-instance 'declaration-declaration-entry
+	    :name name)
+	  (proclamations *global-environment*))))
 
 (defun proclaim-ftype (name type)
   (let ((entry (find-if (lambda (entry)
@@ -971,15 +984,16 @@
 			       (eq (name entry) name)))
 			*global-environment*)))
     (when (null entry)
-      (error "no function by that name"))
+      (setf entry (make-global-function-entry name))
+      (push entry (functions *global-environment*)))
     (let ((existing-declaration
 	    (find-if (lambda (decl)
 		       (and (typep decl 'type-declaration-entry)
 			    (eq (location decl) (location entry))))
-		     *global-environment*)))
+		     (proclamations *global-environment*))))
       (cond ((null existing-declaration)
-	     (add-to-global-environment
-	      (make-type-declaration-entry entry type)))
+	     (push (make-type-declaration-entry entry type)
+		   (proclamations *global-environment*)))
 	    ((equal (type existing-declaration) type)
 	     nil)
 	    (t
@@ -996,35 +1010,4 @@
 	   (cddr declaration-specifier)))
     ;; FIXME: handle more proclamations
     ))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Put some stuff in the global environment.
-
-(add-to-global-environment
- (make-constant-variable-entry 'pi pi))
-
-(add-to-global-environment
- (make-special-variable-entry '*read-base*))
-
-(add-to-global-environment
- (make-global-function-entry 'car))
-
-(add-to-global-environment
- (make-global-function-entry 'error))
-
-(add-to-global-environment
- (make-global-function-entry '(setf fdefinition)))
-
-(add-to-global-environment
- (make-global-function-entry 'funcall))
-
-(add-to-global-environment
- (make-local-macro-entry
-  'when
-  (lambda (form env)
-    (declare (ignore env))
-    `(if ,(cadr form)
-	 (progn ,(cddr form))
-	 nil))))
 
