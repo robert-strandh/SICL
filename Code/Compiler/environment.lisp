@@ -154,6 +154,16 @@
 (defun add-special-variable-entry (env name)
   (add-to-environment env (make-special-variable-entry name)))
 
+(defclass global-variable-entry (special-variable-entry)
+  ((%bound :initform nil :initarg :bound :accessor bound)
+   (%storage :initform (list nil) :reader storage)))
+
+(defun make-global-variable-entry (name)
+  (make-instance 'global-variable-entry
+		 :name name
+		 :location (make-special-location name)))
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LEXICAL-VARIABLE-ENTRY.
@@ -996,6 +1006,12 @@
 	     ;; make that an error for now
 	     (error "function already has a type proclamation"))))))
 
+(defun proclaim-special (name)
+  (pushnew (make-global-variable-entry name)
+	   (variables *global-environment*)
+	   :key #'name
+	   :test #'eq))
+
 (defun proclaim (declaration-specifier)
   (case (car declaration-specifier)
     (declaration
@@ -1004,6 +1020,9 @@
     (ftype
      (mapc (lambda (name) (proclaim-ftype name (cadr declaration-specifier)))
 	   (cddr declaration-specifier)))
+    (special
+     (mapcs #'proclaim-special
+	    (cdr declaration-specifier)))
     ;; FIXME: handle more proclamations
     ))
 
