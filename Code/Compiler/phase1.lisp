@@ -21,14 +21,32 @@
 ;;;
 ;;; Converting ordinary Common Lisp code.
 
-(defun convert-constant (form)
-  (sicl-ast:make-constant-ast form))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a constant.
+;;;
+;;; Either the constant can be represented as an immediate value, or
+;;; else it is turned into a LOAD-TIME-VALUE AST.
+
+;;; FIXME: do this by consulting the global configuration parameters.
+(defun convert-constant (constant)
+  (cond ((and (integerp constant)
+	      (<= (- (ash 1 29)) constant (1- (ash 1 29))))
+	 (sicl-ast:make-immediate-ast (ash constant 2)))
+	((characterp constant)
+	 (sicl-ast:make-immediate-ast (+ (ash (char-code constant) 4) 2)))
+	(t
+	 (sicl-ast:make-load-time-value-ast
+	  `(quote ,constant)))))
 
 (defun convert-variable (form env)
   (let ((info (sicl-env:variable-info form env)))
-    (if (null info)
-	(error "undefined variable: ~s" form)
-	info)))
+    (cond ((null info)
+	   (error "undefined variable: ~s" form))
+	  ((typep info 'sicl-env:constant-variable-info)
+	   (convert-constant `(quote ,(sicl-env:definition info))))
+	  (t
+	   info))))
 
 (defgeneric convert-compound (head form environment))
 
@@ -66,7 +84,10 @@
     (if (null info)
 	(error "no such function ~s" head)
 	(sicl-ast:make-call-ast
-	 info
+	 (if (typep info 'sicl-env:global-location-info)
+	     (sicl-ast:make-load-time-value-ast
+	      `(function-cell ',head))
+	     info)
 	 (convert-sequence (cdr form) env)))))
 
 ;;; Method to be used when the head of a compound form is a
@@ -149,19 +170,6 @@
     (setf (sicl-ast:body-ast ast)
 	  (sicl-ast:make-progn-ast forms))
     ast))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting CATCH.
-
-(defmethod convert-compound
-    ((symbol (eql 'catch)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 nil)
-  (let ((forms (convert-sequence (cddr form) environment)))
-    (sicl-ast:make-catch-ast
-     (convert (cadr form) environment)
-     (sicl-ast:make-progn-ast forms))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -423,30 +431,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting MULTIPLE-VALUE-CALL.
-
-(defmethod convert-compound
-    ((symbol (eql 'multiple-value-call)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 nil)
-  (sicl-ast:make-multiple-value-call-ast
-   (convert (cadr form) environment)
-   (convert-sequence (cddr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting MULTIPLE-VALUE-PROG1.
-
-(defmethod convert-compound
-    ((symbol (eql 'multiple-value-prog1)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 nil)
-  (sicl-ast:make-multiple-value-prog1-ast
-   (convert (cadr form) environment)
-   (convert-sequence (cddr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Converting PROGN.
 
 (defmethod convert-compound
@@ -454,21 +438,6 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-ast:make-progn-ast
    (convert-sequence (cdr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting PROGV.
-
-(defmethod convert-compound
-    ((symbol (eql 'progv)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 2 nil)
-  (let ((body-ast (sicl-ast:make-progn-ast 
-		   (convert-sequence (cdddr form) environment))))
-    (sicl-ast:make-progv-ast
-     (convert (cadr form) environment)
-     (convert (caddr form) environment)
-     body-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -591,30 +560,6 @@
   (sicl-ast:make-the-ast
    (cadr form)
    (convert (caddr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting THROW.
-
-(defmethod convert-compound
-    ((symbol (eql 'throw)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 2 2)
-  (sicl-ast:make-throw-ast
-   (convert (cadr form) environment)
-   (convert (caddr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting UNWIND-PROTECT.
-
-(defmethod convert-compound
-    ((symbol (eql 'unwind-protect)) form environment)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 nil)
-  (sicl-ast:make-unwind-protect-ast
-   (convert (cadr form) environment)
-   (convert-sequence (cddr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
