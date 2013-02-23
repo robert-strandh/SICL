@@ -192,3 +192,7 @@
   (:export
    ))
 
+(defpackage #:sicl-type-proclamations
+  (:use #:common-lisp)
+  (:shadowing-import-from #:sicl-compiler-environment
+			  #:proclaim))
