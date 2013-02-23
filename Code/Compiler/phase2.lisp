@@ -133,37 +133,37 @@
 ;;;
 ;;; Compile a CONSTANT-AST.  
 
-(defmethod compile-ast ((ast sicl-ast:constant-ast) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (ecase (length successors)
-      (1 (cond ((null results)
-		;; If there is a single successor and no value required,
-		;; then this constant is compiled in a context where its
-		;; value makes no difference.  
-		(error "Constant found in a context where no value required."))
-	       ((eq results t)
-		(let ((temp (new-temporary)))
-		  (sicl-mir:make-constant-assignment-instruction
-		   temp
-		   (sicl-mir:make-put-values-instruction
-		    (list temp) (car successors))
-		   (sicl-ast:value ast))))
-	       (t
-		(sicl-mir:make-constant-assignment-instruction
-		 (car results)
-		 (nil-fill (cdr results) (car successors))
-		 (sicl-ast:value ast)))))
-      (2 (cond ((null (sicl-ast:value ast))
-		(car successors))
-	       ((null results)
-		(cadr successors))
-	       (t
-		(sicl-mir:make-constant-assignment-instruction
-		 (car results)
-		 (cadr successors)
-		 (sicl-ast:value ast))))))))
+;; (defmethod compile-ast ((ast sicl-ast:constant-ast) context)
+;;   (with-accessors ((results results)
+;; 		   (successors successors))
+;;       context
+;;     (ecase (length successors)
+;;       (1 (cond ((null results)
+;; 		;; If there is a single successor and no value required,
+;; 		;; then this constant is compiled in a context where its
+;; 		;; value makes no difference.  
+;; 		(error "Constant found in a context where no value required."))
+;; 	       ((eq results t)
+;; 		(let ((temp (new-temporary)))
+;; 		  (sicl-mir:make-constant-assignment-instruction
+;; 		   temp
+;; 		   (sicl-mir:make-put-values-instruction
+;; 		    (list temp) (car successors))
+;; 		   (sicl-ast:value ast))))
+;; 	       (t
+;; 		(sicl-mir:make-constant-assignment-instruction
+;; 		 (car results)
+;; 		 (nil-fill (cdr results) (car successors))
+;; 		 (sicl-ast:value ast)))))
+;;       (2 (cond ((null (sicl-ast:value ast))
+;; 		(car successors))
+;; 	       ((null results)
+;; 		(cadr successors))
+;; 	       (t
+;; 		(sicl-mir:make-constant-assignment-instruction
+;; 		 (car results)
+;; 		 (cadr successors)
+;; 		 (sicl-ast:value ast))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -257,7 +257,7 @@
 		   (sicl-mir:make-nop-instruction nil))))
   (let ((next (if (null (results context))
 		  (car (successors context))
-		  (compile-ast (sicl-ast:make-constant-ast nil)
+		  (compile-ast (sicl-ast:make-load-time-value-ast nil)
 			       context))))
     (loop for item in (reverse (sicl-ast:items ast))
 	  do (setf next
