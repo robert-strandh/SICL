@@ -48,7 +48,7 @@
 (defun collect-constants (ast)
   (let ((result '()))
     (labels ((traverse (ast)
-	       (when (typep ast 'sicl-ast:constant-ast)
+	       (when (typep ast 'sicl-ast:load-time-value-ast)
 		 (let ((value (sicl-ast:value ast)))
 		   (unless (replace-by-immediate-p value)
 		     (push value result))))
@@ -91,7 +91,7 @@
 
 (defun replace-constants (ast table)
   (labels ((traverse (ast)
-	     (when (typep ast 'sicl-ast:constant-ast)
+	     (when (typep ast 'sicl-ast:load-time-value-ast)
 	       (replace-constant ast table))
 	     (mapc #'traverse (sicl-ast:children ast))))
     (traverse ast)))
