@@ -1,7 +1,5 @@
 (in-package #:sicl-compiler-environment)
 
-;;;; An environment is represented as a list of entries. 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Augmenting an environment.
@@ -163,10 +161,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class FUNCTION-ENTRY.
+;;;
+;;; This class is not meant to be instantiated directly, and exists
+;;; only as the common parent class of the classes
+;;; GLOBAL-FUNCTION-ENTRY and LOCAL-FUNCTION-ENTRY.
+
+(defclass function-entry (function-space location-entry)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class GLOBAL-FUNCTION-ENTRY.
 
-(defclass global-function-entry (function-space location-entry)
-  ())
+(defclass global-function-entry (function-entry)
+  ((%bound :initform nil :initarg :bound :accessor bound)))
 
 (defun make-global-function-entry (name)
   (make-instance 'global-function-entry
@@ -180,7 +189,7 @@
 ;;;
 ;;; Class LOCAL-FUNCTION-ENTRY.
 
-(defclass local-function-entry (function-space location-entry)
+(defclass local-function-entry (function-entry)
   ())
 
 (defun make-local-function-entry (name)
@@ -194,17 +203,50 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class MACRO-ENTRY.
+;;;
+;;; This class is not meant to be instantiated directly, and exists
+;;; only as the common parent class of the classes
+;;; GLOBAL-MACRO-ENTRY and LOCAL-MACRO-ENTRY.
 
 (defclass macro-entry (function-space definition-entry)
   ())
 
-(defun make-macro-entry (name expander)
-  (make-instance 'macro-entry
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class GLOBAL-MACRO-ENTRY.
+
+(defclass global-macro-entry (macro-entry)
+  ((%bound :initform nil :initarg :bound :accessor bound)))
+
+(defun make-global-macro-entry (name expander)
+  (make-instance 'global-macro-entry
 		 :name name
 		 :definition expander))
 
-(defun add-macro-entry (env name expander)
-  (add-to-environment env (make-macro-entry name expander)))
+(defun add-global-macro-entry (env name expander)
+  (add-to-environment env (make-global-macro-entry name expander)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOCAL-MACRO-ENTRY.
+
+(defclass local-macro-entry (macro-entry)
+  ())
+
+(defun make-local-macro-entry (name expander)
+  (make-instance 'local-macro-entry
+		 :name name
+		 :definition expander))
+
+(defun add-local-macro-entry (env name expander)
+  (add-to-environment env (make-local-macro-entry name expander)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SPECIAL-OPERATOR-ENTRY.
+
+(defclass special-operator-entry (named-entry function-space)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -506,7 +548,7 @@
   (let ((entry (find-in-namespace name env 'function-space)))
     (cond ((null entry)
 	   nil)
-	  ((typep entry 'macro-entry)
+	  ((typep entry 'local-macro-entry)
 	   (make-instance 'macro-info
 			  :name (name entry)
 			  :definition (definition entry)))
@@ -611,51 +653,6 @@
        (let ((entry (find-variable (cadr rest) environment)))
 	 (make-type-declaration-entry entry (car rest)))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function PROCLAIM.
-
-(defun proclaim-declaration (name)
-  (unless (find-if (lambda (entry)
-		     (and (typep entry 'declaration-declaration-entry)
-			  (eq (name entry) name)))
-		   *global-environment*)
-    (add-to-global-environment
-     (make-instance 'declaration-declaration-entry
-		    :name name))))
-
-(defun proclaim-ftype (name type)
-  (let ((entry (find-if (lambda (entry)
-			  (and (typep entry 'global-function-entry)
-			       (eq (name entry) name)))
-			*global-environment*)))
-    (when (null entry)
-      (error "no function by that name"))
-    (let ((existing-declaration
-	    (find-if (lambda (decl)
-		       (and (typep decl 'type-declaration-entry)
-			    (eq (location decl) (location entry))))
-		     *global-environment*)))
-      (cond ((null existing-declaration)
-	     (add-to-global-environment
-	      (make-type-declaration-entry entry type)))
-	    ((equal (type existing-declaration) type)
-	     nil)
-	    (t
-	     ;; make that an error for now
-	     (error "function already has a type proclamation"))))))
-
-(defun proclaim (declaration-specifier)
-  (case (car declaration-specifier)
-    (declaration
-     (mapc #'proclaim-declaration
-	   (cdr declaration-specifier)))
-    (ftype
-     (mapc (lambda (name) (proclaim-ftype name (cadr declaration-specifier)))
-	   (cddr declaration-specifier)))
-    ;; FIXME: handle more proclamations
-    ))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro expansion.
@@ -711,6 +708,297 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Global environment.
+;;;
+;;; The FUNCTION namespace contains three types of entries:
+;;; GLOBAL-FUNCTION-ENTRY, GLOBAL-MACRO-ENTRY, and
+;;; SPECIAL-OPERATOR-ENTRY.  All special operator entries are global,
+;;; because there is no mechanism for defining local special
+;;; operators.
+ 
+(defclass package ()
+  ((%name :initarg :name :accessor name)
+   (%nicknames :initarg :nicknames :initform '() :accessor nicknames)))
+
+(defclass global-environment ()
+  (;; The package namespace.  A list of packages.
+   (%packages :initform '() :accessor packages)
+   ;; The class namespace.  A list of classes.
+   (%classes :initform '() :accessor classes)
+   ;; The type namespace.
+   (%types :initform '() :accessor types)
+   ;; The variable namespace.  It contains entries for
+   ;; symbol macros, constant variables, and special variables. 
+   (%variables :initform '() :accessor variables)
+   ;; The function namespace.  It contains entries for
+   ;; macros and functions.
+   ;; FIXME: what about compiler macros?
+   (%functions :initform '() :accessor functions)
+   (%proclamations :initform '() :accessor proclamaitions)))
+
+(defun function-name-p (object)
+  (or (symbolp function-name)
+      (and (consp function-name)
+	   (eq (car function-name) 'setf)
+	   (consp (cdr function-name))
+	   (symbolp (cadr function-name))
+	   (null (cddr function-name)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FBOUNDP.
+;;;
+;;; According to the HyperSpec, this function should return any true
+;;; value of the name is fbound in the global environment.  From the
+;;; glossary, we learn that "fbound" means that the name has a
+;;; definition as either a function, a macro, or a special operator in
+;;; the global environment.
+;;;
+;;; We could return something more useful than T, but since conforming
+;;; code can not count on anything else, we might as well just return
+;;; T.
+
+(defun fboundp (function-name)
+  (unless (function-name-p function-name)
+    (error "not a function name ~s" function-name))
+  (let ((entry (find function-name
+		     (functions *global-environment*)
+		     :key #'name
+		     :test #'equal)
+	       (functions *global-environment*)))
+    (typecase entry
+      ((or global-function-entry global-macro-entry)
+       (bound entry))
+      (special-operator-entry
+       t)
+      (t
+       nil))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FMAKUNBOUND.
+;;;
+;;; The description of this function in the HyperSpec say: "Removes
+;;; the function or macro definition, if any, of name in the global
+;;; environment.", and it adds that the consequences are undefined it
+;;; the name is a special operator.
+;;;
+;;; For a special operator we do nothing.
+;;;
+;;; We could remove the entry altogether, but we have chosen not to do
+;;; that.  The reason is that we may have other entries that refer to
+;;; it, such as entries that have to do with whether a function should
+;;; be inlined or not.  We want to preserve the invariant that such
+;;; entries should always refer to the "base" entry.  To preserve that
+;;; property, we mark the base entry as not being bound, and we check
+;;; this in all relevant functions.  By doing it this way, we can also
+;;; give a meaning to a proclamation of an ftype for an unbound
+;;; function.  We simply create a base entry and mark it as unbound. 
+
+(defun fmakunbound (function-name)
+  (unless (function-name-p function-name)
+    (error "not a function name ~s" function-name))
+  (let ((entry (find function-name
+		     (functions *global-environment*)
+		     :key #'name
+		     :test #'equal)
+	       (functions *global-environment*)))
+    (unless (or (null entry)
+		(typep entry 'special-operator-entry))
+      (setf (bound entry) nil))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FDEFINITION.
+;;;
+;;; The HyperSpec has some important things to say about this
+;;; function.
+;;;
+;;; For one thing, it says that "An error of type UNDEFINED-FUNCTION
+;;; is signaled [...] if FUNCTION-NAME is not fbound".
+;;;
+;;; Furthermore, it says that the return value "... may be a function
+;;; or may be an object representing a special form or macro.  The
+;;; value returned by fdefinition when fboundp returns true but the
+;;; function-name denotes a macro or special form is not well-defined,
+;;; but fdefinition does not signal an error."  In other words, we
+;;; must decide what to return in the case of a macro or a special
+;;; operator.  We decide that for a macro, it returns its expander
+;;; function, and for a special operator, it returns the name. 
+
+(defun fdefinition (function-name)
+  (unless (function-name-p function-name)
+    (error "not a function name ~s" function-name))
+  (let ((entry (find function-name
+		     (functions *global-environment*)
+		     :key #'name
+		     :test #'equal)
+	       (functions *global-environment*)))
+    (typecase entry
+      (global-function-entry
+       (if (bound entry)
+	   (car (storage entry))
+	   (error 'undefined-function :name function-name)))
+      (global-macro-entry
+       (if (bound entry)
+	   (definition entry)
+	   (error 'undefined-function :name function-name)))
+      (special-operator-entry
+       function-name)
+      (t
+       (error 'undefined-function :name function-name)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function (SETF FDEFINITION).
+;;;
+;;; They HyperSpec says that this function can be used "to replace a
+;;; global function definition when the function-name's function
+;;; definition does not represent a special form.  [it] requires a
+;;; function as the new value."
+;;;
+;;; We take this to mean: If we find an existing
+;;; special-operator-entry for the name, then we signal an error.  If
+;;; we find an existing global-macro-entry for the name, we replace it
+;;; with a global-function entry.  If we find an existing
+;;; global-function entry, we replace the definition.  If no existing
+;;; entry is found, we create one.
+;;;
+;;; In the case of an existing global-macro-entry, it is safe to
+;;; remove it, because there can be no declarations, so no auxiliary
+;;; entries referring to it.
+
+(defun (setf fdefinition) (new-definition function-name)
+  (unless (function-name-p function-name)
+    (error "not a function name ~s" function-name))
+  (unless (functionp new-definition)
+    (error 'type-error :datum new-definition :expected-type 'function))
+  (let ((entry (find function-name
+		     (functions *global-environment*)
+		     :key #'name
+		     :test #'equal)
+	       (functions *global-environment*)))
+    (cond ((null entry)
+	   (push (make-instance 'global-function-entry
+		   :name function-name
+		   :bound t)
+		 (functions *global-environment*)))
+	  ((typep entry 'special-operator-entry)
+	   (error "can't replace a special operator"))
+	  ((typep entry 'global-macro-entry)
+	   (setf (functions *global-environment*)
+		 (remove entry (functions *global-environment*)))
+	   (push (make-instance 'global-function-entry
+		   :name function-name
+		   :bound t)
+		 (functions *global-environment*)))
+	  (t
+	   (setf (car (storage entry)) new-definition))))
+  new-definition)
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function SPECIAL-OPERATOR-P.
+;;;
+;;; We could return something more useful than T, but since conforming
+;;; code can not count on anything else, we might as well just return
+;;; T.
+
+(defun special-operator-p (symbol)
+  (unless (symbolp symbol)
+    (error 'type-error :datum symbol :expected-type 'symbol))
+  (let ((entry (find-if (lambda (entry)
+			  (and (typep entry 'special-operator-entry)
+			       (eq (name entry) symbol))))
+	       (functions *global-environment*)))
+    (not (null entry))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function (SETF MACRO-FUNCTION).
+;;;
+;;; The HyperSpec says that the consequences are undefined if a
+;;; non-nil environment is given.  We define those consequences to be
+;;; that an error is signaled.
+;;;
+;;; The HyperSpec further says that "Performing this operation causes
+;;; symbol to have only that macro definition as its global function
+;;; definition; any previous definition, whether as a macro or as a
+;;; function, is lost."
+;;;
+;;; The HyperSpec also says that it is possible for a symbol to be
+;;; defined both as a special operator and as a macro.  For that
+;;; reason, we want to find out whether there is an entry that is
+;;; either a global function entry or a global macro entry, but we
+;;; want to ignore the possibility of there being a special operator
+;;; entry.
+
+(defun (setf macro-function) (new-function symbol &optional environment)
+  (unless (null environment)
+    (error 'type-error :datum environment :expected-type null))
+  (unless (symbolp symbol)
+    (error 'type-error :datum symbol :expected-type 'symbol))
+  (unless (functionp new-function)
+    (error 'type-error :datum new-function 'function))
+  (setf (functions *global-environment*)
+	(remove-if (lambda (entry)
+		     (and (or (typep entry 'global-function-entry)
+			      (typep entry 'global-macro-entry))
+			  (eq (name entry))))
+		   (functions *global-environment*)))
+  (push (make-instance 'global-macro-entry
+	  :name symbol
+	  :definition new-function
+	  :bound t)
+	(functions *global-environment*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function PROCLAIM.
+
+(defun proclaim-declaration (name)
+  (unless (find-if (lambda (entry)
+		     (and (typep entry 'declaration-declaration-entry)
+			  (eq (name entry) name)))
+		   *global-environment*)
+    (add-to-global-environment
+     (make-instance 'declaration-declaration-entry
+		    :name name))))
+
+(defun proclaim-ftype (name type)
+  (let ((entry (find-if (lambda (entry)
+			  (and (typep entry 'global-function-entry)
+			       (eq (name entry) name)))
+			*global-environment*)))
+    (when (null entry)
+      (error "no function by that name"))
+    (let ((existing-declaration
+	    (find-if (lambda (decl)
+		       (and (typep decl 'type-declaration-entry)
+			    (eq (location decl) (location entry))))
+		     *global-environment*)))
+      (cond ((null existing-declaration)
+	     (add-to-global-environment
+	      (make-type-declaration-entry entry type)))
+	    ((equal (type existing-declaration) type)
+	     nil)
+	    (t
+	     ;; make that an error for now
+	     (error "function already has a type proclamation"))))))
+
+(defun proclaim (declaration-specifier)
+  (case (car declaration-specifier)
+    (declaration
+     (mapc #'proclaim-declaration
+	   (cdr declaration-specifier)))
+    (ftype
+     (mapc (lambda (name) (proclaim-ftype name (cadr declaration-specifier)))
+	   (cddr declaration-specifier)))
+    ;; FIXME: handle more proclamations
+    ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Put some stuff in the global environment.
 
 (add-to-global-environment
@@ -732,10 +1020,11 @@
  (make-global-function-entry 'funcall))
 
 (add-to-global-environment
- (make-macro-entry 'when
-		   (lambda (form env)
-		     (declare (ignore env))
-		      `(if ,(cadr form)
-			   (progn ,(cddr form))
-			   nil))))
+ (make-local-macro-entry
+  'when
+  (lambda (form env)
+    (declare (ignore env))
+    `(if ,(cadr form)
+	 (progn ,(cddr form))
+	 nil))))
 
