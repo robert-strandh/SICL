@@ -105,34 +105,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class CONSTANT-AST. 
+;;; Class IMMEDIATE-AST. 
 ;;;
-;;; A CONSTANT-AST represents a constant expression.  A constant
-;;; expression is one of the following:
-;;; 
-;;;   * A literal: any non-symbol atom.
-;;;   
-;;;   * A self-evaluating symbol: NIL, T, or a keyword symbol.
+;;; A IMMEDIATE-AST represents a constant expression that has fits in
+;;; a word, and that has a value that is independent of the Lisp
+;;; image, such as a fixnum, a character, or a short float.
 ;;;
-;;;   * A Symbols that have been define to be constant by the use of
-;;;     DEFCONSTANT.  The value stored in the AST is not the symbol
-;;;     itself, but the constant value of it.
-;;;
-;;;   * A quoted expression.  The value stored in the AST is the
-;;;     expression stripped of the quoting form.
+;;; It is represented here as an unsigned integer between 0 and 2^w-1
+;;; where w is the word size in bits. 
 
-(defclass constant-ast (ast)
+(defclass immediate-ast (ast)
   ((%value :initarg :value :reader value)))
 
-(defun make-constant-ast (value)
-  (make-instance 'constant-ast :value value))
+(defun make-immediate-ast (value)
+  (make-instance 'immediate-ast :value value))
 
-(defmethod stream-draw-ast ((ast constant-ast) stream)
+(defmethod stream-draw-ast ((ast immediate-ast) stream)
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (value ast)))
 
-(defmethod children ((ast constant-ast))
+(defmethod children ((ast immediate-ast))
   '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -247,61 +240,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class MULTIPLE-VALUE-PROG1-AST.
-;;;
-;;; The HyperSpec says that MULTIPLE-VALUE-PROG1 takes at least one
-;;; argument.  All the arguments are forms.  The first argument form
-;;; is evaluated first and all the values are saved.  Then the
-;;; remaining forms are evaluated from left to right and their values
-;;; are discarded.  
-
-(defclass multiple-value-prog1-ast (ast)
-  ((%first-ast :initarg :first-ast :reader first-ast)
-   (%body-asts :initarg :body-asts :reader body-asts)))
-
-(defun make-multiple-value-prog1-ast (first-ast body-asts)
-  (make-instance 'multiple-value-prog1-ast
-    :first-ast first-ast
-    :body-asts body-asts))
-
-(defmethod stream-draw-ast ((ast multiple-value-prog1-ast) stream)
-  (declare (ignore stream))
-  (error "don't know how to draw a multiple-value-prog1-ast yet"))
-
-(defmethod children ((ast multiple-value-prog1-ast))
-  (cons (first-ast ast)
-	(body-asts ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class MULTIPLE-VALUE-CALL-AST.
-;;; 
-;;; The HyperSpec says that MULTIPLE-VALUE-CALL takes at least one
-;;; argument.  All the arguments are forms.  The first argument is
-;;; evaluated first, and the result must be a function.  Then the
-;;; remaining forms are evaluated from left to right and all the
-;;; values from each form are then used as arguments to the function.
-;;; In other words, the number of arguments passed to the function are
-;;; the sum of the number of values of each argument form (except the
-;;; first).
-
-(defclass multiple-value-call-ast (ast)
-  ((%callee-ast :initarg :callee-ast :reader callee-ast)
-   (%argument-asts :initarg :argument-asts :reader argument-asts)))
-
-(defun make-multiple-value-call-ast (callee-ast argument-asts)
-  (make-instance 'multiple-value-call-ast
-    :callee-ast callee-ast
-    :argument-asts argument-asts))
-
-;;; FIXME: define a method on STREAM-DRAW-AST specialized to PROGV-AST.
-
-(defmethod children ((ast multiple-value-call-ast))
-  (cons (callee-ast ast)
-	(argument-asts ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class PROGN-AST.
 
 (defclass progn-ast (ast)
@@ -321,28 +259,6 @@
 
 (defmethod children ((ast progn-ast))
   (form-asts ast))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class PROGV-AST.
-
-(defclass progv-ast (ast)
-  ((%symbols-ast :initarg :symbols-ast :reader symbols-ast)
-   (%vals-ast :initarg :vals-ast :reader vals-ast)
-   (%body-ast :initarg :body-ast :reader body-ast)))
-
-(defun make-progv-ast (symbols-ast vals-ast body-ast)
-  (make-instance 'progv-ast
-    :symbols-ast symbols-ast
-    :vals-ast vals-ast
-    :body-ast body-ast))
-
-;;; FIXME: define a method on STREAM-DRAW-AST specialized to PROGV-AST.
-
-(defmethod children ((ast progv-ast))
-  (append (symbols-ast ast)
-	  (vals-ast ast)
-	  (list (body-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -523,13 +439,16 @@
   ((%form-ast :initarg :form-ast :reader form-ast)
    (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
-(defun make-load-time-value-ast (form-ast read-only-p)
+(defun make-load-time-value-ast (form-ast &optional read-only-p)
   (make-instance 'load-time-value-ast
     :form-ast form-ast
     :read-only-p read-only-p))
 
-;;; FIXME: define a method on STREAM-DRAW-AST specialized to
-;;; LOAD-TIME-VALUE-AST.
+(defmethod stream-draw-ast ((ast load-time-value-ast) stream)
+  (format stream "   ~a [label = \"LTV: ~s\"];~%"
+	  (id ast) (form-ast ast))
+  (format stream "   ~a [style = filled, fillcolor = pink];~%"
+	  (id ast)))
 
 (defmethod children ((ast load-time-value-ast))
   (list (form-ast ast)))
