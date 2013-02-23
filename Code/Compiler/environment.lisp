@@ -56,9 +56,6 @@
 (defclass entry ()
   ())
 
-(defclass dummy-entry (entry)
-  ())
-
 (defclass named-entry ()
   ((%name :initarg :name :reader name)))
 
@@ -322,7 +319,7 @@
 ;;;
 ;;; Declaration entries.
 
-(defclass declaration-entry (environment-entry) ())
+(defclass declaration-entry (entry) ())
 
 (defclass location-declaration-entry (declaration-entry)
   ((%location :initarg :location :reader location)))
@@ -988,7 +985,7 @@
   (let ((entry (find-if (lambda (entry)
 			  (and (typep entry 'global-function-entry)
 			       (eq (name entry) name)))
-			*global-environment*)))
+			(functions *global-environment*))))
     (when (null entry)
       (setf entry (make-global-function-entry name))
       (push entry (functions *global-environment*)))
