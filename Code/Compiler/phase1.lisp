@@ -22,7 +22,7 @@
 ;;; Converting ordinary Common Lisp code.
 
 (defun convert-constant (form)
-  (make-instance 'sicl-ast:constant-ast :value form))
+  (sicl-ast:make-constant-ast form))
 
 (defun convert-variable (form env)
   (let ((info (sicl-env:variable-info form env)))
@@ -463,8 +463,8 @@
     ((symbol (eql 'progv)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 nil)
-  (let ((body-ast (make-instance 'progn-ast
-		    :form-asts (convert-sequence (cdddr form) environment))))
+  (let ((body-ast (sicl-ast:make-progn-ast 
+		   (convert-sequence (cdddr form) environment))))
     (sicl-ast:make-progv-ast
      (convert (cadr form) environment)
      (convert (caddr form) environment)
@@ -631,8 +631,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:memalloc)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (make-instance 'memalloc-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-memalloc-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -641,8 +640,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:memref)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (make-instance 'sicl-ast:memref-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-memref-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -651,8 +649,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:memset)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:memset-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-memset-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -661,8 +658,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:u+)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 3)
-  (make-instance 'sicl-ast:u+-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-u+-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -671,8 +667,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:u-)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 3)
-  (make-instance 'sicl-ast:u--ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-u--ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -681,8 +676,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:s+)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:s+-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-s+-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -691,8 +685,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:s-)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:s--ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-s--ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -701,8 +694,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:neg)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (make-instance 'sicl-ast:neg-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-neg-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -711,8 +703,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:&)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:&-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-&-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -721,8 +712,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:ior)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:ior-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-ior-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -731,8 +721,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:xor)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:xor-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-xor-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -741,8 +730,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:~)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:~-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-~-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -751,8 +739,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:==)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:==-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-==-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -761,8 +748,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:s<)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:s<-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-s<-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -771,8 +757,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:s<=)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:s<=-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-s<=-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -781,8 +766,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:u<)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:u<-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-u<-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -791,6 +775,13 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:u<=)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (make-instance 'sicl-ast:u<=-ast
-		 :arguments (convert-arguments (cdr form) env)))
+  (sicl-ast:make-u<=-ast (convert-arguments (cdr form) env)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting HALT.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:halt)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 0 0)
+  (sicl-ast:make-halt-ast))
