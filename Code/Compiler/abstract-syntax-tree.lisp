@@ -95,6 +95,10 @@
 ;;; conversion between namespaces and again, namespaces are no longer
 ;;; present in the AST.
 ;;;
+;;; Some special operators are implemented as macros which is allowed
+;;; by the HyperSpec.  These are CATCH, THROW, UNWIND-PROTECT,
+;;; MULTIPLE-VALUE-PROG1, MULTIPLE-VALUE-CALL, and PROGV.
+;;;
 ;;; We also define ASTs that do not correspond to any Common Lisp
 ;;; special operators, because we simplify later code generation that
 ;;; way.
@@ -492,63 +496,6 @@
 
 (defmethod children ((ast the-ast))
   (list (form-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class CATCH-AST.
-
-(defclass catch-ast (ast)
-  ((%tag-ast :initarg :tag-ast :reader tag-ast)
-   (%body-ast :initarg :body-ast :reader body-ast)))
-
-(defun make-catch-ast (tag-ast body-ast)
-  (make-instance 'catch-ast
-    :tag-ast tag-ast
-    :body-ast body-ast))
-
-;;; FIXME: define a method on STREAM-DRAW-AST specialized to CATCH-AST.
-
-(defmethod children ((ast catch-ast))
-  (list (tag-ast ast)
-	(body-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class THROW-AST.
-
-(defclass throw-ast (ast)
-  ((%tag-ast :initarg :tag-ast :reader tag-ast)
-   (%form-ast :initarg :form-ast :reader form-ast)))
-
-(defun make-throw-ast (tag-ast form-ast)
-  (make-instance 'throw-ast
-    :tag-ast tag-ast
-    :form-ast form-ast))
-
-;;; FIXME: define a method on STREAM-DRAW-AST specialized to THROW-AST.
-
-(defmethod children ((ast throw-ast))
-  (list (tag-ast ast) (form-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class UNWIND-PROTECT-AST.
-
-(defclass unwind-protect-ast (ast)
-  ((%protected-ast :initarg :protected-ast :reader protected-ast)
-   (%cleanup-form-asts :initarg :cleanup-form-asts :reader cleanup-form-asts)))
-
-(defun make-unwind-protect-ast (protected-ast cleanup-form-asts)
-  (make-instance 'unwind-protect-ast
-    :protected-ast protected-ast
-    :cleanup-form-asts cleanup-form-asts))
-
-;;; FIXME: define a method on STREAM-DRAW-AST specialized to
-;;; UNWIND-PROTECT-AST.
-
-(defmethod children ((ast unwind-protect-ast))
-  (cons (protected-ast ast)
-	(cleanup-form-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1200,4 +1147,21 @@
   (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class HALT-AST.
+;;;
+;;; Halt the processor.
+
+(defclass halt-ast (ast)
+  ())
+
+(defun make-halt-ast ()
+  (make-instance 'halt-ast))
+
+(defmethod stream-draw-ast ((ast halt-ast) stream)
+  (format stream "   ~a [label = \"halt\"];~%"
+	  (id ast)))
+
 
