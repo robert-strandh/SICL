@@ -11,6 +11,7 @@
 	   #:fdefinition
 	   #:fboundp
 	   #:fmakunbound
+	   #:special-operator-p
 	   )
   (:export
    #:definition
@@ -26,8 +27,6 @@
    #:make-entry-from-declaration
    #:find-variable
    #:find-function
-   #:find-block
-   #:find-go-tag
    #:macroexpand-1
    #:macroexpand
    #:find-type
@@ -57,13 +56,14 @@
    #:fdefinition
    #:fboundp
    #:fmakunbound
+   #:special-operator-p
    ))
 
 (defpackage #:sicl-ast
   (:use #:common-lisp)
   (:export
    #:ast
-   #:constant-ast #:make-constant-ast #:value
+   #:immediate-ast #:make-immediate-ast #:value
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
    #:eval-when-ast #:make-eval-when-ast #:situations
@@ -71,13 +71,9 @@
    #:go-ast #:make-go-ast #:tag-ast
    #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
-   #:multiple-value-call-ast
-   #:make-multiple-value-call-ast #:function-ast #:argument-asts
    #:lambda-list #:required
-   #:multiple-value-prog1-ast
-   #:make-multiple-value-prog1-ast #:first-ast #:body-asts
+   #:body-asts
    #:progn-ast #:make-progn-ast #:form-asts
-   #:progv-ast #:make-progv-ast #:symbols-ast #:vals-ast
    #:return-from-ast #:make-return-from-ast #:form-ast
    #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
    #:tagbody-ast #:make-tagbody-ast #:items
