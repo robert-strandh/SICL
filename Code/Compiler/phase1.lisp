@@ -85,8 +85,13 @@
 	(error "no such function ~s" head)
 	(sicl-ast:make-call-ast
 	 (if (typep info 'sicl-env:global-location-info)
-	     (sicl-ast:make-load-time-value-ast
-	      `(function-cell ',head))
+	     (sicl-ast:make-memref-ast
+	      (sicl-ast:make-u+-ast
+	       (list (sicl-ast:make-load-time-value-ast
+		      `(function-cell ',head))
+		     ;; FIXME: do this by consulting the global
+		     ;; configuration parameters.
+		     (sicl-ast:make-word-ast 3))))
 	     info)
 	 (convert-sequence (cdr form) env)))))
 
