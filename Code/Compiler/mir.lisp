@@ -7,6 +7,13 @@
   (make-instance 'immediate-input
     :value value))
 
+(defclass external-input ()
+  ((%value :initarg :value :reader value)))
+
+(defun make-external-input (value)
+  (make-instance 'external-input
+    :value value))
+
 (defclass instruction ()
   ((%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :reader inputs)
@@ -72,9 +79,18 @@
 (defmethod draw-location-info ((info immediate-input) stream)
   (when (null (gethash info *instruction-table*))
     (setf (gethash info *instruction-table*) (gensym))
+    (format stream "   ~a [shape = ellipse, style = filled, fillcolor = green]~%"
+	    (gethash info *instruction-table*))
+    (format stream "   ~a [label = \"~a\"]~%"
+	    (gethash info *instruction-table*)
+	    (value info))))
+
+(defmethod draw-location-info ((info external-input) stream)
+  (when (null (gethash info *instruction-table*))
+    (setf (gethash info *instruction-table*) (gensym))
     (format stream "   ~a [shape = ellipse, style = filled, fillcolor = pink]~%"
 	    (gethash info *instruction-table*))
-    (format stream "   ~a label = \"~a\"]~%"
+    (format stream "   ~a [label = \"~a\"]~%"
 	    (gethash info *instruction-table*)
 	    (value info))))
 
@@ -85,7 +101,7 @@
     (format stream "  ~a [shape = box, label = \"~a\"]~%" 
 	    (gethash info *instruction-table*)
 	    (sicl-env:name (sicl-env:location info)))
-    (format stream "  ~a -> ~a [color = green]~%"
+    (format stream "  ~a -> ~a [color = blue]~%"
 	    (gethash info *instruction-table*)
 	    (gethash (sicl-env:location info) *instruction-table*))))
 
