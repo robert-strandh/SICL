@@ -1018,8 +1018,8 @@
      (mapc (lambda (name) (proclaim-ftype name (cadr declaration-specifier)))
 	   (cddr declaration-specifier)))
     (special
-     (mapcs #'proclaim-special
-	    (cdr declaration-specifier)))
+     (mapc #'proclaim-special
+	   (cdr declaration-specifier)))
     ;; FIXME: handle more proclamations
     ))
 
