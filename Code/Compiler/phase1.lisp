@@ -576,6 +576,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting WORD.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:word)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 1)
+  (sicl-ast:make-immediate-ast (cadr form)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting MEMALLOC.
 
 (defmethod convert-compound ((symbol (eql 'sicl-word:memalloc)) form env)
