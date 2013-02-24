@@ -131,42 +131,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a CONSTANT-AST.  
-
-;; (defmethod compile-ast ((ast sicl-ast:constant-ast) context)
-;;   (with-accessors ((results results)
-;; 		   (successors successors))
-;;       context
-;;     (ecase (length successors)
-;;       (1 (cond ((null results)
-;; 		;; If there is a single successor and no value required,
-;; 		;; then this constant is compiled in a context where its
-;; 		;; value makes no difference.  
-;; 		(error "Constant found in a context where no value required."))
-;; 	       ((eq results t)
-;; 		(let ((temp (new-temporary)))
-;; 		  (sicl-mir:make-constant-assignment-instruction
-;; 		   temp
-;; 		   (sicl-mir:make-put-values-instruction
-;; 		    (list temp) (car successors))
-;; 		   (sicl-ast:value ast))))
-;; 	       (t
-;; 		(sicl-mir:make-constant-assignment-instruction
-;; 		 (car results)
-;; 		 (nil-fill (cdr results) (car successors))
-;; 		 (sicl-ast:value ast)))))
-;;       (2 (cond ((null (sicl-ast:value ast))
-;; 		(car successors))
-;; 	       ((null results)
-;; 		(cadr successors))
-;; 	       (t
-;; 		(sicl-mir:make-constant-assignment-instruction
-;; 		 (car results)
-;; 		 (cadr successors)
-;; 		 (sicl-ast:value ast))))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compile an IF-AST.  
 ;;;
 ;;; We compile the test of the IF-AST in a context where no value is
@@ -257,8 +221,10 @@
 		   (sicl-mir:make-nop-instruction nil))))
   (let ((next (if (null (results context))
 		  (car (successors context))
-		  (compile-ast (sicl-ast:make-load-time-value-ast nil)
-			       context))))
+		  (sicl-mir:make-variable-assignment-instruction
+		   (sicl-mir:make-external-input 'nil)
+		   (car (results context))
+		   (car (successors context))))))
     (loop for item in (reverse (sicl-ast:items ast))
 	  do (setf next
 		   (if (typep item 'sicl-ast:tag-ast)
@@ -473,8 +439,10 @@
 (defun make-temp (argument)
   (cond ((typep argument 'sicl-env:lexical-location-info)
 	 argument)
-	((typep argument 'sicl-ast:word-ast)
+	((typep argument 'sicl-ast:immediate-ast)
 	 (sicl-mir:make-immediate-input (sicl-ast:value argument)))
+	((typep argument 'sicl-ast:load-time-value-ast)
+	 (sicl-mir:make-external-input (sicl-ast:form-ast argument)))
 	(t
 	 (new-temporary))))
 
@@ -486,16 +454,17 @@
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
-	do (unless (typep temp 'sicl-mir:immediate-input)
+	do (unless (or (typep temp 'sicl-mir:immediate-input)
+		       (typep temp 'sicl-mir:external-input))
 	     (setf succ (compile-ast arg (context (list temp) (list succ)))))
 	finally (return succ)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a WORD-AST.
+;;; Compile a IMMEDATE-AST.
 ;;;
 
-(defmethod compile-ast ((ast sicl-ast:word-ast) context)
+(defmethod compile-ast ((ast sicl-ast:immediate-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
