@@ -119,6 +119,7 @@
   (:use #:common-lisp)
   (:export
    #:immediate-input #:make-immediate-input
+   #:external-input #:make-external-input
    #:instruction #:successors #:inputs #:outputs
    #:end-instruction #:make-end-instruction
    #:nop-instruction #:make-nop-instruction
