@@ -121,6 +121,7 @@
   (make-instance 'immediate-ast :value value))
 
 (defmethod stream-draw-ast ((ast immediate-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = green];~%" (id ast))
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (value ast)))
@@ -451,7 +452,7 @@
 	  (id ast)))
 
 (defmethod children ((ast load-time-value-ast))
-  (list (form-ast ast)))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
