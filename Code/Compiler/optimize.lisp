@@ -1,33 +1,25 @@
 (in-package #:sicl-optimize)
 
-;;; A LOCATION is an explicit (present in source code) or implicit
-;;; (allocated by the compiler) lexical "place" used to store local
-;;; variables and temporaries.  Locations are not directly used as
-;;; input or output by instructions.  Instead the are used through an
-;;; intermediate object called a LEXICAL-LOCATION-INFO object.  Such
-;;; an object contains the location, but also contains other
-;;; information, in paricular the TYPE of the objects that the
-;;; location may contain in a particular point in the program.  A
-;;; location can be referred to by several different
-;;; LEXICAL-LOCATION-INFO objects, which reflect the fact that a
-;;; location can have different type restrictions at different points
-;;; in the program, for instance as a result of a local declaration.
+;;; A LEXICAL LOCATION is an explicit (present in source code) or
+;;; implicit (allocated by the compiler) lexical "place" used to store
+;;; local variables and temporaries.
 ;;;
-;;; An instruction I REFERS TO a location L if and only if a
-;;; lexical-location-info object that contains L is either
-;;; one of the inputs or one of the outputs of I.  
+;;; An instruction I REFERS TO a lexical location L if and only if a
+;;; lexical-location object that contains L is either one of the
+;;; inputs or one of the outputs of I.
 ;;;
-;;; A LOCATION can be referred to by several different instructions
-;;; that belong to procedures at different nesting depths.  Because
-;;; of the way locations are created, if a location is referred to by
-;;; two different instructions belonging to two different code
-;;; objects, A and B, and neither A is nested inside B nor B is nested
-;;; inside A, then the location is also referred to by some procedure
-;;; C inside which both A and B are nested.
+;;; A lexical location can be referred to by several different
+;;; instructions that belong to procedures at different nesting
+;;; depths.  Because of the way lexical locations are created, if a
+;;; lexical location is referred to by two different instructions
+;;; belonging to two different code objects, A and B, and neither A is
+;;; nested inside B nor B is nested inside A, then the location is
+;;; also referred to by some procedure C inside which both A and B are
+;;; nested.
 ;;;
-;;; A LOCATION L is said to be PRESENT in a procedure A if and only
-;;; if some instruction belonging to A refers to L.  A location L is
-;;; said to BELONG to a procedure A if L is present in A, and L is
+;;; A lexical location L is said to be PRESENT in a procedure A if and
+;;; only if some instruction belonging to A refers to L.  A location L
+;;; is said to BELONG to a procedure A if L is present in A, and L is
 ;;; not present in a procedure inside which A is nested.  Because of
 ;;; the restriction in the previous paragraph, every location belongs
 ;;; to some unique procedure.
@@ -42,7 +34,7 @@
 ;;; procedure B.  Then the lexical depth of A is D+1. 
 ;;;
 ;;; A SIMPLE INSTRUCTION CHAIN is a sequence of instructions, all
-;;; belonging to the same procedure such that every instruction in
+;;; belonging to the same procedure, such that every instruction in
 ;;; the sequence except the first is the unique successor in the
 ;;; instruction graph of its predecessor in the sequence, and every
 ;;; instruction in the sequence except the last is the unique
@@ -64,7 +56,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; A PROGRAM represents a top-level form together with derived
-;;; knowledge of that form.  To begin with, a instance of a program
+;;; knowledge of that form.  To begin with, an instance of a program
 ;;; contains only the initial instruction of the graph of instructions
 ;;; that represent nested procedures.
 
@@ -77,8 +69,8 @@
    ;; This table maps each instruction of the program to
    ;; an instruction-info instance. 
    (%instruction-info :initform nil :accessor instruction-info)
-   ;; This table maps each location of the program to
-   ;; a location-info instance.
+   ;; This table maps each lexical location of the program to a
+   ;; location-info instance.
    (%location-info :initform nil :accessor location-info)
    ;; All the procedures of this program.
    (%procedures :initform '() :accessor procedures)))
