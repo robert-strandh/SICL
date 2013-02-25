@@ -72,6 +72,9 @@
    ;; This table maps each lexical location of the program to a
    ;; location-info instance.
    (%location-info :initform nil :accessor location-info)
+   ;; This table maps each external of the program to an
+   ;; external-info instance.
+   (%external-info :initform nil :accessor external-info)
    ;; All the procedures of this program.
    (%procedures :initform '() :accessor procedures)))
 
@@ -94,6 +97,13 @@
 	     (declare (ignore info))
 	     (funcall function location))
 	   (location-info *program*)))
+
+(defun map-externals (function)
+  (assert (not (null *program*)))
+  (maphash (lambda (external info)
+	     (declare (ignore info))
+	     (funcall function external))
+	   (external-info *program*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -194,8 +204,9 @@
 ;;; with the location as a key.
 
 (defclass location-info ()
-  (;; The procedure to which this instruction belongs.
-   (%procedure :initform nil :accessor procedure)))
+  (;; The procedure to which this location belongs.
+   (%procedure :initform nil :accessor procedure)
+   (%index :initform nil :accessor index)))
 
 (defmethod procedure ((location sicl-env:lexical-location))
   (assert (not (null *program*)))
@@ -205,6 +216,58 @@
   (assert (not (null *program*)))
   (setf (procedure (gethash location (location-info *program*)))
 	new))
+
+(defmethod index ((location sicl-env:lexical-location))
+  (assert (not (null *program*)))
+  (index (gethash location (location-info *program*))))
+
+(defmethod (setf index) (new (location sicl-env:lexical-location))
+  (assert (not (null *program*)))
+  (setf (index (gethash location (location-info *program*)))
+	new))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; External info.
+;;;
+;;; As with lexical locations, We need a som information about a the
+;;; externals of a program.  Again, rather than storing that
+;;; information in the external itself, we store it in an
+;;; EXTERNAL-INFO object.  There is one such object for each external,
+;;; we put it in a hash table with the external as a key.
+
+(defclass external-info ()
+  ((%index :initform nil :accessor index)))
+
+(defmethod index ((external sicl-mir:external-input))
+  (assert (not (null *program*)))
+  (index (gethash external (external-info *program*))))
+
+(defmethod (setf index) (new (external sicl-mir:external-input))
+  (assert (not (null *program*)))
+  (setf (index (gethash external (external-info *program*)))
+	new))
+
+(defun compute-externals-info (program)
+  (let ((*program* program)
+	(externals '()))
+    (with-accessors ((external-info external-info))
+	program
+      (setf external-info (make-hash-table :test #'eq))
+      (map-instructions
+       (lambda (instruction)
+	 (loop for input in (inputs instruction)
+	       do (when (typep input 'sicl-mir:external-input)
+		    (setf (gethash input external-info)
+			  (make-instance 'external-info))
+		    (pushnew (sicl-mir:value input) externals
+			     :test #'equal)))))
+      (map-externals
+       (lambda (external)
+	 (setf (index external)
+	       (position (sicl-mir:value external) externals
+			 :test #'equal)))))))
+    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -317,6 +380,17 @@
 ;;; For each location in a complete instruction graph, determine
 ;;; to which procedure each location belongs.
 
+(defun compute-location-ownership-for-procedure (procedure)
+  (loop for instruction in (instructions procedure)
+	do (loop for location in (append (inputs instruction)
+					 (outputs instruction))
+		 do (when (typep location 'sicl-env:lexical-location)
+		      (when (null (gethash location (location-info *program*)))
+			(setf (gethash location (location-info *program*))
+			      (make-instance 'location-info)))
+		      (when (null (procedure location))
+			(setf (procedure location) procedure))))))
+
 (defun compute-location-ownership (program)
   (let ((*program* program))
     (with-accessors ((procedures procedures))
@@ -326,12 +400,7 @@
       (let ((sorted-code
 	      (sort (copy-list procedures) #'< :key #'nesting-depth)))
 	(loop for procedure in sorted-code
-	      do (loop for instruction in (instructions procedure)
-		       do (loop for info in (append (inputs instruction)
-						    (outputs instruction))
-				for location = (sicl-env:location info)
-				do (when (null (procedure location))
-				     (setf (procedure location) procedure))))))
+	      do (compute-location-ownership-for-procedure procedure)))
       (map-locations (lambda (location)
 		       (push location (locations (procedure location))))))))
 
@@ -367,6 +436,22 @@
 (defun ensure-lexical-depths (program)
   (when (member nil (procedures program) :key #'lexical-depth)
     (compute-lexical-depths program)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the index of each lexical location.
+
+(defun compute-location-indices (program)
+  (let ((*program* program)
+	(indexes (make-hash-table :test #'eq)))
+    (with-accessors ((procedures procedures))
+	program
+      (loop for procedure in procedures
+	    do (setf (gethash procedure indexes) 0))
+      (map-locations (lambda (location)
+		       (setf (index location)
+			     (gethash (procedure location) indexes))
+		       (incf (gethash (procedure location) indexes)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -605,5 +690,9 @@
 		    :initial-instruction initial-instruction))
 	 (*program* program))
     (compute-instruction-ownership program)
+    (compute-lexical-depths program)
+    (compute-location-ownership program)
+    (compute-location-indices program)
+    (compute-externals-info program)
     (compute-basic-blocks program)
     program))
