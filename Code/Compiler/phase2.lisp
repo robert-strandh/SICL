@@ -79,7 +79,7 @@
   (unless (or (eq results t)
 	      (and (listp results)
 		   (every (lambda (result)
-			    (typep result 'sicl-env:lexical-location-info))
+			    (typep result 'sicl-env:lexical-location))
 			  results)))
     (error "illegal results: ~s" results))
   (unless (and (listp successors)
@@ -104,13 +104,7 @@
 ;;; compilation of the entire AST.
 
 (defun new-temporary ()
-  (let ((name (gensym)))
-    (make-instance 'sicl-env:lexical-location-info
-      :location (sicl-env:make-lexical-location name)
-      :type t
-      :inline-info nil
-      :ignore-info nil
-      :dynamic-extent-p nil)))
+  (sicl-env:make-lexical-location (gensym)))
   
 ;;; Given a list of results and a successor, generate a sequence of
 ;;; instructions preceding that successor, and that assign NIL to each
@@ -358,7 +352,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a LEXICAL-LOCATION-INFO object. 
+;;; Compile a LEXICAL-LOCATION object. 
 ;;;
 ;;; If the RESULTS is T, then we generate a PUT-VALUES-INSTRUCTION.
 ;;; In that case, we know that there is only one successor.  If there
@@ -373,7 +367,7 @@
 ;;; the empty list, we must also generate a
 ;;; VARIABLE-ASSIGNMENT-INSTRUCTION.
 
-(defmethod compile-ast ((ast sicl-env:lexical-location-info) context)
+(defmethod compile-ast ((ast sicl-env:lexical-location) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -398,34 +392,6 @@
 	      (car results)
 	      (sicl-mir:make-test-instruction ast successors)))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a GLOBAL-LOCATION-INFO object.
-;;;
-;;; We compile in the exact same way as the LEXICAL-LOCATION-INFO
-;;; object.  
-
-(defmethod compile-ast ((ast sicl-env:global-location-info) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (ecase (length successors)
-      (1 (cond ((eq results t)
-		(sicl-mir:make-put-values-instruction
-		 (list ast) (car successors)))
-	       ((null results)
-		(warn "variable compiled in a context with no values")
-		(car successors))
-	       (t
-		(sicl-mir:make-variable-assignment-instruction
-		 ast
-		 (car results)
-		 (nil-fill (cdr results) (car successors))))))
-      (2 (if (null results)
-	     (sicl-mir:make-test-instruction ast successors)
-	     (sicl-mir:make-variable-assignment-instruction
-	      ast (car results) successors))))))
-
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
@@ -437,7 +403,7 @@
 ;;; Compile ASTs that represent low-level operations.
 
 (defun make-temp (argument)
-  (cond ((typep argument 'sicl-env:lexical-location-info)
+  (cond ((typep argument 'sicl-env:lexical-location)
 	 argument)
 	((typep argument 'sicl-ast:immediate-ast)
 	 (sicl-mir:make-immediate-input (sicl-ast:value argument)))

@@ -46,7 +46,7 @@
 	  ((typep info 'sicl-env:constant-variable-info)
 	   (convert-constant `(quote ,(sicl-env:definition info))))
 	  (t
-	   info))))
+	   (sicl-env:location info)))))
 
 (defgeneric convert-compound (head form environment))
 
@@ -135,7 +135,9 @@
 	  do (setf new-env (sicl-env:add-lexical-variable-entry new-env var)))
     (values (make-instance 'sicl-ast:lambda-list
 	      :required (loop for var in required-vars
-			      collect (sicl-env:variable-info var new-env)))
+			      for info = (sicl-env:variable-info var new-env)
+			      for location = (sicl-env:location info)
+			      collect location))
 	    new-env)))
 
 (defun convert-code (lambda-list body env)
@@ -236,7 +238,8 @@
 	    (loop for (name lambda-list . body) in (cadr form)
 		  for fun = (convert-code lambda-list body env)
 		  collect (sicl-ast:make-setq-ast
-			   (sicl-env:function-info name new-env)
+			   (sicl-env:location 
+			    (sicl-env:function-info name new-env))
 			   fun))))
       (multiple-value-bind (declarations forms)
 	  (sicl-code-utilities:separate-ordinary-body (cddr form))
@@ -261,7 +264,7 @@
   (let ((info (sicl-env:function-info name environment)))
     (if (null info)
 	(error "no such function ~s" name)
-	info)))
+	(sicl-env:location info))))
 
 (defun convert-lambda-function (lambda-form env)
   (unless (sicl-code-utilities:proper-list-p lambda-form)
@@ -500,7 +503,7 @@
 	  ((or (typep info 'sicl-env:lexical-location-info)
 	       (typep info 'sicl-env:special-location-info))
 	   (sicl-ast:make-setq-ast
-	    info
+	    (sicl-env:location info)
 	    (convert form env)))
 	  ((typep info 'sicl-env:symbol-macro-info)
 	   (convert `(setf ,(macroexpand var env) form) env))

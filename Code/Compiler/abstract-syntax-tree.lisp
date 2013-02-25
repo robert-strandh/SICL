@@ -490,54 +490,11 @@
 	(then-ast ast)
 	(else-ast ast)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Define a method on STREAM-DRAW-AST and on CHILDREN for a
-;;; LEXICAL-LOCATION-INFO, GLOBAL-LOCATION-INFO and
-;;; SPECIAL-LOCATION-INFO objects from the environment, because they
-;;; can be elements of an AST.
-
-(defun draw-location (location stream &optional (color "blue"))
-  (when (null (gethash location *table*))
-    (setf (gethash location *table*) (gensym))
-    (format stream
-	    "  ~a [label = \"~a\"];~%"
-	    (id location) (sicl-env:name location))
-    (format stream
-	    "  ~a [style = filled, fillcolor = ~a];~%"
-	    (id location) color)))
-
-(defmethod stream-draw-ast ((ast sicl-env:lexical-location-info) stream)
-  (format stream "   ~a [label = \"lexical\"];~%"
-	  (id ast))
-  (draw-location (sicl-env:location ast) stream "yellow")
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (sicl-env:location ast))))
+(defmethod stream-draw-ast ((ast sicl-env:lexical-location) stream)
+  (format stream "   ~a [label = \"~a\"];~%" (id ast) (sicl-env:name ast))
+  (format stream "   ~a [style = filled, fillcolor = yellow];~%" (id ast)))
   
-(defmethod children ((ast sicl-env:lexical-location-info))
-  '())
-
-(defmethod stream-draw-ast ((ast sicl-env:global-location-info) stream)
-  (format stream "   ~a [label = \"global\"];~%"
-	  (id ast))
-  (draw-location (sicl-env:location ast) stream "green")
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (sicl-env:location ast))))
-  
-(defmethod children ((ast sicl-env:global-location-info))
-  '())
-
-(defmethod stream-draw-ast ((ast sicl-env:special-location-info) stream)
-  (format stream "   ~a [label = \"special\"];~%"
-	  (id ast))
-  (draw-location (sicl-env:location ast) stream "red")
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (sicl-env:location ast))))
-
-(defmethod children ((ast sicl-env:special-location-info))
+(defmethod children ((ast sicl-env:lexical-location))
   '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

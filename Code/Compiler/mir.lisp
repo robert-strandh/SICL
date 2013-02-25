@@ -55,25 +55,6 @@
 	  (gethash instruction *instruction-table*)
 	  (class-name (class-of instruction))))
 
-(defgeneric draw-location (location stream))
-
-(defmethod draw-location :around (location stream)
-  (when (null (gethash location *instruction-table*))
-    (setf (gethash location *instruction-table*) (gensym))
-    (format stream
-	    "  ~a [shape = ellipse, style = filled, label = \"~a\"];~%"
-	    (gethash location *instruction-table*)
-	    (sicl-env:name location))
-    (call-next-method)))
-
-(defmethod draw-location ((location sicl-env:global-location) stream)
-  (format stream "   ~a [fillcolor = green];~%"
-	  (gethash location *instruction-table*)))
-
-(defmethod draw-location ((location sicl-env:lexical-location) stream)
-  (format stream "   ~a [fillcolor = yellow];~%"
-	  (gethash location *instruction-table*)))
-
 (defgeneric draw-location-info (info stream))
 
 (defmethod draw-location-info ((info immediate-input) stream)
@@ -94,16 +75,14 @@
 	    (gethash info *instruction-table*)
 	    (value info))))
 
-(defmethod draw-location-info ((info sicl-env:location-info) stream)
+(defmethod draw-location-info ((info sicl-env:location) stream)
   (when (null (gethash info *instruction-table*))
     (setf (gethash info *instruction-table*) (gensym))
-    (draw-location (sicl-env:location info) stream)
-    (format stream "  ~a [shape = box, label = \"~a\"]~%" 
+    (format stream "  ~a [shape = ellipse, style = filled, fillcolor = yellow]~%" 
+	    (gethash info *instruction-table*))
+    (format stream "  ~a [label = \"~a\"]~%" 
 	    (gethash info *instruction-table*)
-	    (sicl-env:name (sicl-env:location info)))
-    (format stream "  ~a -> ~a [color = blue]~%"
-	    (gethash info *instruction-table*)
-	    (gethash (sicl-env:location info) *instruction-table*))))
+	    (sicl-env:name info))))
 
 (defmethod draw-instruction :after (instruction stream)
   (loop for location in (inputs instruction)
