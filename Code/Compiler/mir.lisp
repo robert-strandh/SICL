@@ -140,46 +140,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction CONSTANT-ASSIGNMENT-INSTRUCTION.
+;;; Instruction ASSIGNMENT-INSTRUCTION.
 
-(defclass constant-assignment-instruction (instruction)
-  ((%constant :initarg :constant :accessor constant)))
-
-(defun make-constant-assignment-instruction (output successor constant)
-  (make-instance 'constant-assignment-instruction
-    :outputs (list output)
-    :successors (list successor)
-    :constant constant))
-
-(defmethod draw-instruction
-    ((instruction constant-assignment-instruction) stream)
-  (format stream "   ~a [label = \"<=\"];~%"
-	  (gethash instruction *instruction-table*))
-  (let ((name (gensym)))
-    (format stream "   ~a [label = \"~a\", style = filled, fillcolor = pink];~%"
-	    name
-	    (constant instruction))
-    (format stream "   ~a [fillcolor = pink];~%"
-	    name)
-    (format stream "   ~a -> ~a [color = pink, style = dashed];~%"
-	    name
-	    (gethash instruction *instruction-table*))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction VARIABLE-ASSIGNMENT-INSTRUCTION.
-
-(defclass variable-assignment-instruction (instruction)
+(defclass assignment-instruction (instruction)
   ())
 
-(defun make-variable-assignment-instruction (input output successor)
-  (make-instance 'variable-assignment-instruction
+(defun make-assignment-instruction (input output successor)
+  (make-instance 'assignment-instruction
     :inputs (list input)
     :outputs (list output)
     :successors (list successor)))
 
 (defmethod draw-instruction
-    ((instruction variable-assignment-instruction) stream)
+    ((instruction assignment-instruction) stream)
   (format stream "   ~a [label = \"<-\"];~%"
 	  (gethash instruction *instruction-table*)))
 

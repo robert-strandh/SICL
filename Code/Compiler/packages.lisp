@@ -123,9 +123,7 @@
    #:instruction #:successors #:inputs #:outputs
    #:end-instruction #:make-end-instruction
    #:nop-instruction #:make-nop-instruction
-   #:constant-assignment-instruction #:make-constant-assignment-instruction
-   #:constant
-   #:variable-assignment-instruction #:make-variable-assignment-instruction
+   #:assignment-instruction #:make-assignment-instruction
    #:test-instruction #:make-test-instruction #:test
    #:funcall-instruction #:make-funcall-instruction #:fun
    #:get-arguments-instruction #:make-get-arguments-instruction #:lambda-list

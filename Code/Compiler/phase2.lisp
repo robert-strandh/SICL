@@ -113,8 +113,9 @@
   (let ((next successor))
     (loop for value in results
 	  do (setf next
-		   (sicl-mir:make-constant-assignment-instruction
-		    value next nil))
+		   (sicl-mir:make-assignment-instruction
+		    (sicl-mir:make-external-input 'nil)
+		    value next))
 	  finally (return next))))
 
 (defgeneric compile-ast (ast context))
@@ -215,7 +216,7 @@
 		   (sicl-mir:make-nop-instruction nil))))
   (let ((next (if (null (results context))
 		  (car (successors context))
-		  (sicl-mir:make-variable-assignment-instruction
+		  (sicl-mir:make-assignment-instruction
 		   (sicl-mir:make-external-input 'nil)
 		   (car (results context))
 		   (car (successors context))))))
@@ -381,13 +382,13 @@
 	       ((eq ast (car results))
 		(nil-fill (cdr results) (car successors)))
 	       (t
-		(sicl-mir:make-variable-assignment-instruction
+		(sicl-mir:make-assignment-instruction
 		 ast
 		 (car results) 
 		 (nil-fill (cdr results) (car successors))))))
       (2 (if (or (null results) (eq ast (car results)))
 	     (sicl-mir:make-test-instruction ast successors)
-	     (sicl-mir:make-variable-assignment-instruction
+	     (sicl-mir:make-assignment-instruction
 	      ast
 	      (car results)
 	      (sicl-mir:make-test-instruction ast successors)))))))
@@ -440,10 +441,10 @@
       (error "Invalid results for word."))
     (if (eq ast (car results))
 	(car successors)
-	(sicl-mir:make-constant-assignment-instruction
+	(sicl-mir:make-assignment-instruction
+	 (sicl-mir:make-immediate-input (sicl-ast:value ast))
 	 (car results)
-	 (car successors)
-	 (sicl-ast:value ast)))))
+	 (car successors)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -640,8 +641,9 @@
 ;;; Compile a test.
 
 (defun make-boolean (boolean result successor)
-  (sicl-mir:make-constant-assignment-instruction
-   result successor boolean))
+  (sicl-mir:make-assignment-instruction
+   (sicl-mir:make-external-input boolean)
+   result successor))
 
 (defun compile-test (argument-asts constructor context)
   (with-accessors ((results results)
