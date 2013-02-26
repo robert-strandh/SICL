@@ -152,6 +152,8 @@
    #:s<=-instruction #:make-s<=-instruction
    #:u<-instruction #:make-u<-instruction
    #:u<=-instruction #:make-u<=-instruction
+   #:catch-instruction #:make-catch-instruction
+   #:unwind-instruction #:make-unwind-instruction
    #:draw-flowchart))
 
 (defpackage #:sicl-compiler-phase-2
