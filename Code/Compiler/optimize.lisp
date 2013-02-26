@@ -479,8 +479,8 @@
     result))
 
 (defun pre-from-post (instruction)
-  (let ((in-locations (mapcar #'sicl-env:location (sicl-mir:inputs instruction)))
-	(out-locations (mapcar #'sicl-env:location (sicl-mir:outputs instruction))))
+  (let ((in-locations (mapcar #'sicl-env:location (inputs instruction)))
+	(out-locations (mapcar #'sicl-env:location (outputs instruction))))
     (let ((result (post-locations instruction)))
       ;; Remove the locations that are created by this instruction.
       (loop for out in out-locations
