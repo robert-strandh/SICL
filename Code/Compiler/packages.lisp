@@ -188,7 +188,7 @@
   (:use #:common-lisp)
   (:export #:eliminate-externals))
 
-(defpackage #:sicl-optimize
+(defpackage #:sicl-program
   (:use #:common-lisp)
   (:export
    ))

@@ -1,4 +1,4 @@
-(in-package #:sicl-optimize)
+(in-package #:sicl-program)
 
 ;;; A LEXICAL LOCATION is an explicit (present in source code) or
 ;;; implicit (allocated by the compiler) lexical "place" used to store

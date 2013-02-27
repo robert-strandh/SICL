@@ -18,5 +18,7 @@
     :depends-on ("packages" "abstract-syntax-tree" "phase1"))
    (:file "externals-elimination"
     :depends-on ("packages" "abstract-syntax-tree" "phase1"))
-   (:file "optimize"
-    :depends-on ("packages" "phase2"))))
+   (:file "program"
+    :depends-on ("packages" "phase2"))
+   (:file "codegen"
+    :depends-on ("packages" "program"))))
