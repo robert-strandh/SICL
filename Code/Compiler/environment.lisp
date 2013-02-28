@@ -32,6 +32,43 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Global environment.
+;;;
+;;; The FUNCTION namespace contains three types of entries:
+;;; GLOBAL-FUNCTION-ENTRY, GLOBAL-MACRO-ENTRY, and
+;;; SPECIAL-OPERATOR-ENTRY.  All special operator entries are global,
+;;; because there is no mechanism for defining local special
+;;; operators.
+
+(defclass global-environment ()
+  (;; The package namespace.  A list of packages.
+   (%packages :initform '() :accessor packages)
+   ;; The class namespace.  A list of classes.
+   (%classes :initform '() :accessor classes)
+   ;; The type namespace.
+   (%types :initform '() :accessor types)
+   ;; The variable namespace.  It contains entries for
+   ;; symbol macros, constant variables, and special variables. 
+   (%variables :initform '() :accessor variables)
+   ;; The function namespace.  It contains entries for
+   ;; macros and functions.
+   ;; FIXME: what about compiler macros?
+   (%functions :initform '() :accessor functions)
+   (%proclamations :initform '() :accessor proclamations)))
+
+(defparameter *global-environment*
+  (make-instance 'global-environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Entries in the package namespace.
+ 
+(defclass package ()
+  ((%name :initarg :name :accessor name)
+   (%nicknames :initarg :nicknames :initform '() :accessor nicknames)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Augmenting an environment.
 
 (defun add-to-environment (environment entry)
@@ -562,39 +599,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Global environment.
-;;;
-;;; The FUNCTION namespace contains three types of entries:
-;;; GLOBAL-FUNCTION-ENTRY, GLOBAL-MACRO-ENTRY, and
-;;; SPECIAL-OPERATOR-ENTRY.  All special operator entries are global,
-;;; because there is no mechanism for defining local special
-;;; operators.
- 
-(defclass package ()
-  ((%name :initarg :name :accessor name)
-   (%nicknames :initarg :nicknames :initform '() :accessor nicknames)))
-
-(defclass global-environment ()
-  (;; The package namespace.  A list of packages.
-   (%packages :initform '() :accessor packages)
-   ;; The class namespace.  A list of classes.
-   (%classes :initform '() :accessor classes)
-   ;; The type namespace.
-   (%types :initform '() :accessor types)
-   ;; The variable namespace.  It contains entries for
-   ;; symbol macros, constant variables, and special variables. 
-   (%variables :initform '() :accessor variables)
-   ;; The function namespace.  It contains entries for
-   ;; macros and functions.
-   ;; FIXME: what about compiler macros?
-   (%functions :initform '() :accessor functions)
-   (%proclamations :initform '() :accessor proclamations)))
-
-(defparameter *global-environment*
-  (make-instance 'global-environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Querying the environment.
 
 (defun find-in-namespace (name environment namespace)
@@ -895,21 +899,20 @@
 		     :key #'name
 		     :test #'equal)))
     (cond ((null entry)
-	   (push (make-instance 'global-function-entry
-		   :name function-name
-		   :bound t)
-		 (functions *global-environment*)))
+	   (setf entry (make-instance 'global-function-entry
+			 :name function-name
+			 :bound t))
+	   (push entry (functions *global-environment*)))
 	  ((typep entry 'special-operator-entry)
 	   (error "can't replace a special operator"))
 	  ((typep entry 'global-macro-entry)
 	   (setf (functions *global-environment*)
 		 (remove entry (functions *global-environment*)))
-	   (push (make-instance 'global-function-entry
-		   :name function-name
-		   :bound t)
-		 (functions *global-environment*)))
-	  (t
-	   (setf (car (storage entry)) new-definition))))
+	   (setf entry (make-instance 'global-function-entry
+			 :name function-name
+			 :bound t))
+	   (push entry (functions *global-environment*))))
+    (setf (car (storage entry)) new-definition))
   new-definition)
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
