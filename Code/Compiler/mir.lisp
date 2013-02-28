@@ -355,11 +355,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction ENTER-INSTRUCTION.
-;;;
-;;; FIXME: maybe remove.
+
 
 (defclass enter-instruction (instruction)
   ())
+
+(defun make-enter-instruction (successor)
+  (make-instance 'enter-instruction
+    :successors (list successor)))
 
 (defmethod draw-instruction ((instruction enter-instruction) stream)
   (format stream "   ~a [label = \"enter\"];~%"
@@ -368,11 +371,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction LEAVE-INSTRUCTION.
-;;;
-;;; FIXME: maybe remove.
 
 (defclass leave-instruction (instruction)
   ())
+
+(defun make-leave-instruction (successor)
+  (make-instance 'leave-instruction
+    :successors (list successor)))
 
 (defmethod draw-instruction ((instruction leave-instruction) stream)
   (format stream "   ~a [label = \"leave\"];~%"

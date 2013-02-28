@@ -292,7 +292,8 @@
 (defun compile-function (lambda-list body-ast)
   (let ((next (sicl-mir:make-return-instruction)))
     (setf next (compile-ast body-ast (p2:context t (list next))))
-    (sicl-mir:make-get-arguments-instruction next lambda-list)))
+    (setf next (sicl-mir:make-get-arguments-instruction next lambda-list))
+    (sicl-mir:make-enter-instruction next)))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
