@@ -14,6 +14,7 @@
 	   #:special-operator-p
 	   )
   (:export
+   #:proclaim
    #:definition
    #:location
    #:lexical-location #:make-lexical-location
@@ -82,7 +83,6 @@
    #:draw-ast
    #:children
    #:word-ast #:make-word-ast
-   #:memalloc-ast #:make-memalloc-ast
    #:memref-ast #:make-memref-ast
    #:memset-ast #:make-memset-ast
    #:u+-ast #:make-u+-ast
@@ -112,6 +112,7 @@
    )
   (:export
    #:ast
+   #:convert-top-level-form
    #:convert #:convert-compound
    ))
 
@@ -121,7 +122,6 @@
    #:immediate-input #:make-immediate-input
    #:external-input #:make-external-input #:value
    #:instruction #:successors #:inputs #:outputs
-   #:end-instruction #:make-end-instruction
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:test-instruction #:make-test-instruction #:test
@@ -178,6 +178,8 @@
    #:& #:ior #:xor #:~
    #:== #:s< #:s<= #:u< #:u<=
    #:halt
+   ;; doesn't strictly belong here
+   #:find-function-cell
    ))
 
 (defpackage #:sicl-procedure-integration
