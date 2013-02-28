@@ -222,20 +222,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction END-INSTRUCTION.
-
-(defclass end-instruction (instruction)
-  ())
-
-(defun make-end-instruction ()
-  (make-instance 'end-instruction))
-
-(defmethod draw-instruction ((instruction end-instruction) stream)
-  (format stream "   ~a [label = \"end\"];~%"
-	  (gethash instruction *instruction-table*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction NOP-INSTRUCTION.
 
 (defclass nop-instruction (instruction)
