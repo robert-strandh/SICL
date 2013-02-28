@@ -36,8 +36,7 @@
 	((characterp constant)
 	 (sicl-ast:make-immediate-ast (+ (ash (char-code constant) 4) 2)))
 	(t
-	 (sicl-ast:make-load-time-value-ast
-	  `(quote ,constant)))))
+	 (sicl-ast:make-load-time-value-ast constant))))
 
 (defun convert-variable (form env)
   (let ((info (sicl-env:variable-info form env)))
@@ -65,6 +64,9 @@
 	(t
 	 (convert-compound (car form) form environment))))
 	 
+(defun convert-top-level-form (form)
+  (convert `(function (lambda () ,form)) nil))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a sequence of forms.
@@ -86,13 +88,13 @@
 	(sicl-ast:make-call-ast
 	 (if (typep info 'sicl-env:global-location-info)
 	     (sicl-ast:make-memref-ast
-	      (sicl-ast:make-u+-ast
-	       (list (sicl-ast:make-load-time-value-ast
-		      `(function-cell ',head))
-		     ;; FIXME: do this by consulting the global
-		     ;; configuration parameters.
-		     (sicl-ast:make-word-ast 3))))
-	     info)
+	      (list (sicl-ast:make-u+-ast
+		     (list (sicl-ast:make-load-time-value-ast
+			    `(sicl-word:find-function-cell ',head))
+			   ;; FIXME: do this by consulting the global
+			   ;; configuration parameters.
+			   (sicl-ast:make-immediate-ast 3)))))
+	     (sicl-env:location info))
 	 (convert-sequence (cdr form) env)))))
 
 ;;; Method to be used when the head of a compound form is a
@@ -262,9 +264,17 @@
 
 (defun convert-named-function (name environment)
   (let ((info (sicl-env:function-info name environment)))
-    (if (null info)
-	(error "no such function ~s" name)
-	(sicl-env:location info))))
+    (cond ((null info)
+	   (error "no such function ~s" name))
+	  ((typep info 'sicl-env:global-location-info)
+	   (sicl-ast:make-memref-ast
+	    (list (sicl-ast:make-u+-ast
+		   (list (sicl-ast:make-load-time-value-ast
+			  `(sicl-word:find-function-cell ',name))
+			 ;; FIXME: do this by consulting the global
+			 ;; configuration parameters.
+			 (sicl-ast:make-immediate-ast 3))))))
+	  (t (sicl-env:location info)))))
 
 (defun convert-lambda-function (lambda-form env)
   (unless (sicl-code-utilities:proper-list-p lambda-form)
@@ -569,6 +579,74 @@
    (cadr form)
    (convert (caddr form) environment)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting FUNCALL.
+;;;
+;;; While FUNCALL is a function and not a special operator, we convert
+;;; it here anyway.
+
+(defmethod convert-compound
+    ((symbol (eql 'funcall)) form environment)
+  (let ((args (convert-sequence (cdr form) environment)))
+    (sicl-ast:make-call-ast (car args) (cdr args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting MEMALLOC.
+;;;
+;;; MEMALLOC is a function, but it has a fixed location in the
+;;; externals verctor, so we recognize that special case here. 
+
+(defmethod convert-compound
+    ((symbol (eql 'sicl-word:memalloc)) form environment)
+  (sicl-ast:make-call-ast
+   (sicl-ast:make-load-time-value-ast
+    '(sicl-word:find-function-cell 'sicl-word:memalloc))
+   (convert-arguments (cdr form) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting FIND-PACKAGE.
+;;;
+;;; FIND-PACKAGE is a function, but it has a fixed location in the
+;;; externals verctor, so we recognize that special case here. 
+
+(defmethod convert-compound
+    ((symbol (eql 'find-package)) form environment)
+  (sicl-ast:make-call-ast
+   (sicl-ast:make-load-time-value-ast
+    '(sicl-word:find-function-cell 'find-package))
+   (convert-arguments (cdr form) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting FIND-SYMBOL.
+;;;
+;;; FIND-SYMBOL is a function, but it has a fixed location in the
+;;; externals verctor, so we recognize that special case here. 
+
+(defmethod convert-compound
+    ((symbol (eql 'find-symbol)) form environment)
+  (sicl-ast:make-call-ast
+   (sicl-ast:make-load-time-value-ast
+    '(sicl-word:find-function-cell 'find-symbol))
+   (convert-arguments (cdr form) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting FIND-FUNCTION-CELL.
+;;;
+;;; FIND-FUNCTION-CELL is a function, but it has a fixed location in the
+;;; externals verctor, so we recognize that special case here. 
+
+(defmethod convert-compound
+    ((symbol (eql 'sicl-word:find-function-cell)) form environment)
+  (sicl-ast:make-call-ast
+   (sicl-ast:make-load-time-value-ast
+    '(sicl-word:find-function-cell 'sicl-word:find-function-cell))
+   (convert-arguments (cdr form) environment)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting code for low-level operators.
@@ -585,15 +663,6 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
   (sicl-ast:make-immediate-ast (cadr form)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting MEMALLOC.
-
-(defmethod convert-compound ((symbol (eql 'sicl-word:memalloc)) form env)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 1)
-  (sicl-ast:make-memalloc-ast (convert-arguments (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
