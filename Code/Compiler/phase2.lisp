@@ -395,9 +395,11 @@
 
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
-	(*go-info* (make-hash-table :test #'eq))
-	(end (sicl-mir:make-end-instruction)))
-    (compile-ast ast (context t (list end)))))
+	(*go-info* (make-hash-table :test #'eq)))
+    ;; The top-level ast must represent a thunk.
+    (assert (typep ast 'sicl-ast:function-ast))
+    (compile-function (sicl-ast:lambda-list ast)
+		      (sicl-ast:body-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -445,31 +447,6 @@
 	 (sicl-mir:make-immediate-input (sicl-ast:value ast))
 	 (car results)
 	 (car successors)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a MEMALLOC-AST.
-;;;
-;;; Allow only a context in which the RESULTS has exactly one
-;;; element and in which there is a single successor.
-;;;
-;;; Allowing a results of T would mean that the result of this
-;;; AST could be returned from a function, but since the result of
-;;; this AST is not a tagged object, but a raw pointer, we cannot
-;;; allow it to escape from the lexical locations of the function. 
-
-(defmethod compile-ast ((ast sicl-ast:memalloc-ast) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (unless (and (listp results)
-		 (= (length results) 1)
-		 (= (length successors) 1))
-      (error "Invalid results for memalloc."))
-    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
-	   (instruction (sicl-mir:make-memalloc-instruction
-			 (car temps) (car results) (car successors))))
-      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
