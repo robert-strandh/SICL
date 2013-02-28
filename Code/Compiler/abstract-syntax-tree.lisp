@@ -536,34 +536,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class MEMALLOC-AST.
-;;;
-;;; Allocate a sequence of bytes of memory.
-;;;
-;;; Arguments (1):
-;;;
-;;;   * The number of bytes to be allocated.
-;;;
-;;; Values (1):
-;;;
-;;;   * A pointer to the first byte allocated.
-
-(defclass memalloc-ast (ast arguments-mixin)
-  ())
-
-(defun make-memalloc-ast (argument-asts)
-  (make-instance 'memalloc-ast
-    :argument-asts argument-asts))
-
-(defmethod stream-draw-ast ((ast memalloc-ast) stream)
-  (format stream "   ~a [label = \"memalloc\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class MEMREF-AST.
 ;;; 
 ;;; Load a word from memory.
