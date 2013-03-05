@@ -88,12 +88,12 @@
 	(sicl-ast:make-call-ast
 	 (if (typep info 'sicl-env:global-location-info)
 	     (sicl-ast:make-memref-ast
-	      (list (sicl-ast:make-u+-ast
-		     (list (sicl-ast:make-load-time-value-ast
-			    `(sicl-word:find-function-cell ',head))
-			   ;; FIXME: do this by consulting the global
-			   ;; configuration parameters.
-			   (sicl-ast:make-immediate-ast 3)))))
+	      (sicl-ast:make-u+-ast
+	       (list (sicl-ast:make-load-time-value-ast
+		      `(sicl-word:find-function-cell ',head))
+		     ;; FIXME: do this by consulting the global
+		     ;; configuration parameters.
+		     (sicl-ast:make-immediate-ast 3))))
 	     (sicl-env:location info))
 	 (convert-sequence (cdr form) env)))))
 
@@ -268,12 +268,12 @@
 	   (error "no such function ~s" name))
 	  ((typep info 'sicl-env:global-location-info)
 	   (sicl-ast:make-memref-ast
-	    (list (sicl-ast:make-u+-ast
-		   (list (sicl-ast:make-load-time-value-ast
-			  `(sicl-word:find-function-cell ',name))
-			 ;; FIXME: do this by consulting the global
-			 ;; configuration parameters.
-			 (sicl-ast:make-immediate-ast 3))))))
+	    (sicl-ast:make-u+-ast
+	     (list (sicl-ast:make-load-time-value-ast
+		    `(sicl-word:find-function-cell ',name))
+		   ;; FIXME: do this by consulting the global
+		   ;; configuration parameters.
+		   (sicl-ast:make-immediate-ast 3)))))
 	  (t (sicl-env:location info)))))
 
 (defun convert-lambda-function (lambda-form env)
@@ -594,57 +594,45 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting MEMALLOC.
-;;;
-;;; MEMALLOC is a function, but it has a fixed location in the
-;;; externals verctor, so we recognize that special case here. 
 
 (defmethod convert-compound
     ((symbol (eql 'sicl-word:memalloc)) form environment)
   (sicl-ast:make-call-ast
-   (sicl-ast:make-load-time-value-ast
-    '(sicl-word:find-function-cell 'sicl-word:memalloc))
+   (sicl-ast:make-memref-ast 
+    (sicl-ast:make-immediate-ast (+ (ash 1 30) 0)))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FIND-PACKAGE.
-;;;
-;;; FIND-PACKAGE is a function, but it has a fixed location in the
-;;; externals verctor, so we recognize that special case here. 
 
 (defmethod convert-compound
     ((symbol (eql 'find-package)) form environment)
   (sicl-ast:make-call-ast
-   (sicl-ast:make-load-time-value-ast
-    '(sicl-word:find-function-cell 'find-package))
+   (sicl-ast:make-memref-ast 
+    (sicl-ast:make-immediate-ast (+ (ash 1 30) 4)))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FIND-SYMBOL.
-;;;
-;;; FIND-SYMBOL is a function, but it has a fixed location in the
-;;; externals verctor, so we recognize that special case here. 
 
 (defmethod convert-compound
     ((symbol (eql 'find-symbol)) form environment)
   (sicl-ast:make-call-ast
-   (sicl-ast:make-load-time-value-ast
-    '(sicl-word:find-function-cell 'find-symbol))
+   (sicl-ast:make-memref-ast 
+    (sicl-ast:make-immediate-ast (+ (ash 1 30) 8)))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting FIND-FUNCTION-CELL.
-;;;
-;;; FIND-FUNCTION-CELL is a function, but it has a fixed location in the
-;;; externals verctor, so we recognize that special case here. 
 
 (defmethod convert-compound
     ((symbol (eql 'sicl-word:find-function-cell)) form environment)
   (sicl-ast:make-call-ast
-   (sicl-ast:make-load-time-value-ast
-    '(sicl-word:find-function-cell 'sicl-word:find-function-cell))
+   (sicl-ast:make-memref-ast 
+    (sicl-ast:make-immediate-ast (+ (ash 1 30) 12)))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -671,7 +659,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:memref)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (sicl-ast:make-memref-ast (convert-arguments (cdr form) env)))
+  (sicl-ast:make-memref-ast (car (convert-arguments (cdr form) env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
