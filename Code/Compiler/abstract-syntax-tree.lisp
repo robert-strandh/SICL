@@ -551,9 +551,9 @@
 (defclass memref-ast (ast arguments-mixin)
   ())
 
-(defun make-memref-ast (argument-asts)
+(defun make-memref-ast (argument-ast)
   (make-instance 'memref-ast
-    :argument-asts argument-asts))
+    :argument-asts (list argument-ast)))
 
 (defmethod stream-draw-ast ((ast memref-ast) stream)
   (format stream "   ~a [label = \"memref\"];~%"
