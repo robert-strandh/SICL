@@ -1,58 +1,24 @@
 (in-package #:sicl-program)
 
-;;; A LEXICAL LOCATION is an explicit (present in source code) or
-;;; implicit (allocated by the compiler) lexical "place" used to store
-;;; local variables and temporaries.
-;;;
-;;; An instruction I REFERS TO a lexical location L if and only if a
-;;; lexical-location object that contains L is either one of the
-;;; inputs or one of the outputs of I.
-;;;
-;;; A lexical location can be referred to by several different
-;;; instructions that belong to procedures at different nesting
-;;; depths.  Because of the way lexical locations are created, if a
-;;; lexical location is referred to by two different instructions
-;;; belonging to two different code objects, A and B, and neither A is
-;;; nested inside B nor B is nested inside A, then the location is
-;;; also referred to by some procedure C inside which both A and B are
-;;; nested.
-;;;
-;;; A lexical location L is said to be PRESENT in a procedure P if and
-;;; only if some instruction belonging to P refers to L.  A location L
-;;; is said to BELONG to a procedure P if L is present in P, and L is
-;;; not present in a procedure inside which P is nested.  Because of
-;;; the restriction in the previous paragraph, every location belongs
-;;; to some unique procedure.  The procedure P to which a location
-;;; belongs is called the OWNER of the location.
-;;;
-;;; The LEXICAL DEPTH of a procedure is a quantity that is less than
-;;; or equal to the NESTING depth of that procedure.  We define it
-;;; recursively as follows: The lexical depth of a procedure A such
-;;; that every location and instruction that is present in A also
-;;; belongs to A is defined to be 0.  For a procedure A with a
-;;; location or an instruction present in it, but that belongs to a
-;;; different procedure B, let D be the greatest depth of any such
-;;; procedure B.  Then the lexical depth of A is D+1. 
-;;;
-;;; A SIMPLE INSTRUCTION CHAIN is a sequence of instructions, all
-;;; belonging to the same procedure, such that every instruction in
-;;; the sequence except the first is the unique successor in the
-;;; instruction graph of its predecessor in the sequence, and every
-;;; instruction in the sequence except the last is the unique
-;;; predecessor in the instruction graph of its successor in the
-;;; sequence.
-;;;
-;;; A BASIC BLOCK is a MAXIMAL SIMPLE INSTRUCTION CHAIN.  It is
-;;; maximal in that if any predecessor in the instruction graph of the
-;;; first instruction in the chain were to be included in the
-;;; sequence, then the sequence is no longer a simple instruction
-;;; chain, and if any successor in the instruction graph of the last
-;;; instruction in the chain were to be included in the sequence, then
-;;; the sequence is no longer a simple instruction chain. 
-;;;
-;;; Every instruction belongs to exactly one basic block.  In the
-;;; degenerate case, the basic block to which an instruction belongs
-;;; contains only that single instruction.
+;;;; A SIMPLE INSTRUCTION CHAIN is a sequence of instructions, all
+;;;; belonging to the same procedure, such that every instruction in
+;;;; the sequence except the first is the unique successor in the
+;;;; instruction graph of its predecessor in the sequence, and every
+;;;; instruction in the sequence except the last is the unique
+;;;; predecessor in the instruction graph of its successor in the
+;;;; sequence.
+;;;;
+;;;; A BASIC BLOCK is a MAXIMAL SIMPLE INSTRUCTION CHAIN.  It is
+;;;; maximal in that if any predecessor in the instruction graph of the
+;;;; first instruction in the chain were to be included in the
+;;;; sequence, then the sequence is no longer a simple instruction
+;;;; chain, and if any successor in the instruction graph of the last
+;;;; instruction in the chain were to be included in the sequence, then
+;;;; the sequence is no longer a simple instruction chain. 
+;;;;
+;;;; Every instruction belongs to exactly one basic block.  In the
+;;;; degenerate case, the basic block to which an instruction belongs
+;;;; contains only that single instruction.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -323,39 +289,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; An instances of the PROCEDURE class represents a single procedure.
-;;; An instruction is the INITIAL INSTRUCTION of a procedure if and
-;;; only if it is either the initial instruction of a PROGRAM (see
-;;; below) or the INPUT of an ENCLOSE instruction.  The initial
-;;; instruction of a procedure does not have any predecessors.  A
-;;; procedure can be the input of at most one ENCLOSE instructions.
-;;; To preserve this property, inlining a procedure must duplicate
-;;; it, all the instructions in it, and all the lexical locations in
-;;; it.
-;;;
-;;; The procedures of a program are nested, and the outermost
-;;; procedure is at NESTING DEPTH 0.  A procedure B is IMMEDIATELY
-;;; NESTED inside a procedure A if and only if its initial instruction
-;;; is the INPUT to an ENCLOSE instruction that belongs to procedure
-;;; A.  A procedure B immediately nested inside a procedure A has a
-;;; nesting depth with is one greater than the nesting depth of A.
-;;;
-;;; An INSTRUCTION is said to be PRESENT in a procedure P if it can
-;;; be reached from the initial instruction of A by following
-;;; successor arcs only.
-;;; 
-;;; An INSTRUCTION is said to BELONG to a procedure P if it is present
-;;; in P, but it is not present in any procedure with a smaller
-;;; nesting depth than that of P.  The procedure P to which an
-;;; instruction I belongs is called the OWNER of I.
-;;; 
-;;; An INSTRUCTION can be present in several procedures, but can
-;;; belong to only one.  An instruction is present in more than one
-;;; procedures when it belongs to some procedure P, but it can also be
-;;; reached from an instruction in a procedure Q nested inside P, so
-;;; that Q has a nesting depth that is greater than that of P. Such a
-;;; situation is the result of a RETURN-FROM or a GO form that
-;;; transfers control from one procedure to an enclosing procedure.
+;;; Class PROCEDURE.
 
 (defclass procedure ()
   ((%initial-instruction
