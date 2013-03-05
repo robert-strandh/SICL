@@ -142,9 +142,9 @@
   (sicl-ast:make-setq-ast
    (make-lexical-location-info out-loc)
    (sicl-ast:make-memref-ast
-    (list (sicl-ast:make-u+-ast
-	   (list (make-lexical-location-info in-loc)
-		 (sicl-ast:make-word-ast offset)))))))
+    (sicl-ast:make-u+-ast
+     (list (make-lexical-location-info in-loc)
+	   (sicl-ast:make-word-ast offset))))))
 
 (defun eliminate-externals (ast)
   (check-type ast sicl-ast:function-ast)
