@@ -17,6 +17,13 @@
 ;;;
 ;;; Converting code to an abstract syntax tree.
 
+;;; When this variable is false, non-immediate constants will be
+;;; converted into a LOAD-TIME-VALUE ast, which means that the machine
+;;; code generated will be an access to an element in the vector of
+;;; externals.  When it is true, such constants will instead be turned
+;;; into code for creating them.
+(defparameter *compile-for-linker* nil)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting ordinary Common Lisp code.
@@ -28,6 +35,46 @@
 ;;; Either the constant can be represented as an immediate value, or
 ;;; else it is turned into a LOAD-TIME-VALUE AST.
 
+(defun convert-string (string)
+  (let ((contents-var (gensym))
+	(string-var (gensym)))
+    (convert
+     `(let ((,contents-var
+	      (sicl-word:memalloc
+	       (sicl-word:word ,(* 4 (1+ (length string)))))))
+	(sicl-word:memset ,contents-var ,(length string))
+	,@(loop for char across string
+		for i from 4 by 4
+		collect `(sicl-word:memset
+			  (sicl-word:u+ ,contents-var
+					(sicl-word:word ,i))
+			  ,char))
+	(let ((,string-var
+		(sicl-word:memalloc (sicl-word:word 8))))
+	  (sicl-word:memset
+	   ,string-var
+	   (sicl-word:memref
+	    (sicl-word:word ,(+ (ash 1 30) 20))))
+	  (sicl-word:memset
+	   (sicl-word:u+ ,string-var (sicl-word:word 4))
+	   ,contents-var)
+	  (sicl-word:u+ ,string-var (sicl-word:word 3))))
+     nil)))
+
+;;; This function is only called for constants that can not
+;;; be represented as immediates. 
+(defun convert-constant-for-linker (constant)
+  (cond ((stringp constant)
+	 (convert-string constant))
+	((symbolp constant)
+	 (convert `(find-symbol
+		    ,(symbol-name constant)
+		    (find-package
+		     ,(package-name (symbol-package constant))))
+		  nil))))	 
+
+;;; When the constant is quoted, this function is called with the 
+;;; surrounding QUOTE form stripped off. 
 ;;; FIXME: do this by consulting the global configuration parameters.
 (defun convert-constant (constant)
   (cond ((and (integerp constant)
@@ -35,15 +82,20 @@
 	 (sicl-ast:make-immediate-ast (ash constant 2)))
 	((characterp constant)
 	 (sicl-ast:make-immediate-ast (+ (ash (char-code constant) 4) 2)))
+	(*compile-for-linker*
+	 (convert-constant-for-linker constant))
 	(t
-	 (sicl-ast:make-load-time-value-ast constant))))
+	 ;; LOAD-TIME-VALUE takes a form, so if the form is
+	 ;; a constant, it must be quoted. 
+	 (sicl-ast:make-load-time-value-ast
+	  `(quote ,constant)))))
 
 (defun convert-variable (form env)
   (let ((info (sicl-env:variable-info form env)))
     (cond ((null info)
 	   (error "undefined variable: ~s" form))
 	  ((typep info 'sicl-env:constant-variable-info)
-	   (convert-constant `(quote ,(sicl-env:definition info))))
+	   (convert-constant (sicl-env:definition info)))
 	  (t
 	   (sicl-env:location info)))))
 
@@ -55,10 +107,11 @@
 		  (not (symbolp form)))
 	     (and (symbolp form)
 		  (or (keywordp form)
-		      (member form '(t nil))))
-	     (and (consp form)
-		  (eq (car form) 'quote)))
+		      (member form '(t nil)))))
 	 (convert-constant form))
+	((and (consp form)
+	      (eq (car form) 'quote))
+	 (convert-constant (cadr form)))
 	((symbolp form)
 	 (convert-variable form environment))
 	(t
@@ -633,6 +686,17 @@
   (sicl-ast:make-call-ast
    (sicl-ast:make-memref-ast 
     (sicl-ast:make-immediate-ast (+ (ash 1 30) 12)))
+   (convert-arguments (cdr form) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting FIND-CLASS.
+
+(defmethod convert-compound
+    ((symbol (eql 'find-class)) form environment)
+  (sicl-ast:make-call-ast
+   (sicl-ast:make-memref-ast 
+    (sicl-ast:make-immediate-ast (+ (ash 1 30) 16)))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
