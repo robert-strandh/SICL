@@ -54,16 +54,13 @@
 
 (defun load-level-location (location)
   (let ((count (- *depth* (lexical-depth (owner location)))))
-    `(;; Load the lexical environment from the stack.
-      "	move ebx, [ebp - 4]"
+    `("	mov ebx, [ebp - 4]	; Load lexical environment from stack."
       ;; The environment is a list of levels.  Take the CDR as many
       ;; times as necessary to get to the right CONS cell of the list.
       ,@(loop repeat count
-	      collect "	move ebx, [ebx + 3]")
-      ;; Take the CAR to get to the level. 
-      "	move ebx, [ebx - 1]"
-      ;; The level is a heap object.  Load the contents vector. 
-      "	move ebx, [ebx + 1]")))
+	      collect "	mov ebx, [ebx + 3]	; CDR down a level.")
+      "	mov ebx, [ebx - 1]	; CAR to get to the level vector."
+      "	mov ebx, [ebx + 1]	; Load contents vector of level vector.")))
 
 (defun source/destination-operand (location)
   (format nil "[ebx + ~a]" (* 4 (1+ (index location)))))
@@ -73,50 +70,45 @@
 (defmethod load-input ((input sicl-env:lexical-location))
   (let ((count (- *depth* (lexical-depth (owner input)))))
     `(;; Load the lexical environment from the stack.
-      "	move eax, [ebp - 4]"
+      "	mov eax, [ebp - 4]	; Load lexical environment from stack."
       ;; The environment is a list of levels.  Take the CDR as many
       ;; times as necessary to get to the right CONS cell of the list.
       ,@(loop repeat count
-	      collect "	move eax, [eax + 3]")
-      ;; Take the CAR to get to the level. 
-      "	move eax, [eax - 1]"
-      ;; The level is a heap object.  Load the contents vector. 
-      "	move eax, [eax + 1]"
+	      collect "	mov eax, [eax + 3]	; CDR down a level.")
+      "	mov eax, [eax - 1]	; CAR to get to the level vector."
+      "	mov eax, [eax + 1]	; Load contents vector of level vector."
       ;; Load the appropriate element from the contents vector.
-      ,(format nil "	move eax, [eax + ~a]"
+      ,(format nil "	mov eax, [eax + ~a]	; Load lexical."
 	       (* 4 (1+ (index input)))))))
 
 (defmethod load-input ((input sicl-mir:immediate-input))
-  `(,(format nil "	move eax, ~a"
+  `(,(format nil "	mov eax, ~a	; Load immediate."
 	     (sicl-mir:value input))))
 
 (defmethod load-input ((input sicl-mir:external-input))
-  `("	move eax, [ebp - 8]"
-    ,(format nil "	move eax, [eax + ~a]"
+  `("	mov eax, [ebp - 8]"
+    ,(format nil "	mov eax, [eax + ~a]	; Load external."
 	     (* 4 (index input)))))
 
 (defun load-from-argument (i)
-  `(,(format nil "	move eax, [edb + ~a]"
+  `(,(format nil "	mov eax, [edb + ~a]	; Load argument."
 	     (* 4 i))))
 
 (defun save-to-argument (i)
-  `(,(format nil "	move [edb + ~a], eax"
+  `(,(format nil "	mov [edb + ~a], eax	; Save to argument."
 	     (* 4 i))))
 
 (defun save-result (location)
   (let ((count (- *depth* (lexical-depth (owner location)))))
-    `(;; Load the lexical environment from the stack.
-      "	move ebx, [ebp - 4]"
+    `("	mov ebx, [ebp - 4]	; Load lexical environment from stack."
       ;; The environment is a list of levels.  Take the CDR as many
       ;; times as necessary to get to the right CONS cell of the list.
       ,@(loop repeat count
-	      collect "	move ebx, [ebx + 3]")
-      ;; Take the CAR to get to the level. 
-      "	move ebx, [ebx - 1]"
-      ;; The level is a heap object.  Load the contents vector. 
-      "	move ebx, [ebx + 1]"
-      ;; Load the appropriate element from the contents vector.
-      ,(format nil "	move [ebx + ~a], eax"
+	      collect "	mov ebx, [ebx + 3]	; CDR down a level.")
+      "	mov ebx, [ebx - 1]	; CAR to get to the level vector."
+      "	mov ebx, [ebx + 1]	; Load contents vector of level vector."
+      ;; Save the appropriate element to the contents vector.
+      ,(format nil "	mov [ebx + ~a], eax	; Save lexical."
 	       (* 4 (1+ (index location)))))))
 
 (defgeneric codegen-instruction (instruction))
@@ -146,20 +138,20 @@
   '("	ret"))
 
 (defun save-function ()
-  `("	move [ebp - 4], ecx"))
+  `("	mov [ebp - 4], ecx"))
 
 ;;; Push the arguments in reverse order. 
 (defun push-arguments ()
   (let ((label1 (gensym))
 	(label2 (gensym)))
-    `("	shl ebx, 2"
+    `("	shl ebx, 2	; Number of args times size of arg."
       ,(format nil "~a:" label1)
-      "	cmp ebx, 0"
-      ,(format nil "	jz, ~a" label2)
-      "	sub ebx, 4"
-      "	push [eax + ebx]"
-      ,(format nil "	jump ~a" label1)
-      ,(format nil "~a:" label2))))
+      "	cmp ebx, 0	; Any arguments left?"
+      ,(format nil "	jz, ~a	; No.  Go!" label2)
+      "	sub ebx, 4	; Yes, find the last of the remaining."
+      "	push [eax + ebx]	; Push it on the stack."
+      ,(format nil "	jump ~a	; Loop." label1)
+      ,(format nil "~a:		; No more arguments to push." label2))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:get-arguments-instruction))
@@ -198,27 +190,19 @@
   `(,@(load-input (car (inputs instruction)))
     ;; Store it for the callee to access.
     ;; FIXME: probably wrong.
-    ,(format nil "	move [~a], eax" (+ (ash 1 30) 12))
-    ;; Load the contents vector of the function
-    "	move eax, [eax + 1]"
-    ;; Load the entry-point offset.
-    "	move ebx, [eax + 8]"
-    ;; Load the code object.
-    "	move eax, [eax]"
-    ;; Load the contents vector of the code object.
-    "	move eax, [eax + 1]"
-    ;; Load the start of the code.
-    "	move eax, [eax]"
-    ;; Add the entry-point offset.
-    "	add eax, ebx"
-    ;; Call the entry point.
-    "	call eax"
+    ,(format nil "	mov [~a], eax	; Store callee." (+ (ash 1 30) 12))
+    "	mov eax, [eax + 1]	; Load contents vector of function."
+    "	mov ebx, [eax + 8]	; Load the entry-point offset."
+    "	mov eax, [eax]	; Load the code object."
+    "	mov eax, [eax + 1]	; Load contents vector of the code object."
+    "	mov eax, [eax]	; Load the start of the code."
+    "	add eax, ebx	; Add the entry-point offset."
+    "	call eax	; Call the entry point."
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:enclose-instruction))
-  `(;; FIXME: wrong
-    "	enclose"
+  `("	enclose	; FIXME: wrong"
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
@@ -234,92 +218,92 @@
 (defmethod codegen-instruction
     ((instruction sicl-mir:memref-instruction))
   `(,@(load-input (car (inputs instruction)))
-    "	move eax, [eax]"
+    "	mov eax, [eax]	; Memref."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:memset-instruction))
   `(,@(load-input (cadr (inputs instruction)))
-    "	move ebx, eax"
+    "	mov ebx, eax	; Move object to store."
     ,@(load-input (car (inputs instruction)))
-    "	move [eax], ebx"
+    "	mov [eax], ebx	; Store the object."
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:u+-instruction))
   `(,@(load-input (cadr (inputs instruction)))
-    "	move ebx eax"
+    "	mov ebx eax	; Second argument of u+."
     ,@(load-input (car (inputs instruction)))
-    "	add eax ebx"
+    "	add eax ebx	; Compute u+ of first and second argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:u--instruction))
   `(,@(load-input (cadr (inputs instruction)))
-    "	move ebx, eax"
+    "	mov ebx, eax	; Second argument of u-."
     ,@(load-input (car (inputs instruction)))
-    "	sub eax, ebx"
+    "	sub eax, ebx	; Compute u- of first and second argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:s+-instruction))
   `(,@(load-input (cadr (inputs instruction)))
-    "	move ebx, eax"
+    "	mov ebx, eax	; Second argument of s+."
     ,@(load-input (car (inputs instruction)))
-    "	add eax, ebx"
+    "	add eax, ebx	; Copute s+ of first and second argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:s--instruction))
   `(,@(load-input (cadr (inputs instruction)))
-    "	move ebx, eax"
+    "	mov ebx, eax	; Second argument of s-."
     ,@(load-input (car (inputs instruction)))
-    "	sub eax, ebx"
+    "	sub eax, ebx	; Compute s- of first and second argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:neg-instruction))
   `(,@(load-input (car (inputs instruction)))
-    "	neg eax"
+    "	neg eax	; Compute negation of argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:&-instruction))
   `(,@(load-input (cadr (inputs instruction)))
-    "	move ebx, eax"
+    "	mov ebx, eax	; Second argument of &."
     ,@(load-input (car (inputs instruction)))
-    "	and eax, ebx"
+    "	and eax, ebx	; Compute & of first and second argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:ior-instruction))
   `(,@(load-input (cadr (inputs instruction)))
-    "	move ebx, eax"
+    "	mov ebx, eax	; Second argument of ior."
     ,@(load-input (car (inputs instruction)))
-    "	or eax, ebx"
+    "	or eax, ebx	; Compute ior of first and second argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:xor-instruction))
   `(,@(load-input (cadr (inputs instruction)))
-    "	move ebx, eax"
+    "	mov ebx, eax	; Second argument of xor."
     ,@(load-input (car (inputs instruction)))
-    "	xor eax, ebx"
+    "	xor eax, ebx	; Compute xor of first and second argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:~-instruction))
   `(,@(load-input (car (inputs instruction)))
-    "	not eax"
+    "	not eax	; Compute logical not of argument."
     ,@(save-result (car (outputs instruction)))
     ,@(codegen-instruction (car (successors instruction)))))
 
@@ -329,12 +313,12 @@
 	(else-branch (codegen-instruction (cadr (successors instruction))))
 	(then-branch (codegen-instruction (car (successors instruction)))))
     `(,@(load-input (cadr (inputs instruction)))
-      "	move ebx, eax"
+      "	mov ebx, eax	; Second argument of ==."
       ,@(load-input (car (inputs instruction)))
-      "	cmp eax, ebx"
-      ,(format nil "	jne ~a" label)
+      "	cmp eax, ebx	; Compare first and second argument of ==."
+      ,(format nil "	jne ~a	; Go if not ==." label)
       ,@then-branch
-      ,(format nil "~a:" label)
+      ,(format nil "~a:		; Come here if not ==." label)
       ,@else-branch)))
 	  
 (defmethod codegen-instruction
@@ -343,12 +327,12 @@
 	(else-branch (codegen-instruction (cadr (successors instruction))))
 	(then-branch (codegen-instruction (car (successors instruction)))))
     `(,@(load-input (cadr (inputs instruction)))
-      "	move ebx, eax"
+      "	mov ebx, eax	; Second argument of s<."
       ,@(load-input (car (inputs instruction)))
-      "	cmp eax, ebx"
-      ,(format nil "	jge ~a" label)
+      "	cmp eax, ebx	; Compare first and second argument of s<."
+      ,(format nil "	jge ~a	; Go if not s<." label)
       ,@then-branch
-      ,(format nil "~a:" label)
+      ,(format nil "~a:		; Come here if not s<." label)
       ,@else-branch)))
 	  
 (defmethod codegen-instruction
@@ -357,12 +341,12 @@
 	(else-branch (codegen-instruction (cadr (successors instruction))))
 	(then-branch (codegen-instruction (car (successors instruction)))))
     `(,@(load-input (cadr (inputs instruction)))
-      "	move ebx, eax"
+      "	mov ebx, eax	; Second argument of s<=."
       ,@(load-input (car (inputs instruction)))
-      "	cmp eax, ebx"
-      ,(format nil "	jg ~a" label)
+      "	cmp eax, ebx	; Compare first and second argument of s<=."
+      ,(format nil "	jg ~a	; Go if not s<=." label)
       ,@then-branch
-      ,(format nil "~a:" label)
+      ,(format nil "~a:		; Come here if not s<=." label)
       ,@else-branch)))
 	  
 (defmethod codegen-instruction
@@ -371,12 +355,12 @@
 	(else-branch (codegen-instruction (cadr (successors instruction))))
 	(then-branch (codegen-instruction (car (successors instruction)))))
     `(,@(load-input (cadr (inputs instruction)))
-      "	move ebx, eax"
+      "	mov ebx, eax	; Second argument of u<."
       ,@(load-input (car (inputs instruction)))
-      "	cmp eax, ebx"
-      ,(format nil "	jnb ~a" label)
+      "	cmp eax, ebx	; Compare first and second argument of u<."
+      ,(format nil "	jnb ~a	; Go if not u<." label)
       ,@then-branch
-      ,(format nil "~a:" label)
+      ,(format nil "~a:		; Come here if not u<." label)
       ,@else-branch)))
 	  
 (defmethod codegen-instruction
@@ -385,12 +369,12 @@
 	(else-branch (codegen-instruction (cadr (successors instruction))))
 	(then-branch (codegen-instruction (car (successors instruction)))))
     `(,@(load-input (cadr (inputs instruction)))
-      "	move ebx, eax"
+      "	mov ebx, eax	; Second argument of u<=."
       ,@(load-input (car (inputs instruction)))
-      "	cmp eax, ebx"
-      ,(format nil "	ja ~a" label)
+      "	cmp eax, ebx	; Compare first and second argument of u<=."
+      ,(format nil "	ja ~a	; Go if not u<=." label)
       ,@then-branch
-      ,(format nil "~a:" label)
+      ,(format nil "~a:		; Come here if not u<=." label)
       ,@else-branch)))
 	  
 (defun codegen-procedure (procedure)
