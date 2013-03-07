@@ -170,12 +170,50 @@
 	  (codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
+    ((instruction sicl-mir:put-arguments-instruction))
+  (append (loop for input in (inputs instruction)
+		for i from 0
+		append (load-input input)
+		append (save-to-argument i))
+	  (codegen-instruction (car (successors instruction)))))
+
+(defmethod codegen-instruction
+    ((instruction sicl-mir:get-values-instruction))
+  (append (loop for output in (outputs instruction)
+		for i from 0
+		append (load-from-argument i)
+		append (save-result output))
+	  (codegen-instruction (car (successors instruction)))))
+
+(defmethod codegen-instruction
     ((instruction sicl-mir:put-values-instruction))
   (append (loop for input in (inputs instruction)
 		for i from 0
 		append (load-input input)
 		append (save-to-argument i))
 	  (codegen-instruction (car (successors instruction)))))
+
+(defmethod codegen-instruction
+    ((instruction sicl-mir:funcall-instruction))
+  `(,@(load-input (car (inputs instruction)))
+    ;; Store it for the callee to access.
+    ;; FIXME: probably wrong.
+    ,(format nil "	move [~a], eax" (+ (ash 1 30) 12))
+    ;; Load the contents vector of the function
+    "	move eax, [eax + 1]"
+    ;; Load the entry-point offset.
+    "	move ebx, [eax + 8]"
+    ;; Load the code object.
+    "	move eax, [eax]"
+    ;; Load the contents vector of the code object.
+    "	move eax, [eax + 1]"
+    ;; Load the start of the code.
+    "	move eax, [eax]"
+    ;; Add the entry-point offset.
+    "	add eax, ebx"
+    ;; Call the entry point.
+    "	call eax"
+    ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:enclose-instruction))
