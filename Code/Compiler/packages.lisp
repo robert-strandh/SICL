@@ -27,6 +27,8 @@
    #:+function-memalloc+
    #:+function-find-package+
    #:+function-find-symbol+
+   #:+function-find-class+
+   #:+function-find-function-cell+
    #:+class-symbol+
    #:+class-package+
    #:+class-simple-vector+

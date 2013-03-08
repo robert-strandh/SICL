@@ -653,7 +653,8 @@
     ((symbol (eql 'sicl-word:memalloc)) form environment)
   (sicl-ast:make-call-ast
    (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast (+ (ash 1 30) 0)))
+    (sicl-ast:make-immediate-ast
+     sicl-configuration:+function-memalloc+))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -664,7 +665,8 @@
     ((symbol (eql 'find-package)) form environment)
   (sicl-ast:make-call-ast
    (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast (+ (ash 1 30) 4)))
+    (sicl-ast:make-immediate-ast
+     sicl-configuration:+function-find-package+))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -675,18 +677,8 @@
     ((symbol (eql 'find-symbol)) form environment)
   (sicl-ast:make-call-ast
    (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast (+ (ash 1 30) 8)))
-   (convert-arguments (cdr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting FIND-FUNCTION-CELL.
-
-(defmethod convert-compound
-    ((symbol (eql 'sicl-word:find-function-cell)) form environment)
-  (sicl-ast:make-call-ast
-   (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast (+ (ash 1 30) 12)))
+    (sicl-ast:make-immediate-ast
+     sicl-configuration:+function-find-symbol+))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -697,7 +689,20 @@
     ((symbol (eql 'find-class)) form environment)
   (sicl-ast:make-call-ast
    (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast (+ (ash 1 30) 16)))
+    (sicl-ast:make-immediate-ast
+     sicl-configuration:+function-find-class+))
+   (convert-arguments (cdr form) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting FIND-FUNCTION-CELL.
+
+(defmethod convert-compound
+    ((symbol (eql 'sicl-word:find-function-cell)) form environment)
+  (sicl-ast:make-call-ast
+   (sicl-ast:make-memref-ast 
+    (sicl-ast:make-immediate-ast
+     sicl-configuration:+function-find-function-cell+))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
