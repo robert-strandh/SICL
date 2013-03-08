@@ -96,6 +96,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; CONS cell utilities.
+
+(defconstant +car-offset+
+  (- +tag-cons+))
+
+(defconstant +cdr-offset+
+  (- +word-size-in-bytes+ +tag-cons+))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Heap object utilities.
+
+(defconstant +class-offset+
+  (- +tag-other+))
+
+(defconstant +contents-offset+
+  (- +word-size-in-bytes+ +tag-other+))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Some fixed addresses.
 ;;;
 ;;; We use a fixed address in the address space where the entire heap

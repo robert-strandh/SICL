@@ -17,6 +17,10 @@
    #:host-integer-to-word
    #:host-char-to-word
    #:+unbound+
+   #:+car-offset+
+   #:+cdr-offset+
+   #:+class-offset+
+   #:+contents-offset+
    #:+mmap-base+
    #:+free+
    #:+global-environment+

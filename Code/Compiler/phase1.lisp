@@ -147,9 +147,8 @@
 	      (sicl-ast:make-u+-ast
 	       (list (sicl-ast:make-load-time-value-ast
 		      `(sicl-word:find-function-cell ',head))
-		     ;; FIXME: do this by consulting the global
-		     ;; configuration parameters.
-		     (sicl-ast:make-immediate-ast 3))))
+		     (sicl-ast:make-immediate-ast
+		      sicl-configuration:+cdr-offset+))))
 	     (sicl-env:location info))
 	 (convert-sequence (cdr form) env)))))
 
@@ -327,9 +326,8 @@
 	    (sicl-ast:make-u+-ast
 	     (list (sicl-ast:make-load-time-value-ast
 		    `(sicl-word:find-function-cell ',name))
-		   ;; FIXME: do this by consulting the global
-		   ;; configuration parameters.
-		   (sicl-ast:make-immediate-ast 3)))))
+		   (sicl-ast:make-immediate-ast
+		    sicl-configuration:+cdr-offset+)))))
 	  (t (sicl-env:location info)))))
 
 (defun convert-lambda-function (lambda-form env)
