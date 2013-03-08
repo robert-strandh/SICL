@@ -1,3 +1,37 @@
+(defpackage #:sicl-configuration
+  (:use #:common-lisp)
+  (:export
+   #:+word-size-in-bytes+
+   #:+word-size-in-bits+
+   #:+tag-fixnum+
+   #:+tag-cons+
+   #:+tag-immediate+
+   #:+tag-other+
+   #:+tag-mask+
+   #:+tag-width+
+   #:+immediate-tag-mask+
+   #:+immediate-tag-width+
+   #:+unbound+
+   #:+mmap-base+
+   #:+free+
+   #:+global-environment+
+   #:+function-memalloc+
+   #:+function-find-package+
+   #:+function-find-symbol+
+   #:+class-symbol+
+   #:+class-package+
+   #:+class-simple-vector+
+   #:+class-simple-string+
+   #:+class-octet-vector+
+   #:+class-function+
+   #:+class-code+
+   #:+class-environment+
+   #:+class-builtin-class+
+   #:+argument-count+
+   #:+arguments+
+   #:+heap-start+
+   ))
+
 (defpackage #:sicl-compiler-environment
   (:nicknames #:sicl-env)
   (:use #:common-lisp)
