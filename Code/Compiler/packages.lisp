@@ -10,9 +10,12 @@
    #:+tag-mask+
    #:+tag-width+
    #:+immediate-tag-mask+
+   #:+tag-character+
    #:+immediate-tag-width+
    #:+most-positive-fixnum+
    #:+most-negative-fixnum+
+   #:host-integer-to-word
+   #:host-char-to-word
    #:+unbound+
    #:+mmap-base+
    #:+free+

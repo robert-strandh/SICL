@@ -75,13 +75,16 @@
 
 ;;; When the constant is quoted, this function is called with the 
 ;;; surrounding QUOTE form stripped off. 
-;;; FIXME: do this by consulting the global configuration parameters.
 (defun convert-constant (constant)
   (cond ((and (integerp constant)
-	      (<= (- (ash 1 29)) constant (1- (ash 1 29))))
-	 (sicl-ast:make-immediate-ast (ash constant 2)))
+	      (<= sicl-configuration:+most-negative-fixnum+
+		  constant
+		  sicl-configuration:+most-positive-fixnum+))
+	 (sicl-ast:make-immediate-ast
+	  (sicl-configuration:host-integer-to-word constant)))
 	((characterp constant)
-	 (sicl-ast:make-immediate-ast (+ (ash (char-code constant) 4) 2)))
+	 (sicl-ast:make-immediate-ast
+	  (sicl-configuration:host-char-to-word constant)))
 	(*compile-for-linker*
 	 (convert-constant-for-linker constant))
 	(t

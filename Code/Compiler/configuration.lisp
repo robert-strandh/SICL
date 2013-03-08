@@ -54,17 +54,34 @@
 
 (defconstant +immediate-tag-mask+ #b1111)
 
+(defconstant +tag-character+ #b0010)
+
 (defconstant +immediate-tag-width+ (integer-length +immediate-tag-mask+))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Fixnum range.
+;;; Fixnum range and conversion.
 
 (defconstant +most-positive-fixnum+
   (1- (ash 1 (- +word-size-in-bits+ +tag-width+ 1))))
 
 (defconstant +most-negative-fixnum+
   (- (ash 1 (- +word-size-in-bits+ +tag-width+ 1))))
+
+;;; We allow negative words. 
+(defun host-integer-to-word (host-integer)
+  (assert (<= +most-negative-fixnum+ host-integer +most-positive-fixnum+))
+  (+ (ash host-integer +tag-width+) +tag-fixnum+))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Character conversion.
+
+;;; Assume for now that the host is using Unicode encoding. 
+(defun host-char-to-word (host-char)
+  (let ((code (char-code host-char)))
+    (assert (<= 0 code (1- (ash 2 24))))
+    (+ (ash code +immediate-tag-width+) +tag-character+)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
