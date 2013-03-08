@@ -11,6 +11,8 @@
    #:+tag-width+
    #:+immediate-tag-mask+
    #:+immediate-tag-width+
+   #:+most-positive-fixnum+
+   #:+most-negative-fixnum+
    #:+unbound+
    #:+mmap-base+
    #:+free+

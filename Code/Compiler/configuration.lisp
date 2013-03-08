@@ -58,6 +58,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Fixnum range.
+
+(defconstant +most-positive-fixnum+
+  (1- (ash 1 (- +word-size-in-bits+ +tag-width+ 1))))
+
+(defconstant +most-negative-fixnum+
+  (- (ash 1 (- +word-size-in-bits+ +tag-width+ 1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Unbound.
 ;;;
 ;;; We define the unbound value to be a machine word with immediate
