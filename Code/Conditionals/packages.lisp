@@ -1,4 +1,4 @@
-;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013
+;;;; Copyright (c) 2008 - 2013
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
