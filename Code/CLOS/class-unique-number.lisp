@@ -1,4 +1,4 @@
-(in-package #:sicl-clos-test)
+(in-package #:sicl-clos)
 
 (defparameter *next-available-class-number* 0)
 

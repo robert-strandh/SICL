@@ -1,4 +1,4 @@
-(in-package #:sicl-clos-test)
+(in-package #:sicl-clos)
 
 (defun set-lambda-list-and-argument-precedence-order
     (generic-function

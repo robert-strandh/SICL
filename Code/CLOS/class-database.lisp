@@ -1,4 +1,4 @@
-(in-package #:sicl-clos-test)
+(in-package #:sicl-clos)
 
 ;;; Classes use symbols as names, so we create an EQ hash table to map
 ;;; class names to classes.  

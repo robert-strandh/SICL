@@ -1,4 +1,4 @@
-(in-package #:sicl-clos-test)
+(in-package #:sicl-clos)
 
 (defgeneric add-dependent (metaobject dependent))
 

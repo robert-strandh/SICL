@@ -54,7 +54,7 @@
 ;; 	#:sicl-code-utilities
 ;; 	#:sicl-clos-slot-definition))
 
-(defpackage #:sicl-clos-test
+(defpackage #:sicl-clos
   (:shadow
    ;; MOP classes
    #:class #:standard-class #:built-in-class #:structure-class

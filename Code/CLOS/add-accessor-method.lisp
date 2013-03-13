@@ -1,4 +1,4 @@
-(in-package #:sicl-clos-test)
+(in-package #:sicl-clos)
 
 (defgeneric reader-method-class (class direct-slot &rest initargs))
 

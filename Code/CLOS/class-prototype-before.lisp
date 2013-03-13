@@ -1,4 +1,4 @@
-(in-package #:sicl-clos-test)
+(in-package #:sicl-clos)
 
 (defmethod class-prototype :before ((class class))
   (unless (finalized-p class)

@@ -3,7 +3,7 @@
 
 (load "packages.lisp")
 
-(in-package #:sicl-clos-test)
+(in-package #:sicl-clos)
 
 (cl:defmacro with-temporary-functions (bindings &body body)
   (let ((vars (loop for binding in bindings collect (gensym)))

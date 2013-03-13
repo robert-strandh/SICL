@@ -1,4 +1,4 @@
-(in-package :sicl-clos-test)
+(in-package :sicl-clos)
 
 ;;; Implement class initialization according to the section of the
 ;;; AMOP entitled "Initialization of Class Metaobjects".
