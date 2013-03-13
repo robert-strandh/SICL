@@ -1,0 +1,165 @@
+Definitions:
+
+  * A HOST CLASS is a class created by HOST:DEFCLASS.  Such a class is
+    an instance of the host class HOST:STANDARD-CLASS.
+
+  * A HOST INSTANCE is an instance of a host class, created by
+    a call to HOST:MAKE-INSTANCE using a host class or the name of a
+    host class. 
+
+  * A TARGET CLASS is a class metaobject represented as a target
+    instance of some target class. 
+
+  * A TARGET INSTANCE is an instance of a target class. 
+
+  * A BRIDGE CLASS is a representation of a target class as a host
+    instance.
+
+  * A BRIDGE INSTANCE is a target instance, except that the class of
+    the instance is not a target class but a bridge class.
+    (hmm, a bridge instance is not an instance of a bridge class???)
+
+  * A HOST GENERIC FUNCTION is a generic function created by
+    HOST:DEFGENERIC, so it is a host instance of the host class
+    HOST:GENERIC-FUNCTION.  Arguments to the discriminating function
+    of such a generic function are typically host instances (but not
+    necessarily, because of our definition of "host instance").
+    HOST:CLASS-OF is called on some required arguments in order to
+    determine what methods to call.
+
+  * A HOST METHOD is a method created by HOST:DEFMETHOD, so it is a
+    host instance of the host class HOST:METHOD.  The class
+    specializers of such a method are host classes.
+
+  * A TARGET GENERIC FUNCTION is an instance of the target class
+    TARGET:GENERIC-FUNCTION.  Arguments to the discriminating function
+    of such a generic function are typically target instances (but not
+    necessarily, because of our definition of "target instance").
+    TARGET:CLASS-OF is called on some required arguments in order to
+    determine what methods to call, and TARGET:CLASS-UNIQUE-NUMBER is
+    called to determine the unique number of the class. 
+
+  * A TARGET METHOD is an instance of the target class TARGET:METHOD.
+    The class specializers of such a method are target classes.
+
+  * A BRIDGE GENERIC FUNCTION is a generic function which is a host
+    instance of the host class TARGET:GENERIC-FUNCTION.  Arguments to
+    the discriminating function of such a generic function are
+    typically target instances (but not necessarily, because of our
+    definition of "target instance").  TARGET:CLASS-OF is called on
+    some required arguments in order to determine what methods to
+    call, and TARGET:CLASS-UNIQUE-NUMBER is called to determine the
+    unique number of the class.
+
+  * A BRIDGE METHOD is a a method which is a host instance of the host
+    class TARGET:METHOD.  The class specializers of such a method can
+    be bridge classes or target classes depending on context, but the
+    class accessors (TARGET:CLASS-DIRECT-SUPERCLASSES, etc.) as well
+    as TARGET:CLASS-UNIQUE-NUMBER must be defined in that context to
+    work on the specializers. 
+
+Phase 1:
+
+  Use HOST:DEFCLASS to create a hierarchy of host classes corresponing
+  to the hierarchy of MOP classes.  The names of those host classes
+  will be TARGET:STANDARD-OBJECT, TARGET:METAOBJECT, etc., except that
+  we rename the class T to TT, because we want to avoid shadowing the
+  symbol T, and it would be impossible to define HOST:T as a class.
+  These host classes have the analogous superclasses compared their
+  corresponding target MOP classes, and they define the analogous
+  slots.  Their metaclasses are all wrong of course, because each one
+  of them has HOST:STANDARD-CLASS as metaclass.  The inheritance
+  finalization protocol of the host will make sure that instances of
+  these host classes have the effective slots determined by class
+  inheritance.  In other words, each of the classes define slots with
+  the right names, the right initargs, etc.  When these host classes
+  are instantiated, some of the slots will contain other host
+  instances, for instance of host classes such as
+  TARGET:STANDARD-DIRECT-SLOT-DEFINITION.  It is not striclty
+  necessary at this point to define host classes for all MOP classes.
+  Only the ones that will be instantiated in the next phase are
+  strictly necessary, but the others won't hurt either.
+
+  Next, we want to create host instances corresponding to the full
+  hierarchy of MOP classes.
+
+Phase 2:
+
+  Define an :after method on HOST:INITIALIZE-INSTANCE specialized for
+  TARGET:STANDARD-CLASS that implements the behavior that is indicated
+  by the AMOP.  The purpose of that :after method is to make sure the
+  slots and the subclasses are metaobjects, that the class is a
+  subclass of its superclasses, and that reader and writer methods are
+  created on the appropriate generic function (maybe skip the
+  readers/writers?). 
+
+Phase 3:
+
+  Define TARGET:DEFCLASS as a macro, TARGET:ENSURE-CLASS as a host
+  function, and TARGET:ENSURE-CLASS-USING-CLASS as a host generic
+  function.  TARGET:ENSURE-CLASS-USING-CLASS calls MAKE-INSTANCE, and
+  we make sure it calls HOST:MAKE-INSTANCE.  It will also call
+  FIND-CLASS and (SETF FIND-CLASS).  We make sure that it calls (SETF
+  TARGET:FIND-CLASS) to create a new class, TARGET:FIND-CLASS to find
+  a superclass, but HOST:FIND-CLASS to find a metaclass.
+  TARGET:ENSURE-CLASS-USING-CLASS will have methods specialized for
+  HOST:NULL, TARGET:CLASS, and TARGET:FORWARD-REFERENCE-CLASS, though
+  at this point, only the method on HOST:NULL will be used. 
+
+  Load the hierarchy of MOP classes again, which will create host
+  non-class instances corresponding to the full hiearchy of MOP
+  classes.
+
+  Most of these instance will be instances of the host class
+  TARGET:STANDARD-CLASS, some will be instances of the host class
+  TARGET:FUNCALLABLE-STANDARD-CLASS, and some will be an instance of
+  the host class TARGET:BUILT-IN-CLASS.  Ordinary host generic
+  functions work on those instances, because their classes are host
+  classes and so can be used as specializers for the host generic
+  functions. 
+
+  These instances are not host classes, so they cannot be instantiated
+  by HOST:MAKE-INSTANCE.  They have the "right" metaclasses, except
+  that those metaclasses are represented as host classes rather than
+  as target classes. 
+
+Phase 4:
+
+  Define TARGET:FINALIZE-INHERITANCE etc. as host generic functions to
+  work on the non-class host instances representing target class
+  metaobjects.
+
+  Define TARGET:MAKE-INSTANCE as a host generic function and define
+  the methods specialized for HOST:SYMBOL, TARGET:STANDARD-CLASS, and
+  TARGET:FUNCALLABLE-STANDARD-CLASS.  TARGET:MAKE-INSTANCE will call
+  TARGET:INITIALIZE-INSTANCE, but this function does not exist yet.
+
+Phase 5:
+
+  Use HOST:MAKE-INSTANCE to create host instances of the classes
+  TARGET:STANDARD-GENERIC-FUNCTION, TARGET:STANDARD-METHOD,
+  TARGET:STANDARD-READER-METHOD, and TARGET:STANDARD-WRITER-METHOD.
+  Host generic functions will work on those instances.
+  Implement TARGET:COMPUTE-EFFECTIVE-METHOD and
+  TARGET:COMPUTE-DISCRIMINATING-FUNCTION as host generic
+  functions working on those instance.  The result of these
+  computations is a bunch of ordinary host functions that use
+  TARGET:CLASS-OF and TARGET:CLASS-UNIQUE-NUMBER, and some ordinary CL
+  functionality not related to classes or generic functions.  The
+  method specializers on these methods are
+
+  The discriminating functions of these instances behave as fully
+  functional target generic functions in that they specialize for
+  target class metaobjects. 
+
+  Define TARGET:INITIALIZE-INSTANCE and TARGET:SHARED-INITIALIZE this
+  way. 
+
+  Now, create target instances of the target classes.  
+
+  Patch the newly created target classes so that they are instances of
+  target instances.
+
+  Redefine TARGET:MAKE-INSTANCE as a target generic function.
+
+  Redefine all the generic functions as target instances. 
