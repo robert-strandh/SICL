@@ -21,7 +21,8 @@
   :components
   ((:file "packages" :depends-on ())
    (:file "conditionals" :depends-on ("packages"))
-   (:file "condition-reporters-en" :depends-on ("packages" "conditionals"))
+   (:file "conditions" :depends-on ("packages"))
+   (:file "condition-reporters-en" :depends-on ("packages" "conditions"))
    (:file "docstrings-en" :depends-on ("packages"))))
 
 (asdf:defsystem :sicl-conditionals-test
