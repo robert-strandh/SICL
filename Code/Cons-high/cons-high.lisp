@@ -1,8 +1,8 @@
 (in-package :sicl-cons-high)
 
-;;;; Copyright (c) 2008, 2009, 2010
+;;;; Copyright (c) 2008 - 2013
 ;;;;
-;;;;     Robert Strandh (strandh@labri.fr)
+;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
 ;;;; all rights reserved. 
 ;;;;
@@ -15,105 +15,6 @@
 ;;;; This file is part of the cons-high module of the SICL project.
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file cons-high.text for a description of the module.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Externally visible conditions
-
-;;; This condition is used to mix into other conditions that
-;;; will report the construct (function, macro, etc) in which 
-;;; the condition was signaled. 
-(define-condition name-mixin ()
-  ((%name :initarg :name :reader name)))
-
-;;; This condition is used by functions an macros that require 
-;;; some argument to be a nonnegative integer. 
-(define-condition must-be-nonnegative-integer (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type '(integer 0)))
-
-;;; This condition is used by functions and macros that require
-;;; some argument to be a cons cell.
-(define-condition must-be-cons (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'cons))
-
-;;; This condition is used by functions and macros that require
-;;; some argument to be a list (a cons or nil).
-(define-condition must-be-list (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'list))
-
-;;; This condition is used by functions and macros that require
-;;; some list to be a proper list.  
-(define-condition must-be-proper-list (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'list))
-
-;;; This condition is used by functions and macros that require
-;;; some list to be either a proper list or a circular list.
-(define-condition must-be-proper-or-circular-list (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'list))
-
-;;; This condition is used by functions and macros that require some
-;;; list to be either a proper list or a dotted list (but not a
-;;; circular list). 
-(define-condition must-be-proper-or-dotted-list (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'list))
-
-;;; This condition is used by functions and macros that require
-;;; some argument to be a propterty list.
-(define-condition must-be-property-list (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'list))
-
-;;; This condition is used by functions and macros that require
-;;; some argument to be a association list.
-(define-condition must-be-association-list (type-error name-mixin)
-  ()
-  (:default-initargs :expected-type 'list))
-
-;;; This condition is used by functions that take :test and :test-not
-;;; keyword arguments, and is signaled when both of those are given.
-(define-condition both-test-and-test-not-given (error name-mixin)
-  ())
-
-;;; This condition is used by the map* family functions when no lists
-;;; were given, since those functions require at least one list
-;;; argument.
-(define-condition at-least-one-list-required (error name-mixin)
-  ())
-
-;;; This condition is used by the list* function when no arguments
-;;; were given, since that function requires at least one argument.
-(define-condition at-least-one-argument-required (error name-mixin)
-  ())
-
-;;; This condition is used by the pairlis function when 
-;;; the two lists are not of the same length.
-(define-condition lists-must-have-the-same-length (error name-mixin)
-  ((%list1 :initarg :list1 :reader list1)
-   (%list2 :initarg :list2 :reader list2)))
-
-;;; This condition is used by setf expanders for c*r when an
-;;; object must be a cons cell but something else was found
-(define-condition setf-c*r-must-be-cons (must-be-cons)
-  ((%original-tree :initarg :original-tree :reader original-tree)
-   (%access-string :initarg :access-string :reader access-string)))
-
-;;; This condition is used by the setf expander for nth when an
-;;; object must be a cons cell but something else was found
-(define-condition setf-nth-must-be-cons (must-be-cons)
-  ((%original-tree :initarg :original-tree :reader original-tree)
-   (%cons-cell-count :initarg :cons-cell-count :reader cons-cell-count)))
-
-;;; This condition is used by macros that detect that there
-;;; is both a :test and a :test-not, and that detection is
-;;; done at macro-expansion time. 
-(define-condition warn-both-test-and-test-not-given (warning name-mixin)
-  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -625,16 +526,17 @@
 
 ;;; special version of last used when the second argument to
 ;;; last is 1. 
-(defun last-1 (list)
-  (unless (typep list 'list)
-    (error 'must-be-list
-	   :datum list
-	   :name 'last))
-  ;; We can use for ... on, because it uses atom to test for
-  ;; the end of the list. 
-  (loop for rest on list
-	do (setf list rest))
-  list)
+(eval-when (:compile-toplevel :load-toplevel)
+  (defun last-1 (list)
+    (unless (typep list 'list)
+      (error 'must-be-list
+	     :datum list
+	     :name 'last))
+    ;; We can use for ... on, because it uses atom to test for
+    ;; the end of the list. 
+    (loop for rest on list
+	  do (setf list rest))
+    list))
 
 (define-compiler-macro last (&whole form list &optional (n 1))
   (if (eql n 1)
@@ -1282,31 +1184,32 @@
 ;;; This implementation works according to the HyperSpec note
 ;;; when n is 0.
 
-(defun butlast (list &optional (n 1))
-  (unless (typep list 'list)
-    (error 'must-be-list
-	   :datum list
-	   :name 'butlast))
-  (unless (typep n '(integer 0))
-    (error 'must-be-nonnegative-integer
-	   :datum n
-	   :name 'butlast))
-  (let ((remaining list))
-    (loop repeat n
-	  until (atom remaining)
-	  do (setf remaining (cdr remaining)))
-    (loop for slow on remaining
-	  until (atom remaining)
-          do (setf remaining (cdr remaining))
-          collect (prog1 (car list) (setf list (cdr list)))
-	  until (atom remaining)
-          do (setf remaining (cdr remaining))
-          collect (prog1 (car list) (setf list (cdr list)))
-	  do (when (eq slow remaining)
-	       ;; we have a circular list
-	       (error 'must-be-proper-or-dotted-list
-		      :datum list
-		      :name 'butlast)))))
+(eval-when (:compile-toplevel :load-toplevel)
+  (defun butlast (list &optional (n 1))
+    (unless (typep list 'list)
+      (error 'must-be-list
+	     :datum list
+	     :name 'butlast))
+    (unless (typep n '(integer 0))
+      (error 'must-be-nonnegative-integer
+	     :datum n
+	     :name 'butlast))
+    (let ((remaining list))
+      (loop repeat n
+	    until (atom remaining)
+	    do (setf remaining (cdr remaining)))
+      (loop for slow on remaining
+	    until (atom remaining)
+	    do (setf remaining (cdr remaining))
+	    collect (prog1 (car list) (setf list (cdr list)))
+	    until (atom remaining)
+	    do (setf remaining (cdr remaining))
+	    collect (prog1 (car list) (setf list (cdr list)))
+	    do (when (eq slow remaining)
+		 ;; we have a circular list
+		 (error 'must-be-proper-or-dotted-list
+			:datum list
+			:name 'butlast))))))
 
 ;;; There is probably no point in making a special version of 
 ;;; butlast for n = 1, because the time is going to be dominated

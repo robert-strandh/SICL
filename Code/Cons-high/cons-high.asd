@@ -1,8 +1,8 @@
 (in-package #:cl-user)
 
-;;;; Copyright (c) 2008, 2009, 2010
+;;;; Copyright (c) 2008 - 2013
 ;;;;
-;;;;     Robert Strandh (strandh@labri.fr)
+;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
 ;;;; all rights reserved. 
 ;;;;
@@ -20,7 +20,8 @@
     :components
   ((:file "packages" :depends-on ())
    (:file "cons-high" :depends-on ("packages"))
-   (:file "condition-reporters-en" :depends-on ("packages" "cons-high"))
+   (:file "conditions" :depends-on ("packages"))
+   (:file "condition-reporters-en" :depends-on ("packages" "conditions"))
    (:file "docstrings-en" :depends-on ("packages"))))
 
 (asdf:defsystem :sicl-cons-high-test

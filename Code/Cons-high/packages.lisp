@@ -1,6 +1,6 @@
-;;;; Copyright (c) 2008, 2009, 2010
+;;;; Copyright (c) 2008 - 2013
 ;;;;
-;;;;     Robert Strandh (strandh@labri.fr)
+;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;;
 ;;;; all rights reserved. 
 ;;;;
