@@ -56,7 +56,7 @@
 		 #:getf #:get-properties
 		 #:push #:pop
 		 #:remf #:pushnew))
-  (:export . #1#))
+  (:export #:reverse-list . #1#))
 
 ;;; In the test package, we want to import all symbols of the
 ;;; COMMON-LISP package, except the ones that were shadowed in

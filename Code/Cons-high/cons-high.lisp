@@ -29,9 +29,43 @@
 ;;; We need the null function in macro expanders in this module
 ;;; so we define it early.  
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defun null (object)
     (eq object '())))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function list
+
+;;; We need the list function in the implementation of other functions
+;;; and or macros in this module, so we define it early.
+
+;;; this implementation assumes that there is no 
+;;; structure sharing between the &rest argument
+;;; and the last argument to apply
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun list (&rest elements)
+    elements))
+
+(define-compiler-macro list (&rest args)
+  (if (null args)
+      'nil
+      `(cons ,(car args) (list ,@(cdr args)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Local function REVERSE-LIST.
+;;;
+;;; FIXME: signal an error if the list is not a proper list.
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun reverse-list (list)
+    (loop with result = '()
+	  for rest = list then (cdr rest)
+	  while (consp rest)
+	  do (setf result (cons (car rest) result))
+	  finally (return result))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -91,32 +125,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function list
-
-;;; We need the list function in the implementation of other functions
-;;; and or macros in this module, so we define it early.
-
-;;; this implementation assumes that there is no 
-;;; structure sharing between the &rest argument
-;;; and the last argument to apply
-
-(eval-when (:compile-toplevel :load-toplevel)
-  (defun list (&rest elements)
-    elements))
-
-(define-compiler-macro list (&rest args)
-  (if (null args)
-      'nil
-      `(cons ,(car args) (list ,@(cdr args)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Function mapcar
 ;;;
 ;;; The compiler macro is defined later because it uses the append
 ;;; function that may not be defined at this point.
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defun mapcar (function &rest lists)
     (when (null lists)
       (error 'at-least-one-list-required :name 'mapcar))
@@ -247,7 +261,8 @@
 				   :name ',function-name))))))
       `(defun ,function-name (list)
          (let ((remaining list))
-           ,@(loop for letter across (reverse letters)
+           ,@(loop for i downfrom (1- (length letters)) to 0
+		   for letter = (aref letters i)
                    collect (one-iteration letter))
            remaining)))))
 
@@ -379,7 +394,8 @@
 				  :name '(setf ,function-name))))))
         `(defun (setf ,function-name) (new-object list)
            (let ((remaining list))
-             ,@(append (loop for letter across (reverse (subseq letters 1))
+             ,@(append (loop for i downfrom (1- (length letters)) to 0
+			     for letter = (aref letters i)
 			     collect (one-iteration letter))
 		       `((if (consp remaining)
 			     (setf (,(primitive (aref letters 0)) remaining)
@@ -526,7 +542,7 @@
 
 ;;; special version of last used when the second argument to
 ;;; last is 1. 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defun last-1 (list)
     (unless (typep list 'list)
       (error 'must-be-list
@@ -1184,7 +1200,7 @@
 ;;; This implementation works according to the HyperSpec note
 ;;; when n is 0.
 
-(eval-when (:compile-toplevel :load-toplevel)
+(eval-when (:compile-toplevel :load-toplevel :execute)
   (defun butlast (list &optional (n 1))
     (unless (typep list 'list)
       (error 'must-be-list
