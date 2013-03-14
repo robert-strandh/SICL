@@ -60,11 +60,11 @@
     (standard-slot-definition effective-slot-definition)
   ())
 
-(defun make-direct-slot-definition (&rest args)
-  (apply #'make-instance 'standard-direct-slot-definition args))
+;; (defun make-direct-slot-definition (&rest args)
+;;   (apply #'make-instance 'standard-direct-slot-definition args))
 
-(defun make-effective-slot-definition (&rest args)
-  (apply #'make-instance 'standard-effective-slot-definition args))
+;; (defun make-effective-slot-definition (&rest args)
+;;   (apply #'make-instance 'standard-effective-slot-definition args))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
