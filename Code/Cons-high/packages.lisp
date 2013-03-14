@@ -47,7 +47,7 @@
                  #:rassoc #:rassoc-if #:rassoc-if-not
                  #:member #:member-if #:member-if-not
                  #:sublis #:nsublis
-		 #:null #:acons #:pairlis #:copy-alist
+		 #:acons #:pairlis #:copy-alist
 		 #:tailp #:ldiff
 		 #:union #:nunion #:intersection #:nintersection
 		 #:set-difference #:nset-difference
