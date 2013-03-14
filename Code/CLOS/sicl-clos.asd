@@ -5,5 +5,5 @@
 	       :sicl-additional-conditions
 	       :sicl-code-utilities)
   :components
-  ((:file "packages2"
+  ((:file "packages"
     :depends-on ())))
