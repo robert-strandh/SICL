@@ -101,6 +101,11 @@
 (defgeneric compute-effective-slot-definition
     (class name direct-slot-definitions))
 
+(defun union-all (lists)
+  (if (null lists)
+      '()
+      (union (car lists) (union-all (cdr lists)))))
+
 ;;; Implement the behavior of compute-effective-slot-definition
 ;;; for standard-class and funcallable-standard-class.
 (defun compute-effective-slot-definition-aux (class name direct-slot-definitions)
@@ -108,10 +113,11 @@
     (setf allocation
 	  (slot-definition-allocation (first direct-slot-definitions)))
     (setf initargs
-	  (reduce #'union
-		  (mapcar #'slot-definition-initargs direct-slot-definitions)))
-    (let ((first-init (find-if-not #'null direct-slot-definitions
-				   :key #'slot-definition-initfunction)))
+	  (union-all
+	   (mapcar #'slot-definition-initargs direct-slot-definitions)))
+    (let ((first-init (car (member-if-not
+			    #'null direct-slot-definitions
+			    :key #'slot-definition-initfunction))))
       (unless (null first-init)
 	(setf initform (slot-definition-initform first-init)
 	      initfunction (slot-definition-initfunction first-init))))
