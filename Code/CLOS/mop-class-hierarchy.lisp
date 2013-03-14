@@ -183,11 +183,11 @@
     :initform nil
     :accessor standard-instance-slots)))
 
-(defclass function (t)
-  ())
+(define-built-in-class t ())
 
-(defclass funcallable-standard-object (standard-object t)
-  ;; FIXME, maybe add something here? 
+(define-built-in-class function (t))
+
+(defclass funcallable-standard-object (standard-object function)
   ())
 
 (defclass metaobject (standard-object)
@@ -305,7 +305,7 @@
 
 (defclass class (specializer)
   ((%unique-number 
-    :initform (progn *class-unique-number* (incf *class-unique-number*))
+    :initform (prog1 *class-unique-number* (incf *class-unique-number*))
     :reader unique-number)
    (%name 
     :initform nil
@@ -349,10 +349,6 @@
     :reader class-direct-slots)
    (%documentation 
     :accessor c-documentation)
-   (%finalized-p 
-    :allocation :class
-    :initform t
-    :accessor class-finalized-p)
    (%precedence-list 
     :initarg :precedence-list 
     :reader class-precedence-list)
