@@ -42,7 +42,8 @@
 ;;; Import some miscellaneous functions.
 (loop for symbol in '(fmakunbound aref eql eq equal equalp typep
 		      not null apply funcall get-setf-expansion
-		      gensym coerce make-hash-table gethash values)
+		      gensym coerce make-hash-table gethash values
+		      find-class make-instance)
       do (setf (fdefinition (intern (symbol-name symbol) '#:scl))
 	       (fdefinition symbol)))
 
@@ -78,6 +79,7 @@
      ,@(remove :metaclass class-options :key #'car)))
 
 (load "mop-class-hierarchy.lisp")
+(load "slot-definition.lisp")
 
 ;;; End of phase 1.
 ;;; We now have a complete class hierarchy corresponding to the 
