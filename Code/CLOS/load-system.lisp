@@ -42,8 +42,8 @@
 ;;; Import some miscellaneous functions.
 (loop for symbol in '(fmakunbound aref eql eq equal equalp typep
 		      not null apply funcall get-setf-expansion
-		      gensym coerce make-hash-table gethash values
-		      find-class make-instance)
+		      gensym coerce make-hash-table gethash remhash
+		      values find-class make-instance initialize-instance)
       do (setf (fdefinition (intern (symbol-name symbol) '#:scl))
 	       (fdefinition symbol)))
 
@@ -86,3 +86,40 @@
 ;;; classes.
 ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Phase 2.  
+;;;
+;;; The purpose of this phase is to create host instances of some of
+;;; the host classes that we defined in phase 1.  These host instances
+;;; correspond to the classes of the MOP hierarchy and they are host
+;;; instances of the host classes BUILT-IN-CLASS, STANDARD-CLASS, and
+;;; FUNCALLABLE-STANDARD-CLASS.  The way we create those instances is
+;;; that we redefine DEFCLASS, and we define ENSURE-CLASS and
+;;; ENSURE-CLASS-USING-CLASS, because what they ultimately do is to
+;;; call MAKE-INSTANCE on the class metaobject, in our case, the
+;;; classes that were created in phase 1. Furthermore, we want the
+;;; newly created host instances to look like MOP classes in that we
+;;; want the class initialization protocol to be applied to them when
+;;; they are created.  This implies among other things that slots
+;;; containing direct slot definitions will be instances of the host
+;;; classed DIRECT-SLOT-DEFINITION, as opposed to just lists.
+
+;;; We start by loading the class database so that we have FIND-CLASS
+;;; and (SETF FIND-CLASS).  Before, we defined FIND-CLASS (actually,
+;;; imported the definition from the CL package) just to avoid a
+;;; warning when loading slot-definition.lisp.  Now, we need to
+;;; undefine it to avoid a warning when it is defined in
+;;; class-database.lisp.
+
+(fmakunbound 'scl:find-class)
+
+(load "class-database.lisp")
+
+;;; Next, we define :after methods on INITIALIZE-INSTANCE specialized
+;;; for STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS.  These :after
+;;; methods implement the class initialization protocol.
+;;; FIXME: check the validity of this comment.
+
+(load "class-initialization.lisp")
