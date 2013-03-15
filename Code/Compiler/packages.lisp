@@ -38,6 +38,8 @@
    #:+class-code+
    #:+class-environment+
    #:+class-builtin-class+
+   #:+symbol-nil+
+   #:+symbol-t+
    #:+argument-count+
    #:+arguments+
    #:+heap-start+
@@ -222,6 +224,7 @@
    #:lshift #:ashift
    #:& #:ior #:xor #:~
    #:== #:s< #:s<= #:u< #:u<=
+   #:<< #:>>
    #:halt
    ;; doesn't strictly belong here
    #:find-function-cell
