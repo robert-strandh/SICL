@@ -9,12 +9,12 @@
 ;;; be loaded, and that need to come from the host.
 (shadowing-import
  '(t nil if let let* setq flet labels return-from setf progn prog1 eval-when
-   loop-finish)
+   lambda loop-finish)
  '#:sicl-common-lisp)
 
 (export
  '(t nil if let let* setq flet labels return-from setf progn prog1 eval-when
-   loop-finish)
+   lambda loop-finish)
  '#:sicl-common-lisp)
 
 ;;; Import functions that have to do with arithmetic and numbers.
@@ -43,14 +43,17 @@
 (loop for symbol in '(fmakunbound aref eql eq equal equalp typep
 		      not null apply funcall get-setf-expansion
 		      gensym coerce make-hash-table gethash remhash
-		      values find-class make-instance initialize-instance)
+		      maphash reverse stringp remove-duplicates
+		      values find-class make-instance
+		      initialize-instance reinitialize-instance
+		      symbolp count class-of change-class)
       do (setf (fdefinition (intern (symbol-name symbol) '#:scl))
 	       (fdefinition symbol)))
 
 ;;; Import some macros.
 (loop for symbol in '(incf decf defconstant defparameter defun defgeneric
 		      defmethod deftype loop return in-package defpackage
-		      lambda defsetf define-setf-expander defmacro
+		      defsetf define-setf-expander defmacro
 		      define-compiler-macro multiple-value-bind)
       do (setf (macro-function (intern (symbol-name symbol) '#:scl))
 	       (macro-function symbol)))
@@ -79,6 +82,7 @@
      ,@(remove :metaclass class-options :key #'car)))
 
 (load "mop-class-hierarchy.lisp")
+(load "additional-classes.lisp")
 (load "slot-definition.lisp")
 
 ;;; End of phase 1.
@@ -153,3 +157,9 @@
   nil)
 
 (load "class-initialization.lisp")
+
+;;; Before loading defclass.lisp, we undefine DEFCLASS:
+
+(fmakunbound 'scl:defclass)
+
+(load "defclass.lisp")
