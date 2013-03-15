@@ -50,7 +50,7 @@
 ;;; Import some macros.
 (loop for symbol in '(incf decf defconstant defparameter defun defgeneric
 		      defmethod deftype loop return in-package defpackage
-		      defsetf define-setf-expander defmacro
+		      lambda defsetf define-setf-expander defmacro
 		      define-compiler-macro multiple-value-bind)
       do (setf (macro-function (intern (symbol-name symbol) '#:scl))
 	       (macro-function symbol)))
@@ -121,5 +121,35 @@
 ;;; for STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS.  These :after
 ;;; methods implement the class initialization protocol.
 ;;; FIXME: check the validity of this comment.
+
+;;; Before we load class-initializationl.lisp, we define dummy
+;;; functions for ADD-READER-METHOD and ADD-WRITER-METHOD.  Those
+;;; functions are called by the :after methods, but right now we don't
+;;; need any methods at all.
+
+(defun sicl-clos::add-reader-method (&rest arguments)
+  (declare (ignore arguments))
+  nil)
+
+(defun sicl-clos::add-writer-method (&rest arguments)
+  (declare (ignore arguments))
+  nil)
+
+;;; The :after methods also call VALIDATE-SUPERCLASS.  For now, we
+;;; consider all superclasses to be valid.
+
+(defun sicl-clos::validate-superclass (&rest arguments)
+  (declare (ignore arguments))
+  t)
+
+;;; FIXME: say something here.
+(defun sicl-clos::update-dependent (&rest arguments)
+  (declare (ignore arguments))
+  nil)
+
+;;; FIXME: say something here.
+(defun sicl-clos::map-dependents (&rest arguments)
+  (declare (ignore arguments))
+  nil)
 
 (load "class-initialization.lisp")
