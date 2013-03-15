@@ -137,67 +137,75 @@
 (defconstant +global-environment+
   (+ +mmap-base+ (* +word-size-in-bytes+ 1)))
 
-;;; This address contains the MEMALLOC function as a Lisp object.
+;;; This address contains the function MEMALLOC as a Lisp object.
 (defconstant +function-memalloc+
   (+ +mmap-base+ (* +word-size-in-bytes+ 2)))
 
-;;; This address contains the FIND-PACKAGE function as a Lisp object.
+;;; This address contains the function FIND-PACKAGE as a Lisp object.
 (defconstant +function-find-package+
   (+ +mmap-base+ (* +word-size-in-bytes+ 3)))
 
-;;; This address contains the FIND-SYMBOL function as a Lisp object.
+;;; This address contains the function FIND-SYMBOL as a Lisp object.
 (defconstant +function-find-symbol+
   (+ +mmap-base+ (* +word-size-in-bytes+ 4)))
 
-;;; This address contains the FIND-CLASS function as a Lisp object.
+;;; This address contains the function FIND-CLASS as a Lisp object.
 (defconstant +function-find-class+
   (+ +mmap-base+ (* +word-size-in-bytes+ 5)))
 
-;;; This address contains the FIND-FUNCTION-CELL function as a Lisp
+;;; This address contains the function FIND-FUNCTION-CELL as a Lisp
 ;;; object.
 (defconstant +function-find-function-cell+
   (+ +mmap-base+ (* +word-size-in-bytes+ 6)))
 
-;;; This address contains the SYMBOL class as a Lisp object.
+;;; This address contains the class SYMBOL as a Lisp object.
 (defconstant +class-symbol+
   (+ +mmap-base+ (* +word-size-in-bytes+ 7)))
 
-;;; This address contains the PACKAGE class as a Lisp object.
+;;; This address contains the class PACKAGE as a Lisp object.
 (defconstant +class-package+
   (+ +mmap-base+ (* +word-size-in-bytes+ 8)))
 
-;;; This address contains the SIMPLE-VECTOR class as a Lisp object.
+;;; This address contains the class SIMPLE-VECTOR as a Lisp object.
 (defconstant +class-simple-vector+
   (+ +mmap-base+ (* +word-size-in-bytes+ 9)))
 
-;;; This address contains the SIMPLE-STRING class as a Lisp object.
+;;; This address contains the class SIMPLE-STRING as a Lisp object.
 (defconstant +class-simple-string+
   (+ +mmap-base+ (* +word-size-in-bytes+ 10)))
 
-;;; This address contains the OCTET-VECTOR class as a Lisp object.
+;;; This address contains the class OCTET-VECTOR as a Lisp object.
 (defconstant +class-octet-vector+
   (+ +mmap-base+ (* +word-size-in-bytes+ 11)))
 
-;;; This address contains the FUNCTION class as a Lisp object.
+;;; This address contains the class FUNCTION as a Lisp object.
 (defconstant +class-function+
   (+ +mmap-base+ (* +word-size-in-bytes+ 12)))
 
-;;; This address contains the CODE class as a Lisp object.
+;;; This address contains the class CODE as a Lisp object.
 (defconstant +class-code+
   (+ +mmap-base+ (* +word-size-in-bytes+ 13)))
 
-;;; This address contains the ENVIRONMENT class as a Lisp object.
+;;; This address contains the class ENVIRONMENT as a Lisp object.
 (defconstant +class-environment+
   (+ +mmap-base+ (* +word-size-in-bytes+ 14)))
 
-;;; This address contains the BUILTIN-CLASS class as a Lisp object.
+;;; This address contains the class BUILTIN-CLASS as a Lisp object.
 (defconstant +class-builtin-class+
   (+ +mmap-base+ (* +word-size-in-bytes+ 15)))
+
+;;; This address contains the symbol NIL as a Lisp object.
+(defconstant +symbol-nil+
+  (+ +mmap-base+ (* +word-size-in-bytes+ 16)))
+
+;;; This address contains the symbol T as a Lisp object.
+(defconstant +symbol-t+
+  (+ +mmap-base+ (* +word-size-in-bytes+ 17)))
 
 ;;; This address contains the number of arguments or return values
 ;;; represented as a raw machine integer.
 (defconstant +argument-count+
-  (+ +mmap-base+ (* +word-size-in-bytes+ 16)))
+  (+ +mmap-base+ (* +word-size-in-bytes+ 18)))
 
 ;;; This address contains the beginning of 50 consecutive words used
 ;;; to pass arguments and return values.
