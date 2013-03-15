@@ -15,6 +15,14 @@
 	    nil)
 	result)))
 
+;;; During bootstrapping, we need to search for metaclasses using a
+;;; different method from that used to search for superclasses.
+;;; Therefore, when we want a metaclass, we call this function.
+;;; During bootstrapping, we redefine this function to search for the
+;;; metaclass using the correct method.
+(defun find-metaclass (&rest arguments)
+  (apply #'find-class arguments))
+
 ;;; FIXME: check the truth of this comment.
 ;;; This function should check the type of its argument, but
 ;;; we don't have class types working yet at this point.  

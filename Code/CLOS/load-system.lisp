@@ -161,6 +161,16 @@
 
 (load "defclass.lisp")
 
+(fmakunbound 'sicl-clos::find-metaclass)
+
+(setf (fdefinition 'sicl-clos::find-metaclass)
+      (fdefinition 'find-class))
+
+(fmakunbound 'sicl-clos::classp)
+
+(defun sicl-clos::classp (object)
+  t)
+
 ;;; The class STANDARD-CLASS must exist a priori because it is the
 ;;; metaclass of the first classes to be created.
 

@@ -88,9 +88,9 @@
 	(let ((class-metaobject
 		(if metaclass-p
 		    (if (symbolp metaclass)
-			(find-class metaclass)
+			(find-metaclass metaclass)
 			metaclass)
-		    (find-class 'standard-class))))
+		    (find-metaclass 'standard-class))))
 	  (unless (classp class-metaobject)
 	    (error "metaclass must be a class metaobject class"))
 	  class-metaobject))
@@ -124,7 +124,7 @@
        &allow-other-keys)
   (when metaclass-p
     (cond ((symbolp metaclass)
-	   (setf metaclass (find-class metaclass)))
+	   (setf metaclass (find-metaclass metaclass)))
 	  ((classp metaclass)
 	   nil)
 	  (t
@@ -158,7 +158,7 @@
   (unless metaclass-p
     (error "metaclass must be given when ensuring a forward-reference class"))
   (cond ((symbolp metaclass)
-	 (setf metaclass (find-class metaclass)))
+	 (setf metaclass (find-metaclass metaclass)))
 	((classp metaclass)
 	 nil)
 	(t
