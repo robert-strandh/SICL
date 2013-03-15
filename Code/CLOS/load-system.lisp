@@ -8,13 +8,13 @@
 ;;; These are the symbols that are mentioned explicitly in the file to
 ;;; be loaded, and that need to come from the host.
 (shadowing-import
- '(t nil if let let* setq flet labels return-from setf progn prog1 eval-when
-   lambda loop-finish)
+ '(t nil null if let let* setq flet labels return-from setf progn prog1
+   and or eval-when lambda loop-finish)
  '#:sicl-common-lisp)
 
 (export
- '(t nil if let let* setq flet labels return-from setf progn prog1 eval-when
-   lambda loop-finish)
+ '(t nil null if let let* setq flet labels return-from setf progn prog1
+   and or eval-when lambda loop-finish)
  '#:sicl-common-lisp)
 
 ;;; Import functions that have to do with arithmetic and numbers.
@@ -29,8 +29,10 @@
       do (setf (fdefinition (intern (symbol-name symbol) '#:scl))
 	       (fdefinition symbol)))
 
-;;; Import low-level functions on conses.
-(loop for symbol in '(cons car cdr rplaca rplacd consp listp atom length)
+;;; Import functions on conses.
+(loop for symbol in '(cons car cdr rplaca rplacd consp listp atom length
+		      union copy-list mapcar list member-if-not
+		      first append cadr cddr)
       do (setf (fdefinition (intern (symbol-name symbol) '#:scl))
 	       (fdefinition symbol)))
 
@@ -41,7 +43,7 @@
 
 ;;; Import some miscellaneous functions.
 (loop for symbol in '(fmakunbound aref eql eq equal equalp typep
-		      not null apply funcall get-setf-expansion
+		      not apply funcall get-setf-expansion
 		      gensym coerce make-hash-table gethash remhash
 		      maphash reverse stringp remove-duplicates
 		      values find-class make-instance
@@ -54,14 +56,10 @@
 (loop for symbol in '(incf decf defconstant defparameter defun defgeneric
 		      defmethod deftype loop return in-package defpackage
 		      defsetf define-setf-expander defmacro
-		      define-compiler-macro multiple-value-bind)
+		      define-compiler-macro multiple-value-bind
+		      cond when unless case push pop remf)
       do (setf (macro-function (intern (symbol-name symbol) '#:scl))
 	       (macro-function symbol)))
-
-;;; Load SICL module for conditional macros.
-(load "../Conditionals/conditionals.lisp")
-;;; Load SICL module for high-level functions on CONSes.
-(load "../Cons-high/cons-high.lisp")
 
 ;;; In phase 1, there is no difference between a built-in class and a
 ;;; standard class, so we can use CL:DEFCLASS to define it.  However,
@@ -82,7 +80,6 @@
      ,@(remove :metaclass class-options :key #'car)))
 
 (load "mop-class-hierarchy.lisp")
-(load "additional-classes.lisp")
 (load "slot-definition.lisp")
 
 ;;; End of phase 1.
@@ -163,3 +160,8 @@
 (fmakunbound 'scl:defclass)
 
 (load "defclass.lisp")
+
+;;; The class STANDARD-CLASS must exist a priori because it is the
+;;; metaclass of the first classes to be created.
+
+(load "mop-class-hierarchy.lisp")
