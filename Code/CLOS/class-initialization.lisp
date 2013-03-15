@@ -103,7 +103,7 @@
        &allow-other-keys)
   (let ((default-superclass (find-class 'standard-class)))
     (set-superclasses class direct-superclasses default-superclass))
-  (set-direct-default-initargs direct-default-initargs)
+  (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
   (create-readers-and-writers class))
@@ -118,17 +118,19 @@
   (let ((default-superclass (find-class 'funcallable-standard-class)))
     (set-superclasses class direct-superclasses default-superclass))
   (when direct-default-initargs-p
-    (set-direct-default-initargs direct-default-initargs))
+    (set-direct-default-initargs class direct-default-initargs))
   (add-as-subclass-to-superclasses class)
   (when direct-slots-p
     (set-direct-slots class direct-slots))
   (create-readers-and-writers class))
 
-(defmethod reinitialize-instance :after
-    ((class standard-class)
-     &rest args
-     &key
-     &allow-other-keys)
-  (map-dependents class
-		  (lambda (dependent)
-		    (apply #'update-dependent class dependent args))))
+;;; I don't know why this definition makes SBCL go into an infinite
+;;; recursion.
+;; (defmethod reinitialize-instance :after
+;;     ((class standard-class)
+;;      &rest args
+;;      &key
+;;      &allow-other-keys)
+;;   (map-dependents class
+;; 		  (lambda (dependent)
+;; 		    (apply #'update-dependent class dependent args))))
