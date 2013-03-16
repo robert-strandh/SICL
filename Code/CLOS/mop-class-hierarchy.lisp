@@ -159,6 +159,10 @@
 (defconstant +timestamp-offset+ 0)
 (defconstant +instance-slots-offset+ 1)
 
+(define-built-in-class t ())
+
+(define-built-in-class function (t))
+
 (defclass standard-object (t)
   (;; Every standard instance has a unique time stamp.  The next
    ;; available consecutive timestamp is given to an instance when it
@@ -182,10 +186,6 @@
     :initarg :instance-slots
     :initform nil
     :accessor standard-instance-slots)))
-
-(define-built-in-class t ())
-
-(define-built-in-class function (t))
 
 (defclass funcallable-standard-object (standard-object function)
   ())
@@ -457,7 +457,8 @@
     :reader class-direct-default-initargs)
    (%direct-slots 
     :initarg :direct-slots
-    :accessor class-direct-slots)
+    :reader class-direct-slots
+    :writer (setf c-direct-slots))
    (%direct-superclasses 
     ;; This slot has no initform and no initarg, because it is set by
     ;; the :after method on INITIALIZE-INSTANCE using the
