@@ -71,12 +71,14 @@
 	   (loop for writer in (slot-definition-writers direct-slot)
 		 do (add-writer-method class writer slot-name))))
 
-(defun set-superclasses (class direct-superclasses default-superclass)
+(defun set-superclasses (class direct-superclasses default-superclass-name)
   (unless (proper-list-p direct-superclasses)
     (error "direct superclasses must be proper list"))
-  (let ((defaulted-direct-superclasses (if (null direct-superclasses)
-					   (list default-superclass)
-					   direct-superclasses)))
+  (let ((defaulted-direct-superclasses
+	  (mapcar #'find-class
+		  (if (null direct-superclasses)
+		      (list default-superclass-name)
+		      direct-superclasses))))
     (loop for direct-superclass in defaulted-direct-superclasses
 	  do (unless (validate-superclass class direct-superclass)
 	       (error "superclass not valid for class")))
@@ -101,8 +103,7 @@
        direct-superclasses
        direct-slots
        &allow-other-keys)
-  (let ((default-superclass (find-class 'standard-class)))
-    (set-superclasses class direct-superclasses default-superclass))
+  (set-superclasses class direct-superclasses 'standard-class)
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
@@ -115,14 +116,22 @@
        direct-superclasses
        (direct-slots nil direct-slots-p)
        &allow-other-keys)
-  (let ((default-superclass (find-class 'funcallable-standard-class)))
-    (set-superclasses class direct-superclasses default-superclass))
+  (set-superclasses class direct-superclasses 'funcallable-standard-class)
   (when direct-default-initargs-p
     (set-direct-default-initargs class direct-default-initargs))
   (add-as-subclass-to-superclasses class)
   (when direct-slots-p
     (set-direct-slots class direct-slots))
   (create-readers-and-writers class))
+
+(defmethod initialize-instance :after
+    ((class built-in-class)
+     &key
+       direct-superclasses
+       &allow-other-keys)
+  (setf (c-direct-superclasses class)
+	(mapcar #'find-class direct-superclasses))
+  (add-as-subclass-to-superclasses class))
 
 ;;; I don't know why this definition makes SBCL go into an infinite
 ;;; recursion.
