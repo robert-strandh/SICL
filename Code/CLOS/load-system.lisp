@@ -159,6 +159,11 @@
 
 (fmakunbound 'scl:defclass)
 
+;;; Before, we defined this macro to exclude the class T, and to call
+;;; CL:DEFCLASS.  Now we undefine it and take the new definition from
+;;; defclass.lisp.
+(fmakunbound 'sicl-clos:define-built-in-class)
+
 (load "defclass.lisp")
 
 (fmakunbound 'sicl-clos::find-metaclass)
@@ -169,6 +174,7 @@
 (fmakunbound 'sicl-clos::classp)
 
 (defun sicl-clos::classp (object)
+  (declare (ignore object))
   t)
 
 ;;; The class STANDARD-CLASS must exist a priori because it is the
