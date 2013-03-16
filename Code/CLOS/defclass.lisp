@@ -426,3 +426,12 @@
 		 :direct-slots
 		 ,(canonicalize-direct-slot-specs slot-specifiers)
 		 ,@(canonicalize-defclass-options options)))
+
+(defmacro define-built-in-class (name superclass-names)
+  `(ensure-class ',name
+		 :direct-superclasses 
+		 ,(canonicalize-direct-superclass-names superclass-names)
+		 :direct-slots
+		 '()
+		 :metaclass
+		 'built-in-class))
