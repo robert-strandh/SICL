@@ -225,3 +225,6 @@
 (defmethod finalize-inheritance ((class funcallable-standard-class))
   (finalize-inheritance-aux class))
 
+(defmethod finalize-inheritance ((class built-in-class))
+  (setf (c-precedence-list class) (compute-class-precedence-list class))
+  (setf (c-finalized-p class) t))
