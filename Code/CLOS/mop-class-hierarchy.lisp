@@ -351,7 +351,8 @@
     :accessor c-documentation)
    (%precedence-list 
     :initarg :precedence-list 
-    :reader class-precedence-list)
+    :reader class-precedence-list
+    :writer (setf c-precedence-list))
     ;; The AMOP says that CLASS-DEFAULT-INITARGS should return the
     ;; empty list for a built-in class.
    (%default-initargs 
@@ -426,10 +427,12 @@
     :accessor c-documentation)
    (%finalized-p 
     :initform nil 
-    :accessor class-finalized-p)
+    :reader class-finalized-p
+    :writer (setf c-finalized-p))
    (%precedence-list 
     :initform '() 
-    :accessor class-precedence-list)
+    :accessor class-precedence-list
+    :writer (setf c-precedence-list))
    (%default-initargs 
     :reader class-default-initargs
     :writer (setf c-default-initargs))
@@ -470,10 +473,11 @@
    (%finalized-p 
     :initform nil 
     :reader class-finalized-p
-    :writer (setf c-default-initargs))
+    :writer (setf c-finalized-p))
    (%precedence-list 
     :initform '() 
-    :accessor class-precedence-list)
+    :accessor class-precedence-list
+    :writer (setf c-precedence-list))
    (%default-initargs 
     :reader class-default-initargs
     :writer (setf c-default-initargs))
