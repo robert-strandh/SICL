@@ -489,7 +489,11 @@
    ;; class-effective-slots.
    (%effective-slots 
     :initform '() 
-    :accessor class-slots)
+    :reader class-slots
+    :writer (setf c-slots))
+   (%prototype
+    :reader class-prototype
+    :writer (setf c-prototype))
    (%dependents
     :initform '()
     :accessor dependents)))
