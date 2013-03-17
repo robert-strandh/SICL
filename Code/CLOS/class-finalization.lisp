@@ -81,9 +81,8 @@
 
 ;;; Implement the behavior of compute-effective-slot-definition
 ;;; for standard-class and funcallable-standard-class.
-(defun compute-effective-slot-definition-aux (class
-					      name
-					      direct-slot-definitions)
+(defun compute-effective-slot-definition-aux
+    (class name direct-slot-definitions)
   (let (allocation initargs initform initfunction type location)
     (setf allocation
 	  (slot-definition-allocation (first direct-slot-definitions)))
@@ -198,10 +197,10 @@
    :key #'car
    :from-end t))
 
-(defmethod compute-default-initargs-aux ((class standard-class))
+(defmethod compute-default-initargs ((class standard-class))
   (compute-default-initargs-aux class))
 
-(defmethod compute-default-initargs-aux ((class funcallable-standard-class))
+(defmethod compute-default-initargs ((class funcallable-standard-class))
   (compute-default-initargs-aux class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
