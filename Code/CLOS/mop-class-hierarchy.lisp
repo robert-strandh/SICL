@@ -349,6 +349,10 @@
     :reader class-direct-slots)
    (%documentation 
     :accessor c-documentation)
+   (%finalized-p 
+    :initform nil 
+    :reader class-finalized-p
+    :writer (setf c-finalized-p))
    (%precedence-list 
     :initarg :precedence-list 
     :reader class-precedence-list
