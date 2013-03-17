@@ -57,7 +57,7 @@
    #:update-instance-for-different-class
    #:update-instance-for-redefined-class
    #:method #:standard-method
-   #:make-method #:add-method #:call-method #:find-method #:call-next-method
+   #:make-method #:add-method #:call-method #:find-method
    #:method-qualifiers #:compute-applicable-methods #:next-method-p
    #:invalid-method-error
    #:no-applicable-method #:no-next-method #:remove-method #:defmethod
