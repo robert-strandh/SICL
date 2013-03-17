@@ -9,12 +9,12 @@
 ;;; be loaded, and that need to come from the host.
 (shadowing-import
  '(t nil null if let let* setq flet labels return-from setf progn prog1
-   and or eval-when lambda loop-finish)
+   and or eval-when lambda loop-finish call-next-method)
  '#:sicl-common-lisp)
 
 (export
  '(t nil null if let let* setq flet labels return-from setf progn prog1
-   and or eval-when lambda loop-finish)
+   and or eval-when lambda loop-finish call-next-method)
  '#:sicl-common-lisp)
 
 ;;; Import functions that have to do with arithmetic and numbers.
@@ -31,13 +31,13 @@
 
 ;;; Import functions on conses.
 (loop for symbol in '(cons car cdr rplaca rplacd consp listp atom length
-		      union copy-list mapcar list member-if-not
+		      union copy-list mapcar list member-if-not member
 		      first append cadr cddr)
       do (setf (fdefinition (intern (symbol-name symbol) '#:scl))
 	       (fdefinition symbol)))
 
-;;; Import low-level SETF functions on conses.
-(loop for symbol in '(car cdr gethash)
+;;; Import low-level SETF functions.
+(loop for symbol in '(car cdr gethash aref)
       do (setf (fdefinition `(setf ,(intern (symbol-name symbol) '#:scl)))
 	       (fdefinition `(setf ,symbol))))
 
@@ -46,9 +46,10 @@
 		      not apply funcall get-setf-expansion
 		      gensym coerce make-hash-table gethash remhash
 		      maphash reverse stringp remove-duplicates
+		      find find-if-not reduce remove 
 		      values find-class make-instance
 		      initialize-instance reinitialize-instance
-		      symbolp count class-of change-class)
+		      symbolp count class-of change-class make-array)
       do (setf (fdefinition (intern (symbol-name symbol) '#:scl))
 	       (fdefinition symbol)))
 
@@ -57,7 +58,7 @@
 		      defmethod deftype loop return in-package defpackage
 		      defsetf define-setf-expander defmacro
 		      define-compiler-macro multiple-value-bind
-		      cond when unless case push pop remf)
+		      cond when unless case push pop remf defstruct)
       do (setf (macro-function (intern (symbol-name symbol) '#:scl))
 	       (macro-function symbol)))
 
@@ -181,3 +182,6 @@
 ;;; metaclass of the first classes to be created.
 
 (load "mop-class-hierarchy.lisp")
+
+(load "allocate-instance.lisp")
+(load "class-finalization.lisp")
