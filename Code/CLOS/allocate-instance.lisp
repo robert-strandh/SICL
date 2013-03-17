@@ -1,4 +1,6 @@
-(in-package #'sicl-clos)
+(in-package #:sicl-clos)
+
+(defgeneric finalize-inheritance (class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -26,7 +28,7 @@
 (defun (setf slot-contents) (new-value slot-storage location)
   (setf (aref slot-storage location) new-value))
 
-(defgeneric allocate-instance class &rest initargs)
+(defgeneric allocate-instance (class &rest initargs))
 
 (defmethod allocate-instance ((class standard-class) &rest initargs)
   (declare (ignore initargs))
@@ -51,8 +53,8 @@
      (make-array number-of-slots :initial-element *secret-unbound-value*))))
 
 (defun standard-instance-access (instance location)
-  (slot-contents (slots instance) location))
+  (slot-contents (standard-instance-slots instance) location))
 
 (defun (setf standard-instance-access) (new-value instance location)
-  (setf (slot-contents (slots instance) location) new-value))
+  (setf (slot-contents (standard-instance-slots instance) location) new-value))
 
