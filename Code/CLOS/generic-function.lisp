@@ -101,7 +101,13 @@
 ;;; of required arguments is seen.  It is computed from the call
 ;;; history of the generic function.
 
-;;; A state of the automaton is represented as a list.
+;;; A state of the automaton is represented as a list of at least two
+;;; elements, the NAME which is a gensym, and INFO which is typically
+;;; NIL but can contain any information associated with the state.
+;;; The remaining elements of the list represent transitions from this
+;;; state to other states (see below for the representation of a
+;;; transition).
+
 (defun make-state (&optional info)
   (list (gensym) info))
 
@@ -126,6 +132,7 @@
 ;;; A transition of the automaton is represented as a CONS cell.  The
 ;;; CAR of the CONS cell is the label (the unique number of a class),
 ;;; and the CDR of the CONS cell is the target state.
+
 (defun make-transition (label target)
   (cons label target))
 
@@ -142,7 +149,8 @@
 ;;; list of labels (unique numbers of classes).
 (defun add-path (state path final-state)
   (if (null (cdr path))
-      ;; by construction, we have no transition yet
+      ;; By construction, we do not yet have a transition to the final
+      ;; state, so no need to check for one.
       (push (make-transition (car path) final-state)
 	    (state-transitions state))
       (let ((transition (find (car path)
@@ -178,7 +186,7 @@
 
 ;;; Two states are equivalent if they have the same INFO as determined
 ;;; by EQUAL, and the same outgoing transitions, as determined by
-;;; TRANSITION-EQUAL
+;;; TRANSITION-EQUAL.
 (defun states-equivalent-p (state1 state2)
   (unless (= (length (state-transitions state1))
 	     (length (state-transitions state2)))
@@ -411,7 +419,7 @@
 ;;; control.  This is typically implemented by wrapping the TAGBODY
 ;;; created by this function in a BLOCK and have the forms be of the
 ;;; form (RETURN-FROM <block-name> ...).  Default behavior is
-;;; implemented by following the 
+;;; implemented by following the ... FIXME: say more!
 (defun make-dispatch (vars dispatch-entries)
   (let ((start-state (make-state)))
     ;; Create final states corresponding to each dispatch entry, where
@@ -470,10 +478,10 @@
 ;;; takes two arguments: a list of all the arguments to the generic
 ;;; function and a list of NEXT METHODS that the method may call using
 ;;; CALL-NEXT-METHOD.  These next methods are METHOD METAOBJECTS, so
-;;; that calling then involves using the generic function
+;;; that calling them involves using the generic function
 ;;; METHOD-FUNCTION to get the method function of the method
 ;;; metaobject and use FUNCALL or APPLY to call it.  But for now we
-;;; don't do it that way, and the don't do it that way in the book
+;;; don't do it that way, and they don't do it that way in the book
 ;;; either.  Instead the next methods are just functions to call. 
 ;;;
 ;;; A METHOD LAMBDA is a lambda expression that must be converted into
@@ -589,7 +597,8 @@
 
 ;;; Determine whether a class C1 is a subclass of another class C2.
 ;;; This can be done by checking whether C2 is in the class precedence
-;;; list of C1.
+;;; list of C1.  The relation is not strict, so that we return true if
+;;; the two are the same.
 (defun subclassp (class1 class2)
   (member class2 (class-precedence-list class1)))
 
