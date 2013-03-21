@@ -63,18 +63,21 @@ Phase 1:
   Use HOST:DEFCLASS to create a hierarchy of host classes corresponing
   to the hierarchy of MOP classes.  The names of those host classes
   will be TARGET:STANDARD-OBJECT, TARGET:METAOBJECT, etc., except that
-  we rename the class T to TT, because we want to avoid shadowing the
-  symbol T, and it would be impossible to define HOST:T as a class.
-  These host classes have the analogous superclasses compared their
-  corresponding target MOP classes, and they define the analogous
-  slots.  Their metaclasses are all wrong of course, because each one
-  of them has HOST:STANDARD-CLASS as metaclass.  The inheritance
-  finalization protocol of the host will make sure that instances of
-  these host classes have the effective slots determined by class
-  inheritance.  In other words, each of the classes define slots with
-  the right names, the right initargs, etc.  When these host classes
-  are instantiated, some of the slots will contain other host
-  instances, for instance of host classes such as
+  we do not create a class named T because that would require
+  shadowing the symbol T which would create many other problems.  It
+  is however not required to have T as a superclass for these classes.
+  All that matters is that these classes have the right slots, and T
+  does not supply any slots anyway.  These host classes have the
+  analogous superclasses compared their corresponding target MOP
+  classes, and they define the analogous slots.  Their metaclasses are
+  all wrong of course, because each one of them has
+  HOST:STANDARD-CLASS as metaclass.  The inheritance finalization
+  protocol of the host will make sure that instances of these host
+  classes have the effective slots determined by class inheritance.
+  In other words, each of the classes define slots with the right
+  names, the right initargs, etc.  When these host classes are
+  instantiated, some of the slots will contain other host instances,
+  for instance of host classes such as
   TARGET:STANDARD-DIRECT-SLOT-DEFINITION.  It is not striclty
   necessary at this point to define host classes for all MOP classes.
   Only the ones that will be instantiated in the next phase are
@@ -145,8 +148,7 @@ Phase 5:
   functions working on those instance.  The result of these
   computations is a bunch of ordinary host functions that use
   TARGET:CLASS-OF and TARGET:CLASS-UNIQUE-NUMBER, and some ordinary CL
-  functionality not related to classes or generic functions.  The
-  method specializers on these methods are
+  functionality not related to classes or generic functions.
 
   The discriminating functions of these instances behave as fully
   functional target generic functions in that they specialize for
