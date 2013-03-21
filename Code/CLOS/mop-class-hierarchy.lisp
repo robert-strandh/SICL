@@ -176,6 +176,7 @@
    ;; important that the timestamp be the first slot of the instance
    ;; so that low-level code knows where to look for it.
    (%timestamp
+    :initform 0
     :accessor standard-instance-timestamp)
    ;; We keep a copy of the effective slots of the class that were
    ;; used to create an instance.  They are used when the instance
@@ -205,6 +206,7 @@
     :reader generic-function-lambda-list
     :writer (setf gf-lambda-list))
    (%documentation 
+    :initform nil
     :accessor gf-documentation)
    (%discriminating-function 
     :accessor discriminating-function)
@@ -348,6 +350,7 @@
     :initform '()
     :reader class-direct-slots)
    (%documentation 
+    :initform nil
     :accessor c-documentation)
    (%finalized-p 
     :initform nil 
@@ -428,6 +431,7 @@
     :reader class-direct-superclasses
     :writer (setf c-direct-superclasses))
    (%documentation 
+    :initform nil
     :accessor c-documentation)
    (%finalized-p 
     :initform nil 
