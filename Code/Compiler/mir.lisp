@@ -6,6 +6,8 @@
 ;;;; INSTRUCTIONS and LOCATIONS.  There are two types of arcs: CONTROL
 ;;;; ARCS and DATA ACRS.  
 ;;;;
+;;;; This is to delete.
+;;;;
 ;;;; A CONTROL ARC represents the flow of control in the flowchart,
 ;;;; and connects one instruction to another instruction.  If there is
 ;;;; a control arc from an instruction I to an instruction J in a
