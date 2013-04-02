@@ -865,8 +865,18 @@
               At most one of TEST and TEST-NOT can be given.~@
               If neither TEST nor TEST-NOT is given, EQL is used."))
 
+(fundoc 'rationalp
+	(fmt "Lambda list: (OBJECT).~@
+              Return true if OBJECT is of type RATIONAL.~@
+              Retrurn falise otherwise."))
+
+(fundoc 'realp
+	(fmt "Lambda list: (OBJECT).~@
+              Return true if OBJECT is of type REAL.~@
+              Retrurn falise otherwise."))
+
 (fundoc 'row-major-aref
-	(fmt "Lambda list (ARRAY INDEX).~@
+	(fmt "Lambda list: (ARRAY INDEX).~@
               Return the element of the array at the row-major index INDEX.~@
               INDEX must be a valid array row-major index for ARRAY.~@
               The row-major index is the position of the element of ARRAY~@
