@@ -1,2 +1,0 @@
-(declaim (ftype (function (&optional (or null condition)) nil) abort))
-(declaim (ftype (function (number) (real 0.0)) abs))
