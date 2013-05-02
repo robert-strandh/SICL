@@ -1,0 +1,70 @@
+\chapter{Data representation}
+\label{chap-data-representation}
+
+\section{Low-level tag bits}
+
+The two least significant bits of a machine word are used to represent
+four different \emph{tags} as follows:
+
+\begin{itemize}
+\item \texttt{00}.  This tag is used for fixnums.  The remaining bits
+  represent a signed integer in two's complement representation.  On a
+  32-bit machine, a fixnum is thus in the interval $[2^{-29}, 2^{29} -
+    1]$.  On a 64-bit machine, a fixnum is in the interval $[2^{-61}, 2^{61} -
+    1]$.  
+\item \texttt{01}.  This tag is used for \texttt{cons} cells.  A
+  pointer to a \texttt{cons} cell is thus a pointer aligned to a
+  double word to which the machine integer $1$ has been added.  On a
+  32-bit machine, the bit representing $2^2$ will always have the
+  value $0$.  On a 64-bit machine, the bits representing $2^2$ and
+  $2^3$ will always have the value $0$.
+\item \texttt{10}.  This tag is used for various \emph{immediate}
+  objects.  In particular for \emph{characters}, but also a
+  distinguished bit pattern that is used to initialize \emph{unbound}
+  variables and slots.  On 64-bit platforms \emph{single-floats} are
+  represented as immediate values. 
+\item \texttt{11}.  This tag is used for all heap-allocated objects
+  other than \texttt{cons} cells.
+\end{itemize}
+
+\section{Immediate objects}
+
+\subsection{Characters}
+
+\subsection{Unbound}
+
+\subsection{Short floats}
+
+\subsection{Single floats}
+
+\section{Representation of \texttt{cons} cells}
+
+A \texttt{cons} cell is represented as two consecutive machine
+words aligned on a double-word boundary.
+
+\section{Representation of other heap objects}
+
+All heap objects other than \texttt{cons} cells are represented in (at
+least) two parts, a \emph{header} object and a \emph{contents} vector.
+The header object always consists of two consecutive words aligned on
+a double-word boundary (just like \texttt{cons} cells).  The first
+word always contains a tagged pointer to a \emph{class} object (which
+is another heap object).  The second word contains a \emph{raw
+  pointer} to the first word of the contents vector.  In the following
+sections we give the details of the representation for all possible
+heap objects.
+
+\section{Subclasses of \texttt{standard-object}}
+
+\section{Arrays}
+
+\section{Symbols}
+
+\section{Packages}
+
+\section{Hash tables}
+
+\section{Streams}
+
+
+

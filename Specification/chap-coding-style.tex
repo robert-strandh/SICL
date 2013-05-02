@@ -1,0 +1,220 @@
+\chapter{Coding style}
+
+\section{Commenting}
+
+In most programs, comments introduce unnecessary redundancies that can
+then easily get out of sync with the code.  This is less risky for an
+implementation of a specification that is not likely to change.
+Furthermore, we would like \sysname{} to be not only a high-quality
+implementation, but we would like for its code to be very readable.
+For that reason, we think it is preferable to write \sysname{} in a
+``literate programming'' style, with significant comments explaining
+the code. 
+
+\section{Designators for symbol names}
+
+Always use uninterned symbols (such as \texttt{\#:hello}) whenever a
+string designator for a symbol name is called for.  In particular,
+this is useful in \texttt{defpackage} and \texttt{in-package} forms.
+
+Using the upper-case equivalent string makes the code break whenever
+the reader is case-sensitive (and it looks strange that the designator
+has a different case from the way symbol that it designates is then
+used), and using keywords unnecessarily clutters the keyword package.
+
+\section{Docstrings}
+
+We believe that it is a bad idea for an implementation of a Lisp
+system to have docstrings in the same place as the definition of the
+language item that is documented, for several reasons.  First, to the
+person reading the code, the docstring is most often noise, because it
+is known from the standard what the language item is about.  Second,
+it often looks ugly with multiple lines starting in column 1 of the
+source file, and this fact often discourages the programmer from
+providing good docstring.  Third, it makes internationalization
+harder.
+
+For this reason, we will provide language-specific files containing
+all docstrings of Common Lisp in the form of calls to \texttt{(setf
+documentation)}. 
+
+\section{Naming and use of slots}
+
+In order to make the code as safe as possible, we typically do not
+want to export the name of a slot, whereas frequently, the reader or
+the accessor of that slot should be exported.  This restriction
+implies that a slot and its corresponding reader or accessor cannot
+have the same name.  Several solutions exist to this problem.  The one
+we are using for \sysname{} is to have slot names start with the
+percent character (`\texttt{\%}').  Traditionally, a percent character
+has been used to indicate some kind of danger, i.e. that the
+programmer should be very careful before directly using such a name.
+Client code that attempts to use such a slot would have to write
+\texttt{package::\%name} which contains two indicators of danger,
+namely the double colon package marker and the percent character.
+
+Code should refer to slot names directly as little as possible.  Even
+code that is private to a package should use an internal protocol in
+the form of readers and accessors, and such protocols should be
+documented and exported whenever reasonable. 
+
+\section{Standard functions}
+
+Standard functions should always check the validity of their arguments
+and of any other aspect of the environment.  If such a function fails
+to accomplish its task, it should signal an appropriate condition.  
+
+We would like error messages to be phrased in terms of the code that
+was directly invoked by user code, as opposed to in terms of code that
+was indirectly invoked by system code.  As an example, consider a
+sequence function such as \texttt{substitute}.  If it is detected that
+a dotted list has been passed to this function, it should not be
+reported by \texttt{endp} or any other system function that was not
+directly called by user code, but instead it should be reported by
+\texttt{substitute} in terms of the sequence that was originally
+passed as an argument.  On the other hand, if substitute invokes a
+user-supplied test that fails, we would like the error message to be
+reported in terms of that user-supplied code rather than by
+\texttt{substitute}.  This is how we are currently imagining solving
+this problem:
+
+\begin{itemize}
+\item Standard functions do not call any other standard functions
+  directly, other than if it is known that no error will be signaled.
+  When a call from a standard function $f$ to a standard function $g$
+  might result in an error being signaled by $g$, that call is
+  replaced by a call to a special version of the standard function,
+  say $h$ that signals a more specific condition than is dictated by
+  the Common Lisp HyperSpec.
+\item If acceptable in terms of performance, a standard function such
+  as $f$ that calls other functions that may signal an error, handles
+  such errors by signaling an error that is directly related to $f$. 
+\item Error reporting is done in terms of the name and arguments to
+  $f$. 
+  
+\end{itemize}
+
+\section{Standard macros}
+
+Standard macros must do extensive syntax analysis on their input so as
+to avoid compilation errors that are phrased in terms of expanded
+code.  
+
+As with standard functions, standard macros that expand into other
+system code that may signal an error should not use other standard
+functions or other standard macros directly, but instead special
+versions that signal more specific conditions.  The expanded code
+should then contain a handler for such errors, which signals an error
+in terms of the name and the arguments of the macro. 
+
+\section{Compiler macros}
+
+{\sysname} will make extensive use of compiler macros.  Compiler
+macros are part of the standard, so this mechanism must be part of a
+conforming compiler anyway.  In many cases, instead of encoding
+special knowledge in the compiler itself, we can use compiler macros.
+By doing it this way, we simplify the compiler, and we provide a set
+of completely portable macros that any implementation can use. 
+
+Compiler macros should be used whenever the exact shape of the call
+site might be used to improve performance of the callee.  For
+instance, when the callee uses keyword arguments, we can eliminate the
+overhead of keyword-value parsing at runtime and instead call a
+special version of the callee that does not have to do any such
+parsing.  
+
+Similarly, functions that take a \texttt{\&rest} argument can provide
+special cases for different common sizes of the \texttt{\&rest}
+argument.
+
+We propose using compiler macros at least for the following
+situations: 
+
+\begin{itemize}
+\item to convert calls to \texttt{list} and \texttt{list*} into nested
+  calls to \texttt{cons};
+\item to convert simple calls to some built-in functions that accept
+  \texttt{:test} and \texttt{:key} keyword arguments (such as
+  \texttt{find}, \texttt{member}, etc) into calls to
+  special versions of these procedures with particularly simple
+  functions for these keyword arguments (\texttt{identity},
+  \texttt{car}, \texttt{eq}, etc);
+\item to convert calls to some functions that accept optional
+  arguments such as \texttt{last} and \texttt{butlast} into calls to
+  special versions when the optional argument is not given.
+\end{itemize}
+
+Compiler macros should not be used in the place of inlining (see
+section \ref{section-inlining}).
+
+\section{Conditions and restarts}
+
+\sysname{} functions should signal conditions whenever this is
+required by the Lisp standard (of course) and whenever it is
+\emph{allowed} by the Lisp standard and reasonably efficient to do so.
+If the standard allows for subclasses of indicated signals (I think
+this is the case), then \sysname{} should generate as specific a
+conditions as possible, and the conditions should contain as much
+information as possible in order to make it as easy as possible to
+find out where the problem is located.
+
+\sysname{} function should also provide restarts whenever this is
+practical. 
+
+\section{Condition reporting}
+
+Condition reporting should be separate from the definition of the
+condition itself.  Separating the two will make it easier to customize
+condition reporting for different languages and for different
+systems.  An integrated development environment might provide
+different condition reporters from the normal ones, that in addition
+to reporting a condition, displays the source-code location of the
+problem. 
+
+Every \sysname{} module will supply a set of default condition
+reporters for all the specific conditions defined in that module.
+Those condition reporters will use plain English text. 
+
+\section{Internationalization}
+
+We would like for {\sysname} to have the ability to report messages in
+the local language if desired.  The way we would like to do that is to
+have it report conditions according to a \texttt{language} object.  To
+accomplish this, condition reporting trampolines to an
+implementation-specific function \texttt{sicl:report-condition} which
+takes the condition, a stream, and a language as arguments.
+
+The value of the special variable \texttt{sicl:*language*} is passed
+by the condition-reporting function to \texttt{sicl:report-condition}.
+
+In other words, the default \texttt{:report} function for conditions is:
+
+\begin{verbatim}
+   (lambda (condition stream) 
+     (sicl:report-condition condition stream sicl:*language*))
+\end{verbatim}
+
+Similarly, the Common Lisp function \texttt{documentation} should
+trampoline to a function that uses the value of
+\texttt{sicl:*language*} to determine which language to use to show
+the documentation. 
+
+\section{Package structure}
+
+{\sysname} has a main package containing and exporting all Common Lisp
+symbols.  It contains no other symbols.  A number of implementation
+packages import the symbols from this package, and might define
+internal symbols as well.  Implementation packages may export symbols
+to be used by other implementation packages.
+
+This package structure allows us to isolate implementation-dependent
+symbols in different packages.  
+
+\section{Assertions}
+
+\section{Threading and thread safety}
+
+Consider the use of locks to be free.  We predict that a technique
+call ``speculative lock elision'' will soon be available in all main
+processors.
+

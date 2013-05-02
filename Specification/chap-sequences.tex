@@ -1,0 +1,14 @@
+\chapter{Sequence functions}
+
+This module will provide high-performance implementations of the
+functions in the ``sequences'' chapter of the HyperSpec.  High
+performance will be obtained by identifying important special cases
+such as the use of \texttt{:test} function \texttt{eq}, or
+\texttt{equal}, or the use of a \texttt{:key} of \texttt{identity}. 
+
+Compiler macros will be supplied so as to avoid runtime dispatch
+whenever a special-case function can be determined by only looking at
+the call site.  This ensures high performance for short sequences,
+where argument parsing would otherwise represent a significant
+fraction of the cost of the call.
+

@@ -1,892 +1,110 @@
-\documentclass{article}
+\documentclass[11pt]{book}
+\newcommand{\Comment}[1]{\begin{center}\tt #1 \end{center}}
+% \usepackage{doublespace}
+\usepackage[paperwidth=7.5in, paperheight=9.25in,
+            inner=35mm, outer=25mm,
+            tmargin=25mm, bmargin=30mm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{alltt}
 \usepackage{moreverb}
 \usepackage{epsfig}
-% \usepackage{makeidx}
+\usepackage{makeidx}
+\usepackage{float}
+\usepackage{color}
+\usepackage{amsthm}
+\usepackage{changebar}
+\usepackage[nottoc]{tocbibind}
+\usepackage{shadow}
+\setlength\sdim{2mm}
+
+\floatplacement{figure}{!htbp}
+
+\newfloat{algorithm}{!htbp}{alg}[chapter]
+
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{exercise}{Exercise}[chapter]
+\newtheorem{definition}{Definition}[chapter]
 
 \setlength{\parskip}{0.3cm}
 \setlength{\parindent}{0cm}
+
+\def\lispout#1{\underline{#1}}
+
+\def\mop{MOP}
+\def\bs{$\backslash$}
+\def\lispobj#1{\textsl{#1}}
+\def\lispobjindex#1{\lispobj{#1}\index{#1@\lispobj{#1}}}
+\def\syntax#1{\texttt{#1}}
+\def\metavar#1{\textit{#1}}
+\def\keyword#1{\code{\textbf{#1}}}
+\def\code#1{\textsf{#1}}
+\def\fixme#1{\footnote{\color{red}FIXME: #1}}
 
 \def\sysname{SICL}
 
 \def\inputfig#1{\input #1}
 \def\inputtex#1{\input #1}
+\def\inputal#1{\input #1}
 
+\inputtex{logos.tex}
+\inputtex{refmacros.tex}
+\inputtex{other-macros.tex}
+
+\newenvironment{itemize0}{
+\begin{itemize}
+\setlength{\parskip}{0cm}%
+}
+{\end{itemize}}
+
+\newenvironment{enumerate0}{
+\begin{enumerate}
+\setlength{\parskip}{0cm}%
+}
+{\end{enumerate}}
+
+\newenvironment{smalltt}{
+\begin{alltt}
+\small
+}
+{\end{alltt}}
+
+%UPDATE version number when it changes.
+\def\majorversion{0}
+\def\minorversion{1}
+\def\bookversion{\majorversion{}.\minorversion{}}
 \title{{\Huge \sysname{}}\\
 Building blocks for implementers of\\Common Lisp systems.}
 
 \author{Robert Strandh}
 
+\date{2013}
+
+\makeindex
 \begin{document}
+\pagenumbering{roman}
 
 \maketitle
 
-\begin{abstract}
-\sysname{} (which doesn't mean anything in particular; pronounce it
-like ``sickle'') is a project with the purpose of creating a
-collection of highly-portable high-performance ``modules'' for
-developers of Common Lisp systems.  Such modules include ``standard
-libraries'' such as high-level functions that operate on lists,
-high-level functions that operate on sequences, the \texttt{format}
-function, the \texttt{loop} macro, the \texttt{read} function, the
-\emph{pretty printer}, etc.  Other possible modules include code that
-makes it easier to write compilers, such as parsers of lambda lists,
-modules for manipulating declarations, etc.  Other planned modules
-include a module that provides localized docstrings for all of Common
-Lisp. 
+\newpage
 
-Great care will be taken to make the modules as portable as possible,
-and to decrease interdependence as much as possible in order to make
-bootstrapping easier, and to allow for modules to serve as drop-in
-replacements in different implementations with as few modifications as
-possible.  The lower layers should use as few primitives as
-possible, without sacrificing performance.  We think it is important
-that the code of \sysname{} be of very high quality.  To that end, we
-would like for error messages to be as explicit as possible.  Macros,
-for instance, would have to do extensive syntax analysis so as to
-prevent error messages from being phrased in terms of expanded code.
+{\setlength{\parskip}{0cm}
+\tableofcontents}
 
-To gain wide acceptance, \sysname{} should be in the public domain, or
-be distributed according to a license that serves the same purpose in
-places where it is not possible for works to be explicitly placed in
-the public domain.
+\inputtex{chap-intro.tex}
 
-Ultimately, this collection of modules might be used to produce a new
-implementation of Common Lisp.  
-\end{abstract}
+\inputtex{part-portable.tex}
 
-\section{Introduction}
+\inputtex{part-system.tex}
 
-We think it is possible to improve on existing open-source Common Lisp
-systems in several ways, and we hope \sysname{} will be able to
-accomplish that, provided that great care is taken to create code with
-a combination of characteristics:
+\inputtex{part-contributing.tex}
 
-\begin{itemize}
-\item The code should be layered, so that different Common Lisp
-  implementations can choose to include \sysname{} modules that
-  represent gaps in their system or improvement on their existing
-  code, without having to include parts for which they prefer their
-  own, implementation-specific code. 
+\inputtex{part-app.tex}
 
-  Upper layers will contain code that is not performance critical.
-  This code will be written entirely in Common Lisp.  To avoid
-  circular references, we will specify what lower-level Common Lisp
-  primitives can be used to write functions in the upper layer.  If
-  done well, code in this layer could be used by all free Common Lisp
-  implementations, which could save considerable maintenance effort.
-  Examples of functionality in this layer would be formatted output,
-  pretty-printing, and macros that can expand to portable Common Lisp
-  code.
+\bibliography{sicl}{}
+\bibliographystyle{alpha}
 
-  Intermediate layers will contain code that needs careful tuning to
-  obtain performance, but where the tuning can be handled by writing
-  different versions of the code for different cases.  For instance,
-  functions that work on all kinds of sequences might have special
-  versions for lists and vectors.  Similarly, such functions might
-  have special versions for common values of the \texttt{:test} (such
-  as the Common Lisp functions \texttt{\#'eq}, \texttt{\#'eql}, etc.)
-  and \texttt{:key} arguments (such as \texttt{\#'identity},
-  \texttt{\#'car}, etc).  These special cases should be handled by
-  using compiler macros.
-
-  Lower layers will have to rely more and more on
-  implementation-specific details, and will have to introduce
-  implementation-specific primitives to be used in implementations of
-  standard Common Lisp constructs.  We might provide several different
-  versions of code in this layer for different low-level assumptions.
-
-\item The code itself should have very high quality.  By this, we do
-  not only mean that it should be bug-free as much as possible, but
-  also that it should have good documentation strings and clear
-  comments when required.  Error messages should be as explicit as
-  possible, and code should be written to capture as many exceptional
-  situations as is possible without performance penalties.  We plan to
-  use very specific conditions that are subclasses of ones stipulated
-  by the Common Lisp HyperSpec for condition signaling, so as to allow
-  for implementations to take advantage of such specific conditions
-  for better error reporting.  Macro expansion code should do
-  everything possible to capture as many errors as possible so that
-  error reporting can be done in terms of code written by the
-  programmer, as opposed to in terms of expanded code.
-
-\end{itemize}
-
-\section{Coding style}
-
-\subsection{Commenting}
-
-In most programs, comments introduce unnecessary redundancies that can
-then easily get out of sync with the code.  This is less risky for an
-implementation of a specification that is not likely to change.
-Furthermore, we would like \sysname{} to be not only a high-quality
-implementation, but we would like for its code to be very readable.
-For that reason, we think it is preferable to write \sysname{} in a
-``literate programming'' style, with significant comments explaining
-the code. 
-
-\subsection{Designators for symbol names}
-
-Always use uninterned symbols (such as \texttt{\#:hello}) whenever a
-string designator for a symbol name is called for.  In particular,
-this is useful in \texttt{defpackage} and \texttt{in-package} forms.
-
-Using the upper-case equivalent string makes the code break whenever
-the reader is case-sensitive (and it looks strange that the designator
-has a different case from the way symbol that it designates is then
-used), and using keywords unnecessarily clutters the keyword package.
-
-\subsection{Docstrings}
-
-We believe that it is a bad idea for an implementation of a Lisp
-system to have docstrings in the same place as the definition of the
-language item that is documented, for several reasons.  First, to the
-person reading the code, the docstring is most often noise, because it
-is known from the standard what the language item is about.  Second,
-it often looks ugly with multiple lines starting in column 1 of the
-source file, and this fact often discourages the programmer from
-providing good docstring.  Third, it makes internationalization
-harder.
-
-For this reason, we will provide language-specific files containing
-all docstrings of Common Lisp in the form of calls to (SETF
-DOCUMENTATION). 
-
-\subsection{Naming and use of slots}
-
-In order to make the code as safe as possible, we typically do not
-want to export the name of a slot, whereas frequently, the reader or
-the accessor of that slot should be exported.  This restriction
-implies that a slot and its corresponding reader or accessor cannot
-have the same name.  Several solutions exist to this problem.  The one
-we are using for \sysname{} is to have slot names start with the
-percent character (`\%').  Traditionally, a percent character has been
-used to indicate some kind of danger, i.e. that the programmer should
-be very careful before directly using such a name.  Client code that
-attempts to use such a slot would have to write
-\texttt{package::\%name} which contains two indicators of danger,
-namely the double colon package marker and the percent character.
-
-Code should refer to slot names directly as little as possible.  Even
-code that is private to a package should use an internal protocol in
-the form of readers and accessors, and such protocols should be
-documented and exported whenever reasonable. 
-
-\subsection{Standard functions}
-
-Standard functions should always check the validity of their arguments
-and of any other aspect of the environment.  If such a function fails
-to accomplish its task, it should signal an appropriate condition.  
-
-We would like error messages to be phrased in terms of the code that
-was directly invoked by user code, as opposed to in terms of code that
-was indirectly invoked by system code.  As an example, consider a
-sequence function such as \texttt{substitute}.  If it is detected that
-a dotted list has been passed to this function, it should not be
-reported by \texttt{endp} or any other system function that was not
-directly called by user code, but instead it should be reported by
-\texttt{substitute} in terms of the sequence that was originally
-passed as an argument.  On the other hand, if substitute invokes a
-user-supplied test that fails, we would like the error message to be
-reported in terms of that user-supplied code rather than by
-\texttt{substitute}.  This is how we are currently imagining solving
-this problem:
-
-\begin{itemize}
-\item Standard functions do not call any other standard functions
-  directly, other than if it is known that no error will be signaled.
-  When a call from a standard function $f$ to a standard function $g$
-  might result in an error being signaled by $g$, that call is
-  replaced by a call to a special version of the standard function,
-  say $h$ that signals a more specific condition than is dictated by
-  the Common Lisp HyperSpec.
-\item If acceptable in terms of performance, a standard function such
-  as $f$ that calls other functions that may signal an error, handles
-  such errors by signaling an error that is directly related to $f$. 
-\item Error reporting is done in terms of the name and arguments to
-  $f$. 
-  
-\end{itemize}
-
-\subsection{Standard macros}
-
-Standard macros must do extensive syntax analysis on their input so as
-to avoid compilation errors that are phrased in terms of expanded
-code.  
-
-As with standard functions, standard macros that expand into other
-system code that may signal an error should not use other standard
-functions or other standard macros directly, but instead special
-versions that signal more specific conditions.  The expanded code
-should then contain a handler for such errors, which signals an error
-in terms of the name and the arguments of the macro. 
-
-\subsection{Compiler macros}
-
-{\sysname} will make extensive use of compiler macros.  Compiler
-macros are part of the standard, so this mechanism must be part of a
-conforming compiler anyway.  In many cases, instead of encoding
-special knowledge in the compiler itself, we can use compiler macros.
-By doing it this way, we simplify the compiler, and we provide a set
-of completely portable macros that any implementation can use. 
-
-Compiler macros should be used whenever the exact shape of the call
-site might be used to improve performance of the callee.  For
-instance, when the callee uses keyword arguments, we can eliminate the
-overhead of keyword-value parsing at runtime and instead call a
-special version of the callee that does not have to do any such
-parsing.  
-
-Similarly, functions that take a \texttt{\&rest} argument can provide
-special cases for different common sizes of the \texttt{\&rest}
-argument.
-
-We propose using compiler macros at least for the following
-situations: 
-
-\begin{itemize}
-\item to convert calls to \texttt{list} and \texttt{list*} into nested
-  calls to \texttt{cons};
-\item to convert simple calls to some built-in functions that accept
-  \texttt{:test} and \texttt{:key} keyword arguments (such as
-  \texttt{find}, \texttt{member}, etc) into calls to
-  special versions of these procedures with particularly simple
-  functions for these keyword arguments (\texttt{identity},
-  \texttt{car}, \texttt{eq}, etc);
-\item to convert calls to some functions that accept optional
-  arguments such as \texttt{last} and \texttt{butlast} into calls to
-  special versions when the optional argument is not given.
-\end{itemize}
-
-Compiler macros should not be used in the place of inlining (see
-section \ref{section-inlining}).
-
-\subsection{Conditions and restarts}
-
-\sysname{} functions should signal conditions whenever this is
-required by the Lisp standard (of course) and whenever it is
-\emph{allowed} by the Lisp standard and reasonably efficient to do so.
-If the standard allows for subclasses of indicated signals (I think
-this is the case), then \sysname{} should generate as specific a
-conditions as possible, and the conditions should contain as much
-information as possible in order to make it as easy as possible to
-find out where the problem is located.
-
-\sysname{} function should also provide restarts whenever this is
-practical. 
-
-\subsection{Condition reporting}
-
-Condition reporting should be separate from the definition of the
-condition itself.  Separating the two will make it easier to customize
-condition reporting for different languages and for different
-systems.  An integrated development environment might provide
-different condition reporters from the normal ones, that in addition
-to reporting a condition, displays the source-code location of the
-problem. 
-
-Every \sysname{} module will supply a set of default condition
-reporters for all the specific conditions defined in that module.
-Those condition reporters will use plain English text. 
-
-\subsection{Internationalization}
-
-We would like for {\sysname} to have the ability to report messages in
-the local language if desired.  The way we would like to do that is to
-have it report conditions according to a \texttt{language} object.  To
-accomplish this, condition reporting trampolines to an
-implementation-specific function \texttt{sicl:report-condition} which
-takes the condition, a stream, and a language as arguments.
-
-The value of the special variable \texttt{sicl:*language*} is passed
-by the condition-reporting function to \texttt{sicl:report-condition}.
-
-In other words, the default \texttt{:report} function for conditions is:
-
-\begin{verbatim}
-   (lambda (condition stream) 
-     (sicl:report-condition condition stream sicl:*language*))
-\end{verbatim}
-
-Similarly, the Common Lisp function \texttt{documentation} should
-trampoline to a function that uses the value of
-\texttt{sicl:*language*} to determine which language to use to show
-the documentation. 
-
-\subsection{Package structure}
-
-{\sysname} has a main package containing and exporting all Common Lisp
-symbols.  It contains no other symbols.  A number of implementation
-packages import the symbols from this package, and might define
-internal symbols as well.  Implementation packages may export symbols
-to be used by other implementation packages.
-
-This package structure allows us to isolate implementation-dependent
-symbols in different packages.  
-
-\subsection{Assertions}
-
-\subsection{Threading and thread safety}
-
-Consider locking free.  We predict that a technique call ``speculative
-lock elision'' will soon be available in all main processors. 
-
-\section{Planned modules}
-
-\subsection{Reader}
-
-The reader can be implemented in an almost entirely portable way.  
-
-We are planning to provide a reader with a very fast tokenizer in the
-form of a state machine that builds up the token while it is being
-read.  
-
-We are also planning to include an entry point to the reader that,
-instead of creating ordinary Common Lisp objects, will create an
-abstract syntax tree that contains information about source-code
-position.  This information could then be used by a compiler for
-reporting compilation errors, or by the runtime system for reporting
-sources of errors. 
-
-The reader will use the method created by David Gay for accurate and
-fast reading of floating-point numbers. 
-
-The only problem as far as portability is concerned is with the reader
-macros \texttt{\#\#} and \texttt{\#=}.  When an object labeled with
-\texttt{\#=} is being read (and so has not been constructed yet) and a
-reference to it is being encountered (thus creating a circular
-structure), some temporary value must be put in until the object has
-been constructed.  Then the object must be scanned for that temporary
-value.  However scanning arbitrary objects for some substructure
-cannot be done portably.
-
-\subsection{Pretty printer}
-
-\subsection{Printer}
-
-A large part of the printer can be written portably without
-performance penalty.  We intend to supply standard methods for
-\texttt{print-object}, and code for functions such as \texttt{princ},
-\texttt{prin1}, and \texttt{print}. 
-
-We are planning to use the method created by Burger and Dybvig to
-print floating-point numbers so that they can be read back to the
-exact same number. 
-
-\subsection{Format}
-
-Again we are planning to use the method created by Burger and Dybvig
-for printing floating-point numbers. 
-
-\subsection{Loop}
-
-Our \texttt{loop} module will use all available Common Lisp functions
-for its analysis of syntax and semantics.  We believe this is not a
-problem, even though we assume the existence of \texttt{loop} for many
-other modules, because the code in this module will be executed during
-macro-expansion time, and for a new Common Lisp system, this would be
-another full Common Lisp implementation. 
-
-For systems without a full implementation of \texttt{loop} we are
-planning to provide macro-expanded versions of modules that would
-otherwise require \texttt{loop} in order to be compiled. 
-
-Our \texttt{loop} module will use only standard Common Lisp code in
-its expansion, so that macro-expanded uses of \texttt{loop} will not
-require any other \sysname{} module in order to work.  
-
-\subsection{High-level functions on lists}
-
-This module will implement high-level functions on lists, using
-essentially only \texttt{car}, \texttt{cdr}, and \texttt{cons}.  For
-its implementation, it will use the \texttt{loop} macro.  If any
-other functionality is required, it will supply special
-implementations of such functionality, so as to avoid dependencies on
-other modules. 
-
-High performance will be obtained by identifying important special
-cases such as the use of \texttt{:test} function \texttt{eq}, or
-\texttt{equal}, or the use of a \texttt{:key} of \texttt{identity}.
-
-Compiler macros will be supplied so as to avoid runtime dispatch
-whenever a special-case function can be determined by only looking at
-the call site.  This ensures high performance for short lists, where
-argument parsing would otherwise represent a significant fraction of
-the cost of the call.
-
-A macro-expanded version of this module will be supplied, which will
-not require and existing implementation of \texttt{loop} and will also
-not require any other \sysname{}-specific module. 
-
-\subsection{Sequence functions}
-
-This module will provide high-performance implementations of the
-functions in the ``sequences'' chapter of the HyperSpec.  High
-performance will be obtained by identifying important special cases
-such as the use of \texttt{:test} function \texttt{eq}, or
-\texttt{equal}, or the use of a \texttt{:key} of \texttt{identity}. 
-
-Compiler macros will be supplied so as to avoid runtime dispatch
-whenever a special-case function can be determined by only looking at
-the call site.  This ensures high performance for short sequences,
-where argument parsing would otherwise represent a significant
-fraction of the cost of the call.
-
-\subsection{Type declarations of standard Common Lisp functions}
-
-This module contains portable type declarations for all standard
-Common Lisp functions.  It could be used by implementers of Common
-Lisp compilers to accomplish error checking and type inferencing. 
-
-\subsection{Docstrings for all Common Lisp symbols}
-
-As mentioned elsewhere, we believe that docstrings should be separate
-from code, because they do not address the same audience.  In
-addition, separating the two allows us to distribute the docstrings as
-a separate module Many implementations have substandard docstrings, so
-this is an important module that can be used as a drop-in replacement
-for existing ones.
-
-We will provide the infrastructure for allowing internationalization
-of docstrings, but we probably will not provide different versions for
-different languages. 
-
-\subsection{Strings}
-
-\subsection{Packages}
-
-\subsection{Hash tables}
-
-\subsection{Unicode support}
-
-We currently do not plan to supply a module for Unicode support.
-Instead we are relying on the support available in the Unicode library
-by Edi Weitz.
-
-\subsection{Streams}
-
-We currently do not plan to supply a module for streams.  Instead we
-are relying on the support available in the Flexi-stream library by
-Edi Wietz.
-
-\section{Towards a complete Common Lisp implementation}
-
-\subsection{TYPECASE and CASE}
-
-The compiler should generate very fast code for TYPECASE, at least
-when the types tested are known to be mutually exclusive and typically
-encoded in tag bits.  For this reason, TYPECASE cannot be a macro that
-expands to COND or IF (well, I guess it could, but that seem backwards).
-
-The compiler should also generate very fast code for CASE, at least
-when the cases represent a dense and compact range of integers or
-object that can be associated with such integers.
-
-Higher-level code should be able to rely on the fast implementation of
-these primitives. 
-
-\subsection{Low-level special operators}
-
-(this section is contrary to what I wrote in the first version.  I am
-now convinced that modern optimization technology can handle arbitrary
-tagbodies)
-
-Iteration primitives, including LOOP should compile to TAGBODY.  From
-a TAGBODY, the compiler then generates basic blocks that can then be
-optimized by known compiler technology.  The TAGBODY can contain only
-function calls, SETQs, GOs, and a conditional goto in the form of
-(when <var> (go <tag>)) [is this possible?].
-
-The special operator LET* is considered as simple as possible.  The
-LET operator is expanded to LET* (using variable renaming).  **Is this
-really important?
-
-\subsection{Runtime information}
-
-The compiler will generate runtime information available both to the
-debugger and to the garbage collector.  For each value of the program
-counter, all registers and stack frame locations will have accessible
-type information.  Maintaining this type information does not require
-any runtime overhead.  All that is required is a mapping from a
-program counter value to a block of runtime information. 
-
-A location (register, stack frame location) can have one of different
-types of values.  On the topmost level of abstraction, there are three
-possibilities for each location:
-
-\begin{itemize}
-\item Unused.  The location does not contain any accessible object.
-\item Tagged Lisp value.  This is the most general type.  It covers
-  every possible Lisp value.  The garbage collector must trace the
-  object contained in this location according to its type, which the
-  garbage collector itself has to test for. 
-  \begin{itemize}
-  \item Immediate Lisp value.  This type is given for tagged Lisp values
-    that are not required to be traced by the garbage collector. 
-  \item Lisp pointer.  This type is given for all tagged Lisp values
-    that are represented by pointers to heap-allocated objects.  
-  \end{itemize}
-\item Raw machine value.  No location will be tagged with this type,
-  but instead with any of the subtypes given below.
-  \begin{itemize}
-  \item Raw immediate machine value
-    \begin{itemize}
-      \item Raw integer.
-      \item Raw Unicode character.
-    \end{itemize}
-  \item Raw machine pointer
-    \begin{itemize}
-    \item Raw machine pointer to a cons cell.  
-    \item Raw machine pointer to the first element of a simple array. 
-    \item Raw machine pointer to the beginning of an instance of
-    standard-class. 
-    \item Raw machine pointer that may point inside another object.
-    In this case, the location has to be indicated as \emph{tied} to
-    another location that contains either a Lisp pointer or a raw
-    machine pointer to a known type of object.  This possibility will
-    be used when (say) a pointer to an array is stored in some
-    location, and this location contains an offset into that array.
-    The garbage collector will modify this pointer value by the same
-    amount as the one it is tied to. 
-    \end{itemize}
-  \end{itemize}
-\end{itemize}
-
-Low-level functions such as masking out tag bits will generate raw
-pointer values.  The compiler must generate code to keep a tagged
-pointer to the original object, unless there is a special type from
-which the type information of the original object can be inferred. 
-
-A number of functions will be provided that manipulate raw values,
-such as arithmetic on raw integers, pointer arithmetic, loading from
-and storing to memory, etc.  In order to be able to use such a
-function, the compiler must be given enough type information to infer
-the correct type of the arguments.  Conversely, functions that return
-a value of a type other than a subtype of tagged Lisp value, must be
-known to the compiler so as to forbid any use of such a value in a
-context that requires a tagged Lisp value, and the compiler must
-apply enough type inference to detect such cases. 
-
-\subsection{Compiler}
-
-The compiler should be as portable as possible.  It should use
-portable Common Lisp for as many of the passes as possible.  
-
-The compiler should keep information about which registers are live,
-and how values are represented in live registers, for all values of
-the program counter.  This information is used by the garbage
-collector to determine what registers should be scanned, and how.   It
-is also used by the debugger.  
-
-The compiler should do some extensive type inferencing.  It should be
-able to eliminate code for which the result of executing it is known
-as a result of the contents of the compilation environment.  
-
-\subsubsection{Phase 1}
-
-In phase 1 of the compilation, each expression is first converted into
-an abstract syntax tree.  Alternatively, the reader supplies this
-abstract syntax tree including information about source location of
-every sub-expression.  Initially, the only types of nodes in the tree
-correspond to constants, variables, and compound expressions.  
-
-In the following step, the abstract syntax tree is traversed relative
-to an \emph{environment} which determines what different types of
-expressions mean, i.e. whether a variable is really a symbol-macro,
-and whether a compound expression is a function call, a macro call, or
-a special form.  In this step, macros and symbol macros are expanded,
-and nodes representing special forms are specialized into a type of
-node that is particular to each special operator.  References to
-variables are replaced by entries into the environment, so that the
-name of a variable no longer influences its scope. 
-
-After conversion to class instances, each nested expression is
-\emph{normalized} in several steps.  In the first step, each
-expression that supplies a single value to another expression is
-converted into first normal form as follows:
-
-\begin{itemize}
-\item A variable reference is already in first normal form.
-\item A constant expression \texttt{c} is converted into first normal
-  form by creating a \texttt{let} form \texttt{(let ((v c)) b)} where
-  \texttt{v} is a new binding. 
-\item An expression such as \texttt{(setq var expr)} is converted into
-  first normal form by converting \texttt{expr} into first normal
-  form.
-\item An expression such as \texttt{(if test then else)} is converted
-  into first normal form by converting each sub-expression into first
-  normal form.
-\item An expression such as \texttt{(let ((v1 e1) (v2 e2) ... (vn en))
-  body)} is converted into first normal form by converting each
-  \texttt{ei} and the \texttt{body} into first normal form.
-\item An expression such as \texttt{(progn e1 e2 ... en)} is converted
-  to first normal form by converting \texttt{en} to first normal
-  form.  The other expressions do not supply values to other
-  expressions.  However, these other expressions may contain other
-  expressions that need to be converted to first normal form.
-\item A function call expression such as \texttt{(f a1 a2 ... an)} is
-  converted to first normal form by creating a \texttt{let} form
-  \texttt{(let ((v1 aa1) (v2 aa2) ... (vn aan)) (f v1 v2 ... vn))}
-  where \texttt{vi} are new bindings, and \texttt{aai} is \texttt{ai}
-  converted into first normal form.
-\end{itemize}
-
-A second normalization phase gathers up all bindings to the outermost
-level, and converts all the \texttt{let} forms into \texttt{progn}
-forms as follows: \texttt{(let ((v1 e1) (v2 e2) ... (vn en)) body)}
-becomes \texttt{(progn (setq v1 e1) (setq v2 e2) ... (setq vn en)
-  body)}.
-
-\subsubsection{Tracking source code locations}
-
-When a macro call is expanded, clearly the abstract syntax tree cannot
-be used, because the Common Lisp standard requires macro functions to
-work on raw Common Lisp expressions.  In interesting problem then is
-to track source-code locations through macro expanders.  Specifically,
-we need to make an educated guess about the origin of a form in the
-expansion with respect to the sub-expressions of the macro call.
-
-Compound expressions and complex atoms (atoms other than numbers,
-characters, and symbols) pose relatively few difficulties.  We build a
-dictionary of all such sub-expressions in the original expression,
-together with the corresponding abstract syntax tree.  Then we scan
-the expanded form for sub-expressions that are \texttt{eq} to those
-sub-expressions in the original form.  Clearly, those sub-expressions
-were directly inserted into the expansion by the macro function.
-
-Next, we try to find out whether any of the sub-expression found in
-the first step were taken apart by the macro function, We do this by
-successively replacing each sub-expression in the original form by a
-an atom of a different type than the original sub-expression, and then
-we call the macro function again.  If it succeeds without an error, we
-are fairly sure that the corresponding sub-expression is
-\emph{opaque}, i.e., that no other sub-expression in the expanded form
-originated inside such a sub-expression.
-
-The tricky part is to identify the origins of simple atoms (numbers,
-characters, and symbols) in the expanded form.  We again build a
-dictionary of sub-expressions in the original expression, but this
-time containing such atoms.  We exclude opaque sub-expressions from
-this search, as we are fairly sure that those cannot contain atoms
-that appear in the expanded expression.
-
-Then the expanded form is scanned for simple atoms.  If any atom in
-the expanded form does not have an entry in the dictionary, then it
-originated from the macro expander, either as a literal or as a
-computed value.
-
-For the remaining atoms, we try to guess whether they really came from
-the original expression, or whether it is just by accident that an
-atom in the original expression was also inserted by the macro
-function.  We do this by successively replacing each suspect simple
-atom in the original expression with a different atom of the same
-type.  An integer is replaced by its predecessor or successor, a
-character by the next one or previous one in the code order, a symbol
-is replaced by a generated symbol.  Then we macro-expand again and
-check whether the suspect atom in the expanded code is now
-\texttt{eql} to the replacement.  If so, we are fairly sure that the
-atom came from the original expression.
-
-Any sub-expression in the expanded form that has not been determined
-by the procedure above to come from the original expression is
-converted to an abstract syntax tree with unknown source code
-location.
-
-This method clearly is not totally accurate.  It would be easy to
-write a macro function that inspects a sub-expression of an expression
-only if it has been determined to be compound.  Our method will
-incorrectly mark such a compound expression as opaque and will not
-find sub-expressions in the expanded expression that originated inside
-such a compound expression.  We are guessing that such situations will
-be fairly rare. 
-
-\subsection{Inlining}
-\label{section-inlining}
-
-The SICL compiler will use inlining in order to make type inferencing
-more effective so that several tests can be avoided.  Implementors of
-SICL features other than the compiler can assume that inlining is done
-when it seems reasonable.  Therefore, even fairly low-level functions
-such as \texttt{aref} can be implemented as portable Lisp code. 
-
-\subsection{Generic-function dispatch}
-
-\subsection{Garbage collection}
-
-We think it would be good to use a per-thread nursery combined with a
-global allocator for older objects.  This technique has been published
-by Doligez and Leroy in their paper ``A concurrent, generational
-garbage collector for a multithreaded implementation of ML'' and
-perhaps in other papers as well.
-
-\subsubsection{Global collector}
-The global allocator can be generational or not.  We imagine the use
-of a fake-copying collector so as to avoid problems with objects
-moving around.  As Paul Wilson noted, fragmentation is a problem only
-in theory, and only when inaccurate statistical models of the behavior
-of real programs are used.  In the collector that Paul Wilson uses,
-objects are grouped by size and organized into doubly-linked lists.
-We think this might be a bit too wasteful for small objects, and some
-internal fragmentation must also be accepted so as to avoid a
-doubly-linked list for each possible size.  Perhaps using bitmaps
-together with an efficient way of accessing them in order to determine
-free zones of memory.
-
-Here is how we imagine the details so far.  These ideas have not been
-tested yet. 
-
-We use a bitmap with a bit for each double word in the heap.  This
-method wastes a very small amount of memory compared to the size of
-the heap.  The bitmap is organized as a vector of consecutive words.
-Initially, the bitmap contains all `1's indicating that all memory is
-free.  During tracing, bits are cleared in the bitmap
-whenever an address contains a live object.
-
-When tracing is finished, we scan the bitmap to collect blocks of free
-memory.  This can be done very efficiently without looking at each bit
-of a block as follows: We start by finding the first word that is not
-all `0's.  Anything before that is in use.  We then start collecting a
-free block, initially of size 0. We do this by using
-\texttt{integer-length} of both the word in the bitmap vector and of
-the \texttt{lognot} of that word.  This information will tell us what
-prefix of the word contains a block, and whether that block is free or
-not.  If the entire word contains `1's then we add $2n$ to the size of
-the free block, where $n$ is the word length of the processor, and we
-continue with the next word.  If the word does not contain all `1's,
-but there is a prefix of `1's (as indicated by the fact that
-\texttt{integer-length} of the word is $n$), then we add the
-difference between the $n$ and the \texttt{integer-length} of the
-\texttt{lognot} of the word to the block size, and we put the block on
-a free-list as indicated below.  Finally we clear the prefix of `1's,
-and we iterate the procedure for this word.  If the word contains a
-prefix of `0's and we are currently accumulating a block, we close the
-block, skip the prefix and start over.  
-
-We manage the free-lists as follows:  We have a relatively small
-number of free-lists of specific sizes.  These sizes are such that the
-binary representation contains from $1$ to $3$ initial `1's, and the
-rest is all `0's.  Requests for blocks are rounded up to the next
-higher size of this form.  For sizes less than $8$, we have free-lists
-for sizes $2$, $4$, and $6$ (but not for $7$ because it is odd).  This
-method generates just under $4n$ free-lists, where $n$ is again the
-word size of the processor.  We organize the free-lists in a vector
-by increasing block size.  It is trivial to round up any size to an
-existing block size, and it is trivial to compute the index of the
-vector, given the block size.  Each free list contains a linked list
-of blocks.  The first word of the block is the exact size of the block
-in words.  The second word is a pointer to the next block in the
-list.  When a request for allocation is made, we round up the size and
-index the vector to see whether a block of that size exists.  If not,
-we search at higher indexes in the vector until a free block is
-found.  We return the pointer to that block, subtract its size from
-the real size requested (rounded up to an even size), and insert the
-remaining words of the block (if any) into an appropriate free-list.  
-This method wastes at most $1/8$ of the total memory, and on the
-average only $1/16$, which is very little compared to schemes that
-round up to powers of $2$, or use a Fibonacci series for block sizes. 
-
-During tracing, if a request for allocation is made, we clear the
-corresponding bits in the bitmap, indicating that this block is no
-longer free (we ``allocate black'').  The only time when a request for
-allocation must wait is when the free-lists are constructed from the
-bitmap. 
-
-Since the nursery collector (see corresponding section below) preserves
-the allocation order of objects, and since it is known that ``objects
-that are allocated together, die together'' (see Wilson), it is likely
-that the heap will contain large consecutive blocks (whether live or
-dead), making it very fast to build the free lists. 
-
-\subsubsection{Nursery collector}
-For the nursery, we imagine a copying collector managing small (a few
-megabytes) linear space.  Instead of promoting objects that survive a
-collection, we would like to investigate the possible use of a sliding
-collector in the nursery.  Such a collector gives a very precise idea
-of the age of different objects, so objects would always be promoted
-in the order of the oldest to the youngest.  This technique avoids the
-problem where the allocation of some intermediate objects is
-immediately followed by a collection, so these objects are promoted
-even though they are likely to die soon after the collection.  In a
-sliding collector, promotion will happen only when a collection leaves
-insufficient space in the nursery, at which point only the number of
-objects required to free up enough memory would be promoted, and in
-the strict order of oldest to youngest. 
-
-\subsubsection{Promotion}
-
-Promotion could happen for reasons other than age.  Objects that are
-too large for the nursery would be allocated directly in the global
-allocator.  Objects to which references from foreign-language code are
-about to be created would first be promoted to the global collector
-where they would no longer move.
-
-\subsection{Debugger}
-\label{section-debugging}
-
-Part of the reason for SICL is to have a system that provides
-excellent debugging facilities for the programmer.  We imagine that a
-thread will be debugged by a debugger running in a different thread.
-The debugger should be able to set breakpoints before and after
-expressions, and at the beginning or the end of a function.  
-We imagine this being done by a conditional branch at strategic points
-in the code, perhaps implemented as a ``skip the next instruction if
-condition is false'' instruction, if that should turn out to be faster
-than a normal conditional branch.  The condition tests a flag in the
-current thread.  If the flag is set, then a call is made to determine
-whether there is a breakpoint at this place.  If not, it returns and
-execution continues as usual.  If there is a breakpoint, then
-execution stops and the debugger thread is given the possibility to
-inspect the state of the debugged thread. 
-
-For the highest debug level, the conditional branch should be
-generated before and after each expression, including each variable
-reference.  This can be a bit costly for local variables because it
-would slow down execution significantly.  Lower debug levels may
-generate the conditional branch only when the cost of the branch is
-negligible compared to the cost of evaluating the expression. 
-
-In order not to slow down the execution too much, there should be a
-quick test to determine that there is no breakpoint at a particular
-place in the code.  We still have to think of ways of doing that.  One
-might imagine a conservative test that is quick but possibly not
-entirely accurate, perhaps based on intervals of values of the program
-counter (say, take PC, shift it right by some number of bits, check a
-bitvector to see if the corresponding bit is set, if not, there is no
-breakpoint here). 
-
-For each possible breakpoint, the system must keep a description of
-the lexical environment.  This includes mappings from variable names
-to registers or stack locations, information about liveness of
-registers and stack location, how a variable is stored in a location
-(immediate value, pointer, with or without type tag, etc). 
-
-\subsection{Source code tracking}
-
-The SICL reader provides an entry point that returns a second value
-which contains a syntax tree in which each expression is associated
-with source-code location.  The compiler calls this entry point, and
-creates its abstract syntax tree with this information in it.  
-
-After the compiler has called a macro expander, the resulting
-expansion is traversed in the search of expressions that are eq to the
-arguments given to the macro expander.  Such expressions are
-associated with the source code location of the argument. 
-
-\subsection{Tracing}
-
-Tracing should not use the method used by some Common Lisp
-implementations to encapsulate the traced function inside a
-trace-reporting function.  Instead it could use the same mechanism as
-the one used for debugging (see section \ref{section-debugging}). 
-
-\subsection{Metering}
-
-Just as was the case with the Multics system, we think it is important
-to be able to meter as many system functions as possible.  We suggest
-adding such meters in every place where something measurable is going
-on, and where adding a meter does not significantly degrade
-performance.  
+\printindex
 
 \end{document}
+

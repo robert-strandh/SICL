@@ -1,0 +1,16 @@
+\chapter{The \texttt{loop} macro} 
+
+Our \texttt{loop} module will use all available Common Lisp functions
+for its analysis of syntax and semantics.  We believe this is not a
+problem, even though we assume the existence of \texttt{loop} for many
+other modules, because the code in this module will be executed during
+macro-expansion time, and for a new Common Lisp system, this would be
+another full Common Lisp implementation. 
+
+For systems without a full implementation of \texttt{loop} we are
+planning to provide macro-expanded versions of modules that would
+otherwise require \texttt{loop} in order to be compiled. 
+
+Our \texttt{loop} module will use only standard Common Lisp code in
+its expansion, so that macro-expanded uses of \texttt{loop} will not
+require any other \sysname{} module in order to work.  

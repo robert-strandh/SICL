@@ -1,0 +1,109 @@
+\chapter{Garbage collector}
+
+We think it would be good to use a per-thread nursery combined with a
+global allocator for older objects.  This technique has been published
+by Doligez and Leroy in their paper ``A concurrent, generational
+garbage collector for a multithreaded implementation of ML'' and
+perhaps in other papers as well.
+
+\section{Global collector}
+The global allocator can be generational or not.  We imagine the use
+of a fake-copying collector so as to avoid problems with objects
+moving around.  As Paul Wilson noted, fragmentation is a problem only
+in theory, and only when inaccurate statistical models of the behavior
+of real programs are used.  In the collector that Paul Wilson uses,
+objects are grouped by size and organized into doubly-linked lists.
+We think this might be a bit too wasteful for small objects, and some
+internal fragmentation must also be accepted so as to avoid a
+doubly-linked list for each possible size.  Perhaps using bitmaps
+together with an efficient way of accessing them in order to determine
+free zones of memory.
+
+Here is how we imagine the details so far.  These ideas have not been
+tested yet. 
+
+We use a bitmap with a bit for each double word in the heap.  This
+method wastes a very small amount of memory compared to the size of
+the heap.  The bitmap is organized as a vector of consecutive words.
+Initially, the bitmap contains all `1's indicating that all memory is
+free.  During tracing, bits are cleared in the bitmap
+whenever an address contains a live object.
+
+When tracing is finished, we scan the bitmap to collect blocks of free
+memory.  This can be done very efficiently without looking at each bit
+of a block as follows: We start by finding the first word that is not
+all `0's.  Anything before that is in use.  We then start collecting a
+free block, initially of size 0. We do this by using
+\texttt{integer-length} of both the word in the bitmap vector and of
+the \texttt{lognot} of that word.  This information will tell us what
+prefix of the word contains a block, and whether that block is free or
+not.  If the entire word contains `1's then we add $2n$ to the size of
+the free block, where $n$ is the word length of the processor, and we
+continue with the next word.  If the word does not contain all `1's,
+but there is a prefix of `1's (as indicated by the fact that
+\texttt{integer-length} of the word is $n$), then we add the
+difference between the $n$ and the \texttt{integer-length} of the
+\texttt{lognot} of the word to the block size, and we put the block on
+a free-list as indicated below.  Finally we clear the prefix of `1's,
+and we iterate the procedure for this word.  If the word contains a
+prefix of `0's and we are currently accumulating a block, we close the
+block, skip the prefix and start over.  
+
+We manage the free-lists as follows:  We have a relatively small
+number of free-lists of specific sizes.  These sizes are such that the
+binary representation contains from $1$ to $3$ initial `1's, and the
+rest is all `0's.  Requests for blocks are rounded up to the next
+higher size of this form.  For sizes less than $8$, we have free-lists
+for sizes $2$, $4$, and $6$ (but not for $7$ because it is odd).  This
+method generates just under $4n$ free-lists, where $n$ is again the
+word size of the processor.  We organize the free-lists in a vector
+by increasing block size.  It is trivial to round up any size to an
+existing block size, and it is trivial to compute the index of the
+vector, given the block size.  Each free list contains a linked list
+of blocks.  The first word of the block is the exact size of the block
+in words.  The second word is a pointer to the next block in the
+list.  When a request for allocation is made, we round up the size and
+index the vector to see whether a block of that size exists.  If not,
+we search at higher indexes in the vector until a free block is
+found.  We return the pointer to that block, subtract its size from
+the real size requested (rounded up to an even size), and insert the
+remaining words of the block (if any) into an appropriate free-list.  
+This method wastes at most $1/8$ of the total memory, and on the
+average only $1/16$, which is very little compared to schemes that
+round up to powers of $2$, or use a Fibonacci series for block sizes. 
+
+During tracing, if a request for allocation is made, we clear the
+corresponding bits in the bitmap, indicating that this block is no
+longer free (we ``allocate black'').  The only time when a request for
+allocation must wait is when the free-lists are constructed from the
+bitmap. 
+
+Since the nursery collector (see corresponding section below) preserves
+the allocation order of objects, and since it is known that ``objects
+that are allocated together, die together'' (see Wilson), it is likely
+that the heap will contain large consecutive blocks (whether live or
+dead), making it very fast to build the free lists. 
+
+\section{Nursery collector}
+For the nursery, we imagine a copying collector managing small (a few
+megabytes) linear space.  Instead of promoting objects that survive a
+collection, we would like to investigate the possible use of a sliding
+collector in the nursery.  Such a collector gives a very precise idea
+of the age of different objects, so objects would always be promoted
+in the order of the oldest to the youngest.  This technique avoids the
+problem where the allocation of some intermediate objects is
+immediately followed by a collection, so these objects are promoted
+even though they are likely to die soon after the collection.  In a
+sliding collector, promotion will happen only when a collection leaves
+insufficient space in the nursery, at which point only the number of
+objects required to free up enough memory would be promoted, and in
+the strict order of oldest to youngest. 
+
+\section{Promotion}
+
+Promotion could happen for reasons other than age.  Objects that are
+too large for the nursery would be allocated directly in the global
+allocator.  Objects to which references from foreign-language code are
+about to be created would first be promoted to the global collector
+where they would no longer move.
+

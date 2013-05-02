@@ -1,0 +1,90 @@
+\chapter{Introduction}
+\pagenumbering{arabic}%
+
+\sysname{} (which doesn't mean anything in particular; pronounce it
+like ``sickle'') is a project with the purpose of creating a
+collection of highly-portable high-performance ``modules'' for
+developers of Common Lisp systems.  Such modules include ``standard
+libraries'' such as high-level functions that operate on lists,
+high-level functions that operate on sequences, the \texttt{format}
+function, the \texttt{loop} macro, the \texttt{read} function, the
+\emph{pretty printer}, etc.  Other modules include code that makes it
+easier to write compilers, such as parsers of lambda lists, code for
+manipulating declarations, etc.  Other planned modules include a
+module that provides localized docstrings for all of Common Lisp.
+
+We attempt to make the modules as portable as possible, and to
+decrease interdependence as much as possible in order to make
+bootstrapping easier, and to allow for modules to serve as drop-in
+replacements in different implementations with as few modifications as
+possible.  The lower layers use as few primitives as possible, without
+sacrificing performance.  We think it is important that the code of
+\sysname{} be of very high quality.  To that end, error messages
+should be as explicit as possible.  Macros, for instance, do extensive
+syntax analysis so as to prevent error messages from being phrased in
+terms of expanded code.
+
+To gain wide acceptance, \sysname{} is in the public domain, or is
+distributed according to a license that serves the same purpose in
+places where it is not possible for works to be explicitly placed in
+the public domain.
+
+Ultimately, this collection of modules might be used to produce a new
+implementation of Common Lisp.  
+
+We think it is possible to improve on existing open-source Common Lisp
+systems in several ways, and we hope \sysname{} will be able to
+accomplish that, provided that great care is taken to create code with
+a combination of characteristics:
+
+\begin{itemize}
+\item The code is layered, so that different Common Lisp
+  implementations can choose to include \sysname{} modules that
+  represent gaps in their system or improvement on their existing
+  code, without having to include parts for which they prefer their
+  own, implementation-specific code. 
+
+  Upper layers contain code that is not performance critical.  This
+  code is written entirely in Common Lisp.  To avoid circular
+  references, we specify what lower-level Common Lisp primitives can
+  be used to write functions in the upper layer.  If done well, code
+  in this layer could be used by all free Common Lisp implementations,
+  which could save considerable maintenance effort.  Examples of
+  functionality in this layer would be formatted output,
+  pretty-printing, and macros that can expand to portable Common Lisp
+  code.
+
+  Intermediate layers contain code that needs careful tuning to
+  obtain performance, but where the tuning can be handled by writing
+  different versions of the code for different cases.  For instance,
+  functions that work on all kinds of sequences might have special
+  versions for lists and vectors.  Similarly, such functions might
+  have special versions for common values of the \texttt{:test} (such
+  as the Common Lisp functions \texttt{\#'eq}, \texttt{\#'eql}, etc.)
+  and \texttt{:key} arguments (such as \texttt{\#'identity},
+  \texttt{\#'car}, etc).  These special cases should be handled by
+  using compiler macros.
+
+  Lower layers have to rely more and more on implementation-specific
+  details, and require the introduction of implementation-specific
+  primitives to be used in implementations of standard Common Lisp
+  constructs.  We might provide several different versions of code in
+  this layer for different low-level assumptions.
+
+\item The goal is for the code itself to be of very high quality.
+  By this, we do not only mean that it should be bug-free as much as
+  possible, but also that it should have good documentation strings
+  and clear comments when required.  We want error messages to be as
+  explicit as possible, and to accomplish that we try to capture as
+  many exceptional situations as is possible without performance
+  penalties.  We use very specific conditions that are subclasses of
+  ones stipulated by the Common Lisp HyperSpec for condition
+  signaling, so as to allow for implementations to take advantage of
+  such specific conditions for better error reporting.  Macro
+  expansion code should do everything possible to capture as many
+  errors as possible so that error reporting can be done in terms of
+  code written by the programmer, as opposed to in terms of expanded
+  code.
+
+\end{itemize}
+

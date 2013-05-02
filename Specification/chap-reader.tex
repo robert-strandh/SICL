@@ -1,0 +1,56 @@
+\chapter{Reader}
+
+The reader can be implemented in an almost entirely portable way.  
+
+The code for the reader is located in the \texttt{Code/Reader}
+directory.  The code is very incomplete and quite difficult to
+understand, mainly because it is over-engineered. 
+
+For one thing, we imagined an reader that would not only give
+expressions as a result of parsing text, but also abstract syntax
+trees.  The main difference between the two is that we imagined the
+abstract syntax tree to contain information about source location as
+well as an expression.  Most of the time, the same effect can be
+obtained by creating a hash table mapping expressions to source
+locations, but this method breaks down for symbols, numbers, and
+characters, because those objects typically occur in several different
+locations.  An abstract syntax tree would distinguish between the
+different occurrences and give the source location for each one.
+However, dealing with abstract syntax trees is complicated, especially
+when it comes to macros.  Common Lisp macros transform expressions to
+other expressions, and it is very hard to recreate an abstract syntax
+tree from an expression that was created by a macro.  Furthermore, we
+are now convinced that the traditional method works sufficiently well,
+as long as the hash table contains \emph{all} occurrences of a
+particular expression, and in particular all occurrences of each
+symbol, number, and character.  Notice that other objects can occur
+several times as well, because of the possible use of the reader
+macros \#\# and \#=.
+
+The second reason for the reader to be over-engineered is that we
+wanted to create a very fast implementation (and we still do).  The
+way we imagined doing this was to create special versions of the
+reader according to important parameters such as the input base and
+the readtable case.  We still think this is a good idea, but it might
+be better to do it in different phases.  Phase 1 would be to create a
+reader that works for any value of those parameters.  Phase 2 would be
+to create a special version for the most common parameter combination
+such as input base 10 and readtable case of \texttt{:upcase}.  Other
+specialized versions could be developed later.  The main method of
+obtaining good performance is to  provide a very fast tokenizer in the
+form of a state machine that builds up the token while it is being
+read.  
+
+The reader will use the method created by David Gay for accurate and
+fast reading of floating-point numbers. 
+
+The only problem as far as portability is concerned is with the reader
+macros \texttt{\#\#} and \texttt{\#=}.  When an object labeled with
+\texttt{\#=} is being read (and so has not been constructed yet) and a
+reference to it is being encountered (thus creating a circular
+structure), some temporary value must be put in until the object has
+been constructed.  Then the object must be scanned for that temporary
+value.  However scanning arbitrary objects for some substructure
+cannot be done portably.
+
+

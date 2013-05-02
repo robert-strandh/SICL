@@ -1,0 +1,79 @@
+\chapter{Compiler}
+
+The compiler should be as portable as possible.  It should use
+portable Common Lisp for as many of the passes as possible.  
+
+The compiler should keep information about which registers are live,
+and how values are represented in live registers, for all values of
+the program counter.  This information is used by the garbage
+collector to determine what registers should be scanned, and how.   It
+is also used by the debugger.  
+
+The compiler should do some extensive type inferencing.  It should be
+able to eliminate code for which the result of executing it is known
+as a result of the contents of the compilation environment.  
+
+\section{Phase 1}
+
+In phase 1 of the compilation, each expression is first converted into
+an abstract syntax tree.  Alternatively, the reader supplies this
+abstract syntax tree including information about source location of
+every sub-expression.  Initially, the only types of nodes in the tree
+correspond to constants, variables, and compound expressions.  
+
+In the following step, the abstract syntax tree is traversed relative
+to an \emph{environment} which determines what different types of
+expressions mean, i.e. whether a variable is really a symbol-macro,
+and whether a compound expression is a function call, a macro call, or
+a special form.  In this step, macros and symbol macros are expanded,
+and nodes representing special forms are specialized into a type of
+node that is particular to each special operator.  References to
+variables are replaced by entries into the environment, so that the
+name of a variable no longer influences its scope. 
+
+After conversion to class instances, each nested expression is
+\emph{normalized} in several steps.  In the first step, each
+expression that supplies a single value to another expression is
+converted into first normal form as follows:
+
+\begin{itemize}
+\item A variable reference is already in first normal form.
+\item A constant expression \texttt{c} is converted into first normal
+  form by creating a \texttt{let} form \texttt{(let ((v c)) b)} where
+  \texttt{v} is a new binding. 
+\item An expression such as \texttt{(setq var expr)} is converted into
+  first normal form by converting \texttt{expr} into first normal
+  form.
+\item An expression such as \texttt{(if test then else)} is converted
+  into first normal form by converting each sub-expression into first
+  normal form.
+\item An expression such as \texttt{(let ((v1 e1) (v2 e2) ... (vn en))
+  body)} is converted into first normal form by converting each
+  \texttt{ei} and the \texttt{body} into first normal form.
+\item An expression such as \texttt{(progn e1 e2 ... en)} is converted
+  to first normal form by converting \texttt{en} to first normal
+  form.  The other expressions do not supply values to other
+  expressions.  However, these other expressions may contain other
+  expressions that need to be converted to first normal form.
+\item A function call expression such as \texttt{(f a1 a2 ... an)} is
+  converted to first normal form by creating a \texttt{let} form
+  \texttt{(let ((v1 aa1) (v2 aa2) ... (vn aan)) (f v1 v2 ... vn))}
+  where \texttt{vi} are new bindings, and \texttt{aai} is \texttt{ai}
+  converted into first normal form.
+\end{itemize}
+
+A second normalization phase gathers up all bindings to the outermost
+level, and converts all the \texttt{let} forms into \texttt{progn}
+forms as follows: \texttt{(let ((v1 e1) (v2 e2) ... (vn en)) body)}
+becomes \texttt{(progn (setq v1 e1) (setq v2 e2) ... (setq vn en)
+  body)}.
+
+\section{Inlining}
+\label{section-inlining}
+
+The SICL compiler will use inlining in order to make type inferencing
+more effective so that several tests can be avoided.  Implementors of
+SICL features other than the compiler can assume that inlining is done
+when it seems reasonable.  Therefore, even fairly low-level functions
+such as \texttt{aref} can be implemented as portable Lisp code. 
+
