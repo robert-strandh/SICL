@@ -1,0 +1,16 @@
+\chapter{Array}
+\label{chap-array}
+
+There are a few things that can be done in a portable module for
+arrays.  \texttt{array-total-size} and \texttt{array-dimensions} can
+be defined in terms of \texttt{array-rank} and
+\texttt{array-dimension}.  Furthermore, \texttt{aref} and
+\texttt{(setf aref)} can be defined in terms of
+\texttt{row-major-aref} and \texttt{(setf row-major-aref)}. 
+
+It might be worthwhile defining a compiler macro for \texttt{aref}. 
+
+At the moment, there is some experimental code for arrays in the
+directory \texttt{Code/Array}, but it is probably best to do it over
+from scratch. 
+
