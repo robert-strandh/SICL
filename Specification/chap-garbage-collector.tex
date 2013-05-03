@@ -1,109 +1,139 @@
 \chapter{Garbage collector}
 
+To fully appreciate the contents of this chapter, the reader should
+have some basic knowledge of the usual techniques for garbage
+collection.  We recommend ``The Garbage Collection Handbook''
+\cite{Jones:2011:GCH:2025255} to acquire such basic knowledge.  We
+also recommend Paul Wilson's excellent survey paper
+\cite{Wilson:1992:UGC:645648.664824}.
+
 We think it would be good to use a per-thread nursery combined with a
 global allocator for older objects.  This technique has been published
-by Doligez and Leroy in their paper ``A concurrent, generational
-garbage collector for a multithreaded implementation of ML'' and
+by Doligez and Leroy (see \cite{Doligez:1993:CGG:158511.158611}) and
 perhaps in other papers as well.
 
+In \refChap{chap-data-representation} we suggest a data representation
+where every heap allocated object has a two-word header object.  If it
+is a \texttt{cons} cell, then that is the entire object.  For other
+heap-allocated objects, the first of the two words is a tagged pointer
+to the class object, and the second of the two words is a raw pointer
+to the \emph{contents vector}.  In this chapter, we describe the
+consequences of this suggested representation to the garbage
+collector. 
+
 \section{Global collector}
-The global allocator can be generational or not.  We imagine the use
-of a fake-copying collector so as to avoid problems with objects
-moving around.  As Paul Wilson noted, fragmentation is a problem only
-in theory, and only when inaccurate statistical models of the behavior
-of real programs are used.  In the collector that Paul Wilson uses,
-objects are grouped by size and organized into doubly-linked lists.
-We think this might be a bit too wasteful for small objects, and some
-internal fragmentation must also be accepted so as to avoid a
-doubly-linked list for each possible size.  Perhaps using bitmaps
-together with an efficient way of accessing them in order to determine
-free zones of memory.
+No work has been done yet on the global collector.  
 
-Here is how we imagine the details so far.  These ideas have not been
-tested yet. 
+The global collector is a concurrent collector, i.e., it runs in
+parallel with the mutator threads.  With modern processors, it is
+probably practical to assign at least one core more or less
+permanently to the global collector.  We suggest using a concurrent
+mark-and-sweep collector.  With such a collector, objects
+never move, a property which has several advantages.  For one thing,
+pointers to objects can then freely be manipulated by foreign
+functions without requiring that the foreign language be aware of when
+the garbage collector is run.  Furthermore, objects that are keys in
+an \texttt{eq} hash table can use the permanent address as a hash
+value, and there is no need to reorganize the hash table as a result
+of running the garbage collector. 
 
-We use a bitmap with a bit for each double word in the heap.  This
-method wastes a very small amount of memory compared to the size of
-the heap.  The bitmap is organized as a vector of consecutive words.
-Initially, the bitmap contains all `1's indicating that all memory is
-free.  During tracing, bits are cleared in the bitmap
-whenever an address contains a live object.
-
-When tracing is finished, we scan the bitmap to collect blocks of free
-memory.  This can be done very efficiently without looking at each bit
-of a block as follows: We start by finding the first word that is not
-all `0's.  Anything before that is in use.  We then start collecting a
-free block, initially of size 0. We do this by using
-\texttt{integer-length} of both the word in the bitmap vector and of
-the \texttt{lognot} of that word.  This information will tell us what
-prefix of the word contains a block, and whether that block is free or
-not.  If the entire word contains `1's then we add $2n$ to the size of
-the free block, where $n$ is the word length of the processor, and we
-continue with the next word.  If the word does not contain all `1's,
-but there is a prefix of `1's (as indicated by the fact that
-\texttt{integer-length} of the word is $n$), then we add the
-difference between the $n$ and the \texttt{integer-length} of the
-\texttt{lognot} of the word to the block size, and we put the block on
-a free-list as indicated below.  Finally we clear the prefix of `1's,
-and we iterate the procedure for this word.  If the word contains a
-prefix of `0's and we are currently accumulating a block, we close the
-block, skip the prefix and start over.  
-
-We manage the free-lists as follows:  We have a relatively small
-number of free-lists of specific sizes.  These sizes are such that the
-binary representation contains from $1$ to $3$ initial `1's, and the
-rest is all `0's.  Requests for blocks are rounded up to the next
-higher size of this form.  For sizes less than $8$, we have free-lists
-for sizes $2$, $4$, and $6$ (but not for $7$ because it is odd).  This
-method generates just under $4n$ free-lists, where $n$ is again the
-word size of the processor.  We organize the free-lists in a vector
-by increasing block size.  It is trivial to round up any size to an
-existing block size, and it is trivial to compute the index of the
-vector, given the block size.  Each free list contains a linked list
-of blocks.  The first word of the block is the exact size of the block
-in words.  The second word is a pointer to the next block in the
-list.  When a request for allocation is made, we round up the size and
-index the vector to see whether a block of that size exists.  If not,
-we search at higher indexes in the vector until a free block is
-found.  We return the pointer to that block, subtract its size from
-the real size requested (rounded up to an even size), and insert the
-remaining words of the block (if any) into an appropriate free-list.  
-This method wastes at most $1/8$ of the total memory, and on the
-average only $1/16$, which is very little compared to schemes that
-round up to powers of $2$, or use a Fibonacci series for block sizes. 
-
-During tracing, if a request for allocation is made, we clear the
-corresponding bits in the bitmap, indicating that this block is no
-longer free (we ``allocate black'').  The only time when a request for
-allocation must wait is when the free-lists are constructed from the
-bitmap. 
-
-Since the nursery collector (see corresponding section below) preserves
-the allocation order of objects, and since it is known that ``objects
-that are allocated together, die together'' (see Wilson), it is likely
-that the heap will contain large consecutive blocks (whether live or
-dead), making it very fast to build the free lists. 
+One main disadvantage of a memory-management system in which the
+objects do not move is that \emph{fragmentation} can be a problem.
+However, with our data representation, we imagine dividing the heap
+into two parts; one part containing only header objects and another
+part containing only contents vectors.  Header object can, for
+instance, be allocated at the beginning of the heap and contents
+vectors at the end of the heap, but there is no requirement that a
+part be contiguous, nor for its size to be fixed.  Fragmentation in
+the part containing header objects can now be eliminated because all
+objects there have the same size.  Furthermore, since each contents
+vector is referred to by exactly one header object, we can freely move
+contents vectors around%
+\footnote{A contents vector can be moved only if no mutator register
+  holds a pointer to one of its elements.  We have yet to work out the
+  best way of making sure this restriction is respected.}  
+without sacrificing our property that ``objects never move'', simply
+because by ``object'' we mean the header object.  We suggest using bit
+vectors to represent the ``color'' of each object.%
+\footnote{Recall that \emph{black} means ``fully scanned'', \emph{white}
+  means ``not yet seen'', and \emph{gray} means ``scanned but may
+  refer to white objects''}
+In a 64-bit system, 2 mark bits would be required for each 128-bit
+header object.  Dead objects would be collected into a simply linked
+list as usual. 
 
 \section{Nursery collector}
-For the nursery, we imagine a copying collector managing small (a few
-megabytes) linear space.  Instead of promoting objects that survive a
-collection, we would like to investigate the possible use of a sliding
-collector in the nursery.  Such a collector gives a very precise idea
-of the age of different objects, so objects would always be promoted
-in the order of the oldest to the youngest.  This technique avoids the
-problem where the allocation of some intermediate objects is
-immediately followed by a collection, so these objects are promoted
-even though they are likely to die soon after the collection.  In a
-sliding collector, promotion will happen only when a collection leaves
-insufficient space in the nursery, at which point only the number of
-objects required to free up enough memory would be promoted, and in
-the strict order of oldest to youngest. 
+The directory \texttt{Code/Garbage-collector} contains some code that
+uses a different data representation from what we now suggest.  
+
+For the nursery, we suggest using a copying collector to manage small
+(a few megabytes) linear space.  Instead of promoting objects that
+survive a collection, we suggest using a \emph{sliding collector} in
+the nursery.  Such a collector gives a very precise idea of the age of
+different objects, so objects would always be promoted in the order of
+the oldest to the youngest.  This technique avoids the problem where
+the allocation of some intermediate objects is immediately followed by
+a collection, so these objects are promoted even though they are
+likely to die soon after the collection.  In a sliding collector,
+promotion will happen only when a collection leaves insufficient space
+in the nursery, at which point only the number of objects required to
+free up enough memory would be promoted, and in the strict order of
+oldest to youngest.
+
+We suggest allocating header objects from the beginning of the nursery
+and contents vectors from the end.  A garbage collection is triggered
+when the two free pointers meet.  We preserve the relative order both
+of header objects and of contents vectors. 
+
+In the \emph{mark phase}, a single mark bit per header object is
+used.  Header objects and contents vectors are scanned, but only
+header objects are marked.  
+
+In the \emph{header compaction phase}, live header objects are compacted
+toward the beginning of the heap.  A \emph{source} and a \emph{target}
+pointer follow blocks in the bitmap and live words are moved. 
+
+In the \emph{table build phase}, the bitmap is used to construct an
+\emph{offset table} at the end of the lower part of the heap.  The
+offset table contains a sequence of pairs $<a,o>$ meaning that a
+pointer with an address less than or equal to $a$ (and greater than
+the corresponding field of the previous pair) should be adjusted by
+offset $o$.  There is always enough room for this table, because it
+can contain at most as many entries as there are dead header objects.  
+
+In the \emph{adjust phase}, header objects and contents vectors are
+scanned, and fields containing pointers are adjusted according to the
+offset table.  The offset table is searched using binary search. 
+
+In the \emph{vector compaction phase}, header objects are scanned in
+order of increasing addresses, and the corresponding contents vectors
+are compacted towards the end of the heap.
 
 \section{Promotion}
 
+Objects are typically promoted when the space recovered in the nursery
+as a result of a thread-local garbage collection is deemed too small.%
+\footnote{Here ``too small'' means that another garbage collection
+  would be triggered very soon again, which is not desirable.}  When
+this happens, a \emph{prefix} of the nursery (and the associated
+contents vectors in the suffix) is moved to the space managed by the
+global collector.  Then, pointers are adjusted according to the size
+of the prefix and the suffix. 
+
 Promotion could happen for reasons other than age.  Objects that are
 too large for the nursery would be allocated directly in the global
-allocator.  Objects to which references from foreign-language code are
+allocator.  Objects to which references from foreign code are
 about to be created would first be promoted to the global collector
-where they would no longer move.
+where they would no longer move.  The same is true for an object that
+is about to be used as key in an \texttt{eq} hash table.  Objects that
+can be expected to have a significant life span (such as symbols)
+might also be allocated directly in the global collector. 
 
+\section{Implementation}
+
+In most systems, the garbage collector is implemented in some language
+other than \cl{}.  However, we imagine using \cl{} together with the
+primitives describe in \ref{chap-low-level-primitives} to implement
+it.  
+
+%%  LocalWords:  mutator
