@@ -19,6 +19,13 @@ of them.  Some functions can not be written portably; in particular
 \texttt{make-sequence}, because it is implementation-dependent what a
 recognizable subtype of (say) a vector is.
 
+In an attempt to make the functions as fast as possible, we created
+lots of different specialized versions for common cases of keyword
+arguments.  Preliminary tests show that we improve on the speed
+compared to existing commonly used implementations of \cl{}.  However,
+the existence of all those special cases also makes the module hard to
+read and difficult to test.  
+
 \section{Future work}
 
 Concerning the \emph{sorting functions} (i.e., \texttt{sort} and
@@ -31,5 +38,15 @@ but some research (\cite{Huang:1990:FSM:898863},
 possible to obtain an in-place stable version of mergesort.   Since
 mergesort is typically significantly faster than quicksort, this would
 be a worthwhile direction to pursue.
+
+We might pursue some alternative to manually creating specialized
+versions of various functions.  Perhaps it would be worthwhile to look
+into techniques related to partial evaluation.  It is possible to
+obtain some of the desired results by writing a macro that takes
+combinations of keyword arguments and generates the appropriate
+specialized function, but the code for this macro becomes less obvious
+to read.  We would prefer to see some general version of each function
+and then some automatic method for transforming that general version
+into specialized versions.  
 
 
