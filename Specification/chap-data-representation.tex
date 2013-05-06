@@ -58,6 +58,35 @@ heap objects.
 
 \section{Arrays}
 
+An array being a heap object, it is represented as a two-word header
+object and a contents vector.  For a \emph{simple} array the contents
+vector contains:
+
+\begin{itemize}
+\item A word containing a fixnum that represents the \emph{rank} of
+  the array.
+\item A word containing a fixnum for each dimension of the array.
+\item A number of consecutive words holding the contents of the
+  array. 
+\end{itemize}
+
+The element type of the array is determined by the exact class of the
+array. 
+
+\section{Strings}
+
+A string is a subtype of \texttt{array}.  Tentatively, we think that
+there is no need to optimize strings that contain only characters that
+could be represented in a single byte.  Thus the contents vector of a
+\emph{simple} string is represented as follows:
+
+\begin{itemize}
+\item A fixnum with the value of 1.
+\item A fixnum containing the number of characters in the string.
+\item A number of consecutive words, each holding a tagged immediate
+  object representing a Unicode character.
+\end{itemize}
+
 \section{Symbols}
 
 \section{Packages}
