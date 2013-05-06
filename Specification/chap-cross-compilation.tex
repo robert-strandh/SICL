@@ -1,0 +1,37 @@
+\chapter{Cross compilation}
+\label{chap-cross-compilation}
+
+While it may seem obvious and straightforward (though perhaps not
+easy) to write a cross compiler for \cl{}, there are some minor issues
+that have to be considered. 
+
+First, let us define \emph{cross compiler} to mean a compiler that is
+entirely written using some \cl{} system called the \emph{host}, and
+which generates a \emph{fasl} file for some other \cl{} system called
+the \emph{target}.  When we say \emph{entirely}, we mean that it is
+the \texttt{read} function of the host that is used.  It would be
+possible, of course to use the \emph{read} function of the target, but
+the difference is small.
+
+Clearly, since we are talking about the \emph{file compiler} we face
+the same restrictions concerning literal objects as a native file
+compiler does.%-----------------------------------------------------
+\footnote{See Section 3.2.4 in the HyperSpec.} %--------------------
+In addition, though, there are some restrictions due to differences
+between systems that the HyperSpec explicitly allows.  
+
+The most important such restriction has to do with floating-point
+numbers.  If (say) the host allows for fewer types of floating-point
+numbers, then \texttt{read} will not accurately represent the source
+code as the native file compiler for the target would.  Code to be
+compiled by the cross compiler must therefore either avoid
+floating-point literals altogether, or instead use some expression to
+create it and make sure that the expression is not evaluated until
+load time. 
+
+The other restriction has to do with \emph{potential numbers} which
+different systems may define differently.  The easy solution is to
+avoid potential numbers in source code.  This should not be hard to
+do. 
+
+
