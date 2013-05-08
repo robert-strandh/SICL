@@ -56,6 +56,51 @@ heap objects.
 
 \section{Subclasses of \texttt{standard-object}}
 
+Subclasses of \texttt{standard-object} must allow for must allow for
+the class of an instance to be changed to some other class
+(\texttt{change-class}) and for the definition of the class of the
+instance to be modified.  Changing the class of an instance is fairly
+straightforward because the instance is then passed as an argument and
+the slots of the instance can be updated as appropriate.
+
+Allowing for the class of an instance to be redefined is significantly
+more complicated.  The main reason for that is that when a class is
+redefined, the existing instances must be updated.  The standard
+specifically allows for these updates to be delayed and not happen as
+a direct result of the class redefinition.  They must happen before an
+attempt is made to access some slot (or some other information about
+the slots) of the instance.  It is undesirable to make the all
+instances directly accessible from the class, because such a solution
+would waste space and would have to make sure that memory leaks are
+avoided.  We must thus take into account the presence of
+\emph{obsolete instance} in the system, i.e., instances that must be
+\emph{updated} at some later point in time. 
+
+The solution is to store some kind of \emph{version} information in
+the contents vector so that when an attempt is made to access an
+obsolete instance, the instance can first be updated to correspond to
+the current definition of its class.  This version information must
+allow the system to determine whether any slots have been added or
+removed since the instance was created.  Furthermore, if the garbage
+collector traces an obsolete instance, then it must either first
+update it, or the version information must allow the garbage collector
+to trace the obsolete version of the instance.  Our solution allows
+both.  We simply store a reference to the \emph{list of effective
+  slots} that the class of the instance defined when the instance was
+created.  This reference is stored as the first word of the contents
+vector.  
+
+This solution makes it possible to determine the layout of the
+contents vector of an obsolete instance, so that it can be traced by
+the garbage collector when necessary.  Furthermore, it is easy to
+determine whether some instance is obsolete, simply by comparing the
+list of effective slots in its \emph{class} (as contained in the first
+word of the header object) to the list of effective slots stored in
+the contents vector.  This comparison is fast, because it can be done
+using \texttt{eq}.  Clearly, this solution also allows the system to
+determine which slots have been added and which slots have been
+removed since the instance was created. 
+
 \section{Arrays}
 
 An array being a heap object, it is represented as a two-word header
@@ -104,7 +149,46 @@ could be represented in a single byte.  Thus the contents vector of a
 
 \section{Symbols}
 
+A symbol is represented with a two-word header (as usual) and a
+contents vector of three consecutive words.  The tree words contain:
+
+\begin{enumerate}
+\item The \emph{name} of the symbol.  The value of this slot is a
+  string.
+\item The \emph{package} of the symbol.  The value of this slot is a
+  package or \texttt{NIL} if this symbol does not have a package.
+\item The \emph{plist} of the symbol.  The value of this slot is a
+  property list.
+\end{enumerate}
+
+Notice that the symbol does not contain its \emph{value} as a global
+variable, nor does it contain its definition as a \emph{function} in
+the global environment.  Instead, this information is contained in an
+explicit \emph{global environment} object.
+
 \section{Packages}
+
+A package is represented with a two-word header (as usual) and a
+contents vector of xxx words:
+
+\begin{enumerate}
+\item The \emph{name} of the package.  The value of this slot is a
+  string.
+\item The \emph{nicknames} of the package.  The value of this slot is
+  a list of strings. 
+\item The \emph{use list} of the package.  The value of this slot is a
+  proper list of packages that are used by this package. 
+\item The \emph{used-by list} of the package.  The value of this slot
+is a proper list of packages that use this package. 
+\item The \emph{external symbols} of the package.  The value of this
+  slot is a proper list of symbols that are both present in and
+  exported from this package.
+\item The \emph{internal symbols} of the package.  The value of this
+  slot is a proper list of symbols that are present in the package but
+  that are not exported.
+\item The \emph{shadowing symbols} of the package.  The value of this
+  slot is a proper list of symbols. 
+\end{enumerate}
 
 \section{Hash tables}
 
