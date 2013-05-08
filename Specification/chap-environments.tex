@@ -1,0 +1,59 @@
+\chapter{Environments}
+\label{chap-environments}
+
+\cl{} has a concept of \emph{environments}, and in fact several
+different environments and several different \emph{kinds} of
+environment are mentioned in the HyperSpec.  However, \cl{} does not
+mandate any particular representation of these environments, nor does
+it mention any particular \emph{operations} on environments other than
+the implicit operations of defining functions, variables, macros,
+types, etc. 
+
+\section{The global environment}
+\label{sec-the-global-environment}
+
+In many \cl{} systems the global environment is \emph{spread out} in
+that it does not have an explicit definition as a data type.  Parts of
+it might be contained in global locations such as the set of packages
+or the set of classes.  Other parts of it may be stored in symbols
+such as the value or the function definition of a symbol.  The
+standard specifically allows for this kind of spread-out
+representation.  
+
+In \sysname{}, we prefer to have an explicit representation of the
+global environment as a data object.  By doing it this way, we can
+allow for any number of global environments present in the system at
+any point in time.  Different global environments can have a different
+set of packages, a different set of classes, a different set of types,
+etc.  This representation can give us several interesting advantages: 
+
+\begin{itemize}
+\item We might ensure that there is always a \emph{sane} environment
+  present in case some environment gets destroyed (by a user
+  accidentally removing some essential system function, for instance).
+\item We can allow for several different packages with the same name
+  to exist in a system, as long as they are present in different
+  environments, which would allow for simpler experimentation with
+  different versions of packages. 
+\item We could even imagine a multi-user system based on different
+  environments, and we could then allow users to do things such as
+  defining \texttt{:after} methods on \texttt{print-object} that are
+  private to that user. 
+\item etc.
+\end{itemize}
+
+A global environment in \sysname{} would then contain:
+
+\begin{itemize}
+\item A set of \emph{packages}, represented either as a list or as a
+  hash table mapping names to packages.
+\item A dictionary of \emph{classes}, represented either as an
+  association list or as a hash table mapping names to classes.
+\item A mapping from function names to functions, macros, and special
+  operators.
+\item Type information for names of functions.
+\item A mapping from names to type definitions.
+\item A mapping from names to \emph{variables}.
+\item Values of \emph{constant variables}.
+\item etc.\fixme{State exactly what the global environment contains.}
+\end{itemize}
