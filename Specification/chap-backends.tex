@@ -1,0 +1,252 @@
+\chapter{Backends}
+
+\section{Introduction}
+
+\section{x86-32}
+
+A \emph{code object} contains:
+
+\begin{itemize}
+\item A linkage vector containing external objects that the running
+  code needs to access.
+\item A byte vector of machine-code instructions.  
+\item Debugging information.
+\end{itemize}
+
+A \emph{function} contains:
+
+\begin{itemize}
+\item A code object.
+\item A captured static environment. 
+\item An offset into the byte vector in the code object.  That offset
+  indicates the entry point for the function, i.e. the first
+  instruction of the function. 
+\end{itemize}
+
+A code object can be shared by several functions.  In particular, the
+file compiler generates a single code object for all the code in the
+file. 
+
+\subsection{Calling conventions}
+
+\refFig{fig-x86-32-stack-frame} shows the layout of a stack frame. 
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-x86-32-stack-frame.pdf_t}
+\end{center}
+\caption{\label{fig-x86-32-stack-frame}
+Stack frame for the x86-32 backend.}
+\end{figure}
+
+Normal call to an external function:
+
+\begin{enumerate}
+\item (caller) Subtract $4 \cdot (N + 5)$ from \texttt{ESP} where $N$
+  is the number of arguments to be passed.  The number $5$ is the
+  number of words required for the caller \texttt{EBP}, the return
+  address, the static environment, the dynamic environment, and the
+  current code object.
+\item (caller) Store the arguments to be passed in
+  \texttt{[ESP$+ 4 \cdot 0$]}, 
+  \texttt{[ESP$+ 4 \cdot 1$]}, 
+  $\ldots$
+  \texttt{[ESP$+ 4 \cdot (N - 1)$]}.
+  Store the code object of the function to be called in 
+  \texttt{[ESP$+4 \cdot N$]}.  
+  Copy the dynamic environment in 
+  \texttt{[EBP$-4 \cdot 5$]} to 
+  \texttt{[ESP$+4 \cdot (N + 1)$]}.  
+  Store the static environment of the function to be called in 
+  \texttt{[ESP$+4 \cdot (N + 2)$]}.    
+  Store \texttt{EBP} in  
+  \texttt{[ESP$+4 \cdot (N + 4)$]}.  
+  These operations can be done in any order.
+\item (caller) Compute the address to call as the address of the first
+  element in the byte vector plus the entry point and put it in a
+  scratch register.
+\item (caller) Store \texttt{ESP$+4 \cdot (N + 4)$} in \texttt{EBP},
+  establishing the stack frame of the callee.
+\item (caller) Use the \texttt{CALL} instruction to call the address
+  previously computed.  The return address is then pushed on the
+  stack. 
+  \begin{enumerate}
+  \item (callee) Pop the return address off of the top of the stack,
+    and store it in \texttt{[EBP$- 4 \cdot 1$]}.  The code for this
+    step has a fixed size and can be skipped by a caller doing a tail
+    call.
+  \item (callee) Do some useful computation.
+  \item (callee) Store \texttt{EBP$- 4 \cdot 1$} in \texttt{ESP},
+    deleting the current stack frame.
+  \item (callee) Use the \texttt{RET} instruction to return to the
+    caller.
+  \end{enumerate}
+\item (caller) Pop \texttt{EBP}, restoring the stack frame as it was
+  before the call.
+\end{enumerate}
+
+By using a \texttt{CALL}/\texttt{RET} pair instead of (say) the caller
+storing the return address in its final place using some other method,
+we make sure that the predictor for the return address of the
+processor makes the right guess about the eventual address to be
+used. 
+
+Tail call to an external function:
+
+\begin{enumerate}
+\item Make sure \texttt{EBP}$-$\texttt{ESP} is at least $4 \cdot (N +
+  5)$ where $N$ is the number of arguments to be passed.  This
+  difference is typically greater, because temporary space might be
+  needed in order to compute the arguments.
+\item Store the arguments in 
+  \texttt{[EBP$- 4 \cdot 5$]}, 
+  \texttt{[EBP$- 4 \cdot 6$]}, 
+  $\ldots$
+  \texttt{[EBP$- 4 \cdot (N + 4$]},
+  from left to right.  Store the code object of the to be called in
+  \texttt{[EBP$- 4 \cdot 4$]}.  
+  Restore the original dynamic environment in 
+  \texttt{[EBP$- 4 \cdot 3$]}
+  if it was modified.  Clear 
+  \texttt{[EBP$- 4 \cdot 2$]} if a static environment was
+  established, so as to avoid that it is kept alive by the GC.
+\item Compute the call address into a scratch register as above, and
+  add the fixed amount to it that is determined by the first step of
+  the callee code for a full call.
+\item Use the JMP instruction to jump the address previously computed.
+  Nothing is pushed on the stack. 
+  \begin{enumerate}
+  \item (callee) Do some useful computation.
+  \item (callee) Store \texttt{EBP$- 4 \cdot 1$} in \texttt{ESP},
+    deleting the current stack frame.
+  \item (callee) Use the \texttt{RET} instruction to return to the
+    caller's caller.
+  \end{enumerate}
+\end{enumerate}
+
+Full call to an internal function (i.e., a function with the same
+code object as the caller):\fixme{Fill it in.}
+
+Tail call to an internal function (i.e., a function with the same
+code object as the caller):\fixme{Fill it in.}
+
+The calling conventions above are optimized for functions with no
+\&rest and no \&key arguments, and with arguments having dynamic
+extent.
+
+\subsection{Use of the static environment}
+
+Variables that are captured by a closure with indefinite extent can
+not be allocated in the stack frame.  Such variables are allocated in
+the static environment.  The static environment is a list of levels,
+where each level is a simple vector.  This list is stored in the stack
+at \texttt{[EBP$-4 \cdot 2$]}.  A function that accesses local
+variables of a containing function has the captured environment stored
+as part of the object representing the function.  To use captured
+variables, the code for the function copies the environment to the
+stack at \texttt{[EBP$-4 \cdot 2$]}.  If the environment needs to be
+extended, then it is done by pushing another level onto the list.
+
+\subsection{Use of the dynamic environment}
+
+The dynamic environment is a simply linked sequence of entries
+allocated in the stack rather than on the heap.  The following entry
+types exist:
+
+\begin{itemize}
+  \item An entry representing the binding of a special variable.  This
+    entry contains two fields; the symbol to be bound and the value.
+
+  \item An entry representing a \texttt{CATCH} tag.  The entry
+    contains two fields; the \texttt{CATCH} tag and the value of
+    \texttt{EBP} in the stack frame to return from.
+
+  \item An entry representing a \texttt{BLOCK} or a \texttt{TAGBODY}.
+    It is similar to the entry representing a \texttt{CATCH} tag.  The
+    entry contains three fields; two fields representing a 64-bit time
+    stamp and one field containing the value of ebp in the stack frame
+    to return from.
+
+  \item An entry representing an \texttt{UNWIND-PROTECT} form.  This
+    entry contains a thunk containing the cleanup forms of the
+    \texttt{UNWIND-PROTECT} form.
+
+\end{itemize}
+
+In addition to their own fields, each entry contains a pointer to the
+next entry in the sequence, and a field indicating what type of entry
+it is.
+
+Of the three types of entries above, the \texttt{CATCH} and the
+\texttt{BLOCK}/\texttt{TAGBODY} entries represent exit points.  An
+exit point can be marked as "expired" or "invalid" by storing 0 as the
+ebp value in the entry.
+
+\texttt{CATCH} is implemented as a call to a function.  This function
+establishes a \texttt{CATCH} tag and calls a thunk containing the body
+of the \texttt{CATCH} form.  The \texttt{CATCH} tag is established by
+allocating (as dynamic local data on the stack) an entry of the second
+type and making [ebp-4*4] point to it.
+
+THROW searches the dynamic environment for an entry with the right
+\texttt{CATCH} tag.  If one is found and it is valid (as indicated by
+the stored ebp different from 0), then the target to which control is
+tranfered is the return address in the stack frame indicated by the
+stored ebp.
+
+A \texttt{BLOCK} form may establish an exit point.  In the most
+general case, a RETURN-FROM is executed from a function
+lexically-enclosed inside the \texttt{BLOCK} with an arbitrary number
+of intervening stack frames.  When this is the case, \texttt{BLOCK} is
+implemented as a call to a function, in a way similar to the way
+\texttt{CATCH} is implemented.  The function establishes a
+\texttt{BLOCK}/\texttt{TAGBODY} entry ith a fresh time stamp.  The
+time stamp is also stored in a lexical varible in the static
+environment.
+
+RETURN-FROM consults the time stamp in the lexical variable and
+searches the dynamic environment for a corresponding time stamp in a
+\texttt{BLOCK}/\texttt{TAGBODY} entry.  If one is found and it is
+valid (as indicated by the stored ebp different from 0), then the
+target to which control is tranfered is the return address in the
+stack frame indicated by the stored ebp.
+
+A \texttt{TAGBODY} may establish several exit points.  In the most
+general case, a \texttt{GO} is executed from a function
+lexically-enclosed inside the \texttt{TAGBODY} with an arbitrary
+number of intervening stack frames.  When this is the case,
+\texttt{TAGBODY} is implemented as a call to a function, in a way
+similar to the way \texttt{BLOCK} is implemented.  The function
+establishes a \texttt{BLOCK}/\texttt{TAGBODY} entry ith a fresh time
+stamp.  The time stamp is also stored in a lexical varible in the
+static environment.  For each tag that is the target of a \texttt{GO},
+an address to wich control is transfered is also stored in a lexical
+environment.
+
+\texttt{GO} consults the time stamp in the lexical variable and
+searches the dynamic environment for a corresponding time stamp in a
+\texttt{BLOCK}/\texttt{TAGBODY} entry.  If one is found and it is
+valid (as indicated by the stored ebp different from 0), then the
+target to which control is tranfered is defined by the lexically
+stored ebp/address pair.  The code to which control is transfered is
+responsible for adjusting esp to a particular value relative to ebp.
+
+\subsection{Transfer of control to an exit point}
+
+Whenever transfer of control to an exit point is initiated, the exit
+point is first searched for.  If no valid exit point can be found, an
+error is signaled.  If a valid exit point is found, the stack must
+then be unwound.  First, the dynamic environment is traversed for any
+intervening exit points, and they are marked as invalid by storing 0
+as the stored ebp value.  The traversal stops when the stack frame of
+the valid exit point is reached.  Unwinding now begins.  The dynamic
+environment is traversed again and thunks in UNWIND-PROTECT entries
+are executed.  The traversal again stops when the stack frame of the
+valid exit point is reached.
+
+\section{x86-64}
+
+\section{C}
+
+\section{Common Lisp}
+
