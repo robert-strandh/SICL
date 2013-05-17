@@ -127,12 +127,28 @@ Tail call to an external function:
 Full call to an internal function (i.e., a function with the same
 code object as the caller):\fixme{Fill it in.}
 
-Tail call to an internal function (i.e., a function with the same
-code object as the caller):\fixme{Fill it in.}
+Tail call to an internal function (i.e., a function with the same code
+object as the caller):\fixme{Fill it in.}\fixme{I thought I had read
+  in the HyperSpec that when there is a call from one function to
+  another function in the same compilation unit, then the caller is
+  allowed to assume that the callee is the function that was compiled
+  at the same time as the caller, and that it must therefore be
+  undefined behavior if the fdefinition of the callee is later
+  altered.  But now I can't find that place, and I am beginning to
+  doubt that I ever read it.}
 
 The calling conventions above are optimized for functions with no
 \&rest and no \&key arguments, and with arguments having dynamic
 extent.
+
+The first return value is passed in \texttt{EAX}, and the number of
+return values is passed in \texttt{EBX} as a \texttt{fixnum}.  If the
+number of return values is $0$, then the callee must make sure
+\texttt{EAX} contains \texttt{NIL} when it returns.  This convention
+makes it unnecessary for the caller that expects a single return value
+to check the count.  Furthermore, this situation is probably the most
+common one, so that in almost all cases, checking the number of return
+values becomes unnecessary. 
 
 \subsection{Use of the static environment}
 
