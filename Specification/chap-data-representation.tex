@@ -29,13 +29,53 @@ four different \emph{tags} as follows:
 
 \section{Immediate objects}
 
+Immediate objects are all objects with \texttt{10} in the lower two
+bits.  Two more bits are used to distinguish between different kinds
+of immediate objects, giving the following four low bits:
+
+\begin{itemize}
+\item \texttt{0010}.  This tag is used for Unicode characters.  When
+  shifted four positions to the right, the value gives the Unicode
+  code point. 
+\item \texttt{0110}.  This tag is used short floats.  
+\item \texttt{1010}.  This tag is used for single floats (64-bit
+  platforms only). 
+\item \texttt{1111}.  This tag is used for various unique immediate
+  objects, in particular for the object that is stored in various
+  locations to indicate that the location is \emph{unbound}. 
+\end{itemize}
+
 \subsection{Characters}
 
-\subsection{Unbound}
+As indicated above, the low four bits of a character have the value
+\texttt{0010}, and the corresponding Unicode code point is obtained by
+shifting the value of the character four bits to the right. 
+
+We currently do not plan to supply a module for Unicode support.
+Instead we are relying on the support available in the Unicode library
+by Edi Weitz.
 
 \subsection{Short floats}
 
+A short float is an immediate floating-point value that does not fall
+into any of the IEEE floating-point categories.  On a 32-bit platform,
+it is similar to a single-precision IEEE floating-point value, with
+the difference that four fewer bits are used for the mantissa.  On a
+65-bit platform, it is similar to a double-precision IEEE
+floating-point value, again with the difference that four fewer bits
+are used for the mantissa.  Notice that on a 64-bit platform, a short
+float is more precise than a single float. 
+
 \subsection{Single floats}
+
+A single float is an IEEE single-precision (32-bit) floating-point
+value stored in the most significant half of a 64-bit word.  The least
+significant half of the word is unused except for the tag bits. 
+
+\subsection{Unbound}
+
+The unbound object is represented as a word in which every bit is
+equal to 1. 
 
 \section{Representation of \texttt{cons} cells}
 
