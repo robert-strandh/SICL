@@ -16,11 +16,7 @@
 
 (cl:in-package #:common-lisp-user)
 
-(asdf:defsystem :sicl-conditionals
-  :depends-on (:sicl-code-utilities)
+(asdf:defsystem :sicl-conditionals-test
+  :depends-on (:sicl-conditionals)
   :components
-  ((:file "packages" :depends-on ())
-   (:file "conditionals" :depends-on ("packages"))
-   (:file "conditions" :depends-on ("packages"))
-   (:file "condition-reporters-en" :depends-on ("packages" "conditions"))
-   (:file "docstrings-en" :depends-on ("packages"))))
+  ((:file "test" :depends-on ())))
