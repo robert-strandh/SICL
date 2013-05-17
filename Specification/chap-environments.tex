@@ -118,3 +118,21 @@ to be insignificant compared to the overhead of calling the closure
 from the sequence function because of all the checks that have to be
 made such as argument count, etc.  
 
+The main reason for choosing this representation is that it has
+some advantages:
+
+\begin{itemize}
+\item Currently, every heap-allocated object has a header object and a
+  contents vector.  If we were to use a different representation for
+  environments, then they would have to be allocated in a dedicated
+  part of the heap, and that would make the memory-management system
+  significantly more complicated.
+\item By using existing standard object types, we simplify their
+  manipulation, and we can use standard accessor functions on them.
+\item Introspection becomes simpler, because no special code is
+  required in order to inspect the static runtime environment.  If a
+  special representation were chosen, specific code would be required
+  for its introspection.  In particular we can then simplify the
+  debugger. 
+\end{itemize}
+
