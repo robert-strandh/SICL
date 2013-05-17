@@ -16,10 +16,7 @@
 ;;;; See the file SICL.text for a description of the project. 
 ;;;; See the file cons-high.text for a description of the module.
 
-(asdf:defsystem :sicl-cons-high
-    :components
-  ((:file "packages" :depends-on ())
-   (:file "cons-high" :depends-on ("packages"))
-   (:file "conditions" :depends-on ("packages"))
-   (:file "condition-reporters-en" :depends-on ("packages" "conditions"))
-   (:file "docstrings-en" :depends-on ("packages"))))
+(asdf:defsystem :sicl-cons-high-test
+  :depends-on (:sicl-cons-high)
+  :components
+  ((:file "test" :depends-on ())))
