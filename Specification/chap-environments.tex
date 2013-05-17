@@ -57,3 +57,64 @@ A global environment in \sysname{} would then contain:
 \item Values of \emph{constant variables}.
 \item etc.\fixme{State exactly what the global environment contains.}
 \end{itemize}
+
+\section{The static runtime environment}
+\label{sec-environments-static-runtime}
+
+The \emph{static runtime environment} contains runtime objects that
+the compiler can not prove to have \emph{dynamic extent}, so it must
+assume that they have \emph{indefinite extent}.  
+
+This situation occurs when some function captures the environment by
+using a \texttt{lambda} expression which contains references to local
+variables outside the expression itself.  Though such a capture in
+itself does not necessarily imply that the variables thus referenced
+have indefinite extent.  It all depends on what happens to the
+function that is the result of the lambda expression.  
+
+If that function is just \emph{called}, then there is no capture.  This
+situation might occur as a result of a \texttt{let} being transformed
+into an application of a \texttt{lambda} expression.  
+
+If that function is passed as an argument to another function which is
+known not to hold on to its argument for longer than the duration of
+the function invocation, then there is no capture.  The typical
+situation would be when a \texttt{lambda} expression is passed to a
+standard \cl{} function such as one of the \emph{sequence} functions
+that is known to have this property.  
+
+In other cases, it might be too risky for the compiler to assume
+dynamic extent.  Even if a function is called which declares its
+corresponding parameter to have dynamic extent, it might be too risky
+to trust this, because the function might be redefined later.%
+\footnote{An exception would be if the called function is in the same
+  \emph{compilation unit} in which case it can not be redefined
+  without the caller being redefined at the same time.}
+
+When the compiler must assume that some variable has indefinite
+extent, then code must be generated to store that variable in a
+heap-allocated environment.  We represent this environment as a proper
+\cl{} list of simple vectors.  
+
+This representation might seem wasteful, because a simple vector is
+represented as a header object and a contents vector containing the
+\emph{length} of the vector, though that information is implicit in
+the value of the program counter, so it could be elided.  The
+representation is wasteful in two ways:
+
+\begin{itemize}
+\item Allocation is a bit slower because two chunks of memory must be
+  allocated and linked, and length information must be stored. 
+\item Looking up the value of a variable requires another
+  indirection. 
+\end{itemize}
+
+However, we think this apparent waste is going to be insignificant.
+Take for instance the example of a sequence function.  The capture
+itself (and the allocation of the environment) is going to be
+insignificant compared to the processing done by the sequence
+function.  Furthermore, the access to the captured variable is going
+to be insignificant compared to the overhead of calling the closure
+from the sequence function because of all the checks that have to be
+made such as argument count, etc.  
+
