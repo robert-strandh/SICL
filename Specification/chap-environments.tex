@@ -136,3 +136,49 @@ some advantages:
   debugger. 
 \end{itemize}
 
+\section{Runtime information}
+
+The compiler will generate runtime information available both to the
+debugger and to the garbage collector.  For each value of the program
+counter%
+\footnote{The values of the program counter are \emph{relative} to the
+  beginning of the code object}, all local locations in use (in
+registers, stack frame, or static environment) have associated type
+information.  Maintaining this type information does not require any
+runtime overhead.  All that is required is a mapping from a program
+counter value to a block of runtime information.
+
+A location can have one of different types of values:
+
+\begin{itemize}
+\item Tagged Lisp value.  This is the most general type.  It covers
+  every possible Lisp value.  The garbage collector must trace the
+  object contained in this location according to its type, which the
+  garbage collector itself has to test for. 
+\item Raw machine value.  No location will be tagged with this type,
+  but instead with any of the subtypes given below.
+  \begin{itemize}
+  \item Raw immediate machine value
+    \begin{itemize}
+      \item Raw integer.
+      \item Raw Unicode character.
+      \item Raw floating-point value.
+    \end{itemize}
+  \item Raw machine pointer
+    \begin{itemize}
+    \item Raw machine pointer to a cons cell.  
+    \item Raw machine pointer to the header object of a heap allocated
+      object other than a cons cell.
+    \item Raw machine pointer that may point inside the contents
+      vector of some other object. In this case, the location has to
+      be indicated as \emph{tied} to another location that contains
+      either a Lisp pointer or a raw machine pointer to one of the
+      previous types.  This possibility will be used when (say) a
+      pointer to an object is stored in some location, and a temporary
+      pointer to one of the elements of the object is needed.  The
+      garbage collector will modify this pointer value by the same
+      amount as that used to modify the contents vector. 
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
