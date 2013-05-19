@@ -141,7 +141,11 @@ using \texttt{eq}.  Clearly, this solution also allows the system to
 determine which slots have been added and which slots have been
 removed since the instance was created. 
 
-\section{Arrays}
+\section{Built-in classes}
+
+\subsection{\texttt{sequence}}
+
+\subsection{Arrays}
 
 An array being a heap object, it is represented as a two-word header
 object and a contents vector.  For a \emph{simple} array the contents
@@ -173,7 +177,7 @@ We suggest providing specialized arrays for the following data types:
 \item \texttt{bit}, as required by the HyperSpec.
 \end{itemize}
 
-\section{Strings}
+\subsubsection{Strings}
 
 A string is a subtype of \texttt{array}.  Tentatively, we think that
 there is no need to optimize strings that contain only characters that
@@ -187,7 +191,7 @@ could be represented in a single byte.  Thus the contents vector of a
   object representing a Unicode character.
 \end{itemize}
 
-\section{Symbols}
+\subsection{Symbols}
 
 A symbol is represented with a two-word header (as usual) and a
 contents vector of three consecutive words.  The tree words contain:
@@ -206,7 +210,7 @@ variable, nor does it contain its definition as a \emph{function} in
 the global environment.  Instead, this information is contained in an
 explicit \emph{global environment} object.
 
-\section{Packages}
+\subsection{Packages}
 
 A package is represented with a two-word header (as usual) and a
 contents vector of 7 words:
@@ -230,11 +234,11 @@ is a proper list of packages that use this package.
   slot is a proper list of symbols. 
 \end{enumerate}
 
-\section{Hash tables}
+\subsection{Hash tables}
 
-\section{Streams}
+\subsection{Streams}
 
-\section{Functions}
+\subsection{Ordinary functions}
 
 An \emph{ordinary} (i.e., non-generic) function is represented as a
 two-word header (as usual) and a contents vector of three words:
