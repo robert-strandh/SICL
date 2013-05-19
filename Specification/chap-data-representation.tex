@@ -143,21 +143,31 @@ removed since the instance was created.
 
 \section{Built-in classes}
 
-\subsection{\texttt{sequence}}
+\subsection{System class \texttt{sequence}}
 
 \subsection{Arrays}
 
 An array being a heap object, it is represented as a two-word header
-object and a contents vector.  For a \emph{simple} array the contents
-vector contains:
+object and a contents vector.  The first word of the contents vector
+contains a proper list of dimensions.  The length of the list is the
+\emph{rank} of the array.
 
-\begin{itemize}
-\item A word containing a fixnum that represents the \emph{rank} of
-  the array.
-\item A word containing a fixnum for each dimension of the array.
-\item A number of consecutive words holding the contents of the
-  array. 
-\end{itemize}
+If the array is \emph{simple}, the initial word is directly followed
+by the elements of the array.  If the array is \emph{not} simple, then
+it is either displaced to another array, or it has a fill pointer, or
+both.  If it has a fill pointer, then it is stored in the second word
+of the contents vector.  Finally, if the array is displaced to another
+array, the contents vector contains two words with the array to which
+this one is displaced, and the displacement offset.  If the array is
+not displaced, then the elements of the array follow.  The size of the
+contents vector is rounded up to the nearest multiple of a word. 
+
+The exact class of the array differs according to whether the array is
+simple, has a fill pointer, or is displaced. 
+
+All arrays are \emph{adjustable} thanks to the split representation
+with a header object and a contents vector.  Adjusting the array
+typically requires allocating a new contents vector. 
 
 The element type of the array is determined by the exact class of the
 array. 
@@ -167,17 +177,31 @@ We suggest providing specialized arrays for the following data types:
 \begin{itemize}
 \item \texttt{double-float}
 \item \texttt{single-float}
-\item \texttt{(unsigned-byte $n$)}, where $n$ is the width of a
-  machine word
-\item \texttt{(signed-byte $n$)}, where $n$ is the width of a
-  machine word.
+\item \texttt{(unsigned-byte 64)}.
+\item \texttt{(signed-byte 64)}.
+\item \texttt{(unsigned-byte 32)}.
+\item \texttt{(signed-byte 32)}.  
 \item \texttt{(unsigned-byte 8)}, used for code, interface with the
   operating system, etc. 
 \item \texttt{character} (i.e., strings) as required by the HyperSpec.
 \item \texttt{bit}, as required by the HyperSpec.
 \end{itemize}
 
-\subsubsection{Strings}
+Since the element type determines where an element is located and how
+to access it, \texttt{aref} and \texttt{(setf aref)} are \emph{generic
+  functions} that specialize on the type of the array. 
+
+\subsubsection{System class \texttt{vector}}
+
+A vector is a one-dimensional array.  As such, a vector has a contents
+vector where the first word is a proper list of a single element,
+namely the \emph{length} of the vector represented as a fixnum. 
+
+The remaining words of the contents vector contain an optional fill
+pointer, and then either the elements of the vector or displacement
+information as indicated above. 
+
+\subsubsection{System class \texttt{string}}
 
 A string is a subtype of \texttt{array}.  Tentatively, we think that
 there is no need to optimize strings that contain only characters that
@@ -185,8 +209,8 @@ could be represented in a single byte.  Thus the contents vector of a
 \emph{simple} string is represented as follows:
 
 \begin{itemize}
-\item A fixnum with the value of 1.
-\item A fixnum containing the number of characters in the string.
+\item A list of a single element corresponding to the \emph{length} of
+  the string. 
 \item A number of consecutive words, each holding a tagged immediate
   object representing a Unicode character.
 \end{itemize}
