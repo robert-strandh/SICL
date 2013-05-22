@@ -49,18 +49,25 @@ A global environment in \sysname{} would then contain:
   hash table mapping names to packages.
 \item A dictionary of \emph{classes}, represented either as an
   association list or as a hash table mapping names to classes.
-\item A mapping from function names to functions, macros, and special
-  operators.
-\item Type information for names of functions.
-\item A mapping from names to type definitions.
-\item A mapping from names to \emph{dynamic variables}.
+\item A mapping from function names to entries representing functions,
+  macros, and special operators.
+\item A mapping from names to entries representing type definitions.
+\item A mapping from names to entries representing \emph{dynamic variables}.
 \item Values of \emph{constant variables}.
 \item etc.\fixme{State exactly what the global environment contains.}
 \end{itemize}
 
-\subsection{Mapping from names to dynamic variables}
+\subsection{Functions, macros, and special operators}
+
+This mapping is manipulated by \texttt{symbol-function}, \texttt{(setf
+  symbol-function)}, \texttt{fdefinition}, \texttt{(setf
+  fdefinition)}, 
+and indirectly by \texttt{defun}, \texttt{defgeneric}, etc. 
+
+\subsection{Dynamic variables}
 
 This mapping is manipulated by \texttt{defvar}, \texttt{defparameter},
+\texttt{set}, \texttt{symbol-value}, \texttt{(setf symbol-value)}
 \texttt{proclaim}, \texttt{declaim}, \texttt{boundp}, and
 \texttt{makunbound}.
 
@@ -90,6 +97,19 @@ An \emph{unbound} dynamic variable can be represented in two ways.
 Either it is not present at all in the mapping, or else it is present,
 but the \texttt{car} of the value cell contains the special immediate
 value indicating \emph{unbound}.  \seesec{data-representation-unbound}
+
+The function \texttt{symbol-value} signals an error if the variable is
+unbound.  Otherwise, it returns the contents of the \texttt{car} of
+the \emph{value cell} of the entry.
+
+The function \texttt{(setf symbol-value)} starts by checking whether
+an entry exists, and if not creates one marked as \emph{created}, sets
+its \emph{type} to \texttt{t} and its value from the argument to the
+function.  Then with either the existing or the newly created entry,
+it compares the value of the argument to the type of the entry.  If
+the type check passes, the \texttt{car} of the value cell is
+modified.  Otherwise an error is signaled.  The function \texttt{set}
+works the same way. 
 
 The macro \texttt{defvar} searches the mapping for the variable entry.
 The following situations can occur:
