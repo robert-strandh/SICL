@@ -158,6 +158,16 @@ modified.  However, we do not plan to make it possible for an instance
 of a condition class to have its class changed (i.e. by using
 \texttt{change-class}).  
 
+With respect to bootstrapping, the hierarchy of condition classes can
+be created fairly late in the process.  The reason for this is that we
+plan to define a dumbed-down version of \texttt{error} during the
+bootstrapping process, and that version will not create any condition
+instances.  Furthermore, all \sysname{} code calls \texttt{error} and
+the other condition-signaling functions with the \emph{name} of a
+condition (which is a symbol) rather than with a \emph{condition
+  instance}, again to allow us to create this hierarchy later in the
+bootstrapping process. 
+
 \section{Structure classes}
 \label{object-system-structure-classes}
 
@@ -207,3 +217,7 @@ take advantage of this possibility.  The higher priority for
 \sysname{} is to make accessors for standard objects fast, rather than
 to work on an efficient implementation of structures. 
 
+With respect to bootstrapping, since \sysname{} does not use structure
+classes at all for its implementation, implementing \texttt{defstruct}
+can be done fairly late.  In fact, we may omit it in initial version
+of the system. 
