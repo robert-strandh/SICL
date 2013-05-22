@@ -62,8 +62,35 @@ value is a negative value.  If the two operands were both negative and
 an underflow occurred then the first value is a non-negative value. 
 
 \subsection{\texttt{s-}, signed subtraction}
+
+This operations takes two word operands, interpreted as signed
+integers.  It returns two values: the difference between the two
+operands modulo the word size, and a Boolean value which is
+\emph{true} if and only if the addition resulted in an overflow or an
+underflow.%
+\fixme{Say more.}
+
 \subsection{\texttt{neg}, negation}
+
+This operation takes a single word operand, interpreted as a signed
+integer.  It returns two values: The negation of the operand and a
+Boolean value which is \emph{true} if and only if the addition
+resulted in an overflow.  Overflow occurs when the operation is the
+most negative machine number that can be represented in a word,
+because then the negation is larger than the most positive machine
+number that can be represented in a word.  In case of overflow, the
+value of the operand is returned as the first return value. 
+
 \subsection{\texttt{u*}, unsigned multiplication}
+
+This operation takes two word operands, interpreted as unsigned
+integers.  It returns two values: The least significant and the most
+significant words of the product between the two numbers.
+
+Applications that know that the result can be represented in a single
+word, or that only care about the least significant part of the result
+can ignore the second return value.
+
 \subsection{\texttt{s*}, signed multiplication}
 
 \subsection{\texttt{==}, equality}
