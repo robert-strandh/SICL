@@ -1,2 +1,98 @@
 \chapter{Medium-level intermediate representation (MIR)}
 
+The compiler translates an abstract syntax tree into a \emph{graph} of
+\emph{instructions} in a language named \textbf{MIR}.  It is a general
+graph because an instruction can have zero, one, or more
+\emph{successors}, and zero, one, or more \emph{predecessors}.  The
+graph can also contain \emph{cycles}.  
+
+An instruction can also have zero, one, or several \emph{inputs} and
+zero, one, or more \emph{outputs}.  An input may be an
+\emph{immediate} value, a \emph{lexical variable}, or an \emph{entry
+  in the linkage vector}.  An output may only be a lexical variable.
+
+Executing a MIR instruction consists of generating the outputs as a
+function of the inputs, and also of choosing a successor based on the
+inputs.
+
+An execution of a MIR program consists of executing a sequence of
+instructions where an instruction in the sequence is the successor
+chosen during the execution of the preceding instruction in the
+sequence.
+
+\section{Definition of MIR instructions}
+
+\subsection{Instruction \texttt{NOP}}
+
+This instruction has a single successor.  It has no inputs and no
+outputs.
+
+Executing this instruction has no effect. 
+
+\subsection{Instruction \texttt{assignment}}
+
+This instruction has a single successor.  It has a single input and a
+single output. 
+
+The execution of this instruction results in the input being copied to
+the output without any modification. 
+
+\subsection{Instruction \texttt{test}}
+
+This instruction has two successors.  It has a single input. 
+
+The first successor is chosen if the input is \emph{true} and the
+second input is chosen if the input is \emph{false}.%
+\fixme{Check that this statement is true.}
+
+\subsection{Instruction \texttt{funcall}}
+
+\subsection{Instruction \texttt{get-arguments}}
+
+\subsection{Instruction \texttt{get-values}}
+
+\subsection{Instruction \texttt{put-arguments}}
+
+\subsection{Instruction \texttt{put-values}}
+
+\subsection{Instruction \texttt{enter}}
+
+\subsection{Instruction \texttt{leave-values}}
+
+\subsection{Instruction \texttt{return}}
+
+\subsection{Instruction \texttt{enclose}}
+
+\subsection{Instruction \texttt{memref}}
+
+\subsection{Instruction \texttt{memset}}
+
+\subsection{Instruction \texttt{u+}}
+
+\subsection{Instruction \texttt{u-}}
+
+\subsection{Instruction \texttt{s+}}
+
+\subsection{Instruction \texttt{s-}}
+
+\subsection{Instruction \texttt{neg}}
+
+\subsection{Instruction \texttt{\&}}
+
+\subsection{Instruction \texttt{ior}}
+
+\subsection{Instruction \texttt{xor}}
+
+\subsection{Instruction \texttt{~}}
+
+\subsection{Instruction \texttt{s$<$}}
+
+\subsection{Instruction \texttt{s$<=$}}
+
+\subsection{Instruction \texttt{$u<$}}
+
+\subsection{Instruction \texttt{$u<=$}}
+
+\subsection{Instruction \texttt{catch}}
+
+\subsection{Instruction \texttt{unwind}}
