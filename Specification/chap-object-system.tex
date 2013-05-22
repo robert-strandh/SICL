@@ -1,0 +1,209 @@
+\chapter{Object system}
+
+\sysname{} will implement the full metaobject protocol (MOP) as
+described by the Art of the Metaobject Protocol (AMOP)
+\cite{Kiczales:1991:AMP:574212}, in as far it does not conflict with
+the HyperSpec.
+
+\section{Classes of class metaobjects}
+
+The AMOP stipulates the existence of four class metaclasses, namely:
+
+\begin{itemize}
+\item \texttt{standard-class}.  This is the default metaclass for classes
+  created by \texttt{defclass}.  It is also the metaclass for all
+  classes in the metaobject protocol except \texttt{t},
+  \texttt{function}, \texttt{generic-function}, and
+  \texttt{standard-generic-function}. 
+\item \texttt{funcallable-standard-class}.  This is the metaclass for
+  \texttt{generic-function}, and \texttt{standard-generic-function},
+  and of course for user-defined subclasses of those classes. 
+\item \texttt{built-in-class}.  This is the metaclass for all built-in
+  classes.  More about built-in classes in
+  \refSec{object-system-built-in-classes}. 
+\item \texttt{forward-reference-class}.  This is the metaclass for
+  classes that have been referred to as superclasses, but that have
+  not yet been created by \texttt{defclass}.
+\end{itemize}
+
+\section{Standard classes}
+\label{object-system-standard-classes}
+
+Instances of \texttt{standard-class} (i.e. ``standard classes'') are
+typically created by \texttt{defclass}.  When no superclasses are
+given to \texttt{defclass}, the class \texttt{standard-object} is
+automatically made a superclass of the new class.  
+
+Perhaps the most interesting features of standard classes is that they
+can be redefined even though there are existing instances of them.
+Without this features, using \cl{} interactively would not be as
+obvious as it is, so in some ways, this features is totally essential
+for any interactive language.%
+\footnote{By ``interactive language'', we mean a language in which a
+  program is built up by a sequence of interactions that augment and
+  modify the state of some \emph{global environment}.}
+
+When there are existing instances of a standard class that is
+modified, the HyperSpec gives us very specific rules concerning how
+those instances are to be updated.  The HyperSpec is also very clear
+that existing instances do not need to be updated immediately.  But
+they must be updated no later than immediately before an access to any
+of the slots of the instance is attempted.   The reason for that rule
+is so that implementations would not have to maintain a reference from
+a class to each of its instance.  Such references would be costly in
+terms of space, and would have to be \emph{weak}%
+\footnote{A \emph{weak} reference is a reference that does not
+  sufficient for the garbage collector to keep the object alive.  The
+  object is kept alive only if there are \emph{strong} (i.e. normal)
+  references to it as well.}
+so as to avoid memory leaks. 
+
+Instead of keeping weak references from classes to instances,
+implementations solve the problem of updating obsolete instance by
+keeping some kind of \emph{version information} in each instance.
+When an access to some slot of the instance is attempted, the version
+information is checked against the current version of the class.  If
+the instance is obsolete, it is first updated according to the new
+definition of the class.  Furthermore, the version information must
+contain enough information of the class as it was when the instance
+was created to determine whether slots have been added or removed. 
+
+In \sysname{} the contents vector of each instance of
+\texttt{standard-object} contains a reference to the \emph{list of
+  effective slots} of the class as it was when the instance was
+created.  This method makes the contents vector of the instance
+completely self contained.  It allows the garbage collector to trace
+the obsolete instance, or update it before tracing.  It allows for an
+inspector to inspect the obsolete instance if this should be
+required.  
+
+Another very handy feature of standard classes, but a much simpler
+one, is that it allows for instances to \emph{change class}.  In other
+words, without changing the \emph{identity} of the instance, the class
+that is an instance of can be changed to a different class.  Again,
+the HyperSpec gives very specific rules about how the instance must be
+transformed in order to be a legitimate instance of the new class.  No
+special mechanism is required for this feature to work, other than the
+ability to modify all aspects of an instance except its identity.  The
+identity is preserved by the fact that the \emph{header object}
+remains the same. 
+
+\section{Built-in classes}
+\label{object-system-built-in-classes}
+
+The HyperSpec contains a significant number of classes that every
+conforming implementation must contain.  Most (all?) of these classes
+are referred to as \emph{system classes}.  Some example of system
+classes are \texttt{symbol}, \texttt{package}, \texttt{list},
+\texttt{stream}, etc.  The HyperSpec tells us that by \emph{system
+  class} is meant ``a class that may be of type built-in-class in a
+conforming implementation and hence cannot be inherited by classes
+defined by conforming programs.'' 
+
+Language implementers are thus given a choice as to whether a system
+class is really a standard class
+\seesec{object-system-standard-classes}, a structure class 
+\seesec{object-system-built-in-classes}, or a built-in class.  
+
+Some of the decisions are determined by the AMOP.  For instance, the
+classes \texttt{standard-class} and \texttt{built-in-class}, labeled
+by the HyperSpec as system classes are required by the AMOP to be
+standard classes.  Any implementation that wants to have an
+implementation of the metaobject protocol as close as possible to what
+the AMOP requires should take this fact into account. 
+
+However, most system classes are not mentioned at all by the AMOP, so
+there we have a choice.  In \sysname{} all these classes will be
+implemented as either built-in classes or standard classes.  None of
+them will be structure classes. 
+
+Even though \sysname{} will implement many of the system classes as
+built-in classes, this does not mean that we have to use
+special-purpose ways of implementing them.  We plan to take advantage
+of features of the metaobject protocol such as inheritance and class
+finalization to define our built-in classes.  
+
+Even for system classes where instances do not all have the same size,
+notably the \texttt{array} class and its subclasses, we plan to take
+advantage of the metaobject protocol by creating a function named
+\texttt{make-built-in-instance} that takes a \emph{size} argument in
+addition to ordinary initialization arguments.  We also plan to create
+a macro named \texttt{define-built-in-class} similar to
+\texttt{defclass}, and with the main difference that the default
+superclass is \texttt{t} instead of \texttt{standard-object}.  This
+method allows us to concentrate all important features of a built-in
+class and its instances in one place, which will simplify
+maintenance. 
+
+\section{Condition classes}
+\label{object-system-condition-classes}
+
+The HyperSpec defines an entire hierarchy of classes with the class
+\texttt{condition} as the root class.  This hierarchy is not mentioned
+by the AMOP.  
+
+We plan to implement this hierarchy by defining a class named
+\texttt{condition-class} analogous to \texttt{standard-class} for
+standard objects.  The class \texttt{condition} plays a role analogous
+to the class \texttt{standard-object} for instances of
+\texttt{standard-class}. 
+
+As with built-in classes \seesec{object-system-built-in-classes}, we
+plan to take advantage of the very complete set of tools provided by
+the metaobject protocol to implement condition classes.  In
+particular, we want to allow for condition classes to be redefined
+even though existing instances may be present, just the way instances
+of \texttt{standard-object} may exist even though the class is being
+modified.  However, we do not plan to make it possible for an instance
+of a condition class to have its class changed (i.e. by using
+\texttt{change-class}).  
+
+\section{Structure classes}
+\label{object-system-structure-classes}
+
+Just like condition classes \seesec{object-system-condition-classes},
+structure classes are not mentioned at all in the AMOP.  In addition,
+their description in the HyperSpec is limited to the dictionary entry
+for \texttt{defstruct}.  
+
+No part of \sysname{} uses structure classes.  The main reason is that
+they are difficult to work with due to the fact that conforming
+implementations are allowed to make it impossible to redefine
+existing structure classes.%
+\footnote{I seem to remember reading somewhere that implementers are
+  encouraged to make it possible to modify existing structure classes
+  in the same way that it is possible to modify standard classes even
+  though there are existing instances, but I don't remember where I
+  read this, and I can't seem to find the place.  It might have been
+  in CLtL2 rather than the HyperSpec, but I can't find it there
+  either.  Oh well, when I find it, I will remove this footnote.}
+
+However, since we plan for \sysname{} to be a conforming
+implementation, we naturally plan to include structure classes as
+well. 
+
+The main reason for using structure classes rather than standard
+classes is \emph{performance}.  Structure classes are supposed to be
+implemented in the ``most efficient way possible''.%
+\footnote{Again, I forget where I read this, and I can't find it.}
+Presumably, the restrictions on structure classes exist to allow for
+an implementation to represent instances as a pointer directly to the
+vector of slots and avoid any indirection, which saves a memory
+access.  However, in \sysname{} \emph{all} heap-allocated objects
+(other than \texttt{cons} cells) are represented as a two-word
+\emph{header object} and a \emph{contents vector} for reasons of
+simplicity and in order to allow our memory-management strategy to
+work.
+
+Since \sysname{} represents instances of structure classes this way,
+there is no reason to keep the restriction that structure classes can
+not be modified.  For that reason, we plan to avoid that restriction.
+
+Structure classes have another interesting restriction, namely that
+they allow only single inheritance.  This restriction allows slot
+accessors to be non-generic, because it becomes possible for a slot to
+have the same physical position in all subclasses.  We may or may not
+take advantage of this possibility.  The higher priority for
+\sysname{} is to make accessors for standard objects fast, rather than
+to work on an efficient implementation of structures. 
+
