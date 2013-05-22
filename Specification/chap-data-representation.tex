@@ -40,7 +40,7 @@ of immediate objects, giving the following four low bits:
 \item \texttt{0110}.  This tag is used short floats.  
 \item \texttt{1010}.  This tag is used for single floats (64-bit
   platforms only). 
-\item \texttt{1111}.  This tag is used for various unique immediate
+\item \texttt{1110}.  This tag is used for various unique immediate
   objects, in particular for the object that is stored in various
   locations to indicate that the location is \emph{unbound}. 
 \end{itemize}
@@ -74,8 +74,9 @@ significant half of the word is unused except for the tag bits.
 
 \subsection{Unbound}
 
-The unbound object is represented as a word in which every bit is
-equal to 1. 
+The unbound object is represented as a word in which every bit except
+the least significant one is equal to 1.  As a signed machine integer,
+this value is equal to $-2$
 
 \section{Representation of \texttt{cons} cells}
 
@@ -85,7 +86,7 @@ words aligned on a double-word boundary.
 \section{Representation of other heap objects}
 
 All heap objects other than \texttt{cons} cells are represented in (at
-least) two parts, a \emph{header} object and a \emph{contents} vector.
+least) two parts, a \emph{header object} and a \emph{contents vector}.
 The header object always consists of two consecutive words aligned on
 a double-word boundary (just like \texttt{cons} cells).  The first
 word always contains a tagged pointer to a \emph{class} object (which
@@ -94,7 +95,7 @@ is another heap object).  The second word contains a \emph{raw
 sections we give the details of the representation for all possible
 heap objects.
 
-\section{Subclasses of \texttt{standard-object}}
+\section{Instances of subclasses of \texttt{standard-object}}
 
 Subclasses of \texttt{standard-object} must allow for must allow for
 the class of an instance to be changed to some other class
@@ -141,9 +142,34 @@ using \texttt{eq}.  Clearly, this solution also allows the system to
 determine which slots have been added and which slots have been
 removed since the instance was created. 
 
-\section{Built-in classes}
+\section{Instance of built-in classes}
 
-\subsection{System class \texttt{sequence}}
+Contrary to instances of subclasses of \texttt{standard-object}, we do
+not allow for a built-in class to change after it has been
+instantiated.  The class definition might change as long as there are
+no instances, but the consequences are undefined if a built-in class
+is changed after it has been instantiated.
+
+As a consequence, it is not necessary to keep version information in
+the contents vector of an instance of a built-in class, and it is not
+necessary to check whether the instance is obsolete before accessing
+its contents.  
+
+\subsection{Instances of \texttt{sequence}}
+
+The system class \texttt{sequence} can not be directly instantiated.
+Instead, it serves as a superclass for the classes \texttt{list} and
+\texttt{vector}.  
+
+The HyperSpec is a bit contradictory here, because
+in some places it says that \texttt{list} and \texttt{vector}
+represent an exhaustive partition of \texttt{sequence}%
+\footnote{See for instance section 17.1}
+but in other places it explicitly allows for other subtypes of
+\texttt{sequence}.%
+\footnote{See the definition of the system class \texttt{sequence}.}
+The general consensus seems to be that other subtypes are allowed. 
+
 
 \subsection{Arrays}
 
