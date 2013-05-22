@@ -82,7 +82,7 @@ The mapping is typically represented as a list of \emph{dynamic
   set to \texttt{true} by \texttt{defvar}, \texttt{defparameter}, or a
   \texttt{special} declaration by \texttt{proclaim} or
   \texttt{declaim}.  Once it has been set to \emph{true} it can never
-  become \texttt{false} again.
+  become \emph{false} again.
 \item The \emph{type} of the dynamic variable.  
 \end{itemize}
 
@@ -104,9 +104,10 @@ The following situations can occur:
   \emph{initial value} form is evaluated, and its value is checked
   against the type of the entry.  If the type check passes, then the
   value of the \emph{initial value} form is given as the value of the
-  variable.  If the type check does not pass, then an error is
-  signaled.  Whether or not the \texttt{defvar} has an \emph{initial
-    value} form, the entry is marked as \emph{created}.
+  variable and the entry is marked as \emph{created}.  If the type
+  check does not pass, then an error is signaled.  If the
+  \texttt{defvar} form does not have an \emph{initial value} form, the
+  entry is marked as \emph{created}.
 \item The item is not present.  Then an entry is created.  It type is
   set to \texttt{t}.  If the \texttt{defvar} form contains
   an \emph{initial value} form, then the \emph{initial value} form is
@@ -125,12 +126,20 @@ variable and the variable is marked as \emph{created}.  If the type
 check does not pass, then an error is signaled.
 
 When \texttt{proclaim} or \texttt{declaim} is used to declare a type
-for a variable, the mapping is searched for an entry.  If no entry is
-found, one is created, and its type is set accordingly.%
-\fixme{Is it really correct to create the variable just because its
-  type is declared?  If not, is it OK to just put a flag in the entry
-  indicating whether it has been created or not? 
-  Also, explain what happens when the entry exists.}
+for a variable, the mapping is searched for an entry.  If no entry
+exists, a new one is created with the slot named \emph{created} set to
+\emph{false}, the value cell set to \emph{unbound} and the type set to
+\texttt{t}.  Then with either the existing or the newly created entry,
+the following can happen:
+
+\begin{itemize}
+\item If the value is \emph{unbound}, then the type is simply
+  updated.  
+\item If the value is not \emph{unbound}, then the new type is
+  verified against the existing value of the variable.  If the test
+  passes, the type of the entry is modified, otherwise an error is
+  signaled. 
+\end{itemize}
 
 When a dynamic variable is used in compiled code, the \emph{value
   cell} is also referred to from the \emph{linkage vector} of the code
