@@ -102,38 +102,125 @@ execution.
 \subsection{Instruction \texttt{return}}
 \label{mir-instruction-return}
 
+This instruction has no successors, no inputs and no outputs.
+
+It terminates execution of the current function and returns to the
+caller. 
+
 \subsection{Instruction \texttt{enclose}}
 \label{mir-instruction-enclose}
+
+This instruction has a single successor.  It has a single output. 
+It does have an input, but it is a special one because it is not a
+value, but instead the root of an instruction graph.  
+
+The instruction takes the instruction graph and creates a
+\emph{closure}.  The closure contains the current lexical runtime
+environment and the code resulting from the input instruction graph.
 
 \subsection{Instruction \texttt{memref}}
 \label{mir-instruction-memref}
 
+This instruction has a single successor.  It has one input and one
+output.  
+
+The input is a raw memory address, and the output is the contents of
+memory at that address. 
+
 \subsection{Instruction \texttt{memset}}
 \label{mir-instruction-memset}
+
+This instruction has a single successor.  It has two inputs and no
+outputs. 
+
+The first output is a memory address and the second input is a value
+to be stored in memory at that address. 
 
 \subsection{Instruction \texttt{u+}}
 \label{mir-instruction-u+}
 
+This instruction has one or two successors.  It has two inputs and one
+output.
+
+The instruction computes the unsigned addition of its two inputs.  The
+output is the sum modulo the $2^w$ where $w$ is the width of a word in
+bits.  If the instruction has two successors, then the first one is
+taken if there is no \emph{overflow} and the second one is taken if
+there is.  
+
 \subsection{Instruction \texttt{u-}}
 \label{mir-instruction-u-}
+
+This instruction has one or two successors.  It has two inputs and one
+output.
+
+The instruction computes the unsigned subtraction of its two inputs.
+The output is the difference modulo the $2^w$ where $w$ is the width
+of a word in bits.  If the instruction has two successors, then the
+first one is taken if there is no \emph{overflow} and the second one
+is taken if there is.
 
 \subsection{Instruction \texttt{s+}}
 \label{mir-instruction-s+}
 
+This instruction has one or two successors.  It has two inputs and one
+output.
+
+The instruction computes the signed addition of its two inputs.  The
+output is the sum modulo the $2^w$ where $w$ is the width of a word in
+bits.  If the instruction has two successors, then the first one is
+taken if there is no \emph{overflow} and the second one is taken if
+there is.  
+
 \subsection{Instruction \texttt{s-}}
 \label{mir-instruction-s-}
+
+This instruction has one or two successors.  It has two inputs and one
+output.
+
+The instruction computes the signed subtraction of its two inputs.
+The output is the difference modulo the $2^w$ where $w$ is the width
+of a word in bits.  If the instruction has two successors, then the
+first one is taken if there is no \emph{overflow} and the second one
+is taken if there is.
 
 \subsection{Instruction \texttt{neg}}
 \label{mir-instruction-neg}
 
+This instruction has one or two successors.  It has one input and one
+output.
+
+The instruction computes the negation of its input.  The output is the
+negation modulo the $2^w$ where $w$ is the width of a word in bits.
+If the instruction has two successors, then the first one is taken if
+there is no \emph{overflow} and the second one is taken if there is.
+
 \subsection{Instruction \texttt{\&}}
 \label{mir-instruction-and}
+
+This instruction has a single successor.  It has two inputs and one
+output. 
+
+This instruction computes the bitwise logical \emph{and} between the
+two inputs. 
 
 \subsection{Instruction \texttt{ior}}
 \label{mir-instruction-ior}
 
+This instruction has a single successor.  It has two inputs and one
+output. 
+
+This instruction computes the bitwise logical \emph{inclusive or}
+between the two inputs.
+
 \subsection{Instruction \texttt{xor}}
 \label{mir-instruction-xor}
+
+This instruction has a single successor.  It has two inputs and one
+output. 
+
+This instruction computes the bitwise logical \emph{exclusive or}
+between the two inputs.
 
 \subsection{Instruction \texttt{\~}}
 \label{mir-instruction-not}
