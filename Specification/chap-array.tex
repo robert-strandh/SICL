@@ -2,9 +2,25 @@
 \label{chap-array}
 
 There are a few things that can be done in a portable module for
-arrays.  \texttt{array-total-size} and \texttt{array-dimensions} can
-be defined in terms of \texttt{array-rank} and
-\texttt{array-dimension}.  Furthermore, \texttt{aref} and
+arrays. 
+
+Clearly, \texttt{array-dimensions} can be defined in terms of
+\texttt{array-rank} and \texttt{array-dimension}.  On the other hand,
+it can also be done the other way around, i.e., \texttt{array-rank}
+can be computed as the length of the list returned by
+\texttt{array-dimensions}, and \texttt{array-dimension} can be defined
+using the list returned by \texttt{array-dimensions} and
+\texttt{elt}, or \texttt{nth}.  Whether one or the other is chosen
+depends on how arrays are represented.  In \sysname{} the list of
+dimensions is already stored in the array
+\seesec{sec-data-representation-arrays}, so the second solution is
+better, and it also avoids consing. 
+
+\texttt{array-total-size} can be defined in terms of
+\texttt{array-rank} and \texttt{array-dimension}, or in terms of and
+\texttt{array-dimensions} depending on what solution was chosen above.
+
+Furthermore, \texttt{aref} and
 \texttt{(setf aref)} can be defined in terms of
 \texttt{row-major-aref} and \texttt{(setf row-major-aref)}. 
 
