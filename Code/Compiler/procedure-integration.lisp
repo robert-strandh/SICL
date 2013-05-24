@@ -7,11 +7,11 @@
 (defun integrate-procedure (ast)
   (let* ((argument-asts (sicl-ast:argument-asts ast))
 	 (callee-ast (sicl-ast:callee-ast ast))
-	 (required (sicl-ast:required (sicl-ast:lambda-list callee-ast)))
+	 (parameters (sicl-ast:parameters callee-ast))
 	 (body (sicl-ast:body-ast callee-ast))
 	 (assignments
 	   (loop for arg in argument-asts
-		 for loc in required
+		 for loc in parameters
 		 collect (sicl-ast:make-setq-ast loc arg))))
     (change-class ast
 		  'sicl-ast:progn-ast
