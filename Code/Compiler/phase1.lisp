@@ -187,20 +187,26 @@
 ;;; FIXME: for now, we handle only required parameters.
 (defun convert-lambda-list (ordinary-lambda-list env)
   (let* ((required-vars (sicl-code-utilities:required ordinary-lambda-list))
-	 (new-env env))
+	 (new-env env)
+	 (parameters '()))
     (loop for var in required-vars
 	  do (setf new-env (sicl-env:add-lexical-variable-entry new-env var)))
-    (values (make-instance 'sicl-ast:lambda-list
-	      :required (loop for var in required-vars
-			      for info = (sicl-env:variable-info var new-env)
-			      for location = (sicl-env:location info)
-			      collect location))
+    (loop for var in required-vars
+	  for info = (sicl-env:variable-info var new-env)
+	  for location = (sicl-env:location info)
+	  do (push location parameters))
+    (values (reverse parameters)
+	    (sicl-ast:make-progn-ast 
+	     (mapcar (lambda (location)
+		       (sicl-ast:make-setq-ast
+			location (sicl-ast:make-arg-ast 0)))
+		     (reverse parameters)))
 	    new-env)))
 
 (defun convert-code (lambda-list body env)
   (let ((parsed-lambda-list
 	  (sicl-code-utilities:parse-ordinary-lambda-list lambda-list)))
-    (multiple-value-bind (compiled-lambda-list new-env)
+    (multiple-value-bind (parameters argparse-ast new-env)
 	(convert-lambda-list parsed-lambda-list env)
       (multiple-value-bind (declarations documentation forms)
 	  (sicl-code-utilities:separate-function-body body)
@@ -210,7 +216,8 @@
 	       new-env declarations))
 	(let ((body-asts (convert-sequence forms new-env)))
 	  (sicl-ast:make-function-ast
-	   compiled-lambda-list
+	   parameters
+	   argparse-ast
 	   (sicl-ast:make-progn-ast body-asts)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
