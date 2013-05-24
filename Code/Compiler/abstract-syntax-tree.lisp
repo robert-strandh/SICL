@@ -215,8 +215,8 @@
 ;;; LABELS.
 
 (defclass function-ast (ast)
-  ((%parameters :initarg parameters :reader parameters)
-   (%argparse-ast :initarg argparse-ast :reader argparse-ast)
+  ((%parameters :initarg :parameters :accessor parameters)
+   (%argparse-ast :initarg :argparse-ast :reader argparse-ast)
    (%body-ast :initarg :body-ast :accessor body-ast)))
 
 (defun make-function-ast (parameters argparse-ast body-ast)
