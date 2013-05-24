@@ -281,18 +281,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a function consisting of an ordinary LAMBDA-LIST and a
-;;; BODY-AST.  
+;;; Compile a function.
 ;;;
 ;;; The result is a graph of instructions starting with a
-;;; GET-ARGUMENTS-INSTRUCTION that uses the LAMBDA-LIST to supply
+;;; GET-ARGUMENTS-INSTRUCTION that uses the PARAMETERS to supply
 ;;; values to the lexical locations that the body needs, and ending
 ;;; with a RETURN-INSTRUCTION which has no successors. 
 
-(defun compile-function (lambda-list body-ast)
+(defun compile-function (argparse-ast body-ast)
   (let ((next (sicl-mir:make-return-instruction)))
     (setf next (compile-ast body-ast (p2:context t (list next))))
-    (setf next (sicl-mir:make-get-arguments-instruction next lambda-list))
+    (setf next (compile-ast argparse-ast (p2:context '() (list next))))
     (sicl-mir:make-enter-instruction next)))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -315,7 +314,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let ((code (compile-function (sicl-ast:lambda-list ast)
+    (let ((code (compile-function (sicl-ast:argparse-ast ast)
 				  (sicl-ast:body-ast ast)))
 	  (next (if (= (length successors) 2)
 		    (cadr successors)
@@ -399,7 +398,7 @@
 	(*go-info* (make-hash-table :test #'eq)))
     ;; The top-level ast must represent a thunk.
     (assert (typep ast 'sicl-ast:function-ast))
-    (compile-function (sicl-ast:lambda-list ast)
+    (compile-function (sicl-ast:argparse-ast ast)
 		      (sicl-ast:body-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -413,6 +412,10 @@
 	 (sicl-mir:make-immediate-input (sicl-ast:value argument)))
 	((typep argument 'sicl-ast:load-time-value-ast)
 	 (sicl-mir:make-external-input (sicl-ast:form-ast argument)))
+	((typep argument 'sicl-ast:argcount-ast)
+	 (sicl-mir:make-argcount-input))
+	((typep argument 'sicl-ast:arg-ast)
+	 (sicl-mir:make-arg-input (sicl-ast:index argument)))
 	(t
 	 (new-temporary))))
 
