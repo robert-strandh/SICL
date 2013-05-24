@@ -236,7 +236,11 @@
   (stream-draw-ast (body-ast ast) stream)
   (format stream "   ~a -> ~a~%"
 	  (id ast)
-	  (id (body-ast ast))))
+	  (id (body-ast ast)))
+  (stream-draw-ast (argparse-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (argparse-ast ast))))
   
 (defmethod children ((ast function-ast))
   (list (body-ast ast)))
@@ -1011,6 +1015,11 @@
 (defun make-argcount-ast ()
   (make-instance 'argcount-ast))
 
+(defmethod stream-draw-ast ((ast argcount-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = orange];~%" (id ast))
+  (format stream "   ~a [label = \"AC\"];~%"
+	  (id ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class ARG-AST.
@@ -1024,6 +1033,12 @@
 
 (defun make-arg-ast (index)
   (make-instance 'arg-ast :index index))
+
+(defmethod stream-draw-ast ((ast arg-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = orange];~%" (id ast))
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (index ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
