@@ -115,11 +115,11 @@
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
    #:eval-when-ast #:make-eval-when-ast #:situations
-   #:function-ast #:make-function-ast #:body-ast
+   #:function-ast #:make-function-ast
+   #:parameters #:argparse-ast #:body-ast
    #:go-ast #:make-go-ast #:tag-ast
    #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
-   #:lambda-list #:required
    #:body-asts
    #:progn-ast #:make-progn-ast #:form-asts
    #:return-from-ast #:make-return-from-ast #:form-ast
@@ -150,6 +150,8 @@
    #:s<=-ast #:make-s<=-ast
    #:u<-ast #:make-u<-ast
    #:u<=-ast #:make-u<=-ast
+   #:argcount-ast #:make-argcount-ast
+   #:arg-ast #:make-arg-ast #:index
    #:halt-ast #:make-halt-ast))
 
 (defpackage #:sicl-compiler-phase-1
@@ -168,12 +170,13 @@
   (:export
    #:immediate-input #:make-immediate-input
    #:external-input #:make-external-input #:value
+   #:argcount-input #:make-argcount-input
+   #:arg-input #:make-arg-input
    #:instruction #:successors #:inputs #:outputs
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:test-instruction #:make-test-instruction #:test
    #:funcall-instruction #:make-funcall-instruction #:fun
-   #:get-arguments-instruction #:make-get-arguments-instruction #:lambda-list
    #:get-values-instruction #:make-get-values-instruction
    #:put-arguments-instruction #:make-put-arguments-instruction
    #:put-values-instruction #:make-put-values-instruction
