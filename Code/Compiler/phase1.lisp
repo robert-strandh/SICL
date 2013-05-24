@@ -197,10 +197,10 @@
 	  do (push location parameters))
     (values (reverse parameters)
 	    (sicl-ast:make-progn-ast 
-	     (mapcar (lambda (location)
-		       (sicl-ast:make-setq-ast
-			location (sicl-ast:make-arg-ast 0)))
-		     (reverse parameters)))
+	     (loop for location in (reverse parameters)
+		   for i from 0
+		   collect (sicl-ast:make-setq-ast
+			    location (sicl-ast:make-arg-ast i))))
 	    new-env)))
 
 (defun convert-code (lambda-list body env)
