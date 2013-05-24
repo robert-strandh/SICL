@@ -188,23 +188,23 @@
 
 ;;; FIXME: handle special variables in lambda list. 
 
-(defclass lambda-list ()
-  (;; A possibly empty list of lexical locations.
-   (%required :initarg :required :accessor required)
-   ;; A possibly empty list of optional entries. 
-   (%optional :initarg :optional :reader optional)
-   ;; Either NIL or a single lexical location. 
-   (%rest-body :initarg :rest-body :reader rest-body)
-   ;; Either:
-   ;;  * :none, meaning &key was not given at all,
-   ;;  * a possibly empty list of &key entries.
-   (%keys :initarg :keys :reader keys)
-   ;; Either:
-   ;;  * nil, meaning &allow-other-keys was not given at all,
-   ;;  * t, meaning &allow-other-keys was given.
-   (%allow-other-keys :initarg :allow-other-keys :reader allow-other-keys)
-   ;; A possibly empty list of &aux entries.
-   (%aux :initarg :aux :reader aux)))
+;; (defclass lambda-list ()
+;;   (;; A possibly empty list of lexical locations.
+;;    (%required :initarg :required :accessor required)
+;;    ;; A possibly empty list of optional entries. 
+;;    (%optional :initarg :optional :reader optional)
+;;    ;; Either NIL or a single lexical location. 
+;;    (%rest-body :initarg :rest-body :reader rest-body)
+;;    ;; Either:
+;;    ;;  * :none, meaning &key was not given at all,
+;;    ;;  * a possibly empty list of &key entries.
+;;    (%keys :initarg :keys :reader keys)
+;;    ;; Either:
+;;    ;;  * nil, meaning &allow-other-keys was not given at all,
+;;    ;;  * t, meaning &allow-other-keys was given.
+;;    (%allow-other-keys :initarg :allow-other-keys :reader allow-other-keys)
+;;    ;; A possibly empty list of &aux entries.
+;;    (%aux :initarg :aux :reader aux)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -215,18 +215,20 @@
 ;;; LABELS.
 
 (defclass function-ast (ast)
-  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+  ((%parameters :initarg parameters :reader parameters)
+   (%argparse-ast :initarg argparse-ast :reader argparse-ast)
    (%body-ast :initarg :body-ast :accessor body-ast)))
 
-(defun make-function-ast (lambda-list body-ast)
+(defun make-function-ast (parameters argparse-ast body-ast)
   (make-instance 'function-ast
-    :lambda-list lambda-list
+    :parameters parameters
+    :argparse-ast argparse-ast
     :body-ast body-ast))
 
 (defmethod stream-draw-ast ((ast function-ast) stream)
   (format stream "   ~a [label = \"function\"];~%"
 	  (id ast))
-  (loop for param in (required (lambda-list ast))
+  (loop for param in (parameters ast)
 	do (stream-draw-ast param stream)
 	   (format stream "   ~a -> ~a~%"
 		   (id ast)
@@ -996,6 +998,32 @@
   (loop for argument-ast in (argument-asts ast)
 	do (stream-draw-ast argument-ast stream)
 	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class ARGCOUNT-AST.
+;;;
+;;; The value is the argument count to a function.
+
+(defclass argcount-ast (ast)
+  ())
+
+(defun make-argcount-ast ()
+  (make-instance 'argcount-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class ARG-AST.
+;;;
+;;; The value is one argument to a function.  
+;;; Arguments are numbered from 0 to C-1 where C
+;;; is the argcount. 
+
+(defclass arg-ast (ast)
+  ((%index :initarg :index :reader index)))
+
+(defun make-arg-ast (index)
+  (make-instance 'arg-ast :index index))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
