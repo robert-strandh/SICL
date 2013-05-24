@@ -156,16 +156,6 @@
       ";;; Finished pushing all arguments to stack.")))
 
 (defmethod codegen-instruction
-    ((instruction sicl-mir:get-arguments-instruction))
-  `(";;; Start of GET-ARGUMENTS instruction."
-    ,@(loop for output in (outputs instruction)
-	    for i from 0
-	    append (load-from-argument i)
-	    append (save-result output))
-    ";;; End of GET-ARGUMENTS instruction."
-    ,@(codegen-instruction (car (successors instruction)))))
-
-(defmethod codegen-instruction
     ((instruction sicl-mir:put-arguments-instruction))
   `(";;; Start of PUT-ARGUMENTS instruction."
     ,@(loop for input in (inputs instruction)
