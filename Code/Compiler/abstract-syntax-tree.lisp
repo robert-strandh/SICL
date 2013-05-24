@@ -233,14 +233,14 @@
 	   (format stream "   ~a -> ~a~%"
 		   (id ast)
 		   (id param)))
-  (stream-draw-ast (body-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (body-ast ast)))
   (stream-draw-ast (argparse-ast ast) stream)
   (format stream "   ~a -> ~a~%"
 	  (id ast)
-	  (id (argparse-ast ast))))
+	  (id (argparse-ast ast)))
+  (stream-draw-ast (body-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (body-ast ast))))
   
 (defmethod children ((ast function-ast))
   (list (body-ast ast)))
