@@ -210,7 +210,7 @@
   (make-instance 'argcount-input))
 
 (defmethod draw-location ((location argcount-input) stream)
-  (format stream "   ~a [fillcolor = pink, label = \"AC\"]~%"
+  (format stream "   ~a [fillcolor = orange, label = \"AC\"]~%"
 	  (gethash location *location-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -225,7 +225,7 @@
     :value value))
 
 (defmethod draw-location ((location arg-input) stream)
-  (format stream "   ~a [fillcolor = pink, label = \"~a\"]~%"
+  (format stream "   ~a [fillcolor = orange, label = \"~a\"]~%"
 	  (gethash location *location-table*)
 	  (value location)))
 
