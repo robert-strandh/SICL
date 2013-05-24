@@ -201,6 +201,36 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Location class ARGCOUNT-INPUT.
+
+(defclass argcount-input ()
+  ())
+
+(defun make-argcount-input ()
+  (make-instance 'argcount-input))
+
+(defmethod draw-location ((location argcount-input) stream)
+  (format stream "   ~a [fillcolor = pink, label = \"AC\"]~%"
+	  (gethash location *location-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Location class ARG-INPUT.
+
+(defclass arg-input ()
+  ((%value :initarg :value :reader value)))
+
+(defun make-arg-input (value)
+  (make-instance 'arg-input
+    :value value))
+
+(defmethod draw-location ((location arg-input) stream)
+  (format stream "   ~a [fillcolor = pink, label = \"~a\"]~%"
+	  (gethash location *location-table*)
+	  (value location)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Draw method for the SICL-ENV:LOCATION location class.
 
 (defmethod draw-location ((location sicl-env:location) stream)
@@ -398,25 +428,6 @@
 
 (defmethod draw-instruction ((instruction funcall-instruction) stream)
   (format stream "   ~a [label = \"funcall\"];~%"
-	  (gethash instruction *instruction-table*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction GET-ARGUMENTS-INSTRUCTION.
-
-(defclass get-arguments-instruction (instruction)
-  ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
-
-(defun make-get-arguments-instruction (successor lambda-list)
-  (make-instance 'get-arguments-instruction
-    :successors (list successor)
-    :lambda-list lambda-list))
-
-(defmethod outputs ((instruction get-arguments-instruction))
-  (sicl-ast:required (lambda-list instruction)))
-
-(defmethod draw-instruction ((instruction get-arguments-instruction) stream)
-  (format stream "   ~a [label = \"get-args\"];~%"
 	  (gethash instruction *instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
