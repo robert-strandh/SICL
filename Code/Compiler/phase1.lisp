@@ -186,21 +186,61 @@
 
 ;;; FIXME: for now, we handle only required parameters.
 (defun convert-lambda-list (ordinary-lambda-list env)
-  (let* ((required-vars (sicl-code-utilities:required ordinary-lambda-list))
-	 (new-env env)
-	 (parameters '()))
-    (loop for var in required-vars
-	  do (setf new-env (sicl-env:add-lexical-variable-entry new-env var)))
-    (loop for var in required-vars
-	  for info = (sicl-env:variable-info var new-env)
+  (let ((required (sicl-code-utilities:required ordinary-lambda-list))
+	(optionals (sicl-code-utilities:optionals ordinary-lambda-list))
+	(new-env env)
+	(argcount-temp (sicl-env:make-lexical-location (gensym)))
+	(parsers '())
+	(parameters '()))
+    (push (sicl-ast:make-setq-ast
+	   argcount-temp
+	   (sicl-ast:make-argcount-ast))
+	  parsers)
+    (loop for req in required
+	  do (setf new-env (sicl-env:add-lexical-variable-entry new-env req)))
+    (loop for req in required
+	  for info = (sicl-env:variable-info req new-env)
 	  for location = (sicl-env:location info)
-	  do (push location parameters))
+	  for i from 0
+	  do (push location parameters)
+	     (push (sicl-ast:make-setq-ast location (sicl-ast:make-arg-ast i))
+		   parsers))
+    (loop for opt in optionals
+	  for i from (length required)
+	  do (push (car opt) parameters)
+	     (let ((init-ast (convert (cadr opt) new-env)))
+	       (setf new-env
+		     (sicl-env:add-lexical-variable-entry new-env (car opt)))
+	       (let ((location (sicl-env:location
+				(sicl-env:variable-info (car opt) new-env))))
+		 (push (sicl-ast:make-if-ast
+			(sicl-ast:make-u<=-ast
+			 (list
+			  argcount-temp
+			  (sicl-ast:make-word-ast i)))
+			(sicl-ast:make-setq-ast location init-ast)
+			(sicl-ast:make-setq-ast location
+						(sicl-ast:make-arg-ast i)))
+		       parsers)))
+	     (unless (null (cddr opt))
+	       (setf new-env
+		     (sicl-env:add-lexical-variable-entry
+		      new-env (caddr opt)))
+	       (let ((location (sicl-env:location
+				(sicl-env:variable-info
+				 (caddr opt) new-env))))
+		 (push (sicl-ast:make-if-ast
+			(sicl-ast:make-u<=-ast
+			 (list 
+			  argcount-temp
+			  (sicl-ast:make-word-ast i)))
+			(sicl-ast:make-setq-ast location
+						(convert-constant nil))
+			(sicl-ast:make-setq-ast location
+						(convert-constant t)))
+		       parsers))))
     (values (reverse parameters)
-	    (sicl-ast:make-progn-ast 
-	     (loop for location in (reverse parameters)
-		   for i from 0
-		   collect (sicl-ast:make-setq-ast
-			    location (sicl-ast:make-arg-ast i))))
+	    (sicl-ast:make-progn-ast (reverse parsers))
 	    new-env)))
 
 (defun convert-code (lambda-list body env)
