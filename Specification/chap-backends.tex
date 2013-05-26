@@ -399,50 +399,24 @@ fairly complicated process.  The process is further complicated by the
 fact that some of the parameters of the function might be
 \emph{special variables} rather than \emph{lexical variables}.  
 
-Conceptually, upon entry to a function, the arguments are immediately
-saved to a vector that becomes the first entry of the \emph{lexical
-  environment level} created by this function.  The remaining entries
-of that lexical environment level are the lexical variables used by
-this function, including temporaries.  The arguments in the stack
-frame are then removed so that the stack frame is empty, aside from
-the four words that are always present.
-\refFig{fig-x86-32-conceptual-argument-parsing} illustrates this
-conceptual situation.
+Conceptually, upon entry to a function, a new level of the lexical
+runtime environment is created in order to hold the lexical variables
+and temporaries of this function.  The argument-parsing process
+consists of analyzing the arguments on the stack and filling in the
+newly created level of the lexical runtime environment.  When this
+process is done, the arguments are removed from the stack, leaving
+only the four words that are always present in the stack frame, plus
+zero, one, or more dynamic variable entries.
+\seefig{fig-x86-32-dynamic-binding}
 
-\begin{figure}
-\begin{center}
-\inputfig{fig-x86-32-conceptual-argument-parsing.pdf_t}
-\end{center}
-\caption{\label{fig-x86-32-conceptual-argument-parsing}
-Conceptual situation for argument parsing.}
-\end{figure}
-
-Occasionally (but not often), the situation in
-\refFig{fig-x86-32-conceptual-argument-parsing} is what really
-happens.  For instance, if the first parameter to a function is a
-\emph{special variable}, then, in \sysname{}, we implement the dynamic
-binding of that special variable as a function call, passing the
-symbol that names the variable, the value of the binding, and a
-\emph{closure} that is responsible for the remaining computation. 
-In terms of argument parsing, the fact that the remaining
-argument-parsing process is accomplished by that closure, i.e. by a
-different function invocation, requires the remaining arguments to be
-accessible through the lexical environment.  
-
-What makes it necessary to store arguments in the lexical environment
-is the fact that the argument-parsing process is \emph{closed over}.
-This situation can be detected statically, because the lexical
-variable holding the argument vector is then closed over.  While it
-would be very inefficient to parse arguments this way, we believe that
-this situation is sufficiently infrequent that no optimization is
-required. 
-
-When the argument-parsing process itself is not closed over, all the
-arguments can remain on the stack.  In the most general case, lexical
-and temporary variables will still have to be allocated as a level in
-the lexical runtime environment.  In this case, the arguments will
-remain in the stack frame until all lexical variables have been
-initialized, and then they are removed.  
+While ordinarily, the binding of a special variable is implemented as
+a function call, passing a closure as an argument, luckily the full
+implementation is not required when the special variable binding is
+part of the argument-passing process.  The reason is that in all cases
+where the stack might be unwound so that the binding is undone, then
+the entire invocation of the function must be unwound as well.  Then,
+the binding can be part of the current stack frame rather than
+requiring its own stack frame. 
 
 Most of the time, there are lexical variables and temporaries that are
 not closed over.  Such variables need not be allocated in a level of
@@ -455,7 +429,12 @@ temporaries that are not closed over.  Then, in each step, argument
 parsing will either initialize one of these variables, or one of the
 variables in the level of the lexical runtime environment.  Finally,
 the arguments are removed from the stack, leaving only the lexical
-variables and temporaries that are not closed over. 
+variables and temporaries that are not closed over.  However, things
+are complicated by the fact that as part of the argument-parsing
+process, entries for dynamic variables may have been created.
+Removing the arguments, then, consists of moving those entries to
+clobber the arguments on the stack, and adjusting the dynamic
+environment word to reflect this move. 
 
 As a special case of the scenario in the previous paragraph,
 \emph{all} lexical variables and temporaries can be allocated on the
