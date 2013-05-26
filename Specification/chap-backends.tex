@@ -404,7 +404,8 @@ saved to a vector that becomes the first entry of the \emph{lexical
   environment level} created by this function.  The remaining entries
 of that lexical environment level are the lexical variables used by
 this function, including temporaries.  The arguments in the stack
-frame are then removed so that the stack frame is empty.
+frame are then removed so that the stack frame is empty, aside from
+the four words that are always present.
 \refFig{fig-x86-32-conceptual-argument-parsing} illustrates this
 conceptual situation.
 
@@ -427,6 +428,51 @@ In terms of argument parsing, the fact that the remaining
 argument-parsing process is accomplished by that closure, i.e. by a
 different function invocation, requires the remaining arguments to be
 accessible through the lexical environment.  
+
+What makes it necessary to store arguments in the lexical environment
+is the fact that the argument-parsing process is \emph{closed over}.
+This situation can be detected statically, because the lexical
+variable holding the argument vector is then closed over.  While it
+would be very inefficient to parse arguments this way, we believe that
+this situation is sufficiently infrequent that no optimization is
+required. 
+
+When the argument-parsing process itself is not closed over, all the
+arguments can remain on the stack.  In the most general case, lexical
+and temporary variables will still have to be allocated as a level in
+the lexical runtime environment.  In this case, the arguments will
+remain in the stack frame until all lexical variables have been
+initialized, and then they are removed.  
+
+Most of the time, there are lexical variables and temporaries that are
+not closed over.  Such variables need not be allocated in a level of
+the lexical runtime environment, but can be allocated on the stack.
+In this case, the place on the stack that these variables will occupy
+overlaps with the place that the initial arguments are passed.  For
+that reason, the arguments are first moved, leaving a hole in the
+stack frame corresponding to the number of lexical variables and
+temporaries that are not closed over.  Then, in each step, argument
+parsing will either initialize one of these variables, or one of the
+variables in the level of the lexical runtime environment.  Finally,
+the arguments are removed from the stack, leaving only the lexical
+variables and temporaries that are not closed over. 
+
+As a special case of the scenario in the previous paragraph,
+\emph{all} lexical variables and temporaries can be allocated on the
+stack.  Then, no level of the lexical runtime environment will be
+created at all, and the hole in the stack frame will be big enough to
+hold all such variables.  
+
+Also as a special case of the scenario in that same paragraph, it is
+common that some \emph{prefix} of the parameters of the function
+contains variables that are not closed over.  The variables in this
+prefix are already in their ultimate places, so only the remaining
+arguments need to be moved. 
+
+When a function takes only required parameters and none of those
+parameters are closed over, then the argument-parsing process is
+reduced to \emph{nothing}, and all that needs to be done upon function
+entry is to allocate space in the stack frame for temporaries. 
 
 
 \section{x86-64}
