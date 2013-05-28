@@ -116,7 +116,7 @@
    #:block-ast #:make-block-ast #:body
    #:eval-when-ast #:make-eval-when-ast #:situations
    #:function-ast #:make-function-ast
-   #:parameters #:argparse-ast #:body-ast
+   #:required-only-p #:required #:argparse-ast #:body-ast
    #:go-ast #:make-go-ast #:tag-ast
    #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
