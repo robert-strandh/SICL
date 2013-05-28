@@ -215,24 +215,36 @@
 ;;; LABELS.
 
 (defclass function-ast (ast)
-  ((%parameters :initarg :parameters :accessor parameters)
+  (;; The value is true if and only if the function has only
+   ;; required parameters.  This information is used to determine
+   ;; whether the function can be inlined.
+   (%required-only-p :initarg :required-only-p :reader required-only-p)
+   ;; When the function has only required parameters, this slot
+   ;; contains the list of locations corresponding to the required
+   ;; parameters.  These locations must be assigned to as part of
+   ;; the inlining process. 
+   (%required :initarg :required :accessor required)
+   ;; This slot contains an AST (typically a PROGN-AST) that
+   ;; does the argument parsing, i.e., that assigns to the 
+   ;; locations corresponding to the parameters of the function
+   ;; by analyzing the arguments.  This AST is excluded when
+   ;; the function is inlined, and replaced by a direct assignment
+   ;; to the required locations. 
    (%argparse-ast :initarg :argparse-ast :reader argparse-ast)
+   ;; This AST contains the body of the function, so it excludes
+   ;; the code for parsing the arguments. 
    (%body-ast :initarg :body-ast :accessor body-ast)))
 
-(defun make-function-ast (parameters argparse-ast body-ast)
+(defun make-function-ast (required-only-p required argparse-ast body-ast)
   (make-instance 'function-ast
-    :parameters parameters
+    :required-only-p required-only-p
+    :required required
     :argparse-ast argparse-ast
     :body-ast body-ast))
 
 (defmethod stream-draw-ast ((ast function-ast) stream)
   (format stream "   ~a [label = \"function\"];~%"
 	  (id ast))
-  (loop for param in (parameters ast)
-	do (stream-draw-ast param stream)
-	   (format stream "   ~a -> ~a~%"
-		   (id ast)
-		   (id param)))
   (stream-draw-ast (argparse-ast ast) stream)
   (format stream "   ~a -> ~a~%"
 	  (id ast)
