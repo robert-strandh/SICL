@@ -162,7 +162,7 @@
     (replace-globals ast globals-table)
     (let* ((externals-location (sicl-env:make-lexical-location (gensym)))
 	   (externals-in (make-lexical-location-info externals-location)))
-      (push externals-in (sicl-ast:parameters ast))
+      (push externals-in (sicl-ast:required ast))
       (setf (sicl-ast:body-ast ast)
 	    (sicl-ast:make-progn-ast
 	     (append (loop for entry in (append constants-table
