@@ -463,6 +463,44 @@
 		     ast))
      new-env)))
 
+(defun convert-one-aux (aux env)
+  (let* (;; Convert the init-form in the original environment.
+	 (init-ast (convert (cadr aux) env))
+	 ;; Add the parameter to the environment, giving a new environment.
+	 (new-env (sicl-env:add-lexical-variable-entry env (car aux)))
+	 ;; Find the info block corresponding to the parameter.
+	 (info (sicl-env:variable-info (car aux) new-env))
+	 ;; Find the location that was allocated for the parameter. 
+	 (location (sicl-env:location info)))
+    (values 
+     ;; The first value we return is then a list of a single AST which
+     ;; assigns to the location corresponding to the aux parameter
+     ;; from the value if the init-form.
+     (sicl-ast:make-setq-ast location init-ast)
+     ;; The second value is the new envirionment, i.e., the one we
+     ;; were passed as an argument, augmented with the location for
+     ;; the parameter.
+     new-env)))
+
+(defun convert-all-aux (aux env)
+  (let ((new-env env))
+    (values 
+     (loop for entry in aux
+	   collect (multiple-value-bind (ast env-temp)
+		       (convert-one-aux entry new-env)
+		     (setf new-env env-temp)
+		     ast))
+     new-env)))
+
+(defun number-of-required (lambda-list)
+  (length (sicl-code-utilities:required lambda-list)))
+
+(defun number-of-optionals (lambda-list)
+  (let ((optionals (sicl-code-utilities:optionals lambda-list)))
+    (if (eq optionals :none)
+	0
+	(length optionals))))
+
 (defun convert-ordinary-lambda-list (lambda-list env)
   (let* ((new-env env)
 	 (argcount-temp (sicl-env:make-lexical-location (gensym)))
@@ -482,7 +520,7 @@
 	     optionals
 	     new-env
 	     argcount-temp
-	     (length (sicl-code-utilities:required lambda-list)))
+	     (number-of-required lambda-list))
 	  (setf parsers (append parsers asts))
 	  (setf new-env env-temp))))
     (let ((rest (sicl-code-utilities:rest-body lambda-list)))
@@ -492,8 +530,8 @@
 	     rest
 	     new-env
 	     argcount-temp
-	     (+ (length (sicl-code-utilities:required lambda-list))
-		(length (sicl-code-utilities:optionals lambda-list))))
+	     (+ (number-of-required lambda-list)
+		(number-of-optionals lambda-list)))
 	  (setf parsers (append parsers (list ast)))
 	  (setf new-env env-temp))))
     (let ((keys (sicl-code-utilities:keys lambda-list)))
@@ -503,7 +541,16 @@
 	     keys
 	     new-env
 	     argcount-temp
-	     (length (sicl-code-utilities:required lambda-list)))
+	     (+ (number-of-required lambda-list)
+		(number-of-optionals lambda-list)))
+	  (setf parsers (append parsers asts))
+	  (setf new-env env-temp))))
+    (let ((aux (sicl-code-utilities:aux lambda-list)))
+      (unless (eq aux :none)
+	(multiple-value-bind (asts env-temp)
+	    (convert-all-aux
+	     aux
+	     new-env)
 	  (setf parsers (append parsers asts))
 	  (setf new-env env-temp))))
     (values (sicl-ast:make-progn-ast parsers)
