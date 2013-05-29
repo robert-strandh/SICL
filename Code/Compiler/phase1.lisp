@@ -193,7 +193,9 @@
 	 (info (sicl-env:variable-info required new-env))
 	 (location (sicl-env:location info)))
     (values
-     (sicl-ast:make-setq-ast location (sicl-ast:make-arg-ast i))
+     (sicl-ast:make-setq-ast
+      location
+      (sicl-ast:make-arg-ast (convert-constant i)))
      new-env)))
      
 (defun convert-all-required (required env)
@@ -233,9 +235,11 @@
 	  (sicl-ast:make-u<=-ast
 	   (list
 	    argcount-temp
-	    (sicl-ast:make-word-ast i)))
+	    (convert-constant i)))
 	  (sicl-ast:make-setq-ast location init-ast)
-	  (sicl-ast:make-setq-ast location (sicl-ast:make-arg-ast i)))
+	  (sicl-ast:make-setq-ast
+	   location
+	   (sicl-ast:make-arg-ast (convert-constant i))))
 	 ;; The second value is the new envirionment, i.e., the one we
 	 ;; were passed as an argument, augmented with the location
 	 ;; for the parameter.
@@ -263,7 +267,9 @@
 					(convert-constant nil))))
 	      (sicl-ast:make-progn-ast
 	       (list 
-		(sicl-ast:make-setq-ast location (sicl-ast:make-arg-ast i))
+		(sicl-ast:make-setq-ast
+		 location
+		 (sicl-ast:make-arg-ast (convert-constant i)))
 		(sicl-ast:make-setq-ast supplied-p-location
 					(convert-constant t)))))
 	     new-env))))))
