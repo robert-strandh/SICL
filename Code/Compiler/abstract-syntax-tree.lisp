@@ -1041,16 +1041,17 @@
 ;;; is the argcount. 
 
 (defclass arg-ast (ast)
-  ((%index :initarg :index :reader index)))
+  ((%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-arg-ast (index)
-  (make-instance 'arg-ast :index index))
+(defun make-arg-ast (index-ast)
+  (make-instance 'arg-ast :index-ast index-ast))
 
 (defmethod stream-draw-ast ((ast arg-ast) stream)
   (format stream "   ~a [style = filled, fillcolor = orange];~%" (id ast))
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (index ast)))
+  (format stream "   ~a [label = \"arg\"];~%"
+	  (id ast))
+  (stream-draw-ast (index-ast ast) stream)
+  (format stream "   ~a -> ~a~%" (id ast) (id (index-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
