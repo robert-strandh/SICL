@@ -332,6 +332,131 @@
        out-ast))
      new-env)))
 
+;;;    (tagbody (setq index start)
+;;;           again
+;;;             (if (>= index argcount)
+;;;                 (progn (setq var <init-form>)
+;;;                        (go out))
+;;;                 (if (eq (arg index) key)
+;;;                     (progn (setq var (arg (+ index 1)))
+;;;                            (go out))
+;;;                     (progn (setq index (+ index 2))
+;;;                            (go again))))
+;;;           out)
+;;;
+;;;    (tagbody (setq index start)
+;;;           again
+;;;             (if (>= index argcount)
+;;;                 (progn (setq var <init-form>)
+;;;                        (setq supplied-p nil)
+;;;                        (go out))
+;;;                 (if (eq (arg index) key)
+;;;                     (progn (setq var (arg (+ index 1)))
+;;;                            (setq supplied-p t)
+;;;                            (go out))
+;;;                     (progn (setq index (+ index 2))
+;;;                            (go again))))
+;;;           out)
+
+(defun convert-one-key (key env argcount-temp start)
+  (let* (;; Convert the init-form in the original environment.
+	 (init-ast (convert (cadr key) env))
+	 (new-env (sicl-env:add-lexical-variable-entry env (cadar key)))
+	 ;; Find the info block corresponding to the parameter.
+	 (info (sicl-env:variable-info (cadar key) new-env))
+	 ;; Find the location that was allocated for the parameter. 
+	 (location (sicl-env:location info))
+	 ;; Create a temporary lexical variable for the index.
+	 (index (sicl-env:make-lexical-location (gensym)))
+	 (again-ast (sicl-ast:make-tag-ast 'again))
+	 (out-ast (sicl-ast:make-tag-ast 'out)))
+    (if (null (cddr key))
+	(values
+	 (sicl-ast:make-tagbody-ast
+	  (list
+	   (sicl-ast:make-setq-ast index (convert-constant start))
+	   again-ast
+	   (sicl-ast:make-if-ast
+	    (sicl-ast:make-u<=-ast (list argcount-temp index))
+	    (sicl-ast:make-progn-ast
+	     (list (sicl-ast:make-setq-ast location init-ast)
+		   (sicl-ast:make-go-ast out-ast)))
+	    (sicl-ast:make-if-ast
+	     (sicl-ast:make-==-ast
+	      (list (sicl-ast:make-arg-ast index)
+		    (convert-constant (caar key))))
+	     (sicl-ast:make-progn-ast
+	      (list (sicl-ast:make-setq-ast
+		     location
+		     (sicl-ast:make-arg-ast
+		      (sicl-ast:make-u+-ast
+		       (list index (convert-constant 1)))))
+		    (sicl-ast:make-go-ast out-ast)))
+	     (sicl-ast:make-progn-ast
+	      (list (sicl-ast:make-setq-ast
+		     index
+		     (sicl-ast:make-u+-ast
+		      (list index (convert-constant 2))))
+		    (sicl-ast:make-go-ast again-ast)))))
+	   out-ast))
+	 new-env)
+	(progn
+	  ;; Add the supplied-p parameter to the environment. 
+	  (setf new-env
+		(sicl-env:add-lexical-variable-entry env (caddr key)))
+	  (let* (;; Find the info block corresponding to the
+		 ;; supplied-p parameter.
+		 (info (sicl-env:variable-info (caddr key) new-env))
+		 ;; Find the location that was allocated for the parameter. 
+		 (supplied-p-location (sicl-env:location info)))
+	    (values
+	     (sicl-ast:make-tagbody-ast
+	      (list
+	       (sicl-ast:make-setq-ast index (convert-constant start))
+	       again-ast
+	       (sicl-ast:make-if-ast
+		(sicl-ast:make-u<=-ast (list argcount-temp index))
+		(sicl-ast:make-progn-ast
+		 (list (sicl-ast:make-setq-ast location init-ast)
+		       (sicl-ast:make-setq-ast supplied-p-location
+					       (convert-constant nil))
+		       (sicl-ast:make-go-ast out-ast)))
+		(sicl-ast:make-if-ast
+		 (sicl-ast:make-==-ast
+		  (list (sicl-ast:make-arg-ast index)
+			(convert-constant (caar key))))
+		 (sicl-ast:make-progn-ast
+		  (list (sicl-ast:make-setq-ast
+			 location
+			 (sicl-ast:make-arg-ast
+			  (sicl-ast:make-u+-ast
+			   (list index (convert-constant 1)))))
+			(sicl-ast:make-setq-ast supplied-p-location
+						(convert-constant t))
+			(sicl-ast:make-go-ast out-ast)))
+		 (sicl-ast:make-progn-ast
+		  (list (sicl-ast:make-setq-ast
+			 index
+			 (sicl-ast:make-u+-ast
+			  (list index (convert-constant 2))))
+			(sicl-ast:make-go-ast again-ast)))))
+	       out-ast))
+	     new-env))))))
+
+;;; Return two values.  The first value is a list of ASTs, one for
+;;; each keyword parameter.  The second value is the environment
+;;; given as argument, augmented with the keyword parameters, and the
+;;; supplied-p parameters if any.
+(defun convert-all-keys (keys env argcount-temp start)
+  (let ((new-env env))
+    (values 
+     (loop for key in keys
+	   collect (multiple-value-bind (ast env-temp)
+		       (convert-one-key key new-env argcount-temp start)
+		     (setf new-env env-temp)
+		     ast))
+     new-env)))
+
 (defun convert-ordinary-lambda-list (lambda-list env)
   (let* ((new-env env)
 	 (argcount-temp (sicl-env:make-lexical-location (gensym)))
@@ -364,6 +489,16 @@
 	     (+ (length (sicl-code-utilities:required lambda-list))
 		(length (sicl-code-utilities:optionals lambda-list))))
 	  (setf parsers (append parsers (list ast)))
+	  (setf new-env env-temp))))
+    (let ((keys (sicl-code-utilities:keys lambda-list)))
+      (unless (eq keys :none)
+	(multiple-value-bind (asts env-temp)
+	    (convert-all-keys
+	     keys
+	     new-env
+	     argcount-temp
+	     (length (sicl-code-utilities:required lambda-list)))
+	  (setf parsers (append parsers asts))
 	  (setf new-env env-temp))))
     (values (sicl-ast:make-progn-ast parsers)
 	    new-env)))
