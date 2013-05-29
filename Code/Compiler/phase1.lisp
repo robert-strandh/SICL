@@ -283,6 +283,55 @@
 		     ast))
      new-env)))
 
+;;; Return two values.  The first value is an AST that accumulates the
+;;; remaining arguments in a lexical variable, and the second is the
+;;; environment passed as an argument, augmented with that lexical
+;;; variable. 
+;;;
+;;; The AST is roughly equivalent to the following form:
+;;;
+;;;    (tagbody (setq rest nil)
+;;;             (setq index start)
+;;;           again
+;;;             (if (>= index argcount)
+;;;                 (go out))
+;;;             (setq rest (cons (arg index) rest))
+;;;             (setq index (+ index 1))
+;;;             (go again)
+;;;           out)
+(defun convert-rest (rest env argcount-temp start)
+  (let* ((new-env (sicl-env:add-lexical-variable-entry env rest))
+	 ;; Find the info block corresponding to the parameter.
+	 (info (sicl-env:variable-info rest new-env))
+	 ;; Find the location that was allocated for the parameter. 
+	 (location (sicl-env:location info))
+	 ;; Create a temporary lexical variable for the index.
+	 (index (sicl-env:make-lexical-location (gensym)))
+	 (again-ast (sicl-ast:make-tag-ast 'again))
+	 (out-ast (sicl-ast:make-tag-ast 'out)))
+    (values
+     (sicl-ast:make-tagbody-ast
+      (list
+       (sicl-ast:make-setq-ast location (convert-constant nil))
+       (sicl-ast:make-setq-ast index (convert-constant start))
+       again-ast
+       (sicl-ast:make-if-ast
+	(sicl-ast:make-u<=-ast
+	 (list argcount-temp index))
+	(sicl-ast:make-go-ast out-ast)
+	(convert-constant nil))
+       (sicl-ast:make-setq-ast
+	location
+	(sicl-ast:make-call-ast
+	 (sicl-env:location (sicl-env:function-info 'cons env))
+	 (list (sicl-ast:make-arg-ast index) location)))
+       (sicl-ast:make-setq-ast
+	index
+	(sicl-ast:make-u+-ast (list index (convert-constant 1))))
+       (sicl-ast:make-go-ast again-ast)
+       out-ast))
+     new-env)))
+
 (defun convert-ordinary-lambda-list (lambda-list env)
   (let* ((new-env env)
 	 (argcount-temp (sicl-env:make-lexical-location (gensym)))
@@ -295,14 +344,27 @@
 	 new-env)
       (setf parsers (append parsers asts))
       (setf new-env env-temp))
-    (multiple-value-bind (asts env-temp)
-	(convert-all-optionals
-	 (sicl-code-utilities:optionals lambda-list)
-	 new-env
-	 argcount-temp
-	 (length (sicl-code-utilities:required lambda-list)))
-      (setf parsers (append parsers asts))
-      (setf new-env env-temp))
+    (let ((optionals (sicl-code-utilities:optionals lambda-list)))
+      (unless (eq optionals :none)
+	(multiple-value-bind (asts env-temp)
+	    (convert-all-optionals
+	     optionals
+	     new-env
+	     argcount-temp
+	     (length (sicl-code-utilities:required lambda-list)))
+	  (setf parsers (append parsers asts))
+	  (setf new-env env-temp))))
+    (let ((rest (sicl-code-utilities:rest-body lambda-list)))
+      (unless (eq rest :none)
+	(multiple-value-bind (ast env-temp)
+	    (convert-rest
+	     rest
+	     new-env
+	     argcount-temp
+	     (+ (length (sicl-code-utilities:required lambda-list))
+		(length (sicl-code-utilities:optionals lambda-list))))
+	  (setf parsers (append parsers (list ast)))
+	  (setf new-env env-temp))))
     (values (sicl-ast:make-progn-ast parsers)
 	    new-env)))
 
