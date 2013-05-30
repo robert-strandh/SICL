@@ -1019,7 +1019,8 @@
 ;;;
 ;;; Class ARGCOUNT-AST.
 ;;;
-;;; The value is the argument count to a function.
+;;; The value is the argument count to a function, represented as a
+;;; fixnum.
 
 (defclass argcount-ast (ast)
   ())
@@ -1036,9 +1037,9 @@
 ;;;
 ;;; Class ARG-AST.
 ;;;
-;;; The value is one argument to a function.  
-;;; Arguments are numbered from 0 to C-1 where C
-;;; is the argcount. 
+;;; The value is one argument to a function.  The argument can be any
+;;; AST, but it is typically very simple, such as a constant or a
+;;; lexical variable.  The argument is interpreted as a fixnum. 
 
 (defclass arg-ast (ast)
   ((%index-ast :initarg :index-ast :reader index-ast)))
