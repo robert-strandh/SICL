@@ -409,9 +409,6 @@
 		 :name name
 		 :definition expander))
 
-(defun add-global-macro-entry (env name expander)
-  (add-to-environment env (make-global-macro-entry name expander)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOCAL-MACRO-ENTRY.
@@ -430,6 +427,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SPECIAL-OPERATOR-ENTRY.
+;;;
+;;; Special operator entries are base entries.  They occur in the
+;;; FUNCTION namespace of a global environment.  A special operator
+;;; entry represents a special operator, as opposed to an ordinary
+;;; function or a macro.
+;;;
+;;; The HyperSpec makes no provision for creating or removing special
+;;; operators, so we assume that all special operator entries that
+;;; will ever exist are created when the global environment is
+;;; created.
 
 (defclass special-operator-entry (named-entry function-space)
   ())
