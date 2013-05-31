@@ -139,18 +139,16 @@
 ;;; the head symbol.
 (defmethod convert-compound ((head symbol) form env)
   (let ((info (sicl-env:function-info head env)))
-    (if (null info)
-	(error "no such function ~s" head)
-	(sicl-ast:make-call-ast
-	 (if (typep info 'sicl-env:global-location-info)
-	     (sicl-ast:make-memref-ast
-	      (sicl-ast:make-u+-ast
-	       (list (sicl-ast:make-load-time-value-ast
-		      `(sicl-word:find-function-cell ',head))
-		     (sicl-ast:make-immediate-ast
-		      sicl-configuration:+cdr-offset+))))
-	     (sicl-env:location info))
-	 (convert-sequence (cdr form) env)))))
+    (sicl-ast:make-call-ast
+     (if (typep info 'sicl-env:global-location-info)
+	 (sicl-ast:make-memref-ast
+	  (sicl-ast:make-u+-ast
+	   (list (sicl-ast:make-load-time-value-ast
+		  `(sicl-word:find-function-cell ',head))
+		 (sicl-ast:make-immediate-ast
+		  sicl-configuration:+cdr-offset+))))
+	 (sicl-env:location info))
+     (convert-sequence (cdr form) env))))
 
 ;;; Method to be used when the head of a compound form is a
 ;;; CONS.  Then the head must be a lambda expression.
@@ -684,9 +682,7 @@
 
 (defun convert-named-function (name environment)
   (let ((info (sicl-env:function-info name environment)))
-    (cond ((null info)
-	   (error "no such function ~s" name))
-	  ((typep info 'sicl-env:global-location-info)
+    (cond ((typep info 'sicl-env:global-location-info)
 	   (sicl-ast:make-memref-ast
 	    (sicl-ast:make-u+-ast
 	     (list (sicl-ast:make-load-time-value-ast
