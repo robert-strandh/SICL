@@ -773,13 +773,13 @@
   (or (find-if (lambda (entry)
 		 (and (eq (name entry) name)
 		      (typep entry 'global-macro-entry)))
-	       (function environment))
+	       (functions environment))
       (find-if (lambda (entry)
 		 (and (eq (name entry) name)
 		      (typep entry 'global-function-entry)
-		      (not (null location entry))
-		      (not (eq (car (storage (location entry))) +unbound+)))
-	       (functions environment)))))
+		      (not (null (location entry)))
+		      (not (eq (car (storage (location entry))) +unbound+))))
+	       (functions environment))))
 
 ;;; I am not sure what the optional environment argument could be.  It
 ;;; seems to me that it must either be a global environment, i.e. an
@@ -796,7 +796,7 @@
 			     (functions environment))))
     (if (null c-m-entry)
 	nil
-	(expander c-m-entry))))
+	(definition c-m-entry))))
 
 (defun (setf compiler-macro-function) (new-function name &optional environment)
   (unless (null environment)
@@ -808,17 +808,37 @@
 				(and (eq (location entry) base-entry)
 				     (typep entry 'compiler-macro-entry)))
 			      (functions *global-environment*))))
-      (if (null c-m-entry)
-	  (unless (null new-function)
-	    (push (make-compiler-macro-entry name new-function)
-		  (function *global-environment*)))
-	  (if (null new-function)
-	      (setf (functions *global-environment*)
-		    (delete c-m-entry (functions *global-environment*)
-			    :test #'eq))
-	      (setf (expander c-m-entry)
-		    new-function)))))
+      ;; Remove the old entry if there was one.
+      (unless (null c-m-entry)
+	(setf (functions *global-environment*)
+	      (delete c-m-entry (functions *global-environment*)
+		      :test #'eq)))
+      ;; Add a new entry unless the new function is NIL.
+      (unless (null new-function)
+	(push (make-compiler-macro-entry name new-function)
+	      (functions *global-environment*)))))
   new-function)
+
+(defun compiler-macroexpand-1 (form &optional env)
+  (if (symbolp (car form))
+      (let* ((base-entry (find-function (car form) env))
+	     (c-m-entry (find-if (lambda (entry)
+				   (and (eq (location entry) base-entry)
+					(typep entry 'compiler-macro-entry)))
+				 (functions *global-environment*))))
+	(if (null c-m-entry)
+	    form
+	    (funcall (coerce *macroexpand-hook* 'function)
+		     (definition c-m-entry)
+		     form
+		     env)))
+      form))
+
+(defun compiler-macroexpand (form &optional env)
+  (loop for expanded-form = (compiler-macroexpand-1 form env)
+	until (eq expanded-form form)
+	do (setf form expanded-form))
+  form)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
