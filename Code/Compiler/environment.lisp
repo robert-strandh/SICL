@@ -443,6 +443,52 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class COMPILER-MACRO-ENTRY.
+;;;
+;;; The HyperSpec is very skimpy when it comes to compiler macros.  In
+;;; section 3.2.2.1 it says that "A compiler macro can be defined for
+;;; a name that also names a function or a macro."  This sentence can
+;;; be interpreted in several ways, but we take it to mean that when a
+;;; compiler macro is defined, there must already be a function or a
+;;; macro with the same name.  As a consequence, we make compiler
+;;; macro entries AUXILIARY, and such an entry refers either to a
+;;; global function entry or to a global macro entry.
+;;;
+;;; Compiler macro entries are thus auxiliary entries.  They occur in
+;;; the FUNCTION namespace of a global environment.  A compiler macro
+;;; entry refers either to a global function entry or to a global
+;;; macro entry.  Compiler macros are by definition global.  The
+;;; HyperSpec makes no provision for creating local compiler macros.
+;;; 
+;;; A compiler macro entry is created as a result of a call to (SETF
+;;; COMPILER-MACRO-FUNCTION).  If there is a global macro entry with
+;;; the same name, then that global macro entry becomes the base entry
+;;; for the compiler macro entry.  If not, and there is a global
+;;; function entry with the same name, and that global function entry
+;;; has a location where the storage cell is not +unbound+, then that
+;;; global function entry becomes the base entry for the compiler
+;;; macro entry.
+;;; 
+;;; It appears from the HyperSpec that a compiler macro can be removed
+;;; by giving the argument NIL to (SETF COMPILER-MACRO-FUNCTION).  As
+;;; a consequence, the entry (if it exists) is removed as a result of
+;;; such a call.  A compiler macro entry is also removed as a result
+;;; of calling FMAKUNBOUND on the name, and as a result of calling
+;;; (SETF MACRO-FUNCTION) when base entry of the compiler macro entry
+;;; is a global function entry, and as a result of calling (SETF
+;;; FDEFINITION) or (SETF SYMBOL-FUNCTION) when the base entry of the
+;;; compiler entry is a global macro entry.
+
+(defclass compiler-macro-entry (macro-entry)
+  ())
+
+(defun make-compiler-macro-entry (name expander)
+  (make-instance 'compiler-macro-entry
+		 :name name
+		 :definition expander))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class BLOCK-ENTRY.
 
 (defclass block-entry (block-space definition-entry)
