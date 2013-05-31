@@ -85,7 +85,6 @@
    #:add-special-variable-entry
    #:add-lexical-variable-entry
    #:add-symbol-macro-entry
-   #:add-global-function-entry
    #:add-local-function-entry
    #:add-local-macro-entry
    #:add-block-entry
@@ -151,7 +150,7 @@
    #:u<-ast #:make-u<-ast
    #:u<=-ast #:make-u<=-ast
    #:argcount-ast #:make-argcount-ast
-   #:arg-ast #:make-arg-ast #:index
+   #:arg-ast #:make-arg-ast #:index-ast
    #:halt-ast #:make-halt-ast))
 
 (defpackage #:sicl-compiler-phase-1
