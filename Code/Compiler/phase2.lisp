@@ -415,7 +415,7 @@
 	((typep argument 'sicl-ast:argcount-ast)
 	 (sicl-mir:make-argcount-input))
 	((typep argument 'sicl-ast:arg-ast)
-	 (sicl-mir:make-arg-input (sicl-ast:index argument)))
+	 (sicl-mir:make-arg-input (sicl-ast:index-ast argument)))
 	(t
 	 (new-temporary))))
 
