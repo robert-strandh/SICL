@@ -764,6 +764,59 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compiler macros.
+
+;;; If there is a compiler macro entry, it must refer to a base entry
+;;; which is either a global macro entry or to a global function entry
+;;; that is bound.  This function searches for such a base entry.
+(defun find-base-entry (name environment)
+  (or (find-if (lambda (entry)
+		 (and (eq (name entry) name)
+		      (typep entry 'global-macro-entry)))
+	       (function environment))
+      (find-if (lambda (entry)
+		 (and (eq (name entry) name)
+		      (typep entry 'global-function-entry)
+		      (not (null location entry))
+		      (not (eq (car (storage (location entry))) +unbound+)))
+	       (functions environment)))))
+
+;;; I am not sure what the optional environment argument could be.  It
+;;; seems to me that it must either be a global environment, i.e. an
+;;; instance of GLOBAL-ENVIRONMENT, a local environment, or NIL.  In
+;;; the last two cases, unless I am wrong, the value of
+;;; *global-envrionment* must be used. 
+(defun compiler-macro-function (name &optional environment)
+  (unless (typep environment 'global-environment)
+    (setf environment *global-environment*))
+  (let* ((base-entry (find-base-entry name environment))
+	 (c-m-entry (find-if (lambda (entry)
+			       (and (eq (location entry) base-entry)
+				    (typep entry 'compiler-macro-entry)))
+			     (functions environment))))
+    (if (null c-m-entry)
+	nil
+	(expander c-m-entry))))
+
+(defun (setf compiler-macro-function) (new-function name &optional environment)
+  (unless (null environment)
+    (error "Environment object must be nil."))
+  (let ((base-entry (find-base-entry name environment)))
+    (when (null base-entry)
+      (error "A global macro or a global function must already exist."))
+    (let ((c-m-entry (find-if (lambda (entry)
+				(and (eq (location entry) base-entry)
+				     (typep entry 'compiler-macro-entry)))
+			      (functions *global-environment*))))
+      (if (null c-m-entry)
+	  (push (make-compiler-macro-entry name new-function)
+		(function *global-environment*))
+	  (setf (expander c-m-entry)
+		new-function))))
+  new-function)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Querying the environment.
 
 (defun find-in-namespace (name environment namespace)
