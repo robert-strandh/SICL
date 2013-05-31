@@ -32,6 +32,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; In the native compiler, we use a special immediate value to
+;;; indicate that some location is unbound.  In the cross compiler, we
+;;; use a unique CONS cell. 
+
+(defvar +unbound+ (list nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global environment.
 ;;;
 ;;; The FUNCTION namespace contains three types of entries:
@@ -126,7 +134,7 @@
 ;;; environment.  This is the case for globally defined variables and
 ;;; globally defined functions.
 (defclass global-location (location)
-  ((%storage :initform (list nil) :reader storage)))
+  ((%storage :initform (list +unbound+) :reader storage)))
 
 (defun make-global-location (name)
   (make-instance 'global-location :name name))
@@ -260,6 +268,72 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class GLOBAL-FUNCTION-ENTRY.
+;;;
+;;; Global function entries are base entries.  They occur in the
+;;; FUNCTION namespace of a global environment.  A global function
+;;; entry represents a globally defined ordinary function, as opposed
+;;; to a macro or a special operator.
+;;;
+;;; If a global function entry exists for some name N, then there can
+;;; not simultaneously be a special operator entry for N.  An attempt
+;;; to create a global function entry when there is already a special
+;;; operator entry will fail. 
+;;; 
+;;; Creating a global function entry with a name N when there is
+;;; already a global macro entry with the name N causes the global
+;;; macro entry to be removed.  However, creating a global macro entry
+;;; with a name N when there is already a global function entry with a
+;;; name N causes the global function entry to be removed only if it
+;;; has no LOCATION associated with it.  If it has a location
+;;; assocated with it, this means that other functions may exist that
+;;; use the name N as a function, so the entry can not be removed.
+;;; For this reason, it is possible that there simultaneously exist a
+;;; global macro entry and a global function entry for the same name
+;;; N.  However, in that case, the storage cell of the location of the
+;;; global function entry always contains +unbound+.
+;;;
+;;; A global function entry can come into existence in several ways:
+;;; 
+;;;  * Using (SETF FDEFINITION) on a name that is not the name of a
+;;;    special operator.  A LOCATION for the entry is created, and the
+;;;    storage cell will be set to the new definition.
+;;;
+;;;  * Proclaiming FTYPE, INLINE, NOTINLINE or DYNAMIC extent with
+;;;    FUNCTION using the name.  In this case, the entry is
+;;;    initialized with LOCATION equal to NIL.  The appropriate
+;;;    auxiliary entry is created and will refer to the base entry.
+;;;
+;;;  * When the compiler sees a compound form with the CAR containing
+;;;    a symbol that is not associated with an entry in the FUNCTION
+;;;    namespace.  In this case, a LOCATION for the entry is created
+;;;    and the storage cell of the entry is initialized to +unbound+.
+;;;    A warning is also signaled, indicating that the function is
+;;;    undefined.
+;;;
+;;; A global function entry may be removed when (SETF MACRO-FUNCTION)
+;;; is used with the same name, provided that the LOCATION of the
+;;; global function entry is NIL.  In this case, any auxiliary entry
+;;; that refers to the global function entry is removed as well.  
+;;; 
+;;; A global function entry is NOT removed as a result of a call to
+;;; FMAKUNBOUND.  The reason is that either it has a non-NIL LOCATION,
+;;; so it can not be removed, or it was created as a result of a
+;;; proclamation, in which case we want to preserve those
+;;; proclamations, so we can not remove the entry for that reason. 
+;;;
+;;; A global function entry with a LOCATION of NIL will have a
+;;; location created for it in the following situations:
+;;;
+;;;  * Using (SETF FDEFINITION) on a name.  The storage cell of the
+;;;    newly created LOCATION is set to the new definition.
+;;;
+;;;  * When the compiler sees a compound form with the CAR containing
+;;;    the name of this entry, and there is not simultaneously any
+;;;    other definition of the name in the FUNCTION namespace, either
+;;;    as a macro (global or local) or as a local function.  In this
+;;;    case, a LOCATION for the entry is created and the storage cell
+;;;    of the entry is initialized to +unbound+.  A warning is also
+;;;    signaled, indicating that the function is undefined.
 
 (defclass global-function-entry (function-entry)
   ((%bound :initform nil :initarg :bound :accessor bound)))
@@ -268,9 +342,6 @@
   (make-instance 'global-function-entry
 		 :name name
 		 :location (make-global-location name)))
-
-(defun add-global-function-entry (env name)
-  (add-to-environment env (make-global-function-entry name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -301,9 +372,37 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class GLOBAL-MACRO-ENTRY.
+;;;
+;;; Global macro entries are base entries.  They occur in the FUNCTION
+;;; namespace of a global environment.  A global macro entry
+;;; represents a globally defined macro, as opposed to an ordinary
+;;; function or a special operator.
+;;;
+;;; There can simultaneously be a global macro entry and either a
+;;; special operator entry or a global function entry (but not both)
+;;; with the same name.  The HyperSpec specifically allows for a macro
+;;; and a special operator for the same name to exist.  A global
+;;; function entry can exist at the same time as a global macro entry
+;;; as a result of the global macro entry being created using (SETF
+;;; MACRO-FUNCTION) but the global function entry can not be removed,
+;;; because its LOCATION is not NIL.  
+;;;
+;;; A global macro entry can not have any auxiliary entries associated
+;;; with it.
+;;;
+;;; A global macro entry can only come into existence by the use of
+;;; (SETF MACRO-FUNCTION).  
+;;;
+;;; A global macro entry may be removed in the following situations: 
+;;;
+;;;  * When (SETF FDEFINITION) is used to either create a global
+;;;    function entry, or to making an existing global function entry
+;;;    FBOUND by storing a new definition in its storage cell. 
+;;;
+;;;  * As a result of calling FMAKUNBOUND on the name of the entry. 
 
 (defclass global-macro-entry (macro-entry)
-  ((%bound :initform nil :initarg :bound :accessor bound)))
+  ())
 
 (defun make-global-macro-entry (name expander)
   (make-instance 'global-macro-entry
