@@ -28,7 +28,7 @@
 ;;;; startup environment that happen when lexial variables, functions,
 ;;;; macros etc, are introduced during the compilation of a form.
 ;;;; This part is represented as a simply linked list of entries, with
-;;;; no regard to namespaces.  Each entry 
+;;;; no regard to namespaces.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -50,9 +50,8 @@
    ;; The variable namespace.  It contains entries for
    ;; symbol macros, constant variables, and special variables. 
    (%variables :initform '() :accessor variables)
-   ;; The function namespace.  It contains entries for
-   ;; macros and functions.
-   ;; FIXME: what about compiler macros?
+   ;; The function namespace.  It contains entries for macros,
+   ;; functions, compiler macros, and special operators.
    (%functions :initform '() :accessor functions)
    (%proclamations :initform '() :accessor proclamations)))
 
@@ -109,39 +108,53 @@
 ;;;
 ;;; The nature of the entry.
 
-;;; For entries that have a complete definition in 
-;;; the environment.
+;;; For entries that have a complete definition in the environment.
+;;; This is the case for macros, symbol macros, constant variables,
+;;; blocks, and go tags.
 (defclass definition-entry (entry named-entry)
   ((%definition :initarg :definition :reader definition)))
 
-;;; For entries representing places that need
-;;; to be accessed at runtime. 
+;;; For entries representing places that need to be accessed at
+;;; runtime.  This is the case for variables and functions.  A
+;;; location can be a global location, a lexical location, or a
+;;; special location.
 (defclass location ()
   ((%name :initarg :name :reader name)))
 
-;;; Every use of the environment must get the same
-;;; place, so the storage is allocated here. 
+;;; A global location is a location that has global storage associated
+;;; with it, and that storage is allocated directly in the global
+;;; environment.  This is the case for globally defined variables and
+;;; globally defined functions.
 (defclass global-location (location)
   ((%storage :initform (list nil) :reader storage)))
 
 (defun make-global-location (name)
   (make-instance 'global-location :name name))
 
-;;; For special locations, the name is the symbol which must be used
-;;; at runtime to access the value.
+;;; A special location does not have any storage associated with it.
+;;; Only the name is important, because the name is used to access the
+;;; dynamic runtime environment.
 (defclass special-location (location)
   ())
 
 (defun make-special-location (name)
   (make-instance 'special-location :name name))
 
-;;; The name of a lexical location is just used to display it.
+;;; A lexical location does not have any storage associated with it.
+;;; The storage for a lexical location is determined by the compiler,
+;;; and it can sometimes be in a local lexical environment, sometimes
+;;; on the stack and sometimes in a register.  The name of a lexical
+;;; location is just used to display it in error messages and for
+;;; debugging purposes.
 (defclass lexical-location (location)
   ())
 
 (defun make-lexical-location (name)
   (make-instance 'lexical-location :name name))
 
+;;; This type of entry has some kind of location associated with it.
+;;; This is the case for special variables, lexical variables, and
+;;; functions.
 (defclass location-entry (entry named-entry)
   ((%location :initarg :location :reader location)))
 
@@ -680,7 +693,15 @@
 (defun function-info (name env)
   (let ((entry (find-function name env)))
     (cond ((null entry)
-	   nil)
+	   (warn "Undefined function: ~a" name)
+	   (setf entry (make-global-function-entry name))
+	   (push entry (functions *global-environment*))
+	   (make-instance 'global-location-info
+	     :location (location entry)
+	     :type nil
+	     :inline-info nil
+	     :ignore-info nil
+	     :dynamic-extent-p nil))
 	  ((typep entry 'local-macro-entry)
 	   (make-instance 'macro-info
 			  :name (name entry)
