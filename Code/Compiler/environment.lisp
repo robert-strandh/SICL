@@ -1248,9 +1248,9 @@
 ;;; global-function entry, we replace the definition.  If no existing
 ;;; entry is found, we create one.
 ;;;
-;;; In the case of an existing global-macro-entry, it is safe to
-;;; remove it, because there can be no declarations, so no auxiliary
-;;; entries referring to it.
+;;; In the case of an existing global-macro-entry, we must remove it.
+;;; If in addition, it has a compiler macro entry referring to it, we
+;;; must remove that compiler macro entry as well.
 
 (defun (setf fdefinition) (new-definition function-name)
   (unless (function-name-p function-name)
