@@ -68,6 +68,49 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Locations. 
+;;;
+;;; Locations are the values of slots of entries representing places
+;;; that need to be accessed at runtime.  This is the case for
+;;; variables and functions.  A location can be a global location, a
+;;; lexical location, or a special location.
+
+(defclass location ()
+  ((%name :initarg :name :reader name)))
+
+;;; A global location is a location that has global storage associated
+;;; with it, and that storage is allocated directly in the global
+;;; environment.  This is the case for globally defined functions.
+(defclass global-location (location)
+  ((%storage :initform (list +unbound+) :reader storage)))
+
+(defun make-global-location (name)
+  (make-instance 'global-location :name name))
+
+;;; Like a global location, a special location also has storage
+;;; associated with it, but it serves a somewhat different purpose.
+;;; It is used only when an attempt to find a special binding in the
+;;; dynamic environment fails.  
+(defclass special-location (location)
+  ((%storage :initform (list +unbound+) :reader storage)))
+
+(defun make-special-location (name)
+  (make-instance 'special-location :name name))
+
+;;; A lexical location does not have any storage associated with it.
+;;; The storage for a lexical location is determined by the compiler,
+;;; and it can sometimes be in a local lexical environment, sometimes
+;;; on the stack and sometimes in a register.  The name of a lexical
+;;; location is just used to display it in error messages and for
+;;; debugging purposes.
+(defclass lexical-location (location)
+  ())
+
+(defun make-lexical-location (name)
+  (make-instance 'lexical-location :name name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Entries in the package namespace.
  
 (defclass package ()
@@ -100,17 +143,36 @@
 (defclass entry ()
   ())
 
+;;; A base entry is an entry that does not refer to any other entry.
+;;; Entries that represent functions, variables, macros, and optimize
+;;; declarations are examples of base entries. 
+(defclass base-entry (entry)
+  ())
+
+;;; An auxiliary entry contains a reference to a base entry.  Type
+;;; declarations, dynamic-extent declarations, and ignore declarations
+;;; are examples of auxiliary entries, because they all refer to some
+;;; other entity (a variable name or a function name).
+(defclass auxiliary-entry (entry)
+  ((%base-entry :initarg :base-entry :reader base-entry)))
+
+;;; A mixin class for entries having a name associated with them. 
 (defclass named-entry ()
   ((%name :initarg :name :reader name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Namespaces.
+;;; We define a mixin class for each namespace.  In the local
+;;; environment, entries are just a linked list, so the namespaces are
+;;; all mixed up.  By making the namespace part of the entry type, we
+;;; can locate entries in a particular namespace in the local
+;;; environment.
 
 (defclass function-space () ())
 (defclass variable-space () ())
 (defclass block-space () ())
 (defclass tag-space () ())
+(defclass declaration-space () ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -119,56 +181,14 @@
 ;;; For entries that have a complete definition in the environment.
 ;;; This is the case for macros, symbol macros, constant variables,
 ;;; blocks, and go tags.
-(defclass definition-entry (entry named-entry)
+(defclass definition-entry ()
   ((%definition :initarg :definition :reader definition)))
-
-;;; For entries representing places that need to be accessed at
-;;; runtime.  This is the case for variables and functions.  A
-;;; location can be a global location, a lexical location, or a
-;;; special location.
-(defclass location ()
-  ((%name :initarg :name :reader name)))
-
-;;; A global location is a location that has global storage associated
-;;; with it, and that storage is allocated directly in the global
-;;; environment.  This is the case for globally defined variables and
-;;; globally defined functions.
-(defclass global-location (location)
-  ((%storage :initform (list +unbound+) :reader storage)))
-
-(defun make-global-location (name)
-  (make-instance 'global-location :name name))
-
-;;; A special location does not have any storage associated with it.
-;;; Only the name is important, because the name is used to access the
-;;; dynamic runtime environment.
-(defclass special-location (location)
-  ())
-
-(defun make-special-location (name)
-  (make-instance 'special-location :name name))
-
-;;; A lexical location does not have any storage associated with it.
-;;; The storage for a lexical location is determined by the compiler,
-;;; and it can sometimes be in a local lexical environment, sometimes
-;;; on the stack and sometimes in a register.  The name of a lexical
-;;; location is just used to display it in error messages and for
-;;; debugging purposes.
-(defclass lexical-location (location)
-  ())
-
-(defun make-lexical-location (name)
-  (make-instance 'lexical-location :name name))
 
 ;;; This type of entry has some kind of location associated with it.
 ;;; This is the case for special variables, lexical variables, and
 ;;; functions.
-(defclass location-entry (entry named-entry)
+(defclass location-entry ()
   ((%location :initarg :location :reader location)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Constant variable entry.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -178,7 +198,8 @@
 ;;; does not require any storage to be accessed at runtime becuase its
 ;;; value is propagated at compile time.
 
-(defclass constant-variable-entry (variable-space definition-entry)
+(defclass constant-variable-entry
+    (base-entry named-entry variable-space definition-entry)
   ())
 
 (defun make-constant-variable-entry (name definition)
@@ -186,45 +207,61 @@
 		 :name name
 		 :definition definition))
 
-(defun add-constant-variable-entry (env name definition)
-  (add-to-environment env (make-constant-variable-entry name definition)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Location entries.
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SPECIAL-VARIABLE-ENTRY.
 ;;;
+;;; A special variable entry can be in two stages of existence. 
+;;;
+;;;  1: It exists, and it has a location associated with it, but
+;;;     it it has not been DEFINED. 
+;;;
+;;;  2: It exists, it has a location associated with it, and it has
+;;;     been DEFINED.
+;;;
+;;; A special variable entry in stage 1 is created for a variable in
+;;; two different situations: The first situation is when a
+;;; proclamation that refers to it is evaluated, typically stating the
+;;; type for the variable.  The second situation is when the compiler
+;;; sees a free variable for which no entry exists, or when it sees a
+;;; SPECIAL declaration of a variable for which no entry exists.  Code
+;;; that refers to such a variable must be able to refer to the global
+;;; value of the variable in case it is not bound in the dynamic
+;;; environment.  The code does that by keeping a copy of the storage
+;;; cell associated with the variable in its linkage vector, so the
+;;; location must exist in this stage.  Notice that the storage must
+;;; exist even though the variable has not been DEFINED, because it
+;;; might become DEFINED after the code has been compiled, and there
+;;; is no way to modify the code a posteriori so that it refers to a
+;;; location that initially did not exist.  Whenever the compiler
+;;; processes a variable binding, it checks whether a globally special
+;;; variable with that name exists, and if so, creates a special
+;;; binding.  An entry in stage 1 does not trigger that behavior in
+;;; the compiler, so any new binding of the varible is considered to
+;;; be a lexical binding.
+;;;
+;;; Stage 2 happens when a DEFVAR or DEFPARAMETER form has been
+;;; evaluated that refers to the variable.  The main difference with
+;;; stage 1, is that in stage 2, when the compiler processes a binding
+;;; of a variable with this name, then the binding is always a special
+;;; binding.
 
-(defclass special-variable-entry (variable-space location-entry)
-  ())
-  
+(defclass special-variable-entry
+    (base-entry named-entry variable-space location-entry)
+  ((%defined-p :initform nil :initarg :defined-p :accessor defined-p)))
+
 (defun make-special-variable-entry (name)
   (make-instance 'special-variable-entry
 		 :name name
 		 :location (make-special-location name)))
-
-(defun add-special-variable-entry (env name)
-  (add-to-environment env (make-special-variable-entry name)))
-
-(defclass global-variable-entry (special-variable-entry)
-  ((%bound :initform nil :initarg :bound :accessor bound)
-   (%storage :initform (list nil) :reader storage)))
-
-(defun make-global-variable-entry (name)
-  (make-instance 'global-variable-entry
-		 :name name
-		 :location (make-special-location name)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LEXICAL-VARIABLE-ENTRY.
 ;;;
 
-(defclass lexical-variable-entry (variable-space location-entry)
+(defclass lexical-variable-entry
+    (base-entry named-entry varible-space location-entry)
   ())
 
 (defun make-lexical-variable-entry (name)
@@ -240,7 +277,8 @@
 ;;; Class SYMBOL-MACRO-ENTRY.
 ;;;
 
-(defclass symbol-macro-entry (variable-space definition-entry)
+(defclass symbol-macro-entry
+    (base-entry named-entry variable-space definition-entry)
   ())
 
 (defun make-symbol-macro-entry (name expansion)
@@ -262,7 +300,8 @@
 ;;; only as the common parent class of the classes
 ;;; GLOBAL-FUNCTION-ENTRY and LOCAL-FUNCTION-ENTRY.
 
-(defclass function-entry (function-space location-entry)
+(defclass function-entry
+    (base-entry named-entry function-space location-entry)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -336,7 +375,7 @@
 ;;;    signaled, indicating that the function is undefined.
 
 (defclass global-function-entry (function-entry)
-  ((%bound :initform nil :initarg :bound :accessor bound)))
+  ())
 
 (defun make-global-function-entry (name)
   (make-instance 'global-function-entry
@@ -366,7 +405,8 @@
 ;;; only as the common parent class of the classes
 ;;; GLOBAL-MACRO-ENTRY and LOCAL-MACRO-ENTRY.
 
-(defclass macro-entry (function-space definition-entry)
+(defclass macro-entry
+    (base-entry named-entry function-space definition-entry)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -438,7 +478,8 @@
 ;;; will ever exist are created when the global environment is
 ;;; created.
 
-(defclass special-operator-entry (named-entry function-space)
+(defclass special-operator-entry
+    (base-entry named-entry function-space)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -479,19 +520,21 @@
 ;;; FDEFINITION) or (SETF SYMBOL-FUNCTION) when the base entry of the
 ;;; compiler entry is a global macro entry.
 
-(defclass compiler-macro-entry (macro-entry)
+(defclass compiler-macro-entry
+    (auxiliary-entry function-space definition-entry)
   ())
 
-(defun make-compiler-macro-entry (name expander)
+(defun make-compiler-macro-entry (base-entry expander)
   (make-instance 'compiler-macro-entry
-		 :name name
+		 :base-entry base-entry
 		 :definition expander))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class BLOCK-ENTRY.
 
-(defclass block-entry (block-space definition-entry)
+(defclass block-entry
+    (base-entry named-entry block-space definition-entry)
   ())
   
 (defun make-block-entry (name block)
@@ -506,7 +549,8 @@
 ;;;
 ;;; Class GO-TAG-ENTRY.
 
-(defclass go-tag-entry (tag-space definition-entry)
+(defclass go-tag-entry
+    (base-entry named-entry tag-space definition-entry)
   ())
 
 (defun make-go-tag-entry (name tag)
@@ -532,13 +576,24 @@
 ;;;
 ;;; We do not have a separate declaration entry for FTYPE.
 
-(defclass type-declaration-entry (location-declaration-entry)
+(defclass type-declaration-entry (auxiliary-entry)
   ((%type :initarg :type :reader type)))
 
 (defun make-type-declaration-entry (location-entry type)
   (make-instance 'type-declaration-entry
 		 :location (location location-entry)
 		 :type type))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class INLINE-OR-NOTINLINE-DECLARATION-ENTRY.
+;;;
+;;; This class is not meant to be directly instantiated.  It just
+;;; serves as a base class for the two classes
+;;; INLINE-DECLARATION-ENTRY and NOTINLINE-DECLARATION-ENTRY. 
+
+(defclass inline-or-notinline-declaration-entry (auxiliary-entry)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -566,7 +621,7 @@
 ;;;
 ;;; Class DYNAMIC-EXTENT-DECLARATION-ENTRY.
 
-(defclass dynamic-extent-declaration-entry (location-declaration-entry)
+(defclass dynamic-extent-declaration-entry (auxliary-entry)
   ())
 
 (defun make-dynamic-extent-declaration-entry (location-entry)
@@ -577,7 +632,7 @@
 ;;;
 ;;; Class IGNORE-DECLARATION-ENTRY.
 
-(defclass ignore-declaration-entry (location-declaration-entry)
+(defclass ignore-declaration-entry (auxiliary-entry)
   ())
 
 (defun make-ignore-declaration-entry (location-entry)
@@ -588,12 +643,20 @@
 ;;;
 ;;; Class IGNORABLE-DECLARATION-ENTRY.
 
-(defclass ignorable-declaration-entry (location-declaration-entry)
+(defclass ignorable-declaration-entry (auxiliary-entry)
   ())
 
 (defun make-ignorable-declaration-entry (location-entry)
   (make-instance 'ignorable-declaration-entry
 		 :location (location location-entry)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class AUTONOMOUS-DECLARATION-ENTRY.
+;;;
+;;; This class is the base class for declaration entries that are base
+;;; entries, i.e., declaration entries that do not refer to any other
+;;; entry.
 
 (defclass autonomous-declaration-entry (declaration-entry)
   ())
@@ -602,7 +665,7 @@
 ;;;
 ;;; Class OPTIMIZE-DECLARATION-ENTRY.
 
-(defclass optimize-declaration-entry (autonomous-declaration-entry)
+(defclass optimize-declaration-entry (base-entry)
   ((%quality :initarg :quality)
    (%value :initarg :value)))
 
@@ -616,7 +679,7 @@
 ;;;
 ;;; Class DECLARATION-DECLARATION-ENTRY.
 
-(defclass declaration-declaration-entry (autonomous-declaration-entry)
+(defclass declaration-declaration-entry (base-entry named-entry)
   ((%name :initarg :name :reader name)))
 
 (defun make-declaration-declaration-entry (name)
@@ -1041,8 +1104,11 @@
 		     :key #'name
 		     :test #'equal)))
     (typecase entry
-      ((or global-function-entry global-macro-entry)
-       (bound entry))
+      (global-function-entry
+       (and (not (null (location entry)))
+	    (not (eq (car (storage (location entry))) +unbound+))))
+      (global-macro-entry
+       (definition entry))
       (special-operator-entry
        t)
       (t
@@ -1059,6 +1125,10 @@
 ;;;
 ;;; For a special operator we do nothing.
 ;;;
+;;; Recall that we may simultaneously have a global function entry and
+;;; a global macro for the name.  Furthermore, one of those entries
+;;; may have a compiler macro auxiliar entry referring to it. 
+;;;
 ;;; We could remove the entry altogether, but we have chosen not to do
 ;;; that.  The reason is that we may have other entries that refer to
 ;;; it, such as entries that have to do with whether a function should
@@ -1072,13 +1142,33 @@
 (defun fmakunbound (function-name)
   (unless (function-name-p function-name)
     (error "not a function name ~s" function-name))
-  (let ((entry (find function-name
-		     (functions *global-environment*)
-		     :key #'name
-		     :test #'equal)))
-    (unless (or (null entry)
-		(typep entry 'special-operator-entry))
-      (setf (bound entry) nil))))
+  ;; First see if there is a global macro entry with teh right name.
+  (let ((macro-entry (find-if (lambda (entry)
+				(and (typep entry 'global-macro-entry)
+				     (equal (name entry) function-name)))
+			      (functions *global-environment*))))
+    (unless (null macro-entry)
+      ;; We found such an entry.  Remove it. 
+      (setf (functions *global-environment*)
+	    (delete macro-entry (functions *global-environment*) :test #'eq))
+      ;; If there is a compiler-macro entry referring to that entry,
+      ;; then remove the compiler-macro entry as well. 
+      (setf (functions *global-environment*)
+	    (delete-if (lambda (entry)
+			 (and (typep entry 'compiler-macro-entry)
+			      (eq (base-entry entry) macro-entry)))
+		       (functions *global-environment*)))))
+  ;; Next, see if there is a global function entry.
+  (let ((function-entry (find-if (lambda (entry)
+				   (and (typep entry 'global-function-entry)
+					(equal (name entry) function-name)))
+				 (functions *global-environment*))))
+    (unless (null function-entry)
+      ;; We found such an entry.  Make sure it is unbound.
+      (unless (null (location function-entry))
+	(setf (car (storage (location function-entry))) +unbound+))))
+  ;; Return the function name, as required by the HyperSpec.
+  function-name)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1098,27 +1188,49 @@
 ;;; must decide what to return in the case of a macro or a special
 ;;; operator.  We decide that for a macro, it returns its expander
 ;;; function, and for a special operator, it returns the name. 
+;;;
+;;; Recall that we may simultaneously have a global function entry and
+;;; a global macro for the name.  If that is the case, then the global
+;;; macro entry is the one that is valid.  
 
 (defun fdefinition (function-name)
   (unless (function-name-p function-name)
     (error "not a function name ~s" function-name))
-  (let ((entry (find function-name
-		     (functions *global-environment*)
-		     :key #'name
-		     :test #'equal)))
-    (typecase entry
-      (global-function-entry
-       (if (bound entry)
-	   (car (storage entry))
-	   (error 'undefined-function :name function-name)))
-      (global-macro-entry
-       (if (bound entry)
-	   (definition entry)
-	   (error 'undefined-function :name function-name)))
-      (special-operator-entry
-       function-name)
-      (t
-       (error 'undefined-function :name function-name)))))
+  ;; First see if there is a global macro entry with the right name.
+  (let ((macro-entry
+	  (find-if (lambda (entry)
+		     (and (typep entry 'global-macro-entry)
+			  (equal (name entry) function-name)))
+		   (functions *global-environment*))))
+    (if (not (null macro-entry))
+	;; We found a global macro entry with the right name.
+	;; Return the expansion function associated with it.
+	(definition macro-entry)
+	;; If we did not find a global macro entry, see if there might
+	;; be a global function entry with the right name.
+	(let ((function-entry
+		(find-if (lambda (entry)
+			   (and (typep entry 'global-function-entry)
+				(equal (name entry) function-name)))
+			 (functions *global-environment*))))
+	  (if (not (null function-entry))
+	      ;; We found a global function entry with the right name.
+	      ;; In this case, there can not also be a special
+	      ;; operator entry for the same name.
+	      (if (or (null (location function-entry))
+		      (eq (car (storage (location function-entry))) +unbound+))
+		  (error 'undefined-function :name function-name)
+		  (car (storage (location function-entry))))
+	      ;; If we did not find a global function entry, see if
+	      ;; there might be a special operator entry.
+	      (let ((specop-entry
+		      (find-if (lambda (entry)
+				 (and (typep entry 'special-operator-entry)
+				      (equal (name entry) function-name)))
+			       (functions *global-environment*))))
+		(if (null specop-entry)
+		    (error 'undefined-function :name function-name)
+		    t)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1258,7 +1370,7 @@
 	     (error "function already has a type proclamation"))))))
 
 (defun proclaim-special (name)
-  (pushnew (make-global-variable-entry name)
+  (pushnew (make-special-variable-entry name)
 	   (variables *global-environment*)
 	   :key #'name
 	   :test #'eq))
