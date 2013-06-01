@@ -82,7 +82,6 @@
    #:find-ftype
    #:augment-environment
    #:augment-environment-with-declarations
-   #:add-special-variable-entry
    #:add-lexical-variable-entry
    #:add-symbol-macro-entry
    #:add-local-function-entry
