@@ -59,6 +59,7 @@
 	   #:fboundp
 	   #:fmakunbound
 	   #:special-operator-p
+	   #:compiler-macro-function
 	   )
   (:export
    #:proclaim
@@ -81,7 +82,6 @@
    #:find-ftype
    #:augment-environment
    #:augment-environment-with-declarations
-   #:add-constant-variable-entry
    #:add-special-variable-entry
    #:add-lexical-variable-entry
    #:add-symbol-macro-entry
