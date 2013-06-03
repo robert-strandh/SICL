@@ -237,8 +237,6 @@
    #:== #:s< #:s<= #:u< #:u<=
    #:<< #:>>
    #:halt
-   ;; doesn't strictly belong here
-   #:find-function-cell
    ))
 
 (defpackage #:sicl-procedure-integration

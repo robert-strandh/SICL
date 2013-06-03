@@ -142,7 +142,7 @@
 	 (sicl-ast:make-memref-ast
 	  (sicl-ast:make-u+-ast
 	   (list (sicl-ast:make-load-time-value-ast
-		  `(sicl-word:find-function-cell ',head))
+		  `(sicl-env:find-function-cell ',head))
 		 (sicl-ast:make-immediate-ast
 		  sicl-configuration:+cdr-offset+))))
 	 (sicl-env:location info))
@@ -684,7 +684,7 @@
 	   (sicl-ast:make-memref-ast
 	    (sicl-ast:make-u+-ast
 	     (list (sicl-ast:make-load-time-value-ast
-		    `(sicl-word:find-function-cell ',name))
+		    `(sicl-env:find-function-cell ',name))
 		   (sicl-ast:make-immediate-ast
 		    sicl-configuration:+cdr-offset+)))))
 	  (t (sicl-env:location info)))))
@@ -1054,7 +1054,7 @@
 ;;; Converting FIND-FUNCTION-CELL.
 
 (defmethod convert-compound
-    ((symbol (eql 'sicl-word:find-function-cell)) form environment)
+    ((symbol (eql 'sicl-env:find-function-cell)) form environment)
   (sicl-ast:make-call-ast
    (sicl-ast:make-memref-ast 
     (sicl-ast:make-immediate-ast
