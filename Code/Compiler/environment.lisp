@@ -42,11 +42,12 @@
 ;;;
 ;;; Global environment.
 ;;;
-;;; The FUNCTION namespace contains three types of entries:
+;;; The FUNCTION namespace contains three types of base entries:
 ;;; GLOBAL-FUNCTION-ENTRY, GLOBAL-MACRO-ENTRY, and
 ;;; SPECIAL-OPERATOR-ENTRY.  All special operator entries are global,
 ;;; because there is no mechanism for defining local special
-;;; operators.
+;;; operators.  The FUNCTION name space also contains auxiliary
+;;; entries of type COMPILER-MACRO-ENTRY. 
 
 (defclass global-environment ()
   (;; The package namespace.  A list of packages.
@@ -322,9 +323,8 @@
 ;;; already a global macro entry with the name N causes the global
 ;;; macro entry to be removed.  However, creating a global macro entry
 ;;; with a name N when there is already a global function entry with a
-;;; name N causes the global function entry to be removed only if it
-;;; has no LOCATION associated with it.  If it has a location
-;;; assocated with it, this means that other functions may exist that
+;;; name N doesn not cause the global function entry to be removed.
+;;; The reason for not removing it is that other functions may exist that
 ;;; use the name N as a function, so the entry can not be removed.
 ;;; For this reason, it is possible that there simultaneously exist a
 ;;; global macro entry and a global function entry for the same name
@@ -338,9 +338,10 @@
 ;;;    storage cell will be set to the new definition.
 ;;;
 ;;;  * Proclaiming FTYPE, INLINE, NOTINLINE or DYNAMIC extent with
-;;;    FUNCTION using the name.  In this case, the entry is
-;;;    initialized with LOCATION equal to NIL.  The appropriate
-;;;    auxiliary entry is created and will refer to the base entry.
+;;;    FUNCTION using the name.  Again, A LOCATION for the entry is
+;;;    created, but the storage cell will be set +unbound+.  The
+;;;    appropriate auxiliary entry is created and will refer to the
+;;;    base entry.
 ;;;
 ;;;  * When the compiler sees a compound form with the CAR containing
 ;;;    a symbol that is not associated with an entry in the FUNCTION
@@ -349,30 +350,8 @@
 ;;;    A warning is also signaled, indicating that the function is
 ;;;    undefined.
 ;;;
-;;; A global function entry may be removed when (SETF MACRO-FUNCTION)
-;;; is used with the same name, provided that the LOCATION of the
-;;; global function entry is NIL.  In this case, any auxiliary entry
-;;; that refers to the global function entry is removed as well.  
-;;; 
-;;; A global function entry is NOT removed as a result of a call to
-;;; FMAKUNBOUND.  The reason is that either it has a non-NIL LOCATION,
-;;; so it can not be removed, or it was created as a result of a
-;;; proclamation, in which case we want to preserve those
-;;; proclamations, so we can not remove the entry for that reason. 
-;;;
-;;; A global function entry with a LOCATION of NIL will have a
-;;; location created for it in the following situations:
-;;;
-;;;  * Using (SETF FDEFINITION) on a name.  The storage cell of the
-;;;    newly created LOCATION is set to the new definition.
-;;;
-;;;  * When the compiler sees a compound form with the CAR containing
-;;;    the name of this entry, and there is not simultaneously any
-;;;    other definition of the name in the FUNCTION namespace, either
-;;;    as a macro (global or local) or as a local function.  In this
-;;;    case, a LOCATION for the entry is created and the storage cell
-;;;    of the entry is initialized to +unbound+.  A warning is also
-;;;    signaled, indicating that the function is undefined.
+;;; A global function entry is never removed for reasons mentioned
+;;; above.
 
 (defclass global-function-entry (function-entry)
   ())
