@@ -1342,6 +1342,42 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function FIND-FUNCTION-CELL.
+;;;
+;;; This function is used when a a FASL file is loaded.  When the
+;;; source file was compiled, there was a reference to a named global
+;;; function in it.  As part of loading the FASL file, a CODE OBJECT
+;;; must be built, and that code object contains a LINKAGE VECTOR,
+;;; which contains all the external references of the file that was
+;;; compiled.  External references to named global functions result in
+;;; an entry in the linkage vector containg the CONS cell that is the
+;;; value of the STORAGE slot of the global function entry.  
+;;;
+;;; This function finds that CONS cell and returns it.  Normally, the
+;;; FASL file should be loaded into an environment that contains the
+;;; global function entry, because if it did not already exist, it was
+;;; created as part of the compilation.  However, we must put
+;;; SOMETHING in the linkage vector even if the file happens to be
+;;; loaded into an environment that does not have the global function
+;;; entry that we want.  Otherwise the system will crash when an
+;;; attempt is made to execute the code we loaded.  For that reason,
+;;; we create the global function entry if it so happens that it does
+;;; not exist.
+
+(defun find-function-cell (name)
+  (let ((function-entry
+	  (find-if (lambda (entry)
+		     (and (typep entry 'global-function-entry)
+			  (equal (name entry) function-name)))
+		   (functions *global-environment*))))
+    (when (null function-entry)
+      ;; No function entry found.  Create one.
+      (setf function-entry (make-global-function-entry name))
+      (push function-entry (functions *global-environment*)))
+    (storage (location function-entry))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function (SETF MACRO-FUNCTION).
 ;;;
 ;;; The HyperSpec says that the consequences are undefined if a
