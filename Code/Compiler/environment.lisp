@@ -1449,10 +1449,48 @@
 				   (eq (name entry symbol)))
 				 (variables *global-environment*))))
     (unless (null variable-entry)
-      (setf (storage (location variable-entry)) +unbound+)))
+      (setf (car (storage (location variable-entry))) +unbound+)))
   ;; Return the symbol as required by the HyperSpec
   symbol)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function SYMBOL-VALUE.
+;;;
+
+(defun symbol-value (symbol)
+  (unless (symbolp symbol)
+    (error 'type-error :datum symbol :expected-type 'symbol))
+  (let ((variable-entry (find-if (lambda (entry)
+				   (typep entry 'special-variable-entry)
+				   (eq (name entry symbol)))
+				 (variables *global-environment*))))
+    (if (or (null variable-entry)
+	    (eq (car (storage (location variable-entry))) +unbound+))
+	(error 'unbound-variable :name symbol)
+	(car (storage (location variable-entry))))))
+	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function (SETF SYMBOL-VALUE).
+;;;
+
+;;; FIXME: should check the type here. 
+(defun symbol-value (new-value symbol)
+  (unless (symbolp symbol)
+    (error 'type-error :datum symbol :expected-type 'symbol))
+  (let ((variable-entry (find-if (lambda (entry)
+				   (typep entry 'special-variable-entry)
+				   (eq (name entry symbol)))
+				 (variables *global-environment*))))
+    (when (null variable-entry)
+      (setf variable-entry (make-special-variable-entry symbol))
+      (push (variable-entry (variables *global-environment*))))
+    (setf (car (storage (location variable-entry))) new-value))
+  ;; Return the new value as the HyperSpec requires.
+  new-value)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
