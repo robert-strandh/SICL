@@ -1417,6 +1417,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function BOUNDP.
+;;;
+;;; According to the HyperSpec, this function should return any true
+;;; value of the name is bound in the global environment and false
+;;; otherwise.  We return T when the symbol is bound.  The symbol is
+;;; bound if it is both the case that a special variable entry exists
+;;; for it AND the storage cell of that entry does not contain
+;;; +unbound+.
+
+(defun boundp (symbol)
+  (unless (symbolp symbol)
+    (error 'type-error :datum symbol :expected-type 'symbol))
+  (let ((variable-entry (find-if (lambda (entry)
+				   (typep entry 'special-variable-entry)
+				   (eq (name entry symbol)))
+				 (variables *global-environment*))))
+    (and (not (null variable-entry))
+	 (not (eq (car (storage (location variable-entry))) +unbound+)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function PROCLAIM.
 
 (defun proclaim-declaration (name)
