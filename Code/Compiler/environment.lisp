@@ -1438,6 +1438,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function MAKUNBOUND.
+;;;
+
+(defun makunbound (symbol)
+  (unless (symbolp symbol)
+    (error 'type-error :datum symbol :expected-type 'symbol))
+  (let ((variable-entry (find-if (lambda (entry)
+				   (typep entry 'special-variable-entry)
+				   (eq (name entry symbol)))
+				 (variables *global-environment*))))
+    (unless (null variable-entry)
+      (setf (storage (location variable-entry)) +unbound+)))
+  ;; Return the symbol as required by the HyperSpec
+  symbol)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function PROCLAIM.
 
 (defun proclaim-declaration (name)
