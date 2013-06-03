@@ -138,7 +138,7 @@
 ;;; Default method when there is not a more specific method for
 ;;; the head symbol.
 (defmethod convert-compound ((head symbol) form env)
-  (let ((info (sicl-env:function-info head env)))
+  (let ((info (sicl-env:function-info head env t)))
     (sicl-ast:make-call-ast
      (if (typep info 'sicl-env:global-location-info)
 	 (sicl-ast:make-memref-ast
@@ -327,7 +327,7 @@
        (sicl-ast:make-setq-ast
 	location
 	(sicl-ast:make-call-ast
-	 (sicl-env:location (sicl-env:function-info 'cons env))
+	 (sicl-env:location (sicl-env:function-info 'cons env t))
 	 (list (sicl-ast:make-arg-ast index) location)))
        (sicl-ast:make-setq-ast
 	index
@@ -659,7 +659,7 @@
 		  for fun = (convert-code lambda-list body env)
 		  collect (sicl-ast:make-setq-ast
 			   (sicl-env:location 
-			    (sicl-env:function-info name new-env))
+			    (sicl-env:function-info name new-env t))
 			   fun))))
       (multiple-value-bind (declarations forms)
 	  (sicl-code-utilities:separate-ordinary-body (cddr form))
@@ -681,7 +681,7 @@
   ())
 
 (defun convert-named-function (name environment)
-  (let ((info (sicl-env:function-info name environment)))
+  (let ((info (sicl-env:function-info name environment t)))
     (cond ((typep info 'sicl-env:global-location-info)
 	   (sicl-ast:make-memref-ast
 	    (sicl-ast:make-u+-ast

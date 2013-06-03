@@ -962,18 +962,32 @@
 			    :ignore-info ignore-info
 			    :dynamic-extent-p dynamic-extent-p))))))
 
-(defun function-info (name env)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FUNCTION-INFO.
+;;;
+;;; This function is called by the compiler whenever there is a symbol
+;;; in a function position of a compound expression.  It is similar to
+;;; the function with the same name, defined in CLtL2, except that we
+;;; return a class instance containing all the information, rather
+;;; than multiple values.  
+;;;
+;;; 
+
+(defun function-info (name env &optional create-if-does-not-exist)
   (let ((entry (find-function name env)))
     (cond ((null entry)
-	   (warn "Undefined function: ~a" name)
-	   (setf entry (make-global-function-entry name))
-	   (push entry (functions *global-environment*))
-	   (make-instance 'global-location-info
-	     :location (location entry)
-	     :type nil
-	     :inline-info nil
-	     :ignore-info nil
-	     :dynamic-extent-p nil))
+	   (if create-if-does-not-exist
+	       (progn (warn "Undefined function: ~a" name)
+		      (setf entry (make-global-function-entry name))
+		      (push entry (functions *global-environment*))
+		      (make-instance 'global-location-info
+			:location (location entry)
+			:type t
+			:inline-info nil
+			:ignore-info nil
+			:dynamic-extent-p nil))
+	       nil))
 	  ((typep entry 'local-macro-entry)
 	   (make-instance 'macro-info
 			  :name (name entry)
