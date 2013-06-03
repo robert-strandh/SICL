@@ -56,10 +56,14 @@
 	   #:macro-function
 	   #:*macroexpand-hook*
 	   #:fdefinition
+	   #:symbol-function
 	   #:fboundp
 	   #:fmakunbound
 	   #:special-operator-p
 	   #:compiler-macro-function
+	   #:symbol-value
+	   #:boundp
+	   #:makunbound
 	   )
   (:export
    #:proclaim
@@ -102,7 +106,13 @@
    #:fdefinition
    #:fboundp
    #:fmakunbound
+   #:find-function-cell
    #:special-operator-p
+   #:symbol-macro-function
+   #:symbol-value
+   #:boundp
+   #:makunbound
+   #:find-value-cell
    ))
 
 (defpackage #:sicl-ast
