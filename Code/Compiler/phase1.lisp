@@ -94,10 +94,8 @@
 	  `(quote ,constant)))))
 
 (defun convert-variable (form env)
-  (let ((info (sicl-env:variable-info form env)))
-    (cond ((null info)
-	   (error "undefined variable: ~s" form))
-	  ((typep info 'sicl-env:constant-variable-info)
+  (let ((info (sicl-env:variable-info form env t)))
+    (cond ((typep info 'sicl-env:constant-variable-info)
 	   (convert-constant (sicl-env:definition info)))
 	  (t
 	   (sicl-env:location info)))))
@@ -918,11 +916,8 @@
   (unless (symbolp var)
     (error 'setq-var-must-be-symbol
 	   :expr var))
-  (let ((info (sicl-env:variable-info var env)))
-    (cond ((null info)
-	   (error 'setq-unknown-variable
-		  :form var))
-	  ((typep info 'sicl-env:constant-variable-info)
+  (let ((info (sicl-env:variable-info var env t)))
+    (cond ((typep info 'sicl-env:constant-variable-info)
 	   (error 'setq-constant-variable
 		  :form var))
 	  ((or (typep info 'sicl-env:lexical-location-info)

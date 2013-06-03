@@ -935,10 +935,31 @@
 		  (eq (location e) entry))
 	  return t))
 
-(defun variable-info (name env)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function VARIABLE-INFO.
+;;;
+;;; This function is called by the compiler whenever there is a symbol
+;;; in a normal value position (as opposed to in a function position).
+;;; It is similar to the function with the same name, defined in
+;;; CLtL2, except that we return a class instance containing all the
+;;; information, rather than multiple values.
+
+(defun variable-info (name env &optional create-if-does-not-exist)
   (let ((entry (find-variable name env)))
     (cond ((null entry)
-	   nil)
+	   (if create-if-does-not-exist
+	       (progn (warn "Undefined variable: ~a" name)
+		      (setf entry (make-special-variable-entry name))
+		      (push entry (variables *global-environment*))
+		      (make-instance 'special-variable-entry
+			:name name
+			:location (location entry)
+			:type t
+			:inline-info nil
+			:ignore-info nil
+			:dynamic-extent-p nil))
+	       nil))
 	  ((typep entry 'constant-variable-entry)
 	   (make-instance 'constant-variable-info
 			  :name (name entry)
@@ -971,8 +992,6 @@
 ;;; the function with the same name, defined in CLtL2, except that we
 ;;; return a class instance containing all the information, rather
 ;;; than multiple values.  
-;;;
-;;; 
 
 (defun function-info (name env &optional create-if-does-not-exist)
   (let ((entry (find-function name env)))
