@@ -1235,25 +1235,60 @@
     (error "not a function name ~s" function-name))
   (unless (functionp new-definition)
     (error 'type-error :datum new-definition :expected-type 'function))
-  (let ((entry (find function-name
-		     (functions *global-environment*)
-		     :key #'name
-		     :test #'equal)))
-    (cond ((null entry)
-	   (setf entry (make-instance 'global-function-entry
-			 :name function-name
-			 :bound t))
-	   (push entry (functions *global-environment*)))
-	  ((typep entry 'special-operator-entry)
-	   (error "can't replace a special operator"))
-	  ((typep entry 'global-macro-entry)
-	   (setf (functions *global-environment*)
-		 (remove entry (functions *global-environment*)))
-	   (setf entry (make-instance 'global-function-entry
-			 :name function-name
-			 :bound t))
-	   (push entry (functions *global-environment*))))
-    (setf (car (storage entry)) new-definition))
+  ;; First see whether there is a special operator entry for the name.
+  (let ((specop-entry
+	  (find-if (lambda (entry)
+		     (and (typep entry 'special-operator-entry)
+			  (equal (name entry) function-name)))
+		   (functions *global-environment*))))
+    (if (not (null specop-entry))
+	;; We found a special operator entry.  In this situation we
+	;; signal an error.
+	(error "can't replace a special operator")
+	(progn
+	  ;; If there was no special operator entry, then check whether
+	  ;; there might be a global macro entry. 
+	  (let ((macro-entry
+		  (find-if (lambda (entry)
+			     (and (typep entry 'global-macro-entry)
+				  (equal (name entry) function-name)))
+			   (functions *global-environment*))))
+	    (unless (null macro-entry)
+	      ;; We found a global macro entry.  We must remove it.
+	      (setf (functions *global-environment*)
+		    (delete macro-entry
+			    (functions *global-environment*)
+			    :test #'eq))
+	      ;; There might be a compiler macro entry that refers to
+	      ;; the global macro entry we just removed, because
+	      ;; compiler macro entries are auxiliary entries.  If so we
+	      ;; remove that one too.
+	      (setf (functions *global-environment*)
+		    (delete-if (lambda (entry)
+				 (and (typep entry 'compiler-macro-entry)
+				      (eq (base-entry entry) macro-entry)))
+			       (functions *global-environment*)))))
+	  ;; When we come here, we know that there is no special
+	  ;; operator entry with the name we are defining, and if
+	  ;; there was a global macro entry for it, then that entry
+	  ;; has been removed.  Next, we check whether there is an
+	  ;; existing global function entry.
+	  (let ((function-entry
+		  (find-if (lambda (entry)
+			     (and (typep entry 'global-function-entry)
+				  (equal (name entry) function-name)))
+			   (functions *global-environment*))))
+	    (when (null function-entry)
+	      ;; No function entry found.  Create one.
+	      (setf function-entry (make-global-function-entry name))
+	      (push function-entry (functions *global-environment*)))
+	    ;; Now, we have a global function entry for the name,
+	    ;; whether it already existed, or we just created one.
+	    ;; All we need to do is assign the new defintion to the
+	    ;; storage cell of the entry.
+	    (setf (car (storage entry)) new-definition)))))
+  ;; The HyperSpec says that any SETF function must return the new
+  ;; value that was assigned.
   new-definition)
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
