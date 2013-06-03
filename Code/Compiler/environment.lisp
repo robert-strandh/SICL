@@ -1196,8 +1196,7 @@
 	      ;; We found a global function entry with the right name.
 	      ;; In this case, there can not also be a special
 	      ;; operator entry for the same name.
-	      (if (or (null (location function-entry))
-		      (eq (car (storage (location function-entry))) +unbound+))
+	      (if (eq (car (storage (location function-entry))) +unbound+)
 		  (error 'undefined-function :name function-name)
 		  (car (storage (location function-entry))))
 	      ;; If we did not find a global function entry, see if
@@ -1209,7 +1208,7 @@
 			       (functions *global-environment*))))
 		(if (null specop-entry)
 		    (error 'undefined-function :name function-name)
-		    t)))))))
+		    function-name)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
