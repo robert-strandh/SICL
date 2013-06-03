@@ -1364,7 +1364,7 @@
 ;;; we create the global function entry if it so happens that it does
 ;;; not exist.
 
-(defun find-function-cell (name)
+(defun find-function-cell (function-name)
   (let ((function-entry
 	  (find-if (lambda (entry)
 		     (and (typep entry 'global-function-entry)
@@ -1372,7 +1372,7 @@
 		   (functions *global-environment*))))
     (when (null function-entry)
       ;; No function entry found.  Create one.
-      (setf function-entry (make-global-function-entry name))
+      (setf function-entry (make-global-function-entry function-name))
       (push function-entry (functions *global-environment*)))
     (storage (location function-entry))))
 
@@ -1491,6 +1491,46 @@
     (setf (car (storage (location variable-entry))) new-value))
   ;; Return the new value as the HyperSpec requires.
   new-value)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FIND-VALUE-CELL.
+;;;
+;;; This function is used when a a FASL file is loaded.  This function
+;;; is used when the source file that was compiled contained a
+;;; reference to a special variable or to a free undefined variable
+;;; (which is taken to be a special variable that will ultimately be
+;;; defined).  As part of loading the FASL file, a CODE OBJECT must be
+;;; built, and that code object contains a LINKAGE VECTOR, which
+;;; contains all the external references of the file that was
+;;; compiled.  External references to special variables result in an
+;;; entry in the linkage vector containg the CONS cell that is the
+;;; value of the STORAGE slot of the special variable entry.  This
+;;; value cell contains the global value of the variable, or +unbound+
+;;; if the variable does not have a global value.
+;;;
+;;; This function finds that CONS cell and returns it.  Normally, the
+;;; FASL file should be loaded into an environment that contains the
+;;; special variable entry, because if it did not already exist, it
+;;; was created as part of the compilation.  However, we must put
+;;; SOMETHING in the linkage vector even if the file happens to be
+;;; loaded into an environment that does not have the special variable
+;;; entry that we want.  Otherwise the system will crash when an
+;;; attempt is made to execute the code we loaded.  For that reason,
+;;; we create the special variable entry if it so happens that it does
+;;; not exist.
+
+(defun find-value-cell (name)
+  (let ((variable-entry
+	  (find-if (lambda (entry)
+		     (and (typep entry 'special-variable-entry)
+			  (equal (name entry) name)))
+		   (variables *global-environment*))))
+    (when (null variable-entry)
+      ;; No function entry found.  Create one.
+      (setf variable-entry (make-special-variable-entry name))
+      (push variable-entry (variables *global-environment*)))
+    (storage (location variable-entry))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
