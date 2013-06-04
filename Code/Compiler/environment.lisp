@@ -4,10 +4,11 @@
 ;;;; be a BASE ENTRY.  This is the kind of entry used for variables,
 ;;;; functions, and macros, but also for autonomous declarations such
 ;;;; as OPTIMIZE.  Other entries are AUXILIARY entries, in that they
-;;;; provide additioal information about other entries.  This type of
+;;;; provide additional information about other entries.  This type of
 ;;;; entry is used for declarations of type, inline, and dynamic
-;;;; extent.  The class of a BASE ENTRY determines for which namespace
-;;;; it is relevant.  
+;;;; extent, but a compiler-macro entry is also an auxiliary entry.
+;;;; The class of a BASE ENTRY determines for which namespace it is
+;;;; relevant.
 ;;;;
 ;;;; When the information about some entity is wanted at some point in
 ;;;; the compilation process, the current environment is first
@@ -42,13 +43,15 @@
 ;;;
 ;;; Global environment.
 ;;;
-;;; The FUNCTION namespace contains three types of base entries:
-;;; GLOBAL-FUNCTION-ENTRY, GLOBAL-MACRO-ENTRY, and
-;;; SPECIAL-OPERATOR-ENTRY.  All special operator entries are global,
-;;; because there is no mechanism for defining local special
-;;; operators.  We define a separate namespace COMPILER-MACROS for
-;;; compiler macros, though technically they belong to the function
-;;; namespace.
+;;; The global envrionment is divided into namespaces, but a namespace
+;;; may be represented in several different slots.  So for instance,
+;;; what is usually considered the FUNCTION namespace, we have divided
+;;; into four separate lists, consisting of global function entries,
+;;; global macro entries, special operator entries and compiler-macro
+;;; entries.  Likewise, what is usually considered the VARIABLE
+;;; namespace, we have divided into three separate lists, consisting
+;;; of special variable entries, constant variable entries and global
+;;; symbol macro entries.
 
 (defclass global-environment ()
   (;; The package namespace.  A list of packages.
@@ -57,14 +60,31 @@
    (%classes :initform '() :accessor classes)
    ;; The type namespace.
    (%types :initform '() :accessor types)
-   ;; The variable namespace.  It contains entries for
-   ;; symbol macros, constant variables, and special variables. 
-   (%variables :initform '() :accessor variables)
-   ;; The function namespace.  It contains entries for macros,
-   ;; functions, and special operators.
+   ;; This slot holds a list of special variable entries.  These
+   ;; entries are all base entries.
+   (%special-variables :initform '() :accessor special-variables)
+   ;; This slot holds a list of constant variable entries.  These
+   ;; entries are all base entries.
+   (%constant-variables :initform '() :accessor constant-variables)
+   ;; This slot holds a list of global symbol macro entries.  These
+   ;; entries are all base entries.
+   (%symbol-macros :initform '() :accessor symbol-macros)
+   ;; This slot holds a list of global function entries.  These entries
+   ;; are all base entries.
    (%functions :initform '() :accessor functions)
-   ;; We keep a separate namespace for compiler macros. 
+   ;; This slot holds a list of global macro entries.  These entries
+   ;; are all base entries.
+   (%macros :initform '() :accessor macros)
+   ;; This slot holds a list of special operator entries.  These
+   ;; entries are all base entries.
+   (%special-operators :initform '() :accessor special-operators)
+   ;; This slot holds a list of compiler macro entries.  These entries
+   ;; are auxiliary entries, and an entry in this list refers to a
+   ;; base entry either in the FUNCTIONS slot, or in the MACROS slot.
    (%compiler-macros :initform '() :accessor compiler-macros)
+   ;; Some entries in this list are base entries, such as OPTIMIZE and
+   ;; DECLARATION.  Others are auxiliary entries such as TYPE, INLINE,
+   ;; DYNAMIC-EXTENT.
    (%proclamations :initform '() :accessor proclamations)))
 
 (defparameter *global-environment*
@@ -76,8 +96,9 @@
 ;;;
 ;;; Locations are the values of slots of entries representing places
 ;;; that need to be accessed at runtime.  This is the case for
-;;; variables and functions.  A location can be a global location, a
-;;; lexical location, or a special location.
+;;; variables (special and lexical) and functions (global and
+;;; lexical).  A location can be a global location, a lexical
+;;; location, or a special location.
 
 (defclass location ()
   ((%name :initarg :name :reader name)))
@@ -198,9 +219,11 @@
 ;;;
 ;;; Class CONSTANT-VARIABLE-ENTRY.
 ;;;
-;;; A constant variable entry belongs to the variable namespace.  It
-;;; does not require any storage to be accessed at runtime becuase its
-;;; value is propagated at compile time.
+;;; These entries are base entreis.  They occur in a list contained in
+;;; the SPECIAL-OPERATORS slot of the global environment.  A constant
+;;; variable entry belongs to the variable namespace.  It does not
+;;; require any storage to be accessed at runtime becuase its value is
+;;; propagated at compile time.
 
 (defclass constant-variable-entry
     (base-entry named-entry variable-space definition-entry)
@@ -214,6 +237,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SPECIAL-VARIABLE-ENTRY.
+;;;
+;;; Special variable entries are base entries.  They occur in a list
+;;; contained in the SPECIAL-VARIABLES slot of the global environment,
+;;; but they can also occur in a local environment.  a special
+;;; variable entry belongs to the variable namespace.
 ;;;
 ;;; A special variable entry can be in two stages of existence. 
 ;;;
@@ -239,10 +267,11 @@
 ;;; is no way to modify the code a posteriori so that it refers to a
 ;;; location that initially did not exist.  Whenever the compiler
 ;;; processes a variable binding, it checks whether a globally special
-;;; variable with that name exists, and if so, creates a special
-;;; binding.  An entry in stage 1 does not trigger that behavior in
-;;; the compiler, so any new binding of the varible is considered to
-;;; be a lexical binding.
+;;; variable with that name exists (i.e., the entry exists in stage
+;;; 2), and if so, uses its special binding.  An entry in stage 1 does
+;;; not trigger that behavior in the compiler, so if the entry found
+;;; is in stage 1, any new binding of the varible is considered to be
+;;; a lexical binding.
 ;;;
 ;;; Stage 2 happens when a DEFVAR or DEFPARAMETER form has been
 ;;; evaluated that refers to the variable.  The main difference with
@@ -312,10 +341,10 @@
 ;;;
 ;;; Class GLOBAL-FUNCTION-ENTRY.
 ;;;
-;;; Global function entries are base entries.  They occur in the
-;;; FUNCTION namespace of a global environment.  A global function
-;;; entry represents a globally defined ordinary function, as opposed
-;;; to a macro or a special operator.
+;;; Global function entries are base entries.  They occur in the list
+;;; contained in the FUNCTIONS slot of a global environment.  A global
+;;; function entry represents a globally defined ordinary function, as
+;;; opposed to a macro or a special operator.
 ;;;
 ;;; If a global function entry exists for some name N, then there can
 ;;; not simultaneously be a special operator entry for N.  An attempt
@@ -327,12 +356,14 @@
 ;;; macro entry to be removed.  However, creating a global macro entry
 ;;; with a name N when there is already a global function entry with a
 ;;; name N doesn not cause the global function entry to be removed.
-;;; The reason for not removing it is that other functions may exist that
-;;; use the name N as a function, so the entry can not be removed.
-;;; For this reason, it is possible that there simultaneously exist a
-;;; global macro entry and a global function entry for the same name
-;;; N.  However, in that case, the storage cell of the location of the
-;;; global function entry always contains +unbound+.
+;;; The reason for not removing it is that it might be referred to by
+;;; existing code and when that code was compiled, it was assumed that
+;;; the name N referred to a function.  For that reason, the entry can
+;;; not be removed.  Therefore, it is possible that there
+;;; simultaneously exist a global macro entry and a global function
+;;; entry for the same name N.  However, in that case, the storage
+;;; cell of the location of the global function entry always contains
+;;; +unbound+.
 ;;;
 ;;; A global function entry can come into existence in several ways:
 ;;; 
@@ -395,10 +426,10 @@
 ;;;
 ;;; Class GLOBAL-MACRO-ENTRY.
 ;;;
-;;; Global macro entries are base entries.  They occur in the FUNCTION
-;;; namespace of a global environment.  A global macro entry
-;;; represents a globally defined macro, as opposed to an ordinary
-;;; function or a special operator.
+;;; Global macro entries are base entries.  They occur in list
+;;; contained in the MACROS slot of a global environment.  A global
+;;; macro entry represents a globally defined macro, as opposed to an
+;;; ordinary function or a special operator.
 ;;;
 ;;; There can simultaneously be a global macro entry and either a
 ;;; special operator entry or a global function entry (but not both)
@@ -406,11 +437,11 @@
 ;;; and a special operator for the same name to exist.  A global
 ;;; function entry can exist at the same time as a global macro entry
 ;;; as a result of the global macro entry being created using (SETF
-;;; MACRO-FUNCTION) but the global function entry can not be removed,
-;;; because its LOCATION is not NIL.  
+;;; MACRO-FUNCTION) but the global function entry could not be removed,
+;;; for reasons indicated above.
 ;;;
-;;; A global macro entry can not have any auxiliary entries associated
-;;; with it.
+;;; The only type of auxiliary entry that can refer to a global macro
+;;; entry is a compiler-macro entry.
 ;;;
 ;;; A global macro entry can only come into existence by the use of
 ;;; (SETF MACRO-FUNCTION).  
@@ -450,10 +481,10 @@
 ;;;
 ;;; Class SPECIAL-OPERATOR-ENTRY.
 ;;;
-;;; Special operator entries are base entries.  They occur in the
-;;; FUNCTION namespace of a global environment.  A special operator
-;;; entry represents a special operator, as opposed to an ordinary
-;;; function or a macro.
+;;; Special operator entries are base entries.  They occur in the list
+;;; contained in the SPECIAL-OPERATORS list of a global environment.
+;;; A special operator entry represents a special operator, as opposed
+;;; to an ordinary function or a macro.
 ;;;
 ;;; The HyperSpec makes no provision for creating or removing special
 ;;; operators, so we assume that all special operator entries that
@@ -478,11 +509,11 @@
 ;;; global function entry or to a global macro entry.
 ;;;
 ;;; Compiler macro entries are thus auxiliary entries.  They occur in
-;;; the COMPILER-MACROS namespace of a global environment.  A compiler
-;;; macro entry refers either to a global function entry or to a
-;;; global macro entry.  Compiler macros are by definition global.
-;;; The HyperSpec makes no provision for creating local compiler
-;;; macros.
+;;; the list contained in the COMPILER-MACROS slot of a global
+;;; environment.  A compiler macro entry refers either to a global
+;;; function entry or to a global macro entry.  Compiler macros are by
+;;; definition global.  The HyperSpec makes no provision for creating
+;;; local compiler macros.
 ;;; 
 ;;; A compiler macro entry is created as a result of a call to (SETF
 ;;; COMPILER-MACRO-FUNCTION).  If there is a global macro entry with
@@ -767,7 +798,7 @@
   (let ((entry (find-if (lambda (entry)
 			  (and (typep entry 'macro-entry)
 			       (eq (name entry) symbol)))
-			(append env (functions *global-environment*)))))
+			(append env (macros *global-environment*)))))
     (if (null entry)
 	nil
 	(definition entry))))
@@ -778,24 +809,26 @@
 
 (defun macroexpand-1 (form &optional env)
   (let ((expander nil))
-    (cond ((and (consp form) (symbolp (car form)))
-	   (setf expander (macro-function (car form) env)))
-	  ((symbolp form)
-	   (let ((entry (find-if (lambda (entry)
-				   (and (typep entry 'symbol-macro-entry)
-					(eq (name entry) form)))
-				 (append env (variables *global-environment*)))))
-	     (if (null entry)
-		 nil
-		 (setf expander (definition entry)))))
-	  (t nil))
-    (if expander
+    (cond
+      ((and (consp form) (symbolp (car form)))
+       (setf expander (macro-function (car form) env)))
+      ((symbolp form)
+       (let ((entry (find-if (lambda (entry)
+			       (and (typep entry 'symbol-macro-entry)
+				    (eq (name entry) form)))
+			     (append env
+				     (symbol-macros *global-environment*)))))
+	 (if (null entry)
+	     nil
+	     (setf expander (definition entry)))))
+      (t nil))
+    (if (null expander)
+	(values form nil)
 	(values (funcall (coerce *macroexpand-hook* 'function)
 			 expander
 			 form
 			 env)
-		t)
-	(values form nil))))
+		t))))
 
 (defun macroexpand (form &optional environment)
   (multiple-value-bind (expansion expanded-p)
@@ -812,21 +845,11 @@
 ;;;
 ;;; Compiler macros.
 
-;;; If there is a compiler macro entry, it must refer to a base entry
-;;; which is either a global macro entry or to a global function entry
-;;; that is bound.  This function searches for such a base entry.
-(defun find-base-entry (name environment)
-  (or (find-if (lambda (entry)
-		 (and (eq (name entry) name)
-		      (typep entry 'global-macro-entry)))
-	       (functions environment))
-      (find-if (lambda (entry)
-		 (and (eq (name entry) name)
-		      (typep entry 'global-function-entry)
-		      (not (null (location entry)))
-		      (not (eq (car (storage (location entry))) +unbound+))))
-	       (functions environment))))
-
+;;; Since a compiler macro entry exists only if the name is fbound,
+;;; this means that if the compiler macro entry exists, it refers
+;;; either to a global macro entry, or to a global function entry
+;;; which does not have +unbound+ in its storage cell. 
+;;;
 ;;; I am not sure what the optional environment argument could be.  It
 ;;; seems to me that it must either be a global environment, i.e. an
 ;;; instance of GLOBAL-ENVIRONMENT, a local environment, or NIL.  In
@@ -835,13 +858,24 @@
 (defun compiler-macro-function (name &optional environment)
   (unless (typep environment 'global-environment)
     (setf environment *global-environment*))
-  (let* ((base-entry (find-base-entry name environment))
-	 (c-m-entry (find-if (lambda (entry)
-			       (eq (location entry) base-entry))
-			     (compiler-macros environment))))
-    (if (null c-m-entry)
+  (let ((entry (find-if (lambda (entry)
+			  (eq (name (base-entry entry)) name))
+			(compiler-macros environment))))
+    (if (null entry)
 	nil
-	(definition c-m-entry))))
+	(definition entry))))
+
+;;; If there is a compiler macro entry, it must refer to a base entry
+;;; which is either a global macro entry or to a global function entry
+;;; that is bound.  This function searches for such a base entry.
+(defun find-base-entry (name environment)
+  (or (find-if (lambda (entry)
+		 (eq (name entry) name))
+	       (macros environment))
+      (find-if (lambda (entry)
+		 (and (eq (name entry) name)
+		      (not (eq (car (storage (location entry))) +unbound+))))
+	       (functions environment))))
 
 (defun (setf compiler-macro-function) (new-function name &optional environment)
   (unless (null environment)
@@ -861,18 +895,18 @@
       (unless (null new-function)
 	(push (make-compiler-macro-entry name new-function)
 	      (compiler-macros *global-environment*)))))
+  ;; Return the new value as required by the HyperSpec.
   new-function)
 
 (defun compiler-macroexpand-1 (form &optional env)
   (if (symbolp (car form))
-      (let* ((base-entry (find-function (car form) env))
-	     (c-m-entry (find-if (lambda (entry)
-				   (eq (location entry) base-entry))
-				 (compiler-macros *global-environment*))))
-	(if (null c-m-entry)
+      (let ((entry (find-if (lambda (entry)
+			      (eq (name (base-entry entry)) name))
+			    (compiler-macros environment))))
+	(if (null entry)
 	    form
 	    (funcall (coerce *macroexpand-hook* 'function)
-		     (definition c-m-entry)
+		     (definition entry)
 		     form
 		     env)))
       form))
@@ -895,12 +929,25 @@
 
 (defun find-variable (name environment)
   (find-in-namespace name
-		     (append environment (variables *global-environment*))
+		     (append environment
+			     ;; The order here doesn't matter because,
+			     ;; there can only be one entry for a
+			     ;; particular name in the global
+			     ;; environment.
+			     (constant-variables *global-environment*)
+			     (symbol-macros *global-environment*)
+			     (special-variables *global-environment*))
 		     'variable-space))
 
 (defun find-function (name environment)
   (find-in-namespace name
-		     (append environment (functions *global-environment*))
+		     (append environment
+			     ;; We want to search global macros first,
+			     ;; because if such an entry exists, it
+			     ;; takes precedence over other entries.
+			     (macros *global-environment*)
+			     (functions *global-environment*)
+			     (special-operators *global-environment*))
 		     'function-space))
 
 (defun find-type (entry env)
@@ -1008,7 +1055,7 @@
 			:ignore-info nil
 			:dynamic-extent-p nil))
 	       nil))
-	  ((typep entry 'local-macro-entry)
+	  ((typep entry 'macro-entry)
 	   (make-instance 'macro-info
 			  :name (name entry)
 			  :definition (definition entry)))
@@ -1113,15 +1160,16 @@
   (unless (function-name-p function-name)
     (error "not a function name ~s" function-name))
   (let ((entry (find function-name
+		     (append (macros *global-environment*))
 		     (functions *global-environment*)
+		     (special-operators *global-environment*)
 		     :key #'name
 		     :test #'equal)))
     (typecase entry
       (global-function-entry
-       (and (not (null (location entry)))
-	    (not (eq (car (storage (location entry))) +unbound+))))
+       (not (eq (car (storage (location entry))) +unbound+)))
       (global-macro-entry
-       (definition entry))
+       t)
       (special-operator-entry
        t)
       (t
@@ -1142,49 +1190,46 @@
 ;;; a global macro for the name.  Furthermore, one of those entries
 ;;; may have a compiler macro auxiliar entry referring to it. 
 ;;;
-;;; We could remove the entry altogether, but we have chosen not to do
-;;; that.  The reason is that we may have other entries that refer to
-;;; it, such as entries that have to do with whether a function should
-;;; be inlined or not.  We want to preserve the invariant that such
-;;; entries should always refer to the "base" entry.  To preserve that
-;;; property, we mark the base entry as not being bound, and we check
-;;; this in all relevant functions.  By doing it this way, we can also
-;;; give a meaning to a proclamation of an ftype for an unbound
-;;; function.  We simply create a base entry and mark it as unbound. 
+;;; Either way, we remove the compiler macro entry.
+;;;
+;;; If there is a base entry and that entry is a macro entry, we
+;;; remove it too.
+;;;
+;;; If there is a base entry and that entry is a global function
+;;; entry, we just mark it as +unbound+, but we remove any auxiliary
+;;; entry that refers to it in PROCLAMATIONS.  This means that if
+;;; anyone uses FMAKUNBOUND with the intention of later giving the
+;;; function a new definition, then they must again proclaim its type,
+;;; inline, etc.
 
 (defun fmakunbound (function-name)
   (unless (function-name-p function-name)
     (error "not a function name ~s" function-name))
-  ;; First see if there is a global macro entry with teh right name.
-  (let ((macro-entry (find-if (lambda (entry)
-				(and (typep entry 'global-macro-entry)
-				     (equal (name entry) function-name)))
-			      (functions *global-environment*))))
+  ;; Remove any compiler macro entry that refers to a base entry with 
+  ;; this name.
+  (setf (compiler-macros *global-environment*)
+	(remove-if (lambda (entry)
+		     (equal (name (base-entry entry)) function-name))
+		   (compiler-macros *global-environment*)))
+  ;; See if there is a global macro entry with the right name.
+  (let ((macro-entry (find function-name (macros *global-environment*)
+			   :key #'name :test #'equal)))
     (unless (null macro-entry)
       ;; We found such an entry.  Remove it. 
-      (setf (functions *global-environment*)
-	    (delete macro-entry (functions *global-environment*) :test #'eq))
-      ;; If there is a compiler-macro entry referring to that entry,
-      ;; then remove the compiler-macro entry as well. 
-      (setf (compiler-macros *global-environment*)
-	    (delete-if (lambda (entry)
-			 (eq (base-entry entry) macro-entry))
-		       (compiler-macros *global-environment*)))))
+      (setf (macros *global-environment*)
+	    (delete macro-entry (macros *global-environment*) :test #'eq))))
   ;; Next, see if there is a global function entry.
-  (let ((function-entry (find-if (lambda (entry)
-				   (and (typep entry 'global-function-entry)
-					(equal (name entry) function-name)))
-				 (functions *global-environment*))))
+  (let ((function-entry (find function-name (functions *global-environment*)
+			      :key #'name :test #'equal)))
     (unless (null function-entry)
       ;; We found such an entry.  Make sure it is unbound.
-      (unless (null (location function-entry))
-	(setf (car (storage (location function-entry))) +unbound+))
-      ;; If there is a compiler-macro entry referring to that entry,
-      ;; then remove the compiler-macro entry as well. 
-      (setf (compiler-macros *global-environment*)
-	    (delete-if (lambda (entry)
-			 (eq (base-entry entry) function-entry))
-		       (compiler-macros *global-environment*)))))
+      (setf (car (storage (location function-entry))) +unbound+)
+      ;; Remove any proclamations that refer to this entry
+      (setf (proclamations *global-environment*)
+	    (remove-if (lambda (entry)
+			 (and (typep entry 'auxiliary-entry)
+			      (eq (base-entry entry) function-entry)))
+		       (proclamations *global-environment*)))))
   ;; Return the function name, as required by the HyperSpec.
   function-name)
 
@@ -1216,10 +1261,10 @@
     (error "not a function name ~s" function-name))
   ;; First see if there is a global macro entry with the right name.
   (let ((macro-entry
-	  (find-if (lambda (entry)
-		     (and (typep entry 'global-macro-entry)
-			  (equal (name entry) function-name)))
-		   (functions *global-environment*))))
+	  ;; We can use EQ to test the name because names
+	  ;; of macros may only be symbols. 
+	  (find function-name (macros *global-environment*)
+		:key #'name :test #'eq)))
     (if (not (null macro-entry))
 	;; We found a global macro entry with the right name.
 	;; Return the expansion function associated with it.
@@ -1227,24 +1272,22 @@
 	;; If we did not find a global macro entry, see if there might
 	;; be a global function entry with the right name.
 	(let ((function-entry
-		(find-if (lambda (entry)
-			   (and (typep entry 'global-function-entry)
-				(equal (name entry) function-name)))
-			 (functions *global-environment*))))
+		(find function-name (functions *global-environment*)
+		      :key #'name :test #'equal)))
 	  (if (not (null function-entry))
 	      ;; We found a global function entry with the right name.
 	      ;; In this case, there can not also be a special
 	      ;; operator entry for the same name.
-	      (if (eq (car (storage (location function-entry))) +unbound+)
-		  (error 'undefined-function :name function-name)
-		  (car (storage (location function-entry))))
+	      (let ((value (car (storage (location function-entry)))))
+		(if (eq value  +unbound+)
+		    (error 'undefined-function :name function-name)
+		    value))
 	      ;; If we did not find a global function entry, see if
 	      ;; there might be a special operator entry.
 	      (let ((specop-entry
-		      (find-if (lambda (entry)
-				 (and (typep entry 'special-operator-entry)
-				      (equal (name entry) function-name)))
-			       (functions *global-environment*))))
+		      (find function-name
+			    (special-operators *global-environment*)
+			    :key #'name :test #'eq)))
 		(if (null specop-entry)
 		    (error 'undefined-function :name function-name)
 		    function-name)))))))
@@ -1276,10 +1319,8 @@
     (error 'type-error :datum new-definition :expected-type 'function))
   ;; First see whether there is a special operator entry for the name.
   (let ((specop-entry
-	  (find-if (lambda (entry)
-		     (and (typep entry 'special-operator-entry)
-			  (equal (name entry) function-name)))
-		   (functions *global-environment*))))
+	  (find function-name (special-operators *global-environment*)
+		:key #'name :test #'eq)))
     (if (not (null specop-entry))
 	;; We found a special operator entry.  In this situation we
 	;; signal an error.
@@ -1288,34 +1329,29 @@
 	  ;; If there was no special operator entry, then check whether
 	  ;; there might be a global macro entry. 
 	  (let ((macro-entry
-		  (find-if (lambda (entry)
-			     (and (typep entry 'global-macro-entry)
-				  (equal (name entry) function-name)))
-			   (functions *global-environment*))))
+		  (find function-name (macros *global-environment*)
+			:key #'name :test #'eq)))
 	    (unless (null macro-entry)
 	      ;; We found a global macro entry.  We must remove it.
-	      (setf (functions *global-environment*)
+	      (setf (macros *global-environment*)
 		    (delete macro-entry
-			    (functions *global-environment*)
+			    (macros *global-environment*)
 			    :test #'eq))
 	      ;; There might be a compiler macro entry that refers to
 	      ;; the global macro entry we just removed, because
 	      ;; compiler macro entries are auxiliary entries.  If so we
 	      ;; remove that one too.
 	      (setf (compiler-macros *global-environment*)
-		    (delete-if (lambda (entry)
-				 (eq (base-entry entry) macro-entry))
-			       (compiler-macros *global-environment*)))))
+		    (delete macro-entry (compiler-macros *global-environment*)
+			    :key #'base-entry :test #'eq))))
 	  ;; When we come here, we know that there is no special
 	  ;; operator entry with the name we are defining, and if
 	  ;; there was a global macro entry for it, then that entry
 	  ;; has been removed.  Next, we check whether there is an
 	  ;; existing global function entry.
 	  (let ((function-entry
-		  (find-if (lambda (entry)
-			     (and (typep entry 'global-function-entry)
-				  (equal (name entry) function-name)))
-			   (functions *global-environment*))))
+		  (find function-name (functions *global-environment*)
+			:key #'name :test #'equal)))
 	    (when (null function-entry)
 	      ;; No function entry found.  Create one.
 	      (setf function-entry (make-global-function-entry name))
@@ -1372,10 +1408,8 @@
 (defun special-operator-p (symbol)
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
-  (let ((entry (find-if (lambda (entry)
-			  (and (typep entry 'special-operator-entry)
-			       (eq (name entry) symbol)))
-			(functions *global-environment*))))
+  (let ((entry (find symbol (special-operators *global-environment*)
+		     :key #'name :test #'eq)))
     (not (null entry))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1404,10 +1438,8 @@
 
 (defun find-function-cell (function-name)
   (let ((function-entry
-	  (find-if (lambda (entry)
-		     (and (typep entry 'global-function-entry)
-			  (equal (name entry) function-name)))
-		   (functions *global-environment*))))
+	  (find function-name (functions *global-environment*)
+		:key #'name :test #'equal)))
     (when (null function-entry)
       ;; No function entry found.  Create one.
       (setf function-entry (make-global-function-entry function-name))
@@ -1441,92 +1473,192 @@
     (error 'type-error :datum symbol :expected-type 'symbol))
   (unless (functionp new-function)
     (error 'type-error :datum new-function 'function))
-  (setf (functions *global-environment*)
-	(remove-if (lambda (entry)
-		     (and (or (typep entry 'global-function-entry)
-			      (typep entry 'global-macro-entry))
-			  (eq (name entry) symbol)))
-		   (functions *global-environment*)))
-  (push (make-instance 'global-macro-entry
-	  :name symbol
-	  :definition new-function
-	  :bound t)
-	(functions *global-environment*)))
+  ;; First check whether there is a global function entry with
+  ;; this name.
+  (let ((function-entry
+	  (find symbol (functions *global-environment*)
+		:key #'name :test #'eq)))
+    (if (not (null function-entry))
+	(progn
+	  ;; Make it unbound.
+	  (setf (car (storage (location function-entry))) +unbound+)
+	  ;; Remove any compiler macro that might be present referring
+	  ;; to this entry.
+	  (setf (compiler-macros *global-environment*)
+		(remove function-entry (compiler-macros *global-environment*)
+			:key #'base-entry :test #'eq))
+	  ;; Remove any proclamations referring to this entry.
+	  (setf (proclamations *global-environment*)
+		(remove-if (lambda (entry)
+			     (and (typep entry 'auxiliary-entry)
+				  (eq (base-entry entry) function-entry)))
+			   (proclamations *global-environment*))))
+	;; No function entry exists.  check whether there is a
+	;; global macro entry with this name.
+	(let ((macro-entry
+		(find symbol (macros *global-environment*)
+		      :key #'name :test #'eq)))
+	  (if (not (null macro-entry))
+	      ;; Then just replace the old definition.  This
+	      ;; way, we preserve any compiler macro that refers
+	      ;; to this entry.
+	      (setf (definition macro-entry) new-function)
+	      ;; Otherwise, we must create a new entry
+	      (push (make-instance 'global-macro-entry
+		      :name symbol
+		      :definition new-function
+		      :bound t)
+		    (macros *global-environment*))))))
+  ;; Return the new value as required by the HyperSpec.
+  new-function)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function BOUNDP.
 ;;;
 ;;; According to the HyperSpec, this function should return any true
-;;; value of the name is bound in the global environment and false
-;;; otherwise.  We return T when the symbol is bound.  The symbol is
-;;; bound if it is both the case that a special variable entry exists
-;;; for it AND the storage cell of that entry does not contain
-;;; +unbound+.
+;;; value if the name is bound in the global environment and false
+;;; otherwise.  We return T when the symbol is bound.  
+;;;
+;;; The HyperSpec does not say whether the name of a constant variable
+;;; is considered to be bound.  We think it is reasonable to consider
+;;; it bound in this case.  They HyperSpec also does not say whether
+;;; the name of a global symbol macro is considered to be bound.
+;;; Again, we think it is reasonable to consider this to be the case,
+;;; if for nothing else, then for symmetry with fboundp.
+;;;
+;;; The symbol is bound as a special variable if it is both the case
+;;; that a special variable entry exists for it AND the storage cell
+;;; of that entry does not contain +unbound+.
 
 (defun boundp (symbol)
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
-  (let ((variable-entry (find-if (lambda (entry)
-				   (typep entry 'special-variable-entry)
-				   (eq (name entry symbol)))
-				 (variables *global-environment*))))
-    (and (not (null variable-entry))
-	 (not (eq (car (storage (location variable-entry))) +unbound+)))))
+  (not (null (or (find symbol (constant-variables *global-environment*)
+		       :key #'name :test #'eq)
+		 (find symbol (symbol-macros *global-environment*)
+		       :key #'name :test #'eq)
+		 (find-if (lambda (entry)
+			    (and (eq (name entry symbol))
+				 (not (eq (car (storage (location entry)))
+					  +unbound+))))
+			  (special-variables *global-environment*))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function MAKUNBOUND.
 ;;;
+;;; Since we consider a name bound if it names a constant variable, or
+;;; if it names a global symbol macro, we must decide what to do in
+;;; those cases.  It would be embarassing for someone to call
+;;; MAKUNBOUND successfully and then have BOUNDP return true.  What we
+;;; do is to remove the symbol macro if any, and signal an error if an
+;;; attempt is made to make a constant variable unbound.
 
 (defun makunbound (symbol)
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
-  (let ((variable-entry (find-if (lambda (entry)
-				   (typep entry 'special-variable-entry)
-				   (eq (name entry symbol)))
-				 (variables *global-environment*))))
-    (unless (null variable-entry)
-      (setf (car (storage (location variable-entry))) +unbound+)))
+  ;; Check whether the symbol has a definition as a constant variable.
+  (let ((constant-variable-entry
+	  (find symbol (constant-variables *global-environment*)
+		:key #'name :test #'eq)))
+    (if (not (null constant-variable-entry))
+	(error "Attemp to make a constant variable unbound")
+	;; Check whether the symbol has a definition as a global
+	;; symbol macro.
+	(let ((macro-entry
+		(find symbol (symbol-macros *global-environment*)
+		      :key #'name :test #'eq)))
+	  (if (not (null macro-entry))
+	      (progn
+		;; Remove the symbol macro entry.
+		(setf (symbol-macros *global-environment*)
+		      (delete macro-entry (symbol-macros *global-environment*)
+			      :test #'eq))
+		;; The symbol macro might have a type proclamation
+		;; associated with it.  Remove that too.
+		(setf (proclamations *global-environment*)
+		      (delete-if (lambda (entry)
+				   (and (typep entry 'auxiliary-entry)
+					(eq (base-entry entry) macro-entry)))
+				 (proclamations *global-environment*))))
+	      ;; Check whether the symbol has a definition as a
+	      ;; special varible.
+	      (let ((variable-entry
+		      (find symbol (special-variables *global-environment*)
+			    :key #'name :test #'eq)))
+		(unless (null variable-entry)
+		  ;; Set the storage cell to +unbound+
+		  (setf (car (storage (location variable-entry))) +unbound+)
+		  ;; The variable might have a various proclamation
+		  ;; associated with it.  Remove those too.
+		  (setf (proclamations *global-environment*)
+			(delete-if (lambda (entry)
+				     (and (typep entry 'auxiliary-entry)
+					  (eq (base-entry entry) macro-entry)))
+				   (proclamations *global-environment*)))))))))
   ;; Return the symbol as required by the HyperSpec
   symbol)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function SYMBOL-VALUE.
 ;;;
+;;; The HyperSpec specifically allows for SYMBOL-VALUE to be used on
+;;; constant variables.  
 
 (defun symbol-value (symbol)
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
-  (let ((variable-entry (find-if (lambda (entry)
-				   (typep entry 'special-variable-entry)
-				   (eq (name entry symbol)))
-				 (variables *global-environment*))))
-    (if (or (null variable-entry)
-	    (eq (car (storage (location variable-entry))) +unbound+))
-	(error 'unbound-variable :name symbol)
-	(car (storage (location variable-entry))))))
-	
+  ;; First check whether the symbol has a defintion as a constant
+  ;; variable. 
+  (let ((constant-variable-entry
+	  (find symbol (constant-variables *global-environment*)
+		:key #'name :test #'eq)))
+    (if (not (null constant-variable-entry))
+	(definition constant-variable-entry)
+	;; Check whether the symbol has a definition as a special
+	;; variable, and check whether it is bound. 
+	(let ((special-variable-entry
+		(find symbol (special-variables *global-environment*)
+		      :key #'name :test #'eq)))
+	  (if (not (null special-variable-entry))
+	      (let ((value (car (storage (location entry)))))
+		(if (eq value +unbound+)
+		    (error 'unbound-variable :name symbol)
+		    value)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function (SETF SYMBOL-VALUE).
 ;;;
+;;; Signal an error if an attempt is made to call this function with
+;;; the name of a constant variable.
 
-;;; FIXME: should check the type here. 
 (defun symbol-value (new-value symbol)
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
-  (let ((variable-entry (find-if (lambda (entry)
-				   (typep entry 'special-variable-entry)
-				   (eq (name entry symbol)))
-				 (variables *global-environment*))))
-    (when (null variable-entry)
-      (setf variable-entry (make-special-variable-entry symbol))
-      (push (variable-entry (variables *global-environment*))))
-    (setf (car (storage (location variable-entry))) new-value))
+  ;; First check whether the symbol has a defintion as a constant
+  ;; variable. 
+  (let ((constant-variable-entry
+	  (find symbol (constant-variables *global-environment*)
+		:key #'name :test #'eq)))
+    (if (not (null constant-variable-entry))
+	(error "attempt to change the value of a constant variable")
+	;; Check whether the symbol has a definition as a special
+	;; variable.
+	(let ((special-variable-entry 
+		(find symbol (special-variables *global-environment*)
+		      :key #'name :test #'eq)))
+	  (when (null special-variable-entry)
+	    ;; Create a new entry
+	    (setf special-variable-entry
+		  (make-special-variable-entry symbol))
+	    (push (special-variable-entry
+		   (special-variables *global-environment*))))
+	  ;; FIXME: should check the type here.
+	  (setf (car (storage (location special-variable-entry)))
+		new-value))))
   ;; Return the new value as the HyperSpec requires.
   new-value)
 
@@ -1559,15 +1691,15 @@
 ;;; not exist.
 
 (defun find-value-cell (name)
-  (let ((variable-entry
-	  (find-if (lambda (entry)
-		     (and (typep entry 'special-variable-entry)
-			  (equal (name entry) name)))
-		   (variables *global-environment*))))
+  (let ((special-variable-entry
+	  (find name (special-variables *global-environment*)
+		:key #'name :test #'eq)))
     (when (null variable-entry)
       ;; No function entry found.  Create one.
-      (setf variable-entry (make-special-variable-entry name))
-      (push variable-entry (variables *global-environment*)))
+      (setf special-variable-entry
+	    (make-special-variable-entry name))
+      (push special-variable-entry
+	    (special-variables *global-environment*)))
     (storage (location variable-entry))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
