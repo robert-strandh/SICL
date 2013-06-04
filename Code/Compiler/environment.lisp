@@ -46,8 +46,9 @@
 ;;; GLOBAL-FUNCTION-ENTRY, GLOBAL-MACRO-ENTRY, and
 ;;; SPECIAL-OPERATOR-ENTRY.  All special operator entries are global,
 ;;; because there is no mechanism for defining local special
-;;; operators.  The FUNCTION name space also contains auxiliary
-;;; entries of type COMPILER-MACRO-ENTRY. 
+;;; operators.  We define a separate namespace COMPILER-MACROS for
+;;; compiler macros, though technically they belong to the function
+;;; namespace.
 
 (defclass global-environment ()
   (;; The package namespace.  A list of packages.
@@ -60,8 +61,10 @@
    ;; symbol macros, constant variables, and special variables. 
    (%variables :initform '() :accessor variables)
    ;; The function namespace.  It contains entries for macros,
-   ;; functions, compiler macros, and special operators.
+   ;; functions, and special operators.
    (%functions :initform '() :accessor functions)
+   ;; We keep a separate namespace for compiler macros. 
+   (%compiler-macros :initform '() :accessor compiler-macros)
    (%proclamations :initform '() :accessor proclamations)))
 
 (defparameter *global-environment*
@@ -475,10 +478,11 @@
 ;;; global function entry or to a global macro entry.
 ;;;
 ;;; Compiler macro entries are thus auxiliary entries.  They occur in
-;;; the FUNCTION namespace of a global environment.  A compiler macro
-;;; entry refers either to a global function entry or to a global
-;;; macro entry.  Compiler macros are by definition global.  The
-;;; HyperSpec makes no provision for creating local compiler macros.
+;;; the COMPILER-MACROS namespace of a global environment.  A compiler
+;;; macro entry refers either to a global function entry or to a
+;;; global macro entry.  Compiler macros are by definition global.
+;;; The HyperSpec makes no provision for creating local compiler
+;;; macros.
 ;;; 
 ;;; A compiler macro entry is created as a result of a call to (SETF
 ;;; COMPILER-MACRO-FUNCTION).  If there is a global macro entry with
@@ -833,9 +837,8 @@
     (setf environment *global-environment*))
   (let* ((base-entry (find-base-entry name environment))
 	 (c-m-entry (find-if (lambda (entry)
-			       (and (eq (location entry) base-entry)
-				    (typep entry 'compiler-macro-entry)))
-			     (functions environment))))
+			       (eq (location entry) base-entry))
+			     (compiler-macros environment))))
     (if (null c-m-entry)
 	nil
 	(definition c-m-entry))))
@@ -847,27 +850,25 @@
     (when (null base-entry)
       (error "A global macro or a global function must already exist."))
     (let ((c-m-entry (find-if (lambda (entry)
-				(and (eq (location entry) base-entry)
-				     (typep entry 'compiler-macro-entry)))
-			      (functions *global-environment*))))
+				(eq (location entry) base-entry))
+			      (compiler-macros *global-environment*))))
       ;; Remove the old entry if there was one.
       (unless (null c-m-entry)
-	(setf (functions *global-environment*)
-	      (delete c-m-entry (functions *global-environment*)
+	(setf (compiler-macros *global-environment*)
+	      (delete c-m-entry (compiler-macros *global-environment*)
 		      :test #'eq)))
       ;; Add a new entry unless the new function is NIL.
       (unless (null new-function)
 	(push (make-compiler-macro-entry name new-function)
-	      (functions *global-environment*)))))
+	      (compiler-macros *global-environment*)))))
   new-function)
 
 (defun compiler-macroexpand-1 (form &optional env)
   (if (symbolp (car form))
       (let* ((base-entry (find-function (car form) env))
 	     (c-m-entry (find-if (lambda (entry)
-				   (and (eq (location entry) base-entry)
-					(typep entry 'compiler-macro-entry)))
-				 (functions *global-environment*))))
+				   (eq (location entry) base-entry))
+				 (compiler-macros *global-environment*))))
 	(if (null c-m-entry)
 	    form
 	    (funcall (coerce *macroexpand-hook* 'function)
@@ -1165,11 +1166,10 @@
 	    (delete macro-entry (functions *global-environment*) :test #'eq))
       ;; If there is a compiler-macro entry referring to that entry,
       ;; then remove the compiler-macro entry as well. 
-      (setf (functions *global-environment*)
+      (setf (compiler-macros *global-environment*)
 	    (delete-if (lambda (entry)
-			 (and (typep entry 'compiler-macro-entry)
-			      (eq (base-entry entry) macro-entry)))
-		       (functions *global-environment*)))))
+			 (eq (base-entry entry) macro-entry))
+		       (compiler-macros *global-environment*)))))
   ;; Next, see if there is a global function entry.
   (let ((function-entry (find-if (lambda (entry)
 				   (and (typep entry 'global-function-entry)
@@ -1178,7 +1178,13 @@
     (unless (null function-entry)
       ;; We found such an entry.  Make sure it is unbound.
       (unless (null (location function-entry))
-	(setf (car (storage (location function-entry))) +unbound+))))
+	(setf (car (storage (location function-entry))) +unbound+))
+      ;; If there is a compiler-macro entry referring to that entry,
+      ;; then remove the compiler-macro entry as well. 
+      (setf (compiler-macros *global-environment*)
+	    (delete-if (lambda (entry)
+			 (eq (base-entry entry) function-entry))
+		       (compiler-macros *global-environment*)))))
   ;; Return the function name, as required by the HyperSpec.
   function-name)
 
@@ -1296,11 +1302,10 @@
 	      ;; the global macro entry we just removed, because
 	      ;; compiler macro entries are auxiliary entries.  If so we
 	      ;; remove that one too.
-	      (setf (functions *global-environment*)
+	      (setf (compiler-macros *global-environment*)
 		    (delete-if (lambda (entry)
-				 (and (typep entry 'compiler-macro-entry)
-				      (eq (base-entry entry) macro-entry)))
-			       (functions *global-environment*)))))
+				 (eq (base-entry entry) macro-entry))
+			       (compiler-macros *global-environment*)))))
 	  ;; When we come here, we know that there is no special
 	  ;; operator entry with the name we are defining, and if
 	  ;; there was a global macro entry for it, then that entry
