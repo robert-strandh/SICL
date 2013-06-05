@@ -37,7 +37,7 @@
 ;;; indicate that some location is unbound.  In the cross compiler, we
 ;;; use a unique CONS cell. 
 
-(defvar +unbound+ (list nil))
+(cl:defvar +unbound+ (list nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -132,7 +132,7 @@
    ;; DYNAMIC-EXTENT.
    (%proclamations :initform '() :accessor proclamations)))
 
-(defparameter *global-environment*
+(cl:defparameter *global-environment*
   (make-instance 'global-environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -848,7 +848,7 @@
 	nil
 	(definition entry))))
 
-(defparameter *macroexpand-hook*
+(cl:defparameter *macroexpand-hook*
   (lambda (macro-function macro-form environment)
     (funcall macro-function macro-form environment)))
 
@@ -1893,23 +1893,26 @@
 (defun symbol-value (symbol)
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
-  ;; First check whether the symbol has a defintion as a constant
-  ;; variable. 
-  (let ((constant-variable-entry
-	  (find symbol (constant-variables *global-environment*)
-		:key #'name :test #'eq)))
-    (if (not (null constant-variable-entry))
-	(definition constant-variable-entry)
-	;; Check whether the symbol has a definition as a special
-	;; variable, and check whether it is bound. 
-	(let ((special-variable-entry
-		(find symbol (special-variables *global-environment*)
-		      :key #'name :test #'eq)))
-	  (if (not (null special-variable-entry))
-	      (let ((value (car (storage (location special-variable-entry)))))
-		(if (eq value +unbound+)
-		    (error 'unbound-variable :name symbol)
-		    value)))))))
+  ;; Handle keyword symbols specially here.
+  (if (keywordp symbol)
+      symbol
+      ;; Next check whether the symbol has a defintion as a constant
+      ;; variable. 
+      (let ((constant-variable-entry
+	      (find symbol (constant-variables *global-environment*)
+		    :key #'name :test #'eq)))
+	(if (not (null constant-variable-entry))
+	    (definition constant-variable-entry)
+	    ;; Check whether the symbol has a definition as a special
+	    ;; variable, and check whether it is bound. 
+	    (let ((special-variable-entry
+		    (find symbol (special-variables *global-environment*)
+			  :key #'name :test #'eq)))
+	      (if (not (null special-variable-entry))
+		  (let ((val (car (storage (location special-variable-entry)))))
+		    (if (eq val +unbound+)
+			(error 'unbound-variable :name symbol)
+			val))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1921,7 +1924,10 @@
 (defun (setf symbol-value) (new-value symbol)
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
-  ;; First check whether the symbol has a defintion as a constant
+  ;; Handle keyword symbols specially here.
+  (when (keywordp symbol)
+    (error "attempt to change the value of a keyword."))
+  ;; Next check whether the symbol has a defintion as a constant
   ;; variable. 
   (let ((constant-variable-entry
 	  (find symbol (constant-variables *global-environment*)
@@ -2054,3 +2060,35 @@
     ;; FIXME: handle more proclamations
     ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro DEFCONSTANT.
+;;;
+;;; This is not the final version of the macro.  For one thing, we
+;;; need to handle the optional DOCUMENTATION argument.  We also need
+;;; to make sure that the macro has the compile-time side effects that
+;;; the HyperSpec requires.
+
+(defun %defconstant (name initial-value)
+  (unless (null (find name (special-variables *global-environment*)
+		      :key #'name :test #'eq))
+    (error "attempt to redefine a special variable as a constant variable."))
+  (unless (null (find name (symbol-macros *global-environment*)
+		      :key #'name :test #'eq))
+    (error "attempt to redefine a global symbol macro as a constant variable."))
+  (let ((existing-entry (find name (constant-variables *global-environment*)
+			      :key #'name :test #'eq)))
+    (cond ((null existing-entry)
+	   (push (make-constant-variable-entry name initial-value)
+		 (constant-variables *global-environment*)))
+	  ((not (eql initial-value (definition existing-entry)))
+	   (error "attempt to redefine a constant variable"))
+	  (t
+	   nil)))
+  ;; Return the name as the HyperSpec requires
+  name)
+
+
+(defmacro defconstant (name initial-value &optional documentation)
+  (declare (ignore documentation))
+  `(%defconstant ',name ,initial-value))
