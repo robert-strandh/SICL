@@ -1174,7 +1174,13 @@
 						 (car form)))
 					   (compiler-macros
 					    *global-environment*))))
-			    (if (not (null c-m-entry))
+			    (if (and (not (null c-m-entry))
+				     (not (find (lambda (entry)
+						  (and (typep entry
+							      'notinline-declaration-entry)
+						       (eq (base-entry entry)
+							   (base-entry c-m-entry))))
+						(proclamations *global-environment*))))
 				;; We found a compiler macro entry.
 				;; Try to expand it.
 				(let ((new-form
