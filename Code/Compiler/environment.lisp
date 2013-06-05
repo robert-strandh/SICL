@@ -1135,17 +1135,34 @@
 					:key #'base-entry :test #'eq)))
 			    (if (not (null c-m-entry))
 				;; We found a compiler macro entry.
-				;; Expand and iterate.
-				(funcall (coerce *macroexpand-hook* 'function)
-					 (definition c-m-entry)
-					 form
-					 environment)
+				;; Try to expand it.
+				(let ((new-form
+					(funcall (coerce *macroexpand-hook*
+							 'function)
+						 (definition c-m-entry)
+						 form
+						 environment)))
+				  (if (eq form new-form)
+				      ;; The compiler macro declined.
+				      ;; Expand the macro instead and
+				      ;; iterate.
+				      (setf form 
+					    (funcall (coerce *macroexpand-hook*
+							     'function)
+						     (definition entry)
+						     form
+						     environment))
+				      ;; The compiler macro expanded.
+				      ;; Iterate with new form.
+				      (setf form new-form)))
 				;; No compiler macro found.  Expand the
 				;; macro instead, and iterate
-				(funcall (coerce *macroexpand-hook* 'function)
-					 (definition entry)
-					 form
-					 environment)))
+				(setf form 
+				      (funcall (coerce *macroexpand-hook*
+						       'function)
+					       (definition entry)
+					       form
+					       environment))))
 			  ;; No global macro found.  At this point, it
 			  ;; is sufficient to search for a compiler
 			  ;; macro, because it we find one, then it
@@ -1158,10 +1175,22 @@
 					   (compiler-macros
 					    *global-environment*))))
 			    (if (not (null c-m-entry))
-				(funcall (coerce *macroexpand-hook* 'function)
-					 (definition c-m-entry)
-					 form
-					 environment)
+				;; We found a compiler macro entry.
+				;; Try to expand it.
+				(let ((new-form
+					(funcall (coerce *macroexpand-hook*
+							 'function)
+						 (definition c-m-entry)
+						 form
+						 environment)))
+				  (if (eq form new-form)
+				      ;; The compiler macro declined.
+				      ;; We are done.
+				      (return-from fully-expand-form form)
+				      ;; The compiler macro expanded.
+				      ;; Iterate with new form
+				      (setf form new-form)))
+				;; No compiler macro found.  We are done.
 				(return-from fully-expand-form form))))))))
 	     (t (return-from fully-expand-form form)))))
 
