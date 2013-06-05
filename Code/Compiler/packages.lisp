@@ -64,6 +64,7 @@
 	   #:symbol-value
 	   #:boundp
 	   #:makunbound
+	   #:constantp
 	   )
   (:export
    #:proclaim
@@ -82,6 +83,7 @@
    #:find-function
    #:macroexpand-1
    #:macroexpand
+   #:fully-expand-form
    #:find-type
    #:find-ftype
    #:augment-environment
@@ -113,6 +115,7 @@
    #:boundp
    #:makunbound
    #:find-value-cell
+   #:constantp
    ))
 
 (defpackage #:sicl-ast
