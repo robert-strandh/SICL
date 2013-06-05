@@ -252,7 +252,7 @@
 ;;; This is the case for macros, symbol macros, constant variables,
 ;;; blocks, and go tags.
 (defclass definition-entry ()
-  ((%definition :initarg :definition :reader definition)))
+  ((%definition :initarg :definition :accessor definition)))
 
 ;;; This type of entry has some kind of location associated with it.
 ;;; This is the case for special variables, lexical variables, and
@@ -983,11 +983,12 @@
   ;; Return the new value as required by the HyperSpec.
   new-function)
 
+;;; FIXME: we probably won't need this function, so maybe remove it.
 (defun compiler-macroexpand-1 (form &optional env)
   (if (symbolp (car form))
       (let ((entry (find-if (lambda (entry)
-			      (eq (name (base-entry entry)) name))
-			    (compiler-macros environment))))
+			      (eq (name (base-entry entry)) (car form)))
+			    (compiler-macros env))))
 	(if (null entry)
 	    form
 	    (funcall (coerce *macroexpand-hook* 'function)
@@ -996,6 +997,7 @@
 		     env)))
       form))
 
+;;; FIXME: we probably won't need this function, so maybe remove it.
 (defun compiler-macroexpand (form &optional env)
   (loop for expanded-form = (compiler-macroexpand-1 form env)
 	until (eq expanded-form form)
@@ -1077,7 +1079,7 @@
 
 (defun fully-expand-form (form environment)
   (loop
-    do (cond ((sympolp form)
+    do (cond ((symbolp form)
 	      (let ((entry
 		      (find-if (lambda (entry)
 				 (and (typep entry 'variable-space)
@@ -1131,7 +1133,7 @@
 				  (find entry
 					(compiler-macros *global-environment*)
 					:key #'base-entry :test #'eq)))
-			    (if (not (null entry))
+			    (if (not (null c-m-entry))
 				;; We found a compiler macro entry.
 				;; Expand and iterate.
 				(funcall (coerce *macroexpand-hook* 'function)
@@ -1155,7 +1157,7 @@
 						 (car form)))
 					   (compiler-macros
 					    *global-environment*))))
-			    (if (not (null entry))
+			    (if (not (null c-m-entry))
 				(funcall (coerce *macroexpand-hook* 'function)
 					 (definition c-m-entry)
 					 form
@@ -1245,7 +1247,7 @@
 	   (if create-if-does-not-exist
 	       (progn (warn "Undefined variable: ~a" name)
 		      (setf entry (make-special-variable-entry name))
-		      (push entry (variables *global-environment*))
+		      (push entry (special-variables *global-environment*))
 		      (make-instance 'special-variable-entry
 			:name name
 			:location (location entry)
@@ -1406,9 +1408,9 @@
   (unless (function-name-p function-name)
     (error "not a function name ~s" function-name))
   (let ((entry (find function-name
-		     (append (macros *global-environment*))
-		     (functions *global-environment*)
-		     (special-operators *global-environment*)
+		     (append (macros *global-environment*)
+			     (functions *global-environment*)
+			     (special-operators *global-environment*))
 		     :key #'name
 		     :test #'equal)))
     (typecase entry
@@ -1600,13 +1602,13 @@
 			:key #'name :test #'equal)))
 	    (when (null function-entry)
 	      ;; No function entry found.  Create one.
-	      (setf function-entry (make-global-function-entry name))
+	      (setf function-entry (make-global-function-entry function-name))
 	      (push function-entry (functions *global-environment*)))
 	    ;; Now, we have a global function entry for the name,
 	    ;; whether it already existed, or we just created one.
 	    ;; All we need to do is assign the new defintion to the
 	    ;; storage cell of the entry.
-	    (setf (car (storage entry)) new-definition)))))
+	    (setf (car (storage function-entry)) new-definition)))))
   ;; The HyperSpec says that any SETF function must return the new
   ;; value that was assigned.
   new-definition)
@@ -1785,7 +1787,7 @@
 		 (find symbol (symbol-macros *global-environment*)
 		       :key #'name :test #'eq)
 		 (find-if (lambda (entry)
-			    (and (eq (name entry symbol))
+			    (and (eq (name entry) symbol)
 				 (not (eq (car (storage (location entry)))
 					  +unbound+))))
 			  (special-variables *global-environment*))))))
@@ -1869,7 +1871,7 @@
 		(find symbol (special-variables *global-environment*)
 		      :key #'name :test #'eq)))
 	  (if (not (null special-variable-entry))
-	      (let ((value (car (storage (location entry)))))
+	      (let ((value (car (storage (location special-variable-entry)))))
 		(if (eq value +unbound+)
 		    (error 'unbound-variable :name symbol)
 		    value)))))))
@@ -1881,7 +1883,7 @@
 ;;; Signal an error if an attempt is made to call this function with
 ;;; the name of a constant variable.
 
-(defun symbol-value (new-value symbol)
+(defun (setf symbol-value) (new-value symbol)
   (unless (symbolp symbol)
     (error 'type-error :datum symbol :expected-type 'symbol))
   ;; First check whether the symbol has a defintion as a constant
@@ -1900,8 +1902,8 @@
 	    ;; Create a new entry
 	    (setf special-variable-entry
 		  (make-special-variable-entry symbol))
-	    (push (special-variable-entry
-		   (special-variables *global-environment*))))
+	    (push special-variable-entry
+		  (special-variables *global-environment*)))
 	  ;; FIXME: should check the type here.
 	  (setf (car (storage (location special-variable-entry)))
 		new-value))))
@@ -1940,13 +1942,13 @@
   (let ((special-variable-entry
 	  (find name (special-variables *global-environment*)
 		:key #'name :test #'eq)))
-    (when (null variable-entry)
+    (when (null special-variable-entry)
       ;; No function entry found.  Create one.
       (setf special-variable-entry
 	    (make-special-variable-entry name))
       (push special-variable-entry
 	    (special-variables *global-environment*)))
-    (storage (location variable-entry))))
+    (storage (location special-variable-entry))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1985,7 +1987,7 @@
 
 (defun proclaim-special (name)
   (pushnew (make-special-variable-entry name)
-	   (variables *global-environment*)
+	   (special-variables *global-environment*)
 	   :key #'name
 	   :test #'eq))
 
