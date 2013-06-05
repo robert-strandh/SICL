@@ -52,9 +52,54 @@
 ;;; namespace, we have divided into three separate lists, consisting
 ;;; of special variable entries, constant variable entries and global
 ;;; symbol macro entries.
+;;;
+;;; The global environment also contains storage cells for functions
+;;; that must be directly accessible when a FASL file is loaded.  The
+;;; normal way for a FASL file to find functions and variables is:
+;;;
+;;;  1. Build a string for the package name and use FIND-PACKAGE to
+;;;     find the package with that name.
+;;;
+;;;  2. Build a string for the symbol name and use INTERN to find the
+;;;     symbol. 
+;;;
+;;;  3. Optionally use CONS to build a list representing a function
+;;;     name of the form (SETF <symbol>).
+;;;     
+;;;  4. Use either FIND-FUNCTION-CELL or FIND-VALUE-CELL to get to
+;;;     either the function cell or the value cell corresponding to
+;;;     the name. 
+;;;
+;;; Clearly, FIND-PACKAGE, INTER, CONS, FIND-FUNCTION-CELL, and
+;;; FIND-VALUE-CELL must then all be accessible some other way.  We
+;;; store their function cells each in a separate slot in the
+;;; environment.  Furthermore, MAKE-STRING and (SETF SCHAR) must be
+;;; available this way, so that the initial strings can be built.  By
+;;; storing their cells rather than their values, we make it possible
+;;; to redefine them later on.  We take advantage of this possibility
+;;; by starting off with embryonic versions of these functions that
+;;; will later be replaced by final versions as the bootstrapping
+;;; process finishes.  Finally, the symbol NIL must be available to
+;;; build lists.
 
 (defclass global-environment ()
-  (;; The package namespace.  A list of packages.
+  (;; The symbol NIL.
+   (%symbol-nil :accessor symbol-nil)
+   ;; The storage cell for MAKE-STRING.
+   (%cell-of-make-string :accessor cell-of-make-string)
+   ;; The storage cell for SCHAR.
+   (%cell-of-setf-schar :accessor cell-of-setf-schar)
+   ;; The storage cell for FIND-PACKAGE.
+   (%cell-of-find-package :accessor cell-of-find-package)
+   ;; The storage cell for INTERN.
+   (%cell-of-intern :accessor cell-of-intern)
+   ;; The storage cell for CONS.
+   (%cell-of-cons :accessor cell-of-cons)
+   ;; The storage cell for FIND-FUNCTION-CELL.
+   (%cell-of-find-function-cell :accessor cell-of-find-function-cell)
+   ;; The storage cell for FIND-VALUE-CELL.
+   (%cell-of-find-value-cell :accessor cell-of-find-value-cell)
+   ;; The package namespace.  A list of packages.
    (%packages :initform '() :accessor packages)
    ;; The class namespace.  A list of classes.
    (%classes :initform '() :accessor classes)
