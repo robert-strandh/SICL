@@ -2092,3 +2092,42 @@
 (defmacro defconstant (name initial-value &optional documentation)
   (declare (ignore documentation))
   `(%defconstant ',name ,initial-value))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro DEFVAR.
+
+(defmacro defvar (name &optional (initial-value initial-value-p) documentation)
+  (declare (ignore documentation))
+  (if initial-value-p
+      (let ((info-var (gensym))
+	    (cell-var (gensym))
+	    (value-var (gensym)))
+	`(let* ((,info-var (variable-info name *global-environment* t))
+		(,cell-var (storage (location ,info-var))))
+	   (when (eq (car ,cell-var) +unbound+)
+	     (let ((,value-var ,initial-value))
+	       (if (typep ,value-var (type ,info-var))
+		   (setf (car ,cell-var) ,initial-value)
+		   (error 'type-error
+			  :datum ,value-var
+			  :expected-type (type ,info-var))))))
+	`(variable-info name *global-environment* t))))
+		     
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macro DEFPARAMETER.
+
+(defmacro defparameter (name initial-value &optional documentation)
+  (declare (ignore documentation))
+  (let ((info-var (gensym))
+	(cell-var (gensym))
+	(value-var (gensym)))
+    `(let* ((,info-var (variable-info name *global-environment* t))
+	    (,cell-var (storage (location ,info-var)))
+	    (,value-var ,initial-value))
+       (if (typep ,value-var (type ,info-var))
+	   (setf (car ,cell-var) ,initial-value)
+	   (error 'type-error
+		  :datum ,value-var
+		  :expected-type (type ,info-var))))))
