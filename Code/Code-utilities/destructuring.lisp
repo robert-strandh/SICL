@@ -102,6 +102,123 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Matching arguments according to a lambda list.
+
+(defun match-required (variables arg-op)
+  (loop for variable in variables
+	for i from 0
+	collect `(,variable (,arg-op ,i))))
+
+;;; Recall that an optional-entry is a list of one of two forms:
+;;;
+;;;  * (variable init-arg)
+;;;  * (variable init-arg supplied-p-parameter)
+;;;
+(defun match-optional (optional-entries first-count arg-count-op arg-op)
+  (loop for (variable init-arg . rest) in optional-entries
+	for i from first-count
+	collect `(,variable (if (> (,arg-count-op) ,i)
+				(,arg-op ,i)
+				,init-arg))
+	unless (null rest)
+	  collect `(,(car rest) (> (,arg-count-op) ,i))))
+
+(defun match-rest/body (variable first-count arg-count-op arg-op)
+  `(,variable (let ((temp '())
+		    (n (,arg-count-op)))
+		(tagbody
+		 again
+		   (when (= n ,first-count)
+		     (go out))
+		   (decf n)
+		   (push (,arg-op n) temp)
+		   (go again)
+		 out)
+		temp)))
+
+;;; Recall that a key-entry is a list of one of two forms:
+;;;
+;;;  * ((keyword variable) init-form)
+;;;  * ((keyword variable) init-form supplied-p-parameter)
+;;;
+(defun match-key (key-entries first-count arg-count-op arg-op)
+  (loop for ((keyword variable) init-form . rest) in key-entries
+	for counter = (gensym)
+	collect `(,variable (let ((,counter ,first-count))
+			      (block nil
+				(tagbody
+				 again
+				   (when (= ,counter (,arg-count-op))
+				     (go out))
+				   (when (eq (,arg-op n) ,keyword)
+				     (return (,arg-op (1+ ,counter))))
+				   (go again)
+				 out)
+				,init-form)))
+	unless (null rest)
+	  collect `(,(car rest) (let ((,counter ,first-count))
+				  (block nil
+				    (tagbody
+				     again
+				       (when (= ,counter (,arg-count-op))
+					 (go out))
+				       (when (eq (,arg-op n) ,keyword)
+					 (return t))
+				       (go again)
+				     out)
+				    nil)))))
+
+;;; Generate code to check that the number of arguments supplied is
+;;; acceptable.
+;;; 
+;;; MIN is a number.  If it is 0, then we don't check the minimum
+;;; number of arguments supplied.  MAX is a number, or NIL (meaning
+;;; "no upper bound").  
+(defun check-arg-count (min max arg-count-op)
+  `(,@(if (= min 0)
+	  `()
+	  `((when (< (,arg-count-op) ,min)
+	      (error "too few arguments"))))
+    ,@(if (null max)
+	  `()
+	  `((when (> (,arg-count-op) ,max)
+	      (error "too many arguments"))))))
+
+;;; Generate code to check that there is an even number of keyword
+;;; arguments.
+(defun check-even-number-of-keyword-arguments (first-count arg-count-op)
+  `(unless (,(if (evenp first-count) 'evenp 'oddp) (,arg-count-op))
+     (error "odd number of keyword arguments")))
+
+;;; Generate code to check that either :ALLOW-OTHER KEYS <true> is a
+;;; keyword argument or that all the keyword arguments are valid.  The
+;;; HyperSpec says that :ALLOW-OTHER-KEYS <something> is always valid,
+;;; so even if we have :ALLOW-OTHER-KEYS <false>, it is valid.
+;;; Furthermore, since there can be multiple instances of keyword
+;;; arguments, and the first one is used to determine the ultimate
+;;; value of the corresponding variable, we must determine whether
+;;; :ALLOW-OTHER-KEYS is true or not from the first occurrence.  This
+;;; function is only called when &allow-other-keys is not given in the
+;;; lambda list.
+(defun check-valid-keyword-arguments
+    (keywords first-count arg-count-op arg-op)
+  `(loop
+     for i from ,first-count below (,arg-count-op) by 2
+     do (if (eq (,arg-op i) :allow-other-keys)
+	    (if (null (,arg-op (1+ i)))
+		(loop-finish)
+		(return)))
+     finally
+	(loop
+	  for i from ,first-count below (,arg-count-op) by 2
+	  do (unless (loop with arg = (,arg-op i)
+			   for keyword in ,(cons :allow-other-keys keywords)
+			   when (eq arg keyword)
+			     return t)
+	       (error "unknown keyword argument")))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; PARSE-MACRO
 ;;;
 ;;; According to CLtL2.
