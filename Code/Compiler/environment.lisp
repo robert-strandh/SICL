@@ -328,10 +328,11 @@
     (base-entry named-entry variable-space location-entry)
   ((%defined-p :initform nil :initarg :defined-p :accessor defined-p)))
 
-(defun make-special-variable-entry (name)
+(defun make-special-variable-entry (name &optional defined-p)
   (make-instance 'special-variable-entry
 		 :name name
-		 :location (make-special-location name)))
+		 :location (make-special-location name)
+		 :defined-p defined-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1916,10 +1917,46 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Auxiliary function ENSURE-DEFINED-VARIABLE.
+;;;
+;;; This function checks whether there is an entry for a name as a
+;;; special variable in the global environment, and if not creates
+;;; such an entry.  If the entry exists, but is not marked as DEFINED,
+;;; then this function marks it as such.
+;;;
+;;; If the name is already that of a constant variable, then an error
+;;; is signaled.
+;;;
+;;; If there is an entry for the name as a global macro then an error
+;;; is signaled.
+
+(defun ensure-defined-variable (name)
+  (when (constantp name)
+    (error "Attempt to redefine a constant variable."))
+  (unless (null (find name (symbol-macros *global-environment*)
+		      :key #'name :test #'eq))
+    (error "Attempt to redefine a global symbol macro as a variable."))
+  (let ((entry (find name (special-variables *global-environment*)
+		     :key #'name :test #'eq)))
+    (if (null entry)
+	(push (make-special-variable-entry name t)
+	      (special-variables *global-environment*))
+	(setf (defined-p entry) t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Function (SETF SYMBOL-VALUE).
 ;;;
 ;;; Signal an error if an attempt is made to call this function with
 ;;; the name of a constant variable.
+;;;
+;;; The Hyperspec does not indicate what should be done if this
+;;; function is called and the name already has a definition as a
+;;; global symbol macro.  However, it does say that an error is
+;;; signaled in the opposite situation, i.e., if an attempt is made to
+;;; define a symbol macro with a name of an existing special variable.
+;;; For that reason, we think it is reasonable to signal an error in
+;;; this case too.
 
 (defun (setf symbol-value) (new-value symbol)
   (unless (symbolp symbol)
@@ -1929,25 +1966,18 @@
     (error "attempt to change the value of a keyword."))
   ;; Next check whether the symbol has a defintion as a constant
   ;; variable. 
-  (let ((constant-variable-entry
-	  (find symbol (constant-variables *global-environment*)
-		:key #'name :test #'eq)))
-    (if (not (null constant-variable-entry))
-	(error "attempt to change the value of a constant variable")
-	;; Check whether the symbol has a definition as a special
-	;; variable.
-	(let ((special-variable-entry 
-		(find symbol (special-variables *global-environment*)
-		      :key #'name :test #'eq)))
-	  (when (null special-variable-entry)
-	    ;; Create a new entry
-	    (setf special-variable-entry
-		  (make-special-variable-entry symbol))
-	    (push special-variable-entry
-		  (special-variables *global-environment*)))
-	  ;; FIXME: should check the type here.
-	  (setf (car (storage (location special-variable-entry)))
-		new-value))))
+  (when (constantp symbol)
+    (error "attempt to change the value of a constant variable"))
+  ;; Calling this function implicitly DEFINES the variable.
+  (ensure-defined-variable symbol)
+  ;; Find out everything about the variable. 
+  (let ((info (variable-info symbol nil)))
+    (unless (typep new-value (type info))
+      (error 'type-error
+	     :datum new-value
+	     :expected-type (type info)))
+    (setf (car (storage (location info)))
+	  new-value))
   ;; Return the new value as the HyperSpec requires.
   new-value)
 
@@ -2096,38 +2126,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro DEFVAR.
+;;;
+;;; This is not the final version of DEFVAR, because we ignore the
+;;; documentation for now.
 
-(defmacro defvar (name &optional (initial-value initial-value-p) documentation)
+(defmacro defvar
+    (name &optional (initial-value nil initial-value-p) documentation)
   (declare (ignore documentation))
   (if initial-value-p
-      (let ((info-var (gensym))
-	    (cell-var (gensym))
-	    (value-var (gensym)))
-	`(let* ((,info-var (variable-info name *global-environment* t))
-		(,cell-var (storage (location ,info-var))))
-	   (when (eq (car ,cell-var) +unbound+)
-	     (let ((,value-var ,initial-value))
-	       (if (typep ,value-var (type ,info-var))
-		   (setf (car ,cell-var) ,initial-value)
-		   (error 'type-error
-			  :datum ,value-var
-			  :expected-type (type ,info-var))))))
-	`(variable-info name *global-environment* t))))
+      `(progn (ensure-defined-variable ,name)
+	      (unless (boundp ,name)
+		(setf (symbol-value ,name) ,initial-value)))
+      `(ensure-defined-variable ,name)))
 		     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro DEFPARAMETER.
+;;;
+;;; As far as I can tell from the HyperSpec, aside from the optional
+;;; DOCUMENTATION, DEFPARAMETER does the same thing as the function
+;;; (SETF SYMBOL-VALUE).
+;;;
+;;; This is not the final version of DEFPARAMETER, because we ignore
+;;; the documentation for now.
 
 (defmacro defparameter (name initial-value &optional documentation)
   (declare (ignore documentation))
-  (let ((info-var (gensym))
-	(cell-var (gensym))
-	(value-var (gensym)))
-    `(let* ((,info-var (variable-info name *global-environment* t))
-	    (,cell-var (storage (location ,info-var)))
-	    (,value-var ,initial-value))
-       (if (typep ,value-var (type ,info-var))
-	   (setf (car ,cell-var) ,initial-value)
-	   (error 'type-error
-		  :datum ,value-var
-		  :expected-type (type ,info-var))))))
+  `(setf (symbol-value ,name) ,initial-value))
