@@ -2094,10 +2094,16 @@
 ;;;
 ;;; Macro DEFCONSTANT.
 ;;;
+;;; The HyperSpec says that we have a choice as to whether the
+;;; initial-value form is evaluated at compile-time, at load-time, or
+;;; both, but that in either case, the compiler must recognize the
+;;; name as a constant variable.  We have chosen to evaluate it both
+;;; at compile-time and at load-time.  We evaluate it at compile time
+;;; so that successive references to the variable can be replaced by
+;;; the value.
+;;;
 ;;; This is not the final version of the macro.  For one thing, we
-;;; need to handle the optional DOCUMENTATION argument.  We also need
-;;; to make sure that the macro has the compile-time side effects that
-;;; the HyperSpec requires.
+;;; need to handle the optional DOCUMENTATION argument.
 
 (defun %defconstant (name initial-value)
   (unless (null (find name (special-variables *global-environment*)
@@ -2118,14 +2124,19 @@
   ;; Return the name as the HyperSpec requires
   name)
 
-
 (defmacro defconstant (name initial-value &optional documentation)
   (declare (ignore documentation))
-  `(%defconstant ',name ,initial-value))
+  `(eval-when (:compile-toplevel :load-toplevel :execute)
+     (%defconstant ',name ,initial-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro DEFVAR.
+;;;
+;;; The HyperSpec says that when DEFVAR is processed as a top-level
+;;; form, then the rest of the compilation must treat the variable as
+;;; special, but the initial-value form must not be evaluated, and
+;;; there must be no assignment of any value to the variable.
 ;;;
 ;;; This is not the final version of DEFVAR, because we ignore the
 ;;; documentation for now.
@@ -2134,22 +2145,31 @@
     (name &optional (initial-value nil initial-value-p) documentation)
   (declare (ignore documentation))
   (if initial-value-p
-      `(progn (ensure-defined-variable ,name)
-	      (unless (boundp ,name)
-		(setf (symbol-value ,name) ,initial-value)))
+      `(progn
+	 (eval-when (:compile-toplevel)
+	   (ensure-defined-variable ,name))
+	 (eval-when (:load-toplevel :execute)
+	   (unless (boundp ,name)
+	     (setf (symbol-value ,name) ,initial-value))))
       `(ensure-defined-variable ,name)))
 		     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Macro DEFPARAMETER.
 ;;;
-;;; As far as I can tell from the HyperSpec, aside from the optional
-;;; DOCUMENTATION, DEFPARAMETER does the same thing as the function
-;;; (SETF SYMBOL-VALUE).
+;;; The HyperSpec says that when DEFPARAMETER is processed as a
+;;; top-level form, then the rest of the compilation must treat the
+;;; variable as special, but the initial-value form must not be
+;;; evaluated, and there must be no assignment of any value to the
+;;; variable.
 ;;;
 ;;; This is not the final version of DEFPARAMETER, because we ignore
 ;;; the documentation for now.
 
 (defmacro defparameter (name initial-value &optional documentation)
   (declare (ignore documentation))
-  `(setf (symbol-value ,name) ,initial-value))
+  `(progn
+     (eval-when (:compile-toplevel)
+       (ensure-defined-variable ,name))
+     (eval-when (:load-toplevel :execute)
+       (setf (symbol-value ,name) ,initial-value))))
