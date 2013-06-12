@@ -2,10 +2,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Function DESTRUCTURE-LAMBDA-LIST.
+;;;
 ;;; Destructuring a tree according to a lambda list.
 ;;;
-;;; We assume that the lambda-list/pattern are syntactically correct.
+;;; The destructuring itself is typically done when a macro function
+;;; is run, and the purpose is to take the macro form apart and assign
+;;; parts of it to the parameter of the lambda list of the macro. 
 ;;;
+;;; The function DESTRUCTURE-LAMBDA-LIST generates the code for doing
+;;; the destrucuring.  It is typically run by the expansion of
+;;; DEFMACRO.  Recall that DEFMACRO must take the definition of a
+;;; macro, in particular its lambda list, and generate a macro
+;;; function.  The macro function takes the macro form as input and
+;;; generates the expanded form.  Destructuring is done by a LET*
+;;; form, and this code generates the bindings of that LET* form.
+;;;
+;;; The bindings generated will contain generated variables that are
+;;; not used in the body of the macro definition, so we want them to
+;;; be declared IGNORE.  For that reason, DESTRUCTURE-LAMBDA-LIST
+;;; returns two values: the bindings mentioned above, and a list of
+;;; variables to declare IGNORE in the beginning of the body of the
+;;; macro function.
+;;;
+;;; We assume that the lambda-list/pattern are syntactically correct.
+;;; They should be, because this function takes as input not the raw
+;;; lambda list, but a PARSED lambda list in the form of a
+;;; standard-object.  
+
 ;;; The function DESTRUCTURE-REQUIRED and DESTRUCTURE-OPTIONALS return
 ;;; two values:
 ;;;
@@ -13,8 +37,10 @@
 ;;;
 ;;;  * A variable to be used to destructure the remaining pattern.
 
+;;; Destructure the required parameters of a lambda list.  
+;;;
 ;;; Recall that the required parameters of a parsed lambda list is
-;;; either the keyword :NONE, or a list of patterns.  
+;;; either the keyword :NONE, or a list of patterns.
 (defun destructure-required (required var)
   (if (or (eq required :none) (null required))
       (values '() var)
@@ -30,6 +56,8 @@
 			  bindings)
 		  rest-var)))))
 
+;;; Destructure the optional parameters of a lambda list.  
+;;;
 ;;; Recall that the optional parameters of a parsed lambda list is
 ;;; either the keyword :none, or it is a list of &optional entries.
 ;;; Each optional entry has one of the two forms:
@@ -90,6 +118,8 @@
 			  bindings)
 		  rest-var)))))
 
+;;; Destructure the keyword parameters of a lambda list.
+;;;
 ;;; Recall that the keys part of a compiled lambda list is either
 ;;; :none, which means that no &key was given at all, or a list if
 ;;; &key entries.  If the list is empty, it means that &key was given,
@@ -247,6 +277,8 @@
 			      (aux lambda-list)))
 		  variables-to-ignore))))))
 
+;;; Destructure a pattern.
+;;; FIXME: say more.
 (defun destructure-pattern (pattern var)
   (cond ((null pattern)
 	 `((,(gensym) (unless (null ,var)
@@ -267,87 +299,103 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Matching arguments according to a lambda list.
-
-(defun match-required (variables arg-op)
-  (loop for variable in variables
-	for i from 0
-	collect `(,variable (,arg-op ,i))))
-
-;;; Recall that an optional-entry is a list of one of two forms:
+;;; Parse arguments according to a lambda list.
 ;;;
-;;;  * (variable init-arg)
-;;;  * (variable init-arg supplied-p-parameter)
+;;; This process is similar to DESTRUCTURING above, except that
+;;; destructuring is done at compile-time and argument parsing is done
+;;; at runtime as part of the prologue of a function.
 ;;;
-(defun match-optional (optional-entries first-count arg-count-op arg-op)
-  (loop for (variable init-arg . rest) in optional-entries
-	for i from first-count
-	collect `(,variable (if (> (,arg-count-op) ,i)
-				(,arg-op ,i)
-				,init-arg))
-	unless (null rest)
-	  collect `(,(car rest) (> (,arg-count-op) ,i))))
+;;; The function MATCH-LAMBDA-LIST is similar to
+;;; DESTRUCTURE-LAMBDA-LIST in that it generates two values: the
+;;; bindings of a LET* form and a list of variables to ignore.  The
+;;; difference is that MATCH-LAMBDA-LIST takes its input as two
+;;; special forms, supplied as parameters, but typically (ARGCOUNT)
+;;; and (ARG i) where i is a fixnum.  The form (ARGCOUNT) returns the
+;;; number of arguments to the function and the form (ARG i) returns
+;;; the i'th argument, where i is between 0 and and N-1 and N is the
+;;; value returned by (ARGCOUNT).  Another difference is that
+;;; MATCH-LAMBDA-LIST only handles ordinary lambda lists, so no
+;;; destructuring is necessary, and the &ENVIRONMENT and &WHOLE
+;;; keywords are not present.
 
-(defun match-rest/body (variable first-count arg-count-op arg-op)
-  `(,variable (let ((temp '())
-		    (n (,arg-count-op)))
-		(tagbody
-		 again
-		   (when (= n ,first-count)
-		     (go out))
-		   (decf n)
-		   (push (,arg-op n) temp)
-		   (go again)
-		 out)
-		temp)))
+;;; Recall that the required parameters of a parsed lambda list is
+;;; either the keyword :NONE, or a list of variables.
+(defun match-required (required arg-op)
+  (if (eq required :none)
+      '()
+      (loop for parameter in required
+	    for i from 0
+	    collect `(,parameter (,arg-op ,i)))))
+
+;;; Recall that the optional parameters of a parsed lambda list is
+;;; either the keyword :NONE or a list of optional entries, and that
+;;; an optional-entry is a list of one of two forms:
+;;;
+;;;  * (parameter init-arg)
+;;;  * (parameter init-arg supplied-p-parameter)
+;;;
+;;; We assume that a binding has been generated that assigns the
+;;; argument count to some generated variable in the LET* form.  That
+;;; generated variable is passed as an argument to this function.
+(defun match-optionals (optional-entries first-count arg-count-var arg-op)
+  (if (eq optional-entries :none)
+      '()
+      (loop for (parameter init-arg . rest) in optional-entries
+	    for i from first-count
+	    collect `(,parameter (if (> ,arg-count-var ,i)
+				     (,arg-op ,i)
+				     ,init-arg))
+	    unless (null rest)
+	      collect `(,(car rest) (> ,arg-count-var ,i)))))
+
+;;; We assume that a binding has been generated that assigns the
+;;; argument count to some generated variable in the LET* form.  That
+;;; generated variable is passed as an argument to this function.
+(defun match-rest/body (rest/body first-count arg-count-var arg-op)
+  (if (eq rest/body :none)
+      '()
+      `((,rest/body (let ((temp '())
+			  (n ,arg-count-var))
+		      (tagbody
+		       again
+			 (when (= n ,first-count)
+			   (go out))
+			 (decf n)
+			 (push (,arg-op n) temp)
+			 (go again)
+		       out)
+		      temp)))))
 
 ;;; Recall that a key-entry is a list of one of two forms:
 ;;;
-;;;  * ((keyword variable) init-form)
-;;;  * ((keyword variable) init-form supplied-p-parameter)
+;;;  * ((keyword parameter) init-form)
+;;;  * ((keyword parameter) init-form supplied-p-parameter)
 ;;;
-(defun match-key (key-entries first-count arg-count-op arg-op)
-  (loop for ((keyword variable) init-form . rest) in key-entries
-	for counter = (gensym)
-	collect `(,variable (let ((,counter ,first-count))
-			      (block nil
-				(tagbody
-				 again
-				   (when (= ,counter (,arg-count-op))
-				     (go out))
-				   (when (eq (,arg-op n) ,keyword)
-				     (return (,arg-op (1+ ,counter))))
-				   (go again)
-				 out)
-				,init-form)))
-	unless (null rest)
-	  collect `(,(car rest) (let ((,counter ,first-count))
-				  (block nil
-				    (tagbody
-				     again
-				       (when (= ,counter (,arg-count-op))
-					 (go out))
-				       (when (eq (,arg-op n) ,keyword)
-					 (return t))
-				       (go again)
-				     out)
-				    nil)))))
-
-;;; Generate code to check that the number of arguments supplied is
-;;; acceptable.
-;;; 
-;;; MIN is a number.  If it is 0, then we don't check the minimum
-;;; number of arguments supplied.  MAX is a number, or NIL (meaning
-;;; "no upper bound").  
-(defun check-arg-count (min max arg-count-op)
-  `(,@(if (= min 0)
-	  `()
-	  `((when (< (,arg-count-op) ,min)
-	      (error "too few arguments"))))
-    ,@(if (null max)
-	  `()
-	  `((when (> (,arg-count-op) ,max)
-	      (error "too many arguments"))))))
+(defun match-keys (key-entries first-count arg-count-var arg-op)
+  (if (eq key-entries :none)
+      '()
+      (loop for ((keyword parameter) init-form . rest) in key-entries
+	    for counter = (gensym)
+	    for supplied-p-temp = (gensym)
+	    unless (null rest)
+	      collect `(,supplied-p-temp nil)
+	    collect `(,parameter (let ((,counter ,first-count))
+				   (block nil
+				     (tagbody
+				      again
+					(when (= ,counter ,arg-count-var)
+					  (go out))
+					(when (eq (,arg-op n) ,keyword)
+					  ,@(if (null rest)
+						'()
+						`((setq ,supplied-p-temp t)))
+					  (return (,arg-op (1+ ,counter))))
+					(incf ,counter 2)
+					(go again)
+				      out)
+				     ,init-form)))
+	    unless (null rest)
+	      collect `(,(car rest) ,supplied-p-temp))))
 
 ;;; Generate code to check that there is an even number of keyword
 ;;; arguments.
@@ -365,22 +413,130 @@
 ;;; :ALLOW-OTHER-KEYS is true or not from the first occurrence.  This
 ;;; function is only called when &allow-other-keys is not given in the
 ;;; lambda list.
-(defun check-valid-keyword-arguments
-    (keywords first-count arg-count-op arg-op)
-  `(loop
-     for i from ,first-count below (,arg-count-op) by 2
-     do (if (eq (,arg-op i) :allow-other-keys)
-	    (if (null (,arg-op (1+ i)))
-		(loop-finish)
-		(return)))
-     finally
-	(loop
-	  for i from ,first-count below (,arg-count-op) by 2
-	  do (unless (loop with arg = (,arg-op i)
-			   for keyword in ,(cons :allow-other-keys keywords)
-			   when (eq arg keyword)
-			     return t)
-	       (error "unknown keyword argument")))))
+(defun check-keyword-validity
+    (variable keywords first-count arg-count-var arg-op)
+  (let ((counter (gensym)))
+    `((,variable
+       (let ((,counter ,first-count))
+	 (block nil
+	   (tagbody
+	      ;; In phase 1 we search for the first
+	      ;; occurrence of :allow-other-keys. 
+	    phase1
+	      (when (>= ,counter ,arg-count-var)
+		;; We ran out of arguments without finding any
+		;; :allow-other-keys.  We must now go check that
+		;; each keyword argument is a valid one. 
+		(go phase2))
+	      (if (eq (,arg-op ,counter) :allow-other-keys)
+		  ;; We found the first :allow-other-keys.
+		  ;; We look no further. 
+		  (if (,arg-op (1+ ,counter))
+		      ;; The argument following :allow-other keys is
+		      ;; true.  Then any keyword is allowed, so we are
+		      ;; done checking.
+		      (return nil)
+		      ;; The argument following :allow-other keys is
+		      ;; false, which means that only explicitly
+		      ;; mentioned keywords are allowed, so we do the
+		      ;; next phase.
+		      (go phase2))
+		  ;; The keyword we found is something other than
+		  ;; :allow-other-keys.  Try the next one.
+		  (progn (incf ,counter 2)
+			 (go phase1)))
+	    phase2
+	      ;; Start over from the first keyword argument.
+	      (setq ,counter ,first-count)
+	    again
+	      (when (>= ,counter ,arg-count-var)
+		;; We ran out of arguments without finding any
+		;; invalid keywords.  We are done.
+		(return nil))
+	      ;; Check that the current keyword is valid.
+	      (unless (member (,arg-op ,counter) ',keywords)
+		;; Found an invalid keyword.
+		(error "invalid keyword ~s" (,arg-op ,counter)))
+	      ;; Come here if the current keyword is not invalid.
+	      ;; Try the next one.
+	      (incf ,counter 2)
+	      (go again))))))))
+
+(defun check-arg-count
+    (variable arg-count-var required-count optional-count rest-p key-p)
+  `(,variable (progn ,@(if (plusp required-count)
+			   `((when (< ,arg-count-var ,required-count)
+			       (error "too few arguments")))
+			   '())
+		     ,@(if (and (not rest-p) (not key-p))
+			   `((when (> ,arg-count-var
+				      ,(+ required-count optional-count))
+			       (error "too many arguments")))
+			   '())
+		     ,@(if key-p
+			   (if (evenp (+ required-count optional-count))
+			       `((when (and (> ,arg-count-var
+					       ,(+ required-count
+						   optional-count))
+					    (oddp ,arg-count-var))
+				   (error "odd number of keyword arguments")))
+			       `((when (and (> ,arg-count-var
+					       ,(+ required-count
+						   optional-count))
+					    (evenp ,arg-count-var))
+				   (error "odd number of keyword arguments"))))
+			   '())))) 
+
+(defun match-lambda-list (lambda-list arg-count-op arg-op)
+  (with-accessors ((required required)
+		   (optionals optionals)
+		   (rest-body rest-body)
+		   (keys keys)
+		   (allow-other-keys allow-other-keys))
+      lambda-list
+    (let* ((arg-count-var (gensym))
+	   (arg-count-check-temp (gensym))
+	   (keyword-validity-check-temp (gensym))
+	   (ignored (list arg-count-check-temp)))
+    (append (if (or (and (not (eq required :none))
+			 (plusp (length required)))
+		    (not (eq keys :none))
+		    (eq rest-body :none))
+		`((,arg-count-var ,arg-count-op))
+		'())
+	    (check-arg-count arg-count-check-temp
+			     arg-count-var
+			     (if (eq required :none) 0 (length required))
+			     (if (eq optionals :none) 0 (length optionals))
+			     (not (eq rest-body :none))
+			     (not (eq keys :none)))
+	    (match-required required arg-op)
+	    (match-optionals optionals 
+			     (if (eq required :none) 0 (length required))
+			     arg-count-var
+			     arg-op)
+	    (match-rest/body rest-body
+			     (+ (if (eq required :none) 0 (length required))
+				(if (eq optionals :none) 0 (length optionals)))
+			     arg-count-var
+			     arg-op)
+	    (if (or (eq keys :none)
+		    allow-other-keys)
+		'()
+		(progn (push keyword-validity-check-temp ignored)
+		       (check-keyword-validity
+			keyword-validity-check-temp
+			(mapcar #'caar keys)
+			(+ (if (eq required :none) 0 (length required))
+			   (if (eq optionals :none) 0 (length optionals)))
+			arg-count-var
+			arg-op)))
+	    (match-keys keys
+			(+ (if (eq required :none) 0 (length required))
+			   (if (eq optionals :none) 0 (length optionals)))
+			arg-count-var
+			arg-op)))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
