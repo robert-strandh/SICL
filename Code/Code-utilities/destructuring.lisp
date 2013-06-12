@@ -173,7 +173,7 @@
 	       ;; else we signal an error.
 	       (let ((temp (gensym)))
 		 (push temp variables-to-ignore)
-		 (push `(,temp (when (not (null ,var2))
+		 (push `(,temp (unless (null ,var2)
 				 (error "too many arguments supplied")))
 		       error-check-bindings)))
 	      ((not (eq (keys lambda-list) :none))
