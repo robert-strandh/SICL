@@ -385,7 +385,7 @@
 				      again
 					(when (= ,counter ,arg-count-var)
 					  (go out))
-					(when (eq (,arg-op n) ,keyword)
+					(when (eq (,arg-op ,counter) ,keyword)
 					  ,@(if (null rest)
 						'()
 						`((setq ,supplied-p-temp t)))
@@ -464,28 +464,28 @@
 
 (defun check-arg-count
     (variable arg-count-var required-count optional-count rest-p key-p)
-  `(,variable (progn ,@(if (plusp required-count)
-			   `((when (< ,arg-count-var ,required-count)
-			       (error "too few arguments")))
-			   '())
-		     ,@(if (and (not rest-p) (not key-p))
-			   `((when (> ,arg-count-var
-				      ,(+ required-count optional-count))
-			       (error "too many arguments")))
-			   '())
-		     ,@(if key-p
-			   (if (evenp (+ required-count optional-count))
-			       `((when (and (> ,arg-count-var
-					       ,(+ required-count
-						   optional-count))
-					    (oddp ,arg-count-var))
-				   (error "odd number of keyword arguments")))
-			       `((when (and (> ,arg-count-var
-					       ,(+ required-count
-						   optional-count))
-					    (evenp ,arg-count-var))
-				   (error "odd number of keyword arguments"))))
-			   '())))) 
+  `((,variable (progn ,@(if (plusp required-count)
+			    `((when (< ,arg-count-var ,required-count)
+				(error "too few arguments")))
+			    '())
+		      ,@(if (and (not rest-p) (not key-p))
+			    `((when (> ,arg-count-var
+				       ,(+ required-count optional-count))
+				(error "too many arguments")))
+			    '())
+		      ,@(if key-p
+			    (if (evenp (+ required-count optional-count))
+				`((when (and (> ,arg-count-var
+						,(+ required-count
+						    optional-count))
+					     (oddp ,arg-count-var))
+				    (error "odd number of keyword arguments")))
+				`((when (and (> ,arg-count-var
+						,(+ required-count
+						    optional-count))
+					     (evenp ,arg-count-var))
+				    (error "odd number of keyword arguments"))))
+			    '())))))
 
 (defun match-lambda-list (lambda-list arg-count-op arg-op)
   (with-accessors ((required required)
@@ -498,44 +498,46 @@
 	   (arg-count-check-temp (gensym))
 	   (keyword-validity-check-temp (gensym))
 	   (ignored (list arg-count-check-temp)))
-    (append (if (or (and (not (eq required :none))
-			 (plusp (length required)))
-		    (not (eq keys :none))
-		    (eq rest-body :none))
-		`((,arg-count-var ,arg-count-op))
-		'())
-	    (check-arg-count arg-count-check-temp
-			     arg-count-var
-			     (if (eq required :none) 0 (length required))
-			     (if (eq optionals :none) 0 (length optionals))
-			     (not (eq rest-body :none))
-			     (not (eq keys :none)))
-	    (match-required required arg-op)
-	    (match-optionals optionals 
-			     (if (eq required :none) 0 (length required))
-			     arg-count-var
-			     arg-op)
-	    (match-rest/body rest-body
-			     (+ (if (eq required :none) 0 (length required))
-				(if (eq optionals :none) 0 (length optionals)))
-			     arg-count-var
-			     arg-op)
-	    (if (or (eq keys :none)
-		    allow-other-keys)
-		'()
-		(progn (push keyword-validity-check-temp ignored)
-		       (check-keyword-validity
-			keyword-validity-check-temp
-			(mapcar #'caar keys)
-			(+ (if (eq required :none) 0 (length required))
-			   (if (eq optionals :none) 0 (length optionals)))
-			arg-count-var
-			arg-op)))
-	    (match-keys keys
-			(+ (if (eq required :none) 0 (length required))
-			   (if (eq optionals :none) 0 (length optionals)))
-			arg-count-var
-			arg-op)))))
+      (values
+       (append (if (or (and (not (eq required :none))
+			    (plusp (length required)))
+		       (not (eq keys :none))
+		       (eq rest-body :none))
+		   `((,arg-count-var ,arg-count-op))
+		   '())
+	       (check-arg-count arg-count-check-temp
+				arg-count-var
+				(if (eq required :none) 0 (length required))
+				(if (eq optionals :none) 0 (length optionals))
+				(not (eq rest-body :none))
+				(not (eq keys :none)))
+	       (match-required required arg-op)
+	       (match-optionals optionals 
+				(if (eq required :none) 0 (length required))
+				arg-count-var
+				arg-op)
+	       (match-rest/body rest-body
+				(+ (if (eq required :none) 0 (length required))
+				   (if (eq optionals :none) 0 (length optionals)))
+				arg-count-var
+				arg-op)
+	       (if (or (eq keys :none)
+		       allow-other-keys)
+		   '()
+		   (progn (push keyword-validity-check-temp ignored)
+			  (check-keyword-validity
+			   keyword-validity-check-temp
+			   (mapcar #'caar keys)
+			   (+ (if (eq required :none) 0 (length required))
+			      (if (eq optionals :none) 0 (length optionals)))
+			   arg-count-var
+			   arg-op)))
+	       (match-keys keys
+			   (+ (if (eq required :none) 0 (length required))
+			      (if (eq optionals :none) 0 (length optionals)))
+			   arg-count-var
+			   arg-op))
+       ignored))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
