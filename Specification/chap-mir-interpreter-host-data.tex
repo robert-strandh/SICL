@@ -1,0 +1,33 @@
+\chapter{MIR interpreter with host data}
+
+This backend is an interpreter for the medium-level intermediate
+representation (MIR) presented in \refChap{chap-mir}.  All objects
+such as symbols, numbers, packages, etc. are host objects.  There are
+three kinds of functions:
+
+\begin{itemize}
+\item Primitive functions.  These are essentially host functions that
+  have been wrapped so that they obey the function-call protocol of
+  the backend. 
+\item Interpreted ordinary functions.  An interpreted ordinary
+  function contains a lexical environment and a MIR program
+  representing a function.  
+\item Interpreted generic functions.  Such a function contains an
+  interpreted ordinary function for the discriminating function, and
+  methods that also contain ordinary interpreted functions. 
+\end{itemize}
+
+Primitive functions can be arbitrarily complex, allowing us to
+gradually test \sysname{} functions by incrementally moving code from
+complex primitive functions to collections of interpreted functions.
+So for instance, the functions \texttt{read} and \texttt{print} will
+initially be primitive functions, and then gradually replaced by
+target implementations as collections of interpreted functions.
+
+Macros such as global standard macros and macros introduced by
+\texttt{macrolet} have macro functions represented as primitive
+functions.  Only macros introduced by executing compiled calls to
+\texttt{(setf macro-function)} will have macro functions represented
+as interpreted ordinary functions.  This way, we can pre-load the
+global environment with standard macros, allowing us to turn source
+code into abstract syntax trees and then to MIR code. 
