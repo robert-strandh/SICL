@@ -65,9 +65,7 @@
 	   #:boundp
 	   #:makunbound
 	   #:constantp
-	   #:defvar
-	   #:defparameter
-	   #:defconstant
+	   #:defmacro
 	   )
   (:export
    #:proclaim
@@ -119,9 +117,7 @@
    #:makunbound
    #:find-value-cell
    #:constantp
-   #:defvar
-   #:defparameter
-   #:defconstant
+   #:defmacro
    ))
 
 (defpackage #:sicl-ast
