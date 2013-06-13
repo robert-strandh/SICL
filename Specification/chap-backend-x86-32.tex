@@ -1,8 +1,5 @@
-\chapter{Backends}
-
-\section{Introduction}
-
-\section{x86-32}
+\chapter{x86-32}
+\label{chap-backend-x86}
 
 A \emph{code object} contains:
 
@@ -27,7 +24,7 @@ A code object can be shared by several functions.  In particular, the
 file compiler generates a single code object for all the code in the
 file. 
 
-\subsection{Calling conventions}
+\section{Calling conventions}
 
 \refFig{fig-x86-32-stack-frame} shows the layout of a stack frame. 
 
@@ -243,7 +240,7 @@ to check the count.  Furthermore, this situation is probably the most
 common one, so that in almost all cases, checking the number of return
 values becomes unnecessary.
 
-\subsection{Use of the static environment}
+\section{Use of the static environment}
 \label{backends-x86-32-static-environment}
 
 Variables that are captured by a closure with indefinite extent can
@@ -257,7 +254,7 @@ variables, the code for the function copies the environment to the
 stack at \texttt{[EBP$-4 \cdot 2$]}.  If the environment needs to be
 extended, then it is done by pushing another level onto the list.
 
-\subsection{Use of the dynamic environment}
+\section{Use of the dynamic environment}
 
 The dynamic environment is a simply linked sequence of entries
 allocated in the stack rather than on the heap.  The following entry
@@ -357,7 +354,7 @@ target to which control is tranfered is defined by the lexically
 stored ebp/address pair.  The code to which control is transfered is
 responsible for adjusting esp to a particular value relative to ebp.
 
-\subsection{Transfer of control to an exit point}
+\section{Transfer of control to an exit point}
 
 Whenever transfer of control to an exit point is initiated, the exit
 point is first searched for.  If no valid exit point can be found, an
@@ -386,7 +383,7 @@ valid exit point is reached.
 Dynamic variable binding for the x86-32 backend.}
 \end{figure}
 
-\subsection{Argument parsing}
+\section{Argument parsing}
 
 By \emph{argument parsing}, we mean the process of analyzing the
 arguments that were passed to a function, and using those arguments to
@@ -452,39 +449,4 @@ When a function takes only required parameters and none of those
 parameters are closed over, then the argument-parsing process is
 reduced to \emph{nothing}, and all that needs to be done upon function
 entry is to allocate space in the stack frame for temporaries. 
-
-\section{x86-64}
-
-The registers are used as follows:
-
-\begin{itemize}
-\item RAX: Temporary register.  First return value. 
-\item RBX: Dynamic environment.
-\item RCX: Second argument. 
-\item RDX: First argument. 
-\item RSP: Stack pointer.
-\item RBP: Frame pointer.
-\item RSI: Code object argument.
-\item RDI: Argument-count argument.  Return value count value.
-\item R8: Third argument. 
-\item R9: Fourth argument. 
-\item R10: Static environment argument.
-\item R11: Temporary register.
-\item R12-R15: Callee-saved registers
-\end{itemize}
-
-\refFig{fig-x86-64-stack-frame} shows the layout of a stack frame. 
-
-\begin{figure}
-\begin{center}
-\inputfig{fig-x86-64-stack-frame.pdf_t}
-\end{center}
-\caption{\label{fig-x86-64-stack-frame}
-Stack frame for the x86-64 backend.}
-\end{figure}
-
-
-\section{C}
-
-\section{Common Lisp}
 

@@ -1,0 +1,30 @@
+\chapter{x86-64}
+\label{chapter-backend-x86-64}
+
+The registers are used as follows:
+
+\begin{itemize}
+\item RAX: Temporary register.  First return value. 
+\item RBX: Dynamic environment.
+\item RCX: Second argument. 
+\item RDX: First argument. 
+\item RSP: Stack pointer.
+\item RBP: Frame pointer.
+\item RSI: Code object argument.
+\item RDI: Argument-count argument.  Return value count value.
+\item R8: Third argument. 
+\item R9: Fourth argument. 
+\item R10: Static environment argument.
+\item R11: Temporary register.
+\item R12-R15: Callee-saved registers
+\end{itemize}
+
+\refFig{fig-x86-64-stack-frame} shows the layout of a stack frame. 
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-x86-64-stack-frame.pdf_t}
+\end{center}
+\caption{\label{fig-x86-64-stack-frame}
+Stack frame for the x86-64 backend.}
+\end{figure}
