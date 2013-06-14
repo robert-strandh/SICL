@@ -161,418 +161,16 @@
      (convert-code lambda-list body env)
      (convert-sequence args env))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Convert an ordinary lambda list to compiled form.
-
-;;; The main tricky part about converting a lambda list is that any
-;;; init-form in &optional, &key, or &aux entries may refer to
-;;; variables in parameter specifiers to the left of the one it
-;;; appears in.
-;;;
-;;; A question (that the HyperSpec does not seem to be addressing as
-;;; far as I can tell) is whether the lambda list may contain multiple
-;;; entries of the same symbol.  It kind of makes sense that this
-;;; would be possible, given what was said in the paragraph above, so
-;;; a lambda list might be for instance: (x &key (x x)) which would
-;;; mean that the variable x takes on the value of the :x keyword
-;;; argument if given, and of the required arguement if no keyword
-;;; argument was given.  It is probably easier to allow this than to
-;;; check for it.
-
-;;; FIXME: we do not yet handle &key parameters.
-;;; FIXME: we do not yet handle special parameters.
-;;; FIXME: we do not yet handle &aux parameters.
-
-(defun convert-one-required (required env i)
-  (let* ((new-env (sicl-env:add-lexical-variable-entry env required))
-	 (info (sicl-env:variable-info required new-env))
-	 (location (sicl-env:location info)))
-    (values
-     (sicl-ast:make-setq-ast
-      location
-      (sicl-ast:make-arg-ast (convert-constant i)))
-     new-env)))
-     
-(defun convert-all-required (required env)
-  (let ((new-env env))
-    (values 
-     (loop for req in required
-	   for i from 0
-	   collect (multiple-value-bind (ast env-temp)
-		       (convert-one-required req new-env i)
-		     (setf new-env env-temp)
-		     ast))
-     new-env)))
-
-;;; We return two values: an AST for initialization, and a new
-;;; environment.  If there is no supplied-p parameter, then the AST
-;;; initializes only the optional parameter.  If there is a supplied-p
-;;; parameter, then the AST initialized both the optional parameter
-;;; and the supplied-p parameter.
-(defun convert-one-optional (optional env argcount-temp i)
-  (let* (;; Convert the init-form in the original environment.
-	 (init-ast (convert (cadr optional) env))
-	 ;; Add the parameter to the environment, giving a new environment.
-	 (new-env (sicl-env:add-lexical-variable-entry env (car optional)))
-	 ;; Find the info block corresponding to the parameter.
-	 (info (sicl-env:variable-info (car optional) new-env))
-	 ;; Find the location that was allocated for the parameter. 
-	 (location (sicl-env:location info)))
-    (if (null (cddr optional))
-	;; There is no supplied-p parameter.
-	(values 
-	 ;; The first value we return is then a list of a single AST
-	 ;; which assigns to the location corresponding to the optional
-	 ;; parameter, either from an argument (if there are enough
-	 ;; arguments), or from the value if the init-form (if there
-	 ;; aren't enough arguments).
-	 (sicl-ast:make-if-ast
-	  (sicl-ast:make-u<=-ast
-	   (list
-	    argcount-temp
-	    (convert-constant i)))
-	  (sicl-ast:make-setq-ast location init-ast)
-	  (sicl-ast:make-setq-ast
-	   location
-	   (sicl-ast:make-arg-ast (convert-constant i))))
-	 ;; The second value is the new envirionment, i.e., the one we
-	 ;; were passed as an argument, augmented with the location
-	 ;; for the parameter.
-	 new-env)
-	;; There is a supplied-p parameter.
-	(progn
-	  ;; Add the supplied-p parameter to the environment. 
-	  (setf new-env
-		(sicl-env:add-lexical-variable-entry env (caddr optional)))
-	  (let* (;; Find the info block corresponding to the
-		 ;; supplied-p parameter.
-		 (info (sicl-env:variable-info (caddr optional) new-env))
-		 ;; Find the location that was allocated for the parameter. 
-		 (supplied-p-location (sicl-env:location info)))
-	    (values
-	     (sicl-ast:make-if-ast
-	      (sicl-ast:make-u<=-ast
-	       (list
-		argcount-temp
-		(sicl-ast:make-word-ast i)))
-	      (sicl-ast:make-progn-ast
-	       (list 
-		(sicl-ast:make-setq-ast location init-ast)
-		(sicl-ast:make-setq-ast supplied-p-location
-					(convert-constant nil))))
-	      (sicl-ast:make-progn-ast
-	       (list 
-		(sicl-ast:make-setq-ast
-		 location
-		 (sicl-ast:make-arg-ast (convert-constant i)))
-		(sicl-ast:make-setq-ast supplied-p-location
-					(convert-constant t)))))
-	     new-env))))))
-
-;;; Return two values.  The first value is a list of ASTs, one for
-;;; each optional parameter.  The second value is the environment
-;;; given as argument, augmented with the optional parameters, and the
-;;; supplied-p parameters if any.
-(defun convert-all-optionals (optionals env argcount-temp start)
-  (let ((new-env env))
-    (values 
-     (loop for opt in optionals
-	   for i from start
-	   collect (multiple-value-bind (ast env-temp)
-		       (convert-one-optional opt new-env argcount-temp i)
-		     (setf new-env env-temp)
-		     ast))
-     new-env)))
-
-;;; Return two values.  The first value is an AST that accumulates the
-;;; remaining arguments in a lexical variable, and the second is the
-;;; environment passed as an argument, augmented with that lexical
-;;; variable. 
-;;;
-;;; The AST is roughly equivalent to the following form:
-;;;
-;;;    (tagbody (setq rest nil)
-;;;             (setq index start)
-;;;           again
-;;;             (if (>= index argcount)
-;;;                 (go out))
-;;;             (setq rest (cons (arg index) rest))
-;;;             (setq index (+ index 1))
-;;;             (go again)
-;;;           out)
-(defun convert-rest (rest env argcount-temp start)
-  (let* ((new-env (sicl-env:add-lexical-variable-entry env rest))
-	 ;; Find the info block corresponding to the parameter.
-	 (info (sicl-env:variable-info rest new-env))
-	 ;; Find the location that was allocated for the parameter. 
-	 (location (sicl-env:location info))
-	 ;; Create a temporary lexical variable for the index.
-	 (index (sicl-env:make-lexical-location (gensym)))
-	 (again-ast (sicl-ast:make-tag-ast 'again))
-	 (out-ast (sicl-ast:make-tag-ast 'out)))
-    (values
-     (sicl-ast:make-tagbody-ast
-      (list
-       (sicl-ast:make-setq-ast location (convert-constant nil))
-       (sicl-ast:make-setq-ast index (convert-constant start))
-       again-ast
-       (sicl-ast:make-if-ast
-	(sicl-ast:make-u<=-ast
-	 (list argcount-temp index))
-	(sicl-ast:make-go-ast out-ast)
-	(convert-constant nil))
-       (sicl-ast:make-setq-ast
-	location
-	(sicl-ast:make-call-ast
-	 (sicl-env:location (sicl-env:function-info 'cons env t))
-	 (list (sicl-ast:make-arg-ast index) location)))
-       (sicl-ast:make-setq-ast
-	index
-	(sicl-ast:make-u+-ast (list index (convert-constant 1))))
-       (sicl-ast:make-go-ast again-ast)
-       out-ast))
-     new-env)))
-
-;;;    (tagbody (setq index start)
-;;;           again
-;;;             (if (>= index argcount)
-;;;                 (progn (setq var <init-form>)
-;;;                        (go out))
-;;;                 (if (eq (arg index) key)
-;;;                     (progn (setq var (arg (+ index 1)))
-;;;                            (go out))
-;;;                     (progn (setq index (+ index 2))
-;;;                            (go again))))
-;;;           out)
-;;;
-;;;    (tagbody (setq index start)
-;;;           again
-;;;             (if (>= index argcount)
-;;;                 (progn (setq var <init-form>)
-;;;                        (setq supplied-p nil)
-;;;                        (go out))
-;;;                 (if (eq (arg index) key)
-;;;                     (progn (setq var (arg (+ index 1)))
-;;;                            (setq supplied-p t)
-;;;                            (go out))
-;;;                     (progn (setq index (+ index 2))
-;;;                            (go again))))
-;;;           out)
-
-(defun convert-one-key (key env argcount-temp start)
-  (let* (;; Convert the init-form in the original environment.
-	 (init-ast (convert (cadr key) env))
-	 (new-env (sicl-env:add-lexical-variable-entry env (cadar key)))
-	 ;; Find the info block corresponding to the parameter.
-	 (info (sicl-env:variable-info (cadar key) new-env))
-	 ;; Find the location that was allocated for the parameter. 
-	 (location (sicl-env:location info))
-	 ;; Create a temporary lexical variable for the index.
-	 (index (sicl-env:make-lexical-location (gensym)))
-	 (again-ast (sicl-ast:make-tag-ast 'again))
-	 (out-ast (sicl-ast:make-tag-ast 'out)))
-    (if (null (cddr key))
-	(values
-	 (sicl-ast:make-tagbody-ast
-	  (list
-	   (sicl-ast:make-setq-ast index (convert-constant start))
-	   again-ast
-	   (sicl-ast:make-if-ast
-	    (sicl-ast:make-u<=-ast (list argcount-temp index))
-	    (sicl-ast:make-progn-ast
-	     (list (sicl-ast:make-setq-ast location init-ast)
-		   (sicl-ast:make-go-ast out-ast)))
-	    (sicl-ast:make-if-ast
-	     (sicl-ast:make-==-ast
-	      (list (sicl-ast:make-arg-ast index)
-		    (convert-constant (caar key))))
-	     (sicl-ast:make-progn-ast
-	      (list (sicl-ast:make-setq-ast
-		     location
-		     (sicl-ast:make-arg-ast
-		      (sicl-ast:make-u+-ast
-		       (list index (convert-constant 1)))))
-		    (sicl-ast:make-go-ast out-ast)))
-	     (sicl-ast:make-progn-ast
-	      (list (sicl-ast:make-setq-ast
-		     index
-		     (sicl-ast:make-u+-ast
-		      (list index (convert-constant 2))))
-		    (sicl-ast:make-go-ast again-ast)))))
-	   out-ast))
-	 new-env)
-	(progn
-	  ;; Add the supplied-p parameter to the environment. 
-	  (setf new-env
-		(sicl-env:add-lexical-variable-entry env (caddr key)))
-	  (let* (;; Find the info block corresponding to the
-		 ;; supplied-p parameter.
-		 (info (sicl-env:variable-info (caddr key) new-env))
-		 ;; Find the location that was allocated for the parameter. 
-		 (supplied-p-location (sicl-env:location info)))
-	    (values
-	     (sicl-ast:make-tagbody-ast
-	      (list
-	       (sicl-ast:make-setq-ast index (convert-constant start))
-	       again-ast
-	       (sicl-ast:make-if-ast
-		(sicl-ast:make-u<=-ast (list argcount-temp index))
-		(sicl-ast:make-progn-ast
-		 (list (sicl-ast:make-setq-ast location init-ast)
-		       (sicl-ast:make-setq-ast supplied-p-location
-					       (convert-constant nil))
-		       (sicl-ast:make-go-ast out-ast)))
-		(sicl-ast:make-if-ast
-		 (sicl-ast:make-==-ast
-		  (list (sicl-ast:make-arg-ast index)
-			(convert-constant (caar key))))
-		 (sicl-ast:make-progn-ast
-		  (list (sicl-ast:make-setq-ast
-			 location
-			 (sicl-ast:make-arg-ast
-			  (sicl-ast:make-u+-ast
-			   (list index (convert-constant 1)))))
-			(sicl-ast:make-setq-ast supplied-p-location
-						(convert-constant t))
-			(sicl-ast:make-go-ast out-ast)))
-		 (sicl-ast:make-progn-ast
-		  (list (sicl-ast:make-setq-ast
-			 index
-			 (sicl-ast:make-u+-ast
-			  (list index (convert-constant 2))))
-			(sicl-ast:make-go-ast again-ast)))))
-	       out-ast))
-	     new-env))))))
-
-;;; Return two values.  The first value is a list of ASTs, one for
-;;; each keyword parameter.  The second value is the environment
-;;; given as argument, augmented with the keyword parameters, and the
-;;; supplied-p parameters if any.
-(defun convert-all-keys (keys env argcount-temp start)
-  (let ((new-env env))
-    (values 
-     (loop for key in keys
-	   collect (multiple-value-bind (ast env-temp)
-		       (convert-one-key key new-env argcount-temp start)
-		     (setf new-env env-temp)
-		     ast))
-     new-env)))
-
-(defun convert-one-aux (aux env)
-  (let* (;; Convert the init-form in the original environment.
-	 (init-ast (convert (cadr aux) env))
-	 ;; Add the parameter to the environment, giving a new environment.
-	 (new-env (sicl-env:add-lexical-variable-entry env (car aux)))
-	 ;; Find the info block corresponding to the parameter.
-	 (info (sicl-env:variable-info (car aux) new-env))
-	 ;; Find the location that was allocated for the parameter. 
-	 (location (sicl-env:location info)))
-    (values 
-     ;; The first value we return is then a list of a single AST which
-     ;; assigns to the location corresponding to the aux parameter
-     ;; from the value if the init-form.
-     (sicl-ast:make-setq-ast location init-ast)
-     ;; The second value is the new envirionment, i.e., the one we
-     ;; were passed as an argument, augmented with the location for
-     ;; the parameter.
-     new-env)))
-
-(defun convert-all-aux (aux env)
-  (let ((new-env env))
-    (values 
-     (loop for entry in aux
-	   collect (multiple-value-bind (ast env-temp)
-		       (convert-one-aux entry new-env)
-		     (setf new-env env-temp)
-		     ast))
-     new-env)))
-
-(defun number-of-required (lambda-list)
-  (length (sicl-code-utilities:required lambda-list)))
-
-(defun number-of-optionals (lambda-list)
-  (let ((optionals (sicl-code-utilities:optionals lambda-list)))
-    (if (eq optionals :none)
-	0
-	(length optionals))))
-
-(defun convert-ordinary-lambda-list (lambda-list env)
-  (let* ((new-env env)
-	 (argcount-temp (sicl-env:make-lexical-location (gensym)))
-	 (parsers (list (sicl-ast:make-setq-ast
-			 argcount-temp
-			 (sicl-ast:make-argcount-ast)))))
-    (multiple-value-bind (asts env-temp)
-	(convert-all-required
-	 (sicl-code-utilities:required lambda-list)
-	 new-env)
-      (setf parsers (append parsers asts))
-      (setf new-env env-temp))
-    (let ((optionals (sicl-code-utilities:optionals lambda-list)))
-      (unless (eq optionals :none)
-	(multiple-value-bind (asts env-temp)
-	    (convert-all-optionals
-	     optionals
-	     new-env
-	     argcount-temp
-	     (number-of-required lambda-list))
-	  (setf parsers (append parsers asts))
-	  (setf new-env env-temp))))
-    (let ((rest (sicl-code-utilities:rest-body lambda-list)))
-      (unless (eq rest :none)
-	(multiple-value-bind (ast env-temp)
-	    (convert-rest
-	     rest
-	     new-env
-	     argcount-temp
-	     (+ (number-of-required lambda-list)
-		(number-of-optionals lambda-list)))
-	  (setf parsers (append parsers (list ast)))
-	  (setf new-env env-temp))))
-    (let ((keys (sicl-code-utilities:keys lambda-list)))
-      (unless (eq keys :none)
-	(multiple-value-bind (asts env-temp)
-	    (convert-all-keys
-	     keys
-	     new-env
-	     argcount-temp
-	     (+ (number-of-required lambda-list)
-		(number-of-optionals lambda-list)))
-	  (setf parsers (append parsers asts))
-	  (setf new-env env-temp))))
-    (let ((aux (sicl-code-utilities:aux lambda-list)))
-      (unless (eq aux :none)
-	(multiple-value-bind (asts env-temp)
-	    (convert-all-aux
-	     aux
-	     new-env)
-	  (setf parsers (append parsers asts))
-	  (setf new-env env-temp))))
-    (values (sicl-ast:make-progn-ast parsers)
-	    new-env)))
 
 (defun convert-code (lambda-list body env)
   (let ((parsed-lambda-list
 	  (sicl-code-utilities:parse-ordinary-lambda-list lambda-list)))
-    (multiple-value-bind (argparse-ast new-env)
-	(convert-ordinary-lambda-list parsed-lambda-list env)
-      (multiple-value-bind (declarations documentation forms)
-	  (sicl-code-utilities:separate-function-body body)
-	(declare (ignore documentation))
-	(setf new-env
-	      (sicl-env:augment-environment-with-declarations
-	       new-env declarations))
-	(let ((body-asts (convert-sequence forms new-env)))
-	  (sicl-ast:make-function-ast
-	   (and (eq (sicl-code-utilities:optionals parsed-lambda-list) :none)
-		(eq (sicl-code-utilities:keys parsed-lambda-list) :none)
-		(eq (sicl-code-utilities:aux parsed-lambda-list) :none))
-	   (loop for req in (sicl-code-utilities:required parsed-lambda-list)
-		 for info = (sicl-env:variable-info req new-env)
-		 collect (sicl-env:location info))
-	   argparse-ast
-	   (sicl-ast:make-progn-ast body-asts)))))))
+    (sicl-ast:make-function-ast
+     nil nil nil
+     (convert `(let* ,(sicl-code-utilities:match-lambda-list
+		       parsed-lambda-list '(argcount) 'arg)
+		 ,body)
+	      env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -748,6 +346,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LET.
+;;;
+;;; We convert a LET form recursively.  If it has a single binding, we
+;;; convert it into a SETQ.  If it has more than one binding, we
+;;; convert it as follows:
+;;;
+;;; (let ((<var> <init-form>)
+;;;       <more-bindings>)
+;;;   <body>)
+;;; =>
+;;; (let ((temp <init-form>))
+;;;   (let (<more-bindings>)
+;;;     (let ((<var> temp))
+;;;       <body>)))
 
 (define-condition bindings-must-be-proper-list
     (compilation-program-error)
@@ -787,34 +398,70 @@
       nil
       (cadr binding)))
 
-;;; FIXME: We convert the LET to a function call with a lambda
-;;; expression in the CAR, but this might not be quite right because a
-;;; lambda expression may have documentation in it, whereas a LET may
-;;; not.  This of course is a problem only when the LET form contains
-;;; a string literal in a context where no value is required.  We may
-;;; solve the problem by adding an empty comment in this case. 
-;;;
-;;; FIXME: If we are going to do it like this, we might as well turn
-;;; LET into a macro, which is allowed by the HyperSpec.
+(defun convert-simple-let (binding body env)
+  (let* ((var (if (symbolp binding) binding (car binding)))
+	 (init-form (if (symbolp binding) nil (cadr binding)))
+	 (new-env (sicl-env:add-lexical-variable-entry env var))
+	 (info (sicl-env:variable-info var new-env)))
+    (multiple-value-bind (declarations forms)
+	(sicl-code-utilities:separate-ordinary-body body)
+      ;; FIXME: handle declarations
+      ;; FIXME: in particular, if there is a SPECIAL declaration
+      ;; then generate totally different code. 
+      (declare (ignore declarations))
+      (sicl-ast:make-progn-ast
+       (append (sicl-ast:make-setq-ast (sicl-env:location info)
+				       (convert init-form env))
+	       (convert-sequence forms new-env))))))
+
+;;; Separate a list of canonicalized declaration specifiers into two
+;;; disjoint sets, returned as two values.  The first set contains All
+;;; the declerations specifiers that concern an ordinary variable
+;;; named NAME, and the second set the remaining declaration specifiers.
+(defun separate-declarations (canonicalized-declaration-specifiers name)
+  (loop for spec in canonicalized-declaration-specifiers
+	if (or (and (eq (first spec) 'ignore)
+		    (eq (second spec) name))
+	       (and (eq (first spec) 'ignorable)
+		    (eq (second spec) name))
+	       (and (eq (first spec) 'dynamic-extent)
+		    (eq (second spec) name))
+	       (and (eq (first spec) 'special)
+		    (eq (second spec) name))
+	       (and (eq (first spec) 'type)
+		    (eq (third spec) name)))
+	  collect spec into first
+	else
+	  collect spec into second
+	finally (return (values first second))))
+
 (defmethod convert-compound
     ((symbol (eql 'let)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   (destructuring-bind (bindings &rest body) (cdr form)
     (check-binding-forms bindings)
-    (convert `((lambda ,(mapcar (lambda (v) (if (symbolp v) v (car v)))
-			 bindings)
-		 ,@body)
-	       ,@(mapcar #'init-form bindings))
-	     env)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting LET*.
-;;;
-;;; LET* can be converted to nested LETs, but one has to be careful to
-;;; take apart the declarations and associate each one with the
-;;; correct LET form.
+    (if (= (length bindings) 1)
+	(convert-simple-let bindings body env)
+	(let* ((first (car bindings))
+	       (var (if (symbolp first) first (car first)))
+	       (init-form (if (symbolp first) nil (cadr first)))
+	       (temp (gensym)))
+	  (multiple-value-bind (declarations forms)
+	      (sicl-code-utilities:separate-ordinary-body body)
+	    (multiple-value-bind (first remaining)
+		(separate-declarations 
+		 (sicl-code-utilities:canonicalize-declaration-specifiers 
+		  (mapcar #'cdr declarations))
+		 var)
+	      (convert
+	       `(let ((,temp ,init-form))
+		  (let ,(cdr bindings)
+		    (declare ,@remaining)
+		    (let ((,var ,temp))
+		      (declare ,@first)
+		      ,@forms)))
+	       env)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
