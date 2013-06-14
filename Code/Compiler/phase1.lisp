@@ -104,9 +104,9 @@
 
 (defun convert (form environment)
   (setf form (sicl-env:fully-expand-form form environment))
-  (cond ((or (and (not (consp form))
-		  (not (symbolp form)))
-	 (convert-constant form)))
+  (cond ((and (not (consp form))
+	      (not (symbolp form)))
+	 (convert-constant form))
 	((and (symbolp form)
 	      (sicl-env:constantp form environment))
 	 (convert-constant (sicl-env:symbol-value form)))
