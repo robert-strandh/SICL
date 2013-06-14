@@ -308,7 +308,7 @@
 	 tree-or-lambda-list)
 	((consp tree-or-lambda-list)
 	 (cond ((list-has-keyword-p tree-or-lambda-list)
-		(parse-destructuring-lambda-list tree-or-lambda-list nil nil))
+		(parse-destructuring-lambda-list tree-or-lambda-list))
 	       (t
 		(check-tree tree-or-lambda-list)
 		tree-or-lambda-list)))
@@ -976,7 +976,7 @@
 		(error "something is seriously wrong here"))
 	      result))))))
 
-(defun parse-destructuring-lambda-list  (lambda-list)
+(defun parse-destructuring-lambda-list (lambda-list)
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
       (error 'lambda-list-must-not-be-circular
