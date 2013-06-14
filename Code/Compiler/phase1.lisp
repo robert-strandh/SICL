@@ -169,7 +169,7 @@
      nil nil nil
      (convert `(let* ,(sicl-code-utilities:match-lambda-list
 		       parsed-lambda-list '(argcount) 'arg)
-		 ,body)
+		 ,@body)
 	      env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -410,9 +410,9 @@
       ;; then generate totally different code. 
       (declare (ignore declarations))
       (sicl-ast:make-progn-ast
-       (append (sicl-ast:make-setq-ast (sicl-env:location info)
-				       (convert init-form env))
-	       (convert-sequence forms new-env))))))
+       (cons (sicl-ast:make-setq-ast (sicl-env:location info)
+				     (convert init-form env))
+	     (convert-sequence forms new-env))))))
 
 ;;; Separate a list of canonicalized declaration specifiers into two
 ;;; disjoint sets, returned as two values.  The first set contains All
@@ -442,7 +442,7 @@
   (destructuring-bind (bindings &rest body) (cdr form)
     (check-binding-forms bindings)
     (if (= (length bindings) 1)
-	(convert-simple-let bindings body env)
+	(convert-simple-let (car bindings) body env)
 	(let* ((first (car bindings))
 	       (var (if (symbolp first) first (car first)))
 	       (init-form (if (symbolp first) nil (cadr first)))
@@ -868,6 +868,21 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (sicl-ast:make-u<=-ast (convert-arguments (cdr form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting ARGCOUNT.
+
+(defmethod convert-compound ((symbol (eql 'argcount)) form env)
+  (sicl-ast:make-argcount-ast))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting ARG.
+
+(defmethod convert-compound ((symbol (eql 'arg)) form env)
+  (sicl-ast:make-arg-ast
+   (convert (cadr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
