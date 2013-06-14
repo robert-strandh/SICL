@@ -315,7 +315,7 @@
 ;;; variable with that name exists (i.e., the entry exists in stage
 ;;; 2), and if so, uses its special binding.  An entry in stage 1 does
 ;;; not trigger that behavior in the compiler, so if the entry found
-;;; is in stage 1, any new binding of the varible is considered to be
+;;; is in stage 1, any new binding of the variable is considered to be
 ;;; a lexical binding.
 ;;;
 ;;; Stage 2 happens when a DEFVAR or DEFPARAMETER form has been
@@ -340,7 +340,7 @@
 ;;;
 
 (defclass lexical-variable-entry
-    (base-entry named-entry varible-space location-entry)
+    (base-entry named-entry variable-space location-entry)
   ())
 
 (defun make-lexical-variable-entry (name)
@@ -1867,7 +1867,7 @@
 					(eq (base-entry entry) macro-entry)))
 				 (proclamations *global-environment*))))
 	      ;; Check whether the symbol has a definition as a
-	      ;; special varible.
+	      ;; special variable.
 	      (let ((variable-entry
 		      (find symbol (special-variables *global-environment*)
 			    :key #'name :test #'eq)))
