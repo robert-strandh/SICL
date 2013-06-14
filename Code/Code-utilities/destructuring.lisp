@@ -360,8 +360,8 @@
 		       again
 			 (when (= n ,first-count)
 			   (go out))
-			 (decf n)
-			 (push (,arg-op n) temp)
+			 (setq n (1- n))
+			 (setq temp (cons (,arg-op n) temp))
 			 (go again)
 		       out)
 		      temp)))))
@@ -390,7 +390,7 @@
 						'()
 						`((setq ,supplied-p-temp t)))
 					  (return (,arg-op (1+ ,counter))))
-					(incf ,counter 2)
+					(setq ,counter (+ ,counter 2))
 					(go again)
 				      out)
 				     ,init-form)))
@@ -443,7 +443,7 @@
 		      (go phase2))
 		  ;; The keyword we found is something other than
 		  ;; :allow-other-keys.  Try the next one.
-		  (progn (incf ,counter 2)
+		  (progn (setq ,counter (+ ,counter 2))
 			 (go phase1)))
 	    phase2
 	      ;; Start over from the first keyword argument.
@@ -459,7 +459,7 @@
 		(error "invalid keyword ~s" (,arg-op ,counter)))
 	      ;; Come here if the current keyword is not invalid.
 	      ;; Try the next one.
-	      (incf ,counter 2)
+	      (setq ,counter (+ ,counter 2))
 	      (go again))))))))
 
 (defun check-arg-count
