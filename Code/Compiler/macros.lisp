@@ -122,48 +122,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro LET.
-;;;
-;;; The HyperSpec specifically allows for an implementation to
-;;; implement any special operator as a macro.  We take advantage of
-;;; that possibility by defining LET to expand to a function call form
-;;; with a lambda expression in the CAR of the form. 
-;;;
-;;; The main thing to watch out for is that a literal string in the
-;;; LET body (which is then a FORM) must play the same role in the
-;;; body of the lambda expression in the expansion.  We must thus
-;;; avoid that such a string could be taken to be the DOCUMENTATION of
-;;; the body of the lambda expression.  We handle this problem by
-;;; putting an empty string first in the body of the lambda
-;;; expression, which is then taken to be an empty documentation.
-
-(defmacro let (bindings &body body)
-  ;; Check that the body is a proper list.
-  (unless (sicl-code-utilities:proper-list-p body)
-    (error "Body of LET must be a proper list"))
-  ;; Check that the bindings are in a proper list.
-  (unless (sicl-code-utilities:proper-list-p bindings)
-    (error "Bindings of LET must be a proper list."))
-  ;; Check the syntax of the bindings.
-  (loop for binding in bindings
-	do (unless (or (symbolp binding)
-		       (and (sicl-code-utilities:proper-list-p binding)
-			    (= (length binding) 2)
-			    (symbolp (car binding))))
-	     (error "Malformed LET binding: ~s" binding)))
-  `((lambda ,(loop for binding in bindings
-		   collect (if (symbolp binding)
-			       binding
-			       (car binding)))
-      ""  ; Empty documentation.
-      ,@body)
-    ,@(loop for binding in bindings
-	    collect (if (symbolp binding)
-			nil
-			(cadr binding)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro LET*.
 ;;;
 ;;; The HyperSpec specifically allows for an implementation to
@@ -213,12 +171,14 @@
 			    (symbolp (car binding))))
 	     (error "Malformed LET binding: ~s" binding)))
   (if (= (length bindings) 1)
-      `(let* ,bindings ,@body)
+      `(let ,bindings ,@body)
       (multiple-value-bind (declarations forms)
 	  (sicl-code-utilities:separate-ordinary-body body)
 	(multiple-value-bind (first remaining)
-	    (sicl-code-utilities:canonicalize-declaration-specifiers 
-	     (mapcar #'cdr declarations))
+	    (separate-declarations 
+	     (sicl-code-utilities:canonicalize-declaration-specifiers 
+	      (mapcar #'cdr declarations))
+	     (if (symbolp (car bindings) (car bindings) (caar bindings))))
 	  `(let (,(car bindings))
 	     (declare ,@first)
 	     (let* ,(cdr bindings)
