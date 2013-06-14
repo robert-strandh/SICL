@@ -35,6 +35,7 @@
 	   #:parse-define-method-combination-arguments-lambda-list
 	   #:lambda-list-variables
 	   #:destruture-lambda-list
+	   #:match-lambda-list
 	   #:parse-macro
 	   #:lambda-lists-congruent-p
 	   #:generate-congruent-lambda-list
