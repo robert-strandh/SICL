@@ -178,7 +178,7 @@
 	    (separate-declarations 
 	     (sicl-code-utilities:canonicalize-declaration-specifiers 
 	      (mapcar #'cdr declarations))
-	     (if (symbolp (car bindings) (car bindings) (caar bindings))))
+	     (if (symbolp (car bindings)) (car bindings) (caar bindings)))
 	  `(let (,(car bindings))
 	     (declare ,@first)
 	     (let* ,(cdr bindings)
@@ -214,3 +214,17 @@
 		(block ,name
 		  ,@forms))
 	      ,name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; A few macros that really belong elsewhere, but that 
+;;; we include here now for testing purposes.
+
+(defmacro when (test &body body)
+  `(if ,test (progn ,@body) nil))
+
+(defmacro unless (test &body body)
+  `(if ,test nil (progn ,@body)))
+
+(defmacro return (x)
+  `(return-from nil ,x))
