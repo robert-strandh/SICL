@@ -125,6 +125,7 @@
   (:export
    #:ast
    #:immediate-ast #:make-immediate-ast #:value
+   #:constant-ast #:make-constant-ast
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
    #:eval-when-ast #:make-eval-when-ast #:situations
