@@ -192,10 +192,6 @@
    #:test-instruction #:make-test-instruction #:test
    #:funcall-instruction #:make-funcall-instruction #:fun
    #:get-values-instruction #:make-get-values-instruction
-   #:put-arguments-instruction #:make-put-arguments-instruction
-   #:put-values-instruction #:make-put-values-instruction
-   #:enter-instruction #:make-enter-instruction
-   #:leave-instruction #:make-leave-instruction
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code
    #:go-instruction #:make-go-instruction

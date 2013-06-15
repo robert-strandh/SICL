@@ -421,9 +421,9 @@
 (defclass funcall-instruction (instruction)
   ())
 
-(defun make-funcall-instruction (input successor)
+(defun make-funcall-instruction (inputs successor)
   (make-instance 'funcall-instruction
-    :inputs (list input)
+    :inputs inputs
     :successors (list successor)))
 
 (defmethod draw-instruction ((instruction funcall-instruction) stream)
@@ -448,76 +448,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction PUT-ARGUMENTS-INSTRUCTION.
-
-(defclass put-arguments-instruction (instruction)
-  ())
-
-(defun make-put-arguments-instruction (inputs successor)
-  (make-instance 'put-arguments-instruction
-    :inputs inputs
-    :successors (list successor)))
-
-(defmethod draw-instruction ((instruction put-arguments-instruction) stream)
-  (format stream "   ~a [label = \"put-args\"];~%"
-	  (gethash instruction *instruction-table*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction PUT-VALUES-INSTRUCTION.
-
-(defclass put-values-instruction (instruction)
-  ())
-
-(defun make-put-values-instruction (inputs successor)
-  (make-instance 'put-values-instruction
-    :inputs inputs
-    :successors (list successor)))
-
-(defmethod draw-instruction ((instruction put-values-instruction) stream)
-  (format stream "   ~a [label = \"put-values\"];~%"
-	  (gethash instruction *instruction-table*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction ENTER-INSTRUCTION.
-
-
-(defclass enter-instruction (instruction)
-  ())
-
-(defun make-enter-instruction (successor)
-  (make-instance 'enter-instruction
-    :successors (list successor)))
-
-(defmethod draw-instruction ((instruction enter-instruction) stream)
-  (format stream "   ~a [label = \"enter\"];~%"
-	  (gethash instruction *instruction-table*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction LEAVE-INSTRUCTION.
-
-(defclass leave-instruction (instruction)
-  ())
-
-(defun make-leave-instruction (successor)
-  (make-instance 'leave-instruction
-    :successors (list successor)))
-
-(defmethod draw-instruction ((instruction leave-instruction) stream)
-  (format stream "   ~a [label = \"leave\"];~%"
-	  (gethash instruction *instruction-table*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction RETURN-INSTRUCTION.
 
 (defclass return-instruction (instruction)
   ())
 
-(defun make-return-instruction ()
-  (make-instance 'return-instruction))
+(defun make-return-instruction (inputs)
+  (make-instance 'return-instruction
+    :inputs inputs))
 
 (defmethod draw-instruction ((instruction return-instruction) stream)
   (format stream "   ~a [label = \"ret\"];~%"
