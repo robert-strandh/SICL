@@ -17,6 +17,10 @@
 ;;;
 ;;; Converting code to an abstract syntax tree.
 
+;;; When this variable is false, we are invoked by EVAL or COMPILE.
+;;; When it is true, we are invoked by COMPILE-FILE.
+(defparameter *compile-file* nil)
+
 ;;; When this variable is false, non-immediate constants will be
 ;;; converted into a LOAD-TIME-VALUE ast, which means that the machine
 ;;; code generated will be an access to an element in the vector of
@@ -76,22 +80,9 @@
 ;;; When the constant is quoted, this function is called with the 
 ;;; surrounding QUOTE form stripped off. 
 (defun convert-constant (constant)
-  (cond ((and (integerp constant)
-	      (<= sicl-configuration:+most-negative-fixnum+
-		  constant
-		  sicl-configuration:+most-positive-fixnum+))
-	 (sicl-ast:make-immediate-ast
-	  (sicl-configuration:host-integer-to-word constant)))
-	((characterp constant)
-	 (sicl-ast:make-immediate-ast
-	  (sicl-configuration:host-char-to-word constant)))
-	(*compile-for-linker*
-	 (convert-constant-for-linker constant))
-	(t
-	 ;; LOAD-TIME-VALUE takes a form, so if the form is
-	 ;; a constant, it must be quoted. 
-	 (sicl-ast:make-load-time-value-ast
-	  `(quote ,constant)))))
+  (if *compile-file*
+      (sicl-ast:make-load-time-value-ast `(quote ,constant) t)
+      (sicl-ast:make-constant-ast constant)))
 
 (defun convert-variable (form env)
   (let ((info (sicl-env:variable-info form env t)))
@@ -137,16 +128,8 @@
 ;;; the head symbol.
 (defmethod convert-compound ((head symbol) form env)
   (let ((info (sicl-env:function-info head env t)))
-    (sicl-ast:make-call-ast
-     (if (typep info 'sicl-env:global-location-info)
-	 (sicl-ast:make-memref-ast
-	  (sicl-ast:make-u+-ast
-	   (list (sicl-ast:make-load-time-value-ast
-		  `(sicl-env:find-function-cell ',head))
-		 (sicl-ast:make-immediate-ast
-		  sicl-configuration:+cdr-offset+))))
-	 (sicl-env:location info))
-     (convert-sequence (cdr form) env))))
+    (sicl-ast:make-call-ast (sicl-env:location info)
+			    (convert-sequence (cdr form) env))))
 
 ;;; Method to be used when the head of a compound form is a
 ;;; CONS.  Then the head must be a lambda expression.
@@ -278,14 +261,7 @@
 
 (defun convert-named-function (name environment)
   (let ((info (sicl-env:function-info name environment t)))
-    (cond ((typep info 'sicl-env:global-location-info)
-	   (sicl-ast:make-memref-ast
-	    (sicl-ast:make-u+-ast
-	     (list (sicl-ast:make-load-time-value-ast
-		    `(sicl-env:find-function-cell ',name))
-		   (sicl-ast:make-immediate-ast
-		    sicl-configuration:+cdr-offset+)))))
-	  (t (sicl-env:location info)))))
+    (sicl-env:location info)))
 
 (defun convert-lambda-function (lambda-form env)
   (unless (sicl-code-utilities:proper-list-p lambda-form)
@@ -694,18 +670,6 @@
    (sicl-ast:make-memref-ast 
     (sicl-ast:make-immediate-ast
      sicl-configuration:+function-find-class+))
-   (convert-arguments (cdr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting FIND-FUNCTION-CELL.
-
-(defmethod convert-compound
-    ((symbol (eql 'sicl-env:find-function-cell)) form environment)
-  (sicl-ast:make-call-ast
-   (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast
-     sicl-configuration:+function-find-function-cell+))
    (convert-arguments (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
