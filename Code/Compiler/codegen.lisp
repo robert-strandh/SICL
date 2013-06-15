@@ -128,11 +128,6 @@
 (defmethod codegen-instruction (instruction)
   nil)
 
-;;; FIXME: wrong
-(defmethod codegen-instruction
-    ((instruction sicl-mir:enter-instruction))
-  (codegen-instruction (car (successors instruction))))
-
 (defmethod codegen-instruction
     ((instruction sicl-mir:return-instruction))
   '("	ret"))
@@ -154,16 +149,6 @@
       ,(format nil "	jump ~a	; Loop." label1)
       ,(format nil "~a:		; No more arguments to push." label2)
       ";;; Finished pushing all arguments to stack.")))
-
-(defmethod codegen-instruction
-    ((instruction sicl-mir:put-arguments-instruction))
-  `(";;; Start of PUT-ARGUMENTS instruction."
-    ,@(loop for input in (inputs instruction)
-	    for i from 0
-	    append (load-input input)
-	    append (save-to-argument i))
-    ";;; End of PUT-ARGUMENTS instruction."
-    ,@(codegen-instruction (car (successors instruction)))))
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:get-values-instruction))
