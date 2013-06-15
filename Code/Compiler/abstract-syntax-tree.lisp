@@ -105,6 +105,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class CONSTANT-AST. 
+
+(defclass constant-ast (ast)
+  ((%value :initarg :value :reader value)))
+
+(defun make-constant-ast (value)
+  (make-instance 'constant-ast :value value))
+
+(defmethod stream-draw-ast ((ast constant-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = green];~%" (id ast))
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (value ast)))
+
+(defmethod children ((ast constant-ast))
+  '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class IMMEDIATE-AST. 
 ;;;
 ;;; A IMMEDIATE-AST represents a constant expression that has fits in
@@ -245,10 +264,11 @@
 (defmethod stream-draw-ast ((ast function-ast) stream)
   (format stream "   ~a [label = \"function\"];~%"
 	  (id ast))
-  (stream-draw-ast (argparse-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (argparse-ast ast)))
+  (unless (null (argparse-ast ast))
+    (stream-draw-ast (argparse-ast ast) stream)
+    (format stream "   ~a -> ~a~%"
+	    (id ast)
+	    (id (argparse-ast ast))))
   (stream-draw-ast (body-ast ast) stream)
   (format stream "   ~a -> ~a~%"
 	  (id ast)
@@ -508,11 +528,25 @@
 	(then-ast ast)
 	(else-ast ast)))
 
+(defmethod stream-draw-ast ((ast sicl-env:global-location) stream)
+  (format stream "   ~a [label = \"~a\"];~%" (id ast) (sicl-env:name ast))
+  (format stream "   ~a [style = filled, fillcolor = cyan];~%" (id ast)))
+  
+(defmethod children ((ast sicl-env:global-location))
+  '())
+
 (defmethod stream-draw-ast ((ast sicl-env:lexical-location) stream)
   (format stream "   ~a [label = \"~a\"];~%" (id ast) (sicl-env:name ast))
   (format stream "   ~a [style = filled, fillcolor = yellow];~%" (id ast)))
   
 (defmethod children ((ast sicl-env:lexical-location))
+  '())
+
+(defmethod stream-draw-ast ((ast sicl-env:special-location) stream)
+  (format stream "   ~a [label = \"~a\"];~%" (id ast) (sicl-env:name ast))
+  (format stream "   ~a [style = filled, fillcolor = magenta];~%" (id ast)))
+  
+(defmethod children ((ast sicl-env:special-location))
   '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
