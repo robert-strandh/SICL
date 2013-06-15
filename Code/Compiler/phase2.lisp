@@ -271,10 +271,7 @@
 			     (sicl-ast:argument-asts ast)))
 	     (temps (make-temps all-args)))
 	(setf next
-	      (sicl-mir:make-funcall-instruction
-	       (car temps) next))
-	(setf next
-	      (sicl-mir:make-put-arguments-instruction (cdr temps) next))
+	      (sicl-mir:make-funcall-instruction temps next))
 	(setf next
 	      (compile-arguments all-args temps next)))
       next)))
@@ -282,17 +279,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a function.
-;;;
-;;; The result is a graph of instructions starting with a
-;;; GET-ARGUMENTS-INSTRUCTION that uses the PARAMETERS to supply
-;;; values to the lexical locations that the body needs, and ending
-;;; with a RETURN-INSTRUCTION which has no successors. 
 
-(defun compile-function (argparse-ast body-ast)
-  (let ((next (sicl-mir:make-return-instruction)))
-    (setf next (compile-ast body-ast (p2:context t (list next))))
-    (setf next (compile-ast argparse-ast (p2:context '() (list next))))
-    (sicl-mir:make-enter-instruction next)))
+(defun compile-function (body-ast)
+  (compile-ast body-ast (p2:context t (list next))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -323,7 +312,7 @@
 	     (let ((temp (new-temporary)))
 	       (sicl-mir:make-enclose-instruction
 		temp
-		(sicl-mir:make-put-values-instruction (list temp) next)
+		(sicl-mir:make-return-instruction (list temp) next)
 		code)))
 	    ((null results)
 	     (warn "closure compiled in a context with no values"))
@@ -374,7 +363,7 @@
       context
     (ecase (length successors)
       (1 (cond ((eq results t)
-		(sicl-mir:make-put-values-instruction
+		(sicl-mir:make-return-instruction
 		 (list ast) (car successors)))
 	       ((null results)
 		(warn "variable compiled in a context with no values")
@@ -471,7 +460,7 @@
 			  ((eq results t)
 			   (let ((temp2 (new-temporary)))
 			     (setf next 
-				   (sicl-mir:make-put-values-instruction
+				   (sicl-mir:make-return-instruction
 				    (list temp2) next))
 			     (sicl-mir:make-memref-instruction
 			      (car temps) temp2 next)))
@@ -523,7 +512,7 @@
 			  ((eq results t)
 			   (let ((temp (new-temporary)))
 			     (setf next 
-				   (sicl-mir:make-put-values-instruction
+				   (sicl-mir:make-return-instruction
 				    (list temp) next))
 			     (funcall constructor temps temp (list next))))
 			  (t
@@ -588,7 +577,7 @@
 		   ((eq results t)
 		    (let ((temp (new-temporary)))
 		      (setf next 
-			    (sicl-mir:make-put-values-instruction
+			    (sicl-mir:make-return-instruction
 			     (list temp) next))
 		      (funcall constructor temps temp next)))
 		   (t
@@ -641,7 +630,7 @@
 			  ((eq results t)
 			   (let ((temp (new-temporary)))
 			     (setf next 
-				   (sicl-mir:make-put-values-instruction
+				   (sicl-mir:make-return-instruction
 				    (list temp) next))
 			     (let ((false (make-boolean nil temp next))
 				   (true (make-boolean t temp next)))
