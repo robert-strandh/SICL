@@ -281,7 +281,7 @@
 ;;; Compile a function.
 
 (defun compile-function (body-ast)
-  (compile-ast body-ast (p2:context t (list next))))
+  (compile-ast body-ast (p2:context t '())))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -311,7 +311,7 @@
 	     (let ((temp (new-temporary)))
 	       (sicl-mir:make-enclose-instruction
 		temp
-		(sicl-mir:make-return-instruction (list temp) next)
+		(sicl-mir:make-return-instruction (list temp))
 		code)))
 	    ((null results)
 	     (warn "closure compiled in a context with no values"))
