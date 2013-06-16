@@ -194,6 +194,8 @@
    #:get-values-instruction #:make-get-values-instruction
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code
+   #:argcount-instruction #:make-argcount-instruction
+   #:arg-instruction #:make-arg-instruction
    #:go-instruction #:make-go-instruction
    #:memalloc-instruction #:make-memalloc-instruction
    #:memref-instruction #:make-memref-instruction
