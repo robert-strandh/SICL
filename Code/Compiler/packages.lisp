@@ -196,7 +196,6 @@
    #:enclose-instruction #:make-enclose-instruction #:code
    #:argcount-instruction #:make-argcount-instruction
    #:arg-instruction #:make-arg-instruction
-   #:go-instruction #:make-go-instruction
    #:memalloc-instruction #:make-memalloc-instruction
    #:memref-instruction #:make-memref-instruction
    #:memset-instruction #:make-memset-instruction
