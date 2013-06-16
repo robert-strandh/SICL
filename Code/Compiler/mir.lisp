@@ -448,6 +448,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction TAILCALL-INSTRUCTION.
+
+(defclass tailcall-instruction (instruction)
+  ())
+
+(defun make-tailcall-instruction (inputs)
+  (make-instance 'tailcall-instruction
+    :inputs inputs))
+
+(defmethod draw-instruction ((instruction tailcall-instruction) stream)
+  (format stream "   ~a [label = \"tailcall\"];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction GET-VALUES-INSTRUCTION.
 
 (defclass get-values-instruction (instruction)

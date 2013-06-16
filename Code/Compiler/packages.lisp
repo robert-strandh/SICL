@@ -192,6 +192,7 @@
    #:assignment-instruction #:make-assignment-instruction
    #:test-instruction #:make-test-instruction #:test
    #:funcall-instruction #:make-funcall-instruction #:fun
+   #:tailcall-instruction #:make-tailcall-instruction
    #:get-values-instruction #:make-get-values-instruction
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code
