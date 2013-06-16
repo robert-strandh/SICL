@@ -482,6 +482,39 @@
 	  (gethash (code instruction) *instruction-table*)
 	  (gethash instruction *instruction-table*)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction GET-ARGCOUNT-INSTRUCTION.
+
+(defclass get-argcount-instruction (instruction)
+  ())
+
+(defun make-get-argcount-instruction (output successor)
+  (make-instance 'get-argcount-instruction
+    :outputs (list output)
+    :successors (list successor)))
+
+(defmethod draw-instruction ((instruction get-argcount-instruction) stream)
+  (format stream "   ~a [label = \"AC\", color = organge];~%"
+	  (gethash instruction *instruction-table*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction GET-ARGCOUNT-INSTRUCTION.
+
+(defclass get-arg-instruction (instruction)
+  ())
+
+(defun make-get-arg-instruction (input output successor)
+  (make-instance 'get-arg-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+(defmethod draw-instruction ((instruction get-arg-instruction) stream)
+  (format stream "   ~a [label = \"arg\", color = organge];~%"
+	  (gethash instruction *instruction-table*)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions for low-level operators.
