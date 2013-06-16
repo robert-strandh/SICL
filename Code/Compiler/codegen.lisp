@@ -130,7 +130,13 @@
 
 (defmethod codegen-instruction
     ((instruction sicl-mir:return-instruction))
-  '("	ret"))
+  `(";;; Start of RETURN instruction."
+    ,@(loop for input in (inputs instruction)
+	    for i from 0
+	    append (load-input input)
+	    append (save-to-argument i))
+    "	ret"    
+    ";;; End of RETURN instruction."))
 
 (defun save-function ()
   `("	mov [ebp - 4], ecx"))
@@ -157,16 +163,6 @@
 	    for i from 0
 	    append (load-from-argument i)
 	    append (save-result output))
-    ";;; End of GET-VALUES instruction."
-    ,@(codegen-instruction (car (successors instruction)))))
-
-(defmethod codegen-instruction
-    ((instruction sicl-mir:put-values-instruction))
-  `(";;; Start of PUT-VALUES instruction."
-    ,@(loop for input in (inputs instruction)
-	    for i from 0
-	    append (load-input input)
-	    append (save-to-argument i))
     ";;; End of GET-VALUES instruction."
     ,@(codegen-instruction (car (successors instruction)))))
 
