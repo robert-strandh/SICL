@@ -95,6 +95,12 @@
 		     :successors successors
 		     :false-required-p false-required-p)))
 
+(defmethod print-object ((obj context) stream)
+  (print-unreadable-object (obj stream)
+    (format stream " results: ~s" (results obj))
+    (format stream " successors: ~s" (successors obj))
+    (format stream " false-required-p: ~s" (false-required-p obj))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile an abstract syntax tree in a compilation context.
@@ -243,7 +249,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a FUNCTION-CALL-AST.
+;;; Compile a CALL-AST.
 ;;;
 ;;; The first instruction generated is a PUT-ARGUMENTS-INSTRUCTION.
 ;;; This instruction supplies the arguments to the call.  Then the
@@ -263,18 +269,18 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let ((next (if (eq results t)
-		    (car successors)
-		    (sicl-mir:make-get-values-instruction
-		     results (car successors)))))
-      (let* ((all-args (cons (sicl-ast:callee-ast ast)
-			     (sicl-ast:argument-asts ast)))
-	     (temps (make-temps all-args)))
-	(setf next
-	      (sicl-mir:make-funcall-instruction temps next))
-	(setf next
-	      (compile-arguments all-args temps next)))
-      next)))
+    (let* ((all-args (cons (sicl-ast:callee-ast ast)
+			   (sicl-ast:argument-asts ast)))
+	   (temps (make-temps all-args)))
+      (compile-arguments
+       all-args
+       temps
+       (if (eq results t)
+	   (sicl-mir:make-tailcall-instruction temps)
+	   (sicl-mir:make-funcall-instruction
+	    temps
+	    (sicl-mir:make-get-values-instruction
+	     results (car successors))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -360,25 +366,23 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (ecase (length successors)
-      (1 (cond ((eq results t)
-		(sicl-mir:make-return-instruction (list ast)))
-	       ((null results)
-		(warn "variable compiled in a context with no values")
-		(car successors))
-	       ((eq ast (car results))
-		(nil-fill (cdr results) (car successors)))
-	       (t
-		(sicl-mir:make-assignment-instruction
-		 ast
-		 (car results) 
-		 (nil-fill (cdr results) (car successors))))))
-      (2 (if (or (null results) (eq ast (car results)))
-	     (sicl-mir:make-test-instruction ast successors)
-	     (sicl-mir:make-assignment-instruction
-	      ast
-	      (car results)
-	      (sicl-mir:make-test-instruction ast successors)))))))
+    (if (eq results t)
+	(sicl-mir:make-return-instruction (list ast))
+	(ecase (length successors)
+	  (1 (if (null results)
+		 (progn 
+		   (warn "variable compiled in a context with no values")
+		   (car successors))
+		 (sicl-mir:make-assignment-instruction
+		  ast
+		  (car results) 
+		  (nil-fill (cdr results) (car successors)))))
+	  (2 (if (null results)
+		 (sicl-mir:make-test-instruction ast successors)
+		 (sicl-mir:make-assignment-instruction
+		  ast
+		  (car results)
+		  (sicl-mir:make-test-instruction ast successors))))))))
 
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
@@ -449,16 +453,28 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (unless (and (listp results)
-		 (= (length results) 1)
-		 (= (length successors) 1))
-      (error "Invalid results for constant."))
-    (if (eq ast (car results))
-	(car successors)
-	(sicl-mir:make-assignment-instruction
-	 (sicl-mir:make-constant-input (sicl-ast:value ast))
-	 (car results)
-	 (car successors)))))
+    (if (eq results t)
+	(sicl-mir:make-return-instruction
+	 (list (sicl-mir:make-constant-input (sicl-ast:value ast))))
+	(ecase (length successors)
+	  (1 (if (null results)
+		 (progn 
+		   (warn "constant compiled in a context with no values")
+		   (car successors))
+		 (sicl-mir:make-assignment-instruction
+		  (sicl-mir:make-constant-input (sicl-ast:value ast))
+		  (car results)
+		  (nil-fill (cdr results) (car successors)))))
+	  (2 (if (null results)
+		 (if (null (sicl-ast:value ast))
+		     (cadr successors)
+		     (car successors))
+		 (sicl-mir:make-assignment-instruction
+		  ast
+		  (car results)
+		  (if (null (sicl-ast:value ast))
+		      (cadr successors)
+		      (car successors)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
