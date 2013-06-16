@@ -394,6 +394,8 @@
 (defun make-temp (argument)
   (cond ((typep argument 'sicl-env:lexical-location)
 	 argument)
+	((typep argument 'sicl-ast:constant-ast)
+	 (sicl-mir:make-constant-input (sicl-ast:value argument)))
 	((typep argument 'sicl-ast:immediate-ast)
 	 (sicl-mir:make-immediate-input (sicl-ast:value argument)))
 	((typep argument 'sicl-ast:load-time-value-ast)
@@ -420,7 +422,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a IMMEDATE-AST.
+;;; Compile a IMMEDIATE-AST.
 ;;;
 
 (defmethod compile-ast ((ast sicl-ast:immediate-ast) context)
@@ -435,6 +437,26 @@
 	(car successors)
 	(sicl-mir:make-assignment-instruction
 	 (sicl-mir:make-immediate-input (sicl-ast:value ast))
+	 (car results)
+	 (car successors)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a CONSTANT-AST.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:constant-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (and (listp results)
+		 (= (length results) 1)
+		 (= (length successors) 1))
+      (error "Invalid results for constant."))
+    (if (eq ast (car results))
+	(car successors)
+	(sicl-mir:make-assignment-instruction
+	 (sicl-mir:make-constant-input (sicl-ast:value ast))
 	 (car results)
 	 (car successors)))))
 
