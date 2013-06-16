@@ -303,8 +303,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let ((code (compile-function (sicl-ast:argparse-ast ast)
-				  (sicl-ast:body-ast ast)))
+    (let ((code (compile-function (sicl-ast:body-ast ast)))
 	  (next (if (= (length successors) 2)
 		    (cadr successors)
 		    (car successors))))
@@ -363,8 +362,7 @@
       context
     (ecase (length successors)
       (1 (cond ((eq results t)
-		(sicl-mir:make-return-instruction
-		 (list ast) (car successors)))
+		(sicl-mir:make-return-instruction (list ast)))
 	       ((null results)
 		(warn "variable compiled in a context with no values")
 		(car successors))
@@ -387,8 +385,7 @@
 	(*go-info* (make-hash-table :test #'eq)))
     ;; The top-level ast must represent a thunk.
     (assert (typep ast 'sicl-ast:function-ast))
-    (compile-function (sicl-ast:argparse-ast ast)
-		      (sicl-ast:body-ast ast))))
+    (compile-function (sicl-ast:body-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -461,7 +458,7 @@
 			   (let ((temp2 (new-temporary)))
 			     (setf next 
 				   (sicl-mir:make-return-instruction
-				    (list temp2) next))
+				    (list temp2)))
 			     (sicl-mir:make-memref-instruction
 			      (car temps) temp2 next)))
 			  (t
@@ -513,7 +510,7 @@
 			   (let ((temp (new-temporary)))
 			     (setf next 
 				   (sicl-mir:make-return-instruction
-				    (list temp) next))
+				    (list temp)))
 			     (funcall constructor temps temp (list next))))
 			  (t
 			   (setf next (nil-fill (cdr results) next))
@@ -578,7 +575,7 @@
 		    (let ((temp (new-temporary)))
 		      (setf next 
 			    (sicl-mir:make-return-instruction
-			     (list temp) next))
+			     (list temp)))
 		      (funcall constructor temps temp next)))
 		   (t
 		    (setf next (nil-fill (cdr results) next))
@@ -631,7 +628,7 @@
 			   (let ((temp (new-temporary)))
 			     (setf next 
 				   (sicl-mir:make-return-instruction
-				    (list temp) next))
+				    (list temp)))
 			     (let ((false (make-boolean nil temp next))
 				   (true (make-boolean t temp next)))
 			       (funcall constructor temps (list false true)))))
