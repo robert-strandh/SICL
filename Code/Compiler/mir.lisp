@@ -247,10 +247,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Draw method for the SICL-ENV:LOCATION location class.
+;;; Draw method for the SICL-ENV:LEXICAL-LOCATION location class.
 
-(defmethod draw-location ((location sicl-env:location) stream)
+(defmethod draw-location ((location sicl-env:lexical-location) stream)
   (format stream "  ~a [fillcolor = yellow, label = \"~a\"]~%" 
+	  (gethash location *location-table*)
+	  (sicl-env:name location)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Draw method for the SICL-ENV:GLOBAL-LOCATION location class.
+
+(defmethod draw-location ((location sicl-env:global-location) stream)
+  (format stream "  ~a [fillcolor = cyan, label = \"~a\"]~%" 
 	  (gethash location *location-table*)
 	  (sicl-env:name location)))
 
@@ -526,12 +535,12 @@
     :successors (list successor)))
 
 (defmethod draw-instruction ((instruction get-argcount-instruction) stream)
-  (format stream "   ~a [label = \"AC\", color = organge];~%"
+  (format stream "   ~a [label = \"AC\", color = orange];~%"
 	  (gethash instruction *instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction GET-ARGCOUNT-INSTRUCTION.
+;;; Instruction GET-ARG-INSTRUCTION.
 
 (defclass get-arg-instruction (instruction)
   ())
