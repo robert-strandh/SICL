@@ -277,10 +277,19 @@
        temps
        (if (eq results t)
 	   (sicl-mir:make-tailcall-instruction temps)
-	   (sicl-mir:make-funcall-instruction
-	    temps
-	    (sicl-mir:make-get-values-instruction
-	     results (car successors))))))))
+	   (ecase (length successors)
+	     (1 (sicl-mir:make-funcall-instruction
+		 temps
+		 (sicl-mir:make-get-values-instruction
+		  results (car successors))))
+	     (2 (let ((temp (new-temporary)))
+		  (sicl-mir:make-funcall-instruction
+		   temps
+		   (sicl-mir:make-get-values-instruction
+		    (list temp)
+		    (sicl-mir:make-test-instruction
+		     temp successors)))))))))))
+		  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -349,8 +358,8 @@
 ;;;
 ;;; Compile a LEXICAL-LOCATION object. 
 ;;;
-;;; If the RESULTS is T, then we generate a PUT-VALUES-INSTRUCTION.
-;;; In that case, we know that there is only one successor.  If there
+;;; If the RESULTS is T, then we generate a RETURN-INSTRUCTION.
+;;; In that case, we know that there are no successors.  If there
 ;;; is a single successor and the RESULTS is the empty list, then a
 ;;; lexical variable occurs in a context where its value is not
 ;;; required, so we warn, and generate no additional code.  If there
@@ -384,12 +393,81 @@
 		  (car results)
 		  (sicl-mir:make-test-instruction ast successors))))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a GLOBAL-LOCATION object. 
+;;;
+;;; If the RESULTS is T, then we generate a RETURN-INSTRUCTION.
+;;; In that case, we know that there are no successors.  If there
+;;; is a single successor and the RESULTS is the empty list, then a
+;;; lexical variable occurs in a context where its value is not
+;;; required, so we warn, and generate no additional code.  If there
+;;; is a single successor and the RESULTS contains a single element,
+;;; we generate a VARIABLE-ASSIGNMENT-INSTRUCTION.
+;;;
+;;; If there are two successors, we must generate a TEST-INSTRUCTION
+;;; with those two successor.  If in addition the RESULTS is not
+;;; the empty list, we must also generate a
+;;; VARIABLE-ASSIGNMENT-INSTRUCTION.
+
+(defmethod compile-ast ((ast sicl-env:global-location) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (if (eq results t)
+	(sicl-mir:make-return-instruction (list ast))
+	(ecase (length successors)
+	  (1 (if (null results)
+		 (progn 
+		   (warn "form compiled in a context with no values")
+		   (car successors))
+		 (sicl-mir:make-assignment-instruction
+		  ast
+		  (car results) 
+		  (nil-fill (cdr results) (car successors)))))
+	  (2 (if (null results)
+		 (sicl-mir:make-test-instruction ast successors)
+		 (sicl-mir:make-assignment-instruction
+		  ast
+		  (car results)
+		  (sicl-mir:make-test-instruction ast successors))))))))
+
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq)))
     ;; The top-level ast must represent a thunk.
     (assert (typep ast 'sicl-ast:function-ast))
     (compile-function (sicl-ast:body-ast ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile an ARGCOUNT-AST.
+;;;
+;;; The ARGCOUNT AST is known only to be found in a context where
+;;; there is a single result required, and a single successor.
+
+(defmethod compile-ast ((ast sicl-ast:argcount-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (sicl-mir:make-get-argcount-instruction (car results) (car successors))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile an ARG-AST.
+;;;
+;;; The ARG AST is known only to be found in a context where
+;;; there is a single result required, and a single successor.
+
+(defmethod compile-ast ((ast sicl-ast:arg-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (let ((temp (new-temporary)))
+      (compile-ast (sicl-ast:index-ast ast)
+		   (context (list temp)
+			    (list (sicl-mir:make-get-arg-instruction
+				   temp (car results) (car successors))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -398,8 +476,6 @@
 (defun make-temp (argument)
   (cond ((typep argument 'sicl-env:lexical-location)
 	 argument)
-	((typep argument 'sicl-ast:constant-ast)
-	 (sicl-mir:make-constant-input (sicl-ast:value argument)))
 	((typep argument 'sicl-ast:immediate-ast)
 	 (sicl-mir:make-immediate-input (sicl-ast:value argument)))
 	((typep argument 'sicl-ast:load-time-value-ast)
@@ -470,7 +546,7 @@
 		     (cadr successors)
 		     (car successors))
 		 (sicl-mir:make-assignment-instruction
-		  ast
+		  (sicl-mir:make-constant-input (sicl-ast:value ast))
 		  (car results)
 		  (if (null (sicl-ast:value ast))
 		      (cadr successors)
