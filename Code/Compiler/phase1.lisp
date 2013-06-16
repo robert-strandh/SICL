@@ -624,54 +624,6 @@
   (let ((args (convert-sequence (cdr form) environment)))
     (sicl-ast:make-call-ast (car args) (cdr args))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting MEMALLOC.
-
-(defmethod convert-compound
-    ((symbol (eql 'sicl-word:memalloc)) form environment)
-  (sicl-ast:make-call-ast
-   (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast
-     sicl-configuration:+function-memalloc+))
-   (convert-arguments (cdr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting FIND-PACKAGE.
-
-(defmethod convert-compound
-    ((symbol (eql 'find-package)) form environment)
-  (sicl-ast:make-call-ast
-   (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast
-     sicl-configuration:+function-find-package+))
-   (convert-arguments (cdr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting FIND-SYMBOL.
-
-(defmethod convert-compound
-    ((symbol (eql 'find-symbol)) form environment)
-  (sicl-ast:make-call-ast
-   (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast
-     sicl-configuration:+function-find-symbol+))
-   (convert-arguments (cdr form) environment)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting FIND-CLASS.
-
-(defmethod convert-compound
-    ((symbol (eql 'find-class)) form environment)
-  (sicl-ast:make-call-ast
-   (sicl-ast:make-memref-ast 
-    (sicl-ast:make-immediate-ast
-     sicl-configuration:+function-find-class+))
-   (convert-arguments (cdr form) environment)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting code for low-level operators.
