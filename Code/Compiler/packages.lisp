@@ -124,8 +124,8 @@
   (:use #:common-lisp)
   (:export
    #:ast
-   #:immediate-ast #:make-immediate-ast #:value
-   #:constant-ast #:make-constant-ast
+   #:constant-ast #:make-constant-ast #:value
+   #:immediate-ast #:make-immediate-ast
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
    #:eval-when-ast #:make-eval-when-ast #:situations
@@ -183,6 +183,7 @@
   (:use #:common-lisp)
   (:export
    #:immediate-input #:make-immediate-input
+   #:constant-input #:make-constant-input
    #:external-input #:make-external-input #:value
    #:argcount-input #:make-argcount-input
    #:arg-input #:make-arg-input

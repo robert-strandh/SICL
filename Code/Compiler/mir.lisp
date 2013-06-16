@@ -185,6 +185,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Location class CONSTANT-INPUT.
+
+(defclass constant-input ()
+  ((%value :initarg :value :reader value)))
+
+(defun make-constant-input (value)
+  (make-instance 'constant-input
+    :value value))
+
+(defmethod draw-location ((location constant-input) stream)
+  (format stream "   ~a [fillcolor = green, label = \"~a\"]~%"
+	  (gethash location *location-table*)
+	  (value location)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Location class EXTERNAL-INPUT.
 
 (defclass external-input ()
