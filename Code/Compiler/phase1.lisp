@@ -36,14 +36,17 @@
   (or (gethash location *location-asts*)
       (let ((ast (etypecase location
 		   (sicl-env:lexical-location
-		    (sicl-ast:make-lexical-ast (name location)))
+		    (sicl-ast:make-lexical-ast
+		     (sicl-env:name location)))
 		   (sicl-env:global-location
-		    (sicl-ast:make-global-ast (name location) (storage location)))
+		    (sicl-ast:make-global-ast
+		     (sicl-env:name location)
+		     (sicl-env:storage location)))
 		   (sicl-env:special-location
-		    (sicl-ast:make-special-ast (name location) (storage location))))))
+		    (sicl-ast:make-special-ast
+		     (sicl-env:name location)
+		     (sicl-env:storage location))))))
 	(setf (gethash location *location-asts*) ast))))
-
-		   
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -128,7 +131,7 @@
 	 (convert-compound (car form) form environment))))
 	 
 (defun convert-top-level-form (form)
-  (let ((*info-asts* (make-hash-table :test #'eq)))
+  (let ((*location-asts* (make-hash-table :test #'eq)))
     (convert `(function (lambda () ,form)) nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -146,11 +149,10 @@
 ;;; Default method when there is not a more specific method for
 ;;; the head symbol.
 (defmethod convert-compound ((head symbol) form env)
-  (let ((info (sicl-env:function-info head env t)))
+  (let* ((info (sicl-env:function-info head env t))
+	 (location (sicl-env:location info)))
     (sicl-ast:make-call-ast
-     (sicl-ast:make-global-ast
-      (sicl-env:name (sicl-env:location info))
-      (sicl-env:storage (sicl-env:location info)))
+     (find-or-create-ast location)
      (convert-sequence (cdr form) env))))
 
 ;;; Method to be used when the head of a compound form is a
@@ -259,11 +261,9 @@
 	    (loop for (name lambda-list . body) in (cadr form)
 		  for fun = (convert-code lambda-list body env)
 		  collect (sicl-ast:make-setq-ast
-			   (let ((location (sicl-env:location 
-					    (sicl-env:function-info name new-env t))))
-			     (sicl-ast:make-lexical-ast
-			      (sicl-env:name location)
-			      (sicl-env:storage location)))
+			   (let* ((info (sicl-env:function-info name new-env t))
+				  (location (sicl-env:location info)))
+			     (find-or-create-ast location))
 			   fun))))
       (multiple-value-bind (declarations forms)
 	  (sicl-code-utilities:separate-ordinary-body (cddr form))
@@ -285,13 +285,9 @@
   ())
 
 (defun convert-named-function (name environment)
-  (let ((location (sicl-env:location (sicl-env:function-info name environment t))))
-    (etypecase location
-      (sicl-env:global-location
-       (sicl-ast:make-global-ast (sicl-env:name location)
-				 (sicl-env:storage location)))
-      (sicl-env:lexical-location
-       (sicl-ast:make-lexical-ast (sicl-env:name location))))))
+  (let* ((info (sicl-env:function-info name environment t))
+	 (location (sicl-env:location info)))
+    (find-or-create-ast location)))
 
 (defun convert-lambda-function (lambda-form env)
   (unless (sicl-code-utilities:proper-list-p lambda-form)
@@ -418,9 +414,8 @@
       (declare (ignore declarations))
       (sicl-ast:make-progn-ast
        (cons (sicl-ast:make-setq-ast
-	      (sicl-ast:make-lexical-ast
-(sicl-env:location info)
-				     (convert init-form env))
+	      (find-or-create-ast location)
+	      (convert init-form env))
 	     (convert-sequence forms new-env))))))
 
 ;;; Separate a list of canonicalized declaration specifiers into two
@@ -572,19 +567,14 @@
   (unless (symbolp var)
     (error 'setq-var-must-be-symbol
 	   :expr var))
-  (let ((info (sicl-env:variable-info var env t)))
-    (cond ((typep info 'sicl-env:constant-variable-info)
-	   (error 'setq-constant-variable
-		  :form var))
-	  ((or (typep info 'sicl-env:lexical-location-info)
-	       (typep info 'sicl-env:special-location-info))
-	   (sicl-ast:make-setq-ast
-	    (sicl-env:location info)
-	    (convert form env)))
-	  ((typep info 'sicl-env:symbol-macro-info)
-	   (convert `(setf ,(macroexpand var env) form) env))
-	  (t
-	   (error "this should not happen")))))
+  (let* ((info (sicl-env:variable-info var env t))
+	 (location (sicl-env:location info)))
+    (if (typep info 'sicl-env:constant-variable-info)
+	(error 'setq-constant-variable
+	       :form var)
+	(sicl-ast:make-setq-ast
+	 (find-or-create-ast location)
+	 (convert form env)))))
   
 (defmethod convert-compound
     ((symbol (eql 'setq)) form environment)
