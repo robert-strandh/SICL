@@ -126,7 +126,7 @@
    #:ast
    #:constant-ast #:make-constant-ast #:value
    #:immediate-ast #:make-immediate-ast
-   #:global-ast #:make-global-ast
+   #:global-ast #:make-global-ast #:storage
    #:special-ast #:make-special-ast
    #:lexical-ast #:make-lexical-ast
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
