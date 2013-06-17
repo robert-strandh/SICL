@@ -28,6 +28,23 @@
 ;;; into code for creating them.
 (defparameter *compile-for-linker* nil)
 
+;;; During conversion, this variable contains a hash table that maps
+;;; from instance of environment locations to ASTs.
+(defparameter *location-asts* nil)
+
+(defun find-or-create-ast (location)
+  (or (gethash location *location-asts*)
+      (let ((ast (etypecase location
+		   (sicl-env:lexical-location
+		    (sicl-ast:make-lexical-ast (name location)))
+		   (sicl-env:global-location
+		    (sicl-ast:make-global-ast (name location) (storage location)))
+		   (sicl-env:special-location
+		    (sicl-ast:make-special-ast (name location) (storage location))))))
+	(setf (gethash location *location-asts*) ast))))
+
+		   
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting ordinary Common Lisp code.
@@ -86,10 +103,11 @@
 
 (defun convert-variable (form env)
   (let ((info (sicl-env:variable-info form env t)))
-    (cond ((typep info 'sicl-env:constant-variable-info)
-	   (convert-constant (sicl-env:definition info)))
-	  (t
-	   (sicl-env:location info)))))
+    (typecase info
+      (sicl-env:constant-variable-info
+       (convert-constant (sicl-env:definition info)))
+      (t
+       (find-or-create-ast (sicl-env:location info))))))
 
 (defgeneric convert-compound (head form environment))
 
@@ -110,7 +128,8 @@
 	 (convert-compound (car form) form environment))))
 	 
 (defun convert-top-level-form (form)
-  (convert `(function (lambda () ,form)) nil))
+  (let ((*info-asts* (make-hash-table :test #'eq)))
+    (convert `(function (lambda () ,form)) nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -128,8 +147,11 @@
 ;;; the head symbol.
 (defmethod convert-compound ((head symbol) form env)
   (let ((info (sicl-env:function-info head env t)))
-    (sicl-ast:make-call-ast (sicl-env:location info)
-			    (convert-sequence (cdr form) env))))
+    (sicl-ast:make-call-ast
+     (sicl-ast:make-global-ast
+      (sicl-env:name (sicl-env:location info))
+      (sicl-env:storage (sicl-env:location info)))
+     (convert-sequence (cdr form) env))))
 
 ;;; Method to be used when the head of a compound form is a
 ;;; CONS.  Then the head must be a lambda expression.
@@ -237,8 +259,11 @@
 	    (loop for (name lambda-list . body) in (cadr form)
 		  for fun = (convert-code lambda-list body env)
 		  collect (sicl-ast:make-setq-ast
-			   (sicl-env:location 
-			    (sicl-env:function-info name new-env t))
+			   (let ((location (sicl-env:location 
+					    (sicl-env:function-info name new-env t))))
+			     (sicl-ast:make-lexical-ast
+			      (sicl-env:name location)
+			      (sicl-env:storage location)))
 			   fun))))
       (multiple-value-bind (declarations forms)
 	  (sicl-code-utilities:separate-ordinary-body (cddr form))
@@ -260,8 +285,13 @@
   ())
 
 (defun convert-named-function (name environment)
-  (let ((info (sicl-env:function-info name environment t)))
-    (sicl-env:location info)))
+  (let ((location (sicl-env:location (sicl-env:function-info name environment t))))
+    (etypecase location
+      (sicl-env:global-location
+       (sicl-ast:make-global-ast (sicl-env:name location)
+				 (sicl-env:storage location)))
+      (sicl-env:lexical-location
+       (sicl-ast:make-lexical-ast (sicl-env:name location))))))
 
 (defun convert-lambda-function (lambda-form env)
   (unless (sicl-code-utilities:proper-list-p lambda-form)
@@ -378,7 +408,8 @@
   (let* ((var (if (symbolp binding) binding (car binding)))
 	 (init-form (if (symbolp binding) nil (cadr binding)))
 	 (new-env (sicl-env:add-lexical-variable-entry env var))
-	 (info (sicl-env:variable-info var new-env)))
+	 (info (sicl-env:variable-info var new-env))
+	 (location (sicl-env:location info)))
     (multiple-value-bind (declarations forms)
 	(sicl-code-utilities:separate-ordinary-body body)
       ;; FIXME: handle declarations
@@ -386,7 +417,9 @@
       ;; then generate totally different code. 
       (declare (ignore declarations))
       (sicl-ast:make-progn-ast
-       (cons (sicl-ast:make-setq-ast (sicl-env:location info)
+       (cons (sicl-ast:make-setq-ast
+	      (sicl-ast:make-lexical-ast
+(sicl-env:location info)
 				     (convert init-form env))
 	     (convert-sequence forms new-env))))))
 
