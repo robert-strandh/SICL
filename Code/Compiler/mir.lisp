@@ -209,7 +209,7 @@
 ;;; location, because where a lexical variable is to be found
 ;;; is typically different in different parts of the code. 
 
-(defclass constant-input ()
+(defclass lexical-location ()
   ((%name :initarg :name :reader name)))
 
 (defun make-lexical-location (name)
