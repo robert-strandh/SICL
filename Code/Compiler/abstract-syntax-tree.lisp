@@ -223,7 +223,7 @@
   (make-instance 'lexical-ast :name name))
 
 (defmethod stream-draw-ast ((ast lexical-ast) stream)
-  (format stream "   ~a [style = filled, fillcolor = magenta];~%" (id ast))
+  (format stream "   ~a [style = filled, fillcolor = yellow];~%" (id ast))
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (name ast)))
@@ -563,27 +563,6 @@
   (list (test-ast ast)
 	(then-ast ast)
 	(else-ast ast)))
-
-(defmethod stream-draw-ast ((ast sicl-env:global-location) stream)
-  (format stream "   ~a [label = \"~a\"];~%" (id ast) (sicl-env:name ast))
-  (format stream "   ~a [style = filled, fillcolor = cyan];~%" (id ast)))
-  
-(defmethod children ((ast sicl-env:global-location))
-  '())
-
-(defmethod stream-draw-ast ((ast sicl-env:lexical-location) stream)
-  (format stream "   ~a [label = \"~a\"];~%" (id ast) (sicl-env:name ast))
-  (format stream "   ~a [style = filled, fillcolor = yellow];~%" (id ast)))
-  
-(defmethod children ((ast sicl-env:lexical-location))
-  '())
-
-(defmethod stream-draw-ast ((ast sicl-env:special-location) stream)
-  (format stream "   ~a [label = \"~a\"];~%" (id ast) (sicl-env:name ast))
-  (format stream "   ~a [style = filled, fillcolor = magenta];~%" (id ast)))
-  
-(defmethod children ((ast sicl-env:special-location))
-  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
