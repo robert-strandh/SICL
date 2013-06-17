@@ -187,9 +187,13 @@
   (:export
    #:immediate-input #:make-immediate-input
    #:constant-input #:make-constant-input
+   #:lexical-location #:make-lexical-location #:name
+   #:special-location #:make-special-location #:storage
+   #:global-input #:make-global-input
    #:external-input #:make-external-input #:value
-   #:argcount-input #:make-argcount-input
-   #:arg-input #:make-arg-input
+   #:register-input #:make-register-input
+   #:static-location #:make-static-location #:layer #:index
+   #:dynamic-location #:make-dynamic-location
    #:instruction #:successors #:inputs #:outputs
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
