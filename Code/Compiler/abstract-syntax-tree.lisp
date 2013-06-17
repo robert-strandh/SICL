@@ -150,6 +150,86 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class GLOBAL-AST. 
+;;; 
+;;; A GLOBAL-AST represents a reference to a global FUNCTION, i.e., a
+;;; name that is known to be associated with a function in the global
+;;; environment.  Such a reference contains the name of the function,
+;;; and the STORAGE cell where the function can be found.  The storage
+;;; cell is a CONS cell where the CAR contains the function and the
+;;; CDR is NIL.
+;;;
+;;; We do not include information about the type of the function, nor
+;;; whether the function is declared inline/notinline, because such
+;;; information is not intrinsic properties of the function, and can
+;;; vary according to the place where the function is called. 
+
+(defclass global-ast (ast)
+  ((%name :initarg :name :reader name)
+   (%storage :initarg :storage :reader storage)
+   (%children :initform '() :allocation :class)))
+
+(defun make-global-ast (name storage)
+  (make-instance 'global-ast :name name :storage storage))
+
+(defmethod stream-draw-ast ((ast global-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = cyan];~%" (id ast))
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (name ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SPECIAL-AST.
+;;; 
+;;; A SPECIAL-AST represents a reference to a special variable.  Such
+;;; a reference contains the name of the variable, and the STORAGE
+;;; cell where the global value of the variable can be found.  This
+;;; value is used only if no binding of the variable is found in the
+;;; dynamic environment.  The storage cell is a CONS cell where the
+;;; CAR contains the global value and the CDR is NIL.
+
+(defclass special-ast (ast)
+  ((%name :initarg :name :reader name)
+   (%storage :initarg :storage :reader storage)
+   (%children :initform '() :allocation :class)))
+
+(defun make-special-ast (name storage)
+  (make-instance 'special-ast :name name :storage storage))
+
+(defmethod stream-draw-ast ((ast special-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = magenta];~%" (id ast))
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (name ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LEXICAL-AST.
+;;; 
+;;; A LEXICAL-AST represents a reference to a lexical variable.  Such
+;;; a reference contains the name of the variable, but it is used only
+;;; for debugging perposes and for the purpose of error reporting.
+;;;
+;;; A lexical variable does not have any associated location or
+;;; storage, because where it can be found might be different in
+;;; different parts of the code.
+
+(defclass lexical-ast (ast)
+  ((%name :initarg :name :reader name)
+   (%children :initform '() :allocation :class)))
+
+(defun make-lexical-ast (name)
+  (make-instance 'lexical-ast :name name))
+
+(defmethod stream-draw-ast ((ast lexical-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = magenta];~%" (id ast))
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (name ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CALL-AST. 
 ;;;
 ;;; A CALL-AST represents a function call.  
@@ -180,50 +260,6 @@
 (defmethod children ((ast call-ast))
   (cons (callee-ast ast)
 	(argument-asts ast)))
-
-;;; An &optional entry is one of:
-;;;
-;;;  * (lexical-location init-form-ast)
-;;;  * (lexical-location init-form-ast lexical-location)
-;;;
-;;; Here, init-form-ast is an AST resulting from the conversion of an
-;;; initialization form.  In the second variant, the last lexical
-;;; location is assigned a Boolean value according to whether an
-;;; optional argument was given.
-;;;
-;;; A &key entry is one of:
-;;;
-;;;  * ((keyword lexical-location) init-form-ast)
-;;;  * ((keyword lexical-location) init-form-ast lexical-location)
-;;;
-;;; As with the &optional entry, init-form-ast is an AST resulting
-;;; from the conversion of an initialization form.  In the second
-;;; variant, the last lexical location is assigned a Boolean value
-;;; according to whether an optional argument was given.
-;;; 
-;;; An &aux entry is of the form:
-;;;
-;;;  * (lexical-location init-form-ast)
-
-;;; FIXME: handle special variables in lambda list. 
-
-;; (defclass lambda-list ()
-;;   (;; A possibly empty list of lexical locations.
-;;    (%required :initarg :required :accessor required)
-;;    ;; A possibly empty list of optional entries. 
-;;    (%optional :initarg :optional :reader optional)
-;;    ;; Either NIL or a single lexical location. 
-;;    (%rest-body :initarg :rest-body :reader rest-body)
-;;    ;; Either:
-;;    ;;  * :none, meaning &key was not given at all,
-;;    ;;  * a possibly empty list of &key entries.
-;;    (%keys :initarg :keys :reader keys)
-;;    ;; Either:
-;;    ;;  * nil, meaning &allow-other-keys was not given at all,
-;;    ;;  * t, meaning &allow-other-keys was given.
-;;    (%allow-other-keys :initarg :allow-other-keys :reader allow-other-keys)
-;;    ;; A possibly empty list of &aux entries.
-;;    (%aux :initarg :aux :reader aux)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

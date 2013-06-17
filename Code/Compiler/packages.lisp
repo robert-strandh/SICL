@@ -126,6 +126,9 @@
    #:ast
    #:constant-ast #:make-constant-ast #:value
    #:immediate-ast #:make-immediate-ast
+   #:global-ast #:make-global-ast
+   #:special-ast #:make-special-ast
+   #:lexical-ast #:make-lexical-ast
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
    #:eval-when-ast #:make-eval-when-ast #:situations
