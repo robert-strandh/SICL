@@ -52,18 +52,9 @@ second input is chosen if the input is \emph{false}.%
 \subsection{Instruction \texttt{funcall}}
 \label{mir-instruction-funcall}
 
-This instruction has a single successor.  It has a single input and no
-outputs.
-
-The input contains the function to be called.  Arguments must already
-have been communicated by the use of the \texttt{put-arguments}
-instruction. \seesec{mir-instruction-put-arguments}
-
-\subsection{Instruction \texttt{get-arguments}}
-\label{mir-instruction-get-arguments}
-
-This instruction has a single successor.%
-\fixme{Say more.}
+This instruction has a single successor.  It can have any number of
+inputs, and it has no outputs.  The inputs correspond to the function
+to call and to the arguments of that function.
 
 \subsection{Instruction \texttt{get-values}}
 \label{mir-instruction-get-values}
@@ -74,36 +65,12 @@ have any number of outputs.
 The effect of this instruction is to assign the values of a preceding
 function call to a set of lexical variables. 
 
-\subsection{Instruction \texttt{put-arguments}}
-\label{mir-instruction-put-arguments}
-
-This instruction has a single successor.  It can have any number of
-inputs, and it has not outputs. 
-
-The effect of this instruction is to communicate the value of the
-inputs as arguments to the next \texttt{funcall}
-instruction. \seesec{mir-instruction-funcall}
-
-\subsection{Instruction \texttt{put-values}}
-\label{mir-instruction-put-values}
-
-This instruction has a single successor.  It can have any number of
-inputs, and it has no outputs. 
-
-The effect of this instruction is to communicate the value of the
-inputs as values to be returned when this function finishes its
-execution.
-
-\subsection{Instruction \texttt{enter}}
-\label{mir-instruction-enter}
-
-\subsection{Instruction \texttt{leave-values}}
-\label{mir-instruction-leave-values}
-
 \subsection{Instruction \texttt{return}}
 \label{mir-instruction-return}
 
-This instruction has no successors, no inputs and no outputs.
+This instruction has no successors.  It can have any number of
+inputs, and it has no outputs.  The inputs correspond to the values
+transmitted to the caller
 
 It terminates execution of the current function and returns to the
 caller. 
@@ -118,6 +85,12 @@ value, but instead the root of an instruction graph.
 The instruction takes the instruction graph and creates a
 \emph{closure}.  The closure contains the current lexical runtime
 environment and the code resulting from the input instruction graph.
+
+\subsection{Instruction \texttt{catch}}
+\label{mir-instruction-catch}
+
+\subsection{Instruction \texttt{unwind}}
+\label{mir-instruction-unwind}
 
 \subsection{Instruction \texttt{memref}}
 \label{mir-instruction-memref}
@@ -238,8 +211,3 @@ between the two inputs.
 \subsection{Instruction \texttt{u<=}}
 \label{mir-instruction-u-less-or-equal}
 
-\subsection{Instruction \texttt{catch}}
-\label{mir-instruction-catch}
-
-\subsection{Instruction \texttt{unwind}}
-\label{mir-instruction-unwind}
