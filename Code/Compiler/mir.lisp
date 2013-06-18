@@ -589,7 +589,7 @@
     :successors (list successor)))
 
 (defmethod draw-instruction ((instruction get-arg-instruction) stream)
-  (format stream "   ~a [label = \"arg\", color = organge];~%"
+  (format stream "   ~a [label = \"arg\", color = orange];~%"
 	  (gethash instruction *instruction-table*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
