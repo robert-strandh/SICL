@@ -152,7 +152,7 @@
 ;;; with it, and that storage is allocated directly in the global
 ;;; environment.  This is the case for globally defined functions.
 (defclass global-location (location)
-  ((%storage :initform (list +unbound+) :reader storage)))
+  ((%storage :initarg :storage :initform (list +unbound+) :reader storage)))
 
 (defun make-global-location (name)
   (make-instance 'global-location :name name))
