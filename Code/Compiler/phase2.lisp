@@ -312,7 +312,7 @@
 		   (sicl-mir:make-get-values-instruction
 		    (list temp)
 		    (sicl-mir:make-test-instruction
-		     temp successors)))))))))))
+		     temp (reverse successors))))))))))))
 		  
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -413,11 +413,13 @@
 		    (car results) 
 		    (nil-fill (cdr results) (car successors)))))
 	    (2 (if (null results)
-		   (sicl-mir:make-test-instruction location successors)
+		   (sicl-mir:make-test-instruction
+		    location (reverse successors))
 		   (sicl-mir:make-assignment-instruction
 		    location
 		    (car results)
-		    (sicl-mir:make-test-instruction location successors)))))))))
+		    (sicl-mir:make-test-instruction
+		     location (reverse successors))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -454,11 +456,13 @@
 		    (car results) 
 		    (nil-fill (cdr results) (car successors)))))
 	    (2 (if (null results)
-		   (sicl-mir:make-test-instruction location successors)
+		   (sicl-mir:make-test-instruction
+		    location (reverse successors))
 		   (sicl-mir:make-assignment-instruction
 		    location
 		    (car results)
-		    (sicl-mir:make-test-instruction location successors)))))))))
+		    (sicl-mir:make-test-instruction
+		     location (reverse successors))))))))))
 
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
@@ -602,7 +606,7 @@
 					   (new-temporary)
 					   (car results)))
 			     (next (sicl-mir:make-test-instruction
-				    location successors)))
+				    location (reverse successors))))
 			(setf next
 			      (sicl-mir:make-memref-instruction
 			       (car temps) location next))
