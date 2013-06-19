@@ -1,0 +1,60 @@
+\chapter{ARM}
+
+\section{Register use}
+
+The ARM standard allocates registers as follows:
+
+\begin{tabular}{|l|l|}
+\hline
+Name & Used for\\
+\hline
+\hline
+R0 & First argument, first value, scratch\\
+R1 & Second argument, second value, scratch \\
+R2 & Third argument, scratch \\
+R3 & Fourth argument, scratch \\
+R4 & Register variable (callee saved) \\
+R5 & Register variable (callee saved) \\
+R6 & Register variable (callee saved) \\
+R7 & Register variable (callee saved) \\
+R8 & Register variable (callee saved) \\
+R9 & Varies according to the platform\\
+R10 & Register variable (callee saved) \\
+R11 & Register variable (callee saved) \\
+R12, IP & Intra-procedure-call scratch register\\
+R13, SP & Stack pointer \\
+R14, LR & Link register, scratch \\
+R15, PC & Program counter \\
+\hline
+\end{tabular}
+
+We mostly respect this standard, and allocate as follows:%
+\footnote{Unfortunately, because we need to pass the static
+  environment and the argument count as arguments, there are only two
+  registers left to pass real arguments.  Three would have been
+  better.  We might consider using R4 as an additional
+  argument/scratch register.}
+
+\begin{tabular}{|l|l|}
+\hline
+Name & Used for\\
+\hline
+\hline
+R0 & First argument, first value, scratch\\
+R1 & Second argument, second value, scratch \\
+R2 & Static env. argument, third value, scratch \\
+R3 & Argument count, Value count, scratch \\
+R4 & Register variable (callee saved) \\
+R5 & Register variable (callee saved) \\
+R6 & Register variable (callee saved) \\
+R7 & Register variable (callee saved) \\
+R8 & Register variable (callee saved) \\
+R9 & The current thread\\
+R10 & Register variable (callee saved) \\
+R11 & Frame pointer\\
+R12, IP & Code-object argument\\
+R13, SP & Stack pointer \\
+R14, LR & Link register, scratch \\
+R15, PC & Program counter \\
+\hline
+\end{tabular}
