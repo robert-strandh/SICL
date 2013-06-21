@@ -622,15 +622,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction MEMREF-INSTRUCTION.
+;;;
+;;; This instruction takes a single input and a single output, and it
+;;; has a single successor.  The input is a memory address and the
+;;; output is the contents of that address in memory.
+;;;
+;;; When CACHEABLE is true, we guarantee that if the execution is
+;;; executed twice with the same input, then it yields the same
+;;; result.  This way, the result of the instruction can be cached in
+;;; a register if the register allocator decides to do that.
 
 (defclass memref-instruction (instruction)
   ())
 
-(defun make-memref-instruction (input output successor)
+(defun make-memref-instruction (input output successor &optional cacheable)
   (make-instance 'memref-instruction
     :inputs (list input)
     :outputs (list output)
-    :successors (list successor)))
+    :successors (list successor)
+    :cacheable cacheable))
 
 (defmethod draw-instruction ((instruction memref-instruction) stream)
   (format stream "   ~a [label = \"memref\"];~%"

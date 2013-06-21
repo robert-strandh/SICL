@@ -206,7 +206,7 @@
    #:get-argcount-instruction #:make-get-argcount-instruction
    #:get-arg-instruction #:make-get-arg-instruction
    #:memalloc-instruction #:make-memalloc-instruction
-   #:memref-instruction #:make-memref-instruction
+   #:memref-instruction #:make-memref-instruction #:cacheable
    #:memset-instruction #:make-memset-instruction
    #:u+-instruction #:make-u+-instruction
    #:u--instruction #:make-u--instruction
