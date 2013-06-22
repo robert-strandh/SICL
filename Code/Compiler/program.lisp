@@ -694,6 +694,47 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Eliminate redundant locations.
+;;;
+;;; We look for patterns of two locations IN and OUT, and one
+;;; assignment instruction I such that:
+;;;
+;;;   * IN is the input of I.
+;;;
+;;;   * OUT is the output of I.
+;;;
+;;;   * IN is used only by I.
+;;;
+;;;   * OUT is assigned to only by I.
+;;;
+;;; The simplification consists of:
+;;;
+;;;   * Replacing OUT by IN as input in all instructions that use OUT.
+;;;
+;;;   * Replacing I by a NOP-INSTRUCTION.
+
+(defun eliminate-redundant-locations (program)
+  (ensure-location-assign-use program)
+  (let ((*program* program))
+    (loop for procedure in (procedures program)
+	  do (loop for instruction in (instructions procedure)
+		   for inputs = (inputs instruction)
+		   for in = (car inputs)
+		   for outputs = (outputs instruction)
+		   for out = (car outputs)
+		   do (when (and (typep instruction
+					'sicl-mir:assignment-instruction)
+				 (typep in 'sicl-mir:lexical-location)
+				 (= (length (using-instructions in)) 1)
+				 (typep out 'sicl-mir:lexical-location)
+				 (= (length (assigning-instructions out)) 1))
+			(loop for inst in (using-instructions out)
+			      do (nsubstitute IN OUT (inputs inst)))
+			(change-class instruction
+				      'sicl-mir:nop-instruction))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Main entry point.
 
 (defun post-process (initial-instruction)
