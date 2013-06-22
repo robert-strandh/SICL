@@ -33,7 +33,7 @@
     :initarg :initial-instruction :accessor initial-instruction)
    ;; This time stamp is set when the instruction graph is altered in
    ;; some way.
-   (%instructions-timestemp 
+   (%instructions-timestamp 
     :initform 0 :accessor instructions-timestamp)
    ;; This table maps each instruction of the program to an
    ;; instruction-info instance.
@@ -607,12 +607,14 @@
 
 (defun find-unused-lexical-locations (program)
   (ensure-location-assign-use program)
-  (let ((*program* program))
-    (loop for procedure in (procedures program)
-	  append (loop for location in (locations procedure)
-		       when (and (typep location 'sicl-mir:lexical-location)
-				 (null (using-instructions location)))
-			 collect location))))
+  (let ((*program* program)
+	(result '()))
+    (map-locations
+     (lambda (location)
+       (when (and (typep location 'sicl-mir:lexical-location)
+		  (null (using-instructions location)))
+	 (push location result))))
+    result))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -716,22 +718,36 @@
 (defun eliminate-redundant-locations (program)
   (ensure-location-assign-use program)
   (let ((*program* program))
-    (loop for procedure in (procedures program)
-	  do (loop for instruction in (instructions procedure)
-		   for inputs = (inputs instruction)
-		   for in = (car inputs)
-		   for outputs = (outputs instruction)
-		   for out = (car outputs)
-		   do (when (and (typep instruction
-					'sicl-mir:assignment-instruction)
-				 (typep in 'sicl-mir:lexical-location)
-				 (= (length (using-instructions in)) 1)
-				 (typep out 'sicl-mir:lexical-location)
-				 (= (length (assigning-instructions out)) 1))
-			(loop for inst in (using-instructions out)
-			      do (nsubstitute IN OUT (inputs inst)))
-			(change-class instruction
-				      'sicl-mir:nop-instruction))))))
+    (map-instructions
+     (lambda (instruction)
+       (let* ((inputs (inputs instruction))
+	      (in  (car inputs))
+	      (outputs (outputs instruction))
+	      (out  (car outputs)))
+	 (when (and (typep instruction 'sicl-mir:assignment-instruction)
+		    (typep in 'sicl-mir:lexical-location)
+		    (= (length (using-instructions in)) 1)
+		    (typep out 'sicl-mir:lexical-location)
+		    (= (length (assigning-instructions out)) 1))
+	   (loop for inst in (using-instructions out)
+		 do (nsubstitute IN OUT (inputs inst)))
+	   (change-class instruction
+			 'sicl-mir:nop-instruction)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Remove instances of NOP-INSTRUCTION.
+
+(defun remove-nop-instructions (program)
+  (ensure-instruction-info program)
+  (let ((*program* program))
+    (map-instructions
+     (lambda (instruction)
+       (loop for rest on (successors instruction)
+	     do (loop while (typep (car rest) 'sicl-mir:nop-instruction)
+		      do (setf (car rest) (car (successors (car rest)))))))))
+  (setf (instructions-timestamp program)
+	(incf (current-timestamp program))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
