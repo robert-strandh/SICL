@@ -67,6 +67,10 @@
    ;; recomputed.
    (%location-ownership-timestamp
     :initform 0 :accessor location-ownership-timestamp)
+   ;; This time stamp is set whenever the assigning-instructions
+   ;; and using-instructions of a location are recomputed
+   (%location-assign-use-timestamp
+    :initform 0 :accessor location-assign-use-timestamp)
    ;; This time stamp is set whenever the location indices are
    ;; recomputed.
    (%location-indices-timestamp
@@ -217,6 +221,10 @@
 (defclass location-info ()
   (;; The procedure to which this location belongs.
    (%owner :initform nil :accessor owner)
+   ;; A list of all instructions that have this location as an output.
+   (%assigning-instructions :initform nil :accessor assigning-instructions)
+   ;; A list of all instructions that have this location as an input.
+   (%using-instructions :initform nil :accessor using-instructions)
    (%index :initform nil :accessor index)))
 
 (defmethod owner ((location sicl-mir:lexical-location))
@@ -226,6 +234,25 @@
 (defmethod (setf owner) (new (location sicl-mir:lexical-location))
   (assert (not (null *program*)))
   (setf (owner (gethash location (location-info *program*)))
+	new))
+
+(defmethod assigning-instructions ((location sicl-mir:lexical-location))
+  (assert (not (null *program*)))
+  (assigning-instructions (gethash location (location-info *program*))))
+
+(defmethod (setf assigning-instructions)
+    (new (location sicl-mir:lexical-location))
+  (assert (not (null *program*)))
+  (setf (assigning-instructions (gethash location (location-info *program*)))
+	new))
+
+(defmethod using-instructions ((location sicl-mir:lexical-location))
+  (assert (not (null *program*)))
+  (using-instructions (gethash location (location-info *program*))))
+
+(defmethod (setf using-instructions) (new (location sicl-mir:lexical-location))
+  (assert (not (null *program*)))
+  (setf (using-instructions (gethash location (location-info *program*)))
 	new))
 
 (defmethod index ((location sicl-mir:lexical-location))
@@ -436,6 +463,42 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compute the assigning and using instructions of each location.
+
+(defun compute-location-assign-use (program)
+  (let ((*program* program))
+    ;; Start by clearing the assigning and using instructions
+    ;; of each location.
+    (loop for procedure in (procedures program)
+	  do (loop for location in (locations procedure)
+		   do (when (typep location 'sicl-mir:lexical-location)
+			(setf (assigning-instructions location) nil)
+			(setf (using-instructions location) nil))))
+    ;; Next, loop over all instructions and for each instruction, add
+    ;; it to the list of assigning instructions for all its outputs,
+    ;; and addit to the list of using instructions for all its inputs.
+    (loop for procedure in (procedures program)
+	  do (loop for instruction in (instructions procedure)
+		   do (loop for input in (inputs instruction)
+			    do (when (typep input 'sicl-mir:lexical-location)
+				 (push instruction
+				       (using-instructions input))))
+		      (loop for output in (outputs instruction)
+			    do (when (typep output 'sicl-mir:lexical-location)
+				 (push instruction
+				       (assigning-instructions output))))))))
+
+(defun ensure-location-assign-use (program)
+  (when (>= (max (ensure-instruction-ownership program)
+		 (ensure-location-info program))
+	    (location-assign-use-timestamp program))
+    (compute-location-assign-use program)
+    (setf (location-assign-use-timestamp program)
+	  (incf (current-timestamp program))))
+  (location-assign-use-timestamp program))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Determine the LEXICAl DEPTH of each procedure in a program.
 
 (defun compute-lexical-depth (procedure)
@@ -540,6 +603,97 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Find unused lexical locations of a program.
+
+(defun find-unused-lexical-locations (program)
+  (ensure-location-assign-use program)
+  (let ((*program* program))
+    (loop for procedure in (procedures program)
+	  append (loop for location in (locations procedure)
+		       when (and (typep location 'sicl-mir:lexical-location)
+				 (null (using-instructions location)))
+			 collect location))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Simplify an instruction with one ore more outputs that are unused. 
+
+(defun location-unused-p (location)
+  (null (using-instructions location)))
+
+(defgeneric simplify-instruction (instruction))
+
+;;; By default don't do anything. 
+(defmethod simplify-instruction ((instruction sicl-mir:instruction))
+  nil)
+  
+;;; An ASSIGNMENT-INSTRUCTION has a single output, so if it has an
+;;; unused output, then all outputs are unused, and it can be replaced
+;;; by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:assignment-instruction))
+  (change-class instruction 'sicl-mir:nop-instruction))
+
+;;; If all the outputs of a GET-VALUES-INSTRUCTION are unused, then the
+;;; instruction can be replaced by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:get-values-instruction))
+  (when (every #'location-unused-p (outputs instruction))
+    (change-class instruction 'sicl-mir:nop-instruction)))
+  
+;;; An ENCLOSE-INSTRUCTION has a single output, so if it has an
+;;; unused output, then all outputs are unused, and it can be replaced
+;;; by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:enclose-instruction))
+  (change-class instruction 'sicl-mir:nop-instruction))
+
+;;; A GET-ARG-INSTRUCTION has a single output, so if it has an
+;;; unused output, then all outputs are unused, and it can be replaced
+;;; by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:get-arg-instruction))
+  (change-class instruction 'sicl-mir:nop-instruction))
+
+;;; A MEMREF-INSTRUCTION has a single output, so if it has an
+;;; unused output, then all outputs are unused, and it can be replaced
+;;; by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:memref-instruction))
+  (change-class instruction 'sicl-mir:nop-instruction))
+
+;;; FIXME: add arithetic instructions here.  It is complicated because
+;;; they may have more than one output, so they might be difficult to
+;;; simplify.
+
+;;; A &-INSTRUCTION has a single output, so if it has an
+;;; unused output, then all outputs are unused, and it can be replaced
+;;; by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:&-instruction))
+  (change-class instruction 'sicl-mir:nop-instruction))
+
+;;; A IOR-INSTRUCTION has a single output, so if it has an
+;;; unused output, then all outputs are unused, and it can be replaced
+;;; by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:ior-instruction))
+  (change-class instruction 'sicl-mir:nop-instruction))
+
+;;; A XOR-INSTRUCTION has a single output, so if it has an
+;;; unused output, then all outputs are unused, and it can be replaced
+;;; by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:xor-instruction))
+  (change-class instruction 'sicl-mir:nop-instruction))
+
+;;; A ~-INSTRUCTION has a single output, so if it has an
+;;; unused output, then all outputs are unused, and it can be replaced
+;;; by a NOP-INSTRUCTION.
+(defmethod simplify-instruction ((instruction sicl-mir:~-instruction))
+  (change-class instruction 'sicl-mir:nop-instruction))
+
+(defun simplify-instructions (program)
+  (ensure-location-assign-use program)
+  (let ((*program* program))
+    (loop for location in (find-unused-lexical-locations program)
+	  do (loop for instruction in (assigning-instructions location)
+		   do (simplify-instruction instruction)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Main entry point.
 
 (defun post-process (initial-instruction)
@@ -549,6 +703,7 @@
     (ensure-instruction-ownership program)
     (ensure-lexical-depths program)
     (ensure-location-ownership program)
+    (ensure-location-assign-use program)
     (ensure-location-indices program)
 ;;    (ensure-externals-info program)
     (ensure-basic-blocks program)
