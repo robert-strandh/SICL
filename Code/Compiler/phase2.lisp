@@ -244,17 +244,22 @@
 	do (when (typep item 'sicl-ast:tag-ast)
 	     (setf (gethash item *go-info*)
 		   (sicl-mir:make-nop-instruction nil))))
-  (let ((next (if (null (results context))
-		  (car (successors context))
-		  (sicl-mir:make-assignment-instruction
-		   (sicl-mir:make-constant-input 'nil)
-		   (car (results context))
-		   (car (successors context))))))
+  (let ((next (cond ((eq (results context) t)
+		     (sicl-mir:make-return-instruction
+		      (list (sicl-mir:make-constant-input 'nil))))
+		    ((null (results context))
+		     (car (successors context)))
+		    (t
+		     (sicl-mir:make-assignment-instruction
+		      (sicl-mir:make-constant-input 'nil)
+		      (car (results context))
+		      (car (successors context)))))))
     (loop for item in (reverse (sicl-ast:items ast))
 	  do (setf next
 		   (if (typep item 'sicl-ast:tag-ast)
 		       (let ((instruction (gethash item *go-info*)))
-			 (setf (successors instruction) (list next))
+			 (setf (sicl-mir:successors instruction)
+			       (list next))
 			 instruction)
 		       (compile-ast item (context '() (list next))))))
     next))
