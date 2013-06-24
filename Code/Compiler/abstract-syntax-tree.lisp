@@ -424,6 +424,11 @@
   (make-instance 'tag-ast
     :name name))
 
+(defmethod stream-draw-ast ((ast tag-ast) stream)
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (name ast)))
+
 (defmethod children ((ast tag-ast))
   '())
 
