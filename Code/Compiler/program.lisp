@@ -696,43 +696,67 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Merge similar constants
+;;;
+;;; This simplification consists of taking all the instances of some
+;;; constant C, keeping one of them and replacing each occurrence of
+;;; the other instances by the one that was kept.  For now we compare
+;;; constants using EQUAL, but something more precise is needed so
+;;; that we can merge similar constant arrays.  We can not use EQUALP
+;;; because it disregards the different between upper and lower case
+;;; (for one thing).
+;;;
+;;; Since we might replace the EQUAL test by something more
+;;; sophisticated, we are not using a hash table, and instead just a
+;;; set of constantes represented as a list.
+
+(defun merge-similar-constants (program)
+  (ensure-instruction-info program)
+  (let ((*program* program)
+	(constants '()))
+    (map-instructions
+     (lambda (instruction)
+       (loop for location in (sicl-mir:inputs instruction)
+	     do (when (typep location 'sicl-mir:constant-input)
+		  (pushnew location constants
+			   :key #'sicl-mir:value
+			   :test #'equal)))))
+    (map-instructions
+     (lambda (instruction)
+       (loop for rest on (sicl-mir:inputs instruction)
+	     do (when (typep (car rest) 'sicl-mir:constant-input)
+		  (setf (car rest)
+			(find (sicl-mir:value (car rest)) constants
+			      :key #'sicl-mir:value
+			      :test #'equal))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Eliminate redundant locations.
 ;;;
-;;; We look for patterns of two locations IN and OUT, and one
-;;; assignment instruction I such that:
+;;; We look for patterns of two lexical locations IN and OUT and two
+;;; instructions I1 and I2 such that:
 ;;;
-;;;   * IN is the input of I.
+;;;   * I1 is an assignment instruction.
 ;;;
-;;;   * OUT is the output of I.
+;;;   * IN is the input of I1.
 ;;;
-;;;   * IN is used only by I.
+;;;   * OUT is the output of I1.
 ;;;
-;;;   * OUT is assigned to only by I.
+;;;   * OUT is assigned to only by I1.
+;;;
+;;;   * OUT is used only by I2.
+;;;
+;;;   * In all execution paths starting at I1, I2 appears before
+;;;     any instruction that assigns to IN. 
 ;;;
 ;;; The simplification consists of:
 ;;;
-;;;   * Replacing OUT by IN as input in all instructions that use OUT.
+;;;   * Replacing OUT by IN as input in I2.
 ;;;
 ;;;   * Replacing I by a NOP-INSTRUCTION.
-
-(defun eliminate-redundant-locations (program)
-  (ensure-location-assign-use program)
-  (let ((*program* program))
-    (map-instructions
-     (lambda (instruction)
-       (let* ((inputs (inputs instruction))
-	      (in  (car inputs))
-	      (outputs (outputs instruction))
-	      (out  (car outputs)))
-	 (when (and (typep instruction 'sicl-mir:assignment-instruction)
-		    (typep in 'sicl-mir:lexical-location)
-		    (= (length (using-instructions in)) 1)
-		    (typep out 'sicl-mir:lexical-location)
-		    (= (length (assigning-instructions out)) 1))
-	   (loop for inst in (using-instructions out)
-		 do (nsubstitute IN OUT (inputs inst)))
-	   (change-class instruction
-			 'sicl-mir:nop-instruction)))))))
+;;;
+;;; FIXME: implement it.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
