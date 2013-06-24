@@ -56,8 +56,6 @@
 ;;;
 ;;; Converting a constant.
 ;;;
-;;; Either the constant can be represented as an immediate value, or
-;;; else it is turned into a LOAD-TIME-VALUE AST.
 
 (defun convert-string (string)
   (let ((contents-var (gensym))
@@ -662,7 +660,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-word:word)) form env)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (sicl-ast:make-immediate-ast (cadr form)))
+  (sicl-ast:make-word-ast (cadr form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

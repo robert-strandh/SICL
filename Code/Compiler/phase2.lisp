@@ -530,10 +530,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a IMMEDIATE-AST.
+;;; Compile a WORD-AST.
 ;;;
 
-(defmethod compile-ast ((ast sicl-ast:immediate-ast) context)
+(defmethod compile-ast ((ast sicl-ast:word-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -542,7 +542,7 @@
 		 (= (length successors) 1))
       (error "Invalid results for word."))
     (sicl-mir:make-assignment-instruction
-     (sicl-mir:make-immediate-input (sicl-ast:value ast))
+     (sicl-mir:make-word-input (sicl-ast:value ast))
      (car results)
      (car successors))))
 

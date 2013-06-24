@@ -106,6 +106,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class CONSTANT-AST. 
+;;;
+;;; This class represents Lisp constants in source code.  
+;;;
+;;; If the constant that was found was wrapped in QUOTE, then the
+;;; QUOTE is not part of the value here, because it was stripped off.
+;;;
+;;; If the constant that was found was a constant variable, then the
+;;; value here represents the value of that constant variable at
+;;; compile time.
 
 (defclass constant-ast (ast)
   ((%value :initarg :value :reader value)))
@@ -120,32 +129,6 @@
 	  (value ast)))
 
 (defmethod children ((ast constant-ast))
-  '())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class IMMEDIATE-AST. 
-;;;
-;;; A IMMEDIATE-AST represents a constant expression that has fits in
-;;; a word, and that has a value that is independent of the Lisp
-;;; image, such as a fixnum, a character, or a short float.
-;;;
-;;; It is represented here as an unsigned integer between 0 and 2^w-1
-;;; where w is the word size in bits. 
-
-(defclass immediate-ast (ast)
-  ((%value :initarg :value :reader value)))
-
-(defun make-immediate-ast (value)
-  (make-instance 'immediate-ast :value value))
-
-(defmethod stream-draw-ast ((ast immediate-ast) stream)
-  (format stream "   ~a [style = filled, fillcolor = green];~%" (id ast))
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (value ast)))
-
-(defmethod children ((ast immediate-ast))
   '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -582,9 +565,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class WORD.
+;;; Class WORD-AST.
 ;;;
-;;; Immediate word value. 
+;;; 
 ;;;
 ;;; No arguments.
 ;;;
@@ -604,7 +587,7 @@
 
 (defmethod stream-draw-ast ((ast word-ast) stream)
   (format stream "   ~a [label = \"~d\"];~%" (id ast) (value ast))
-  (format stream "   ~a [style = filled, fillcolor = blue];~%" (id ast)))
+  (format stream "   ~a [style = filled, fillcolor = lightblue];~%" (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

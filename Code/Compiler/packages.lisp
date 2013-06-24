@@ -125,7 +125,6 @@
   (:export
    #:ast
    #:constant-ast #:make-constant-ast #:value
-   #:immediate-ast #:make-immediate-ast
    #:global-ast #:make-global-ast #:storage
    #:special-ast #:make-special-ast
    #:lexical-ast #:make-lexical-ast
@@ -186,6 +185,7 @@
   (:use #:common-lisp)
   (:export
    #:immediate-input #:make-immediate-input
+   #:word-input #:make-word-input
    #:constant-input #:make-constant-input
    #:lexical-location #:make-lexical-location #:name
    #:special-location #:make-special-location #:storage
