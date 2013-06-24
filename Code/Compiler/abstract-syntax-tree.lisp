@@ -567,14 +567,19 @@
 ;;;
 ;;; Class WORD-AST.
 ;;;
-;;; 
+;;; Arguments (1):
 ;;;
-;;; No arguments.
+;;;   * An Lisp integer that represents a machine integer.  So for a
+;;;     32-bit machine, the Lisp integer can be in the range between
+;;;     -2^31 and 2^31 - 1.
 ;;;
-;;; Values: (1):
+;;; Values (1):
 ;;;
-;;;   * The positive or negative value truncated to the 
-;;;     number of bits in a word on the target platform.
+;;;   * The same as the argument.  In other words, it is a no-op AST,
+;;;     and its sole purpose is to make it possible to distinguish
+;;;     between Lisp integers and machine integers.  A Lisp integer
+;;;     would be represented as a CONSTANT-AST rather than a WORD-AST,
+;;;     at least in early phases of the compilation process. 
 
 (defclass word-ast (ast)
   ((%value :initarg :value :reader value)))
@@ -655,6 +660,14 @@
 ;;;   * First operand, an unsigned integer.
 ;;;   * Second operand, an unsigned integer.
 ;;;   * A Boolean indicating carry in (optional).
+;;;
+;;; Values (2):
+;;;
+;;;   * The first (primary) value is the sum of the operands modulo
+;;;     2^w where w is the word length of the machine.  
+;;;
+;;;   * The second value is true if and only if the operation resulted
+;;;     in a carry.
 
 (defclass u+-ast (ast arguments-mixin)
   ())
@@ -685,7 +698,9 @@
 ;;; Values (2):
 ;;;
 ;;;   * The difference of the first two operands modulo word size
-;;;   * A Boolean indicating carry out.
+;;;
+;;;   * A Boolean indicating carry out.  Carry out happens when the 
+;;;     second operand is larger than the first.  
 
 (defclass u--ast (ast arguments-mixin)
   ())
