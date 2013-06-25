@@ -681,70 +681,86 @@
 ;;;
 ;;; Eliminate redundant locations.
 ;;;
-;;; We look for patterns of two lexical locations IN and OUT and two
-;;; instructions I1 and I2 such that:
+;;; We look for patterns of a location IN (which might be a lexical
+;;; location, a constant, or something else), a lexical locations OUT,
+;;; and an instructions I such that:
 ;;;
-;;;   * I1 is an assignment instruction.
+;;;   * I is an assignment instruction.
 ;;;
-;;;   * IN is the input of I1.
+;;;   * IN is the input of I.
 ;;;
-;;;   * OUT is the output of I1.
+;;;   * OUT is the output of I.
 ;;;
-;;;   * OUT is assigned to only by I1.
+;;;   * OUT is assigned to only by I.
 ;;;
-;;;   * OUT is used only by I2.
-;;;
-;;;   * In all execution paths starting at I1, I2 appears before
-;;;     any instruction that assigns to IN. 
+;;;   * In all execution paths starting at I, OUT is used before IN is
+;;;     assigned to.
 ;;;
 ;;; The simplification consists of:
 ;;;
-;;;   * Replacing OUT by IN as input in I2.
+;;;   * Replacing OUT by IN as input in all instructions. 
 ;;;
 ;;;   * Replacing I by a NOP-INSTRUCTION.
 ;;;
-;;; FIXME: implement it.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; This is a dataflow problem that can be solved by fixpoint
+;;; iterations.  Before some instruction I, let T mean that there
+;;; exists an execution path starting at I where IN is assigned to
+;;; before OUT is used, i.e. the negation of what we want.  Start off
+;;; optimistically with the value NIL before each instruction.
+;;; 
+;;; For each instructions I that does not use OUT but that assigns to
+;;; IN, set the value to T, trace backward through its predecessors,
+;;; propagating the T until either:
 ;;;
-;;; This transformation consists of removing temporary lexical
-;;; locations that are known to always hold the value of a constant,
-;;; and replacing occurrences of such lexical locations by a direct
-;;; reference to the constant location.
-;;;
-;;; Later on, we reintroduce temporary lexical locations for
-;;; constants, but then in a way that there is exactly one lexical
-;;; location for each unique constant.
+;;;   * An instruction is reached that already has the value T.
+;;;  
+;;;   * An instruction I is found that assigns to IN or uses OUT.  If
+;;;     I does not assign to OUT, then it either has already been
+;;;     processed, or it will later.  If it does assign to OUT, then
+;;;     propatagtion should stop.
 
-(defun remove-constant-temporaries (program)
+(defun handle-one-candidate (instruction in out)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (or (gethash instruction table)
+			   (member in (outputs instruction) :test #'eq)
+			   (member out (inputs instruction) :test #'eq))
+		 (setf (gethash instruction table) t)
+		 (mapc #'traverse (predecessors instruction)))))
+      (map-instructions
+       (lambda (instruction)
+	 (when (and (not (member out (inputs instruction) :test #'eq))
+		    (member in (outputs instruction) :test #'eq))
+	   (traverse instruction)))))
+    (if (gethash instruction table)
+	nil
+	(progn
+	  (map-instructions
+	   (lambda (instruction)
+	     (nsubstitute in out (inputs instruction))))
+	  (change-class instruction 'sicl-mir:nop-instruction)
+	  t))))
+	 
+(defun eliminate-redundant-temporaries (program)
   (let ((modify-p nil))
-    (map-locations
-     (lambda (location)
-       (let* ((assigning-instructions (assigning-instructions location))
-	      (assigning-instruction (car assigning-instructions))
-	      (using-instructions (using-instructions location))
-	      (using-instruction (car using-instructions)))
-	 (when (and (typep location 'sicl-mir:lexical-location)
-		    (= (length assigning-instructions) 1)
-		    (= (length using-instructions) 1)
-		    (typep assigning-instruction
-			   'sicl-mir:assignment-instruction))
-	   (let ((source-location (car (inputs assigning-instruction))))
-	     (when (typep source-location 'sicl-mir:constant-input)
-	       (when (member location (inputs using-instruction)
-			     :test #'eq)
-		 (setf modify-p t)
-		 (nsubstitute source-location location
-			      (inputs using-instruction)
-			      :test #'eq))))))))
+    (map-instructions
+     (lambda (instruction)
+       (when (typep instruction 'sicl-mir:assignment-instruction)
+	 (let ((out (car (outputs instruction))))
+	   (when (and (typep out 'sicl-mir:lexical-location)
+		      (= (length (assigning-instructions out)) 1))
+	     (let ((in (car (inputs instruction))))
+	       (setf modify-p
+		     (or (handle-one-candidate instruction in out)
+			 modify-p))))))))
     (when modify-p
-      ;; We have modified some inputs of some instructions.
       (touch program 'instruction-graph))))
-  
-(set-processor 'no-constant-temporaries 'remove-constant-temporaries)
 
-(add-dependencies 'no-constant-temporaries
-		  '(location-info))
+(set-processor 'no-redundant-temporaries 'eliminate-redundant-temporaries)
+
+(add-dependencies 'no-redundant-temporaries
+		  '(instruction-info
+		    location-assign-use))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
