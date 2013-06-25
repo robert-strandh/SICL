@@ -68,7 +68,6 @@
     new))
 
 (defun make (program target &key dry-run)
-  (check-type program program)
   (check-type target symbol)
   (let ((*program* program)
 	(timestamps (timestamps program)))
@@ -86,7 +85,10 @@
 				  (older-than-p target dependee timestamps))
 				(cddr entry))
 		   (if dry-run
-		       (format t "calling ~s~%" (car entry))
-		       (funcall (car entry) program))
+		       (format t "calling ~s~%" (cadr entry))
+		       (funcall (cadr entry) program))
 		   (set-timestamp target timestamps)))))
       (aux target))))
+
+(defun touch (program target)
+  (set-timestamp target (timestamps program)))
