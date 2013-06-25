@@ -245,6 +245,10 @@
 	  (gethash location *location-table*)
 	  (name location)))
 
+;;; Generate a new lexical location
+(defun new-temporary ()
+  (make-lexical-location (gensym)))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Location class SPECIAL-LOCATION.

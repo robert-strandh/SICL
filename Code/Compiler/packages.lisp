@@ -188,6 +188,7 @@
    #:word-input #:make-word-input
    #:constant-input #:make-constant-input
    #:lexical-location #:make-lexical-location #:name
+   #:new-temporary
    #:special-location #:make-special-location #:storage
    #:global-input #:make-global-input
    #:external-input #:make-external-input #:value
@@ -234,7 +235,6 @@
    #:nil-fill
    #:compile-ast
    #:compile-toplevel
-   #:new-temporary
    ))
 
 (defpackage #:sicl-word

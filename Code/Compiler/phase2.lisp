@@ -133,9 +133,6 @@
 ;;; instruction of the instruction graph resulting from the
 ;;; compilation of the entire AST.
 
-(defun new-temporary ()
-  (sicl-mir:make-lexical-location (gensym)))
-  
 ;;; Given a list of results and a successor, generate a sequence of
 ;;; instructions preceding that successor, and that assign NIL to each
 ;;; result in the list.
@@ -311,7 +308,7 @@
 		 temps
 		 (sicl-mir:make-get-values-instruction
 		  results (car successors))))
-	     (2 (let ((temp (new-temporary)))
+	     (2 (let ((temp (sicl-mir:new-temporary)))
 		  (sicl-mir:make-funcall-instruction
 		   temps
 		   (sicl-mir:make-get-values-instruction
@@ -352,7 +349,7 @@
 		    (cadr successors)
 		    (car successors))))
       (cond ((eq results t)
-	     (let ((temp (new-temporary)))
+	     (let ((temp (sicl-mir:new-temporary)))
 	       (sicl-mir:make-enclose-instruction
 		temp
 		(sicl-mir:make-return-instruction (list temp))
@@ -501,7 +498,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let ((temp (new-temporary)))
+    (let ((temp (sicl-mir:new-temporary)))
       (compile-ast (sicl-ast:index-ast ast)
 		   (context (list temp)
 			    (list (sicl-mir:make-get-arg-instruction
@@ -513,7 +510,7 @@
 
 (defun make-temp (argument)
   (declare (ignore argument))
-  (new-temporary))
+  (sicl-mir:new-temporary))
 
 (defun make-temps (arguments)
   (loop for argument in arguments
@@ -595,7 +592,7 @@
 			   (warn "MEMREF operation in a context of no results.")
 			   next)
 			  ((eq results t)
-			   (let ((temp2 (new-temporary)))
+			   (let ((temp2 (sicl-mir:new-temporary)))
 			     (setf next 
 				   (sicl-mir:make-return-instruction
 				    (list temp2)))
@@ -608,7 +605,7 @@
 	       (2 (if (eq results t)
 		      (error "Illegal context for memref")
 		      (let* ((location (if (null results)
-					   (new-temporary)
+					   (sicl-mir:new-temporary)
 					   (car results)))
 			     (next (sicl-mir:make-test-instruction
 				    location (reverse successors))))
@@ -647,7 +644,7 @@
 			   (warn "Arithmetic operation in a context of no results.")
 			   next)
 			  ((eq results t)
-			   (let ((temp (new-temporary)))
+			   (let ((temp (sicl-mir:new-temporary)))
 			     (setf next 
 				   (sicl-mir:make-return-instruction
 				    (list temp)))
@@ -712,7 +709,7 @@
 		    (warn "Logic operation in a context of no results.")
 		    next)
 		   ((eq results t)
-		    (let ((temp (new-temporary)))
+		    (let ((temp (sicl-mir:new-temporary)))
 		      (setf next 
 			    (sicl-mir:make-return-instruction
 			     (list temp)))
@@ -765,7 +762,7 @@
 			   (warn "Compilation of a test that is not used.")
 			   next)
 			  ((eq results t)
-			   (let ((temp (new-temporary)))
+			   (let ((temp (sicl-mir:new-temporary)))
 			     (setf next 
 				   (sicl-mir:make-return-instruction
 				    (list temp)))
