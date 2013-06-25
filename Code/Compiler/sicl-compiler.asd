@@ -13,10 +13,10 @@
    (:file "phase1"
     :depends-on ("packages" "environment" "abstract-syntax-tree"))
    (:file "phase2"
-    :depends-on ("packages" "phase1" "mir"))
+    :depends-on ("packages" "abstract-syntax-tree" "mir"))
    (:file "procedure-integration"
-    :depends-on ("packages" "abstract-syntax-tree" "phase1"))
-   (:file "externals-elimination"
-    :depends-on ("packages" "abstract-syntax-tree" "phase1"))
+    :depends-on ("packages" "abstract-syntax-tree"))
+   (:file "make"
+    :depends-on ("packages"))
    (:file "program"
-    :depends-on ("packages" "phase2"))))
+    :depends-on ("packages" "mir" "make"))))
