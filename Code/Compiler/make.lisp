@@ -70,7 +70,8 @@
 (defun make (program target &key dry-run)
   (check-type target symbol)
   (let ((*program* program)
-	(timestamps (timestamps program)))
+	(timestamps (timestamps program))
+	(modify-p nil))
     (declare (special *program*))
     (when dry-run
       (setf timestamps (copy-timestamps timestamps)))
@@ -84,11 +85,13 @@
 		 (when (find-if (lambda (dependee)
 				  (older-than-p target dependee timestamps))
 				(cddr entry))
+		   (setf modify-p t)
 		   (if dry-run
 		       (format t "calling ~s~%" (cadr entry))
 		       (funcall (cadr entry) program))
 		   (set-timestamp target timestamps)))))
-      (aux target))))
+      (aux target))
+    modify-p))
 
 (defun touch (program target)
   (set-timestamp target (timestamps program)))
