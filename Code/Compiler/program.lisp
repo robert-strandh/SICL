@@ -28,71 +28,29 @@
 ;;; that represent nested procedures.
 
 (defclass program ()
-  ((%current-timestamp :initform 0 :accessor current-timestamp)
+  ((%timestamps
+    :initform (make-hash-table :test #'eq) :reader timestamps)
    (%initial-instruction
     :initarg :initial-instruction :accessor initial-instruction)
-   ;; This time stamp is set when the instruction graph is altered in
-   ;; some way.
-   (%instructions-timestamp 
-    :initform 0 :accessor instructions-timestamp)
    ;; This table maps each instruction of the program to an
    ;; instruction-info instance.
    (%instruction-info
     :initform (make-hash-table :test #'eq) :accessor instruction-info)
-   ;; This time stamp is set whenever the instruction-info table is
-   ;; recomputed.
-   (%instruction-info-timestamp
-    :initform 0 :accessor instruction-info-timestamp)
-   ;; This time stamp is set whenever the instruction predecessors are
-   ;; recomputed.
-   (%instruction-predecessors-timestamp
-    :initform 0 :accessor instruction-predecessors-timestamp)
-   ;; This time stamp is set whenever the instruction ownership is
-   ;; recomputed.
-   (%instruction-ownership-timestamp
-    :initform 0 :accessor instruction-ownership-timestamp)
-   ;; This time stamp is set whenever the lexical depths of procedures
-   ;; are recomputed.
-   (%lexical-depths-timestamp
-    :initform 0 :accessor lexical-depths-timestamp)
    ;; This table maps each lexical location of the program to a
    ;; location-info instance.
    (%location-info
     :initform (make-hash-table :test #'eq) :accessor location-info)
-   ;; This time stamp is set whenever the location-info table is
-   ;; recomputed.
-   (%location-info-timestamp
-    :initform 0 :accessor location-info-timestamp)
-   ;; This time stamp is set whenever the location ownership is
-   ;; recomputed.
-   (%location-ownership-timestamp
-    :initform 0 :accessor location-ownership-timestamp)
-   ;; This time stamp is set whenever the assigning-instructions
-   ;; and using-instructions of a location are recomputed
-   (%location-assign-use-timestamp
-    :initform 0 :accessor location-assign-use-timestamp)
-   ;; This time stamp is set whenever the location indices are
-   ;; recomputed.
-   (%location-indices-timestamp
-    :initform 0 :accessor location-indices-timestamp)
    ;; This table maps each external of the program to an
    ;; external-info instance.
    (%external-info
     :initform (make-hash-table :test #'eq) :accessor external-info)
-   ;; This time stamp is set whenever the external-info table is
-   ;; recomputed.
-   (%external-info-timestamp
-    :initform 0 :accessor external-info-timestamp)
    ;; All the procedures of this program.
-   (%procedures :initform '() :accessor procedures)
-   ;; This time stamp is set whenever the procedures table is
-   ;; recomputed.
-   (%procedures-timestamp
-     :initform 0 :accessor procedures-timestamp)
-   ;; This time stamp is set whenever the basic blocks are
-   ;; recomputed.
-   (%basic-blocks-timestamp
-     :initform 0 :accessor basic-blocks-timestamp)))
+   (%procedures :initform '() :accessor procedures)))
+
+(set-processor 'instruction-graph nil)
+
+(defmethod initialize-instance :after ((instance program) &key &allow-other-keys)
+  (touch instance 'instruction-graph))
 
 ;;; This variable holds the current program that is being processed.
 ;;; By doing it this way, we avoid having to pass it as an argument to
@@ -203,13 +161,10 @@
 		   (mapc #'aux (successors instruction)))))
 	(aux (initial-instruction program))))))
 
-(defun ensure-instruction-info (program)
-  (when (>= (instructions-timestamp program)
-	    (instruction-info-timestamp program))
-    (compute-instruction-info program)
-    (setf (instruction-info-timestamp program)
-	  (incf (current-timestamp program))))
-  (instruction-info-timestamp program))
+(set-processor 'instruction-info 'compute-instruction-info)
+
+(add-dependencies 'instruction-info
+		  '(instruction-graph))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -309,13 +264,10 @@
 	       (position (sicl-mir:value external) externals
 			 :test #'equal)))))))
     
-(defun ensure-externals-info (program)
-  (when (>= (ensure-instruction-info program)
-	    (external-info-timestamp program))
-    (compute-externals-info program)
-    (setf (external-info-timestamp program)
-	  (incf (current-timestamp program))))
-  (external-info-timestamp program))
+(set-processor 'externals-info 'compute-externals-info)
+
+(add-dependencies 'externals-info
+		  '(instruction-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -373,13 +325,10 @@
        (lambda (instruction)
 	 (push instruction (instructions (owner instruction))))))))
 
-(defun ensure-instruction-ownership (program)
-  (when (>= (ensure-instruction-info program)
-	    (instruction-ownership-timestamp program))
-    (compute-instruction-ownership program)
-    (setf (instruction-ownership-timestamp program)
-	  (incf (current-timestamp program))))
-  (instruction-info-timestamp program))
+(set-processor 'instruction-ownership 'compute-instruction-ownership)
+
+(add-dependencies 'instruction-ownership
+		  '(instruction-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -395,13 +344,10 @@
        (loop for successor in (successors instruction)
 	     do (push instruction (predecessors successor)))))))
 
-(defun ensure-predecessors (program)
-  (when (>= (ensure-instruction-info program)
-	    (instruction-predecessors-timestamp program))
-    (compute-predecessors program)
-    (setf (instruction-predecessors-timestamp program)
-	  (incf (current-timestamp program))))
-  (instruction-predecessors-timestamp program))
+(set-processor 'predecessors 'compute-predecessors)
+	       
+(add-dependencies 'predecessors
+		  '(instruction-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -423,14 +369,11 @@
 			     (null (gethash location location-info)))
 		    (setf (gethash location location-info)
 			  (make-instance 'location-info)))))))))
-			
-(defun ensure-location-info (program)
-  (when (>= (ensure-instruction-info program)
-	    (location-info-timestamp program))
-    (compute-location-info program)
-    (setf (location-info-timestamp program)
-	  (incf (current-timestamp program))))
-  (location-info-timestamp program))
+
+(set-processor 'location-info 'compute-location-info )
+
+(add-dependencies 'location-info
+		  '(instruction-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -455,14 +398,11 @@
       (map-locations (lambda (location)
 		       (push location (locations (owner location))))))))
 
-(defun ensure-location-ownership (program)
-  (when (>= (max (ensure-instruction-ownership program)
-		 (ensure-location-info program))
-	    (location-ownership-timestamp program))
-    (compute-location-ownership program)
-    (setf (location-ownership-timestamp program)
-	  (incf (current-timestamp program))))
-  (location-ownership-timestamp program))
+(set-processor 'location-ownership 'compute-location-ownership)
+
+(add-dependencies 'location-ownership
+		  '(instruction-ownership
+		    location-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -491,14 +431,11 @@
 				 (push instruction
 				       (assigning-instructions output))))))))
 
-(defun ensure-location-assign-use (program)
-  (when (>= (max (ensure-instruction-ownership program)
-		 (ensure-location-info program))
-	    (location-assign-use-timestamp program))
-    (compute-location-assign-use program)
-    (setf (location-assign-use-timestamp program)
-	  (incf (current-timestamp program))))
-  (location-assign-use-timestamp program))
+(set-processor 'location-assign-use 'compute-location-assign-use)
+
+(add-dependencies 'location-assign-use
+		  '(location-info
+		    instruction-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -521,13 +458,10 @@
 	(loop for procedure in sorted-code
 	      do (compute-lexical-depth procedure))))))
 
-(defun ensure-lexical-depths (program)
-  (when (>= (ensure-location-ownership program)
-	    (lexical-depths-timestamp program))
-    (compute-lexical-depths program)
-    (setf (lexical-depths-timestamp program)
-	  (incf (current-timestamp program))))
-  (lexical-depths-timestamp program))
+(set-processor 'lexical-depth 'compute-lexical-depth)
+
+(add-dependencies 'lexical-depth
+		  '(location-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -545,13 +479,10 @@
 			     (gethash (owner location) indices))
 		       (incf (gethash (owner location) indices)))))))
 
-(defun ensure-location-indices (program)
-  (when (>= (ensure-instruction-ownership program)
-	    (location-indices-timestamp program))
-    (compute-location-indices program)
-    (setf (location-indices-timestamp program)
-	  (incf (current-timestamp program))))
-  (location-indices-timestamp program))
+(set-processor 'location-indices 'compute-location-indices)
+
+(add-dependencies 'location-indices
+		  '(location-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -561,8 +492,7 @@
   ((%initial :initarg :initial :accessor initial)
    (%final :initarg :final :accessor final)))
 
-(defun compute-basic-blocks-for-procedure (procedure program)
-  (ensure-instruction-ownership program)
+(defun compute-basic-blocks-for-procedure (procedure)
   (with-accessors ((instructions instructions)
 		   (basic-blocks basic-blocks))
       procedure
@@ -593,23 +523,20 @@
 	      do (push (one-block (pop remaining)) basic-blocks))))))
 
 (defun compute-basic-blocks (program)
-  (loop for procedure in (procedures program)
-	do (compute-basic-blocks-for-procedure procedure program)))
-  
-(defun ensure-basic-blocks (program)
-  (when (>= (ensure-instruction-ownership program)
-	    (basic-blocks-timestamp program))
-    (compute-basic-blocks program)
-    (setf (basic-blocks-timestamp program)
-	  (incf (current-timestamp program))))
-  (basic-blocks-timestamp program))
+  (let ((*program* program))
+    (loop for procedure in (procedures program)
+	  do (compute-basic-blocks-for-procedure procedure))))
+
+(set-processor 'basic-blocks 'compute-basic-blocks)
+
+(add-dependencies 'basic-blocks
+		  '(instruction-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Find unused lexical locations of a program.
 
 (defun find-unused-lexical-locations (program)
-  (ensure-location-assign-use program)
   (let ((*program* program)
 	(result '()))
     (map-locations
@@ -621,7 +548,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Simplify an instruction with one ore more outputs that are unused. 
+;;; Simplify an instruction with one or more outputs that are unused. 
 
 (defun location-unused-p (location)
   (null (using-instructions location)))
@@ -691,11 +618,15 @@
   (change-class instruction 'sicl-mir:nop-instruction))
 
 (defun simplify-instructions (program)
-  (ensure-location-assign-use program)
   (let ((*program* program))
     (loop for location in (find-unused-lexical-locations program)
 	  do (loop for instruction in (assigning-instructions location)
 		   do (simplify-instruction instruction)))))
+
+(set-processor 'simplified-instructions 'simplify-instructions)
+
+(add-dependencies 'simplified-instructions
+		  '(location-assign-use))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -714,7 +645,6 @@
 ;;; set of constantes represented as a list.
 
 (defun merge-similar-constants (program)
-  (ensure-instruction-info program)
   (let ((*program* program)
 	(constants '()))
     (map-instructions
@@ -732,6 +662,11 @@
 			(find (sicl-mir:value (car rest)) constants
 			      :key #'sicl-mir:value
 			      :test #'equal))))))))
+
+(set-processor 'unique-constants 'merge-similar-constants)
+
+(add-dependencies 'unique-constants
+		  '(instruction-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -849,29 +784,15 @@
 ;;; Remove instances of NOP-INSTRUCTION.
 
 (defun remove-nop-instructions (program)
-  (ensure-instruction-info program)
   (let ((*program* program))
     (map-instructions
      (lambda (instruction)
        (loop for rest on (successors instruction)
 	     do (loop while (typep (car rest) 'sicl-mir:nop-instruction)
 		      do (setf (car rest) (car (successors (car rest)))))))))
-  (setf (instructions-timestamp program)
-	(incf (current-timestamp program))))
+  (touch program 'instructions))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Main entry point.
+(set-processor 'remove-nop-instructions 'remove-nop-instructions)
 
-(defun post-process (initial-instruction)
-  (let* ((program (make-instance 'program
-		    :initial-instruction initial-instruction))
-	 (*program* program))
-    (ensure-instruction-ownership program)
-    (ensure-lexical-depths program)
-    (ensure-location-ownership program)
-    (ensure-location-assign-use program)
-    (ensure-location-indices program)
-;;    (ensure-externals-info program)
-    (ensure-basic-blocks program)
-    program))
+(add-dependencies 'remove-nop-instructions
+		  '(instruction-info))
