@@ -330,6 +330,15 @@
 (add-dependencies 'instruction-ownership
 		  '(instruction-info))
 
+;;; It might be confusing that we compute the procedures at the same
+;;; time we determine instruction ownership.  For that reason, we
+;;; instroduce a target named PROCEDURES.
+
+(set-processor 'procedures 'identity)
+
+(add-dependencies 'procedures
+		  '(instruction-ownership))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Determine the predecessors of every instruction in a program.
@@ -791,7 +800,8 @@
 (defun cache-constant (constant first-instruction)
   (let ((table (make-hash-table :test #'eq))
 	(temp (sicl-mir:new-temporary))
-	(legitimate-users '()))
+	(legitimate-users '())
+	(modify-p nil))
     ;; In phase 1, we find instructions that might be the first users
     ;; of the constant and we insert an assignment instruction before
     ;; those instructions.  These new assignment instructions become
@@ -803,6 +813,7 @@
 		     (let ((a (sicl-mir:make-assignment-instruction
 			       constant temp instruction)))
 		       (setf (gethash a table) t)
+		       (setf modify-p t)
 		       (push a legitimate-users)
 		       (insert-instruction-before a instruction))
 		     (mapc #'traverse (successors instruction))))))
@@ -818,7 +829,25 @@
 		   (nsubstitute temp constant (sicl-mir:inputs instruction)
 				:test #'eq))
 		 (mapc #'traverse (successors instruction)))))
-      (traverse first-instruction))))
+      (traverse first-instruction))
+    modify-p))
+
+(defun cache-constants (program)
+  (let ((modify-p nil))
+    (map-locations
+     (lambda (location)
+       (when (typep location 'sicl-mir:constant-input)
+	 (loop for procedure in (procedures program)
+	       for first = (initial-instruction procedure)
+	       do (setf modify-p
+			(or (cache-constant location first)))))))
+    (when modify-p
+      (touch program 'instruction-graph))))
+
+(set-processor 'cached-constants 'cache-constants)
+
+(add-dependencies 'cached-constants
+		  '(no-constant-temporaries))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
