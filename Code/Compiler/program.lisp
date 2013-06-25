@@ -698,6 +698,47 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; This transformation consists of removing temporary lexical
+;;; locations that are known to always hold the value of a constant,
+;;; and replacing occurrences of such lexical locations by a direct
+;;; reference to the constant location.
+;;;
+;;; Later on, we reintroduce temporary lexical locations for
+;;; constants, but then in a way that there is exactly one lexical
+;;; location for each unique constant.
+
+(defun remove-constant-temporaries (program)
+  (let ((modify-p nil))
+    (map-locations
+     (lambda (location)
+       (let* ((assigning-instructions (assigning-instructions location))
+	      (assigning-instruction (car assigning-instructions))
+	      (using-instructions (using-instructions location))
+	      (using-instruction (car using-instructions)))
+	 (when (and (typep location 'sicl-mir:lexical-location)
+		    (= (length assigning-instructions) 1)
+		    (= (length using-instructions) 1)
+		    (typep assigning-instruction
+			   'sicl-mir:assignment-instruction))
+	   (let ((source-location (car (inputs assigning-instruction))))
+	     (when (typep source-location 'sicl-mir:constant-input)
+	       (when (member location (inputs using-instruction)
+			     :test #'eq)
+		 (setf modify-p t)
+		 (nsubstitute source-location location
+			      (inputs using-instruction)
+			      :test #'eq))))))))
+    (when modify-p
+      ;; We have modified some inputs of some instructions.
+      (touch program 'instruction-graph))))
+  
+(set-processor 'no-constant-temporaries 'remove-constant-temporaries)
+
+(add-dependencies 'no-constant-temporaries
+		  '(location-info))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; This transformation is used when large constants have already been
 ;;; merged, and after backend-specific code has replaced
 ;;; CONSTANT-INPUT by IMMEDIATE-INPUT whenever appropriate.  Thus, it
@@ -784,13 +825,15 @@
 ;;; Remove instances of NOP-INSTRUCTION.
 
 (defun remove-nop-instructions (program)
-  (let ((*program* program))
+  (let ((modify-p nil))
     (map-instructions
      (lambda (instruction)
        (loop for rest on (successors instruction)
 	     do (loop while (typep (car rest) 'sicl-mir:nop-instruction)
-		      do (setf (car rest) (car (successors (car rest)))))))))
-  (touch program 'instructions))
+		      do (setf modify-p t)
+			 (setf (car rest) (car (successors (car rest))))))))
+    (when modify-p
+      (touch program 'instruction-graph))))
 
 (set-processor 'remove-nop-instructions 'remove-nop-instructions)
 
