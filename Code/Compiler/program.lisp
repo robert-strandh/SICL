@@ -175,6 +175,9 @@
 (defun successors (instruction)
   (sicl-mir:successors instruction))
 
+(defun (setf successors) (new-successors instruction)
+  (setf (sicl-mir:successors instruction) new-successors))
+
 (defun inputs (instruction)
   (sicl-mir:inputs instruction))
 
@@ -757,6 +760,89 @@
 ;;;   * Replacing I by a NOP-INSTRUCTION.
 ;;;
 ;;; FIXME: implement it.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This transformation is used when large constants have already been
+;;; merged, and after backend-specific code has replaced
+;;; CONSTANT-INPUT by IMMEDIATE-INPUT whenever appropriate.  Thus, it
+;;; is known that all the CONSTANT-INPUTs will require memory access.
+;;;
+;;; The purpose of the transformation is to allow large constants to
+;;; be kept in registers whenever there is a sufficient number of
+;;; registers.  When there is not a sufficient number of registers, no
+;;; spilling is required, because the constant is always present in
+;;; the same memory location.
+;;;
+;;; The transformation consists of the following steps for each unique
+;;; constant C:
+;;;
+;;;  * Create a lexical location L to hold C.
+;;; 
+;;;  * For every use of C that MIGHT be the FIRST use, precede the
+;;;    using instruction by an ASSIGNMENT-INSTRUCTION, copying C to L,
+;;;    and replace the uses of C by L in the using instruction.
+;;;
+;;;  * For every other use of C, replace C by L.
+;;;
+;;; We apply this transformation for each PROCEDURE in the program.
+;;; There are several reasons for that, but mainly that we do not
+;;; attempt any inter-procedural register allocation at the moment,
+;;; and whenever we have several procedures in a program, it is likely
+;;; that we also have procedures with indefinite extent, so that
+;;; inter-procedural register allocation would not be possible anyway.
+;;;
+;;; Finding all the instructions that might be the first ones using C
+;;; in some procedure is fairly simple.  Just do a depth-first
+;;; traversal from the initial instruction.  Stop when an instruction
+;;; is encountered that uses C or when an instruction that has already
+;;; been traversed is encountered. 
+
+;;; Insert an instruction before another instruction.  The new
+;;; instruction will have as its only successor the existing
+;;; instruction.  All occurrences of the existing instruction in the
+;;; predecessors of the existing instruction will be replaced by the
+;;; new instruction.
+(defun insert-instruction-before (new-instruction existing-instruction)
+  (loop for pred in (predecessors existing-instruction)
+	do (nsubstitute new-instruction
+			existing-instruction
+			(successors pred)
+			:test #'eq)
+	   (setf (successors new-instruction)
+		 (list existing-instruction))))
+
+(defun cache-constant (constant first-instruction)
+  (let ((table (make-hash-table :test #'eq))
+	(temp (sicl-mir:new-temporary))
+	(legitimate-users '()))
+    ;; In phase 1, we find instructions that might be the first users
+    ;; of the constant and we insert an assignment instruction before
+    ;; those instructions.  These new assignment instructions become
+    ;; the only LEGITIMATE USERS of the constant.
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (if (member constant (sicl-mir:inputs instruction)
+			     :test #'eq)
+		     (let ((a (sicl-mir:make-assignment-instruction
+			       constant temp instruction)))
+		       (setf (gethash a table) t)
+		       (push a legitimate-users)
+		       (insert-instruction-before a instruction))
+		     (mapc #'traverse (successors instruction))))))
+      (traverse first-instruction))
+    ;; In phase 2, we find instructions that use the constant, but
+    ;; that are not legitimate users of it.  We replace the constant
+    ;; inputs by the new temporary lexical.
+    (clrhash table)
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (unless (member instruction legitimate-users :test #'eq)
+		   (nsubstitute temp constant (sicl-mir:inputs instruction)
+				:test #'eq))
+		 (mapc #'traverse (successors instruction)))))
+      (traverse first-instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
