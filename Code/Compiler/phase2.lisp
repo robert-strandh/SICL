@@ -88,7 +88,7 @@
 			  results)))
     (error "illegal results: ~s" results))
   (when (listp results)
-    (unless (and (listp types) (= (length types) (length successors)))
+    (unless (and (listp types) (= (length types) (length results)))
       (error "illegal types")))
   (unless (and (listp successors)
 	       (every (lambda (successor)
