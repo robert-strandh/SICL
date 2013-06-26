@@ -3,8 +3,8 @@
 ;;;; MIR stands for Medium-level Intermediate Representation.  In this
 ;;;; representation, an AST representing a top-level form is compiled
 ;;;; into FLOWCHART.  A flowchart is a graph in which the nodes are
-;;;; INSTRUCTIONS and LOCATIONS.  There are two types of arcs: CONTROL
-;;;; ARCS and DATA ACRS.  
+;;;; INSTRUCTIONS and DATA.  There are two types of arcs: CONTROL ARCS
+;;;; and DATA ACRS.
 ;;;;
 ;;;; A CONTROL ARC represents the flow of control in the flowchart,
 ;;;; and connects one instruction to another instruction.  If there is
@@ -25,13 +25,13 @@
 ;;;; A DATA ARC represents the input to or the output from an
 ;;;; instruction.  A data arc with an instruction as its HEAD is an
 ;;;; INPUT ARC.  A data arc with an instruction as its TAIL is an
-;;;; OUTPUT ARC.  The HEAD of an output arc is always a LOCATION that
-;;;; can be written to.  The TAIL of an input arc is usually a
-;;;; LOCATION, except that the input to an ENCLOSE instruction is the
-;;;; INITIAL INSTRUCTION of some subgraph.  The output of that same
-;;;; ENCLOSE instruction is a CLOSURE that, when called, transfers
-;;;; control to the initial instruction that is the input of the
-;;;; enclose instruction.
+;;;; OUTPUT ARC.  The HEAD of an output arc is always a DATUM that can
+;;;; be written to.  The TAIL of an input arc is usually a DATUM,
+;;;; except that the input to an ENCLOSE instruction is the INITIAL
+;;;; INSTRUCTION of some subgraph.  The output of that same ENCLOSE
+;;;; instruction is a CLOSURE that, when called, transfers control to
+;;;; the initial instruction that is the input of the enclose
+;;;; instruction.
 ;;;;
 ;;;; An instruction J is said to be REACHABLE from some instruction I
 ;;;; if and only if there is a (possibly empty) sequence of control
@@ -80,11 +80,11 @@
 ;;;; independent, whereas P will share code with some ancestor of its
 ;;;; parent.
 ;;;;
-;;;; Locations are used as inputs to and outputs from instructions. 
+;;;; Data are used as inputs to and outputs from instructions. 
 ;;;;
-;;;; The possible types of locations that can be found in a MIR
+;;;; The possible types of data that can be found in a MIR
 ;;;; program depend on the stage of translation.  Globally speaking,
-;;;; there are three kinds of locations.  The first kind represents
+;;;; there are three kinds of data.  The first kind represents
 ;;;; small constants that can occur directly in an instruction stream.
 ;;;; The second kind represent more complex constants that must be
 ;;;; represented separately.  The third kind represents a LEXICAL
@@ -102,84 +102,93 @@
 ;;;; depths.  Because of the way lexical locations are created, if a
 ;;;; lexical location is referred to by two different instructions
 ;;;; belonging to two different procedures, P and Q, and neither P is
-;;;; nested inside Q nor is Q nested inside P, then the location is
-;;;; also referred to by some instruction belonging to a procedure C
-;;;; inside which both A and B are nested.
+;;;; nested inside Q nor is Q nested inside P, then the lexical
+;;;; location is also referred to by some instruction belonging to a
+;;;; procedure C inside which both A and B are nested.
 ;;;;
-;;;; A lexical location L is said to be PRESENT in a procedure P if and
-;;;; only if some instruction belonging to P refers to L.  A location L
-;;;; is said to BELONG to a procedure P if L is present in P, and L is
-;;;; not present in a procedure inside which P is nested.  Because of
-;;;; the restriction in the previous paragraph, every location belongs
-;;;; to some unique procedure.  The procedure P to which a location
-;;;; belongs is called the OWNER of the location.
+;;;; A lexical location L is said to be PRESENT in a procedure P if
+;;;; and only if some instruction belonging to P refers to L.  A
+;;;; lexical location L is said to BELONG to a procedure P if L is
+;;;; present in P, and L is not present in a procedure inside which P
+;;;; is nested.  Because of the restriction in the previous paragraph,
+;;;; every lexical location belongs to some unique procedure.  The
+;;;; procedure P to which a lexical location belongs is called the
+;;;; OWNER of the lexical location.
 ;;;;
 ;;;; The LEXICAL DEPTH of a procedure is a quantity that is less than
 ;;;; or equal to the NESTING depth of that procedure.  We define it
 ;;;; recursively as follows: The lexical depth of a procedure P such
-;;;; that every location that is present in P also belongs to P is
-;;;; defined to be 0.  For a procedure A with a location present in
-;;;; it, but that belongs to a different procedure Q, let D be the
-;;;; greatest depth of any such procedure Q.  Then the lexical depth
-;;;; of P is D+1.  
+;;;; that every lexical location that is present in P also belongs to
+;;;; P is defined to be 0.  For a procedure A with a lexical location
+;;;; present in it, but that belongs to a different procedure Q, let D
+;;;; be the greatest depth of any such procedure Q.  Then the lexical
+;;;; depth of P is D+1.
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class DATUM.  
+;;;
+;;; This is the root class of all different kinds of data. 
+
+(defclass datum () ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing a location on a stream.
+;;; Drawing a datum on a stream.
 
-(defgeneric draw-location (location stream))
+(defgeneric draw-datum (datum stream))
 
 ;;; During the drawing process, the value of this variable is a hash
-;;; table that contains locations that have already been drawn. 
-(defparameter *location-table* nil)
+;;; table that contains data that have already been drawn. 
+(defparameter *datum-table* nil)
 
-(defmethod draw-location :around (location stream)
-  (when (null (gethash location *location-table*))
-    (setf (gethash location *location-table*) (gensym))
+(defmethod draw-datum :around (datum stream)
+  (when (null (gethash datum *datum-table*))
+    (setf (gethash datum *datum-table*) (gensym))
     (format stream "  ~a [shape = ellipse, style = filled];~%"
-	    (gethash location *location-table*))
+	    (gethash datum *datum-table*))
     (call-next-method)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class IMMEDIATE-INPUT.
+;;; Datum class IMMEDIATE-INPUT.
 ;;;
-;;; The IMMEDIATE-INPUT location corresponds to a raw machine interger
+;;; The IMMEDIATE-INPUT datum corresponds to a raw machine interger
 ;;; that is considered sufficiently small that it can occur directly
 ;;; in the instruction stream.  The machine integer is represented in
 ;;; the instance as a Lisp integer.  The machine integer can represent
 ;;; some raw numeric information, or it can represent a tagged
 ;;; immediate Lisp datum such as a fixnum or a character. 
 ;;;
-;;; Locations of this type are introduced by backend-specific code,
+;;; Data of this type are introduced by backend-specific code,
 ;;; because whether or not some datum can be represented as immediate
 ;;; input depends on the backend. 
 
-(defclass immediate-input ()
+(defclass immediate-input (datum)
   ((%value :initarg :value :reader value)))
 
 (defun make-immediate-input (value)
   (make-instance 'immediate-input
     :value value))
 
-(defmethod draw-location ((location immediate-input) stream)
+(defmethod draw-datum ((datum immediate-input) stream)
   (format stream "   ~a [fillcolor = lightgreen, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (value location)))
+	  (gethash datum *datum-table*)
+	  (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class WORD-INPUT.
+;;; Datum class WORD-INPUT.
 ;;;
-;;; The WORD-INPUT location corresponds to a raw machine interger that
+;;; The WORD-INPUT datum corresponds to a raw machine interger that
 ;;; may or may not be sufficiently small to occur directly in the
 ;;; instruction stream.  The machine integer is represented in the
 ;;; instance as a Lisp integer.  The machine integer can represent
 ;;; some raw numeric information, or it can represent a tagged
 ;;; immediate Lisp datum such as a fixnum or a character.
 ;;;
-;;; Locations of this type are introduced in early compilation stages
+;;; Data of this type are introduced in early compilation stages
 ;;; when a WORD-AST is compiled, and in later stages when
 ;;; backend-specific code determins that a Lisp constant has a
 ;;; representation as a machine word, typically a character constant.
@@ -188,62 +197,62 @@
 ;;; point of the character, and depending on the magnitude of
 ;;; immediates that the bacend can handle.
 
-(defclass word-input ()
+(defclass word-input (datum)
   ((%value :initarg :value :reader value)))
 
 (defun make-word-input (value)
   (make-instance 'word-input
     :value value))
 
-(defmethod draw-location ((location word-input) stream)
+(defmethod draw-datum ((datum word-input) stream)
   (format stream "   ~a [fillcolor = lightblue, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (value location)))
+	  (gethash datum *datum-table*)
+	  (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class CONSTANT-INPUT.
+;;; Datum class CONSTANT-INPUT.
 ;;;
-;;; In later compilation stages, this location is eliminated.  If the
+;;; In later compilation stages, this datum is eliminated.  If the
 ;;; constant can be encoded as an immediate value, then an
 ;;; IMMEDIATE-INPUT is used instead.  If not, then the constant is
 ;;; allocated in the linkage vector of the code object, and an
 ;;; EXTERNAL-INPUT is used instead.
 
-(defclass constant-input ()
+(defclass constant-input (datum)
   ((%value :initarg :value :reader value)))
 
 (defun make-constant-input (value)
   (make-instance 'constant-input
     :value value))
 
-(defmethod draw-location ((location constant-input) stream)
+(defmethod draw-datum ((datum constant-input) stream)
   (format stream "   ~a [fillcolor = green, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (value location)))
+	  (gethash datum *datum-table*)
+	  (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class LEXICAL-LOCATION.
+;;; Datum class LEXICAL-LOCATION.
 ;;;
-;;; In later compilation stages, this location is eliminated.  Instead
-;;; an other locations are used such as STATIC-LOCATION,
+;;; In later compilation stages, this datum is eliminated.  Instead
+;;; other data are used such as STATIC-LOCATION,
 ;;; DYNAMIC-LOCATION, or REGISTER-LOCATION.  Not all references to a
 ;;; particular lexical location are replaced by the same replacement
-;;; location, because where a lexical variable is to be found
-;;; is typically different in different parts of the code. 
+;;; location, because where a lexical variable is to be found is
+;;; typically different in different parts of the code.
 
-(defclass lexical-location ()
+(defclass lexical-location (datum)
   ((%name :initarg :name :reader name)))
 
 (defun make-lexical-location (name)
   (make-instance 'lexical-location
     :name name))
 
-(defmethod draw-location ((location lexical-location) stream)
+(defmethod draw-datum ((datum lexical-location) stream)
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (name location)))
+	  (gethash datum *datum-table*)
+	  (name datum)))
 
 ;;; Generate a new lexical location
 (defun new-temporary ()
@@ -251,19 +260,19 @@
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class SPECIAL-LOCATION.
+;;; Datum class SPECIAL-LOCATION.
 ;;;
-;;; This location corresponds to a reference to a special variable.
+;;; This datum corresponds to a reference to a special variable.
 ;;; The storage is the place where a global value (if any) of the
 ;;; special variable is stored.
 ;;;
-;;; In later compilation stages, this location is eliminated.  Instead
+;;; In later compilation stages, this datum is eliminated.  Instead
 ;;; an EXTERNAL-INPUT is used to hold the storage cell containing the
 ;;; global value, and this cell (together with the name) is passed as
 ;;; argument to a function call that searches for bindings in the
 ;;; dynamic environment.
 
-(defclass special-location ()
+(defclass special-location (datum)
   ((%name :initarg :name :reader name)
    (%storage :initarg :storage :reader storage)))
 
@@ -272,23 +281,23 @@
     :name name
     :storage storage))
 
-(defmethod draw-location ((location special-location) stream)
+(defmethod draw-datum ((datum special-location) stream)
   (format stream "   ~a [fillcolor = cyan, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (name location)))
+	  (gethash datum *datum-table*)
+	  (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class GLOBAL-INPUT.
+;;; Datum class GLOBAL-INPUT.
 ;;;
-;;; This location corresponds to a reference to a global FUNCTION,
+;;; This datum corresponds to a reference to a global FUNCTION,
 ;;; i.e., a function defined in the global environment.  
 ;;;
-;;; In later compilation stages, this location is eliminated.  Instead
+;;; In later compilation stages, this datum is eliminated.  Instead
 ;;; an EXTERNAL-INPUT is used to hold the storage cell containing the
 ;;; global value, i.e. the function object that is referred to.
 
-(defclass global-input ()
+(defclass global-input (datum)
   ((%name :initarg :name :reader name)
    (%storage :initarg :storage :reader storage)))
 
@@ -297,60 +306,60 @@
     :name name
     :storage storage))
 
-(defmethod draw-location ((location global-input) stream)
+(defmethod draw-datum ((datum global-input) stream)
   (format stream "   ~a [fillcolor = cyan, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (name location)))
+	  (gethash datum *datum-table*)
+	  (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class EXTERNAL-INPUT.
+;;; Datum class EXTERNAL-INPUT.
 ;;;
-;;; This location corresponds to an index in the linkage vector of a
+;;; This datum corresponds to an index in the linkage vector of a
 ;;; code object.  Later compilation stages typically replace a
 ;;; CONSTANT-INPUT that can not be an IMMEDIATE-INPUT, or a
 ;;; GLOBAL-INPUT or a by an EXTERNAL-INPUT. 
 
-(defclass external-input ()
+(defclass external-input (datum)
   ((%value :initarg :value :reader value)))
 
 (defun make-external-input (value)
   (make-instance 'external-input
     :value value))
 
-(defmethod draw-location ((location external-input) stream)
+(defmethod draw-datum ((datum external-input) stream)
   (format stream "   ~a [fillcolor = pink, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (value location)))
+	  (gethash datum *datum-table*)
+	  (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class REGISTER-INPUT.
+;;; Datum class REGISTER-INPUT.
 ;;;
-;;; This location corresponds to a processor register.  It is
+;;; This datum corresponds to a processor register.  It is
 ;;; introduced by the register allocation phase.
 
-(defclass register-input ()
+(defclass register-input (datum)
   ((%name :initarg :name :reader name)))
 
 (defun make-register-input (name)
   (make-instance 'register-input
     :name name))
 
-(defmethod draw-location ((location register-input) stream)
+(defmethod draw-datum ((datum register-input) stream)
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (name location)))
+	  (gethash datum *datum-table*)
+	  (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class STATIC-LOCATION.
+;;; Datum class STATIC-LOCATION.
 ;;;
-;;; This location corresponds to a places in the static runtime
+;;; This datum corresponds to a places in the static runtime
 ;;; envirionment.  That environment is organized in LAYERS, with each
 ;;; layer being a vector of values.  
 
-(defclass static-location ()
+(defclass static-location (datum)
   ((%layer :initarg :layer :reader layer)
    (%index :initarg :index :reader index)))
 
@@ -359,30 +368,30 @@
     :layer layer
     :index index))
 
-(defmethod draw-location ((location static-location) stream)
+(defmethod draw-datum ((datum static-location) stream)
   (format stream "   ~a [fillcolor = yellow, label = \"~a,~a\"]~%"
-	  (gethash location *location-table*)
-	  (layer location)
-	  (index location)))
+	  (gethash datum *datum-table*)
+	  (layer datum)
+	  (index datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location class DYNAMIC-LOCATION.
+;;; Datum class DYNAMIC-LOCATION.
 ;;;
-;;; This location corresponds to places in the stack frame where the
+;;; This datum corresponds to places in the stack frame where the
 ;;; compiler might decide to put objects with dynamic extent.  
 
-(defclass dynamic-location ()
+(defclass dynamic-location (datum)
   ((%index :initarg :index :reader index)))
 
 (defun make-dynamic-location (index)
   (make-instance 'dynamic-location
     :index index))
 
-(defmethod draw-location ((location dynamic-location) stream)
+(defmethod draw-datum ((datum dynamic-location) stream)
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
-	  (gethash location *location-table*)
-	  (index location)))
+	  (gethash datum *datum-table*)
+	  (index datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -430,23 +439,23 @@
 	  (class-name (class-of instruction))))
 
 (defmethod draw-instruction :after (instruction stream)
-  (loop for location in (inputs instruction)
-	do (draw-location location stream)
+  (loop for datum in (inputs instruction)
+	do (draw-datum datum stream)
 	   (format stream "  ~a -> ~a [color = red, style = dashed];~%"
-		   (gethash location *location-table*)
+		   (gethash datum *datum-table*)
 		   (gethash instruction *instruction-table*)))
-  (loop for location in (outputs instruction)
-	do (draw-location location stream)
+  (loop for datum in (outputs instruction)
+	do (draw-datum datum stream)
 	   (format stream "  ~a -> ~a [color = blue, style = dashed];~%"
 		   (gethash instruction *instruction-table*)
-		   (gethash location *location-table*))))
+		   (gethash datum *datum-table*))))
 
 (defun draw-flowchart (start filename)
   (with-open-file (stream filename
 			  :direction :output
 			  :if-exists :supersede)
     (let ((*instruction-table* (make-hash-table :test #'eq))
-	  (*location-table* (make-hash-table :test #'eq)))
+	  (*datum-table* (make-hash-table :test #'eq)))
 	(format stream "digraph G {~%")
 	(draw-instruction start stream)
 	(format stream "}~%"))))
