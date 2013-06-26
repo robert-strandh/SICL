@@ -171,11 +171,15 @@
   (let ((parsed-lambda-list
 	  (sicl-code-utilities:parse-ordinary-lambda-list lambda-list)))
     (sicl-ast:make-function-ast
-     nil nil nil
      (convert `(let* ,(sicl-code-utilities:match-lambda-list
 		       parsed-lambda-list '(argcount) 'arg)
 		 ,@body)
-	      env))))
+	      env)
+     (if (and (eq (sicl-code-utilities:optionals parsed-lambda-list) :none)
+	      (eq (sicl-code-utilities:rest-body parsed-lambda-list) :none)
+	      (eq (sicl-code-utilities:keys parsed-lambda-list) :none))
+	 (length (sicl-code-utilities:required parsed-lambda-list))
+	 nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
