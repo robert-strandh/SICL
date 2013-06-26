@@ -97,13 +97,15 @@
 (defun check-lambda-list-not-circular (lambda-list)
   (when (eq (nth-value 1 (list-structure lambda-list)) :circular)
     (error 'lambda-list-must-not-be-circular
-	   :form lambda-list)))
+	   :signaler 
+	   :code lambda-list)))
 
 ;;; Use this function for lambda lists that must be proper lists.
-(defun check-lambda-list-proper (lambda-list)
+(defun check-lambda-list-proper (lambda-list signaler)
   (unless (eq (nth-value 1 (list-structure lambda-list)) :proper)
     (error 'lambda-list-must-be-proper-list
-	   :form lambda-list)))
+	   :signaler signaler
+	   :code lambda-list)))
 
 ;;; Check for restrictions common to all lambda lists.
 ;;;
@@ -459,14 +461,14 @@
 	  (error 'malformed-destructuring-optional
 		 :code optional))
 	`(,(car optional)
-	  ,(if (> length 1) (cadr optional) default)
+	  ,(if (> length 1) (cadr optional) `',default)
 	  . ,(cddr optional)))
       (progn
 	(unless (and (symbolp optional)
 		     (not (constantp optional)))
 	  (error 'malformed-destructuring-optional
 		 :code optional))
-	`(,optional nil))))
+	`(,optional ',default))))
 
 (defun parse-destructuring-optional (optional)
   (parse-destructuring/deftype-optional optional nil))
@@ -766,7 +768,7 @@
 
 (defun parse-ordinary-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body &key &allow-other-keys &aux)))
-    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-proper lambda-list 'parse-ordinary-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
@@ -792,7 +794,7 @@
 	
 (defun parse-generic-function-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body &key &allow-other-keys)))
-    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-proper lambda-list 'parse-generic-function-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
@@ -816,7 +818,7 @@
 	
 (defun parse-specialized-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body &key &allow-other-keys &aux)))
-    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-proper lambda-list 'parse-specialized-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
@@ -1056,11 +1058,13 @@
   (multiple-value-bind (length structure) (list-structure lambda-list)
     (when (eq structure :circular)
       (error 'lambda-list-must-not-be-circular
+	     :signaler 'parse-deftype-lambda-list
 	     :code lambda-list))
     (if (eq structure :dotted)
 	(progn
 	  (when (zerop length)
 	    (error 'lambda-list-must-be-list
+		   :signaler 'parse-deftype-lambda-list
 		   :code lambda-list))
 	  (let ((allowed '(&whole &environment &optional)))
 	    (check-lambda-list-keywords lambda-list allowed)
@@ -1184,7 +1188,7 @@
 
 (defun parse-defsetf-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body &key &allow-other-keys &environment)))
-    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-proper lambda-list 'parse-defsetf-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
@@ -1211,7 +1215,7 @@
 	
 (defun parse-define-modify-macro-lambda-list (lambda-list)
   (let ((allowed '(&optional &rest &body)))
-    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-proper lambda-list 'parse-define-modify-macro-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
@@ -1231,7 +1235,9 @@
 (defun parse-define-method-combination-arguments-lambda-list
     (lambda-list)
   (let ((allowed '(&whole &optional &rest &body &key &allow-other-keys &aux)))
-    (check-lambda-list-proper lambda-list)
+    (check-lambda-list-proper
+     lambda-list
+     'parse-define-method-combination-arguments-lambda-list)
     (check-lambda-list-keywords lambda-list allowed)
     (let ((positions (compute-keyword-positions lambda-list allowed))
 	  (result (make-instance 'lambda-list)))
