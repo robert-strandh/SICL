@@ -336,9 +336,8 @@
 ;;; The value computed by the FUNCTION-AST is always a function, so it
 ;;; is always a single non-NIL value.  If the value context is T,
 ;;; i.e., all the values are needed, we also generate a
-;;; PUT-VALUES-INSTRUCTION with the single value as input.  If there
-;;; is more than one successor, chose the second one for the true
-;;; value. 
+;;; RETURN-INSTRUCTION with the single value as input.  If there is
+;;; more than one successor, chose the second one for the true value.
 
 (defmethod compile-ast ((ast sicl-ast:function-ast) context)
   (with-accessors ((results results)
