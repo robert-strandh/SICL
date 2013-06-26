@@ -856,14 +856,16 @@
 	 (loop for procedure in (procedures program)
 	       for first = (initial-instruction procedure)
 	       do (setf modify-p
-			(or (cache-constant location first)))))))
+			(or (cache-constant location first) modify-p))))))
     (when modify-p
       (touch program 'instruction-graph))))
 
 (set-processor 'cached-constants 'cache-constants)
 
 (add-dependencies 'cached-constants
-		  '(no-constant-temporaries))
+		  '(procedures
+		    location-info
+		    no-constant-temporaries))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -883,4 +885,39 @@
 (set-processor 'remove-nop-instructions 'remove-nop-instructions)
 
 (add-dependencies 'remove-nop-instructions
+		  '(instruction-info))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The purpose of this transformation is to identify FUNCALL
+;;; instructions where the function called is known not to return.
+;;; For now, we only handle calls to CL:ERROR, but in the future, we
+;;; might handle calls to any CLHS function declared to return a value
+;;; of type NULL.  
+;;;
+;;; While this transformation might not seem worthwhile, in fact it
+;;; is, because it cuts off certain paths in the instruction graph
+;;; which makes it easier for the register allocator to do its job. 
+;;;
+;;; For this transformation to work, the first input to the FUNCALL
+;;; instruction must be a GLOBAL-INPUT (where the NAME property is
+;;; CL:ERROR).  Therefore, It will only work right after redundant
+;;; temporaries have been eleminated.
+
+(defun eliminate-error-successors (program)
+  (let ((modify-p nil))
+    (map-instructions
+     (lambda (instruction)
+       (when (and (typep instruction 'sicl-mir:funcall-instruction)
+		  (let ((fun (car (inputs instruction))))
+		    (and (typep fun 'sicl-mir:global-input)
+			 (eq (sicl-mir:name fun) 'error))))
+	 (setf modify-p t)
+	 (setf (successors instruction) '()))))
+    (when modify-p
+      (touch program 'instruction-graph))))
+
+(set-processor 'no-error-successors 'eliminate-error-successors)
+
+(add-dependencies 'no-error-successors
 		  '(instruction-info))
