@@ -390,7 +390,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a LEXICAL-LOCATION object. 
+;;; Compile a LEXICAL-AST.
 ;;;
 ;;; If the RESULTS is T, then we generate a RETURN-INSTRUCTION.
 ;;; In that case, we know that there are no successors.  If there
@@ -433,7 +433,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a GLOBAL-LOCATION object. 
+;;; Compile a GLOBAL-AST.
 ;;;
 ;;; If the RESULTS is T, then we generate a RETURN-INSTRUCTION.
 ;;; In that case, we know that there are no successors.  If there
