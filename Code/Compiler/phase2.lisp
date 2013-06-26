@@ -390,6 +390,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a THE-AST.
+;;;
+;;; FIXME: handle the types!
+
+(defmethod compile-ast ((ast sicl-ast:the-ast) context)
+  (compile-ast (sicl-ast:form-ast ast) context))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a LEXICAL-AST.
 ;;;
 ;;; If the RESULTS is T, then we generate a RETURN-INSTRUCTION.
