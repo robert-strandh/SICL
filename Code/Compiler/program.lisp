@@ -36,14 +36,10 @@
    ;; instruction-info instance.
    (%instruction-info
     :initform (make-hash-table :test #'eq) :accessor instruction-info)
-   ;; This table maps each lexical location of the program to a
-   ;; location-info instance.
-   (%location-info
-    :initform (make-hash-table :test #'eq) :accessor location-info)
-   ;; This table maps each external of the program to an
-   ;; external-info instance.
-   (%external-info
-    :initform (make-hash-table :test #'eq) :accessor external-info)
+   ;; This table maps each datum of the program to a datum-info
+   ;; instance.
+   (%datum-info
+    :initform (make-hash-table :test #'eq) :accessor datum-info)
    ;; All the procedures of this program.
    (%procedures :initform '() :accessor procedures)))
 
@@ -58,6 +54,7 @@
 ;;; every class.
 (defparameter *program* nil)
 
+;;; Apply a function to every instruction of the program.
 (defun map-instructions (function)
   (assert (not (null *program*)))
   (maphash (lambda (instruction info)
@@ -65,19 +62,31 @@
 	     (funcall function instruction))
 	   (instruction-info *program*)))
 
-(defun map-locations (function)
+;;; Apply a function to every datum of the program.
+(defun map-data (function)
   (assert (not (null *program*)))
-  (maphash (lambda (location info)
+  (maphash (lambda (datum info)
 	     (declare (ignore info))
-	     (funcall function location))
-	   (location-info *program*)))
+	     (funcall function datum))
+	   (datum-info *program*)))
 
-(defun map-externals (function)
+;;; Apply a function to every lexical location of the program.
+(defun map-lexical-locations (function)
   (assert (not (null *program*)))
-  (maphash (lambda (external info)
+  (maphash (lambda (datum info)
 	     (declare (ignore info))
-	     (funcall function external))
-	   (external-info *program*)))
+	     (when (typep datum 'sicl-mir:lexical-location)
+	       (funcall function datum)))
+	   (datum-info *program*)))
+
+;;; Apply a function to every constant input of the program.
+(defun map-constants (function)
+  (assert (not (null *program*)))
+  (maphash (lambda (datum info)
+	     (declare (ignore info))
+	     (when (typep datum 'sicl-mir:constant-input)
+	       (funcall function datum)))
+	   (datum-info *program*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -86,14 +95,15 @@
 ;;; We need a lot of information about an instruction.  Rather than
 ;;; storing that information in the instruction itself, we store it in
 ;;; an INSTRUCTION-INFO object.  There is one such object for each
-;;; instruction, we put it in a hash table with the instruction as a key. 
+;;; instruction, we put it in a hash table with the instruction as a
+;;; key.
 
 (defgeneric predecessors (instruction-or-info))
 (defgeneric (setf predecessors) (new instruction-or-info))
 (defgeneric owner (instruction-or-info))
 (defgeneric (setf owner) (new instruction-or-info))
-(defgeneric basic-block (instruction-or-info))
-(defgeneric (setf basic-block) (new instruction-or-info))
+(defgeneric basic-block (instruction))
+(defgeneric (setf basic-block) (new instruction))
 
 (defclass instruction-info ()
   (;; The list of predecessor instructions of this instruction. 
@@ -103,31 +113,33 @@
    ;; The basic block to which this instruction belongs.
    (%basic-block :initform nil :accessor basic-block)))
 
-(defmethod predecessors ((instruction sicl-mir:instruction))
+(defun find-instruction-info (instruction)
   (assert (not (null *program*)))
-  (predecessors (gethash instruction (instruction-info *program*))))
+  (multiple-value-bind (info present-p)
+      (gethash instruction (instruction-info *program*))
+    (unless present-p
+      (error "no instruction-info for instruction ~s" instruction))
+    info))
+
+(defmethod predecessors ((instruction sicl-mir:instruction))
+  (predecessors (find-instruction-info instruction)))
 
 (defmethod (setf predecessors) (new (instruction sicl-mir:instruction))
-  (assert (not (null *program*)))
-  (setf (predecessors (gethash instruction (instruction-info *program*)))
+  (setf (predecessors (find-instruction-info instruction))
 	new))
 
 (defmethod owner ((instruction sicl-mir:instruction))
-  (assert (not (null *program*)))
-  (owner (gethash instruction (instruction-info *program*))))
+  (owner (find-instruction-info instruction)))
 
 (defmethod (setf owner) (new (instruction sicl-mir:instruction))
-  (assert (not (null *program*)))
-  (setf (owner (gethash instruction (instruction-info *program*)))
+  (setf (owner (find-instruction-info instruction))
 	new))
 
 (defmethod basic-block ((instruction sicl-mir:instruction))
-  (assert (not (null *program*)))
-  (basic-block (gethash instruction (instruction-info *program*))))
+  (basic-block (find-instruction-info instruction)))
 
 (defmethod (setf basic-block) (new (instruction sicl-mir:instruction))
-  (assert (not (null *program*)))
-  (setf (basic-block (gethash instruction (instruction-info *program*)))
+  (setf (basic-block (find-instruction-info instruction))
 	new))
 
 (defun successors (instruction)
@@ -168,106 +180,87 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Location info.
+;;; Datum info.
 ;;;
-;;; As with instructions, We need a som information about a
-;;; location.  Again, rather than storing that information in the
-;;; location itself, we store it in an LOCATION-INFO object.  There is
-;;; one such object for each location, we put it in a hash table
-;;; with the location as a key.
+;;; As with instructions, We need a som information about every datum
+;;; of the program.  Again, rather than storing that information in
+;;; the datum itself, we store it in an DATUM-INFO object.  There is
+;;; one such object for each datum, we put it in a hash table with the
+;;; datum as a key.
+;;;
+;;; Contrary to an instruction info object, we need different types of
+;;; information for different types of data, such as lexical
+;;; locations, global inputs, constants, etc.  For that reason, we
+;;; define different subclasses of datum-info.
 
-(defclass location-info ()
-  (;; The procedure to which this location belongs.
+(defclass datum-info ()
+  (;; A list of all instructions that have this datum as an input.
+   (%using-instructions :initform nil :accessor using-instructions)))
+
+(defgeneric make-datum-info (datum))
+
+(defclass lexical-location-info (datum-info)
+  (;; The procedure to which this lexical location belongs.
    (%owner :initform nil :accessor owner)
    ;; A list of all instructions that have this location as an output.
-   (%assigning-instructions :initform nil :accessor assigning-instructions)
-   ;; A list of all instructions that have this location as an input.
-   (%using-instructions :initform nil :accessor using-instructions)
-   (%index :initform nil :accessor index)))
+   (%assigning-instructions :initform nil :accessor assigning-instructions)))
 
-(defmethod owner ((location sicl-mir:lexical-location))
-  (assert (not (null *program*)))
-  (owner (gethash location (location-info *program*))))
+(defmethod make-datum-info ((datum sicl-mir:lexical-location))
+  (make-instance 'lexical-location-info))
 
-(defmethod (setf owner) (new (location sicl-mir:lexical-location))
+(defclass constant-input-info (datum-info)
+  ())
+
+(defmethod make-datum-info ((datum sicl-mir:constant-input))
+  (make-instance 'constant-input-info))
+
+(defclass global-input-info (datum-info)
+  ())
+
+(defmethod make-datum-info ((datum sicl-mir:global-input))
+  (make-instance 'global-input-info))
+
+(defclass word-input-info (datum-info)
+  ())
+
+(defmethod make-datum-info ((datum sicl-mir:word-input))
+  (make-instance 'word-input-info))
+
+(defclass immediate-input-info (datum-info)
+  ())
+
+(defmethod make-datum-info ((datum sicl-mir:immediate-input))
+  (make-instance 'immediate-input-info))
+
+(defun find-datum-info (datum)
   (assert (not (null *program*)))
-  (setf (owner (gethash location (location-info *program*)))
+  (multiple-value-bind (info present-p)
+      (gethash datum (datum-info *program*))
+    (unless present-p
+      (error "no datum-info for datum ~s" datum))
+    info))
+
+(defmethod owner ((datum sicl-mir:lexical-location))
+  (owner (find-datum-info datum)))
+
+(defmethod (setf owner) (new (datum sicl-mir:lexical-location))
+  (setf (owner (find-datum-info datum))
 	new))
 
-(defmethod assigning-instructions ((location sicl-mir:lexical-location))
-  (assert (not (null *program*)))
-  (assigning-instructions (gethash location (location-info *program*))))
+(defmethod assigning-instructions ((datum sicl-mir:lexical-location))
+  (assigning-instructions (find-datum-info datum)))
 
 (defmethod (setf assigning-instructions)
-    (new (location sicl-mir:lexical-location))
-  (assert (not (null *program*)))
-  (setf (assigning-instructions (gethash location (location-info *program*)))
+    (new (datum sicl-mir:lexical-location))
+  (setf (assigning-instructions (find-datum-info datum))
 	new))
 
-(defmethod using-instructions ((location sicl-mir:lexical-location))
-  (assert (not (null *program*)))
-  (using-instructions (gethash location (location-info *program*))))
+(defmethod using-instructions ((datum sicl-mir:datum))
+  (using-instructions (find-datum-info datum)))
 
-(defmethod (setf using-instructions) (new (location sicl-mir:lexical-location))
-  (assert (not (null *program*)))
-  (setf (using-instructions (gethash location (location-info *program*)))
+(defmethod (setf using-instructions) (new (datum sicl-mir:datum))
+  (setf (using-instructions (find-datum-info datum))
 	new))
-
-(defmethod index ((location sicl-mir:lexical-location))
-  (assert (not (null *program*)))
-  (index (gethash location (location-info *program*))))
-
-(defmethod (setf index) (new (location sicl-mir:lexical-location))
-  (assert (not (null *program*)))
-  (setf (index (gethash location (location-info *program*)))
-	new))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; External info.
-;;;
-;;; As with lexical locations, We need a som information about a the
-;;; externals of a program.  Again, rather than storing that
-;;; information in the external itself, we store it in an
-;;; EXTERNAL-INFO object.  There is one such object for each external,
-;;; we put it in a hash table with the external as a key.
-
-(defclass external-info ()
-  ((%index :initform nil :accessor index)))
-
-(defmethod index ((external sicl-mir:external-input))
-  (assert (not (null *program*)))
-  (index (gethash external (external-info *program*))))
-
-(defmethod (setf index) (new (external sicl-mir:external-input))
-  (assert (not (null *program*)))
-  (setf (index (gethash external (external-info *program*)))
-	new))
-
-(defun compute-externals-info (program)
-  (let ((*program* program)
-	(externals '()))
-    (with-accessors ((external-info external-info))
-	program
-      (clrhash external-info)
-      (map-instructions
-       (lambda (instruction)
-	 (loop for input in (inputs instruction)
-	       do (when (typep input 'sicl-mir:external-input)
-		    (setf (gethash input external-info)
-			  (make-instance 'external-info))
-		    (pushnew (sicl-mir:value input) externals
-			     :test #'equal)))))
-      (map-externals
-       (lambda (external)
-	 (setf (index external)
-	       (position (sicl-mir:value external) externals
-			 :test #'equal)))))))
-    
-(set-processor 'externals-info 'compute-externals-info)
-
-(add-dependencies 'externals-info
-		  '(instruction-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -278,8 +271,8 @@
     :initarg :initial-instruction :accessor initial-instruction)
    ;; Instructions that belong to this procedure. 
    (%instructions :initform '() :accessor instructions)
-   ;; Locations that  belong to this procedure. 
-   (%locations :initform '() :accessor locations)
+   ;; Lexical locations that  belong to this procedure. 
+   (%lexical-locations :initform '() :accessor lexical-locations)
    (%nesting-depth :initarg :nesting-depth :accessor nesting-depth)
    (%lexical-depth :initform nil :accessor lexical-depth)
    ;; The basic blocks that belong to this procedure.
@@ -301,6 +294,7 @@
 		   (instruction-info instruction-info)
 		   (procedures procedures))
       program
+    (setf procedures '())
     (let ((*program* program))
       (let* ((first (make-procedure initial-instruction 0))
 	     (worklist (list first)))
@@ -360,28 +354,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute lexical location info.
+;;; Compute datum info.
 ;;;
-;;; For each lexical location in the program, create a location-info
-;;; instance and put it in the location-info hash table.
+;;; For each datum in the program, create a datum-info instance and
+;;; put it in the datum-info hash table.
 
-(defun compute-location-info (program)
+(defun compute-datum-info (program)
   (let ((*program* program))
-    (with-accessors ((location-info location-info))
+    (with-accessors ((datum-info datum-info))
 	program
-      (clrhash location-info)
+      (clrhash datum-info)
       (map-instructions
        (lambda (instruction)
-	 (loop for location in (append (inputs instruction)
-				       (outputs instruction))
-	       do (when (and (typep location 'sicl-mir:lexical-location)
-			     (null (gethash location location-info)))
-		    (setf (gethash location location-info)
-			  (make-instance 'location-info)))))))))
+	 (loop for datum in (append (inputs instruction)
+				    (outputs instruction))
+	       do (when (null (gethash datum datum-info))
+		    (setf (gethash datum datum-info)
+			  (make-datum-info datum)))))))))
 
-(set-processor 'location-info 'compute-location-info )
+(set-processor 'datum-info 'compute-datum-info )
 
-(add-dependencies 'location-info
+;;; We use MAP-INSTRUCTIONS for computing the data, which requries the
+;;; DATUM-INFO to have been computed.
+(add-dependencies 'datum-info
 		  '(instruction-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -390,11 +385,11 @@
 
 (defun compute-location-ownership-for-procedure (procedure)
   (loop for instruction in (instructions procedure)
-	do (loop for location in (append (inputs instruction)
-					 (outputs instruction))
-		 do (when (and (typep location 'sicl-mir:lexical-location)
-			       (null (owner location)))
-		      (setf (owner location) procedure)))))
+	do (loop for datum in (append (inputs instruction)
+				      (outputs instruction))
+		 do (when (and (typep datum 'sicl-mir:lexical-location)
+			       (null (owner datum)))
+		      (setf (owner datum) procedure)))))
 
 (defun compute-location-ownership (program)
   (let ((*program* program))
@@ -404,46 +399,45 @@
 	      (sort (copy-list procedures) #'< :key #'nesting-depth)))
 	(loop for procedure in sorted-code
 	      do (compute-location-ownership-for-procedure procedure)))
-      (map-locations (lambda (location)
-		       (push location (locations (owner location))))))))
+      (map-lexical-locations
+       (lambda (lexical-location)
+	 (push lexical-location
+	       (lexical-locations (owner lexical-location))))))))
 
 (set-processor 'location-ownership 'compute-location-ownership)
 
 (add-dependencies 'location-ownership
 		  '(instruction-ownership
-		    location-info))
+		    datum-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the assigning and using instructions of each location.
+;;; Compute the assigning and using instructions of each datum.
 
-(defun compute-location-assign-use (program)
+(defun compute-datum-assign-use (program)
   (let ((*program* program))
     ;; Start by clearing the assigning and using instructions
-    ;; of each location.
-    (loop for procedure in (procedures program)
-	  do (loop for location in (locations procedure)
-		   do (when (typep location 'sicl-mir:lexical-location)
-			(setf (assigning-instructions location) nil)
-			(setf (using-instructions location) nil))))
-    ;; Next, loop over all instructions and for each instruction, add
-    ;; it to the list of assigning instructions for all its outputs,
-    ;; and addit to the list of using instructions for all its inputs.
-    (loop for procedure in (procedures program)
-	  do (loop for instruction in (instructions procedure)
-		   do (loop for input in (inputs instruction)
-			    do (when (typep input 'sicl-mir:lexical-location)
-				 (push instruction
-				       (using-instructions input))))
-		      (loop for output in (outputs instruction)
-			    do (when (typep output 'sicl-mir:lexical-location)
-				 (push instruction
-				       (assigning-instructions output))))))))
+    ;; of each datum.
+    (map-data
+     (lambda (datum)
+       (setf (using-instructions datum) '())))
+    (map-lexical-locations
+     (lambda (lexical-location)
+       (setf (assigning-instructions lexical-location) '())))
+    ;; Next, for each instruction, add it to the list of assigning
+    ;; instructions for all its outputs, and addit to the list of
+    ;; using instructions for all its inputs.
+    (map-instructions
+     (lambda (instruction)
+       (loop for input in (inputs instruction)
+	     do (push instruction (using-instructions input)))
+       (loop for output in (outputs instruction)
+	     do (push instruction (assigning-instructions output)))))))
 
-(set-processor 'location-assign-use 'compute-location-assign-use)
+(set-processor 'datum-assign-use 'compute-datum-assign-use)
 
-(add-dependencies 'location-assign-use
-		  '(location-info
+(add-dependencies 'datum-assign-use
+		  '(datum-info
 		    instruction-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -452,8 +446,8 @@
 
 (defun compute-lexical-depth (procedure)
   (setf (lexical-depth procedure)
-	(loop for location in (locations procedure)
-	      maximize  (let ((owner (owner location)))
+	(loop for lexical-location in (lexical-locations procedure)
+	      maximize  (let ((owner (owner lexical-location)))
 			  (if (eq owner procedure)
 			      0
 			      (1+ (lexical-depth owner)))))))
@@ -474,27 +468,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the index of each lexical location.
-
-(defun compute-location-indices (program)
-  (let ((*program* program)
-	(indices (make-hash-table :test #'eq)))
-    (with-accessors ((procedures procedures))
-	program
-      (loop for procedure in procedures
-	    do (setf (gethash procedure indices) 0))
-      (map-locations (lambda (location)
-		       (setf (index location)
-			     (gethash (owner location) indices))
-		       (incf (gethash (owner location) indices)))))))
-
-(set-processor 'location-indices 'compute-location-indices)
-
-(add-dependencies 'location-indices
-		  '(location-ownership))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Basic blocks.
 
 (defclass basic-block ()
@@ -505,6 +478,7 @@
   (with-accessors ((instructions instructions)
 		   (basic-blocks basic-blocks))
       procedure
+    (setf basic-blocks '())
     (let ((remaining instructions))
       (flet ((one-block (instruction)
 	       (let ((initial instruction)
@@ -539,7 +513,8 @@
 (set-processor 'basic-blocks 'compute-basic-blocks)
 
 (add-dependencies 'basic-blocks
-		  '(instruction-ownership))
+		  '(instruction-ownership
+		    predecessors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -548,10 +523,9 @@
 (defun find-unused-lexical-locations (program)
   (let ((*program* program)
 	(result '()))
-    (map-locations
+    (map-lexical-locations
      (lambda (location)
-       (when (and (typep location 'sicl-mir:lexical-location)
-		  (null (using-instructions location)))
+       (when (null (using-instructions location))
 	 (push location result))))
     result))
 
@@ -635,7 +609,7 @@
 (set-processor 'simplified-instructions 'simplify-instructions)
 
 (add-dependencies 'simplified-instructions
-		  '(location-assign-use))
+		  '(datum-assign-use))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -656,13 +630,11 @@
 (defun merge-similar-constants (program)
   (let ((*program* program)
 	(constants '()))
-    (map-instructions
-     (lambda (instruction)
-       (loop for location in (sicl-mir:inputs instruction)
-	     do (when (typep location 'sicl-mir:constant-input)
-		  (pushnew location constants
-			   :key #'sicl-mir:value
-			   :test #'equal)))))
+    (map-constants
+     (lambda (constant)
+       (pushnew constant constants
+		:key #'sicl-mir:value
+		:test #'equal)))
     (map-instructions
      (lambda (instruction)
        (loop for rest on (sicl-mir:inputs instruction)
@@ -679,11 +651,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Eliminate redundant locations.
+;;; Eliminate redundant lexical locations.
 ;;;
-;;; We look for patterns of a location IN (which might be a lexical
-;;; location, a constant, or something else), a lexical locations OUT,
-;;; and an instructions I such that:
+;;; We look for patterns of a location IN (which might be any datum),
+;;; a lexical locations OUT, and an instructions I such that:
 ;;;
 ;;;   * I is an assignment instruction.
 ;;;
@@ -760,7 +731,7 @@
 
 (add-dependencies 'no-redundant-temporaries
 		  '(instruction-info
-		    location-assign-use))
+		    datum-assign-use))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -809,9 +780,9 @@
 	do (nsubstitute new-instruction
 			existing-instruction
 			(successors pred)
-			:test #'eq)
-	   (setf (successors new-instruction)
-		 (list existing-instruction))))
+			:test #'eq))
+  (setf (successors new-instruction)
+	(list existing-instruction)))
 
 (defun cache-constant (constant first-instruction)
   (let ((table (make-hash-table :test #'eq))
@@ -824,8 +795,9 @@
     ;; the only LEGITIMATE USERS of the constant.
     (labels ((traverse (instruction)
 	       (unless (gethash instruction table)
-		 (if (member constant (sicl-mir:inputs instruction)
-			     :test #'eq)
+		 (setf (gethash instruction table) t)
+		 (if (and (member constant (sicl-mir:inputs instruction)
+				  :test #'eq))
 		     (let ((a (sicl-mir:make-assignment-instruction
 			       constant temp instruction)))
 		       (setf (gethash a table) t)
@@ -849,14 +821,18 @@
     modify-p))
 
 (defun cache-constants (program)
-  (let ((modify-p nil))
-    (map-locations
-     (lambda (location)
-       (when (typep location 'sicl-mir:constant-input)
-	 (loop for procedure in (procedures program)
-	       for first = (initial-instruction procedure)
-	       do (setf modify-p
-			(or (cache-constant location first) modify-p))))))
+  (let ((modify-p nil)
+	(inputs '()))
+    (map-instructions
+     (lambda (instruction)
+       (loop for input in (inputs instruction)
+	     do (when (and (typep input 'sicl-mir:constant-input)
+			   (not (member input inputs :test #'eq)))
+		  (push input inputs)
+		  (loop for procedure in (procedures program)
+			for first = (initial-instruction procedure)
+			do (setf modify-p
+				 (or (cache-constant input first) modify-p)))))))
     (when modify-p
       (touch program 'instruction-graph))))
 
@@ -864,8 +840,8 @@
 
 (add-dependencies 'cached-constants
 		  '(procedures
-		    location-info
-		    no-constant-temporaries))
+		    datum-assign-use
+		    no-redundant-temporaries))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -897,7 +873,8 @@
 ;;;
 ;;; While this transformation might not seem worthwhile, in fact it
 ;;; is, because it cuts off certain paths in the instruction graph
-;;; which makes it easier for the register allocator to do its job. 
+;;; which decreases the number of basic blocks, and makes it easier
+;;; for the register allocator to do its job.
 ;;;
 ;;; For this transformation to work, the first input to the FUNCALL
 ;;; instruction must be a GLOBAL-INPUT (where the NAME property is
