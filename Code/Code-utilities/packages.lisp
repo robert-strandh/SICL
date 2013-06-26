@@ -37,6 +37,7 @@
 	   #:destruture-lambda-list
 	   #:match-lambda-list
 	   #:parse-macro
+	   #:parse-deftype
 	   #:lambda-lists-congruent-p
 	   #:generate-congruent-lambda-list
 	   #:canonicalize-declaration-specifiers
