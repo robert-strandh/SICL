@@ -589,10 +589,12 @@
 		 (setf change t)
 		 (setf (aref dominators i) temp)))
 	  while change)
-    dominators))
-	     
-    
-
+    (loop for i from 0 below (length dominators)
+	  for b1  across blocks
+	  do (loop for j from 0 below (length dominators)
+		   for b2 across blocks
+		   do (when (= (sbit (aref dominators i) j) 1)
+			(push b2 (dominators b1)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
