@@ -19,6 +19,9 @@
 ;;;; Every instruction belongs to exactly one basic block.  In the
 ;;;; degenerate case, the basic block to which an instruction belongs
 ;;;; contains only that single instruction.
+;;;;
+;;;; We follow the terminology of Steven S Muchnick, in that a FLOW
+;;;; GRAPH is a graph of BASIC BLOCKS. 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -595,6 +598,15 @@
 		   for b2 across blocks
 		   do (when (= (sbit (aref dominators i) j) 1)
 			(push b2 (dominators b1)))))))
+
+(defun compute-dominance (program)
+  (loop for procedure in (procedures program)
+	do (compute-dominance-for-procedure procedure)))
+  
+(set-processor 'dominance 'compute-dominance)
+
+(add-dependencies 'dominance
+		  '(basic-blocks))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
