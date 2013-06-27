@@ -358,19 +358,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum class REGISTER-INPUT.
+;;; Datum class REGISTER-LOCATION.
 ;;;
 ;;; This datum corresponds to a processor register.  It is
 ;;; introduced by the register allocation phase.
 
-(defclass register-input (datum)
+(defclass register-location (datum)
   ((%name :initarg :name :reader name)))
 
-(defun make-register-input (name)
-  (make-instance 'register-input
+(defun make-register-location (name)
+  (make-instance 'register-location
     :name name))
 
-(defmethod draw-datum ((datum register-input) stream)
+(defmethod draw-datum ((datum register-location) stream)
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
 	  (gethash datum *datum-table*)
 	  (name datum)))
@@ -432,6 +432,11 @@
 (defun make-linkage-location (index)
   (make-instance 'linkage-location
     :index index))
+
+(defmethod draw-datum ((datum linkage-location) stream)
+  (format stream "   ~a [fillcolor = white, label = \"~a\"]~%"
+	  (gethash datum *datum-table*)
+	  (index datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
