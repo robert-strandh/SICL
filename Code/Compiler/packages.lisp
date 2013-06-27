@@ -196,6 +196,7 @@
    #:register-input #:make-register-input
    #:static-location #:make-static-location #:layer #:index
    #:dynamic-location #:make-dynamic-location
+   #:linkage-location #:make-linkage-location
    #:instruction #:successors #:inputs #:outputs
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction

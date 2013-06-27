@@ -393,6 +393,22 @@
 	  (gethash datum *datum-table*)
 	  (index datum)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum class LINKAGE-LOCATION.
+;;;
+;;; This datum corresponds to a place in the linkage vector where we
+;;; store global non-immediate constants and value cells for global
+;;; functions and global value cells for special variables.
+
+(defclass linkage-location (datum)
+  (;; The index in the linkage vector of this location.
+   (%index :initarg :index :accessor index)))
+
+(defun make-linkage-location (index)
+  (make-instance 'linkage-location
+    :index index))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions. 
