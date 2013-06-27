@@ -31,7 +31,9 @@
 ;;; that represent nested procedures.
 
 (defclass program ()
-  ((%timestamps
+  (;; The backend for which this program is intended.
+   (%backend :initarg :backend :initform nil :reader backend)
+   (%timestamps
     :initform (make-hash-table :test #'eq) :reader timestamps)
    (%initial-instruction
     :initarg :initial-instruction :accessor initial-instruction)
@@ -754,7 +756,8 @@
 
 (defun merge-similar-constants (program)
   (let ((*program* program)
-	(constants '()))
+	(constants '())
+	(modify-p nil))
     (map-constants
      (lambda (constant)
        (pushnew constant constants
@@ -764,10 +767,14 @@
      (lambda (instruction)
        (loop for rest on (sicl-mir:inputs instruction)
 	     do (when (typep (car rest) 'sicl-mir:constant-input)
-		  (setf (car rest)
-			(find (sicl-mir:value (car rest)) constants
-			      :key #'sicl-mir:value
-			      :test #'equal))))))))
+		  (unless (member (car rest) constants :test #'eq)
+		    (setf modify-p t)
+		    (setf (car rest)
+			  (find (sicl-mir:value (car rest)) constants
+				:key #'sicl-mir:value
+				:test #'equal)))))))
+    (when modify-p
+      (touch program 'instruction-graph))))
 
 (set-processor 'unique-constants 'merge-similar-constants)
 
@@ -1029,14 +1036,11 @@
 ;;;
 ;;; The purpose of this transformation is to introduce immediate data
 ;;; whenever possible.  Since determining when an immidiate datum is
-;;; possible depends on the backend, this transformation takes a
-;;; backend-specific function as a parameter.  This function takes
-;;; some datum as its sole argument and returns either NIL (meaning,
+;;; possible depends on the backend, this function calls a generic
+;;; function CONVERT-CONSTANT with the backend and the constant.  The
+;;; function CONVERT-CONSTANT returns returns either NIL (meaning,
 ;;; leave the datum as it is), or a different datum that should be
 ;;; used instead.  The return value is a freshly allocated datum.
-;;; However, since our MAKE frameword only allows for a single
-;;; parameter (the program), the backend-specific function must be the
-;;; value of the special variable *CONSTANT-CONVERTER*. 
 ;;;
 ;;; This transformation should be applied before we attempt to
 ;;; uniqueify constants, because it may introduce duplicate constants
@@ -1046,14 +1050,16 @@
 ;;; data left in the program, because every such datum has been
 ;;; converted to either a CONSTANT-INPUT or an IMMEDIATE-INPUT.  
 
-(defvar *constant-converter*)
+(defgeneric convert-constant (backend constant))
+
+(defmethod convert-constant ((backend null) constant)
+  nil)
 
 (defun convert-constants-according-to-backend (program)
-  (assert (functionp *constant-converter*))
-  (let ((fun *constant-converter*)
+  (let ((backend (backend program))
 	(modify-p nil))
     (flet ((maybe-replace (cons)
-	     (let ((replacement (funcall fun (car cons))))
+	     (let ((replacement (convert-constant backend (car cons))))
 	       (unless (null replacement)
 		 (setf (car cons) replacement)
 		 (setf modify-p t)))))
@@ -1103,3 +1109,139 @@
 	 (push (cons datum index) result)
 	 (incf index))))
     result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Replace a CONSTANT-INPUT datum by a LINKAGE-LOCATION and a
+;;; LEXICAL-LOCATION in a particular PROCEDURE.  The linkage location
+;;; does not have to be unique, but there must be a unique
+;;; LEXICAL-LOCATION for each CONSTANT-INPUT.
+;;;
+;;; For this particular CONSTANT-INPUT C, allocate a unique
+;;; LEXICAL-LOCATION L and then alter the instruction graph as
+;;; follows:
+;;;
+;;;   * Determine the set of instruction that use C, except that we
+;;;     exclude from the set any assigmnent instruction with an output
+;;;     of type REGISTER-LOCATION, because the presence of such an
+;;;     instruction means that we have already determined how to deal
+;;;     with C in this particular context.
+;;;
+;;;   * Divide the set into two parts: one part (P1) containing
+;;;     instructions that are dominated by some other instructions in
+;;;     the set, and a second part (P1) containg instructions that are
+;;;     NOT dominated by some other instruction in the set.
+;;;
+;;;   * For each instruction I in the set P2, precede I with an
+;;;     ASSIGNMENT-INSTRUCTION A.  A takes a LINKAGE-LOCATION as an
+;;;     input.  The index of that LINKAGE-LOCATION is the unique index
+;;;     determined for C.  A takes the unique LEXICAL-LOCATION L as an
+;;;     output.  I is then modified so that the input C is replaced by
+;;;     L.
+;;;
+;;;   * For each instruction I in the set P1, wherever C occurs as an
+;;;     input, replace it with L.
+
+;;; Determine whether an instruction I1 dominates an instruction I2,
+;;; where I1 and I2 are in the same basic block.  
+(defun instruction-strictly-dominates-instruction-in-block-p (i1 i2)
+  (let ((b1 (basic-block i1))
+	(b2 (basic-block i2)))
+    (assert (eq b1 b2))
+    (if (eq i1 i2)
+	nil
+	(loop for inst = i1 then (car (successors inst))
+	      until (eq inst (final b1))
+	      when (eq inst i2) return t))))
+
+;;; Determine whether an instruction I1 strictly dominates an
+;;; instruction I2.  This is the case if and only if either I1 and I2
+;;; belong to the same basic block and I1 strictly dominates I2 in
+;;; that block, or if I1 and I2 belong to different basic blocks and
+;;; the basic block that I1 belongs to dominates the basic block that
+;;; I2 belongs to.
+(defun instruction-strictly-dominates-instruction-p (i1 i2)
+  (let ((b1 (basic-block i1))
+	(b2 (basic-block i2)))
+    (cond ((eq i1 i2)
+	   ;; While every instruction dominates itself, it does not
+	   ;; STRICTLY dominate itself.
+	   nil)
+	  ((eq b1 b2)
+	   (instruction-strictly-dominates-instruction-in-block-p i1 i2))
+	  (t
+	   (member b1 (dominators b2))))))
+
+(defun insert-assignment-before (instruction in out)
+  (let ((new (sicl-mir:make-assignment-instruction in out instruction)))
+    (loop for pred in (predecessors instruction)
+	  do (nsubstitute new
+			  instruction
+			  (successors pred)
+			  :test #'eq))))
+
+(defun replace-constant-input (constant-input unique-number procedure)
+  (let ((new-lexical (sicl-mir:new-temporary))
+	(using-instructions
+	  (loop for instruction in (instructions procedure)
+		when (member constant-input (inputs instruction)
+			     :test #'eq)
+		  collect instruction)))
+    (let ((p1 '())
+	  (p2 '()))
+      (loop for instruction in using-instructions
+	    do (if (some (lambda (x)
+			   (instruction-strictly-dominates-instruction-p
+			    x instruction))
+			 using-instructions)
+		   (push instruction p1)
+		   (push instruction p2)))
+      (loop for instruction in p2
+	    for location = (sicl-mir:make-linkage-location unique-number)
+	    do (insert-assignment-before instruction location new-lexical)
+	       (nsubstitute new-lexical constant-input (inputs instruction)
+			    :test #'eq))
+      (loop for instruction in p1
+	    do (nsubstitute new-lexical constant-input (inputs instruction)
+			    :test #'eq)))
+    (not (null using-instructions))))
+
+(defun replace-constant-inputs-in-procedure (procedure unique-numbers)
+  (loop with modify-p = nil
+	for (input . unique-number) in unique-numbers
+	do (when (typep input 'sicl-mir:constant-input)
+	     (setf modify-p
+		   (or (replace-constant-input input unique-number procedure)
+		       modify-p)))
+	finally (return modify-p)))
+	   
+
+(defun replace-constant-inputs (program)
+  (let ((unique-numbers (compute-linkage-vector-indices program)))
+    (loop with modify-p = nil
+	  for procedure in (procedures program)
+	  do (setf modify-p
+		   (or (replace-constant-inputs-in-procedure
+			procedure unique-numbers)
+		       modify-p))
+	  finally (return modify-p))))
+
+(set-processor 'no-constant-inputs 'replace-constant-inputs)
+
+(add-dependencies 'no-constant-inputs
+		  '(dominance))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Do some initial transformations.
+
+(defun initial-transformations (program)
+  (make program 'no-redundant-temporaries)
+  (make program 'no-error-successors)
+  (make program 'simplified-instructions)
+  (make program 'remove-nop-instructions)
+  (make program 'unique-constants)
+  (make program 'basic-blocks)
+  (make program 'dominance)
+  (make program 'no-constant-inputs))
+  
