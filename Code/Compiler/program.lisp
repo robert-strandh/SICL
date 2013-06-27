@@ -1069,3 +1069,36 @@
 (add-dependencies 'backend-specific-constants
 		  '(instruction-graph))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Determine indices for all data that need to be allocated there,
+;;; i.e., data of type CONSTANT-INPUT, GLOBAL-INPUT, and
+;;; LOAD-TIME-INPUT.
+;;;
+;;; We do not expect the number of of such data to be huge, so it is
+;;; not justified to use a hash table.  For that reason, we use an
+;;; ALIST, where the CAR of each element is the datum and the CDR of
+;;; each element is the unique index that was allocated for that
+;;; datum.
+;;;
+;;; Before this computation is done, it is advantageous to uniquify
+;;; the inputs for which an index is to be computed, so as to avoid
+;;; multiple entries in the linkage vector containg the same constant
+;;; or the same global function. 
+;;;
+;;; FIXME: consider introducting a common superclass for the three
+;;; kinds of data that we handle here. 
+
+(defun compute-linkage-vector-indices (program)
+  (declare (ignore program))
+  (let ((index 0)
+	(result '()))
+    (map-data
+     (lambda (datum)
+       (when (and (or (typep datum 'sicl-mir:constant-input)
+		      (typep datum 'sicl-mir:global-input)
+		      (typep datum 'sicl-mir:load-time-input))
+		  (null (assoc datum result :test #'eq)))
+	 (push (cons datum index) result)
+	 (incf index))))
+    result))
