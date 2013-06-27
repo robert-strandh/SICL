@@ -1197,7 +1197,8 @@
 		   (push instruction p1)
 		   (push instruction p2)))
       (loop for instruction in p2
-	    for location = (sicl-mir:make-linkage-location unique-number)
+	    for location = (sicl-mir:make-linkage-location
+			    unique-number (sicl-mir:value constant-input))
 	    do (insert-assignment-before instruction location new-lexical)
 	       (nsubstitute new-lexical constant-input (inputs instruction)
 			    :test #'eq))
@@ -1224,7 +1225,8 @@
 		   (or (replace-constant-inputs-in-procedure
 			procedure unique-numbers)
 		       modify-p))
-	  finally (return modify-p))))
+	  finally (when modify-p
+		    (touch program 'instruction-graph)))))
 
 (set-processor 'no-constant-inputs 'replace-constant-inputs)
 
