@@ -1072,8 +1072,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Determine indices for all data that need to be allocated there,
-;;; i.e., data of type CONSTANT-INPUT, GLOBAL-INPUT, and
-;;; LOAD-TIME-INPUT.
+;;; i.e., data of type CONSTANT-INPUT, GLOBAL-INPUT, LOAD-TIME-INPUT,
+;;; and SPECIAL-LOCATION.
 ;;;
 ;;; We do not expect the number of of such data to be huge, so it is
 ;;; not justified to use a hash table.  For that reason, we use an
@@ -1097,7 +1097,8 @@
      (lambda (datum)
        (when (and (or (typep datum 'sicl-mir:constant-input)
 		      (typep datum 'sicl-mir:global-input)
-		      (typep datum 'sicl-mir:load-time-input))
+		      (typep datum 'sicl-mir:load-time-input)
+		      (typep datum 'sicl-mir:special-location))
 		  (null (assoc datum result :test #'eq)))
 	 (push (cons datum index) result)
 	 (incf index))))
