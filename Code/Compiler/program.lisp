@@ -772,7 +772,8 @@
 (set-processor 'unique-constants 'merge-similar-constants)
 
 (add-dependencies 'unique-constants
-		  '(instruction-info))
+		  '(instruction-info
+		    backend-specific-constants))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1023,3 +1024,48 @@
 
 (add-dependencies 'no-error-successors
 		  '(instruction-info))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The purpose of this transformation is to introduce immediate data
+;;; whenever possible.  Since determining when an immidiate datum is
+;;; possible depends on the backend, this transformation takes a
+;;; backend-specific function as a parameter.  This function takes
+;;; some datum as its sole argument and returns either NIL (meaning,
+;;; leave the datum as it is), or a different datum that should be
+;;; used instead.  The return value is a freshly allocated datum.
+;;; However, since our MAKE frameword only allows for a single
+;;; parameter (the program), the backend-specific function must be the
+;;; value of the special variable *CONSTANT-CONVERTER*. 
+;;;
+;;; This transformation should be applied before we attempt to
+;;; uniqueify constants, because it may introduce duplicate constants
+;;; that need to be uniqueified later.  
+;;;
+;;; After this tranformation has been applied, there are no WORD-INPUT
+;;; data left in the program, because every such datum has been
+;;; converted to either a CONSTANT-INPUT or an IMMEDIATE-INPUT.  
+
+(defvar *constant-converter*)
+
+(defun convert-constants-according-to-backend (program)
+  (assert (functionp *constant-converter*))
+  (let ((fun *constant-converter*)
+	(modify-p nil))
+    (flet ((maybe-replace (cons)
+	     (let ((replacement (funcall fun (car cons))))
+	       (unless (null replacement)
+		 (setf (car cons) replacement)
+		 (setf modify-p t)))))
+      (map-instructions
+       (lambda (instruction)
+	 (mapl #'maybe-replace (inputs instruction)))))
+    (when modify-p
+      (touch program 'instruction-graph))))
+
+(set-processor 'backend-specific-constants
+	       'convert-constants-according-to-backend)
+
+(add-dependencies 'backend-specific-constants
+		  '(instruction-graph))
+
