@@ -192,6 +192,7 @@
    #:new-temporary
    #:special-location #:make-special-location #:storage
    #:global-input #:make-global-input
+   #:load-time-input #:make-load-time-input #:initial-instruction
    #:external-input #:make-external-input #:value
    #:register-input #:make-register-input
    #:static-location #:make-static-location #:layer #:index
