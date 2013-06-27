@@ -610,6 +610,39 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Find loops.
+;;;
+;;; Recall that a loop is present whenever there is a back arc in the
+;;; flow graph.  An arc is a back arc when the HEAD of the arc
+;;; DOMINATES the TAIL of the arc.  The head of the arc is the INITIAL
+;;; block of the loop and the tail of the arc is the FINAL block of
+;;; the loop.
+;;;
+;;; Thus a LOOP is a SET of basic blocks with an INITIAL basic block I
+;;; and a FINAL basic block F, such that I dominates F.  A block B is
+;;; in the set if and only if B is an ancestor of F and B is dominated
+;;; by I.
+;;;
+;;; To find all the blocks in a loop given a back arc, if suffices to
+;;; recursively trace predecessors of F until I is reached.  Notice
+;;; though that there might be nested loops, so that care must be
+;;; taken when predecessors are traced to avoid tracing blocks
+;;; multiple times.
+
+;;; Since we don't have an explicit representation of arcs in the flow
+;;; graph (nor in the instruction graph), we represent a back arc as a
+;;; pair of basic blocks, (F . I) where F is the final block and I is
+;;; the inital block of the loop, or, equivalently, where F is the
+;;; tail of the arc and I is the head of the arc.
+(defun find-back-arcs-in-procedure (procedure)
+  (loop for block in (basic-blocks procedure)
+	for successors = (mapcar #'basic-block (successors (final block)))
+	append (loop for successor in successors
+		     when (member successor (dominators block))
+		       collect (cons block successor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Find unused lexical locations of a program.
 
 (defun find-unused-lexical-locations (program)
