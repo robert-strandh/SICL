@@ -427,16 +427,20 @@
 
 (defclass linkage-location (datum)
   (;; The index in the linkage vector of this location.
-   (%index :initarg :index :accessor index)))
+   (%index :initarg :index :accessor index)
+   ;; The name is just for debugging purposes
+   (%name :initarg :name :accessor name)))
 
-(defun make-linkage-location (index)
+(defun make-linkage-location (index name)
   (make-instance 'linkage-location
-    :index index))
+    :index index
+    :name name))
 
 (defmethod draw-datum ((datum linkage-location) stream)
-  (format stream "   ~a [fillcolor = white, label = \"~a\"]~%"
+  (format stream "   ~a [fillcolor = bisque, label = \"~a, ~a\"]~%"
 	  (gethash datum *datum-table*)
-	  (index datum)))
+	  (index datum)
+	  (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
