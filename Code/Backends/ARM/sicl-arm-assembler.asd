@@ -1,6 +1,7 @@
 (asdf:defsystem :sicl-arm-assembler
-  :depends-on (:split-sequence)
+  :depends-on (:split-sequence :sicl-compiler)
   :components
   ((:file "packages")
    (:file "instructions" :depends-on ("packages"))
-   (:file "assembler" :depends-on ("packages" "instructions"))))
+   (:file "lir" :depends-on ("packages" "instructions"))))
+
