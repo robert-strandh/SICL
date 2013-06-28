@@ -194,8 +194,6 @@
    #:global-input #:make-global-input
    #:load-time-input #:make-load-time-input #:initial-instruction
    #:external-input #:make-external-input #:value
-   ;; FIXME: remove register input later
-   #:register-input #:make-register-input
    #:register-location #:make-register-location
    #:static-location #:make-static-location #:layer #:index
    #:dynamic-location #:make-dynamic-location
@@ -203,7 +201,6 @@
    #:instruction #:successors #:inputs #:outputs
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
-   #:test-instruction #:make-test-instruction #:test
    #:funcall-instruction #:make-funcall-instruction #:fun
    #:tailcall-instruction #:make-tailcall-instruction
    #:get-values-instruction #:make-get-values-instruction

@@ -548,22 +548,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction TEST-INSTRUCTION.
-
-(defclass test-instruction (instruction)
-  ())
-
-(defun make-test-instruction (input successors)
-  (make-instance 'test-instruction
-    :inputs (list input)
-    :successors successors))
-
-(defmethod draw-instruction ((instruction test-instruction) stream)
-  (format stream "   ~a [label = \"test\"];~%"
-	  (gethash instruction *instruction-table*)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction FUNCALL-INSTRUCTION.
 
 (defclass funcall-instruction (instruction)

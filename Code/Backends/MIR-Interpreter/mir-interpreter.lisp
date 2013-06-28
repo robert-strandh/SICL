@@ -225,9 +225,10 @@
     ((instruction sicl-mir:nop-instruction))
   (setf *program-counter* (car (sicl-mir:successors instruction))))
 
-(defmethod execute-instruction ((instruction sicl-mir:test-instruction))
+(defmethod execute-instruction ((instruction sicl-mir:==-instruction))
   (setf *program-counter*
-	(if (read-input (car (sicl-mir:inputs instruction)))
+	(if (eq (read-input (car (sicl-mir:inputs instruction)))
+		(read-input (cadr (sicl-mir:inputs instruction))))
 	    (car (sicl-mir:successors instruction))
 	    (cadr (sicl-mir:successors instruction)))))
 
