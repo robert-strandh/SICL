@@ -272,3 +272,10 @@
   (:use #:common-lisp)
   (:shadowing-import-from #:sicl-compiler-environment
 			  #:proclaim))
+
+(defpackage #:sicl-graph-coloring
+  (:use #:common-lisp)
+  (:export
+   #:solve
+   ))
+
