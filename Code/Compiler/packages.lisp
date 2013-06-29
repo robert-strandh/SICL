@@ -199,6 +199,7 @@
    #:dynamic-location #:make-dynamic-location
    #:linkage-location #:make-linkage-location
    #:instruction #:successors #:inputs #:outputs
+   #:unique-id
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction #:fun
@@ -208,7 +209,6 @@
    #:enclose-instruction #:make-enclose-instruction #:code
    #:get-argcount-instruction #:make-get-argcount-instruction
    #:get-arg-instruction #:make-get-arg-instruction
-   #:memalloc-instruction #:make-memalloc-instruction
    #:memref-instruction #:make-memref-instruction #:cacheable
    #:memset-instruction #:make-memset-instruction
    #:u+-instruction #:make-u+-instruction
@@ -264,6 +264,8 @@
 (defpackage #:sicl-program
   (:use #:common-lisp)
   (:export
+   #:convert-constant
+   #:convert-to-lir
    ))
 
 (defpackage #:sicl-type-proclamations
