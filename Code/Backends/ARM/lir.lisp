@@ -1048,6 +1048,7 @@
 ;;; code object as inputs to the instruction so that the register
 ;;; allocator can do its thing.
 (defmethod convert-instruction ((instruction sicl-mir:enclose-instruction))
+  (convert-instruction-graph (car (sicl-mir:inputs instruction)))
   (push *static-environment-lexical* (sicl-mir:inputs instruction))
   (push *code-object-lexical* (sicl-mir:inputs instruction)))
 
