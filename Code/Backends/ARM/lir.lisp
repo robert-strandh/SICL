@@ -537,27 +537,88 @@
 ;;;
 ;;; Convert a MIR instruction graph to LIR.
 
+(defvar *linkage-vector-lexical*)
+(defvar *code-object-lexical*)
+(defvar *return-address-lexical*)
+
 (defgeneric convert-instruction (instruction))
 
 (defmethod convert-instruction (instruction)
   (declare (ignore instruction))
   nil)
 
-(defmethod sicl-program:convert-to-lir ((backend backend-arm) initial-instruction)
-  (let ((table (make-hash-table :test #'eq)))
+(defun convert-instruction-graph (initial-instruction)
+  (let ((table (make-hash-table :test #'eq))
+	(*linkage-vector-lexical* (sicl-mir:new-temporary))
+	(*code-object-lexical* (sicl-mir:new-temporary))
+	(*return-address-lexical* (sicl-mir:new-temporary)))
     (labels ((traverse (instruction)
 	       (unless (gethash instruction table)
 		 (setf (gethash instruction table) t)
 		 (convert-instruction instruction))))
-      (traverse initial-instruction))))
+      (traverse initial-instruction))))  
 
+(defmethod sicl-program:convert-to-lir ((backend backend-arm) initial-instruction)
+  (convert-instruction-graph initial-instruction))
+
+;;; FIXME: check the constants
+(defmethod convert-instruction ((instruction sicl-mir:enter-instruction))
+  (setf (outputs instruction)
+	(list (aref *registers* 0)
+	      (aref *registers* 1)
+	      (aref *registers* 2)
+	      (aref *registers* 3)
+	      (aref *registers* 9)
+	      (aref *registers* 11)
+	      (aref *registers* 12)
+	      (aref *registers* 13)
+	      (aref *registers* 14)))
+  ;; Generate code for moving the retrurn address to a lexical
+  ;; variable.
+  (setf (successors instruction)
+	(list (sicl-mir:make-assignment-instruction
+	       (aref *registers* 14)
+	       *return-address-lexical*
+	       (successors instruction))))
+  ;; Generate code for moving the code object argument to a lexical
+  ;; variable.
+  (setf (successors instruction)
+	(list (sicl-mir:make-assignment-instruction
+	       (aref *registers* 12)
+	       *code-object-lexical*
+	       (successors instruction))))
+  ;; Generate code for loading the linkage vector from the code
+  ;; object.
+  (let ((temp (sicl-mir:new-temporary)))
+    (setf (successors instruction)
+	  (list (make-instance 'ldr-immediate-instruction
+		  :inputs (list (aref *registers* 12))
+		  :immediate-value 1
+		  :outputs (list temp)
+		  :successors
+		  (list (make-instance 'ldr-immediate-instruction
+			  :inputs (list temp)
+			  :immediate-value 12
+			  :outputs (list *linkage-vector-lexical*)
+			  :successors (successors instruction))))))))
+
+;;; To convert the argcount, take the difference between FP and SP.
 (defmethod convert-instruction ((instruction sicl-mir:get-argcount-instruction))
   (change-class instruction
-		'mov-register-instruction
-		:inputs (aref *registers* 3)))
+		'sub-register-instruction
+		:inputs (list (aref *registers* 11) (aref *registers* 13))))
 
 (defmethod convert-instruction ((instruction sicl-mir:get-arg-instruction))
-  (error "can't handle this yet"))
+  (let ((input (car (inputs instruction))))
+    (if (typep input 'sicl-mir:immediate-input)
+	(if (<= (value input) 8)
+	    (change-class instruction 'mov-register-instruction
+			  :inputs (list (aref *registers* (/ (value input) 4))))
+	    (change-class instruction 'ldr-immediate-instruction
+			  :immediate-value (value input)
+			  :inputs (list (aref *registers* 13))))
+	(change-class instruction 'ldr-register-instruction
+		      :inputs (list (aref *registers* 13) input)))))
 
 (defmethod convert-instruction ((instruction sicl-mir:==-instruction))
   (destructuring-bind (first second) (sicl-mir:inputs instruction)
@@ -765,6 +826,10 @@
 		 (t
 		  (change-class instruction 'sub-register-instruction))))))))
 
+(defmethod convert-instruction ((instruction sicl-mir:neg-instruction))
+  (change-class instruction 'rsb-immediate-instruction
+		:immediate-value 0))
+
 (defmethod convert-instruction ((instruction sicl-mir:&-instruction))
   (destructuring-bind (first second) (sicl-mir:inputs instruction)
     (cond ((typep first 'sicl-mir:immediate-input)
@@ -811,5 +876,70 @@
 		      :immediate-value (sicl-mir:value input))
 	(change-class instruction 'mvn-register-instruction))))
 
-		      
-	  
+(defmethod convert-instruction ((instruction sicl-mir:memref-instruction))
+  (let* ((inputs (sicl-mir:inputs instruction))
+	 (offset (if (= (length inputs) 2) (sicl-mir:value (cadr inputs)) 0)))
+    (change-class instruction 'ldr-immediate-instruction
+		  :immediate-input offset
+		  :inputs (list (car inputs)))))
+
+(defmethod convert-instruction ((instruction sicl-mir:memset-instruction))
+  (let* ((inputs (sicl-mir:inputs instruction))
+	 (offset (if (= (length inputs) 3) (sicl-mir:value (caddr inputs)) 0)))
+    (change-class instruction 'ldr-immediate-instruction
+		  :immediate-input offset
+		  :inputs (subseq inputs 0 2))))
+
+(defmethod convert-instruction ((instruction sicl-mir:funcall-instruction))
+  (let ((callee (car (sicl-mir:inputs instruction)))
+	(arguments (cdr (sicl-mir:inputs instruction)))
+	(last-instruction instruction)
+	;; SUCCESSOR is always the GET-VALUES-INSTRUCTION that follows
+	;; the FUNCALL-INSTRUCTION.
+	(successor (successors instruction)))
+    ;; We start by subtracting from SP N+1 words where N is the
+    ;; number of arguments to pass.  The additional word is for the
+    ;; saved FP.  We leave FP intact so that we can easily access the
+    ;; data of the current stack frame without changing the offset.
+    (change-class instruction 'sub-immediate-instruction
+		  :immediate-input (* 4 (1+ (length arguments)))
+		  :inputs (list (aref *registers* 13)))
+    ;; Next, we assign to the registers containing the first three
+    ;; arguments.  We use a generic assignment instruction because we
+    ;; don't know where the register allocator will put the lexical
+    ;; for the argument.
+    (loop for argument in arguments
+	  for i from 0 below 3
+	  do (let ((inst (sicl-mir:make-assignment-instruction
+			  argument (aref *registers* i) successor)))
+	       (setf (successors last-instruction)
+		     (list inst))
+	       (setf last-instruction inst)))
+    ;; Now we deal with the arguments starting with the fourth one.
+    (when (> (length arguments) 3)
+      (loop for argument in (subseq arguments 3)
+	    for offset from 12 by 4
+	    do (let ((inst (make-instance 'str-immediate-instruction
+			     :immediate-input offset
+			     :inputs (list argument (aref *registers* 13))
+			     :successors (list successor))))
+		 (setf (successors last-instruction)
+		       (list inst))
+		 (setf last-instruction inst))))
+    ;; Almost done.  Store the current value of FP in its place
+    (let ((inst (make-instance 'str-immediate-instruction
+		  :immediate-input (* 4 (length arguments))
+		  :inputs (list (aref *registers* 11) (aref *registers 13))
+		  :successors (list successor))))
+      (setf (successors last-instruction)
+	    (list inst))
+      (setf last-instruction inst))
+    ;; Finally set the calle FP value.
+    (let ((inst (make-instance 'add-immediate-instruction
+		  :immediate-input (* 4 (length arguments))
+		  :inputs (list (aref *registers* 11) (aref *registers 13))
+		  :successors (list successor))))
+      (setf (successors last-instruction)
+	    (list inst))
+      (setf last-instruction inst))))
+
