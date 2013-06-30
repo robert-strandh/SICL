@@ -331,7 +331,8 @@
 	       argument-list))
       (cadr entry))))
 
-(defmacro define-instruction (descriptor additional-test syntax)
+(defmacro define-instruction (descriptor additional-test syntax operation)
+  (declare (ignore operation))
   (let ((mask (make-mask descriptor))
 	(pattern (make-pattern descriptor))
 	(bindings (bindings descriptor 'instruction))
@@ -414,8 +415,23 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 1|S|   Rn  |   Rd  |       imm12           |"
-    (not (and (= Rd #b1111) (= S 1)))
-  (ADC{S}{<c>} {<Rd>} <Rn> <const>))
+    (not (and (equal Rd #*1111) (equal S #*1)))
+  (ADC{S}{<c>} {<Rd>} <Rn> <const>)
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(setflags (equal S #*1))
+	(imm32 (arm-expand-imm im12)))
+    (when (condition-passed)
+      (multiple-value-bind (result carry overflow)
+	  (add-with-carry (reg n) imm32 (APSR +C+))
+	(if (= d 15)              ; can only occur for ARM encoding
+	    (alu-write-pc result) ; setflags is always false here
+	    (progn (setf (reg d) result)
+		   (setf (APSR +N+) (logbitp 31 result))
+		   (setf (APSR +Z+) (if (zerop result) 1 0)
+		   (setf (APSR +C+) carry)
+		   (setf (APSR +V+) overflow))))))))
+	    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -429,8 +445,24 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 1|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
-    (not (and (= Rd #b1111) (= S 1)))
-  (ADC{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>}))
+    (not (and (equal Rd #*1111) (equal S #*1)))
+  (ADC{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>})
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(setflags (equal S #*1)))
+    (multiple-value-bind (shift-t shift-n)
+	(decode-imm-shift typ imm5)
+      (when (condition-passed)
+	(let ((shifted (shift (reg m) shift-t shift-n (APSR +C+))))
+	  (if (= d 15)              ; can only occur for ARM encoding
+	      (alu-write-pc result) ; setflags is always false here
+	      (progn (setf (reg d) result)
+		   (setf (APSR +N+) (logbitp 31 result))
+		   (setf (APSR +Z+) (if (zerop result) 1 0)
+		   (setf (APSR +C+) carry)
+		   (setf (APSR +V+) overflow)))))))))
+		     
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -445,7 +477,26 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 1|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
     t
-  (ADC{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>))
+  (ADC{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>)
+  (let ((d (u-int Rd)
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(s (u-int Rs))
+	(setflags (equal S #*1))
+	(shift-t (decode-reg-shift typ))))
+    (when (or (= d 15) (= n 15) (= m 15))
+      unpredicatable)
+    (when condition-passed
+      (let* ((shift-n (ldb (byte 8 0) (reg s)))
+	     (shifted (shift (reg m) shift-t shift-n (APSR +C))))
+	(multiple-value-bind (result carry overflow)
+	    (add-with-carry (reg n) shifted (APSR +C+))
+	  (setf (reg d) result)
+	  (when setflags
+		   (setf (APSR +N+) (logbitp 31 result))
+		   (setf (APSR +Z+) (if (zerop result) 1 0)
+		   (setf (APSR +C+) carry)
+		   (setf (APSR +V+) overflow))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -458,10 +509,11 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 0|S|   Rn  |   Rd  |       imm12           |"
-    (not (or (and (= Rn #b1111) (= S 0))
-	     (= Rn #b1101)
-	     (and (= Rd #b1111) (= S 1))))
-  (ADD{S}{<c>} {<Rd>} <Rn> <const>))
+    (not (or (and (equal Rn #*1111) (equal S #*0))
+	     (equal Rn #*1101)
+	     (and (equal Rd #*1111) (equal S #*1))))
+  (ADD{S}{<c>} {<Rd>} <Rn> <const>)
+  ())
 
 ;;; Instruction: ADD (register)
 ;;; 
@@ -473,9 +525,10 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 0|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
-    (not (or (and (= Rd #b1111) (= S 1))
-	     (= Rn #b1101)))
-  (ADD{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>}))
+    (not (or (and (equal Rd #*1111) (equal S #*1))
+	     (equal Rn #*1101)))
+  (ADD{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>})
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -490,7 +543,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
     t
-  (ADD{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>))
+  (ADD{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>)
+  ())
   
 ;;; Instruction: ADD (SP plus immediate)
 ;;; 
@@ -500,8 +554,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 0|S|1 1 0 1|   Rd  |       imm12           |"
-    (not (and (= Rd #b1111) (= S 1)))
-  (ADD{S}{<c>} {<Rd>} SP <const>))
+    (not (and (equal Rd #*1111) (equal S #*1)))
+  (ADD{S}{<c>} {<Rd>} SP <const>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -513,9 +568,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 0|S|1 1 0 1|   Rd  |   imm5  |typ|0|  Rm   |"
-    (not (and (= (ldb (byte 4 12) instruction) #b1111)
-	      (logbitp 20 instruction)))
-  (ADD{S}{<c>} {<Rd>} SP <Rm> {<shift>}))
+    (not (and (equal Rd #*1111) (equal S #*1)))
+  (ADD{S}{<c>} {<Rd>} SP <Rm> {<shift>})
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -529,7 +584,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 0|0|1 1 1 1|   Rd  |       imm12           |"
   t
-  (ADR{<c>} <Rd> <label>))
+  (ADR{<c>} <Rd> <label>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -542,9 +598,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 0 0 0|S|   Rn  |   Rd  |       imm12           |"
-  (not (and (= (ldb (byte 4 12) instruction) #b1111)
-	    (logbitp 20 instruction)))
-  (AND{S}{<c>} {<Rd>} <Rn> <const>))
+  (not (and (equal rd #*1111) (equal S #*1)))
+  (AND{S}{<c>} {<Rd>} <Rn> <const>)
+  ())
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -558,10 +614,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
-    (not (and (= (ldb (byte 4 12) instruction) #b1111)
-	      (logbitp 20 instruction)))
-  
-  (AND{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>}))
+    (not (and (equal Rd #*1111) (equal S #*1)))
+  (AND{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>})
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -576,7 +631,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
     t
-  (AND{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>))
+  (AND{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -590,9 +646,10 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   imm5  |1 0 0|  Rm   |"
-    (not (and (= (ldb (byte 4 12) instruction) #b1111)
-	      (logbitp 20 instruction)))
-  (ASR{S}{<c>} {<Rd>} <Rm> <imm>))
+    (not (and (equal Rd #*1111)
+	      (equal S #*1)))
+  (ASR{S}{<c>} {<Rd>} <Rm> <imm>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -608,7 +665,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   Rm  |0 1 0 0|  Rn   |"
     t
-  (ASR{S}{<c>} {<Rd>} <Rn> <Rm>))
+  (ASR{S}{<c>} {<Rd>} <Rn> <Rm>)
+  ())
     
 ;;; Instruction: B
 ;;; 
@@ -618,7 +676,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |1 0 1 0|                   imm24                       |"
     t
-  (B{<c>} <label>))
+  (B{<c>} <label>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -631,7 +690,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|1 1 1 1|"
     t
-  (BFC{<c>} <Rd> <lsb> <width>))
+  (BFC{<c>} <Rd> <lsb> <width>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -644,8 +704,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|  Rn   |"
-    (not (= (ldb (byte 4 12) instruction) #b1111))
-  (BFI{<c>} <Rd> <Rn> <lsb> <width>))
+    (not (equal Rd #*1111))
+  (BFI{<c>} <Rd> <Rn> <lsb> <width>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -659,9 +720,10 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|1 1 1 0|S|  Rn   |  Rd   |        imm12          |"
-    (not (and (= (ldb (byte 4 12) instruction) #b1111)
-	      (logbitp 20 instruction)))
-  (BIC{S}{<c>} {<Rd>} <Rn> <const>))
+    (not (and (equal Rd #*1111)
+	      (equal S #*1)))
+  (BIC{S}{<c>} {<Rd>} <Rn> <const>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -674,7 +736,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0 0 1 0 0 1 0|         imm12         |0 1 1 1| imm4  |"
     t
-  (BKPT <imm16>))
+  (BKPT <imm16>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -686,7 +749,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |1 0 1 1|                   imm24                       |"
     t
-  (BL<c> <label>))
+  (BL<c> <label>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -699,7 +763,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 1 1|  Rm   |"
     t
-  (BLX{<c>} <Rm>))
+  (BLX{<c>} <Rm>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -712,7 +777,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 0 1|  Rm   |"
     t
-  (BX{<c>} <Rm>))
+  (BX{<c>} <Rm>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -730,7 +796,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 1 0|  Rm   |"
     t
-  (BXJ{<c>} <Rm>))
+  (BXJ{<c>} <Rm>)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -751,7 +818,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |1 1 1 0| opc1  |  CRn  |  CRd  |coproc |opc2 |0|  CRm  |"
     (not (and (/= coproc #x1010) (/= coproc #x1011)))
-  (CDP{<c>} <coproc> <opc1> <CRd> <CRn> CRm> {<opc2>}))
+  (CDP{<c>} <coproc> <opc1> <CRd> <CRn> CRm> {<opc2>})
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -772,7 +840,8 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "|1 1 1 1|1 1 1 0| opc1  |  CRn  |  CRd  |coproc |opc2 |0|  CRm  |"
     (not (and (/= coproc #x1010) (/= coproc #x1011)))
-  (CDP2 <coproc> <opc1> <CRd> <CRn> CRm> {<opc2>}))
+  (CDP2 <coproc> <opc1> <CRd> <CRn> CRm> {<opc2>})
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -792,26 +861,29 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 1 0|0|U|0|0|1|  Rn   |  Rt   |         imm12         |"
-    (not (or (= Rn #b1111)
-	     (and (= Rn #b1101) (= U 1) (= imm12 4))))
-  (LDR{<c>} <Rt> (<Rn>) +/-<imm>))
+    (not (or (equal Rn #*1111)
+	     (and (equal Rn #*1101) (= U 1) (= imm12 4))))
+  (LDR{<c>} <Rt> (<Rn>) +/-<imm>)
+  ())
 
 ;;; P = 1 & W = 0
 (define-instruction
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 1 0|1|U|0|0|1|  Rn   |  Rt   |         imm12         |"
-    (not (or (= Rn #b1111)
-	     (and (= Rn #b1101) (= U 1) (= imm12 4))))
-  (LDR{<c>} <Rt> (<Rn> {+/-<imm>})))
+    (not (or (equal Rn #*1111)
+	     (and (equal Rn #*1101) (= U 1) (= imm12 4))))
+  (LDR{<c>} <Rt> (<Rn> {+/-<imm>}))
+  ())
 
 ;;; P = 1 & W = 1
 (define-instruction
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 1 0|1|U|0|1|1|  Rn   |  Rt   |         imm12         |"
-    (not (= Rn #b1111))
-  (LDR{<c>} <Rt> (<Rn> +/-<imm>)!))
+    (not (equal Rn #*1111))
+  (LDR{<c>} <Rt> (<Rn> +/-<imm>)!)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -825,4 +897,5 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 1 0|1|U|0|0|1|1 1 1 1|  Rt   |         imm12         |"
     t
-    (LDR{<c>} <Rt> (PC +/-<imm>)))
+    (LDR{<c>} <Rt> (PC +/-<imm>))
+  ())
