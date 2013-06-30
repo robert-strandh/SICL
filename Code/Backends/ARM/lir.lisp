@@ -934,10 +934,58 @@
       (setf (successors last-instruction)
 	    (list inst))
       (setf last-instruction inst))
-    ;; Finally set the calle FP value.
+    ;; Set the calle FP value.
     (let ((inst (make-instance 'add-immediate-instruction
 		  :immediate-input (* 4 (length arguments))
 		  :inputs (list (aref *registers* 11) (aref *registers 13))
+		  :successors (list successor))))
+      (setf (successors last-instruction)
+	    (list inst))
+      (setf last-instruction inst))
+    ;; Finally, do the BLX.
+    (let ((inst (make-instance 'blx-register-instruction
+		  :inputs (list callee)
+		  :successors (list successor))))
+      (setf (successors last-instruction)
+	    (list inst))
+      (setf last-instruction inst))))
+
+;;; FIXME: handle more than 3 arguments.
+(defmethod convert-instruction ((instruction sicl-mir:tailcall-instruction))
+  (let ((callee (car (sicl-mir:inputs instruction)))
+	(arguments (cdr (sicl-mir:inputs instruction)))
+	(last-instruction instruction)
+	;; SUCCESSOR is always the GET-VALUES-INSTRUCTION that follows
+	;; the FUNCALL-INSTRUCTION.
+	(successor (successors instruction)))
+    ;; This gets messy when there are more than 3 arguments to pass
+    ;; so we don't handle that at the moment.
+    (when (> (length arguments) 3)
+      (error "can handle at most 3 arguments in a tailcall at the moment"))
+    ;; We assign to the registers containing the first three
+    ;; arguments.  We use a generic assignment instruction because we
+    ;; don't know where the register allocator will put the lexical
+    ;; for the argument.
+    (loop for argument in arguments
+	  for i from 0 below 3
+	  do (let ((inst (sicl-mir:make-assignment-instruction
+			  argument (aref *registers* i) successor)))
+	       (setf (successors last-instruction)
+		     (list inst))
+	       (setf last-instruction inst)))
+    ;; Adjust SP so that it reflects the number of arguments that we
+    ;; pass
+    (let ((inst (make-instance 'sub-immediate-instruction
+		  :immediate-input (* 4 (length arguments))
+		  :inputs (list (aref *registers* 11))
+		  :outputs (list (aref *registers* 13))
+		  :successors (list successor))))
+      (setf (successors last-instruction)
+	    (list inst))
+      (setf last-instruction inst))
+    ;; Finally, do the BLX.
+    (let ((inst (make-instance 'blx-register-instruction
+		  :inputs (list callee)
 		  :successors (list successor))))
       (setf (successors last-instruction)
 	    (list inst))
