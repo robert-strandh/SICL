@@ -285,6 +285,16 @@
 	(t
 	 (apply #'sub (binary-sub term (car more-terms)) (cdr more-terms)))))
 
+(defgeneric align (x y))
+
+(defmethod align ((x integer) (y integer))
+  (assert (not (zerop y)))
+  (* y (floor x y)))
+
+(defmethod align ((x bit-vector) (y integer))
+  (assert (not (zerop y)))
+  (<> (align (u-int x) y) (1- (length x)) 0))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Shift and rotate operations.
@@ -972,49 +982,145 @@
 		     (setf APSR.V overflow))))))))
 
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: ADD (SP plus register)
-;; ;;; 
-;; ;;; This instruction adds an optionally-shifted register value to the
-;; ;;; SP value, and writes the result to the destination register.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0|0|0 1 0 0|S|1 1 0 1|   Rd  |   imm5  |typ|0|  Rm   |"
-;;     (not (and (equal Rd #*1111) (equal S #*1)))
-;;   (ADD{S}{<c>} {<Rd>} SP <Rm> {<shift>})
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: ADD (SP plus register)
+;;; 
+;;; This instruction adds an optionally-shifted register value to the
+;;; SP value, and writes the result to the destination register.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|0 1 0 0|S|1 1 0 1|   Rd  |   imm5  |typ|0|  Rm   |"
+    ;; Additional condition
+    (not (and (equal Rd #*1111) (equal S #*1)))
+  ;; Disassembly
+  (format stream
+	  "ADD~a~a ~aSP, ~a~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd #*1101)
+	  (register-to-string Rm)
+	  (optional-shift-of-register typ imm5))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(m (u-int Rm))
+	(setflags (equal S #*1)))
+    (multiple-value-bind (shift-t shift-n)
+	(decode-imm-shift typ imm5)
+      (when condition-passed
+	(let ((shifted (shift (reg m) shift-t shift-n APSR.C)))
+	  (multiple-value-bind (result carry overflow)
+	      (add-with-carry (reg #*1101) shifted #*0)
+	    (if (= d 15)              
+		(alu-write-pc result) ; setflags is always false here
+		(progn (setf (reg d) result)
+		       (when setflags
+			 (setf APSR.N (<> result 31 31))
+			 (setf APSR.Z (is-zero-bit result))
+			 (setf APSR.C carry)
+			 (setf APSR.V overflow))))))))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: ADR
-;; ;;; 
-;; ;;; This instruction adds an immediate value to the PC value to form a
-;; ;;; PC-relative address, and writes the result to the destination
-;; ;;; register.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0|1|0 1 0 0|0|1 1 1 1|   Rd  |       imm12           |"
-;;   t
-;;   (ADR{<c>} <Rd> <label>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: ADR 
+;;;
+;;; Encoding A1
+;;; 
+;;; This instruction adds an immediate value to the PC value to form a
+;;; PC-relative address, and writes the result to the destination
+;;; register.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|1|0 1 0 0|0|1 1 1 1|   Rd  |       imm12           |"
+    ;; Additional condition
+    t
+  ;; Disassembler
+  (format stream
+	  "ADD~s ~s, PC, #~a #~a"
+	  (condition-to-string cond)
+	  (register-to-string Rd)
+	  (u-int (<> imm12 7 0))
+	  (u-int (<> imm12 11 8)))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(imm32 (arm-expand-imm imm12)))
+    (when condition-passed
+      (let ((result (add (align #*1111 4) imm32)))
+	(if (= d 15)
+	    (alu-write-pc result)
+	    (setf (reg d) result))))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: AND (immediate)
-;; ;;; 
-;; ;;; This instruction performs a bitwise AND of a register value and an
-;; ;;; immediate value, and writes the result to the destination
-;; ;;; register.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0|1|0 0 0 0|S|   Rn  |   Rd  |       imm12           |"
-;;   (not (and (equal rd #*1111) (equal S #*1)))
-;;   (AND{S}{<c>} {<Rd>} <Rn> <const>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: ADR 
+;;;
+;;; Encoding A2
+;;; 
+;;; This instruction adds an immediate value to the PC value to form a
+;;; PC-relative address, and writes the result to the destination
+;;; register.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|1|0 1 0 0|0|1 1 1 1|   Rd  |       imm12           |"
+    ;; Additional condition
+    t
+  ;; Disassembler
+  (format stream
+	  "SUB~s ~s, PC, #~a #~a"
+	  (condition-to-string cond)
+	  (register-to-string Rd)
+	  (u-int (<> imm12 7 0))
+	  (u-int (<> imm12 11 8)))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(imm32 (arm-expand-imm imm12)))
+    (when condition-passed
+      (let ((result (sub (align #*1111 4) imm32)))
+	(if (= d 15)
+	    (alu-write-pc result)
+	    (setf (reg d) result))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: AND (immediate)
+;;; 
+;;; This instruction performs a bitwise AND of a register value and an
+;;; immediate value, and writes the result to the destination
+;;; register.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|1|0 0 0 0|S|   Rn  |   Rd  |       imm12           |"
+    ;; Additional condition.
+    (not (and (equal rd #*1111) (equal S #*1)))
+  ;; Disassembler
+  (progn
+    (format stream
+	    "AND~a~a ~a~a, #~a #~a"
+	    (if (equal S #*1) "S" "")
+	    (condition-to-string cond)
+	    (optional-register-to-string Rd Rn)
+	    (register-to-string Rn)
+	    (u-int (<> imm12 7 0))
+	    (u-int (<> imm12 11 8))))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(setflags (equal S #*1)))
+    (multiple-value-bind (imm32 carry)
+	(arm-expand-imm-c imm12 APSR.C)
+      (when condition-passed
+	(let ((result (bit-and (reg n) imm32)))
+	  (if (= d 15)
+	      (alu-write-pc result) ; setflags is always false here
+	      (progn (setf (reg d) result)
+		     (when setflags
+		       (setf APSR.N (<> result 31 31))
+		       (setf APSR.Z (is-zero-bit result))
+		       (setf APSR.C carry)))))))))  ; APSR.V unchanged
     
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;;;
