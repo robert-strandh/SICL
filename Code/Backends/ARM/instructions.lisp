@@ -28,23 +28,22 @@
 ;;; spaces and then taking the STRING-UPCASE of the remaining string,
 ;;; and finally INTERNing it in this package.
 
-
 ;;; From an instruction descriptor, compute a MASK in the form of a
 ;;; 32-bit unsigned integer that contains a 1 wherever the descriptor
 ;;; indicates a 0 or a 1 in the instruction word, and that contains a
 ;;; 0 in all other bit positions.
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun make-mask (descriptor)
-    (loop with mask = 0
+    (loop with mask = (make-array 32 :element-type 'bit :initial-element 0)
 	  for index from 1 to 63 by 2
-	  for weight downfrom 31
+	  for mask-index from 0
 	  do (when (and (or (eql (char descriptor index) #\0)
 			    (eql (char descriptor index) #\1))
 			(or (eql (char descriptor (1- index)) #\Space)
 			    (eql (char descriptor (1- index)) #\|))
 			(or (eql (char descriptor (1+ index)) #\Space)
 			    (eql (char descriptor (1+ index)) #\|)))
-	       (setf (ldb (byte 1 weight) mask) 1))
+	       (setf (sbit mask mask-index) 1))
 	  finally (return mask))))
 	
 ;;; From an instruction descriptor, compute a PATTERN in the form of a
@@ -53,9 +52,9 @@
 ;;; all other bit positions.
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun make-pattern (descriptor)
-    (loop with mask = 0
+    (loop with pattern = (make-array 32 :element-type 'bit :initial-element 0)
 	  for index from 1 to 63 by 2
-	  for weight downfrom 31
+	  for pattern-index from 0
 	  do (when (and (or (eql (char descriptor index) #\0)
 			    (eql (char descriptor index) #\1))
 			(or (eql (char descriptor (1- index)) #\Space)
@@ -63,8 +62,8 @@
 			(or (eql (char descriptor (1+ index)) #\Space)
 			    (eql (char descriptor (1+ index)) #\|)))
 	       (when (eql (char descriptor index) #\1)
-		 (setf (ldb (byte 1 weight) mask) 1)))
-	  finally (return mask))))
+		 (setf (sbit pattern pattern-index) 1)))
+	  finally (return pattern))))
 	
 ;;; Return TRUE if and only if a field from an instruction descriptor
 ;;; is a VARIABLE field.  
@@ -82,8 +81,8 @@
 ;;; From an instruction descriptor, compute a list of LET BINDINGS.
 ;;; The variables of the bindings are the variables derived from
 ;;; variable fields, and the init-forms of the bindings are
-;;; expressions of the form (LDB (BYTE x y) var), so that the body of
-;;; the LET has the appropriate variables in scope, and those
+;;; expressions of the form (SUBSEQ var start end) , so that the body
+;;; of the LET has the appropriate variables in scope, and those
 ;;; variables contain the values of the corresponding bit-fields in
 ;;; the instruction.
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -95,216 +94,464 @@
 		    (length fields))
 		 64))
       (loop for field in fields
-	    for left = 32 then (- left decr)
+	    for start = 0 then (+ start decr)
 	    for decr = (/ (1+ (length field)) 2)
 	    when (field-contains-variable-p field)
 	      collect `(,(variable-from-field field)
-			(ldb (byte ,decr ,(- left decr)) ,var))))))
+			(subseq ,var ,start ,(+ start decr)))))))
 						
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Disassembly according to assembly syntax.
+;;; Definitions of functions and macros for pseudocode support.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; We take advantage of the regular instruction syntax to factor the
-;;; code for instruction disassembly.  At the moment, we do it the
-;;; stupid way, i.e., for each instance of an instruction list syntax
-;;; that we see in the reference manual, we enter it into a list,
-;;; associated with code that takes the instruction word and generates
-;;; the arguments.
+;;; Lisp equivalents of psudocode as defined in the manual.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Operations on bit vectors.
+;;;
+;;; Secton P.5.3, page 2651
+
+(defun top-bit (x)
+  (assert (typep x 'bit-vector))
+  (subseq x 0 1))
+
+;;; We can't use :: as a symbol name so we use CAT instead.
+(defun cat (x y)
+  (assert (typep x 'bit-vector))
+  (assert (typep y 'bit-vector))
+  (concatenate 'bit-vector x y))
+
+(defun replicate (x n)
+  (assert (typep x 'bit-vector))
+  (assert (typep n '(integer (0))))
+  (loop with result = #*
+	repeat n
+	do (setf result (cat result x))))
+
+(defun zeros (n)
+  (assert (typep n '(integer (0))))
+  (make-array n :element-type 'bit :initial-element 0))
+
+(defun ones (n)
+  (assert (typep n '(integer (0))))
+  (make-array n :element-type 'bit :initial-element 1))
+
+(defun is-zero (x)
+  (assert (typep x 'bit-vector))
+  (zerop (count 1 x)))
+
+(defun is-ones (x)
+  (assert (typep x 'bit-vector))
+  (zerop (count 0 x)))
+
+(defun is-zero-bit (x)
+  (assert (typep x 'bit-vector))
+  (if (is-zero x) #*1 #*0))
+
+(defun is-ones-bit (x)
+  (assert (typep x 'bit-vector))
+  (if (is-ones x) #*1 #*0))
+
+(defun lowest-bit-set (x)
+  (assert (typep x 'bit-vector))
+  (let ((pos (position 1 x :from-end t))
+	(length (length x)))
+    (if (null pos)
+	length
+	(- length pos 1))))
+
+(defun highest-bit-set (x)
+  (assert (typep x 'bit-vector))
+  (let ((pos (position 1 x))
+	(length (length x)))
+    (if (null pos)
+	-1
+	(- length pos 1))))
+
+(defun count-leading-zero-bits (x)
+  (assert (typep x 'bit-vector))
+  (let ((pos (position 1 x))
+	(length (length x)))
+    (if (null pos)
+	length
+	pos)))
+
+(defun count-leading-sign-bits (x)
+  (assert (typep x 'bit-vector))
+  (let ((pos (position (- 1 (sbit x 0)) x))
+	(length (length x)))
+    (if (null pos)
+	length
+	pos)))
+
+;;; ZERO-EXTEND takes a bitvector and a size and extends the bitvector
+;;; with 0s to the number of bits given by size.
+(defun zero-extend (bitvector size)
+  (assert (> size (length bitvector)))
+  (let ((result (make-array size :element-type 'bit :initial-element 0)))
+    (setf (subseq result (- size (length bitvector))) bitvector)
+    result))
+
+(defun sign-extend (bitvector size)
+  (let ((result (make-array size :element-type 'bit
+				 :initial-element (sbit bitvector 0))))
+    (setf (subseq result (- size (length bitvector))) bitvector)
+    result))
+
+(defun u-int (bitvector)
+  (loop with result = 0
+	for bit across bitvector
+	do (setf result (+ (ash result 1) bit))
+	finally (return result)))
+
+(defun s-int (bitvector)
+  (let ((u-int (u-int bitvector)))
+    (if (= (sbit bitvector 0) 1)
+	(- u-int (expt 2 (length bitvector)))
+	u-int)))
+
+(defun int (bitvector unsigned-p)
+  (if unsigned-p
+      (u-int bitvector)
+      (s-int bitvector)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Arithmetic
+;;;
+;;; Section P.5.4, page 2654
+
+(defun integer-to-bit-vector (n width)
+  (let ((result (make-array width :element-type 'bit :initial-element 0)))
+    (loop for i downfrom (1- width) to 0
+	  for weight from 0
+	  do (setf (sbit result i) (ldb (byte 1 weight) n)))
+    result))
+
+(defgeneric <> (x high low))
+
+(defmethod <> ((x bit-vector) high low)
+  (let ((length (length x)))
+    (subseq x (- length high 1) (- length low))))
+
+(defmethod <> ((x integer) high low)
+  (let ((width (1+ (- high low))))
+    (integer-to-bit-vector (ldb (byte width low) x) width))) 
+
+(defgeneric binary-add (x y))
+
+(defmethod binary-add ((x integer) (y integer))
+  (+ x y))
+
+(defmethod binary-add ((x bit-vector) (y bit-vector))
+  (assert (= (length x) (length y)))
+  (<> (add (u-int x) (u-int y)) (1- (length x)) 0))
+
+(defmethod binary-add ((x bit-vector) (y integer))
+  (binary-add x (<> y (1- (length x)) 0)))
+
+(defmethod binary-add ((x integer) (y bit-vector))
+  (binary-add (<> x (1- (length y)) 0) y))
+
+(defun add (term &rest more-terms)
+  (if (null more-terms)
+      term
+      (apply #'add (binary-add term (car more-terms)) (cdr more-terms))))
+
+(defgeneric binary-sub (x y))
+
+(defmethod binary-sub ((x integer) (y integer))
+  (- x y))
+
+(defmethod binary-sub ((x bit-vector) (y bit-vector))
+  (assert (= (length x) (length y)))
+  (<> (sub (u-int x) (u-int y)) (1- (length x)) 0))
+
+(defmethod binary-sub ((x bit-vector) (y integer))
+  (binary-sub x (<> y (1- (length x)) 0)))
+
+(defmethod binary-sub ((x integer) (y bit-vector))
+  (binary-sub (<> x (1- (length y)) 0) y))
+
+(defun sub (term &rest more-terms)
+  (cond ((null more-terms)
+	 (binary-sub 0 term))
+	((null (cdr more-terms))
+	 (binary-sub term (car more-terms)))
+	(t
+	 (apply #'sub (binary-sub term (car more-terms)) (cdr more-terms)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Shift and rotate operations.
+;;;
+;;; Section A2.2.1, page 41
+
+(defun lsl-c (x shift)
+  (assert (typep x 'bit-vector))
+  (assert (typep shift '(integer (0))))
+  (let* ((N (length x))
+	 (extended-x (cat x (zeros shift)))
+	 (result (<> extended-x (1- N) 0))
+	 (carry-out (<> extended-x N N)))
+    (values result carry-out)))
+
+(defun lsl (x shift)
+  (assert (typep x 'bit-vector))
+  (assert (typep shift '(integer 0)))
+  (if (zerop shift)
+      x
+      (nth-value 0 (lsl-c x shift))))
+
+(defun lsr-c (x shift)
+  (assert (typep x 'bit-vector))
+  (assert (typep shift '(integer (0))))
+  (let* ((N (length x))
+	 (extended-x (zero-extend x (+ N shift)))
+	 (result (<> extended-x (1- (+ N shift)) shift))
+	 (carry-out (<> extended-x (1- shift) (1- shift))))
+    (values result carry-out)))
+
+(defun lsr (x shift)
+  (assert (typep x 'bit-vector))
+  (assert (typep shift '(integer 0)))
+  (if (zerop shift)
+      x
+      (nth-value 0 (lsr-c x shift))))
+
+(defun asr-c (x shift)
+  (assert (typep x 'bit-vector))
+  (assert (typep shift '(integer (0))))
+  (let* ((N (length x))
+	 (extended-x (sign-extend x (+ N shift)))
+	 (result (<> extended-x (1- (+ N shift)) shift))
+	 (carry-out (<> extended-x (1- shift) (1- shift))))
+    (values result carry-out)))
+
+(defun asr (x shift)
+  (assert (typep x 'bit-vector))
+  (assert (typep shift '(integer 0)))
+  (if (zerop shift)
+      x
+      (nth-value 0 (asr-c x shift))))
+  
+(defun ror-c (x shift)
+  (assert (typep x 'bit-vector))
+  (assert (and (typep shift 'integer) (not (zerop shift)))) 
+  (let* ((N (length x))
+	 (m (mod shift N))
+	 (result (bit-ior (lsr x m) (lsl x (- N m))))
+	 (carry-out (<> result (1- N) (1- N))))
+    (values result carry-out)))
+
+(defun ror (x shift)
+  (assert (typep x 'bit-vector))
+  (assert (typep shift 'integer))
+  (if (zerop shift)
+      x
+      (nth-value 0 (ror-c x shift))))
+
+(defun rrx-c (x carry-in)
+  (assert (typep x 'bit-vector))
+  (assert (typep carry-in 'bit-vector))
+  (let* ((N (length x))
+	 (result (cat carry-in (<> x (1- N) 1)))
+	 (carry-out (<> x 0 0)))
+    (values result carry-out)))
+
+(defun rrx(x carry-in)
+  (assert (typep x 'bit-vector))
+  (assert (typep carry-in 'bit-vector))
+  (nth-value 0 (rrx-c x carry-in)))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Addition and subtraction.
+;;;
+;;; Section A2.2.1, page 44
+
+(defun add-with-carry (x y carry-in)
+  (assert (and (typep x 'bit-vector)
+	       (typep y 'bit-vector)
+	       (typep carry-in '(bit-vector 1))
+	       (= (length x) (length y))))
+  (let* ((N (length x))
+	 (unsigned-sum (add (u-int x) (u-int y) (u-int carry-in)))
+	 (signed-sum (add (s-int x) (s-int y) (u-int carry-in)))
+	 (result (<> unsigned-sum (1- N) 0))
+	 (carry-out (if (= (u-int result) unsigned-sum) #*0 #*1))
+	 (overflow (if (= (s-int result) signed-sum) #*0 #*1)))
+    (values result carry-out overflow)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Saturation.
+;;;
+;;; Section A2.2.1, page 44.
+
+;;; FIXME: fill in when needed.
 
 
-;;; Take a shift type between 0 and 3 and a numeric value between 0
-;;; and 31.  If the shift type is 0 and the numeric is 0, then return
-;;; the empty list.  If the shift type i 3 and the numeric value is 0,
-;;; then return a list of a single element: RRX.  Otherwise return a
-;;; list of two elements, the symbolic shift type and the shift amount
-;;; corresponding to the numeric value for that particular type.
-(defun optional-shift (shift-type value)
-  (case shift-type
-    (#b00
-     (if (zerop value)
-	 '()
-	 `(LSL ,value)))
-    (#b01
-     (if (zerop value)
-	 `(LSR 32)
-	 `(LSR ,value)))
-    (#b10
-     (if (zerop value)
-	 `(ASR 32)
-	 `(ASR ,value)))
-    (#b11
-     (if (zerop value)
-	 `(RRX)
-	 `(ROR ,value)))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Pseudocode detail of operatons on ARM core registers.
+;;;
+;;; Section A2.3.2, page 47.
 
-;;; Take two register numbers.  If they are the same, return a list of
-;;; a single element, the symbolic name of the register in question.
-;;; If they are not the same, return a list of the symbolic names of
-;;; both registers.
-(defun optional-destination (Rd Rn)
-  (if (= Rd Rn)
-      `(,(reg-to-symbol Rn))
-      `(,(reg-to-symbol Rd) ,(reg-to-symbol Rn))))
+;;; The current instance of the machine.
+(defvar *machine*)
 
-(defun arglist-immediate-type-1 (Rd Rn const)
-  `(,@(optional-destination Rd Rn)
-    ,const))
+(defun reg (register-number)
+  (assert (<= 0 register-number 15))
+  (aref (registers *machine*) register-number))
+	  
+(defun (setf reg) (new-contents register-number)
+  (assert (<= 0 register-number 14))
+  (assert (typep new-contents '(bit-vector 32)))
+  (setf (aref (registers *machine*) register-number)
+	new-contents))
+  
+(defun pc-store-value ()
+  (aref (registers *machine*) 15))
 
-(defun arglist-immediate-type-2 (Rd const)
-  `(,@(if (= Rd 13) '() `(,(reg-to-symbol Rd)))
-    SP
-    ,const))
+;;; Section B1.3.2, page 1147.
+(defun branch-to (address)
+  (assert (typep address '(bit-vector 32)))
+  (setf (aref (registers *machine*) 15) address))
 
-(defun arglist-immediate-type-3 (Rd Rm const)
-  `(,@(optional-destination Rd Rm)
-    ,const))
+;;; We skip the tests for instruction set and architecture version. 
+(defun branch-write-pc (address)
+  (assert (typep address '(bit-vector 32)))
+  (assert (equal (<> address 1 0) #*00))
+  (branch-to address))
 
-(defun arglist-immediate-type-4 (cond imm12 imm4)
-  (progn (if (/= cond #b1110)
-	     (error "condition must be UNCONDITIONAL: ~a"
-		    (cond-to-symbol cond))
-	     `(,(+ (ash imm12 4) imm4)))))
+;;; Section A2.3.2, page 48.
+;;; We skip the test for architecture version, etc.
+(defun alu-write-pc (address)
+  (assert (typep address '(bit-vector 32)))
+  (branch-write-pc address))
 
-(defun arglist-register-type-1 (Rd Rn Rm shift-type shift-value)
-  `(,@(optional-destination Rd Rn)
-    ,(reg-to-symbol Rm)
-    ,@(optional-shift shift-type shift-value)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Operations of modified immediate constants
+;;;
+;;; Section A5.2.4, page 201.
 
-(defun arglist-register-type-2 (Rd Rm shift-type shift-value)
-  `(,@(if (= Rd 13) '() `(,(reg-to-symbol Rd)))
-    SP
-    ,(reg-to-symbol Rm)
-    ,@(optional-shift shift-type shift-value)))
+(defun arm-expand-imm (imm12)
+  (assert (typep imm12 '(bit-vector 12)))
+  (nth-value 0 (arm-expand-imm-c imm12 APSR.C)))
 
-(defun arglist-register-type-3 (Rd Rn Rm)
-  `(,@(optional-destination Rd Rn)
-    ,(reg-to-symbol Rm)))
+(defun arm-expand-imm-c (imm12 carry-in)
+  (assert (typep imm12 '(bit-vector 12)))
+  (assert (typep carry-in '(bit-vector 1)))
+  (let ((unrotated-value (zero-extend (<> imm12 7 0) 32)))
+    (shift-c unrotated-value
+	     :sr-type-ror
+	     (* 2 (u-int (<> imm12 11 8)))
+	     carry-in)))
 
-(defun arglist-register-type-4 (Rm)
-  `(,(reg-to-symbol Rm)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Pseudocode details of instruction-specified shifts and rotates
+;;;
+;;; Section A8.4.3, page 292.
 
-(defun arglist-register-shifted-register-type-1 (Rd Rn Rm shift-type Rs)
-  `(,@(optional-destination Rd Rn)
-    ,(reg-to-symbol Rm)
-    ,(aref #(LSL LSR ASR ROR) shift-type)
-    ,(reg-to-symbol Rs)))
+(defun decode-imm-shift (type imm5)
+  (assert (typep type '(bit-vector 2)))
+  (assert (typep imm5 '(bit-vector 5)))
+  (cond ((equal type #*00)
+	 (values :sr-type-lsl (u-int imm5)))
+	((equal type #*01)
+	 (values :sr-type-lsr (if (equal imm5 #*0000) 32 (u-int imm5))))
+	((equal type #*10)
+	 (values :sr-type-asr (if (equal imm5 #*0000) 32 (u-int imm5))))
+	((equal type #*11)
+	 (if (equal imm5 #*0000)
+	     (values :sr-type-rrx 1)
+	     (values :sr-type-ror (u-int imm5))))))
 
-(defun arglist-label-type-1 (Rd label-value)
-  `(,(reg-to-symbol Rd)
-    ,label-value))
+(defun decode-reg-shift (type)
+  (assert (typep type '(bit-vector 2)))
+  (cond ((equal type #*00) :sr-type-lsl)
+	((equal type #*01) :sr-type-lsr)
+	((equal type #*10) :sr-type-asr)
+	((equal type #*11) :sr-type-ror)))
 
-(defun arglist-label-type-2 (label-value)
-  `(,label-value))
+(deftype sr-type ()
+  `(member :sr-type-lsl :sr-type-lsr :sr-type-asr :sr-type-ror :sr-type-rrx))
 
-(defun arglist-bitfield-type-1 (Rd msb lsb)
-  `(,(reg-to-symbol Rd)
-    ,lsb
-    ,(1+ (- msb lsb))))
+(defun shift (value type amount carry-in)
+  (assert (typep value 'bit-vector))
+  (assert (typep type 'sr-type))
+  (assert (typep carry-in '(bit-vector 1)))
+  (nth-value 0 (shift-c value type amount carry-in)))
 
-(defun arglist-bitfield-type-2 (Rd Rn msb lsb)
-  `(,(reg-to-symbol Rd)
-    ,(reg-to-symbol Rn)
-    ,lsb
-    ,(1+ (- msb lsb))))
+(defun shift-c (value type amount carry-in)
+  (assert (typep value 'bit-vector))
+  (assert (typep type 'sr-type))
+  (assert (typep carry-in '(bit-vector 1)))
+  (if (zerop amount)
+      (values value carry-in)
+      (ecase type
+	(:sr-type-lsl (lsl-c value amount))
+	(:sr-type-lsr (lsr-c value amount))
+	(:sr-type-asl (asr-c value amount))
+	(:sr-type-ror (ror-c value amount))
+	(:sr-type-rrx (rrx-c value amount)))))
 
-(defun arglist-coproc-type-1 (coproc opc1 CRd CRn CRm opc2)
-  `(,coproc
-    ,opc1
-    ,CRd
-    ,CRn
-    ,CRm
-    ,@(if (zerop opc2) '() `(,opc2))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions and macros to access the machine.
 
-(defun memaccess-type-1 (U Rt Rn offset)
-  `(,(reg-to-symbol Rt)
-    (,(reg-to-symbol Rn)
-     ,@(if (and (= U 1) (= offset 0))
-	   '()
-	   (if (= U 1) `(,offset) `,(- offset))))))
+(define-symbol-macro APSR.N
+    (subseq (condition-codes *machine*) 0 1))
+(define-symbol-macro APSR.Z
+    (subseq (condition-codes *machine*) 1 2))
+(define-symbol-macro APSR.C
+    (subseq (condition-codes *machine*) 2 3))
+(define-symbol-macro APSR.V
+    (subseq (condition-codes *machine*) 3 4))
+(define-symbol-macro APSR.Q
+    (subseq (condition-codes *machine*) 4 5))
 
-(defun memaccess-type-2 (U Rt Rn offset)
-  `(,(reg-to-symbol Rt)
-    (,(reg-to-symbol Rn)
-     ,@(if (= U 1) `(,offset) `,(- offset)))
-    !))
+(define-symbol-macro condition-passed
+  (cond ((equal cond #*0000)
+	 (equal APSR.Z #*1))
+	((equal cond #*0001)
+	 (equal APSR.Z #*0))
+	((equal cond #*0010)
+	 (equal APSR.C #*1))
+	((equal cond #*0011)
+	 (equal APSR.C #*0))
+	((equal cond #*0100)
+	 (equal APSR.N #*1))
+	((equal cond #*0101)
+	 (equal APSR.N #*0))
+	((equal cond #*0110)
+	 (equal APSR.V #*1))
+	((equal cond #*0111)
+	 (equal APSR.V #*0))
+	((equal cond #*1000)
+	 (and (equal APSR.C #*1) (equal APSR.Z #*0)))
+	((equal cond #*1001)
+	 (or (equal APSR.C #*0) (equal APSR.Z #*1)))
+	((equal cond #*1010)
+	 (equal APSR.N APSR.V))
+	((equal cond #*1011)
+	 (not (equal APSR.N APSR.V)))
+	((equal cond #*1100)
+	 (and (equal APSR.Z #*0) (equal APSR.N APSR.V)))
+	((equal cond #*1101)
+	 (or (equal APSR.Z #*1) (not (equal APSR.N APSR.V))))
+	((equal cond #*1110)
+	 t)))
 
-(defun memaccess-type-3 (U Rt Rn offset)
-  `(,(reg-to-symbol Rt)
-    (,(reg-to-symbol Rn))
-    ,@(if (= U 1) `(,offset) `,(- offset))))
-
-(defun memaccess-type-4 (U Rt offset)
-  `(,(reg-to-symbol Rt)
-    (PC
-     ,@(if (= U 1) `(,offset) `,(- offset)))))
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defparameter *build-arguments*
-    `((({<Rd>} <Rn> <const>)
-       (arglist-immediate-type-1 Rd Rn imm12))
-      (({<Rd>} SP <const>)
-       (arglist-immediate-type-2 Rd imm12))
-      (({<Rd>} <Rm> <imm>)
-       (arglist-immediate-type-3 Rd Rm imm5))
-      ((<imm16>)
-       (arglist-immediate-type-4 cond imm12 imm4))
-      (({<Rd>} <Rn> <Rm> {<shift>})
-       (arglist-register-type-1 Rd Rn Rm typ imm5))
-      (({<Rd>} SP <Rm> {<shift>})
-       (arglist-register-type-2  Rd Rm typ imm5))
-      (({<Rd>} <Rn> <Rm>)
-       (arglist-register-type-3 Rd Rn Rm))
-      ((<Rm>)
-       (arglist-register-type-4 Rm))
-      (({<Rd>} <Rn> <Rm> <type> <Rs>)
-       (arglist-register-shifted-register-type-1 Rd Rn Rm typ Rs))
-      ((<Rd> <label>)
-       (arglist-label-type-1 Rd imm12))
-      ((<label>)
-       (arglist-label-type-2 imm24))
-      ((<Rd> <lsb> <width>)
-       (arglist-bitfield-type-1 Rd msb lsb))
-      ((<Rd> <Rn> <lsb> <width>)
-       (arglist-bitfield-type-2 Rd Rn msb lsb))
-      ((<coproc> <opc1> <CRd> <CRn> CRm> {<opc2>})
-       (arglist-coproc-type-1 coproc opc1 CRd CRn CRm opc2))
-      ((<Rt> (<Rn>) +/-<imm>)
-       (memaccess-type-1 U Rt Rn imm12))
-      ((<Rt> (<Rn> {+/-<imm>}))
-       (memaccess-type-2 U Rt Rn imm12))
-      ((<Rt> (<Rn> +/-<imm>)!)
-       (memaccess-type-3 U Rt Rn imm12))
-      ((<Rt> (PC +/-<imm>))
-       (memaccess-type-4 U Rt imm12)))))
-
-;;; This function takes a symbol that is the first element of an
-;;; assembly-syntax entry and generates the code for computing the
-;;; symbol to appear first in the assembly version of the instruction.
-(defun make-build-mnemonic (symbol)
-  (let* ((name (symbol-name symbol))
-	 (first-non-alpha (position-if-not #'alphanumericp name))
-	 (base (subseq name 0 first-non-alpha))
-	 (suffix (if (null first-non-alpha) "" (subseq name first-non-alpha))))
-    (cond ((equal suffix "")
-	   `',symbol)
-	  ((equal suffix "{S}{<C>}")
-	   `(build-name ,base
-			(if (zerop S) "" "S")
-			(cond-to-symbol cond)))
-	  ((equal suffix "{S}")
-	   `(build-name ,base
-			(if (zerop S) "" "S")))
-	  ((equal suffix "{<C>}")
-	   `(build-name ,base
-			(cond-to-symbol cond)))
-	  ((equal suffix "<C>")
-	   `(build-name ,base
-			(if (= cond 14)
-			    'AL
-			    (cond-to-symbol cond))))
-	  (t
-	   (error "Unknown syntax: ~s" symbol)))))
+(define-symbol-macro unpredictable
+    (warn "unpredictable behavior"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -315,29 +562,15 @@
    (%pattern :initarg :pattern :reader pattern)
    (%syntax :initarg :syntax :reader syntax)
    (%additional-test :initarg :additional-test :reader additional-test)
-   (%disassembler :initarg :disassembler :reader disassembler)))
-
-(defmethod print-object ((object instruction) stream)
-  (print-unreadable-object (object stream)
-    (format stream "~a" (syntax object))))
+   (%disassembler :initarg :disassembler :reader disassembler)
+   (%operation :initarg :operation :reader operation)))
 
 (defparameter *instructions* '())
 	  
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defun make-argument-disassembler (argument-list)
-    (let ((entry (assoc argument-list *build-arguments* :test #'equal)))
-      (when (null entry)
-	(error "no argument encoder for argument list: ~s"
-	       argument-list))
-      (cadr entry))))
-
-(defmacro define-instruction (descriptor additional-test syntax operation)
-  (declare (ignore operation))
+(defmacro define-instruction (descriptor additional-test disassembler operation)
   (let ((mask (make-mask descriptor))
 	(pattern (make-pattern descriptor))
-	(bindings (bindings descriptor 'instruction))
-	(mnemonic-code (make-build-mnemonic (car syntax)))
-	(disassemby-code (make-argument-disassembler (cdr syntax))))
+	(bindings (bindings descriptor 'instruction)))
     `(push (make-instance 'instruction
 	     :mask ,mask
 	     :pattern ,pattern
@@ -347,57 +580,98 @@
 	       (let ,bindings
 		 (declare (ignorable ,@(mapcar #'car bindings)))
 		 ,additional-test))
-	     :syntax ',syntax
 	     :disassembler
+	     (lambda (instruction stream)
+	       (let ,bindings
+		 ,disassembler))
+	     :operation
 	     (lambda (instruction)
 	       (let ,bindings
-		 (cons ,mnemonic-code
-		       ,disassemby-code))))
+		 ,operation)))
 	   *instructions*)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Computing the disassembly of an instruction word.
-
-(defun cond-to-symbol (cond)
-  (check-type cond (integer 0 14))
-  (aref #(EQ NE CS CC MI PL VS VC HI LS GE LT GT LE ||)
-	cond))
-
-(defun reg-to-symbol (reg)
-  (check-type reg (integer 0 15))
-  (aref #(R0 R1 R2  R3  R4  R5 R6 R7 R8 R9 R10 R11 R12 SP LR PC)
-	reg))
-
-(defun reg-list-to-symbol (reg-list)
-  (let ((result ""))
-    (loop for i from 0 below 16
-	  do (unless (zerop (ldb (byte 1 i) reg-list))
-	       (setf result
-		     (concatenate 'string result (reg-to-symbol i) " "))))
-    result))
-
-(defun shift-type-to-symbol (shift-type)
-  (check-type shift-type (integer 0 3))
-  (aref #(LSL LSR ASR ROR) shift-type))
-
+;;; Given an instruction in the form of a bitvector of length 32, find
+;;; an instruction entry that matches that instruction.  Position 0 of
+;;; the bitvector corresponds to bit 31 in the corresponding unsigned
+;;; 32-bit integer that make up the instruction in memory.
 (defun find-entry (instruction)
   (find-if (lambda (entry)
-	     (and (= (logand instruction (mask entry))
+	     (and (equal (bit-and instruction (mask entry))
 		     (pattern entry))
 		  (funcall (additional-test entry) instruction)))
 	   *instructions*))
 
-(defun handle-instruction (instruction)
+(defun execute-instruction (instruction)
   (let ((entry (find-entry instruction)))
-    (if (null entry)
-	(error "unknown instruction ~a" instruction)
-	(funcall (syntax entry) instruction))))
+    (when (null entry)
+      (error "no such instruction ~s" instruction))
+    (funcall (operation entry) instruction)))
 
-(defun build-name (&rest string-designators)
-  (intern (apply #'concatenate 'string
-		 (mapcar #'string string-designators))
-	  (find-package '#:sicl-arm-assembler)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions for disassembly.
+
+(defun condition-to-string (condition)
+  (cond ((equal condition #*0000) "EQ")
+	((equal condition #*0001) "NE")
+	((equal condition #*0010) "CS")
+	((equal condition #*0011) "CC")
+	((equal condition #*0100) "MI")
+	((equal condition #*0101) "PL")
+	((equal condition #*0110) "VS")
+	((equal condition #*0111) "VC")
+	((equal condition #*1000) "HI")
+	((equal condition #*1001) "LS")
+	((equal condition #*1010) "GE")
+	((equal condition #*1011) "LT")
+	((equal condition #*1100) "GT")
+	((equal condition #*1101) "LE")
+	((equal condition #*1110) "")))
+
+(defun register-to-string (register)
+  (cond ((equal register #*0000) "R0")
+	((equal register #*0001) "R1")
+	((equal register #*0010) "R2")
+	((equal register #*0011) "R3")
+	((equal register #*0100) "R4")
+	((equal register #*0101) "R5")
+	((equal register #*0110) "R6")
+	((equal register #*0111) "R7")
+	((equal register #*1000) "R8")
+	((equal register #*1001) "R9")
+	((equal register #*1010) "R10")
+	((equal register #*1011) "R11")
+	((equal register #*1100) "R12")
+	((equal register #*1101) "SP")
+	((equal register #*1110) "LR")
+	((equal register #*1110) "PC")))
+
+(defun optional-register-to-string (Rd Rn)
+  (if (equal Rd Rn)
+      ""
+      (concatenate 'string (register-to-string Rd) ", ")))
+
+(defun optional-shift-of-register (type imm5)
+  (cond ((equal type #*00)
+	 (if (equal imm5 #*00000)
+	     ""
+	     (format nil ", LSL #~a" (u-int imm5))))
+	((equal type #*01)
+	 (format nil ", LSR #~d"
+		 (if (equal imm5 #*00000) 32 (u-int imm5))))
+	((equal type #*10)
+	 (format nil ", ASR #~d"
+		 (if (equal imm5 #*00000) 32 (u-int imm5))))
+	((equal type #*11)
+	 (format nil ", ~a ~a"
+		 (if (equal imm5 #*00000) "RRX" "ROR")
+		 (if (equal imm5 #*00000) "" (u-int imm5))))))
+
+(defun shift-type-to-string (type)
+  (cond ((equal type #*00) "LSL")
+	((equal type #*01) "LSR")
+	((equal type #*10) "ASR")
+	((equal type #*11) "ROR")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -415,22 +689,33 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 1|S|   Rn  |   Rd  |       imm12           |"
+    ;; Aditional condition.
     (not (and (equal Rd #*1111) (equal S #*1)))
-  (ADC{S}{<c>} {<Rd>} <Rn> <const>)
+  ;; Disassembler
+  (format stream
+	  "ADC~a~a ~a~a, #~a #~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (u-int (<> imm12 7 0))
+	  (u-int (<> imm12 11 8)))
+  ;; Operation
   (let ((d (u-int Rd))
 	(n (u-int Rn))
 	(setflags (equal S #*1))
-	(imm32 (arm-expand-imm im12)))
-    (when (condition-passed)
+	(imm32 (arm-expand-imm imm12)))
+    (when condition-passed
       (multiple-value-bind (result carry overflow)
-	  (add-with-carry (reg n) imm32 (APSR +C+))
+	  (add-with-carry (reg n) imm32 APSR.C)
 	(if (= d 15)              ; can only occur for ARM encoding
 	    (alu-write-pc result) ; setflags is always false here
 	    (progn (setf (reg d) result)
-		   (setf (APSR +N+) (logbitp 31 result))
-		   (setf (APSR +Z+) (if (zerop result) 1 0)
-		   (setf (APSR +C+) carry)
-		   (setf (APSR +V+) overflow))))))))
+		   (when setflags
+		     (setf APSR.N (<> result 31 31))
+		     (setf APSR.Z (is-zero-bit result))
+		     (setf APSR.C carry)
+		     (setf APSR.V overflow))))))))
 	    
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -445,23 +730,36 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 1|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
+    ;; Aditional condition.
     (not (and (equal Rd #*1111) (equal S #*1)))
-  (ADC{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>})
+  ;; Disassembler
+  (format stream
+	  "ADC~a~a ~a~a, ~a~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (optional-shift-of-register typ imm5))
+  ;; Operation
   (let ((d (u-int Rd))
 	(n (u-int Rn))
 	(m (u-int Rm))
 	(setflags (equal S #*1)))
     (multiple-value-bind (shift-t shift-n)
 	(decode-imm-shift typ imm5)
-      (when (condition-passed)
-	(let ((shifted (shift (reg m) shift-t shift-n (APSR +C+))))
-	  (if (= d 15)              ; can only occur for ARM encoding
-	      (alu-write-pc result) ; setflags is always false here
-	      (progn (setf (reg d) result)
-		   (setf (APSR +N+) (logbitp 31 result))
-		   (setf (APSR +Z+) (if (zerop result) 1 0)
-		   (setf (APSR +C+) carry)
-		   (setf (APSR +V+) overflow)))))))))
+      (when condition-passed
+	(let ((shifted (shift (reg m) shift-t shift-n APSR.C)))
+	  (multiple-value-bind (result carry overflow)
+	      (add-with-carry (reg n) shifted APSR.C)
+	    (if (= d 15)              ; can only occur for ARM encoding
+		(alu-write-pc result) ; setflags is always false here
+		(progn (setf (reg d) result)
+		       (when setflags
+			 (setf APSR.N (<> result 31 31))
+			 (setf APSR.Z (is-zero-bit result))
+			 (setf APSR.C carry)
+			 (setf APSR.V overflow))))))))))
 		     
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -476,27 +774,38 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 1|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
+    ;; Aditional condition.
     t
-  (ADC{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>)
-  (let ((d (u-int Rd)
+  ;; Disassembler
+  (format stream
+	  "ADC~a~a ~a~a, ~a, ~a ~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (shift-type-to-string typ)
+	  (register-to-string Rs))
+  ;; Operation
+  (let ((d (u-int Rd))
 	(n (u-int Rn))
 	(m (u-int Rm))
 	(s (u-int Rs))
 	(setflags (equal S #*1))
-	(shift-t (decode-reg-shift typ))))
+	(shift-t (decode-reg-shift typ)))
     (when (or (= d 15) (= n 15) (= m 15))
-      unpredicatable)
+      unpredictable)
     (when condition-passed
-      (let* ((shift-n (ldb (byte 8 0) (reg s)))
-	     (shifted (shift (reg m) shift-t shift-n (APSR +C))))
+      (let* ((shift-n (u-int (<> (reg s) 7 0)))
+	     (shifted (shift (reg m) shift-t shift-n APSR.C)))
 	(multiple-value-bind (result carry overflow)
-	    (add-with-carry (reg n) shifted (APSR +C+))
+	    (add-with-carry (reg n) shifted APSR.C)
 	  (setf (reg d) result)
 	  (when setflags
-		   (setf (APSR +N+) (logbitp 31 result))
-		   (setf (APSR +Z+) (if (zerop result) 1 0)
-		   (setf (APSR +C+) carry)
-		   (setf (APSR +V+) overflow))))))))
+	    (setf APSR.N (<> result 31 31))
+	    (setf APSR.Z (is-zero-bit result))
+	    (setf APSR.C carry)
+	    (setf APSR.V overflow)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -509,11 +818,36 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 0|S|   Rn  |   Rd  |       imm12           |"
+    ;; Aditional condition.
     (not (or (and (equal Rn #*1111) (equal S #*0))
 	     (equal Rn #*1101)
 	     (and (equal Rd #*1111) (equal S #*1))))
-  (ADD{S}{<c>} {<Rd>} <Rn> <const>)
-  ())
+  ;; Disassembler
+  (progn
+    (format stream
+	    "ADD~a~a ~a~a, #~a #~a"
+	    (if (equal S #*1) "S" "")
+	    (condition-to-string cond)
+	    (optional-register-to-string Rd Rn)
+	    (register-to-string Rn)
+	    (u-int (<> imm12 7 0))
+	    (u-int (<> imm12 11 8))))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(setflags (equal S #*1))
+	(imm32 (arm-expand-imm imm12)))
+    (when condition-passed
+      (multiple-value-bind (result carry overflow)
+	  (add-with-carry (reg n) imm32 #*0)
+	(if (= d 15)
+	    (alu-write-pc result) ; setflags is always false here
+	    (progn (setf (reg d) result)
+		   (when setflags
+		     (setf APSR.N (<> result 31 31))
+		     (setf APSR.Z (is-zero-bit result))
+		     (setf APSR.C carry)
+		     (setf APSR.V overflow))))))))
 
 ;;; Instruction: ADD (register)
 ;;; 
@@ -525,10 +859,38 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 0|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
+    ;; Additional condition.
     (not (or (and (equal Rd #*1111) (equal S #*1))
 	     (equal Rn #*1101)))
-  (ADD{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>})
-  ())
+  ;; Disassembler
+  (format stream
+	  "ADD~a~a ~a~a, ~a~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (optional-shift-of-register typ imm5))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(setflags (equal S #*1)))
+    (multiple-value-bind (shift-t shift-n)
+	(decode-imm-shift typ imm5)
+      (when condition-passed
+	(let ((shifted (shift (reg m) shift-t shift-n APSR.C)))
+	  (multiple-value-bind (result carry overflow)
+	      (add-with-carry (reg n) shifted #*0)
+	    (if (= d 15)              
+		(alu-write-pc result) ; setflags is always false here
+		(progn (setf (reg d) result)
+		       (when setflags
+			 (setf APSR.N (<> result 31 31))
+			 (setf APSR.Z (is-zero-bit result))
+			 (setf APSR.C carry)
+			 (setf APSR.V overflow))))))))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -542,10 +904,39 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
+    ;; Additional condition.
     t
-  (ADD{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>)
-  ())
-  
+  ;; Disassembler
+  (format stream
+	  "ADD~a~a ~a~a, ~a, ~a ~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (shift-type-to-string typ)
+	  (register-to-string Rs))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(s (u-int Rs))
+	(setflags (equal S #*1))
+	(shift-t (decode-reg-shift typ)))
+    (when (or (= d 15) (= n 15) (= m 15))
+      unpredictable)
+    (when condition-passed
+      (let* ((shift-n (u-int (<> (reg s) 7 0)))
+	     (shifted (shift (reg m) shift-t shift-n APSR.C)))
+	(multiple-value-bind (result carry overflow)
+	    (add-with-carry (reg n) shifted #*0)
+	  (setf (reg d) result)
+	  (when setflags
+	    (setf APSR.N (<> result 31 31))
+	    (setf APSR.Z (is-zero-bit result))
+	    (setf APSR.C carry)
+	    (setf APSR.V overflow)))))))
+
 ;;; Instruction: ADD (SP plus immediate)
 ;;; 
 ;;; This instruction adds an immediate value to the SP value, and
@@ -554,348 +945,312 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 0|S|1 1 0 1|   Rd  |       imm12           |"
+    ;; Additional conditino
     (not (and (equal Rd #*1111) (equal S #*1)))
-  (ADD{S}{<c>} {<Rd>} SP <const>)
-  ())
+  ;; Disassembler
+  (format stream
+	  "ADD~s~s ~sSP, #~a #~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd #*1101)
+	  (u-int (<> imm12 7 0))
+	  (u-int (<> imm12 11 8)))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(setflags (equal S #*1))
+	(imm32 (arm-expand-imm imm12)))
+    (when condition-passed
+      (multiple-value-bind (result carry overflow)
+	  (add-with-carry (reg 13) imm32 #*0)
+	(if (= d 15)
+	    (alu-write-pc result) ; setflags is always false here
+	    (progn (setf (reg d) result)
+		   (when setflags
+		     (setf APSR.N (<> result 31 31))
+		     (setf APSR.Z (is-zero-bit result))
+		     (setf APSR.C carry)
+		     (setf APSR.V overflow))))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: ADD (SP plus register)
-;;; 
-;;; This instruction adds an optionally-shifted register value to the
-;;; SP value, and writes the result to the destination register.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|0|0 1 0 0|S|1 1 0 1|   Rd  |   imm5  |typ|0|  Rm   |"
-    (not (and (equal Rd #*1111) (equal S #*1)))
-  (ADD{S}{<c>} {<Rd>} SP <Rm> {<shift>})
-  ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: ADR
-;;; 
-;;; This instruction adds an immediate value to the PC value to form a
-;;; PC-relative address, and writes the result to the destination
-;;; register.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|1|0 1 0 0|0|1 1 1 1|   Rd  |       imm12           |"
-  t
-  (ADR{<c>} <Rd> <label>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: ADD (SP plus register)
+;; ;;; 
+;; ;;; This instruction adds an optionally-shifted register value to the
+;; ;;; SP value, and writes the result to the destination register.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0|0|0 1 0 0|S|1 1 0 1|   Rd  |   imm5  |typ|0|  Rm   |"
+;;     (not (and (equal Rd #*1111) (equal S #*1)))
+;;   (ADD{S}{<c>} {<Rd>} SP <Rm> {<shift>})
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: AND (immediate)
-;;; 
-;;; This instruction performs a bitwise AND of a register value and an
-;;; immediate value, and writes the result to the destination
-;;; register.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|1|0 0 0 0|S|   Rn  |   Rd  |       imm12           |"
-  (not (and (equal rd #*1111) (equal S #*1)))
-  (AND{S}{<c>} {<Rd>} <Rn> <const>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: ADR
+;; ;;; 
+;; ;;; This instruction adds an immediate value to the PC value to form a
+;; ;;; PC-relative address, and writes the result to the destination
+;; ;;; register.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0|1|0 1 0 0|0|1 1 1 1|   Rd  |       imm12           |"
+;;   t
+;;   (ADR{<c>} <Rd> <label>)
+;;   ())
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: AND (immediate)
+;; ;;; 
+;; ;;; This instruction performs a bitwise AND of a register value and an
+;; ;;; immediate value, and writes the result to the destination
+;; ;;; register.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0|1|0 0 0 0|S|   Rn  |   Rd  |       imm12           |"
+;;   (not (and (equal rd #*1111) (equal S #*1)))
+;;   (AND{S}{<c>} {<Rd>} <Rn> <const>)
+;;   ())
     
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: AND (register)
-;;; 
-;;; This instruction performs a bitwise AND of a register value and an
-;;; optionally-shifted register value, and writes the result to the
-;;; destination register. It can optionally update the condition flags
-;;; based on the result.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
-    (not (and (equal Rd #*1111) (equal S #*1)))
-  (AND{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>})
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: AND (register)
+;; ;;; 
+;; ;;; This instruction performs a bitwise AND of a register value and an
+;; ;;; optionally-shifted register value, and writes the result to the
+;; ;;; destination register. It can optionally update the condition flags
+;; ;;; based on the result.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
+;;     (not (and (equal Rd #*1111) (equal S #*1)))
+;;   (AND{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>})
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: AND (register-shifted register)
-;;; 
-;;; This instruction performs a bitwise AND of a register value and a
-;;; register-shifted register value. It writes the result to the
-;;; destination register, and can optionally update the condition
-;;; flags based on the result.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
-    t
-  (AND{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: AND (register-shifted register)
+;; ;;; 
+;; ;;; This instruction performs a bitwise AND of a register value and a
+;; ;;; register-shifted register value. It writes the result to the
+;; ;;; destination register, and can optionally update the condition
+;; ;;; flags based on the result.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
+;;     t
+;;   (AND{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: ASR (immediate)
-;;; 
-;;; Arithmetic Shift Right (immediate) shifts a register value right by an
-;;; immediate number of bits, shifting in copies of its sign bit, and
-;;; writes the result to the destination register. It can optionally
-;;; update the condition flags based on the result.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   imm5  |1 0 0|  Rm   |"
-    (not (and (equal Rd #*1111)
-	      (equal S #*1)))
-  (ASR{S}{<c>} {<Rd>} <Rm> <imm>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: ASR (immediate)
+;; ;;; 
+;; ;;; Arithmetic Shift Right (immediate) shifts a register value right by an
+;; ;;; immediate number of bits, shifting in copies of its sign bit, and
+;; ;;; writes the result to the destination register. It can optionally
+;; ;;; update the condition flags based on the result.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   imm5  |1 0 0|  Rm   |"
+;;     (not (and (equal Rd #*1111)
+;; 	      (equal S #*1)))
+;;   (ASR{S}{<c>} {<Rd>} <Rm> <imm>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: ASR (register)
-;;; 
-;;; Arithmetic Shift Right (register) shifts a register value right by
-;;; a variable number of bits, shifting in copies of its sign bit, and
-;;; writes the result to the destination register. The variable number
-;;; of bits is read from the bottom byte of a register. It can
-;;; optionally update the condition flags based on the result.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   Rm  |0 1 0 0|  Rn   |"
-    t
-  (ASR{S}{<c>} {<Rd>} <Rn> <Rm>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: ASR (register)
+;; ;;; 
+;; ;;; Arithmetic Shift Right (register) shifts a register value right by
+;; ;;; a variable number of bits, shifting in copies of its sign bit, and
+;; ;;; writes the result to the destination register. The variable number
+;; ;;; of bits is read from the bottom byte of a register. It can
+;; ;;; optionally update the condition flags based on the result.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   Rm  |0 1 0 0|  Rn   |"
+;;     t
+;;   (ASR{S}{<c>} {<Rd>} <Rn> <Rm>)
+;;   ())
     
-;;; Instruction: B
-;;; 
-;;; Branch causes a branch to a target address.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |1 0 1 0|                   imm24                       |"
-    t
-  (B{<c>} <label>)
-  ())
+;; ;;; Instruction: B
+;; ;;; 
+;; ;;; Branch causes a branch to a target address.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |1 0 1 0|                   imm24                       |"
+;;     t
+;;   (B{<c>} <label>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; BFC
-;;;
-;;; Bit Field Clear clears any number of adjacent bits at any position
-;;; in a register, without affecting the other bits in the register.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|1 1 1 1|"
-    t
-  (BFC{<c>} <Rd> <lsb> <width>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; BFC
+;; ;;;
+;; ;;; Bit Field Clear clears any number of adjacent bits at any position
+;; ;;; in a register, without affecting the other bits in the register.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|1 1 1 1|"
+;;     t
+;;   (BFC{<c>} <Rd> <lsb> <width>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: BFI
-;;;
-;;; Bit Field Insert copies any number of low order bits from a
-;;; register into the same number of adjacent bits at any position in
-;;; the destination register.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|  Rn   |"
-    (not (equal Rd #*1111))
-  (BFI{<c>} <Rd> <Rn> <lsb> <width>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: BFI
+;; ;;;
+;; ;;; Bit Field Insert copies any number of low order bits from a
+;; ;;; register into the same number of adjacent bits at any position in
+;; ;;; the destination register.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|  Rn   |"
+;;     (not (equal Rd #*1111))
+;;   (BFI{<c>} <Rd> <Rn> <lsb> <width>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: BIC (immediate)
-;;;
-;;; Bitwise Bit Clear (immediate) performs a bitwise AND of a register
-;;; value and the complement of an immediate value, and writes the
-;;; result to the destination register. It can optionally update the
-;;; condition flags based on the result.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|1|1 1 1 0|S|  Rn   |  Rd   |        imm12          |"
-    (not (and (equal Rd #*1111)
-	      (equal S #*1)))
-  (BIC{S}{<c>} {<Rd>} <Rn> <const>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: BIC (immediate)
+;; ;;;
+;; ;;; Bitwise Bit Clear (immediate) performs a bitwise AND of a register
+;; ;;; value and the complement of an immediate value, and writes the
+;; ;;; result to the destination register. It can optionally update the
+;; ;;; condition flags based on the result.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0|1|1 1 1 0|S|  Rn   |  Rd   |        imm12          |"
+;;     (not (and (equal Rd #*1111)
+;; 	      (equal S #*1)))
+;;   (BIC{S}{<c>} {<Rd>} <Rn> <const>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: BKPT
-;;;
-;;; Breakpoint causes a software breakpoint to occur.
-;;; Breakpoint is always unconditional, even when inside an IT block.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0 0 1 0 0 1 0|         imm12         |0 1 1 1| imm4  |"
-    t
-  (BKPT <imm16>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: BKPT
+;; ;;;
+;; ;;; Breakpoint causes a software breakpoint to occur.
+;; ;;; Breakpoint is always unconditional, even when inside an IT block.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0 0 1 0 0 1 0|         imm12         |0 1 1 1| imm4  |"
+;;     t
+;;   (BKPT <imm16>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: BL (immediate)
-;;;
-;;; Branch with Link calls a subroutine at a PC-relative address.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |1 0 1 1|                   imm24                       |"
-    t
-  (BL<c> <label>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: BL (immediate)
+;; ;;;
+;; ;;; Branch with Link calls a subroutine at a PC-relative address.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |1 0 1 1|                   imm24                       |"
+;;     t
+;;   (BL<c> <label>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: BLX (register)
-;;;
-;;; Branch with Link and Exchange (register) calls a subroutine at an
-;;; address and instruction set specified by a register.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 1 1|  Rm   |"
-    t
-  (BLX{<c>} <Rm>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: BLX (register)
+;; ;;;
+;; ;;; Branch with Link and Exchange (register) calls a subroutine at an
+;; ;;; address and instruction set specified by a register.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 1 1|  Rm   |"
+;;     t
+;;   (BLX{<c>} <Rm>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: BX
-;;;
-;;; Branch and Exchange causes a branch to an address and instruction
-;;; set specified by a register.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 0 1|  Rm   |"
-    t
-  (BX{<c>} <Rm>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: BX
+;; ;;;
+;; ;;; Branch and Exchange causes a branch to an address and instruction
+;; ;;; set specified by a register.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 0 1|  Rm   |"
+;;     t
+;;   (BX{<c>} <Rm>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: BXJ
-;;;
-;;; Branch and Exchange Jazelle attempts to change to Jazelle
-;;; state. If the attempt fails, it branches to an address and
-;;; instruction set specified by a register as though it were a BX
-;;; instruction.  In an implementation that includes the
-;;; Virtualization Extensions, if HSTR.TJDBX is set to 1, execution of
-;;; a BXJ instruction in a Non-secure mode other than Hyp mode
-;;; generates a Hyp Trap exception.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 1 0|  Rm   |"
-    t
-  (BXJ{<c>} <Rm>)
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: LDR (immediate)
+;; ;;;
+;; ;;; Load Register (immediate) calculates an address from a base
+;; ;;; register value and an immediate offset, loads a word from memory,
+;; ;;; and writes it to a register. It can use offset, post-indexed, or
+;; ;;; pre-indexed addressing.
+;; ;;;
+;; ;;; To get the assembly syntax closer to the ARM standard, we encode
+;; ;;; this instruction as three different instance: 
+;; ;;; P = 0 & W = 0; P = 1 & W = 0; P = 1 & W = 1
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: CDP
-;;; 
-;;; Coprocessor Data Processing tells a coprocessor to perform an
-;;; operation that is independent of ARM core registers and memory. If
-;;; no coprocessor can execute the instruction, an Undefined
-;;; Instruction exception is generated.  This is a generic coprocessor
-;;; instruction. Some of the fields have no functionality defined by
-;;; the architecture and are free for use by the coprocessor
-;;; instruction set designer. These are the opc1, opc2, CRd, CRn, and
-;;; CRm fields.  However, coprocessors CP8-CP15 are reserved for use
-;;; by ARM, and this manual defines the valid CDP and CDP2
-;;; instructions when coproc is in the range p8-p15
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |1 1 1 0| opc1  |  CRn  |  CRd  |coproc |opc2 |0|  CRm  |"
-    (not (and (/= coproc #x1010) (/= coproc #x1011)))
-  (CDP{<c>} <coproc> <opc1> <CRd> <CRn> CRm> {<opc2>})
-  ())
+;; ;;; P = 0 & W = 0
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 1 0|0|U|0|0|1|  Rn   |  Rt   |         imm12         |"
+;;     (not (or (equal Rn #*1111)
+;; 	     (and (equal Rn #*1101)
+;; 		  (equal U #*1)
+;; 		  (equal imm12 #*000000000100))))
+;;   (LDR{<c>} <Rt> (<Rn>) +/-<imm>)
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: CDP2
-;;;
-;;; Coprocessor Data Processing tells a coprocessor to perform an
-;;; operation that is independent of ARM core registers and memory. If
-;;; no coprocessor can execute the instruction, an Undefined
-;;; Instruction exception is generated.  This is a generic coprocessor
-;;; instruction. Some of the fields have no functionality defined by
-;;; the architecture and are free for use by the coprocessor
-;;; instruction set designer. These are the opc1, opc2, CRd, CRn, and
-;;; CRm fields.  However, coprocessors CP8-CP15 are reserved for use
-;;; by ARM, and this manual defines the valid CDP and CDP2
-;;; instructions when coproc is in the range p8-p15
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "|1 1 1 1|1 1 1 0| opc1  |  CRn  |  CRd  |coproc |opc2 |0|  CRm  |"
-    (not (and (/= coproc #x1010) (/= coproc #x1011)))
-  (CDP2 <coproc> <opc1> <CRd> <CRn> CRm> {<opc2>})
-  ())
+;; ;;; P = 1 & W = 0
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 1 0|1|U|0|0|1|  Rn   |  Rt   |         imm12         |"
+;;     (not (or (equal Rn #*1111)
+;; 	     (and (equal Rn #*1101)
+;; 		  (equal U #*1)
+;; 		  (equal imm12 #*000000000100))))
+;;   (LDR{<c>} <Rt> (<Rn> {+/-<imm>}))
+;;   ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: LDR (immediate)
-;;;
-;;; Load Register (immediate) calculates an address from a base
-;;; register value and an immediate offset, loads a word from memory,
-;;; and writes it to a register. It can use offset, post-indexed, or
-;;; pre-indexed addressing.
-;;;
-;;; To get the assembly syntax closer to the ARM standard, we encode
-;;; this instruction as three different instance: 
-;;; P = 0 & W = 0; P = 1 & W = 0; P = 1 & W = 1
+;; ;;; P = 1 & W = 1
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 1 0|1|U|0|1|1|  Rn   |  Rt   |         imm12         |"
+;;     (not (equal Rn #*1111))
+;;   (LDR{<c>} <Rt> (<Rn> +/-<imm>)!)
+;;   ())
 
-;;; P = 0 & W = 0
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 1 0|0|U|0|0|1|  Rn   |  Rt   |         imm12         |"
-    (not (or (equal Rn #*1111)
-	     (and (equal Rn #*1101) (= U 1) (= imm12 4))))
-  (LDR{<c>} <Rt> (<Rn>) +/-<imm>)
-  ())
-
-;;; P = 1 & W = 0
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 1 0|1|U|0|0|1|  Rn   |  Rt   |         imm12         |"
-    (not (or (equal Rn #*1111)
-	     (and (equal Rn #*1101) (= U 1) (= imm12 4))))
-  (LDR{<c>} <Rt> (<Rn> {+/-<imm>}))
-  ())
-
-;;; P = 1 & W = 1
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 1 0|1|U|0|1|1|  Rn   |  Rt   |         imm12         |"
-    (not (equal Rn #*1111))
-  (LDR{<c>} <Rt> (<Rn> +/-<imm>)!)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Instruction: LDR (literal)
-;;;
-;;; Load Register (literal) calculates an address from the PC value
-;;; and an immediate offset, loads a word from memory, and writes it
-;;; to a register.
-(define-instruction
-    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 1 0|1|U|0|0|1|1 1 1 1|  Rt   |         imm12         |"
-    t
-    (LDR{<c>} <Rt> (PC +/-<imm>))
-  ())
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;
+;; ;;; Instruction: LDR (literal)
+;; ;;;
+;; ;;; Load Register (literal) calculates an address from the PC value
+;; ;;; and an immediate offset, loads a word from memory, and writes it
+;; ;;; to a register.
+;; (define-instruction
+;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+;;     "| cond  |0 1 0|1|U|0|0|1|1 1 1 1|  Rt   |         imm12         |"
+;;     t
+;;     (LDR{<c>} <Rt> (PC +/-<imm>))
+;;   ())
