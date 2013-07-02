@@ -661,7 +661,7 @@
 	((equal register #*1100) "R12")
 	((equal register #*1101) "SP")
 	((equal register #*1110) "LR")
-	((equal register #*1110) "PC")))
+	((equal register #*1111) "PC")))
 
 (defun optional-register-to-string (Rd Rn)
   (if (equal Rd Rn)
@@ -1103,15 +1103,14 @@
     ;; Additional condition.
     (not (and (equal rd #*1111) (equal S #*1)))
   ;; Disassembler.
-  (progn
-    (format stream
-	    "AND~a~a ~a~a, #~a #~a"
-	    (if (equal S #*1) "S" "")
-	    (condition-to-string cond)
-	    (optional-register-to-string Rd Rn)
-	    (register-to-string Rn)
-	    (u-int (<> imm12 7 0))
-	    (u-int (<> imm12 11 8))))
+  (format stream
+	  "AND~a~a ~a~a, #~a #~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (u-int (<> imm12 7 0))
+	  (u-int (<> imm12 11 8)))
   ;; Operation
   (let ((d (u-int Rd))
 	(n (u-int Rn))
@@ -1343,92 +1342,126 @@
 		(replicate #*0 (1+ (- msbit lsbit))))
 	  unpredictable))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: BFI
-;; ;;;
-;; ;;; Bit Field Insert copies any number of low order bits from a
-;; ;;; register into the same number of adjacent bits at any position in
-;; ;;; the destination register.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|  Rn   |"
-;;     (not (equal Rd #*1111))
-;;   (BFI{<c>} <Rd> <Rn> <lsb> <width>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: BFI
+;;;
+;;; Bit Field Insert copies any number of low order bits from a
+;;; register into the same number of adjacent bits at any position in
+;;; the destination register.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|  Rn   |"
+    ;; Additional condition.
+    (not (equal Rd #*1111))
+  ;; Disassembler.
+  (format stream
+	  "BFI~a ~a, ~a, #~a #~a"
+	  (condition-to-string cond)
+	  (register-to-string Rd)
+	  (register-to-string Rn)
+	  (u-int lsb)
+	  (1+ (- (u-int msb) (u-int lsb))))
+  ;; Operation.
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(msbit (u-int msb))
+	(lsbit (u-int lsb)))
+    (when (= d 15)
+      unpredictable)
+    (when condition-passed
+      (if (>= msbit lsbit)
+	  (setf (<> (reg d) msbit lsbit)
+		(<> (reg n) (- msbit lsbit) 0))
+	  unpredictable))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: BIC (immediate)
-;; ;;;
-;; ;;; Bitwise Bit Clear (immediate) performs a bitwise AND of a register
-;; ;;; value and the complement of an immediate value, and writes the
-;; ;;; result to the destination register. It can optionally update the
-;; ;;; condition flags based on the result.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0|1|1 1 1 0|S|  Rn   |  Rd   |        imm12          |"
-;;     (not (and (equal Rd #*1111)
-;; 	      (equal S #*1)))
-;;   (BIC{S}{<c>} {<Rd>} <Rn> <const>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: BIC (immediate)
+;;;
+;;; Bitwise Bit Clear (immediate) performs a bitwise AND of a register
+;;; value and the complement of an immediate value, and writes the
+;;; result to the destination register. It can optionally update the
+;;; condition flags based on the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|1|1 1 1 0|S|  Rn   |  Rd   |        imm12          |"
+    (not (and (equal Rd #*1111)
+	      (equal S #*1)))
+  ;; Disassembler
+  (format stream
+	  "BIC~a~a ~a~a, #~a #~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (u-int (<> imm12 7 0))
+	  (u-int (<> imm12 11 8)))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(setflags (equal S #*1)))
+    (multiple-value-bind (imm32 carry)
+	(arm-expand-imm-c imm12 APSR.C)
+      (when condition-passed
+	(let ((result (bit-andc2 (reg n) imm32)))
+	  (if (= d 15)
+	      (alu-write-pc result) ; setflags is always false here
+	      (progn (setf (reg d) result)
+		     (when setflags
+		       (setf APSR.N (<> result 31 31))
+		       (setf APSR.Z (is-zero-bit result))
+		       (setf APSR.C carry)))))))))  ; APSR.V unchanged
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: BKPT
-;; ;;;
-;; ;;; Breakpoint causes a software breakpoint to occur.
-;; ;;; Breakpoint is always unconditional, even when inside an IT block.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0 0 1 0 0 1 0|         imm12         |0 1 1 1| imm4  |"
-;;     t
-;;   (BKPT <imm16>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: BKPT
+;;;
+;;; Breakpoint causes a software breakpoint to occur.
+;;; Breakpoint is always unconditional, even when inside an IT block.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0 0 1 0 0 1 0|         imm12         |0 1 1 1| imm4  |"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (progn (when (not (equal cond #*1110))
+	   unpredictable)
+	 (format stream
+		 "BKPT #~a"
+		 (zero-extend (cat imm12 imm4) 32)))
+  ;; Operation
+  (let ((imm32 (zero-extend (cat imm12 imm4) 32)))
+    (when (not (equal cond #*1110))
+      unpredictable)
+    ;; FIXME: do something more reasonable here later.
+    (throw 'bkpt imm32)))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: BL (immediate)
-;; ;;;
-;; ;;; Branch with Link calls a subroutine at a PC-relative address.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |1 0 1 1|                   imm24                       |"
-;;     t
-;;   (BL<c> <label>)
-;;   ())
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: BLX (register)
-;; ;;;
-;; ;;; Branch with Link and Exchange (register) calls a subroutine at an
-;; ;;; address and instruction set specified by a register.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 1 1|  Rm   |"
-;;     t
-;;   (BLX{<c>} <Rm>)
-;;   ())
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: BX
-;; ;;;
-;; ;;; Branch and Exchange causes a branch to an address and instruction
-;; ;;; set specified by a register.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0 0 1 0 0 1 0|1 1 1 1|1 1 1 1|1 1 1 1|0 0 0 1|  Rm   |"
-;;     t
-;;   (BX{<c>} <Rm>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: BL (immediate)
+;;;
+;;; Branch with Link calls a subroutine at a PC-relative address.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |1 0 1 1|                   imm24                       |"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (format stream
+	  "BL~a ~a"
+	  (condition-to-string cond)
+	  (sign-extend (cat imm24 #*00) 32))
+  ;; Operation
+  (let ((imm32 (sign-extend (cat imm24 #*00) 32)))
+    (when condition-passed
+      (setf (reg 14) (sub (reg 15) 4))
+      (let ((target-address (add (align (reg 15) 4) imm32)))
+	(branch-write-pc target-address)))))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;;;
