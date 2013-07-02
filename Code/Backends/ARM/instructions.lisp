@@ -452,6 +452,11 @@
   (assert (typep address '(bit-vector 32)))
   (branch-write-pc address))
 
+;;; Section A2.3.2, page 48.
+;;; We skip the test for architecture version, etc.
+(defun load-write-pc (address)
+  (branch-to address))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Operations of modified immediate constants
@@ -569,6 +574,11 @@
 
 (define-symbol-macro unpredictable
     (warn "unpredictable behavior"))
+
+(defun mem-u (address number-of-bytes)
+  (integer-to-bit-vector
+   (load-memory-unaligned (memory *machine*) address number-of-bytes)
+   (* number-of-bytes 8)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1463,51 +1473,123 @@
       (let ((target-address (add (align (reg 15) 4) imm32)))
 	(branch-write-pc target-address)))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: LDR (immediate)
-;; ;;;
-;; ;;; Load Register (immediate) calculates an address from a base
-;; ;;; register value and an immediate offset, loads a word from memory,
-;; ;;; and writes it to a register. It can use offset, post-indexed, or
-;; ;;; pre-indexed addressing.
-;; ;;;
-;; ;;; To get the assembly syntax closer to the ARM standard, we encode
-;; ;;; this instruction as three different instance: 
-;; ;;; P = 0 & W = 0; P = 1 & W = 0; P = 1 & W = 1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: LDR (immediate)
+;;;
+;;; Load Register (immediate) calculates an address from a base
+;;; register value and an immediate offset, loads a word from memory,
+;;; and writes it to a register. It can use offset, post-indexed, or
+;;; pre-indexed addressing.
+;;;
+;;; To get the assembly syntax closer to the ARM standard, we encode
+;;; this instruction as three different instance: 
+;;; P = 0 & W = 0; P = 1 & W = 0; P = 1 & W = 1
 
-;; ;;; P = 0 & W = 0
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 1 0|0|U|0|0|1|  Rn   |  Rt   |         imm12         |"
-;;     (not (or (equal Rn #*1111)
-;; 	     (and (equal Rn #*1101)
-;; 		  (equal U #*1)
-;; 		  (equal imm12 #*000000000100))))
-;;   (LDR{<c>} <Rt> (<Rn>) +/-<imm>)
-;;   ())
+;;; P = 0 & W = 0
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 1 0|0|U|0|0|1|  Rn   |  Rt   |         imm12         |"
+    ;; Additional condition.
+    (not (or (equal Rn #*1111)
+	     (and (equal Rn #*1101)
+		  (equal U #*1)
+		  (equal imm12 #*000000000100))))
+  ;; Disassembler.
+  (format stream
+	  "LDR~a ~a, [~a], #~a~a"
+	  (condition-to-string cond)
+	  (u-int Rt)
+	  (u-int Rn)
+	  (if (equal U #*0) "-" "")
+	  (u-int imm12))
+  ;; Operation.
+  (let ((tt (u-int Rt))
+	(n (u-int Rn))
+	(imm32 (zero-extend imm12 32))
+	(add (equal U #*1)))
+    (when (= n tt)
+      unpredictable)
+    (when condition-passed
+      (let* ((offset-addr (if add (add (reg n) imm32) (sub (reg n) imm32)))
+	     (address (reg n))
+	     (data (mem-u address 4)))
+	(setf (reg n) offset-addr)
+	(if (= tt 15)
+	    (if (equal (<> address 1 0) #*00)
+		(load-write-pc data)
+		unpredictable)
+	    (setf (reg tt) data))))))
 
-;; ;;; P = 1 & W = 0
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 1 0|1|U|0|0|1|  Rn   |  Rt   |         imm12         |"
-;;     (not (or (equal Rn #*1111)
-;; 	     (and (equal Rn #*1101)
-;; 		  (equal U #*1)
-;; 		  (equal imm12 #*000000000100))))
-;;   (LDR{<c>} <Rt> (<Rn> {+/-<imm>}))
-;;   ())
+;;; P = 1 & W = 0
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 1 0|1|U|0|0|1|  Rn   |  Rt   |         imm12         |"
+    ;; Additional condition.
+    (not (or (equal Rn #*1111)
+	     (and (equal Rn #*1101)
+		  (equal U #*1)
+		  (equal imm12 #*000000000100))))
+  ;; Disassembler
+  (format stream
+	  "LDR~a ~a, [~a~a]"
+	  (condition-to-string cond)
+	  (register-to-string Rt)
+	  (register-to-string Rn)
+	  (if (and (equal U #*1) (equal imm12 #*000000000000))
+	      ""
+	      (format nil ", #~a~a"
+		      (if (equal U #*1) "" "-")
+		      (u-int imm12))))
+  ;; Operation
+  (let ((tt (u-int Rt))
+	(n (u-int Rn))
+	(imm32 (zero-extend imm12 32))
+	(add (equal U #*1)))
+    (when condition-passed
+      (let* ((offset-addr (if add (add (reg n) imm32) (sub (reg n) imm32)))
+	     (address offset-addr)
+	     (data (mem-u address 4)))
+	(if (= tt 15)
+	    (if (equal (<> address 1 0) #*00)
+		(load-write-pc data)
+		unpredictable)
+	    (setf (reg tt) data))))))
 
-;; ;;; P = 1 & W = 1
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 1 0|1|U|0|1|1|  Rn   |  Rt   |         imm12         |"
-;;     (not (equal Rn #*1111))
-;;   (LDR{<c>} <Rt> (<Rn> +/-<imm>)!)
-;;   ())
+;;; P = 1 & W = 1
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 1 0|1|U|0|1|1|  Rn   |  Rt   |         imm12         |"
+    ;; Additional condition.
+    (not (equal Rn #*1111))
+  ;; Disassembler.
+  (format stream
+	  "LDR~a ~a, [~a, #~a~a]!"
+	  (condition-to-string cond)
+	  (register-to-string Rt)
+	  (register-to-string Rn)
+	  (if (equal U #*1) "" "-")
+	  (u-int imm12))
+  ;; Operation.
+  (let ((tt (u-int Rt))
+	(n (u-int Rn))
+	(imm32 (zero-extend imm12 32))
+	(add (equal U #*1)))
+    (when (= n tt)
+      unpredictable)
+    (when condition-passed
+      (let* ((offset-addr (if add (add (reg n) imm32) (sub (reg n) imm32)))
+	     (address offset-addr)
+	     (data (mem-u address 4)))
+	(setf (reg n) offset-addr)
+	(if (= tt 15)
+	    (if (equal (<> address 1 0) #*00)
+		(load-write-pc data)
+		unpredictable)
+	    (setf (reg tt) data))))))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;;;
