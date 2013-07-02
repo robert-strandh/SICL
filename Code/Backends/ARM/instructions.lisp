@@ -580,6 +580,10 @@
    (load-memory-unaligned (memory *machine*) address number-of-bytes)
    (* number-of-bytes 8)))
 
+(defun (setf mem-u) (value address number-of-bytes)
+  (store-memory-unaligned
+   (memory *machine*) address (u-int value) number-of-bytes))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction info.
@@ -1528,10 +1532,7 @@
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 1 0|1|U|0|0|1|  Rn   |  Rt   |         imm12         |"
     ;; Additional condition.
-    (not (or (equal Rn #*1111)
-	     (and (equal Rn #*1101)
-		  (equal U #*1)
-		  (equal imm12 #*000000000100))))
+    (not (equal Rn #*1111))
   ;; Disassembler
   (format stream
 	  "LDR~a ~a, [~a~a]"
@@ -1591,17 +1592,109 @@
 		unpredictable)
 	    (setf (reg tt) data))))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: LDR (literal)
-;; ;;;
-;; ;;; Load Register (literal) calculates an address from the PC value
-;; ;;; and an immediate offset, loads a word from memory, and writes it
-;; ;;; to a register.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 1 0|1|U|0|0|1|1 1 1 1|  Rt   |         imm12         |"
-;;     t
-;;     (LDR{<c>} <Rt> (PC +/-<imm>))
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: STR (immediate)
+;;;
+;;; Store Register (immediate) calculates an address from a base
+;;; register value and an immediate offset, and stores a word from a
+;;; register to memory. It can use offset, post-indexed, or
+;;; pre-indexed addressing.
+;;;
+;;; To get the assembly syntax closer to the ARM standard, we encode
+;;; this instruction as three different instance: 
+;;; P = 0 & W = 0; P = 1 & W = 0; P = 1 & W = 1
+
+;;; P = 0 & W = 0
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 1 0|0|U|0|0|0|  Rn   |  Rt   |         imm12         |"
+    ;; Additional condition.
+    t
+  ;; Disassemler.
+  (format stream
+	  "STR~a ~a, [~a], #~a~a"
+	  (condition-to-string cond)
+	  (u-int Rt)
+	  (u-int Rn)
+	  (if (equal U #*0) "-" "")
+	  (u-int imm12))
+  ;; Operation.
+  (let ((tt (u-int Rt))
+	(n (u-int Rn))
+	(imm32 (zero-extend imm12 32))
+	(add (equal U #*1)))
+    (when (or (= n 15) (= n tt))
+      unpredictable)
+    (when condition-passed
+      (let* ((offset-addr (if add (add (reg n) imm32) (sub (reg n) imm32)))
+	     (address (reg n)))
+	(setf (mem-u address 4)
+	      (if (= tt 15)
+		  (pc-store-value)
+		  (reg tt)))
+	(setf (reg n) offset-addr)))))
+
+;;; P = 1 & W = 0
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 1 0|1|U|0|0|0|  Rn   |  Rt   |         imm12         |"
+    ;; Additional condition.
+    t
+  ;; Disassemler.
+  (format stream
+	  "STR~a ~a, [~a~a]"
+	  (condition-to-string cond)
+	  (register-to-string Rt)
+	  (register-to-string Rn)
+	  (if (and (equal U #*1) (equal imm12 #*000000000000))
+	      ""
+	      (format nil ", #~a~a"
+		      (if (equal U #*1) "" "-")
+		      (u-int imm12))))
+  ;; Operation.
+  (let ((tt (u-int Rt))
+	(n (u-int Rn))
+	(imm32 (zero-extend imm12 32))
+	(add (equal U #*1)))
+    (when condition-passed
+      (let* ((offset-addr (if add (add (reg n) imm32) (sub (reg n) imm32)))
+	     (address offset-addr))
+	(setf (mem-u address 4)
+	      (if (= tt 15)
+		  (pc-store-value)
+		  (reg tt)))))))
+
+
+;;; P = 1 & W = 1
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 1 0|1|U|0|1|0|  Rn   |  Rt   |         imm12         |"
+    ;; Additional condition.
+    (not (and (equal Rn #*1101) (equal U #*0) (equal imm12 #*000000000100)))
+  ;; Disassemler.
+  (format stream
+	  "STR~a ~a, [~a, #~a~a]"
+	  (condition-to-string cond)
+	  (register-to-string Rt)
+	  (register-to-string Rn)
+	  (if (equal U #*1) "" "-")
+	  (u-int imm12))
+  ;; Operation.
+  (let ((tt (u-int Rt))
+	(n (u-int Rn))
+	(imm32 (zero-extend imm12 32))
+	(add (equal U #*1)))
+    (when (or (= n 15) (= n tt))
+      unpredictable)
+    (when condition-passed
+      (let* ((offset-addr (if add (add (reg n) imm32) (sub (reg n) imm32)))
+	     (address offset-addr))
+	(setf (mem-u address 4)
+	      (if (= tt 15)
+		  (pc-store-value)
+		  (reg tt)))
+	(setf (reg n) offset-addr)))))
