@@ -242,6 +242,13 @@
   (let ((width (1+ (- high low))))
     (integer-to-bit-vector (ldb (byte width low) x) width))) 
 
+(defgeneric (setf <>) (new-interval x high low))
+
+(defmethod (setf <>) (new-interval (x bit-vector) high low)
+  (let ((length (length x)))
+    (setf (subseq x (- length high 1) (- length low))
+	  new-interval)))
+
 (defgeneric binary-add (x y))
 
 (defmethod binary-add ((x integer) (y integer))
@@ -1305,19 +1312,36 @@
     (when condition-passed
       (branch-write-pc (add (reg 15) imm32)))))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; BFC
-;; ;;;
-;; ;;; Bit Field Clear clears any number of adjacent bits at any position
-;; ;;; in a register, without affecting the other bits in the register.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|1 1 1 1|"
-;;     t
-;;   (BFC{<c>} <Rd> <lsb> <width>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; BFC
+;;;
+;;; Bit Field Clear clears any number of adjacent bits at any position
+;;; in a register, without affecting the other bits in the register.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 1 1 1 1 1 0|   msb   |  Rd   |   lsb   |0 0 1|1 1 1 1|"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (format stream
+	  "BFC~a ~a, #~a #~a"
+	  (condition-to-string cond)
+	  (register-to-string Rd)
+	  (u-int lsb)
+	  (1+ (- (u-int msb) (u-int lsb))))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(msbit (u-int msb))
+	(lsbit (u-int lsb)))
+    (when (= d 15)
+      unpredictable)
+    (when condition-passed
+      (if (>= msbit lsbit)
+	  (setf (<> (reg d) msbit lsbit)
+		(replicate #*0 (1+ (- msbit lsbit))))
+	  unpredictable))))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;;;
