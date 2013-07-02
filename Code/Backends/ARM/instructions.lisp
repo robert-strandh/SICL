@@ -1479,6 +1479,109 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction: CMP (immediate)
+;;; 
+;;; Compare (immediate) subtracts an immediate value from a register
+;;; value. It updates the condition flags based on the result, and
+;;; discards the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|1|1 0 1 0|1|  Rn   |0 0 0 0|          imm12        |"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (format stream
+	  "CMP~a ~a, #~a, #~a"
+	  (condition-to-string cond)
+	  (register-to-string Rn)
+	  (u-int (<> imm12 7 0))
+	  (u-int (<> imm12 11 8)))
+  ;; Operation
+  (let ((n (u-int Rn))
+	(imm32 (arm-expand-imm imm12)))
+    (when condition-passed
+      (multiple-value-bind (result carry overflow)
+	  (add-with-carry (reg n) (bit-not imm32) #*1)
+	(setf APSR.N (<> result 31 31))
+	(setf APSR.Z (is-zero-bit result))
+	(setf APSR.C carry)
+	(setf APSR.V overflow)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: CMP (register)
+;;; 
+;;; Compare (register) subtracts an optionally-shifted register value
+;;; from a register value. It updates the condition flags based on the
+;;; result, and discards the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|1 0 1 0|1|  Rn   |0 0 0 0|  imm5   |typ|0|  Rm   |"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (format stream
+	  "CMP~s ~s, ~s~s"
+	  (condition-to-string cond)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (optional-shift-of-register typ imm5))
+  ;; Operation
+  (let ((n (u-int Rn))
+	(m (u-int Rm)))
+    (multiple-value-bind (shift-t shift-n)
+	(decode-imm-shift typ imm5)
+      (when condition-passed
+	(let ((shifted (shift (reg m) shift-t shift-n APSR.C)))
+	  (multiple-value-bind (result carry overflow)
+	      (add-with-carry (reg n) (bit-not shifted) #*1)
+	    (setf APSR.N (<> result 31 31))
+	    (setf APSR.Z (is-zero-bit result))
+	    (setf APSR.C carry)
+	    (setf APSR.V overflow)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: CMP (registser-shifted register)
+;;; 
+;;; Compare (register-shifted register) subtracts a register-shifted
+;;; register value from a register value. It updates the condition
+;;; flags based on the result, and discards the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|1 0 1 0|1|  Rn   |0 0 0 0|  Rs   |0|typ|1|  Rm   |"
+    ;; Additional contition.
+    t
+  ;; Disassembler
+  (format stream
+	  "CMP~a ~a, ~a, ~a ~a"
+	  (condition-to-string cond)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (shift-type-to-string typ)
+	  (register-to-string Rs))
+  ;; Operation.
+  (let ((n (u-int Rn))
+	(m (u-int Rm))
+	(s (u-int Rs))
+	(shift-t (decode-reg-shift typ)))
+    (when (or (= n 15) (= m 15) (= s 15))
+      unpredictable)
+    (when condition-passed
+      (let* ((shift-n (u-int (<> (reg s) 7 0)))
+	     (shifted (shift (reg m) shift-t shift-n APSR.C)))
+	(multiple-value-bind (result carry overflow)
+	    (add-with-carry (reg n) (bit-not shifted) #*1)
+	  (setf APSR.N (<> result 31 31))
+	  (setf APSR.Z (is-zero-bit result))
+	  (setf APSR.C carry)
+	  (setf APSR.V overflow))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction: EOR (immediate)
 ;;; 
 ;;; This instruction performs a bitwise exclusive OR of a register
@@ -1720,7 +1823,7 @@
 ;;;
 ;;; Instruction: ORR (immediate)
 ;;; 
-;;; This instruction performs a bitwise exclusive OR of a register
+;;; This instruction performs a bitwise (inclusive) OR of a register
 ;;; value and an immediate value, and writes the result to the
 ;;; destination register.
 (define-instruction
@@ -1758,7 +1861,7 @@
 ;;;
 ;;; Instruction: ORR (register)
 ;;; 
-;;; This instruction performs a bitwise exclusive OR of a register
+;;; This instruction performs a bitwise (inclusive) OR of a register
 ;;; value and an optionally-shifted register value, and writes the
 ;;; result to the destination register. It can optionally update the
 ;;; condition flags based on the result.
@@ -1800,7 +1903,7 @@
 ;;;
 ;;; Instruction: ORR (register-shifted register)
 ;;; 
-;;; This instruction performs a bitwise exclusive OR of a register
+;;; This instruction performs a bitwise (inclusive) OR of a register
 ;;; value and a register-shifted register value. It writes the result
 ;;; to the destination register, and can optionally update the
 ;;; condition flags based on the result.
