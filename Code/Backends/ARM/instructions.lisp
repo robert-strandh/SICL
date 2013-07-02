@@ -1568,7 +1568,7 @@
 (define-instruction
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
+    "| cond  |0 0|0|0 0 0 1|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
     ;; Additional condition.
     t
   ;; Disassembler.
@@ -1765,7 +1765,7 @@
 (define-instruction
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|0|0 0 0 1|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
+    "| cond  |0 0|0|1 1 0 0|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
     ;; Additional condition.
     (not (and (equal Rd #*1111) (equal S #*1)))
   ;; Disassembler.
@@ -1807,7 +1807,7 @@
 (define-instruction
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-    "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
+    "| cond  |0 0|0|1 1 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
     ;; Additional condition.
     t
   ;; Disassembler.
