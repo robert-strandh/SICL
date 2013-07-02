@@ -1479,6 +1479,130 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction: EOR (immediate)
+;;; 
+;;; This instruction performs a bitwise exclusive OR of a register
+;;; value and an immediate value, and writes the result to the
+;;; destination register.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|1|0 0 0 1|S|   Rn  |   Rd  |       imm12           |"
+    ;; Additional condition.
+    (not (and (equal rd #*1111) (equal S #*1)))
+  ;; Disassembler.
+  (format stream
+	  "EOR~a~a ~a~a, #~a #~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (u-int (<> imm12 7 0))
+	  (u-int (<> imm12 11 8)))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(setflags (equal S #*1)))
+    (multiple-value-bind (imm32 carry)
+	(arm-expand-imm-c imm12 APSR.C)
+      (when condition-passed
+	(let ((result (bit-xor (reg n) imm32)))
+	  (if (= d 15)
+	      (alu-write-pc result) ; setflags is always false here
+	      (progn (setf (reg d) result)
+		     (when setflags
+		       (setf APSR.N (<> result 31 31))
+		       (setf APSR.Z (is-zero-bit result))
+		       (setf APSR.C carry)))))))))  ; APSR.V unchanged
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: EOR (register)
+;;; 
+;;; This instruction performs a bitwise exclusive OR of a register
+;;; value and an optionally-shifted register value, and writes the
+;;; result to the destination register. It can optionally update the
+;;; condition flags based on the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|0 0 0 1|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
+    ;; Additional condition.
+    (not (and (equal Rd #*1111) (equal S #*1)))
+  ;; Disassembler.
+  (format stream
+	  "EOR~a~a ~a~a, ~a~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (optional-shift-of-register typ imm5))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(setflags (equal S #*1)))
+    (multiple-value-bind (shift-t shift-n)
+	(decode-imm-shift typ imm5)
+      (when condition-passed
+	(multiple-value-bind (shifted carry)
+	    (shift-c (reg m) shift-t shift-n APSR.C)
+	  (let ((result (bit-xor (reg n) shifted)))
+	    (if (= d 15)              
+		(alu-write-pc result) ; setflags is always false here
+		(progn (setf (reg d) result)
+		       (when setflags
+			 (setf APSR.N (<> result 31 31))
+			 (setf APSR.Z (is-zero-bit result))
+			 (setf APSR.C carry)))))))))) ; APSR.V unchanged
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: EOR (register-shifted register)
+;;; 
+;;; This instruction performs a bitwise exclusive OR of a register
+;;; value and a register-shifted register value. It writes the result
+;;; to the destination register, and can optionally update the
+;;; condition flags based on the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (format stream
+	  "EOR~a~a ~a~a, ~a, ~a ~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (shift-type-to-string typ)
+	  (register-to-string Rs))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(s (u-int Rs))
+	(setflags (equal S #*1))
+	(shift-t (decode-reg-shift typ)))
+    (when (or (= d 15) (= n 15) (= m 15))
+      unpredictable)
+    (when condition-passed
+      (let ((shift-n (u-int (<> (reg s) 7 0))))
+	(multiple-value-bind (shifted carry)
+	    (shift-c (reg m) shift-t shift-n APSR.C)
+	  (let ((result (bit-xor (reg n) shifted)))
+	    (setf (reg d) result)
+	    (when setflags
+	      (setf APSR.N (<> result 31 31))
+	      (setf APSR.Z (is-zero-bit result))
+	      (setf APSR.C carry))))))))  ; APSR.V unchanged
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction: LDR (immediate)
 ;;;
 ;;; Load Register (immediate) calculates an address from a base
