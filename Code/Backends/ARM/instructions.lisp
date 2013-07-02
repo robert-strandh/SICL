@@ -420,7 +420,7 @@
   (aref (registers *machine*) register-number))
 	  
 (defun (setf reg) (new-contents register-number)
-  (assert (<= 0 register-number 14))
+  (assert (<= 0 register-number 15))
   (assert (typep new-contents '(bit-vector 32)))
   (setf (aref (registers *machine*) register-number)
 	new-contents))
@@ -701,7 +701,7 @@
     "| cond  |0 0|1|0 1 0 1|S|   Rn  |   Rd  |       imm12           |"
     ;; Aditional condition.
     (not (and (equal Rd #*1111) (equal S #*1)))
-  ;; Disassembler
+  ;; Disassembler.
   (format stream
 	  "ADC~a~a ~a~a, #~a #~a"
 	  (if (equal S #*1) "S" "")
@@ -742,7 +742,7 @@
     "| cond  |0 0|0|0 1 0 1|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
     ;; Aditional condition.
     (not (and (equal Rd #*1111) (equal S #*1)))
-  ;; Disassembler
+  ;; Disassembler.
   (format stream
 	  "ADC~a~a ~a~a, ~a~a"
 	  (if (equal S #*1) "S" "")
@@ -786,7 +786,7 @@
     "| cond  |0 0|0|0 1 0 1|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
     ;; Aditional condition.
     t
-  ;; Disassembler
+  ;; Disassembler.
   (format stream
 	  "ADC~a~a ~a~a, ~a, ~a ~a"
 	  (if (equal S #*1) "S" "")
@@ -832,7 +832,7 @@
     (not (or (and (equal Rn #*1111) (equal S #*0))
 	     (equal Rn #*1101)
 	     (and (equal Rd #*1111) (equal S #*1))))
-  ;; Disassembler
+  ;; Disassembler.
   (progn
     (format stream
 	    "ADD~a~a ~a~a, #~a #~a"
@@ -872,7 +872,7 @@
     ;; Additional condition.
     (not (or (and (equal Rd #*1111) (equal S #*1))
 	     (equal Rn #*1101)))
-  ;; Disassembler
+  ;; Disassembler.
   (format stream
 	  "ADD~a~a ~a~a, ~a~a"
 	  (if (equal S #*1) "S" "")
@@ -901,7 +901,6 @@
 			 (setf APSR.C carry)
 			 (setf APSR.V overflow))))))))))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction: ADD (register-shifted register)
@@ -916,7 +915,7 @@
     "| cond  |0 0|0|0 1 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
     ;; Additional condition.
     t
-  ;; Disassembler
+  ;; Disassembler.
   (format stream
 	  "ADD~a~a ~a~a, ~a, ~a ~a"
 	  (if (equal S #*1) "S" "")
@@ -955,9 +954,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 0|S|1 1 0 1|   Rd  |       imm12           |"
-    ;; Additional conditino
+    ;; Additional condition.
     (not (and (equal Rd #*1111) (equal S #*1)))
-  ;; Disassembler
+  ;; Disassembler.
   (format stream
 	  "ADD~s~s ~sSP, #~a #~a"
 	  (if (equal S #*1) "S" "")
@@ -992,9 +991,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|0|0 1 0 0|S|1 1 0 1|   Rd  |   imm5  |typ|0|  Rm   |"
-    ;; Additional condition
+    ;; Additional condition.
     (not (and (equal Rd #*1111) (equal S #*1)))
-  ;; Disassembly
+  ;; Disassembler.
   (format stream
 	  "ADD~a~a ~aSP, ~a~a"
 	  (if (equal S #*1) "S" "")
@@ -1034,9 +1033,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 0|0|1 1 1 1|   Rd  |       imm12           |"
-    ;; Additional condition
+    ;; Additional condition.
     t
-  ;; Disassembler
+  ;; Disassembler.
   (format stream
 	  "ADD~s ~s, PC, #~a #~a"
 	  (condition-to-string cond)
@@ -1065,9 +1064,9 @@
     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
     "| cond  |0 0|1|0 1 0 0|0|1 1 1 1|   Rd  |       imm12           |"
-    ;; Additional condition
+    ;; Additional condition.
     t
-  ;; Disassembler
+  ;; Disassembler.
   (format stream
 	  "SUB~s ~s, PC, #~a #~a"
 	  (condition-to-string cond)
@@ -1096,7 +1095,7 @@
     "| cond  |0 0|1|0 0 0 0|S|   Rn  |   Rd  |       imm12           |"
     ;; Additional condition.
     (not (and (equal rd #*1111) (equal S #*1)))
-  ;; Disassembler
+  ;; Disassembler.
   (progn
     (format stream
 	    "AND~a~a ~a~a, #~a #~a"
@@ -1122,82 +1121,189 @@
 		       (setf APSR.Z (is-zero-bit result))
 		       (setf APSR.C carry)))))))))  ; APSR.V unchanged
     
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: AND (register)
-;; ;;; 
-;; ;;; This instruction performs a bitwise AND of a register value and an
-;; ;;; optionally-shifted register value, and writes the result to the
-;; ;;; destination register. It can optionally update the condition flags
-;; ;;; based on the result.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
-;;     (not (and (equal Rd #*1111) (equal S #*1)))
-;;   (AND{S}{<c>} {<Rd>} <Rn> <Rm> {<shift>})
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: AND (register)
+;;; 
+;;; This instruction performs a bitwise AND of a register value and an
+;;; optionally-shifted register value, and writes the result to the
+;;; destination register. It can optionally update the condition flags
+;;; based on the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   imm5  |typ|0|  Rm   |"
+    ;; Additional condition.
+    (not (and (equal Rd #*1111) (equal S #*1)))
+  ;; Disassembler.
+  (format stream
+	  "AND~a~a ~a~a, ~a~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (optional-shift-of-register typ imm5))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(setflags (equal S #*1)))
+    (multiple-value-bind (shift-t shift-n)
+	(decode-imm-shift typ imm5)
+      (when condition-passed
+	(multiple-value-bind (shifted carry)
+	    (shift-c (reg m) shift-t shift-n APSR.C)
+	  (let ((result (bit-and (reg n) shifted)))
+	    (if (= d 15)              
+		(alu-write-pc result) ; setflags is always false here
+		(progn (setf (reg d) result)
+		       (when setflags
+			 (setf APSR.N (<> result 31 31))
+			 (setf APSR.Z (is-zero-bit result))
+			 (setf APSR.C carry)))))))))) ; APSR.V unchanged
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: AND (register-shifted register)
-;; ;;; 
-;; ;;; This instruction performs a bitwise AND of a register value and a
-;; ;;; register-shifted register value. It writes the result to the
-;; ;;; destination register, and can optionally update the condition
-;; ;;; flags based on the result.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
-;;     t
-;;   (AND{S}{<c>} {<Rd>} <Rn> <Rm> <type> <Rs>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: AND (register-shifted register)
+;;; 
+;;; This instruction performs a bitwise AND of a register value and a
+;;; register-shifted register value. It writes the result to the
+;;; destination register, and can optionally update the condition
+;;; flags based on the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|0 0 0 0|S|   Rn  |   Rd  |   Rs  |0|typ|1|  Rm   |"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (format stream
+	  "AND~a~a ~a~a, ~a, ~a ~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm)
+	  (shift-type-to-string typ)
+	  (register-to-string Rs))
+  ;; Operation
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(s (u-int Rs))
+	(setflags (equal S #*1))
+	(shift-t (decode-reg-shift typ)))
+    (when (or (= d 15) (= n 15) (= m 15))
+      unpredictable)
+    (when condition-passed
+      (let ((shift-n (u-int (<> (reg s) 7 0))))
+	(multiple-value-bind (shifted carry)
+	    (shift-c (reg m) shift-t shift-n APSR.C)
+	  (let ((result (bit-and (reg n) shifted)))
+	    (setf (reg d) result)
+	    (when setflags
+	      (setf APSR.N (<> result 31 31))
+	      (setf APSR.Z (is-zero-bit result))
+	      (setf APSR.C carry))))))))  ; APSR.V unchanged
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: ASR (immediate)
-;; ;;; 
-;; ;;; Arithmetic Shift Right (immediate) shifts a register value right by an
-;; ;;; immediate number of bits, shifting in copies of its sign bit, and
-;; ;;; writes the result to the destination register. It can optionally
-;; ;;; update the condition flags based on the result.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   imm5  |1 0 0|  Rm   |"
-;;     (not (and (equal Rd #*1111)
-;; 	      (equal S #*1)))
-;;   (ASR{S}{<c>} {<Rd>} <Rm> <imm>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: ASR (immediate)
+;;; 
+;;; Arithmetic Shift Right (immediate) shifts a register value right by an
+;;; immediate number of bits, shifting in copies of its sign bit, and
+;;; writes the result to the destination register. It can optionally
+;;; update the condition flags based on the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   imm5  |1 0 0|  Rm   |"
+    ;; Additional condition.
+    (not (and (equal Rd #*1111)
+	      (equal S #*1)))
+  ;; Dissassembler.
+  (format stream
+	  "ASR~a~a ~a~a, #~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rm)
+	  (register-to-string Rm)
+	  (if (equal imm5 #*00000) 32 (u-int imm5)))
+  ;; Operation.
+  (let ((d (u-int Rd))
+	(m (u-int Rm))
+	(setflags (equal S #*1))
+	(shift-n (nth-value 1 (decode-imm-shift #*10 imm5))))
+    (when condition-passed
+      (multiple-value-bind (result carry)
+	  (shift-c (reg m) :sr-type-asr shift-n APSR.C)
+	(if (= d 15)
+	    (alu-write-pc result) ; setflags is always false here.
+	    (progn (setf (reg d) result)
+		   (when setflags
+		     (setf APSR.N (<> result 31 31))
+		     (setf APSR.Z (is-zero-bit result))
+		     (setf APSR.C carry)))))))) ; APSR.V unchanged.
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;;;
-;; ;;; Instruction: ASR (register)
-;; ;;; 
-;; ;;; Arithmetic Shift Right (register) shifts a register value right by
-;; ;;; a variable number of bits, shifting in copies of its sign bit, and
-;; ;;; writes the result to the destination register. The variable number
-;; ;;; of bits is read from the bottom byte of a register. It can
-;; ;;; optionally update the condition flags based on the result.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   Rm  |0 1 0 0|  Rn   |"
-;;     t
-;;   (ASR{S}{<c>} {<Rd>} <Rn> <Rm>)
-;;   ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction: ASR (register)
+;;; 
+;;; Arithmetic Shift Right (register) shifts a register value right by
+;;; a variable number of bits, shifting in copies of its sign bit, and
+;;; writes the result to the destination register. The variable number
+;;; of bits is read from the bottom byte of a register. It can
+;;; optionally update the condition flags based on the result.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |0 0|0|1 1 0 1|S| (0000)|   Rd  |   Rm  |0 1 0 0|  Rn   |"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (format stream
+	  "ASR~a~a ~a~a, ~a"
+	  (if (equal S #*1) "S" "")
+	  (condition-to-string cond)
+	  (optional-register-to-string Rd Rn)
+	  (register-to-string Rn)
+	  (register-to-string Rm))
+  ;; Operation.
+  (let ((d (u-int Rd))
+	(n (u-int Rn))
+	(m (u-int Rm))
+	(setflags (equal S #*1)))
+    (when (or (= d 15) (= n 15) (= m 15))
+      unpredictable)
+    (when condition-passed
+      (let ((shift-n (u-int (<> (reg m) 7 0))))
+	(multiple-value-bind (result carry)
+	    (shift-c (reg n) :sr-type-asr shift-n APSR.C)
+	  (setf (reg d) result)
+	  (when setflags
+	    (setf APSR.N (<> result 31 31))
+	    (setf APSR.Z (is-zero-bit result))
+	    (setf APSR.C carry))))))) ; APSR.V unchanged.
     
-;; ;;; Instruction: B
-;; ;;; 
-;; ;;; Branch causes a branch to a target address.
-;; (define-instruction
-;;     ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
-;;     ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
-;;     "| cond  |1 0 1 0|                   imm24                       |"
-;;     t
-;;   (B{<c>} <label>)
-;;   ())
+;;; Instruction: B
+;;; 
+;;; Branch causes a branch to a target address.
+(define-instruction
+    ;;3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 
+    ;;1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+    "| cond  |1 0 1 0|                   imm24                       |"
+    ;; Additional condition.
+    t
+  ;; Disassembler.
+  (format stream
+	  "B~a ~a"
+	  (condition-to-string cond)
+	  (s-int (sign-extend (cat imm24 #*00) 32)))
+  ;; Operation
+  (let ((imm32 (sign-extend (cat imm24 #*00) 32)))
+    (when condition-passed
+      (branch-write-pc (add (reg 15) imm32)))))
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;;;
