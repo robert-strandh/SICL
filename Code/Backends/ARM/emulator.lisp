@@ -48,12 +48,55 @@
   ((%registers
     :initform (make-array 16
 			  :element-type '(bit-vector 32)
-			  :initial-element
-			  #*00000000000000000000000000000000)
+			  :initial-contents
+			  (loop repeat 16
+				collect (make-array 32
+						    :element-type 'bit
+						    :initial-element 0)))
     :reader registers)
    (%condition-codes
     :initform (make-array 32 :element-type 'bit :initial-element 0)
     :reader condition-codes)
+   (%current-instruction
+    :initform nil
+    :accessor current-instruction)
+   (%next-instruction
+    :initform nil
+    :accessor next-instruction)
    (%memory
     :initform (make-array +number-of-pages+ :initial-element nil)
     :reader memory)))
+
+(defun execute-one-instruction (emulator)
+  (let ((*machine* emulator))
+    (when (null (current-instruction emulator))
+      ;; The current instruction will be NIL when the machine is
+      ;; started, but also right after a branchinstruction has been
+      ;; executed.  When that is the case, we need to start loading
+      ;; instructions from the address in PC.
+      (setf (current-instruction emulator)
+	    (integer-to-bit-vector
+	     (load-word (memory emulator) (u-int (reg 15)))
+	     32))
+      (setf (reg 15) (add (reg 15) 4))
+      (setf (next-instruction emulator)
+	    (integer-to-bit-vector
+	     (load-word (memory emulator) (u-int (reg 15)))
+	     32))
+      (setf (reg 15) (add (reg 15) 4)))
+    ;; Executing a branch instruction will set the next
+    ;; instruction to NIL.
+    (execute-instruction (current-instruction emulator))
+    ;; So if the instruction we just executed was a branch, we are now
+    ;; setting the current instruction to NIL,
+    (setf (current-instruction emulator)
+	  (next-instruction emulator))
+    ;; If the instruction that we just exedcuted was a branch, the
+    ;; instruction that gets loaded here will be discared.
+    (setf (next-instruction emulator)
+	  (integer-to-bit-vector
+	   (load-word (memory emulator) (u-int (reg 15)))
+	   32))
+    (setf (reg 15) (add (reg 15) 4))))
+
+	    
