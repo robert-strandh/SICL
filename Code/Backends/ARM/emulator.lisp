@@ -32,7 +32,13 @@
   
 (defun load-memory-unaligned (memory address number-of-bytes)
   (loop for offset from 0 below number-of-bytes
-	sum (ash (load-byte memory (+ address offset)) (* offset 8))))
+	for bit-pos = (* offset 8)
+	sum (ash (load-byte memory (+ address offset)) bit-pos)))
+
+(defun store-memory-unaligned (memory address value number-of-bytes)
+  (loop for offset from 0 below number-of-bytes
+	for bit-pos = (* offset 8)
+	do (store-byte memory (+ address offset) (ldb (byte 8 bit-pos) value))))
 
 (defun load-word (memory address)
   (assert (= (mod address 4) 0))
