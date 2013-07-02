@@ -30,12 +30,13 @@
     (ensure-page memory page-number)
     (setf (aref (aref memory page-number) offset) value)))
   
+(defun load-memory-unaligned (memory address number-of-bytes)
+  (loop for offset from 0 below number-of-bytes
+	sum (ash (load-byte memory (+ address offset)) (* offset 8))))
+
 (defun load-word (memory address)
   (assert (= (mod address 4) 0))
-  (+ (ash (load-byte memory (+ address 0)) 0)
-     (ash (load-byte memory (+ address 1)) 8)
-     (ash (load-byte memory (+ address 2)) 16)
-     (ash (load-byte memory (+ address 3)) 24)))
+  (load-memory-unaligned memory address 4))
 
 (defun store-word (memory address value)
   (assert (= (mod address 4) 0))
