@@ -200,6 +200,8 @@
    #:linkage-location #:make-linkage-location
    #:instruction #:successors #:inputs #:outputs
    #:unique-id
+   #:clone-instruction
+   #:enter-instruction #:make-enter-instruction
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction #:fun
@@ -209,6 +211,10 @@
    #:enclose-instruction #:make-enclose-instruction #:code
    #:get-argcount-instruction #:make-get-argcount-instruction
    #:get-arg-instruction #:make-get-arg-instruction
+   #:load-constant-instruction #:make-load-constant-instruction 
+   #:load-global-instruction #:make-load-global-instruction 
+   #:load-static-env-instruction #:make-load-static-env-instruction 
+   #:load-linkage-vector-instruction #:make-load-linkage-vector-instruction 
    #:memref-instruction #:make-memref-instruction #:cacheable
    #:memset-instruction #:make-memset-instruction
    #:u+-instruction #:make-u+-instruction
@@ -264,6 +270,22 @@
 (defpackage #:sicl-program
   (:use #:common-lisp)
   (:export
+   #:program
+   #:*program*
+   #:predecessors
+   #:touch
+   #:instruction-graph
+   #:no-redundant-temporaries
+   #:no-error-successors
+   #:simplified-instructions
+   #:remove-nop-instructions
+   #:unique-constants
+   #:basic-blocks
+   #:dominance
+   #:no-constant-inputs
+   #:initial-transformations
+   #:insert-instruction-before-instruction
+   #:insert-assignment-before
    #:convert-constant
    #:convert-to-lir
    ))
