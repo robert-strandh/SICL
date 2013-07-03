@@ -173,7 +173,7 @@
     :value value))
 
 (defmethod draw-datum ((datum immediate-input) stream)
-  (format stream "   ~a [fillcolor = lightgreen, label = \"~a\"]~%"
+  (format stream "   ~a [fillcolor = aquamarine, label = \"~a\"]~%"
 	  (gethash datum *datum-table*)
 	  (value datum)))
 
@@ -282,7 +282,7 @@
     :storage storage))
 
 (defmethod draw-datum ((datum special-location) stream)
-  (format stream "   ~a [fillcolor = cyan, label = \"~a\"]~%"
+  (format stream "   ~a [fillcolor = cyan4, label = \"~a\"]~%"
 	  (gethash datum *datum-table*)
 	  (name datum)))
 
@@ -371,7 +371,7 @@
     :name name))
 
 (defmethod draw-datum ((datum register-location) stream)
-  (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
+  (format stream "   ~a [fillcolor = red, label = \"~a\"]~%"
 	  (gethash datum *datum-table*)
 	  (name datum)))
 
@@ -448,8 +448,8 @@
 
 (defclass instruction ()
   ((%successors :initform '() :initarg :successors :accessor successors)
-   (%inputs :initform '() :initarg :inputs :reader inputs)
-   (%outputs :initform '() :initarg :outputs :reader outputs)))
+   (%inputs :initform '() :initarg :inputs :accessor inputs)
+   (%outputs :initform '() :initarg :outputs :accessor outputs)))
 
 (defmethod initialize-instance :after ((obj instruction) &key &allow-other-keys)
   (unless (and (listp (successors obj))
@@ -457,6 +457,14 @@
 			(typep successor 'instruction))
 		      (successors obj)))
     (error "successors must be a list of instructions")))
+
+(defgeneric clone-instruction (instruction))
+
+(defmethod clone-instruction ((instruction instruction))
+  (make-instance (class-of instruction)
+    :inputs (inputs instruction)
+    :outputs (outputs instruction)
+    :successors (successors instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -515,6 +523,25 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions for Common Lisp operators.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction ENTER-INSTRUCTION.
+;;;
+;;; This instruction is mostly a placeholder for backend to put
+;;; information that needs to be present right at the beginning of
+;;; each procedure.  It has a single successor.
+
+(defclass enter-instruction (instruction)
+  ())
+
+(defun make-enter-instruction (successor)
+  (make-instance 'enter-instruction
+    :successors (list successor)))
+
+(defmethod draw-instruction ((instruction enter-instruction) stream)
+  (format stream "   ~a [label = \"enter\"];~%"
+	  (unique-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -632,6 +659,11 @@
 	  (gethash (code instruction) *instruction-table*)
 	  (unique-id instruction)))
 
+(defmethod clone-instruction :around ((instruction enclose-instruction))
+  (let ((new (call-next-method)))
+    (setf (code new) (code instruction))
+    new))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction GET-ARGCOUNT-INSTRUCTION.
@@ -663,6 +695,75 @@
 
 (defmethod draw-instruction ((instruction get-arg-instruction) stream)
   (format stream "   ~a [label = \"arg\", color = orange];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-CONSTANT-INSTRUCTION.
+
+(defclass load-constant-instruction (instruction)
+  ())
+
+(defun make-load-constant-instruction (inputs output successor)
+  (make-instance 'load-constant-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (list successor)))
+
+(defmethod draw-instruction ((instruction load-constant-instruction) stream)
+  (format stream "   ~a [label = \"LC\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-GLOBAL-INSTRUCTION.
+
+(defclass load-global-instruction (instruction)
+  ())
+
+(defun make-load-global-instruction (inputs output successor)
+  (make-instance 'load-global-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (list successor)))
+
+(defmethod draw-instruction ((instruction load-global-instruction) stream)
+  (format stream "   ~a [label = \"LX\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-STATIC-ENV-INSTRUCTION.
+
+(defclass load-static-env-instruction (instruction)
+  ())
+
+(defun make-load-static-env-instruction (input output successor)
+  (make-instance 'load-static-env-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+(defmethod draw-instruction ((instruction load-static-env-instruction) stream)
+  (format stream "   ~a [label = \"LSE\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-LINKAGE-VECTOR-INSTRUCTION.
+
+(defclass load-linkage-vector-instruction (instruction)
+  ())
+
+(defun make-load-linkage-vector-instruction (input output successor)
+  (make-instance 'load-linkage-vector-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+(defmethod draw-instruction
+    ((instruction load-linkage-vector-instruction) stream)
+  (format stream "   ~a [label = \"LLV\"];~%"
 	  (unique-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
