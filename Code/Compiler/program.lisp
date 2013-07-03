@@ -1090,7 +1090,8 @@
 (defgeneric convert-to-lir (backend initial-instruction))
 
 (defun convert-from-mir-to-lir (program)
-  (convert-to-lir (backend program) (initial-instruction program)))
+  (convert-to-lir (backend program) (initial-instruction program))
+  (touch program 'instruction-graph))
 
 (set-processor 'lir 'convert-from-mir-to-lir)
 

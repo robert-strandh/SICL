@@ -102,9 +102,7 @@
 		 (mapc #'traverse (sicl-mir:successors instruction)))))
       (traverse initial-instruction))
     ;; Now convert all instructions previously collected.
-    (mapc #'convert-instruction all-instructions)
-    (sicl-program:touch sicl-program:*program*
-			'sicl-program:instruction-graph)))
+    (mapc #'convert-instruction all-instructions)))
 
 (defmethod sicl-program:convert-to-lir ((backend backend-arm) initial-instruction)
   (convert-instruction-graph initial-instruction))
