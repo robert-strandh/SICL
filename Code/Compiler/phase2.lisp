@@ -327,7 +327,8 @@
 ;;; Compile a function.
 
 (defun compile-function (body-ast)
-  (compile-ast body-ast (context t '() '())))
+  (sicl-mir:make-enter-instruction 
+   (compile-ast body-ast (context t '() '()))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
