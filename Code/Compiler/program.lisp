@@ -1100,6 +1100,150 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Liveness analysis
+;;;
+;;; An item I (lexical location or register) is LIVE at some point P
+;;; in a program if and only if there exists an execution path from P
+;;; to the end of the procedure on which I is used before it is
+;;; assigned to.
+;;;
+;;; Liveness is going to be represented as two sets of items for each
+;;; instructions; the items that are live BEFORE the instruction, and
+;;; the items that are live AFTER the instruction.
+;;;
+;;; Computing liveness is a dataflow problem that is best computed
+;;; from the end of the program to the beginning of the program.
+;;; Given the set A of live items AFTER some instruction I, the set B
+;;; of items live BEFORE the instruction is computed as A intersected
+;;; with the items written to by I and then unioned by the items used
+;;; by I.  Given the set Bi of live items live before each successor i
+;;; of some instruction I, the set A of live items after I is computed
+;;; as the union of all the Bi.
+;;;
+;;; Initially the sets A(I) and B(I) for each instruction are empty.
+;;; The computation is iterated until a fixpoint is reached.  In fact,
+;;; it is unnecessary to maintain an explicit representation of both
+;;; the A and the B set.  The B set is enough. 
+;;;
+;;; The literature suggests using bitvectors for this computation,
+;;; where a particular item has a unique index in the bitvector.
+;;; However, to avoid storing the unique indices in the items, we
+;;; would have to maintain a hash table and a vector for the mapping
+;;; from items to indices and from indices to items respectively.
+;;; Instead we attempt to maintain the sets as Lisp lists.  If
+;;; performance becomes a problem, we might revisit this decision.
+;;;
+;;; The literature also suggests doing this computation on basic
+;;; blocks.  The reason is that a basic block can be made to behave
+;;; much like a single instruction, in that it defines and uses some
+;;; items.  It can be a big gain in performance to perform the
+;;; iterative computation on basic blocks until a fixpoint is reached,
+;;; and then compute a simple loop for each basic block.  Again, we
+;;; are willing to bet that performance is no longer a problem, and
+;;; that we can get away with doing this computation on individual
+;;; instructions.  And of course, we might rethink that decision as
+;;; well if performance becomes a problem.
+;;;
+;;; We have a further complication compared to the situation described
+;;; in the literature, namely that our programs are structured into
+;;; nested procedures, and that the successor of some instruction can
+;;; be in an enclosing procedure.  However, liveness analysis is only
+;;; concerned with variables with DYNAMIC EXTENT.  Variables with
+;;; indefinite extent are not allocated in register nor on the stack,
+;;; but in the static environment.  A call to an enclosed procedure
+;;; must save all callee-saved registers that might be trashed by that
+;;; procedure, and those registers must be restored as part of the
+;;; non-local transfer.  As far as liveness analysis is concerned
+;;; then, an instruction I in a procedure P where every successor Ji
+;;; of I is in Qi /= P can be treated as a RETURN, i.e. the end of the
+;;; execution of P.  As far as Q is concerned, a predecessor I of J
+;;; can be ignored.
+
+(defun set-equal (set1 set2)
+  (and (subsetp set1 set2 :test #'eq) (subsetp set2 set1 :test #'eq)))
+
+(defun compute-liveness (program)
+  (let ((*program* program))
+    (make program 'instruction-ownership)
+    (make program 'predecessors)
+    (let (;; An entry in the table associates an instruction with a list of
+	  ;; the items that are live before it.
+	  (btable (make-hash-table :test #'eq))
+	  ;; An entry in the table associates an instruction with a list of
+	  ;; the items that are live after it.
+	  (atable (make-hash-table :test #'eq)))
+      (labels
+	  ((traverse (instruction)
+	     (let ((live '()))
+	       ;; First compute the union of the items that are live
+	       ;; before each of the successors of INSTRUCTION.
+	       (loop for successor in (successors instruction)
+		     do (setf live
+			      (union live (gethash successor btable))))
+	       (multiple-value-bind (current present-p)
+		   (gethash instruction atable)
+		 (unless (and present-p (set-equal live current))
+		   ;; Something has changed.  Propagate!
+		   (setf (gethash instruction atable) live)
+		   ;; Remove from the set the items that are written
+		   ;; by INSTRUCTION.
+		   (loop for output in (outputs instruction)
+			 do (setf live (remove output live :test #'eq)))
+		   ;; Add to the set the items used by INSTRUCTION
+		   ;; that are registers or lexical locations.
+		   (loop for input in (inputs instruction)
+			 do (when (or (typep input 'sicl-mir:lexical-location)
+				      (typep input 'sicl-mir:register-location))
+			      (pushnew input live :test #'eq)))
+		   (setf (gethash instruction btable) live)
+		   (loop for pred in (predecessors instruction)
+			 do (when (eq (owner pred) (owner instruction))
+			      (traverse pred))))))))
+	(map-instructions
+	 (lambda (instruction)
+	   (when (or (null (successors instruction))
+		     (every (lambda (successor)
+			      (not (eq (owner successor) (owner instruction))))
+			    (successors instruction)))
+	     (traverse instruction)))))
+      atable)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute a set of conflicts for the register allocator.  Recall
+;;; that two items generate a conflict when one is live at the point
+;;; where the other is written to.
+;;;
+;;; We do not want to include conflicts between two registers in our
+;;; set.  Nor do we want multiple copies of some conflict.  We have to
+;;; be careful because the relation is symmetric, so that if (L1 . L2)
+;;; is a conflict in the set, we do not want to add (L2 . L1) because
+;;; it is the same conflict.
+
+(defun same-conflict-p (c1 c2)
+  (or (and (eq (car c1) (car c2))
+	   (eq (cdr c1) (cdr c2)))
+      (and (eq (car c1) (cdr c2))
+	   (eq (cdr c1) (car c2)))))
+
+(defun compute-conflicts (program)
+  (let ((*program* program)
+	(conflicts '()))
+    (let ((atable (compute-liveness program)))
+      (map-instructions
+       (lambda (instruction)
+	 (loop for output in (outputs instruction)
+	       do (loop for live in (gethash instruction atable)
+			do (when (or (typep output 'sicl-mir:lexical-location)
+				     (typep live 'sicl-mir:lexical-location))
+			     (when (typep live 'sicl-mir:register-location)
+			       (rotatef live output))
+			     (pushnew (cons live output) conflicts
+				      :test #'same-conflict-p)))))))
+    conflicts))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
