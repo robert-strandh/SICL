@@ -447,7 +447,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Determine the LEXICAl DEPTH of each procedure in a program.
+;;; Determine the LEXICAL DEPTH of each procedure in a program.
 
 (defun compute-lexical-depth (procedure)
   (setf (lexical-depth procedure)
@@ -1241,6 +1241,74 @@
 			     (pushnew (cons live output) conflicts
 				      :test #'same-conflict-p)))))))
     conflicts))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the reaching definitions of a program.  
+;;;
+;;; A DEFINITION is a CONS of an INSTRUCTION and a LEXICAL-LOCATION
+;;; that is an output of that instruction.  A definition is said to
+;;; REACH an instruction I if and only if there exists an execution
+;;; path from the definition to I in which the lexical location is not
+;;; the output of any other instruction.
+;;;
+;;; The REACHING DEFINITIONS of an instruction I is a SET of
+;;; DEFINITIONS that reach I.  
+;;;
+;;; The problem of computing the reaching definitions of a procedure
+;;; is a so-called FORWARD DATAFLOW problem, in that it can be solved
+;;; by fixpoint iteration, starting from the initial instruction and
+;;; following successors until a fixpoint is reached.  
+
+(defun compute-reaching-definitions-for-procedure (procedure)
+  (let ((atable (make-hash-table :test #'eq))
+	(btable (make-hash-table :test #'eq)))
+    (flet ((same-set-p (s1 s2)
+	     (and (subsetp s1 s2 :test #'equal)
+		  (subsetp s2 s1 :test #'equal))))
+      (flet ((lexical-outputs (instruction)
+	       (remove-if-not (lambda (output)
+				(typep output 'sicl-mir:lexical-location))
+			      (sicl-mir:outputs instruction))))
+	(flet ((b-to-a (instruction)
+		 (let* ((before (gethash instruction btable))
+			(locations (lexical-outputs instruction))
+			(stripped (remove-if (lambda (x)
+					       (member (cdr x) locations
+						       :test #'eq))
+					     before))
+			(new-definitions (mapcar (lambda (location)
+						   (cons instruction location))
+						 locations))
+			(after (append new-definitions stripped)))
+		   (setf (gethash instruction atable) after))))
+	  ;; A function that returns only the successors of an
+	  ;; instruction I that have the same owner as I does.
+	  (flet ((sp-successors (instruction)
+		   (remove-if-not (lambda (succ)
+				    (eq (owner instruction) (owner succ)))
+				  (successors instruction))))
+	    (labels ((traverse (instruction)
+		       (multiple-value-bind (value present-p)
+			   (gethash instruction btable)
+			 (let* ((new (apply
+				      #'concatenate 'list
+				      (mapcar (lambda (inst)
+						(gethash inst atable))
+					      (predecessors instruction))))
+				(unique (remove-duplicates new :test #'equal)))
+			   (when (or (not present-p)
+				     (not (same-set-p value unique)))
+			     (setf (gethash instruction btable) new)
+			     (b-to-a instruction)
+			     (mapc #'traverse (sp-successors instruction)))))))
+	      (traverse (initial-instruction procedure)))))))
+    btable))
+
+(defun compute-reaching-definitions (program)
+  (let ((*program* program))
+    (mapcar #'compute-reaching-definitions-for-procedure
+	    (procedures program))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
