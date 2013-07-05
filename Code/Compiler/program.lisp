@@ -1307,8 +1307,12 @@
 
 (defun compute-reaching-definitions (program)
   (let ((*program* program))
-    (mapcar #'compute-reaching-definitions-for-procedure
-	    (procedures program))))
+    (loop for procedure in (procedures program)
+	  append
+	  (loop for instruction being each hash-key
+		using (hash-value definitions)
+		of (compute-reaching-definitions-for-procedure procedure)
+		collect (cons instruction definitions)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
