@@ -1316,6 +1316,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compute DU-chains.
+;;;
+;;; A UD-chain is a not a chain at all, but rather a mapping that
+;;; takes a DEFINITION and returns a set of INSTRUCTIONS that might
+;;; use that definition.  Recall that a definition is a CONS of an
+;;; INSTRUCTION and a LEXICAL-LOCATION.  
+
+(defun compute-du-chains (program)
+  (let* (;; Start by computing the reaching definitions.  Recall that
+	 ;; we obtain a list for each instruction in the program.  The
+	 ;; list has the instruction as its CAR and the definitions
+	 ;; that reach that definition as its CDR.
+	 (reaching-definitions (compute-reaching-definitions program))
+	 ;; To obtain every definition in the program, one way is to
+	 ;; uniquify the lists of the definitions returned by the
+	 ;; reaching definitions.  It's a bit wasteful since there are
+	 ;; a lot of duplicates, but who is counting? 
+	 (definitions (remove-duplicates
+		       (reduce #'append
+			       (mapcar #'cdr reaching-definitions)
+			       :from-end t)
+		       :test #'equal)))
+    (mapcar (lambda (definition)
+	      (cons definition
+		    (loop for rd in reaching-definitions
+			  when (and (member (cdr definition)
+					    (sicl-mir:inputs (car rd))
+					    :test #'eq)
+				    (member definition (cdr rd)
+					    :test #'equal))
+			    collect (car rd))))
+	    definitions)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
