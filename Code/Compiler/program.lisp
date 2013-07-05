@@ -1351,6 +1351,120 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compute Webs.
+;;;
+;;; Two DU-chains are said to INTERSECT if and only if:
+;;;
+;;;   * They concern the same lexical location, and
+;;;
+;;;   * They have at least one using instruction in common.
+;;;
+;;; A WEB is a maximal set of intersecting DU-chains.  The concept of
+;;; a web is an important one, because when there are several distinct
+;;; webs for one particular lexical location, then this is a result of
+;;; the programmer having used the same variable name for several
+;;; distinct purposes.  By recognizing such distinct usages, we can
+;;; improve register allocation because the number of conflicts in the
+;;; allocation graph decreases then.
+;;;
+;;; This function returns a list of as many elements as there are
+;;; lexical locations in the program.  Each element of the list is a
+;;; list of webs.  A web is represented as a list of three elements:
+;;;
+;;;   * The first element is the lexical location concerned by the
+;;;     web.
+;;;
+;;;   * The second element is a list of defining instructions.
+;;;
+;;;   * The third element is a list of using instructions.
+;;; 
+;;; Most sublists of the top-level list will contain a single element,
+;;; in particular sublists for temporary variables allocated by the
+;;; compiler.
+;;;
+;;; Recall that a DU-chain is represented as a list with the CAR being
+;;; a CONS cell of an defining instruction and a lexical location, and
+;;; the CDR being a list of using instructions. 
+
+;;; From a non-empty list of DU-chains concerning the same lexical
+;;; location, exctract a single web consisting of all the DU-chains in
+;;; the list that instersect the first DU-chain of the list.  Return
+;;; two values: the web that was calculated, and a list of the
+;;; remaining DU-chains that do not instersect the first one.
+(defun extract-one-web (du-chains)
+  (let* ((first (car du-chains))
+	 (rest (cdr du-chains))
+	 (web (list (cdar first) (list (caar first)) (cdr first))))
+    (loop for chain = (find-if-not
+		       (lambda (chain)
+			 (null (intersection (cdr chain) (third web)
+					     :test #'eq)))
+		       rest)
+	  until (null chain)
+	  do (setf rest (remove chain rest :test #'eq))
+	     (push (caar chain) (second web))
+	     (setf (third web) (union (third web) (cdr chain) :test #'eq)))
+    (values web rest)))
+  
+;;; Given a (possibly empty) list of DU-chains concerning the same
+;;; lexical location, return a list of distinct webs correspodning to
+;;; those DU-chains.
+;;;
+;;; We do not expect there to be very many different du-chains
+;;; concerning one particular location, so we can afford to use a
+;;; recusive solution.
+(defun chains-to-webs (du-chains)
+  (if (null du-chains)
+      '()
+      (multiple-value-bind (web rest)
+	  (extract-one-web du-chains)
+	(cons web (chains-to-webs rest)))))
+
+(defun compute-webs (program)
+  (let ((du-chains (compute-du-chains program))
+	(webs '()))
+    (loop until (null du-chains)
+	  for lexical-location = (cdar (car du-chains))
+	  do (let ((related-chains
+		     (remove lexical-location du-chains
+			     :key #'cdar :test-not #'eq)))
+	       (setf du-chains
+		     (set-difference du-chains related-chains :test #'eq))
+	       (push (chains-to-webs related-chains) webs)))
+    webs))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Uniquify web.
+;;;
+;;; Given a web, allocate a new lexical location and replace the
+;;; existing lexical location in all the defining and all the using
+;;; instructions by the new one.
+;;; 
+;;; The purpose of this transformation is to make sure that each
+;;; lexical location of the program is concerned by a single web, so
+;;; that we can use lexical locations as the unit for register
+;;; allocation.  When we discover that we have more than one distinct
+;;; web for a particular lexical location, we uniquify all but one of
+;;; them.  For most lexical locations, there is a single web, so for
+;;; most lexical locations, this function will never be called.
+;;;
+;;; Recall that a web is represented as a list of three elements: The
+;;; lexical location concerned by the web, a list of defining
+;;; instructions, and a list of using instructions.
+
+(defun uniquify-web (web)
+  (let ((old (first web))
+	(new (sicl-mir:new-temporary)))
+    (mapc (lambda (instruction)
+	    (nsubstitute new old (sicl-mir:outputs instruction)))
+	  (second web))
+    (mapc (lambda (instruction)
+	    (nsubstitute new old (sicl-mir:inputs instruction)))
+	  (third web))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
