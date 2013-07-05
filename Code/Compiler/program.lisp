@@ -1351,7 +1351,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute Webs.
+;;; Compute web sets.
 ;;;
 ;;; Two DU-chains are said to INTERSECT if and only if:
 ;;;
@@ -1420,7 +1420,7 @@
 	  (extract-one-web du-chains)
 	(cons web (chains-to-webs rest)))))
 
-(defun compute-webs (program)
+(defun compute-web-sets (program)
   (let ((du-chains (compute-du-chains program))
 	(webs '()))
     (loop until (null du-chains)
@@ -1465,9 +1465,38 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Uniquify webs.
+;;;
+;;; Make sure that every lexical location in a program corresponds to
+;;; a unique web.
+
+(defun uniquify-webs (program)
+  (let ((*program* program))
+    ;; Recall that the web sets computed by COMPUTE-WEB-SETS is a list
+    ;; that has as many elements as there are lexical locations in the
+    ;; program.  Each element of the top-level list is a set of webs
+    ;; represented as a list, all concerning the same lexical
+    ;; location.  We uniqify all but one (the first) web in the list.
+    (mapc (lambda (web-set)
+	    (unless (null (cdr web-set))
+	      (touch program 'instruction-graph))
+	    (mapc #'uniquify-web (cdr web-set)))
+	  (compute-web-sets program)))
+  nil)
+
+(set-processor 'unique-webs 'uniquify-webs)
+
+(add-dependencies 'unique-webs
+		  '(predecesors
+		    procedures
+		    instruction-ownership))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
+  (make program 'unique-webs)
   (make program 'no-redundant-temporaries)
   (make program 'no-error-successors)
   (make program 'simplified-instructions)
