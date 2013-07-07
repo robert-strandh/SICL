@@ -227,9 +227,9 @@
    (%preferred-register :initform nil :accessor preferred-register)
    ;; The spill cost is computed once all new lexical locations have
    ;; been added by the backend.  The spill cost is computed as the
-   ;; number of estimated defines/uses of the lexical location during
-   ;; the execution of the program divided by the number of conflicts
-   ;; it participates in.
+   ;; number of estimated definitions/uses of the lexical location
+   ;; during the execution of the program divided by the number of
+   ;; conflicts it participates in.
    (%spill-cost :accessor spill-cost)))
 
 (defmethod make-datum-info ((datum sicl-mir:lexical-location))
@@ -1558,6 +1558,38 @@
 		 (traverse initial)
 		 (push temp result))
       result)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the spill cost of every lexical location.
+;;;
+;;; The spill cost is computed once all new lexical locations have
+;;; been added by the backend.  The spill cost is computed as the
+;;; number of estimated definitions/uses of the lexical location during
+;;; the execution of the program divided by the number of conflicts it
+;;; participates in.
+;;;
+;;; The conflicts are computed in the same way as for the register
+;;; allocator.  For now, we use a very crude estimate of the number of
+;;; definitions/uses.  We just count the number of assigning and using
+;;; instructions, except that if an instruction is part of a loop, we
+;;; count it as 10 instead of as 1.  We could do much better here, by
+;;; counting nested loops and by taking branches into account.
+
+(defun compute-spill-costs (program)
+  (let* ((loops (remove 1 (kosaraju (initial-instruction program))
+			:test #'length))
+	 (loop-instructions (reduce #'append loops :from-end t))
+	 (conflicts (compute-conflicts program)))
+    (map-lexical-locations
+     (lambda (location)
+       (setf (spill-cost location)
+	     (/ (loop for inst in (append (using-instructions location)
+					  (assigning-instructions location))
+		      sum (if (member inst loop-instructions :test #'eq)
+			      10
+			      1))
+		(sicl-graph-coloring:degree location conflicts)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
