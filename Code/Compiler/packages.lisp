@@ -274,7 +274,6 @@
   (:export
    #:program
    #:*program*
-   #:predecessors
    #:touch
    #:instruction-graph
    #:no-redundant-temporaries
@@ -290,6 +289,7 @@
    #:insert-assignment-before
    #:convert-constant
    #:convert-to-lir
+   #:required-register #:preferred-register
    ))
 
 (defpackage #:sicl-type-proclamations

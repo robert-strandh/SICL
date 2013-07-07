@@ -205,7 +205,32 @@
   (;; The procedure to which this lexical location belongs.
    (%owner :initform nil :accessor owner)
    ;; A list of all instructions that have this location as an output.
-   (%assigning-instructions :initform nil :accessor assigning-instructions)))
+   (%assigning-instructions :initform nil :accessor assigning-instructions)
+   ;; If a backend requires this lexical location to be in a
+   ;; particular register when it is not spilled, then it can set this
+   ;; slot to the required register.  If there is no required register
+   ;; for this lexical location, then the value of this slot is nil.
+   ;; The register allocator uses this information to assign a
+   ;; register a priori, and excluding this lexical location from
+   ;; further consideration.  The backend typically uses this method
+   ;; for callee-saved register; either they are spilled to the stack,
+   ;; or they stay in a particular register.
+   (%required-register :initform nil :accessor required-register)
+   ;; If a backend determins that it is advantageous for this lexical
+   ;; location to be in a particular register, then it sets this slot
+   ;; to the preferred register.  The effect is that when the register
+   ;; allocator assigns a register to this location, rather than
+   ;; taking any available register, if the preferred register is
+   ;; available, that is the one it selects.  The backend typically
+   ;; uses this method for lexical locations representing parameters
+   ;; and arguments that are passed in registers.  
+   (%preferred-register :initform nil :accessor preferred-register)
+   ;; The spill cost is computed once all new lexical locations have
+   ;; been added by the backend.  The spill cost is computed as the
+   ;; number of estimated defines/uses of the lexical location during
+   ;; the execution of the program divided by the number of conflicts
+   ;; it participates in.
+   (%spill-cost :accessor spill-cost)))
 
 (defmethod make-datum-info ((datum sicl-mir:lexical-location))
   (make-instance 'lexical-location-info))
