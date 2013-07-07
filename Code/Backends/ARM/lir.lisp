@@ -45,34 +45,6 @@
 ;;;
 ;;; Convert a MIR instruction graph to LIR.
 ;;;
-;;; When we want to alter the instruction graph, we can't really
-;;; insert instructions BEFORE another instruction.  The reason is
-;;; that, although the predecessors are known initially, once we have
-;;; altered the instruction graph, this is no longer the case.  For
-;;; that reason, we are obliged to always insert instructions AFTER
-;;; other instructions.  This leads to strange code where the
-;;; instruction to be alterd is first cloned and then it has its class
-;;; changed.
-;;;
-;;; However, things are not as bad as they seem.  The MIR package
-;;; provides a function CLONE-INSTRUCTION that we can use. 
-;;;
-;;; So if we have an instruction A and we would have wanted to precede
-;;; A with some other instruction B, we do as follows:
-;;;
-;;;   * Clone A, giving us A'.
-;;;
-;;;   * Change the class of A to that of B, passing appropriate
-;;;     initargs, including A' as its successor. 
-
-(defun add-instruction-before-instruction
-    (instruction new-class inputs outputs)
-  (let ((cloned (sicl-mir:clone-instruction instruction)))
-    (change-class instruction new-class
-		  :inputs inputs
-		  :outputs outputs
-		  :successors (list cloned))
-    (values instruction cloned)))
 
 (defvar *linkage-vector-lexical*)
 (defvar *code-object-lexical*)
@@ -119,25 +91,28 @@
 	      (aref *registers* 14)))
   ;; Generate code for moving the retrurn address to a lexical
   ;; variable.
-  (setf (sicl-mir:successors instruction)
-	(list (sicl-mir:make-assignment-instruction
-	       (aref *registers* 14)
-	       *return-address-lexical*
-	       (car (sicl-mir:successors instruction)))))
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 14)
+    *return-address-lexical*
+    (car (sicl-mir:successors instruction)))
+   instruction)
   ;; Generate code for moving the static environment argument to a
   ;; lexical variable.
-  (setf (sicl-mir:successors instruction)
-	(list (sicl-mir:make-assignment-instruction
-	       (aref *registers* 3)
-	       *code-object-lexical*
-	       (car (sicl-mir:successors instruction)))))
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 3)
+    *code-object-lexical*
+    (car (sicl-mir:successors instruction)))
+   instruction)
   ;; Generate code for moving the linkage vector argument to a lexical
   ;; variable.
-  (setf (sicl-mir:successors instruction)
-	(list (sicl-mir:make-assignment-instruction
-	       (aref *registers* 12)
-	       *linkage-vector-lexical*
-	       (car (sicl-mir:successors instruction))))))
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 12)
+    *linkage-vector-lexical*
+    (car (sicl-mir:successors instruction)))
+   instruction))
 
 (defmethod convert-instruction ((instruction sicl-mir:get-arg-instruction))
   (let* ((input (car (sicl-mir:inputs instruction)))
@@ -155,27 +130,27 @@
     ;; FUNCALL-INSTRUCTION by the register.
     (loop for rest on (cdr inputs)
 	  for i from 0 below 3
-	  do (setf instruction
-		   (nth-value 1 (add-instruction-before-instruction
-				 instruction
-				 'sicl-mir:assignment-instruction
-				 (list (car rest))
-				 (list (aref *registers* i)))))
+	  do (sicl-mir:insert-instruction-before
+	      (sicl-mir:make-assignment-instruction
+	       (car rest)
+	       (aref *registers* i)
+	       instruction)
+	      instruction)
 	     (setf (car rest) (aref *registers* i)))
     ;; Insert instructions for loading the static environment and the
     ;; linkage vector of the callee into appropriate registers.
-    (setf instruction
-	  (nth-value 1 (add-instruction-before-instruction
-			instruction
-			'sicl-mir:load-static-env-instruction
-			(list (car inputs))
-			(list (aref *registers* 3)))))
-    (setf instruction
-	  (nth-value 1 (add-instruction-before-instruction
-			instruction
-			'sicl-mir:load-linkage-vector-instruction
-			(list (car inputs))
-			(list (aref *registers* 12)))))
+    (sicl-mir:insert-instruction-before
+     (sicl-mir:make-load-static-env-instruction
+      (car inputs)
+      (aref *registers* 3)
+      instruction)
+     instruction)
+    (sicl-mir:insert-instruction-before
+     (sicl-mir:make-load-linkage-vector-instruction
+      (car inputs)
+      (aref *registers* 12)
+      instruction)
+     instruction)
     ;; Add the static environment and linkage vector registers as
     ;; input to the funcall instruction, right after the callee input
     ;; itself.
@@ -200,27 +175,27 @@
     ;; FUNCALL-INSTRUCTION by the register.
     (loop for rest on (cdr inputs)
 	  for i from 0 below 3
-	  do (setf instruction
-		   (nth-value 1 (add-instruction-before-instruction
-				 instruction
-				 'sicl-mir:assignment-instruction
-				 (list (car rest))
-				 (list (aref *registers* i)))))
+	  do (sicl-mir:insert-instruction-before
+	      (sicl-mir:make-assignment-instruction
+	       (car rest)
+	       (aref *registers* i)
+	       instruction)
+	      instruction)
 	     (setf (car rest) (aref *registers* i)))
     ;; Insert instructions for loading the static environment and the
     ;; linkage vector of the callee into appropriate registers.
-    (setf instruction
-	  (nth-value 1 (add-instruction-before-instruction
-			instruction
-			'sicl-mir:load-static-env-instruction
-			(list (car inputs))
-			(list (aref *registers* 3)))))
-    (setf instruction
-	  (nth-value 1 (add-instruction-before-instruction
-			instruction
-			'sicl-mir:load-linkage-vector-instruction
-			(list (car inputs))
-			(list (aref *registers* 12)))))
+    (sicl-mir:insert-instruction-before
+     (sicl-mir:make-load-static-env-instruction
+      (car inputs)
+      (aref *registers* 3)
+      instruction)
+     instruction)
+    (sicl-mir:insert-instruction-before
+     (sicl-mir:make-load-linkage-vector-instruction
+      (car inputs)
+      (aref *registers* 12)
+      instruction)
+     instruction)
     ;; Add the static environment and linkage vector registers as
     ;; input to the funcall instruction, right after the callee input
     ;; itself.
@@ -238,22 +213,23 @@
 (defmethod convert-instruction ((instruction sicl-mir:get-values-instruction))
   (loop for rest on (sicl-mir:outputs instruction)
 	for i from 0 below 4
-	do (setf (sicl-mir:successors instruction)
-		 (list (sicl-mir:make-assignment-instruction
-			(aref *registers* i)
-			(car rest)
-			(car (sicl-mir:successors instruction)))))
+	do (sicl-mir:insert-instruction-after
+	    (sicl-mir:make-assignment-instruction
+	     (aref *registers* i)
+	     (car rest)
+	     (car (sicl-mir:successors instruction)))
+	    instruction)
 	   (setf (car rest) (aref *registers* i))))
 
 (defmethod convert-instruction ((instruction sicl-mir:return-instruction))
   (loop for rest on (sicl-mir:inputs instruction)
 	for i from 0 below 4
-	do (setf instruction
-		 (nth-value 1 (add-instruction-before-instruction
-			       instruction
-			       'sicl-mir:assignment-instruction
-			       (list (car rest))
-			       (list (aref *registers* i)))))
+	do (sicl-mir:insert-instruction-before
+	    (sicl-mir:make-assignment-instruction
+	     (car rest)
+	     (aref *registers* i)
+	     instruction)
+	    instruction)
 	   (setf (car rest) (aref *registers* i)))
   (push *return-address-lexical* (sicl-mir:inputs instruction)))
 
