@@ -447,7 +447,8 @@
 ;;; Instructions. 
 
 (defclass instruction ()
-  ((%successors :initform '() :initarg :successors :accessor successors)
+  ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
+   (%successors :initform '() :initarg :successors :accessor successors)
    (%inputs :initform '() :initarg :inputs :accessor inputs)
    (%outputs :initform '() :initarg :outputs :accessor outputs)))
 
@@ -456,7 +457,9 @@
 	       (every (lambda (successor)
 			(typep successor 'instruction))
 		      (successors obj)))
-    (error "successors must be a list of instructions")))
+    (error "successors must be a list of instructions"))
+  (loop for successor in (successors obj)
+	do (push obj (predecessors successor))))
 
 (defgeneric clone-instruction (instruction))
 
@@ -519,6 +522,39 @@
 	(format stream "digraph G {~%")
 	(draw-instruction start stream)
 	(format stream "}~%"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Modifying the instruction graph.
+
+;;; Insert a new instruction N BEFORE an existing instruction E.  N
+;;; will have E as its sole successors, and E will have N as its sole
+;;; predecessor.  For every existing predecessor P of E, P will become
+;;; a predecessor of N and N will replace E as a successor of P.
+(defun insert-instruction-before (new existing)
+  (setf (predecessors new) (predecessors existing))
+  (loop for pred in (predecessors existing)
+	do (nsubstitute new existing (successors pred) :test #'eq))
+  (setf (successors new) (list existing))
+  (setf (predecessors existing) (list new)))
+
+;;; Insert a new instruction N BETWEEN two exiting instruction E1 and
+;;; E2, where E2 is a successor of E1.  E1 can have any number of
+;;; successors and E2 can have any number of predecessors.  E1 becomes
+;;; the sole predecessor of N, and E2 becomes the sole successor of N.
+;;; N replaces E as a successor of E1, and as a predecessor of E2.
+(defun insert-instruction-between (new existing1 existing2)
+  (setf (predecessors new) (list existing1))
+  (setf (successors new) (list existing2))
+  (nsubstitute new existing2 (successors existing1))
+  (nsubstitute new existing1 (predecessors existing2)))
+
+;;; Insert a new instruction N AFTER an existing instruction E.  E
+;;; must have a single successor.  N is inserted BETWEEN E and its
+;;; sole successor. 
+(defun insert-instruction-after (new existing)
+  (assert (= (length (successors existing)) 1))
+  (insert-instruction-between new existing (car (successors existing))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

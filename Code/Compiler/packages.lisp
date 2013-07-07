@@ -198,7 +198,9 @@
    #:static-location #:make-static-location #:layer #:index
    #:dynamic-location #:make-dynamic-location
    #:linkage-location #:make-linkage-location
-   #:instruction #:successors #:inputs #:outputs
+   #:instruction #:predecessors #:successors #:inputs #:outputs
+   #:insert-instruction-before #:insert-instruction-after
+   #:insert-instruction-between
    #:unique-id
    #:clone-instruction
    #:enter-instruction #:make-enter-instruction
