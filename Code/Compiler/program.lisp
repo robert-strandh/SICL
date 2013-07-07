@@ -1593,6 +1593,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Spill a lexical location.
+;;;
+;;; We look at all the instructions that define or use the location L,
+;;; and we distinguish between assignment instructions and other
+;;; instructions (called COMPUTATIONAL).
+;;;
+;;; For every computational instruction I that USES L, we create a new
+;;; lexical location M.  We insert an assignment instruction A before
+;;; I.  A assigns L to M.  L is replaced by M as an input of I.  For
+;;; every computational instruction I that DEFINES L, we create a new
+;;; lexical location M.  We insert an assignment instruction A before
+;;; I.  A assigns M to L.  L is replaced by M as an output of I.
+;;;
+;;; Assignment instructions are left alone for now.  
+
+(defun spill-lexical-location (lexical-location)
+  (loop for inst in (using-instructions lexical-location)
+	do (unless (typep inst 'sicl-mir:assignment-instruction)
+	     (let* ((new (sicl-mir:new-temporary))
+		    (assignment (sicl-mir:make-assignment-instruction
+				 lexical-location new inst)))
+	       (sicl-mir:insert-instruction-before assignment inst)
+	       (nsubstitute new lexical-location (inputs inst)
+			    :test #'eq))))
+  (loop for inst in (assigning-instructions lexical-location)
+	do (unless (typep inst 'sicl-mir:assignment-instruction)
+	     (let* ((new (sicl-mir:new-temporary))
+		    (assignment (sicl-mir:make-assignment-instruction
+				 lexical-location new inst)))
+	       (sicl-mir:insert-instruction-after assignment inst)
+	       (nsubstitute new lexical-location (outputs inst)
+			    :test #'eq)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
