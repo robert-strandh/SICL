@@ -614,39 +614,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Find loops.
-;;;
-;;; Recall that a loop is present whenever there is a back arc in the
-;;; flow graph.  An arc is a back arc when the HEAD of the arc
-;;; DOMINATES the TAIL of the arc.  The head of the arc is the INITIAL
-;;; block of the loop and the tail of the arc is the FINAL block of
-;;; the loop.
-;;;
-;;; Thus a LOOP is a SET of basic blocks with an INITIAL basic block I
-;;; and a FINAL basic block F, such that I dominates F.  A block B is
-;;; in the set if and only if B is an ancestor of F and B is dominated
-;;; by I.
-;;;
-;;; To find all the blocks in a loop given a back arc, if suffices to
-;;; recursively trace predecessors of F until I is reached.  Notice
-;;; though that there might be nested loops, so that care must be
-;;; taken when predecessors are traced to avoid tracing blocks
-;;; multiple times.
-
-;;; Since we don't have an explicit representation of arcs in the flow
-;;; graph (nor in the instruction graph), we represent a back arc as a
-;;; pair of basic blocks, (F . I) where F is the final block and I is
-;;; the inital block of the loop, or, equivalently, where F is the
-;;; tail of the arc and I is the head of the arc.
-(defun find-back-arcs-in-procedure (procedure)
-  (loop for block in (basic-blocks procedure)
-	for successors = (mapcar #'basic-block (successors (final block)))
-	append (loop for successor in successors
-		     when (member successor (dominators block))
-		       collect (cons block successor))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Find unused lexical locations of a program.
 
 (defun find-unused-lexical-locations (program)
@@ -1527,6 +1494,52 @@
 (defun backward-depth-first-post-order (initial-instruction)
   (reverse (backward-depth-first-pre-order initial-instruction)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Find loops.  
+;;;
+;;; A loop can only be the result of a TAGBODY form.  Whenever there
+;;; is a non-trivial strongly connected component in the instruction
+;;; graph, we have a loop.  The only restriction on loops in Common
+;;; Lisp is that the TAGBODY form introduces a unique instruction that
+;;; dominates every other instruction in the strongly connected
+;;; component.  Another way of saying the same thing is that it is not
+;;; possible to transfer control from the outside of a TAGBODY form
+;;; into it (we shall se later that we can ignore control arcs from a
+;;; nested procedure).  
+;;;
+;;; If we compute a dominance tree of all the instructions in a
+;;; strongly connected component S, then a nested loop shows up as a
+;;; (sub) strongly connected component immediately dominated by some
+;;; other instruction than the one that dominates the entire component
+;;; S.  Let us say that I0 is the instruction that dominates every
+;;; instruction in the strongly connected component.  Let I10, I11,
+;;; ..., I1n be the instructions in S that are immediately dominated
+;;; by I0.  If we remove I0 and I10, I11, ... I1n from S and the
+;;; remaining instructions contain a strongly connected component T,
+;;; this means that there is a nested loop, and since I0 is not the
+;;; instruction that immediately dominates them, there must be some
+;;; other instruction I that does.  
+;;;
+;;; Notice that a nested loop detected this way may or may not be the
+;;; result of a nested TAGBODY form.  It could also appear because the
+;;; tags and the GO forms of the top-level loop form such a nested
+;;; loop "by accident".  But we still want to count it as a nested
+;;; loop.  And it is unlikely that such a nested loop would appear by
+;;; accident.  
+;;;
+;;; Finally, it is possible that a nested loop that appears by
+;;; accident, i.e., that is not the result of a nested TAGBODY form,
+;;; can not be detected by the method describe above, because there is
+;;; no restriction preventing a GO into the middle of it.  As a result
+;;; we might have a real nested loop, but since the instructions in it
+;;; are all directly dominated by I0, then we won't find it.
+
+;;; Kosaraju's algoritm is a simple algorithm for finding the strongly
+;;; connected components of an instruction graph.  The return value is
+;;; a set (represented as a list) of strongly connected components,
+;;; each represented as a list of instructions.  A trivial component
+;;; will be represented as a list of a single element.
 (defun kosaraju (initial-instruction)
   (let ((pre (depth-first-pre-order initial-instruction))
 	(table (make-hash-table :test #'eq))
