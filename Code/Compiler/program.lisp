@@ -103,17 +103,13 @@
 ;;; instruction, we put it in a hash table with the instruction as a
 ;;; key.
 
-(defgeneric predecessors (instruction-or-info))
-(defgeneric (setf predecessors) (new instruction-or-info))
 (defgeneric owner (instruction-or-info))
 (defgeneric (setf owner) (new instruction-or-info))
 (defgeneric basic-block (instruction))
 (defgeneric (setf basic-block) (new instruction))
 
 (defclass instruction-info ()
-  (;; The list of predecessor instructions of this instruction. 
-   (%predecessors :initform '() :accessor predecessors)
-   ;; The procedure to which this instruction belongs.
+  (;; The procedure to which this instruction belongs.
    (%owner :initform nil :accessor owner)
    ;; The basic block to which this instruction belongs.
    (%basic-block :initform nil :accessor basic-block)))
@@ -125,13 +121,6 @@
     (unless present-p
       (error "no instruction-info for instruction ~s" instruction))
     info))
-
-(defmethod predecessors ((instruction sicl-mir:instruction))
-  (predecessors (find-instruction-info instruction)))
-
-(defmethod (setf predecessors) (new (instruction sicl-mir:instruction))
-  (setf (predecessors (find-instruction-info instruction))
-	new))
 
 (defmethod owner ((instruction sicl-mir:instruction))
   (owner (find-instruction-info instruction)))
@@ -146,6 +135,14 @@
 (defmethod (setf basic-block) (new (instruction sicl-mir:instruction))
   (setf (basic-block (find-instruction-info instruction))
 	new))
+
+(defgeneric predecessors (object)
+  (:method ((object sicl-mir:instruction))
+    (sicl-mir:predecessors object)))
+
+(defgeneric (setf predecessors) (new-predecessors object)
+  (:method (new-predecessors (object sicl-mir:instruction))
+    (setf (sicl-mir:predecessors object) new-predecessors)))
 
 (defun successors (instruction)
   (sicl-mir:successors instruction))
@@ -340,25 +337,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Determine the predecessors of every instruction in a program.
-
-(defun compute-predecessors (program)
-  (let ((*program* program))
-    (map-instructions
-     (lambda (instruction)
-       (setf (predecessors instruction) '())))
-    (map-instructions
-     (lambda (instruction)
-       (loop for successor in (successors instruction)
-	     do (push instruction (predecessors successor)))))))
-
-(set-processor 'predecessors 'compute-predecessors)
-	       
-(add-dependencies 'predecessors
-		  '(instruction-info))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compute datum info.
 ;;;
 ;;; For each datum in the program, create a datum-info instance and
@@ -527,8 +505,7 @@
 (set-processor 'basic-blocks 'compute-basic-blocks)
 
 (add-dependencies 'basic-blocks
-		  '(instruction-ownership
-		    predecessors))
+		  '(instruction-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1165,7 +1142,6 @@
 (defun compute-liveness (program)
   (let ((*program* program))
     (make program 'instruction-ownership)
-    (make program 'predecessors)
     (let (;; An entry in the table associates an instruction with a list of
 	  ;; the items that are live before it.
 	  (btable (make-hash-table :test #'eq))
@@ -1454,8 +1430,9 @@
 ;;; instructions, and a list of using instructions.
 
 (defun uniquify-web (web)
-  (let ((old (first web))
-	(new (sicl-mir:new-temporary)))
+  (let* ((old (first web))
+	 (name (sicl-mir:name (car old)))
+	 (new (sicl-mir:make-lexical-location name)))
     (mapc (lambda (instruction)
 	    (nsubstitute new old (sicl-mir:outputs instruction)))
 	  (second web))
@@ -1493,114 +1470,56 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Generate spillable locations.
-;;;
-;;; This transformations requires some explanation.  The background is
-;;; that we want the register allocator to always succeed
-;;; (reasonable).  When the register allocator fails to compute a
-;;; solution, it tries to spill some lexical location, and then it
-;;; tries again, until a solution is found.  To determine what lexical
-;;; location to spill, it chooses the one with the smallest SPILL
-;;; COST.  Now, if we have a load/store architecture, then we can not
-;;; spill lexical locations that are the direct input or output of any
-;;; instruction other than an assignment, and even the assignment
-;;; requires either the input or the output to be a physical register.
-;;; Let us call such locations FLUID (for lack of a better word), and
-;;; let us call non-assignment instructions COMPUTATIONAL. And even if
-;;; we have a more traditional CISC architecture, it is typically
-;;; advantagous to treat it more like a load/store machine, because
-;;; register instructions will typically be much faster.  We make sure
-;;; that the register allocator does not spill fluid locations by
-;;; putting a very high spill cost on them.  But then it is possible
-;;; that no valid solution can be found by the register allocator,
-;;; because it is entirely possible for more fluid locations to be
-;;; live simultaneously than there are physical registers available to
-;;; the register allocator.
-;;;
-;;; We solve this problem by creating a set of lexical locations that
-;;; are guaranteed not to be fluid, so they can always be spilled, and
-;;; for which the spill cost is low enough that they will be
-;;; considered for spilling by the register allocator.  Furthermore,
-;;; we make sure that the number of fluid locations that are
-;;; simulteneously live is small; significantly smaller than the
-;;; number of available registers.
-;;;
-;;; We do this by examining each lexical location L of the program.
-;;; If L is an input or output of only assignment instructions, we
-;;; leave it as it is.  Otherwise L is used or defined by at least one
-;;; computational instructon.  In that case, we start by dividing all
-;;; instructions using or defining L (including assignment
-;;; instruction) into GROUPS, where each group contains instructions
-;;; that are CLOSE, i.e, each instruction in a group is separated from
-;;; each otehr instruction in the group by at most K control arcs (see
-;;; below for how to choose K).  There is not necessarily a unique way
-;;; of dividing the instructions this way, but we make sure that an
-;;; instruction is a member of exactly one group.  If there is only
-;;; one group, again, we leave things as they are.  If there is more
-;;; than one group, we know that L is defined/used by instructions
-;;; that are distant (by at least K control arcs) from each other.
-;;;
-;;; We want to make it possible for L to be spillable, so we must make
-;;; sure that it is no longer fluid.  We do this by creating, for each
-;;; group of neighbors a new (fluid) lexical location, say M.
-;;; Essentially, all definitions and uses of L by instructions of the
-;;; group will be replaced by definitions and used of M instead.  For
-;;; every control arc from an instruction I outside the group to an
-;;; instruction J inside the group where J USES (as opposed to
-;;; DEFINES) L, we insert an assignment instruction assigning L to M.
-;;; For each control arc from an instruction J inside the group to an
-;;; instruction I outside the group such that there exists a control
-;;; path from some instruction K in the group that DEFINES L to J, we
-;;; insert an assignment instruction assigning M to L.  Finally we
-;;; replace all instances of a definition or use of L in the group by
-;;; M instead.
-;;;
-;;; Clearly, some subsequent transformation like this could insert
-;;; assignment instructions into the group so that the instructions in
-;;; the group become distant by more than K control arcs, but we do
-;;; not revisit the group, and we mark M as fluid which will prevent
-;;; us from considering it again.  We still need to develop some
-;;; theory here in order to prove that the register allocator always
-;;; succeeds.  However, choosing K sufficiently small compared to the
-;;; number of available registers should do the trick.
-;;;
-;;; When the transformation above is accomplished for every group of
-;;; L, then L is defined/used only by assignment instructions, so L is
-;;; no longer fluid.  We assign a spill cost of L based on heuristics
-;;; about the number of times each instruction might be executed.
-;;; Typically a higher cost will be attributed for instructions that
-;;; are part of a loop, etc.
-;;;
-;;; After we transformed every lexical location of the program this
-;;; way, we have divided them into fluid/non-fluid.  There is only one
-;;; more thing we need to do.  We have to look for assignment
-;;; instructions I that assign a non-fluid L1 location to another
-;;; non-fluid location L2.  A load/store architecture can not deal
-;;; with this situation, because it would mean loading from and
-;;; storing into memory in the same instruction.  We handle this
-;;; situation by allocating a fresh fluid lexical location M and by
-;;; replacing I by two assignment instructions, the first one
-;;; assigning L1 to M and the second one assigning M to L2.
-;;;
-;;; Now, while it might seem like this transformation will introduce a
-;;; huge number of lexical locations that are mostly unnecessary, let
-;;; us examine what will happen.  In each attempts by the register
-;;; allocator to find a solution, it starts by a phase called REGISTER
-;;; COALESCING.  Essentially this means doing the exact inverse
-;;; transformation of what we just did, i.e. eliminating assignments
-;;; and superflous lexical locations.  Initially we mark all non-fluid
-;;; locations as being candidates for coalescing and we try one
-;;; attempt for the register alloctor to find a solution.  All the
-;;; work we just did will be undone, and perhaps the register
-;;; allocator will not find a solution then.  Then we take the
-;;; non-fluid location with the lowest spill cost and mark it as no
-;;; longer being a candidate for coalescing, and we run the register
-;;; allocator again.  This time the REGISTER PRESSURE will be lower,
-;;; because fewer lexical locations are simultaneously live.  We
-;;; repeat this process until a solution can be found.  The non-fluid
-;;; locations marked as not being candidates for coalescing will be
-;;; allocated on the stack, and we automatically have our spill
-;;; points.
+;;; Depth-first pre-order and post-order traversal of a flowchart.
+
+(defun depth-first-pre-order (initial-instruction)
+  (let ((table (make-hash-table :test #'eq))
+	(result '()))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (loop for succ in (successors instruction)
+		       do (traverse succ))
+		 (push instruction result))))
+      (traverse initial-instruction))
+    result))
+
+(defun depth-first-post-order (initial-instruction)
+  (reverse (depth-first-pre-order initial-instruction)))
+
+(defun backward-depth-first-pre-order (initial-instruction)
+  (let ((table (make-hash-table :test #'eq))
+	(result '()))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (loop for pred in (predecessors instruction)
+		       do (traverse pred))
+		 (push instruction result))))
+      (traverse initial-instruction))
+    result))
+  
+(defun backward-depth-first-post-order (initial-instruction)
+  (reverse (backward-depth-first-pre-order initial-instruction)))
+
+(defun kosaraju (initial-instruction)
+  (let ((pre (depth-first-pre-order initial-instruction))
+	(table (make-hash-table :test #'eq))
+	(result '())
+	(temp '()))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (loop for pred in (predecessors instruction)
+		       do (traverse pred))
+		 (push instruction temp))))
+      (loop until (null pre)
+	    for initial = (pop pre)
+	    unless (gethash initial table)
+	      do (setf temp '())
+		 (traverse initial)
+		 (push temp result))
+      result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
