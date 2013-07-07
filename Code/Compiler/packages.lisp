@@ -290,6 +290,7 @@
    #:convert-constant
    #:convert-to-lir
    #:required-register #:preferred-register
+   #:spill-cost
    ))
 
 (defpackage #:sicl-type-proclamations
