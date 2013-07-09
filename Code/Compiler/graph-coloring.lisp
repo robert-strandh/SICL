@@ -8,23 +8,43 @@
 		  (eq lexical (cdr conflict))))
 	    conflicts))
 
-;;; The safe rule is the rule that finds a lexical with a degree that
-;;; is strictly less than the number of registers.  If such a lexical
-;;; exists, this function returns it.  Otherwise it returns NIL.
-(defun safe-rule (lexicals conflicts register-count)
+;;; The safe rule is the rule that finds a lexical that fulfills two
+;;; criteria: 
+;;; 
+;;;   * The lexical does not have a required register as indictated by
+;;;     the fact that when REQ-FUN is applied to the lexical, NIL is
+;;;     returned.
+;;; 
+;;;   * The degree of the lexical is strictly less than the number of
+;;;     registers.
+;;; 
+;;; If such a lexical exists, this function returns it.  Otherwise it
+;;; returns NIL.
+(defun safe-rule (lexicals conflicts register-count req-fun)
   (find-if (lambda (lexical)
-	     (< (degree lexical conflicts)
-		register-count))
+	     (and (null (funcall req-fun lexical))
+		  (< (degree lexical conflicts)
+		     register-count)))
 	   lexicals))
 
-;;; The optimistic rule always succeeds (unless there are no lexicals,
-;;; of course).  It returns the lexical with the smallest degree.
-(defun optimistic-rule (lexicals conflicts register-count)
+;;; The optimistic rule finds a lexical that fulfills two criteria:
+;;;
+;;;   * The lexical does not have a required register as indictated by
+;;;     the fact that when REQ-FUN is applied to the lexical, NIL is
+;;;     returned.
+;;;
+;;;   * The degree if the lexical is the one with the smallest degree
+;;;     among all the lexicals.
+;;;
+;;; If such a lexical exists, this function returns it.  Otherwise it
+;;; returns NIL.
+(defun optimistic-rule (lexicals conflicts register-count req-fun)
   (loop with min-degree = (+ (length lexicals) register-count)
 	with result = nil
 	for lexical in lexicals
 	do (let ((degree (degree lexical conflicts)))
-	     (when (< degree min-degree)
+	     (when (and (null (funcall req-fun lexical))
+			(< degree min-degree))
 	       (setf min-degree degree)
 	       (setf result lexical)))
 	finally (return result)))
@@ -66,7 +86,7 @@
 ;;; register that L does not conflict with, and that has not been
 ;;; assigned to any lexical in S that L conflicts with.  Such a
 ;;; solution might not be possible, in which case we give up.
-(defun patch-solution (solution lexical conflicting-items registers)
+(defun patch-solution (solution lexical conflicting-items registers pref-fun)
   (let* ((conflicting-registers
 	   (loop for thing in conflicting-items
 		 if (member thing registers :test #'eq)
@@ -74,34 +94,85 @@
 		 else
 		   collect (cdr (assoc thing solution
 				       :test #'eq))))
-	 (free-register
-	   (find-if (lambda (register)
-		      (not (member register conflicting-registers
-				   :test #'eq)))
-		    registers)))
-    (if (null free-register)
-	(throw 'no-solution nil)
-	(cons (cons lexical free-register) solution))))
+	 (free-registers (set-difference registers conflicting-registers
+					 :test #'eq)))
+    (cond ((null free-registers)
+	   ;; There are no free registers, so no solution was found.
+	   (throw 'no-solution nil))
+	  ((member (funcall pref-fun lexical) free-registers :test #'eq)
+	   ;; We are in luck.  The preferred register for the lexical
+	   ;; is free, so we assign it to the lexical and return the
+	   ;; resulting solution.
+	   (cons (cons lexical (funcall pref-fun lexical)) solution))
+	  (t
+	   ;; The preferred register of the lexical is not free, but
+	   ;; there are other free registers, so we pick a different
+	   ;; one.
+	   (cons (cons lexical (car free-registers)) solution)))))
 
 ;;; Solve the suproblem that is like the original problem but with one
 ;;; particular lexical removed.
-(defun solve-sub (lexical registers lexicals conflicts register-count)
+(defun solve-sub
+    (lexical registers lexicals conflicts register-count req-fun pref-fun)
   (multiple-value-bind (new-lexicals conflicting-items new-conflicts)
       (split-problem lexical lexicals conflicts)
     (let ((solution (solve-aux registers
 			       new-lexicals
 			       new-conflicts
-			       register-count)))
-      (patch-solution solution lexical conflicting-items registers))))
+			       register-count
+			       req-fun
+			       pref-fun)))
+      (patch-solution solution lexical conflicting-items registers pref-fun))))
 	  
-(defun solve-aux (registers lexicals conflicts register-count)
-  (if (null lexicals)
-      '()
-      (let ((lexical (or (safe-rule lexicals conflicts register-count)
-			 (optimistic-rule lexicals conflicts register-count))))
-	(solve-sub lexical registers lexicals conflicts register-count))))
+(defun solve-aux (registers lexicals conflicts register-count req-fun pref-fun)
+  (flet ((rule-1 (lexicals conflicts)
+	   (safe-rule lexicals conflicts register-count req-fun))
+	 (rule-2 (lexicals conflicts)
+	   (optimistic-rule lexicals conflicts register-count req-fun)))
+    (labels
+	((aux (lexicals conflicts)
+	   (if (null lexicals)
+	       '()
+	       (let ((lexical (or (rule-1 lexicals conflicts)
+				  (rule-2 lexicals conflicts))))
+		 
+		 (if (null lexical)
+		     ;; This situation happens when all of the
+		     ;; lexicals have required registers.  Then there
+		     ;; is a solution if and only if each such lexical
+		     ;; has a different requried register.
+		     (let ((required-registers (mapcar req-fun lexicals)))
+		       (if (= (length required-registers)
+			      (length (remove-duplicates required-registers
+							 :test #'eq)))
+			   ;; Each lexical has a different required
+			   ;; register. build a solution and return
+			   ;; it.
+			   (mapcar (lambda (lexical)
+				     (cons lexical (funcall req-fun lexical)))
+				   lexicals)
+			   ;; Otherwise there is a conflict in that
+			   ;; some two lexicals require the same
+			   ;; register.
+			   (throw 'no-solution nil)))
+		     ;; Some lexical with no required register was
+		     ;; chosen by one of the rules.
+		     (multiple-value-bind (new-lexicals
+					   conflicting-items
+					   new-conflicts)
+			 (split-problem lexical lexicals conflicts)
+		       (let ((solution (aux new-lexicals new-conflicts)))
+			 (patch-solution solution lexical conflicting-items
+					 registers pref-fun))))))))
+      (aux lexicals conflicts))))
 
-(defun solve (registers lexicals conflicts)
+;;; REQ-FUN is a function that takes a lexical location and returns a
+;;; REQUIRED REGISTER for that location, or NIL if the lexical
+;;; location does not have a required register.  PREF-FUN is a
+;;; function that takes a location and returns a PREFERRED REGISTER
+;;; for that location of NIL if the lexical location does not have a
+;;; preferred register.
+(defun solve (registers lexicals conflicts req-fun pref-fun)
   ;; Do a lot of error checking
   (loop for (item . rest) on registers
 	do (when (member item rest :test #'eq)
@@ -120,4 +191,9 @@
 		     (member (cons item2 item1) rest :test #'equal))
 	     (error "item (~s . ~s) occurs multiple times" item1 item2)))
   (catch 'no-solution 
-    (solve-aux registers lexicals conflicts (length registers))))
+    (solve-aux registers
+	       lexicals
+	       conflicts
+	       (length registers)
+	       req-fun
+	       pref-fun)))
