@@ -1638,8 +1638,24 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Register allocation.
-
-
+;;;
+;;; The graph-coloring module tries to find a solution that assigns a
+;;; register to every lexical location.  That might fail because of
+;;; too many conflicts.
+;;;
+;;; Here, we call the graph-coloring solver repeatedly until a
+;;; solution is found, and each time with one fewer lexical locations,
+;;; i.e. the one we decided to spill because it had the lowest spill
+;;; cost.
+;;;
+;;; However, the solution that we obtain this way might not be valid,
+;;; because it may contain an assignment instruction that assigns
+;;; between two stack locations.  When that happens, we add a new
+;;; lexical location with infinite spill cost and two assignment
+;;; instructions that assign between the two stack locations, using
+;;; the new lexical location as an intermediate.  Now, since we have
+;;; introduced more lexical locations, we need to solve from the
+;;; beginning again.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
