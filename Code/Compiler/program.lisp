@@ -229,8 +229,11 @@
    ;; been added by the backend.  The spill cost is computed as the
    ;; number of estimated definitions/uses of the lexical location
    ;; during the execution of the program divided by the number of
-   ;; conflicts it participates in.
-   (%spill-cost :accessor spill-cost)))
+   ;; conflicts it participates in.  A value of NIL means that the
+   ;; spill const has not been computed yet.  A spill cost of T means
+   ;; "infinity" so that this lexical should never be spilled, and its
+   ;; spill cost should never be altered.
+   (%spill-cost :initform nil :accessor spill-cost)))
 
 (defmethod make-datum-info ((datum sicl-mir:lexical-location))
   (make-instance 'lexical-location-info))
@@ -1583,13 +1586,14 @@
 	 (conflicts (compute-conflicts program)))
     (map-lexical-locations
      (lambda (location)
-       (setf (spill-cost location)
-	     (/ (loop for inst in (append (using-instructions location)
-					  (assigning-instructions location))
-		      sum (if (member inst loop-instructions :test #'eq)
-			      10
-			      1))
-		(sicl-graph-coloring:degree location conflicts)))))))
+       (unless (eq (spill-cost location) t)
+	 (setf (spill-cost location)
+	       (/ (loop for inst in (append (using-instructions location)
+					    (assigning-instructions location))
+			sum (if (member inst loop-instructions :test #'eq)
+				10
+				1))
+		  (sicl-graph-coloring:degree location conflicts))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1614,6 +1618,8 @@
 	     (let* ((new (sicl-mir:new-temporary))
 		    (assignment (sicl-mir:make-assignment-instruction
 				 lexical-location new inst)))
+	       ;; We don't want to spill this one again.
+	       (setf (spill-cost new) t)
 	       (sicl-mir:insert-instruction-before assignment inst)
 	       (nsubstitute new lexical-location (inputs inst)
 			    :test #'eq))))
@@ -1622,9 +1628,18 @@
 	     (let* ((new (sicl-mir:new-temporary))
 		    (assignment (sicl-mir:make-assignment-instruction
 				 lexical-location new inst)))
+	       ;; We don't want to spill this one again.
+	       (setf (spill-cost new) t)
 	       (sicl-mir:insert-instruction-after assignment inst)
 	       (nsubstitute new lexical-location (outputs inst)
 			    :test #'eq)))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Register allocation.
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

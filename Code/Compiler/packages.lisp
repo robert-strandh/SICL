@@ -301,6 +301,7 @@
 (defpackage #:sicl-graph-coloring
   (:use #:common-lisp)
   (:export
+   #:degree
    #:solve
    ))
 
