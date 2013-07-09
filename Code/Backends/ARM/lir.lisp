@@ -46,6 +46,13 @@
 ;;; Convert a MIR instruction graph to LIR.
 ;;;
 
+(defvar *r4-lexical*)
+(defvar *r5-lexical*)
+(defvar *r6-lexical*)
+(defvar *r7-lexical*)
+(defvar *r8-lexical*)
+(defvar *r11-lexical*)
+
 (defvar *linkage-vector-lexical*)
 (defvar *code-object-lexical*)
 (defvar *return-address-lexical*)
@@ -64,6 +71,14 @@
 	(*return-address-lexical* (sicl-mir:new-temporary))
 	(*static-environment-lexical* (sicl-mir:new-temporary))
 	(all-instructions '()))
+    (setf (sicl-program:required-register *r4-lexical*) (aref *registers* 4))
+    (setf (sicl-program:required-register *r5-lexical*) (aref *registers* 5))
+    (setf (sicl-program:required-register *r6-lexical*) (aref *registers* 6))
+    (setf (sicl-program:required-register *r7-lexical*) (aref *registers* 7))
+    (setf (sicl-program:required-register *r8-lexical*) (aref *registers* 8))
+    (setf (sicl-program:required-register *r11-lexical*) (aref *registers* 11))
+    (setf (sicl-program:required-register *return-address-lexical*)
+	  (aref *registers* 14))
     ;; Start by collecting all the instructions to be processed, so as
     ;; to avoid converting an instruction twice as the instruction
     ;; graph changes.
@@ -86,10 +101,42 @@
 	      (aref *registers* 1)
 	      (aref *registers* 2)
 	      (aref *registers* 3)
+	      (aref *registers* 4)
+	      (aref *registers* 5)
+	      (aref *registers* 6)
+	      (aref *registers* 7)
+	      (aref *registers* 8)
 	      (aref *registers* 9)
+	      (aref *registers* 11)
 	      (aref *registers* 12)
 	      (aref *registers* 14)))
-  ;; Generate code for moving the retrurn address to a lexical
+  ;; Generate code for moving the callee-saved registers to lexical
+  ;; variables.
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 4) *r4-lexical* (car (sicl-mir:successors instruction)))
+   instruction)
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 5) *r5-lexical* (car (sicl-mir:successors instruction)))
+   instruction)
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 6) *r6-lexical* (car (sicl-mir:successors instruction)))
+   instruction)
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 7) *r7-lexical* (car (sicl-mir:successors instruction)))
+   instruction)
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 8) *r8-lexical* (car (sicl-mir:successors instruction)))
+   instruction)
+  (sicl-mir:insert-instruction-after
+   (sicl-mir:make-assignment-instruction
+    (aref *registers* 11) *r11-lexical* (car (sicl-mir:successors instruction)))
+   instruction)
+  ;; Generate code for moving the return address to a lexical
   ;; variable.
   (sicl-mir:insert-instruction-after
    (sicl-mir:make-assignment-instruction
