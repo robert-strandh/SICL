@@ -273,6 +273,8 @@
   (:use #:common-lisp)
   (:export
    #:program
+   #:backend
+   #:registers
    #:*program*
    #:touch
    #:instruction-graph

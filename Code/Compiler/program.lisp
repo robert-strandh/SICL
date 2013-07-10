@@ -25,6 +25,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; A BACKEND is an object that contains various backend-specific data
+;;; such as the physical registers of the machine, etc.  It is also
+;;; used as dispatch for certain generic functions. 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function REGISTERS.
+;;;
+;;; Return a list of the physical registers of the backend. 
+
+(defgeneric registers (backend))
+
+(defclass backend () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; A PROGRAM represents a top-level form together with derived
 ;;; knowledge of that form.  To begin with, an instance of a program
 ;;; contains only the initial instruction of the graph of instructions
@@ -1656,6 +1672,37 @@
 ;;; the new lexical location as an intermediate.  Now, since we have
 ;;; introduced more lexical locations, we need to solve from the
 ;;; beginning again.
+
+(defun find-cheapest-lexical-location (program)
+  (let ((*program* program)
+	(cheapest nil)
+	(cost t))
+    (map-lexical-locations
+     (lambda (lexical-location)
+       (when (and (not (eq (spill-cost lexical-location) t)
+		       (or (eq cost t)
+			   (< (spill-cost lexical-location) cost))))
+	 (setf cost (spill-cost lexical-location))
+	 (setf cheapest lexical-location))))
+    cheapest))
+
+(defun pseudo-allocate-registers (program)
+  (make program 'datum-assign-use)
+  (let ((lexical-locations '())
+	(registers (registers (backend program)))
+	(conflicts (compute-conflicts program)))
+    (map-lexical-locations
+     (lambda (lexical-location)
+       (push lexical-location lexical-locations)))
+    (loop for solution = (sicl-graph-coloring:solve registers
+						    lexical-locations
+						    conflicts
+						    #'required-register
+						    #'preferred-register)
+	  while (null solution)
+	  do (spill-lexical-location
+	      (find-cheapest-lexical-location program))
+	  finally (return solution))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
