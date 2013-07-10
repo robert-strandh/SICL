@@ -208,7 +208,7 @@
 (proclaim '(ftype (function (symbol) t)
 	    boundp))
 
-(proclaim '(ftype (function (&optional (or string function)) &rest list) null
+(proclaim '(ftype (function (&optional (or string function) &rest list) nil)
 	    break))
 
 (proclaim '(ftype (function (broadcast-stream) list)
@@ -221,9 +221,12 @@
 	    byte-size
 	    byte-position))
 
+(proclaim '(ftype (or
+		   (function (null) null)
+		   (function (cons) t))
+	    car cdr))
+
 (proclaim '(ftype (function (list) t)
-	    car
-	    cdr
 	    caar
 	    cadr
 	    cdar
@@ -263,7 +266,7 @@
 (proclaim '(ftype (function (cell-error) t)
 	    cell-error-name))
 
-(proclaim '(ftype (function ((or string function) &rest list) null)
+(proclaim '(ftype (function ((or string function) &rest list) nil)
 	    cerror))
 
 (proclaim '(ftype (function (t (or symbol class) &key &allow-other-keys) t)
@@ -376,7 +379,9 @@
 (proclaim '(ftype (function (t t) cons)
 	    cons))
 
-(proclaim '(ftype general-predicate
+(proclaim '(ftype (or
+		   (function (cons) (eql t))
+		   (function (atom) null))
 	    consp))
 
 (proclaim '(ftype (function (t) (function ()))
@@ -594,4 +599,13 @@
 		   (function (long-float integer) long-float))
 	    scale-float))
 
+(proclaim '(ftype (function (function t) function)
+	    (setf fdefinition)))
 
+(proclaim '(ftype (function (symbol &optional generalized-boolean t))
+	    find-class))
+
+(proclaim '(ftype (or
+		   (function (null) (eql t))
+		   (function ((not null)) null))
+	    null))
