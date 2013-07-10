@@ -1679,9 +1679,9 @@
 	(cost t))
     (map-lexical-locations
      (lambda (lexical-location)
-       (when (and (not (eq (spill-cost lexical-location) t)
-		       (or (eq cost t)
-			   (< (spill-cost lexical-location) cost))))
+       (when (and (not (eq (spill-cost lexical-location) t))
+		  (or (eq cost t)
+		      (< (spill-cost lexical-location) cost)))
 	 (setf cost (spill-cost lexical-location))
 	 (setf cheapest lexical-location))))
     cheapest))
