@@ -22,8 +22,11 @@
 	  (sicl-mir:make-register-location 'sicl-arm-assembler:LR)
 	  (sicl-mir:make-register-location 'sicl-arm-assembler:PC)))
 
-(defclass backend-arm ()
+(defclass backend-arm (sicl-program:backend)
   ())
+
+(defmethod sicl-program:registers ((backend backend-arm))
+  *registers*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
