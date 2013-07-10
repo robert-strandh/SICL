@@ -641,7 +641,7 @@
 
 (defun make-type-declaration-entry (location-entry type)
   (make-instance 'type-declaration-entry
-		 :location (location location-entry)
+		 :base-entry location-entry
 		 :type type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2059,7 +2059,7 @@
     (let ((existing-declaration
 	    (find-if (lambda (decl)
 		       (and (typep decl 'type-declaration-entry)
-			    (eq (location decl) (location entry))))
+			    (eq (base-entry decl) entry)))
 		     (proclamations *global-environment*))))
       (cond ((null existing-declaration)
 	     (push (make-type-declaration-entry entry type)
