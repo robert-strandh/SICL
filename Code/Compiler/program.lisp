@@ -1442,7 +1442,7 @@
 
 (defun uniquify-web (web)
   (let* ((old (first web))
-	 (name (sicl-mir:name (car old)))
+	 (name (sicl-mir:name old))
 	 (new (sicl-mir:make-lexical-location name)))
     (mapc (lambda (instruction)
 	    (nsubstitute new old (sicl-mir:outputs instruction)))
@@ -1475,8 +1475,7 @@
 (set-processor 'unique-webs 'uniquify-webs)
 
 (add-dependencies 'unique-webs
-		  '(predecesors
-		    procedures
+		  '(procedures
 		    instruction-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
