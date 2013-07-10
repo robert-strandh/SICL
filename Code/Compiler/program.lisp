@@ -1648,7 +1648,9 @@
 	       (setf (spill-cost new) t)
 	       (sicl-mir:insert-instruction-after assignment inst)
 	       (nsubstitute new lexical-location (outputs inst)
-			    :test #'eq)))))
+			    :test #'eq))))
+  (change-class lexical-location 'sicl-mir:dynamic-location)
+  (touch *program* 'instruction-graph))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1677,6 +1679,7 @@
   (let ((*program* program)
 	(cheapest nil)
 	(cost t))
+    (compute-spill-costs program)
     (map-lexical-locations
      (lambda (lexical-location)
        (when (and (not (eq (spill-cost lexical-location) t))
@@ -1704,6 +1707,40 @@
 	      (find-cheapest-lexical-location program))
 	  finally (return solution))))
 
+(defun valid-register-assignment-p (program)
+  (let ((result t))
+    (map-instructions
+     (lambda (instruction)
+       (when (and (typep instruction 'sicl-mir:assignment-instruction)
+		  (typep (car (inputs instruction)) 'sicl-mir:dynamic-location)
+		  (typep (car (outputs instruction)) 'sicl-mir:dynamic-location))
+	 ;; We have an illegal assignment.
+	 (let* ((new-temp (sicl-mir:new-temporary))
+		(new-inst (sicl-mir:make-assignment-instruction
+			   (car (inputs instruction)) new-temp instruction)))
+	   (setf (spill-cost new-temp) t)
+	   (sicl-mir:insert-instruction-before new-inst instruction)
+	   (setf (sicl-mir:inputs instruction) (list new-temp))
+	   (setf result nil)))))
+    (when (null result)
+      (touch program 'instruction-graph))
+    result))	 
+
+(defun allocate-registers (program)
+  (loop for solution = (pseudo-allocate-registers program)
+	until (valid-register-assignment-p program)
+	finally (return solution)))
+
+(defun assign-registers (program)
+  (let ((solution (allocate-registers program)))
+    (loop for (lexical . reg) in solution
+	  do (loop for inst in (assigning-instructions lexical)
+		   do (nsubstitute reg lexical (outputs inst)
+				   :test #'eq))
+	     (loop for inst in (using-instructions lexical)
+		   do (nsubstitute reg lexical (inputs inst)
+				   :test #'eq)))))
+		      
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Do some initial transformations.
