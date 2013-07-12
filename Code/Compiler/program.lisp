@@ -553,86 +553,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute the dominance between basic blocks.
-;;;
-;;; The dominance relation is indicated as a property of each block
-;;; containing the basic blocks that dominate it.
-
-(defmethod predecessors ((obj basic-block))
-  (mapcar #'basic-block (predecessors (initial obj))))
-
-(defun compute-dominance-for-procedure (procedure)
-  ;; First clear the existing information.
-  (loop for block in (basic-blocks procedure)
-	do (setf (dominators block) '()))
-  ;; Now, make sure the initial block is first on the list of
-  ;; basic block of this procedure.  It simplifies algorithms later.
-  (let ((initial-block (basic-block (initial-instruction procedure))))
-    (setf (basic-blocks procedure)
-	  (cons initial-block
-		(remove initial-block (basic-blocks procedure) :test #'eq))))
-  ;; For the purpose of this algorithm, we assign a unique number to
-  ;; the basic blocks.  We need a way to translate from a basic block
-  ;; to its unique number, and from a number to the corresponding
-  ;; basic block.  For the first mapping, we use a hash table, and for
-  ;; the second one a vector of basic blocks.
-  (let ((blocks (coerce (basic-blocks procedure) 'vector))
-	(numbers (make-hash-table :test #'eq))
-	(dominators (make-array (length (basic-blocks procedure)))))
-    ;; Determine the unique number of each block.
-    (loop for block across blocks
-	  for i from 0
-	  do (setf (gethash block numbers) i))
-    ;; The initial block should have a set containing only itself, so
-    ;; its associated bit vector should have a single 1 in the
-    ;; position corresponding to itself.  We know that the initial
-    ;; block is block number 0 from making that happen above.
-    (let ((set (make-array (length blocks)
-			   :element-type 'bit :initial-element 0)))
-      (setf (sbit set 0) 1)
-      (setf (aref dominators 0) set))
-    ;; Initialize every bit vector except the one of the initial block
-    ;; to a vector of all 1s, meaning that for now we think that every
-    ;; block is dominated by every other block.
-    (loop for i from 1 below (length dominators)
-	  do (setf (aref dominators i)
-		   (make-array (length blocks)
-			       :element-type 'bit
-			       :initial-element 1)))
-    (loop with change = nil
-	  for i from 1 below (length dominators)
-	  for block = (aref blocks i)
-	  do (let ((temp (make-array (length dominators)
-				     :element-type 'bit
-				     :initial-element 1)))
-	       (loop for predecessor in (predecessors block)
-		     for predecessor-number = (gethash predecessor numbers)
-		     do (bit-and temp
-				 (aref dominators predecessor-number)
-				 temp))
-	       (setf (sbit temp i) 1)
-	       (unless (equal temp (aref dominators i))
-		 (setf change t)
-		 (setf (aref dominators i) temp)))
-	  while change)
-    (loop for i from 0 below (length dominators)
-	  for b1  across blocks
-	  do (loop for j from 0 below (length dominators)
-		   for b2 across blocks
-		   do (when (= (sbit (aref dominators i) j) 1)
-			(push b2 (dominators b1)))))))
-
-(defun compute-dominance (program)
-  (loop for procedure in (procedures program)
-	do (compute-dominance-for-procedure procedure)))
-  
-(set-processor 'dominance 'compute-dominance)
-
-(add-dependencies 'dominance
-		  '(basic-blocks))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Find unused lexical locations of a program.
 
 (defun find-unused-lexical-locations (program)
@@ -1038,7 +958,7 @@
 (set-processor 'no-constant-inputs 'replace-constant-inputs)
 
 (add-dependencies 'no-constant-inputs
-		  '(dominance))
+		  '(datum-info))
 
 ;;; Insert a LOAD-EXTERNAL instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
@@ -1069,7 +989,7 @@
 (set-processor 'no-global-inputs 'replace-global-inputs)
 
 (add-dependencies 'no-global-inputs
-		  '(dominance))
+		  '(datum-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1752,7 +1672,6 @@
   (make program 'remove-nop-instructions)
   (make program 'unique-constants)
   (make program 'basic-blocks)
-  (make program 'dominance)
   (make program 'no-constant-inputs)
   (make program 'no-global-inputs))
   
