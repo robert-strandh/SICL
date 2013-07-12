@@ -19,5 +19,6 @@
    (:file "graph-coloring" :depends-on ("packages"))
    (:file "make"
     :depends-on ("packages"))
+   (:file "dominance" :depends-on ("packages"))
    (:file "program"
     :depends-on ("packages" "mir" "make"))))
