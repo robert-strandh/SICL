@@ -194,6 +194,39 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Dominance frontiers.
+
+(defun children (dominance-tree)
+  (let ((result (make-hash-table :test #'eq)))
+    (loop for node being each hash-key of dominance-tree
+	  do (let ((idom (immediate-dominator dominance-tree node)))
+	       (unless (null idom)
+		 (push node (gethash idom result)))))
+    result))
+	       
+(defun dominance-frontiers (start-node successor-fun)
+  (let* ((dominance-tree (dominance-tree start-node successor-fun))
+	 (children (children dominance-tree))
+	 (result (make-hash-table :test #'eq)))
+    (flet ((children (node)
+	     (gethash node children))
+	   (successors (node)
+	     (funcall successor-fun node))
+	   (df (node)
+	     (gethash node result))
+	   ((setf df) (new-df node)
+	     (setf (gethash node result) new-df)))
+      (labels ((traverse (node)
+		 (mapc #'traverse (children node))
+		 (loop for succ in (successors node)
+		       do (unless (eq (immediate-dominator dominance-tree succ)
+				      node)
+			    (pushnew succ (df node) :test #'eq)))))
+	(traverse start-node)))
+    result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test
 
 (defclass node ()
@@ -291,7 +324,7 @@
   (with-open-file (stream filename
 			  :direction :output
 			  :if-exists :supersede)
-    (format stream "digraph G {~%")
+    (format stream "digraph G {~% ordering = out;~%")
     ;; Draw all the nodes first.
     (loop for node in preorder
 	  do (format stream
@@ -309,6 +342,52 @@
 			      (name succ))))
     (format stream "}~%")))
 
+(defun draw-dominance-tree (dominance-tree filename)
+  (with-open-file (stream filename
+			  :direction :output
+			  :if-exists :supersede)
+    (format stream "digraph G {~%   ordering = in;~%")
+    ;; Draw all the nodes first.
+    (loop for node being each hash-key of dominance-tree
+	  do (format stream "   ~a [label = \"~a\"];~%"
+		     (name node) (name node)))
+    ;; Now draw all the arcs.
+    (loop for node being each hash-key of dominance-tree
+	  do (let ((idom (immediate-dominator dominance-tree node)))
+	       (unless (null idom)
+		 (format stream "   ~a -> ~a;~%"
+			 (name node) (name idom)))))
+    (format stream "}~%")))
+
+(defun draw-dominance-frontiers (start-node successor-fun filename)
+  (let ((dominance-frontiers (dominance-frontiers start-node successor-fun))
+	(table (make-hash-table :test #'eq)))
+    (with-open-file (stream filename
+			    :direction :output
+			    :if-exists :supersede)
+      (format stream "digraph G {~% ordering = out;~%")
+      (labels ((draw-node (node)
+		 (unless (gethash node table)
+		   (setf (gethash node table) t)
+		   (loop for succ in (successors node)
+			 do (draw-node succ))
+		   (format stream
+			   "   ~a [label = \"~a\"];~%"
+			   (name node) (name node))
+		   (loop for succ in (successors node)
+			 do (format stream
+				    "   ~a -> ~a;~%"
+				    (name node)
+				    (name succ))))))
+	(draw-node start-node))
+      (loop for node being each hash-key of dominance-frontiers
+	    do (let ((f (gethash node dominance-frontiers)))
+		 (loop for ff in f
+		       do (format stream
+				  "   ~a -> ~a [style = bold, color = red];"
+				  (name node) (name ff)))))
+      (format stream "}~%"))))
+    
 ;;; This algorithm applies the definition of dominators by examining
 ;;; all possible paths from the root of the flow chart to a node N,
 ;;; and removing any node not on that path from the possible
