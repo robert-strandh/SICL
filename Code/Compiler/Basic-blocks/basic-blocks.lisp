@@ -2,6 +2,8 @@
 
 ;;;; Compute the basic blocks of a flow chart. 
 
+;;; Return a list of basic blocks.  Each basic block is represented as
+;;; a CONS of the FIRST and the LAST nodes of the block. 
 (defun basic-blocks (start-node successor-fun)
   (let ((predecessor-fun (sicl-compiler-utilities:predecessor-function
 			  start-node successor-fun))
