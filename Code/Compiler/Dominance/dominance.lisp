@@ -172,6 +172,9 @@
 ;;; that list is the IMMEDIATE dominator of a node, The CDR of the
 ;;; list is the set of all STRICT dominators of the node. 
 
+;;; From the point of view of client code, this function returns an
+;;; opaque object to be used as an argument to the three dominator
+;;; functions below.
 (defun dominance-tree (start-node successor-fun)
   (let ((immediate-dominators (immediate-dominators start-node successor-fun))
 	(dominators (make-hash-table :test #'eq)))
