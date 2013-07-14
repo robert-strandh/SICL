@@ -209,6 +209,9 @@
 		 (push node (gethash idom result)))))
     result))
 	       
+;;; Given a flow chart or a flow graph, compute the dominance frontier
+;;; for each node.  To client code, the object returned is opaque, and
+;;; can be used to pass to the function DOMINANCE-FRONTIER.
 (defun dominance-frontiers (start-node successor-fun)
   (let* ((dominance-tree (dominance-tree start-node successor-fun))
 	 (children (children dominance-tree))
@@ -235,3 +238,6 @@
 				 (pushnew y (df x) :test #'eq))))))
 	(traverse start-node)))
     result))
+
+(defun dominance-frontier (dominance-frontiers node)
+  (gethash node dominance-frontiers))

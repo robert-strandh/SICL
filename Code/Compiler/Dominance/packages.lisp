@@ -8,4 +8,5 @@
    #:strict-dominators
    #:immediate-dominator
    #:dominance-frontiers
+   #:dominance-frontier
    ))
