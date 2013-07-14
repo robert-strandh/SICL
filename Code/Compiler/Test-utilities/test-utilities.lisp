@@ -2,6 +2,8 @@
 
 (defclass node ()
   ((%name :initform (gensym) :reader name)
+   (%inputs :initform '() :accessor inputs)
+   (%outputs :initform '() :accessor outputs)
    (%successors :initform '() :accessor successors)))
 
 (defun make-node (&optional successors)
@@ -27,6 +29,39 @@
 
 ;;; The probability of a successor being in a lower layer.
 (defparameter *back-edge-probability* 0.2)
+
+(defun random-inputs (vars)
+  (let ((r (random 1.0)))
+    (cond ((< r 0.05)
+	   '())
+	  ((< r 0.90)
+	   (list (elt vars (random (length vars)))))
+	  (t
+	   (let* ((v1 (elt vars (random (length vars))))
+		  (v2 (elt (remove v1 vars) (random (1- (length vars))))))
+	     (list v1 v2))))))
+
+(defun random-outputs (vars)
+  (let ((r (random 1.0)))
+    (cond ((< r 0.90)
+	   (list (elt vars (random (length vars)))))
+	  ((< r 0.95)
+	   '())
+	  (t
+	   (let* ((v1 (elt vars (random (length vars))))
+		  (v2 (elt (remove v1 vars) (random (1- (length vars))))))
+	     (list v1 v2))))))
+
+(defun assign-random-inputs/outputs (start-node)
+  (let* ((node-count (sicl-compiler-utilities:count-nodes
+		      start-node #'successors))
+	 (variables (loop repeat (+ (round (* node-count 1)) 2)
+			  collect (gensym))))
+    (sicl-compiler-utilities:map-nodes
+     start-node #'successors
+     (lambda (node)
+       (setf (inputs node) (random-inputs variables))
+       (setf (outputs node) (random-outputs variables))))))
 
 (defun random-flow-chart
     (&optional
@@ -76,7 +111,8 @@
 		       do (process-node node zsp))
 		 (setf layer next-layer)
 		 (setf next-layer '()))))
-    initial))
+    (assign-random-inputs/outputs initial)
+    (values initial #'inputs #'outputs)))
 			
 (defun draw-flow-chart (initial-node filename)
   (with-open-file (stream filename
