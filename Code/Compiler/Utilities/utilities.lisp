@@ -25,6 +25,18 @@
       (traverse start-node))
     (hash-table-count table)))
 
+;;; Map a function over all nodes. 
+(defun map-nodes (start-node successor-fun function)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (node)
+	       (unless (gethash node table)
+		 (setf (gethash node table) t)
+		 (funcall function node)
+		 (loop for succ in (funcall successor-fun node)
+		       do (traverse succ)))))
+      (traverse start-node)))
+  nil)
+
 (defun predecessor-function (start-node successor-fun)
   (let ((pred-table (make-hash-table :test #'eq)))
     (flet ((successors (node)
