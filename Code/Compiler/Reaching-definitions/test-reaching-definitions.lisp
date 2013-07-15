@@ -1,5 +1,17 @@
 (in-package #:sicl-compiler-reaching-definitions-test)
 
+;;;; To test the reaching definitions, we essentially program it
+;;;; again, in a different way.  This time we take a single
+;;;; definition, and we see what nodes it reaches by traversing the
+;;;; graph starting at that node.  We call this function for every
+;;;; definition in some random graph, and we compare the result to
+;;;; what the call to REACHING-DEFINITIONS returns.  We compare it
+;;;; both ways, i.e., if some node can be reached the stupid way, then
+;;;; its definition had better be in the result of
+;;;; REACHING-DEFINITIONS, and if some node is not in the result of
+;;;; REACHING-DEFINITIONS, then it must not be possible to reach it
+;;;; the stupid way.
+
 ;;; Return a hash table in which the keys are the nodes that can be
 ;;; reached from a definition of VAR in NODE.
 (defun nodes-reached-by-definition (node var successor-fun output-fun)
