@@ -52,7 +52,7 @@
 				(unique (remove-duplicates new :test #'eq)))
 			   (when (or (not present-p)
 				     (not (same-set-p value unique)))
-			     (setf (gethash node btable) new)
+			     (setf (gethash node btable) unique)
 			     (b-to-a node btable atable (definitions node))
 			     (mapc #'traverse (successors node)))))))
 	      (traverse start-node))
