@@ -1,5 +1,23 @@
 (in-package #:sicl-compiler-reaching-definitions)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the reaching definitions of a program.  
+;;;
+;;; A DEFINITION is a CONS of a NODE and a VARIABLE that is an output
+;;; of that node.  A definition is said to REACH an node N if and only
+;;; if there exists an execution path from the definition to N in
+;;; which the lexical location is not the output of any other node.
+;;;
+;;; The REACHING DEFINITIONS of a node N is a SET of DEFINITIONS that
+;;; reach N.  
+;;;
+;;; The problem of computing the reaching definitions of a procedure
+;;; is a so-called FORWARD DATAFLOW problem, in that it can be solved
+;;; by fixpoint iteration, starting from the initial node and
+;;; following successors until a fixpoint is reached.  
+
+
 (defun same-set-p (set1 set2)
   (and (subsetp set1 set2 :test #'eq)
        (subsetp set2 set1 :test #'eq)))
@@ -13,9 +31,8 @@
     (setf (gethash node atable)
 	  (append definitions stripped))))
 
-;;; A DEFINITION is a CONS of a NODE and some VARIABLE.  This function
-;;; can handle any concept of NODE and VARIABLE as long as they can be
-;;; compared with EQ.  
+;;; This function can handle any concept of NODE and VARIABLE as long
+;;; as they can be compared with EQ.
 ;;;
 ;;; Return a hash table.  A key in the hash table is a node and a
 ;;; value is a list of definitions that reach that node.
