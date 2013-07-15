@@ -1,28 +1,5 @@
 (in-package #:sicl-program)
 
-;;;; A SIMPLE INSTRUCTION CHAIN is a sequence of instructions, all
-;;;; belonging to the same procedure, such that every instruction in
-;;;; the sequence except the first is the unique successor in the
-;;;; instruction graph of its predecessor in the sequence, and every
-;;;; instruction in the sequence except the last is the unique
-;;;; predecessor in the instruction graph of its successor in the
-;;;; sequence.
-;;;;
-;;;; A BASIC BLOCK is a MAXIMAL SIMPLE INSTRUCTION CHAIN.  It is
-;;;; maximal in that if any predecessor in the instruction graph of the
-;;;; first instruction in the chain were to be included in the
-;;;; sequence, then the sequence is no longer a simple instruction
-;;;; chain, and if any successor in the instruction graph of the last
-;;;; instruction in the chain were to be included in the sequence, then
-;;;; the sequence is no longer a simple instruction chain. 
-;;;;
-;;;; Every instruction belongs to exactly one basic block.  In the
-;;;; degenerate case, the basic block to which an instruction belongs
-;;;; contains only that single instruction.
-;;;;
-;;;; We follow the terminology of Steven S Muchnick, in that a FLOW
-;;;; GRAPH is a graph of BASIC BLOCKS. 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; A BACKEND is an object that contains various backend-specific data
@@ -165,6 +142,11 @@
 
 (defun (setf successors) (new-successors instruction)
   (setf (sicl-mir:successors instruction) new-successors))
+
+(defun local-successors (instruction)
+  (remove-if (lambda (successor)
+	       (not (eq (owner instruction) (owner successor))))
+	     (successors instruction)))
 
 (defun inputs (instruction)
   (sicl-mir:inputs instruction))
@@ -492,64 +474,6 @@
 
 (add-dependencies 'lexical-depth
 		  '(location-ownership))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Basic blocks.
-
-(defclass basic-block ()
-  ((;; The first instruction in the basic block.
-    %initial :initarg :initial :accessor initial)
-   ;; The last instruction in the basic block.
-   (%final :initarg :final :accessor final)
-   ;; The basic blocks that dominate this block (not necessarily
-   ;; immediately, and not strictly).
-   (%dominators :initform '() :accessor dominators)))
-
-(defun compute-basic-blocks-for-procedure (procedure)
-  (with-accessors ((instructions instructions)
-		   (basic-blocks basic-blocks))
-      procedure
-    (setf basic-blocks '())
-    (let ((remaining instructions))
-      (flet ((one-block (instruction)
-	       (let ((initial instruction)
-		     (final instruction))
-		 (loop for preds = (predecessors initial)
-		       while (= (length preds) 1)
-		       for pred = (car preds)
-		       while (eq (owner pred) procedure)
-		       for succs = (successors pred)
-		       while (= (length succs) 1)
-		       do (setf initial pred)
-			  (setf remaining (remove pred remaining :test #'eq)))
-		 (loop for succs = (successors final)
-		       while (= (length succs) 1)
-		       for succ = (car succs)
-		       while (eq (owner succ) procedure)
-		       for preds = (predecessors succ)
-		       while (= (length preds) 1)
-		       do (setf final succ)
-			  (setf remaining (remove succ remaining :test #'eq)))
-		 (let ((b (make-instance 'basic-block
-			    :initial initial
-			    :final final)))
-		   (loop for ins = initial then (car (successors ins))
-			 do (setf (basic-block ins) b)
-			 until (eq ins final))
-		   b))))
-	(loop until (null remaining)
-	      do (push (one-block (pop remaining)) basic-blocks))))))
-
-(defun compute-basic-blocks (program)
-  (let ((*program* program))
-    (loop for procedure in (procedures program)
-	  do (compute-basic-blocks-for-procedure procedure))))
-
-(set-processor 'basic-blocks 'compute-basic-blocks)
-
-(add-dependencies 'basic-blocks
-		  '(instruction-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1008,115 +932,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Liveness analysis
-;;;
-;;; An item I (lexical location or register) is LIVE at some point P
-;;; in a program if and only if there exists an execution path from P
-;;; to the end of the procedure on which I is used before it is
-;;; assigned to.
-;;;
-;;; Liveness is going to be represented as two sets of items for each
-;;; instructions; the items that are live BEFORE the instruction, and
-;;; the items that are live AFTER the instruction.
-;;;
-;;; Computing liveness is a dataflow problem that is best computed
-;;; from the end of the program to the beginning of the program.
-;;; Given the set A of live items AFTER some instruction I, the set B
-;;; of items live BEFORE the instruction is computed as A intersected
-;;; with the items written to by I and then unioned by the items used
-;;; by I.  Given the set Bi of live items live before each successor i
-;;; of some instruction I, the set A of live items after I is computed
-;;; as the union of all the Bi.
-;;;
-;;; Initially the sets A(I) and B(I) for each instruction are empty.
-;;; The computation is iterated until a fixpoint is reached.  In fact,
-;;; it is unnecessary to maintain an explicit representation of both
-;;; the A and the B set.  The B set is enough. 
-;;;
-;;; The literature suggests using bitvectors for this computation,
-;;; where a particular item has a unique index in the bitvector.
-;;; However, to avoid storing the unique indices in the items, we
-;;; would have to maintain a hash table and a vector for the mapping
-;;; from items to indices and from indices to items respectively.
-;;; Instead we attempt to maintain the sets as Lisp lists.  If
-;;; performance becomes a problem, we might revisit this decision.
-;;;
-;;; The literature also suggests doing this computation on basic
-;;; blocks.  The reason is that a basic block can be made to behave
-;;; much like a single instruction, in that it defines and uses some
-;;; items.  It can be a big gain in performance to perform the
-;;; iterative computation on basic blocks until a fixpoint is reached,
-;;; and then compute a simple loop for each basic block.  Again, we
-;;; are willing to bet that performance is no longer a problem, and
-;;; that we can get away with doing this computation on individual
-;;; instructions.  And of course, we might rethink that decision as
-;;; well if performance becomes a problem.
-;;;
-;;; We have a further complication compared to the situation described
-;;; in the literature, namely that our programs are structured into
-;;; nested procedures, and that the successor of some instruction can
-;;; be in an enclosing procedure.  However, liveness analysis is only
-;;; concerned with variables with DYNAMIC EXTENT.  Variables with
-;;; indefinite extent are not allocated in register nor on the stack,
-;;; but in the static environment.  A call to an enclosed procedure
-;;; must save all callee-saved registers that might be trashed by that
-;;; procedure, and those registers must be restored as part of the
-;;; non-local transfer.  As far as liveness analysis is concerned
-;;; then, an instruction I in a procedure P where every successor Ji
-;;; of I is in Qi /= P can be treated as a RETURN, i.e. the end of the
-;;; execution of P.  As far as Q is concerned, a predecessor I of J
-;;; can be ignored.
-
-(defun set-equal (set1 set2)
-  (and (subsetp set1 set2 :test #'eq) (subsetp set2 set1 :test #'eq)))
-
-(defun compute-liveness (program)
-  (let ((*program* program))
-    (make program 'instruction-ownership)
-    (let (;; An entry in the table associates an instruction with a list of
-	  ;; the items that are live before it.
-	  (btable (make-hash-table :test #'eq))
-	  ;; An entry in the table associates an instruction with a list of
-	  ;; the items that are live after it.
-	  (atable (make-hash-table :test #'eq)))
-      (labels
-	  ((traverse (instruction)
-	     (let ((live '()))
-	       ;; First compute the union of the items that are live
-	       ;; before each of the successors of INSTRUCTION.
-	       (loop for successor in (successors instruction)
-		     do (setf live
-			      (union live (gethash successor btable))))
-	       (multiple-value-bind (current present-p)
-		   (gethash instruction atable)
-		 (unless (and present-p (set-equal live current))
-		   ;; Something has changed.  Propagate!
-		   (setf (gethash instruction atable) live)
-		   ;; Remove from the set the items that are written
-		   ;; by INSTRUCTION.
-		   (loop for output in (outputs instruction)
-			 do (setf live (remove output live :test #'eq)))
-		   ;; Add to the set the items used by INSTRUCTION
-		   ;; that are registers or lexical locations.
-		   (loop for input in (inputs instruction)
-			 do (when (or (typep input 'sicl-mir:lexical-location)
-				      (typep input 'sicl-mir:register-location))
-			      (pushnew input live :test #'eq)))
-		   (setf (gethash instruction btable) live)
-		   (loop for pred in (predecessors instruction)
-			 do (when (eq (owner pred) (owner instruction))
-			      (traverse pred))))))))
-	(map-instructions
-	 (lambda (instruction)
-	   (when (or (null (successors instruction))
-		     (every (lambda (successor)
-			      (not (eq (owner successor) (owner instruction))))
-			    (successors instruction)))
-	     (traverse instruction)))))
-      atable)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compute a set of conflicts for the register allocator.  Recall
 ;;; that two items generate a conflict when one is live at the point
 ;;; where the other is written to.
@@ -1136,7 +951,16 @@
 (defun compute-conflicts (program)
   (let ((*program* program)
 	(conflicts '()))
-    (let ((atable (compute-liveness program)))
+    (let ((atable (sicl-compiler-liveness:liveness
+		   (initial-instruction program)
+		   #'local-successors
+		   (lambda (instruction)
+		     (remove-if-not
+		      (lambda (input)
+			(or (typep input 'sicl-mir:lexical-location)
+			    (typep input 'sicl-mir:register-location)))
+		      (inputs instruction))) 
+		   #'outputs)))
       (map-instructions
        (lambda (instruction)
 	 (loop for output in (outputs instruction)
@@ -1148,354 +972,6 @@
 			     (pushnew (cons live output) conflicts
 				      :test #'same-conflict-p)))))))
     conflicts))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compute the reaching definitions of a program.  
-;;;
-;;; A DEFINITION is a CONS of an INSTRUCTION and a LEXICAL-LOCATION
-;;; that is an output of that instruction.  A definition is said to
-;;; REACH an instruction I if and only if there exists an execution
-;;; path from the definition to I in which the lexical location is not
-;;; the output of any other instruction.
-;;;
-;;; The REACHING DEFINITIONS of an instruction I is a SET of
-;;; DEFINITIONS that reach I.  
-;;;
-;;; The problem of computing the reaching definitions of a procedure
-;;; is a so-called FORWARD DATAFLOW problem, in that it can be solved
-;;; by fixpoint iteration, starting from the initial instruction and
-;;; following successors until a fixpoint is reached.  
-
-(defun compute-reaching-definitions-for-procedure (procedure)
-  (let ((atable (make-hash-table :test #'eq))
-	(btable (make-hash-table :test #'eq)))
-    (flet ((same-set-p (s1 s2)
-	     (and (subsetp s1 s2 :test #'equal)
-		  (subsetp s2 s1 :test #'equal))))
-      (flet ((lexical-outputs (instruction)
-	       (remove-if-not (lambda (output)
-				(typep output 'sicl-mir:lexical-location))
-			      (sicl-mir:outputs instruction))))
-	(flet ((b-to-a (instruction)
-		 (let* ((before (gethash instruction btable))
-			(locations (lexical-outputs instruction))
-			(stripped (remove-if (lambda (x)
-					       (member (cdr x) locations
-						       :test #'eq))
-					     before))
-			(new-definitions (mapcar (lambda (location)
-						   (cons instruction location))
-						 locations))
-			(after (append new-definitions stripped)))
-		   (setf (gethash instruction atable) after))))
-	  ;; A function that returns only the successors of an
-	  ;; instruction I that have the same owner as I does.
-	  (flet ((sp-successors (instruction)
-		   (remove-if-not (lambda (succ)
-				    (eq (owner instruction) (owner succ)))
-				  (successors instruction))))
-	    (labels ((traverse (instruction)
-		       (multiple-value-bind (value present-p)
-			   (gethash instruction btable)
-			 (let* ((new (apply
-				      #'concatenate 'list
-				      (mapcar (lambda (inst)
-						(gethash inst atable))
-					      (predecessors instruction))))
-				(unique (remove-duplicates new :test #'equal)))
-			   (when (or (not present-p)
-				     (not (same-set-p value unique)))
-			     (setf (gethash instruction btable) new)
-			     (b-to-a instruction)
-			     (mapc #'traverse (sp-successors instruction)))))))
-	      (traverse (initial-instruction procedure)))))))
-    btable))
-
-(defun compute-reaching-definitions (program)
-  (let ((*program* program))
-    (loop for procedure in (procedures program)
-	  append
-	  (loop for instruction being each hash-key
-		using (hash-value definitions)
-		of (compute-reaching-definitions-for-procedure procedure)
-		collect (cons instruction definitions)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compute DU-chains.
-;;;
-;;; A UD-chain is a not a chain at all, but rather a mapping that
-;;; takes a DEFINITION and returns a set of INSTRUCTIONS that might
-;;; use that definition.  Recall that a definition is a CONS of an
-;;; INSTRUCTION and a LEXICAL-LOCATION.  
-
-(defun compute-du-chains (program)
-  (let* (;; Start by computing the reaching definitions.  Recall that
-	 ;; we obtain a list for each instruction in the program.  The
-	 ;; list has the instruction as its CAR and the definitions
-	 ;; that reach that definition as its CDR.
-	 (reaching-definitions (compute-reaching-definitions program))
-	 ;; To obtain every definition in the program, one way is to
-	 ;; uniquify the lists of the definitions returned by the
-	 ;; reaching definitions.  It's a bit wasteful since there are
-	 ;; a lot of duplicates, but who is counting? 
-	 (definitions (remove-duplicates
-		       (reduce #'append
-			       (mapcar #'cdr reaching-definitions)
-			       :from-end t)
-		       :test #'equal)))
-    (mapcar (lambda (definition)
-	      (cons definition
-		    (loop for rd in reaching-definitions
-			  when (and (member (cdr definition)
-					    (sicl-mir:inputs (car rd))
-					    :test #'eq)
-				    (member definition (cdr rd)
-					    :test #'equal))
-			    collect (car rd))))
-	    definitions)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compute web sets.
-;;;
-;;; Two DU-chains are said to INTERSECT if and only if:
-;;;
-;;;   * They concern the same lexical location, and
-;;;
-;;;   * They have at least one using instruction in common.
-;;;
-;;; A WEB is a maximal set of intersecting DU-chains.  The concept of
-;;; a web is an important one, because when there are several distinct
-;;; webs for one particular lexical location, then this is a result of
-;;; the programmer having used the same variable name for several
-;;; distinct purposes.  By recognizing such distinct usages, we can
-;;; improve register allocation because the number of conflicts in the
-;;; allocation graph decreases then.
-;;;
-;;; This function returns a list of as many elements as there are
-;;; lexical locations in the program.  Each element of the list is a
-;;; list of webs.  A web is represented as a list of three elements:
-;;;
-;;;   * The first element is the lexical location concerned by the
-;;;     web.
-;;;
-;;;   * The second element is a list of defining instructions.
-;;;
-;;;   * The third element is a list of using instructions.
-;;; 
-;;; Most sublists of the top-level list will contain a single element,
-;;; in particular sublists for temporary variables allocated by the
-;;; compiler.
-;;;
-;;; Recall that a DU-chain is represented as a list with the CAR being
-;;; a CONS cell of an defining instruction and a lexical location, and
-;;; the CDR being a list of using instructions. 
-
-;;; From a non-empty list of DU-chains concerning the same lexical
-;;; location, exctract a single web consisting of all the DU-chains in
-;;; the list that instersect the first DU-chain of the list.  Return
-;;; two values: the web that was calculated, and a list of the
-;;; remaining DU-chains that do not instersect the first one.
-(defun extract-one-web (du-chains)
-  (let* ((first (car du-chains))
-	 (rest (cdr du-chains))
-	 (web (list (cdar first) (list (caar first)) (cdr first))))
-    (loop for chain = (find-if-not
-		       (lambda (chain)
-			 (null (intersection (cdr chain) (third web)
-					     :test #'eq)))
-		       rest)
-	  until (null chain)
-	  do (setf rest (remove chain rest :test #'eq))
-	     (push (caar chain) (second web))
-	     (setf (third web) (union (third web) (cdr chain) :test #'eq)))
-    (values web rest)))
-  
-;;; Given a (possibly empty) list of DU-chains concerning the same
-;;; lexical location, return a list of distinct webs correspodning to
-;;; those DU-chains.
-;;;
-;;; We do not expect there to be very many different du-chains
-;;; concerning one particular location, so we can afford to use a
-;;; recusive solution.
-(defun chains-to-webs (du-chains)
-  (if (null du-chains)
-      '()
-      (multiple-value-bind (web rest)
-	  (extract-one-web du-chains)
-	(cons web (chains-to-webs rest)))))
-
-(defun compute-web-sets (program)
-  (let ((du-chains (compute-du-chains program))
-	(webs '()))
-    (loop until (null du-chains)
-	  for lexical-location = (cdar (car du-chains))
-	  do (let ((related-chains
-		     (remove lexical-location du-chains
-			     :key #'cdar :test-not #'eq)))
-	       (setf du-chains
-		     (set-difference du-chains related-chains :test #'eq))
-	       (push (chains-to-webs related-chains) webs)))
-    webs))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Uniquify web.
-;;;
-;;; Given a web, allocate a new lexical location and replace the
-;;; existing lexical location in all the defining and all the using
-;;; instructions by the new one.
-;;; 
-;;; The purpose of this transformation is to make sure that each
-;;; lexical location of the program is concerned by a single web, so
-;;; that we can use lexical locations as the unit for register
-;;; allocation.  When we discover that we have more than one distinct
-;;; web for a particular lexical location, we uniquify all but one of
-;;; them.  For most lexical locations, there is a single web, so for
-;;; most lexical locations, this function will never be called.
-;;;
-;;; Recall that a web is represented as a list of three elements: The
-;;; lexical location concerned by the web, a list of defining
-;;; instructions, and a list of using instructions.
-
-(defun uniquify-web (web)
-  (let* ((old (first web))
-	 (name (sicl-mir:name old))
-	 (new (sicl-mir:make-lexical-location name)))
-    (mapc (lambda (instruction)
-	    (nsubstitute new old (sicl-mir:outputs instruction)))
-	  (second web))
-    (mapc (lambda (instruction)
-	    (nsubstitute new old (sicl-mir:inputs instruction)))
-	  (third web))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Uniquify webs.
-;;;
-;;; Make sure that every lexical location in a program corresponds to
-;;; a unique web.
-
-(defun uniquify-webs (program)
-  (let ((*program* program))
-    ;; Recall that the web sets computed by COMPUTE-WEB-SETS is a list
-    ;; that has as many elements as there are lexical locations in the
-    ;; program.  Each element of the top-level list is a set of webs
-    ;; represented as a list, all concerning the same lexical
-    ;; location.  We uniqify all but one (the first) web in the list.
-    (mapc (lambda (web-set)
-	    (unless (null (cdr web-set))
-	      (touch program 'instruction-graph))
-	    (mapc #'uniquify-web (cdr web-set)))
-	  (compute-web-sets program)))
-  nil)
-
-(set-processor 'unique-webs 'uniquify-webs)
-
-(add-dependencies 'unique-webs
-		  '(procedures
-		    instruction-ownership))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Depth-first pre-order and post-order traversal of a flowchart.
-
-(defun depth-first-pre-order (initial-instruction)
-  (let ((table (make-hash-table :test #'eq))
-	(result '()))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (loop for succ in (successors instruction)
-		       do (traverse succ))
-		 (push instruction result))))
-      (traverse initial-instruction))
-    result))
-
-(defun depth-first-post-order (initial-instruction)
-  (reverse (depth-first-pre-order initial-instruction)))
-
-(defun backward-depth-first-pre-order (initial-instruction)
-  (let ((table (make-hash-table :test #'eq))
-	(result '()))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (loop for pred in (predecessors instruction)
-		       do (traverse pred))
-		 (push instruction result))))
-      (traverse initial-instruction))
-    result))
-  
-(defun backward-depth-first-post-order (initial-instruction)
-  (reverse (backward-depth-first-pre-order initial-instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Find loops.  
-;;;
-;;; A loop can only be the result of a TAGBODY form.  Whenever there
-;;; is a non-trivial strongly connected component in the instruction
-;;; graph, we have a loop.  The only restriction on loops in Common
-;;; Lisp is that the TAGBODY form introduces a unique instruction that
-;;; dominates every other instruction in the strongly connected
-;;; component.  Another way of saying the same thing is that it is not
-;;; possible to transfer control from the outside of a TAGBODY form
-;;; into it (we shall se later that we can ignore control arcs from a
-;;; nested procedure).  
-;;;
-;;; If we compute a dominance tree of all the instructions in a
-;;; strongly connected component S, then a nested loop shows up as a
-;;; (sub) strongly connected component immediately dominated by some
-;;; other instruction than the one that dominates the entire component
-;;; S.  Let us say that I0 is the instruction that dominates every
-;;; instruction in the strongly connected component.  Let I10, I11,
-;;; ..., I1n be the instructions in S that are immediately dominated
-;;; by I0.  If we remove I0 and I10, I11, ... I1n from S and the
-;;; remaining instructions contain a strongly connected component T,
-;;; this means that there is a nested loop, and since I0 is not the
-;;; instruction that immediately dominates them, there must be some
-;;; other instruction I that does.  
-;;;
-;;; Notice that a nested loop detected this way may or may not be the
-;;; result of a nested TAGBODY form.  It could also appear because the
-;;; tags and the GO forms of the top-level loop form such a nested
-;;; loop "by accident".  But we still want to count it as a nested
-;;; loop.  And it is unlikely that such a nested loop would appear by
-;;; accident.  
-;;;
-;;; Finally, it is possible that a nested loop that appears by
-;;; accident, i.e., that is not the result of a nested TAGBODY form,
-;;; can not be detected by the method describe above, because there is
-;;; no restriction preventing a GO into the middle of it.  As a result
-;;; we might have a real nested loop, but since the instructions in it
-;;; are all directly dominated by I0, then we won't find it.
-
-;;; Kosaraju's algoritm is a simple algorithm for finding the strongly
-;;; connected components of an instruction graph.  The return value is
-;;; a set (represented as a list) of strongly connected components,
-;;; each represented as a list of instructions.  A trivial component
-;;; will be represented as a list of a single element.
-(defun kosaraju (initial-instruction)
-  (let ((pre (depth-first-pre-order initial-instruction))
-	(table (make-hash-table :test #'eq))
-	(result '())
-	(temp '()))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (loop for pred in (predecessors instruction)
-		       do (traverse pred))
-		 (push instruction temp))))
-      (loop until (null pre)
-	    for initial = (pop pre)
-	    unless (gethash initial table)
-	      do (setf temp '())
-		 (traverse initial)
-		 (push temp result))
-      result)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1515,7 +991,8 @@
 ;;; counting nested loops and by taking branches into account.
 
 (defun compute-spill-costs (program)
-  (let* ((loops (remove 1 (kosaraju (initial-instruction program))
+  (let* ((loops (remove 1 (sicl-compiler-loops:kosaraju
+			   (initial-instruction program) #'successors)
 			:test #'length))
 	 (loop-instructions (reduce #'append loops :from-end t))
 	 (conflicts (compute-conflicts program)))
