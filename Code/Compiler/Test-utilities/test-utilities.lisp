@@ -112,7 +112,7 @@
 		 (setf layer next-layer)
 		 (setf next-layer '()))))
     (assign-random-inputs/outputs initial)
-    (values initial #'inputs #'outputs)))
+    (values initial #'successors #'inputs #'outputs)))
 			
 (defun draw-flow-chart (initial-node filename)
   (with-open-file (stream filename
