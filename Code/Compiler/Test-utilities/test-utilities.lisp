@@ -9,6 +9,10 @@
 (defun make-node (&optional successors)
   (make-instance 'node :successors successors))
 
+(defmethod print-object ((object node) stream)
+  (print-unreadable-object (object stream)
+    (format stream "~a" (name object))))
+
 ;;; The probability of giving a node in layer 0 zero successors.
 (defparameter *initial-zero-successor-probability* 0.05)
 
@@ -34,7 +38,7 @@
   (let ((r (random 1.0)))
     (cond ((< r 0.05)
 	   '())
-	  ((< r 0.90)
+	  ((< r 0.20)
 	   (list (elt vars (random (length vars)))))
 	  (t
 	   (let* ((v1 (elt vars (random (length vars))))
@@ -119,21 +123,46 @@
 			  :direction :output
 			  :if-exists :supersede)
     (format stream "digraph G {~%")
-    (let ((table (make-hash-table :test #'eq)))
-      (labels ((draw-node (node)
-		 (unless (gethash node table)
-		   (setf (gethash node table) t)
-		   (loop for succ in (successors node)
-			 do (draw-node succ))
-		   (format stream
-			   "   ~a [label = \"~a\"];~%"
-			   (name node) (name node))
-		   (loop for succ in (successors node)
-			 do (format stream
-				    "   ~a -> ~a;~%"
-				    (name node)
-				    (name succ))))))
-	(draw-node initial-node)))
+    ;; First draw all the nodes.
+    (sicl-compiler-utilities:map-nodes
+     initial-node #'successors
+     (lambda (node)
+       (format stream
+	       "   ~a [shape = box, label = \"~a\"];~%"
+	       (name node) (name node))))
+    ;; Next draw all the links between nodes
+    (sicl-compiler-utilities:map-nodes
+     initial-node #'successors
+     (lambda (node)
+       (loop for succ in (successors node)
+	     do (format stream
+			"   ~a -> ~a [style = bold];~%"
+			(name node)
+			(name succ)))))
+    
+     ;; Draw all the variables.
+     (let ((table (make-hash-table :test #'eq)))
+       (sicl-compiler-utilities:map-nodes
+	initial-node #'successors
+	(lambda (node)
+	  (loop for var in (append (inputs node) (outputs node))
+		do (unless (gethash var table)
+		     (setf (gethash var table) t)
+		     (format stream
+			     "   ~a [shape = ellipse, label = \"~a\"];~%"
+			     var var))))))
+    ;; Draw all the inputs and outputs.
+    (sicl-compiler-utilities:map-nodes
+     initial-node #'successors
+     (lambda (node)
+       (loop for var in (inputs node)
+	     do (format stream
+			"   ~a -> ~a [color = red, style = dashed];~%"
+			var (name node)))
+       (loop for var in (outputs node)
+	     do (format stream
+			"   ~a -> ~a [color = blue, style = dashed];~%"
+			(name node) var))))
     (format stream "}~%")))
 
 (defun draw-preorder (preorder filename)
