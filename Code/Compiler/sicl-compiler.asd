@@ -1,7 +1,14 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-compiler
-  :depends-on (:sicl-code-utilities)
+  :depends-on (:sicl-code-utilities
+	       :sicl-compiler-utilities
+	       :sicl-compiler-basic-blocks
+	       :sicl-compiler-dominance
+	       :sicl-compiler-liveness
+	       :sicl-compiler-reaching-definitions
+	       :sicl-compiler-def-use-chains
+	       :sicl-compiler-ssa-form)
   :components
   ((:file "packages" :depends-on ())
    (:file "environment"
@@ -19,6 +26,5 @@
    (:file "graph-coloring" :depends-on ("packages"))
    (:file "make"
     :depends-on ("packages"))
-   (:file "dominance" :depends-on ("packages"))
    (:file "program"
     :depends-on ("packages" "mir" "make"))))
