@@ -26,7 +26,8 @@
   ())
 
 (defmethod sicl-program:registers ((backend backend-arm))
-  *registers*)
+  (loop for i in '(0 1 2 3 4 5 6 7 8 9 10 11 12 14)
+	collect (aref *registers* i)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -54,6 +55,7 @@
 (defvar *r6-lexical*)
 (defvar *r7-lexical*)
 (defvar *r8-lexical*)
+(defvar *r10-lexical*)
 (defvar *r11-lexical*)
 
 (defvar *linkage-vector-lexical*)
@@ -69,6 +71,13 @@
 
 (defun convert-instruction-graph (initial-instruction)
   (let ((table (make-hash-table :test #'eq))
+	(*r4-lexical* (sicl-mir:new-temporary))
+	(*r5-lexical* (sicl-mir:new-temporary))
+	(*r6-lexical* (sicl-mir:new-temporary))
+	(*r7-lexical* (sicl-mir:new-temporary))
+	(*r8-lexical* (sicl-mir:new-temporary))
+	(*r10-lexical* (sicl-mir:new-temporary))
+	(*r11-lexical* (sicl-mir:new-temporary))
 	(*linkage-vector-lexical* (sicl-mir:new-temporary))
 	(*code-object-lexical* (sicl-mir:new-temporary))
 	(*return-address-lexical* (sicl-mir:new-temporary))
@@ -79,6 +88,7 @@
     (setf (sicl-program:required-register *r6-lexical*) (aref *registers* 6))
     (setf (sicl-program:required-register *r7-lexical*) (aref *registers* 7))
     (setf (sicl-program:required-register *r8-lexical*) (aref *registers* 8))
+    (setf (sicl-program:required-register *r10-lexical*) (aref *registers* 10))
     (setf (sicl-program:required-register *r11-lexical*) (aref *registers* 11))
     (setf (sicl-program:required-register *return-address-lexical*)
 	  (aref *registers* 14))
@@ -104,49 +114,15 @@
 	      (aref *registers* 1)
 	      (aref *registers* 2)
 	      (aref *registers* 3)
-	      (aref *registers* 4)
-	      (aref *registers* 5)
-	      (aref *registers* 6)
-	      (aref *registers* 7)
-	      (aref *registers* 8)
-	      (aref *registers* 9)
-	      (aref *registers* 11)
 	      (aref *registers* 12)
-	      (aref *registers* 14)))
-  ;; Generate code for moving the callee-saved registers to lexical
-  ;; variables.
-  (sicl-mir:insert-instruction-after
-   (sicl-mir:make-assignment-instruction
-    (aref *registers* 4) *r4-lexical* (car (sicl-mir:successors instruction)))
-   instruction)
-  (sicl-mir:insert-instruction-after
-   (sicl-mir:make-assignment-instruction
-    (aref *registers* 5) *r5-lexical* (car (sicl-mir:successors instruction)))
-   instruction)
-  (sicl-mir:insert-instruction-after
-   (sicl-mir:make-assignment-instruction
-    (aref *registers* 6) *r6-lexical* (car (sicl-mir:successors instruction)))
-   instruction)
-  (sicl-mir:insert-instruction-after
-   (sicl-mir:make-assignment-instruction
-    (aref *registers* 7) *r7-lexical* (car (sicl-mir:successors instruction)))
-   instruction)
-  (sicl-mir:insert-instruction-after
-   (sicl-mir:make-assignment-instruction
-    (aref *registers* 8) *r8-lexical* (car (sicl-mir:successors instruction)))
-   instruction)
-  (sicl-mir:insert-instruction-after
-   (sicl-mir:make-assignment-instruction
-    (aref *registers* 11) *r11-lexical* (car (sicl-mir:successors instruction)))
-   instruction)
-  ;; Generate code for moving the return address to a lexical
-  ;; variable.
-  (sicl-mir:insert-instruction-after
-   (sicl-mir:make-assignment-instruction
-    (aref *registers* 14)
-    *return-address-lexical*
-    (car (sicl-mir:successors instruction)))
-   instruction)
+	      *r4-lexical*
+	      *r5-lexical*
+	      *r6-lexical*
+	      *r7-lexical*
+	      *r8-lexical*
+	      *r10-lexical*
+	      *r11-lexical*
+	      *return-address-lexical*))
   ;; Generate code for moving the static environment argument to a
   ;; lexical variable.
   (sicl-mir:insert-instruction-after
@@ -250,7 +226,18 @@
     ;; input to the funcall instruction, right after the callee input
     ;; itself.
     (setf (cdr inputs)
-	  (list* (aref *registers* 3) (aref *registers* 12) (cdr inputs)))))
+	  (list* (aref *registers* 3) (aref *registers* 12) (cdr inputs)))
+    (setf (sicl-mir:inputs instruction)
+	  (append (list (aref *registers* 12)
+			*r4-lexical*
+			*r5-lexical*
+			*r6-lexical*
+			*r7-lexical*
+			*r8-lexical*
+			*r10-lexical*
+			*r11-lexical*
+			*return-address-lexical*)
+		  (sicl-mir:inputs instruction)))))
 
 ;;; For the ENCLOSE-INSTRUCTION, we just add the static environment
 ;;; and the linkage-vector as inputs to the instruction so that the
@@ -281,7 +268,17 @@
 	     instruction)
 	    instruction)
 	   (setf (car rest) (aref *registers* i)))
-  (push *return-address-lexical* (sicl-mir:inputs instruction)))
+  (setf (sicl-mir:inputs instruction)
+	(append (list (aref *registers* 12)
+		      *r4-lexical*
+		      *r5-lexical*
+		      *r6-lexical*
+		      *r7-lexical*
+		      *r8-lexical*
+		      *r10-lexical*
+		      *r11-lexical*
+		      *return-address-lexical*)
+		(sicl-mir:inputs instruction))))
 
 (defmethod convert-instruction
     ((instruction sicl-mir:load-constant-instruction))
