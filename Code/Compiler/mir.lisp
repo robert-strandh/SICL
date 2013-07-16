@@ -446,6 +446,22 @@
 ;;;
 ;;; Instructions. 
 
+(defgeneric inputs (instruction))
+
+(defgeneric (setf inputs) (new-inputs instruction))
+
+(defmethod (setf inputs) :before (new-inputs instruction)
+  (assert (listp new-inputs))
+  (assert (every (lambda (input) (typep input 'datum)) new-inputs)))
+
+(defgeneric outputs (instruction))
+
+(defgeneric (setf outputs) (new-outputs instruction))
+
+(defmethod (setf outputs) :before (new-outputs instruction)
+  (assert (listp new-outputs))
+  (assert (every (lambda (output) (typep output 'datum)) new-outputs)))
+
 (defclass instruction ()
   ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
    (%successors :initform '() :initarg :successors :accessor successors)
@@ -458,6 +474,10 @@
 			(typep successor 'instruction))
 		      (successors obj)))
     (error "successors must be a list of instructions"))
+  (assert (and (listp (inputs obj))
+	       (every (lambda (input) (typep input 'datum)) (inputs obj))))
+  (assert (and (listp (outputs obj))
+	       (every (lambda (output) (typep output 'datum)) (outputs obj))))
   (loop for successor in (successors obj)
 	do (push obj (predecessors successor))))
 
