@@ -8,7 +8,8 @@
 	       :sicl-compiler-liveness
 	       :sicl-compiler-reaching-definitions
 	       :sicl-compiler-def-use-chains
-	       :sicl-compiler-ssa-form)
+	       :sicl-compiler-ssa-form
+	       :sicl-compiler-loops)
   :components
   ((:file "packages" :depends-on ())
    (:file "environment"
