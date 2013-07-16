@@ -143,16 +143,31 @@
 (defun (setf successors) (new-successors instruction)
   (setf (sicl-mir:successors instruction) new-successors))
 
+;;; FIXME: we need to deal with non-local transfers one day.
+;;; 
+;;;  (remove-if (lambda (successor)
+;;;	       (not (eq (owner instruction) (owner successor))))
+;;;	     (successors instruction)))
 (defun local-successors (instruction)
-  (remove-if (lambda (successor)
-	       (not (eq (owner instruction) (owner successor))))
-	     (successors instruction)))
+  (successors instruction))
 
 (defun inputs (instruction)
   (sicl-mir:inputs instruction))
 
+(defun (setf inputs) (new-inputs instruction)
+  (setf (sicl-mir:inputs instruction) new-inputs))
+
 (defun outputs (instruction)
   (sicl-mir:outputs instruction))
+
+(defun (setf outputs) (new-outputs instruction)
+  (setf (sicl-mir:outputs instruction) new-outputs))
+
+(defun defining-instructions (datum)
+  (sicl-mir:defining-instructions datum))
+
+(defun using-instructions (datum)
+  (sicl-mir:using-instructions datum))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -193,17 +208,13 @@
 ;;; locations, global inputs, constants, etc.  For that reason, we
 ;;; define different subclasses of datum-info.
 
-(defclass datum-info ()
-  (;; A list of all instructions that have this datum as an input.
-   (%using-instructions :initform nil :accessor using-instructions)))
+(defclass datum-info () ())
 
 (defgeneric make-datum-info (datum))
 
 (defclass lexical-location-info (datum-info)
   (;; The procedure to which this lexical location belongs.
    (%owner :initform nil :accessor owner)
-   ;; A list of all instructions that have this location as an output.
-   (%assigning-instructions :initform nil :accessor assigning-instructions)
    ;; If a backend requires this lexical location to be in a
    ;; particular register when it is not spilled, then it can set this
    ;; slot to the required register.  If there is no required register
@@ -260,6 +271,12 @@
 (defmethod make-datum-info ((datum sicl-mir:immediate-input))
   (make-instance 'immediate-input-info))
 
+(defclass register-location-info (datum-info)
+  ())
+
+(defmethod make-datum-info ((datum sicl-mir:register-location))
+  (make-instance 'register-location-info))
+
 (defun find-datum-info (datum)
   (assert (not (null *program*)))
   (or (gethash datum (datum-info *program*))
@@ -273,19 +290,11 @@
   (setf (owner (find-datum-info datum))
 	new))
 
-(defmethod assigning-instructions ((datum sicl-mir:lexical-location))
-  (assigning-instructions (find-datum-info datum)))
+(defmethod spill-cost ((datum sicl-mir:datum))
+  (spill-cost (find-datum-info datum)))
 
-(defmethod (setf assigning-instructions)
-    (new (datum sicl-mir:lexical-location))
-  (setf (assigning-instructions (find-datum-info datum))
-	new))
-
-(defmethod using-instructions ((datum sicl-mir:datum))
-  (using-instructions (find-datum-info datum)))
-
-(defmethod (setf using-instructions) (new (datum sicl-mir:datum))
-  (setf (using-instructions (find-datum-info datum))
+(defmethod (setf spill-cost) (new (datum sicl-mir:datum))
+  (setf (spill-cost (find-datum-info datum))
 	new))
 
 (defmethod required-register ((datum sicl-mir:datum))
@@ -375,33 +384,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute datum info.
-;;;
-;;; For each datum in the program, create a datum-info instance and
-;;; put it in the datum-info hash table.
-
-(defun compute-datum-info (program)
-  (let ((*program* program))
-    (with-accessors ((datum-info datum-info))
-	program
-      (clrhash datum-info)
-      (map-instructions
-       (lambda (instruction)
-	 (loop for datum in (append (inputs instruction)
-				    (outputs instruction))
-	       do (when (null (gethash datum datum-info))
-		    (setf (gethash datum datum-info)
-			  (make-datum-info datum)))))))))
-
-(set-processor 'datum-info 'compute-datum-info )
-
-;;; We use MAP-INSTRUCTIONS for computing the data, which requries the
-;;; DATUM-INFO to have been computed.
-(add-dependencies 'datum-info
-		  '(instruction-info))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compute location ownership.
 
 (defun compute-location-ownership-for-procedure (procedure)
@@ -428,38 +410,7 @@
 (set-processor 'location-ownership 'compute-location-ownership)
 
 (add-dependencies 'location-ownership
-		  '(instruction-ownership
-		    datum-info))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compute the assigning and using instructions of each datum.
-
-(defun compute-datum-assign-use (program)
-  (let ((*program* program))
-    ;; Start by clearing the assigning and using instructions
-    ;; of each datum.
-    (map-data
-     (lambda (datum)
-       (setf (using-instructions datum) '())))
-    (map-lexical-locations
-     (lambda (lexical-location)
-       (setf (assigning-instructions lexical-location) '())))
-    ;; Next, for each instruction, add it to the list of assigning
-    ;; instructions for all its outputs, and addit to the list of
-    ;; using instructions for all its inputs.
-    (map-instructions
-     (lambda (instruction)
-       (loop for input in (inputs instruction)
-	     do (push instruction (using-instructions input)))
-       (loop for output in (outputs instruction)
-	     do (push instruction (assigning-instructions output)))))))
-
-(set-processor 'datum-assign-use 'compute-datum-assign-use)
-
-(add-dependencies 'datum-assign-use
-		  '(datum-info
-		    instruction-ownership))
+		  '(instruction-ownership))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -574,7 +525,7 @@
 (defun simplify-instructions (program)
   (let ((*program* program))
     (loop for location in (find-unused-lexical-locations program)
-	  do (loop for instruction in (assigning-instructions location)
+	  do (loop for instruction in (defining-instructions location)
 		   do (simplify-instruction instruction)))))
 
 (set-processor 'simplified-instructions 'simplify-instructions)
@@ -600,116 +551,26 @@
 
 (defun merge-similar-constants (program)
   (let ((*program* program)
-	(constants '())
-	(modify-p nil))
-    (map-constants
-     (lambda (constant)
-       (pushnew constant constants
-		:key #'sicl-mir:value
-		:test #'equal)))
-    (map-instructions
-     (lambda (instruction)
-       (loop for rest on (sicl-mir:inputs instruction)
-	     do (when (typep (car rest) 'sicl-mir:constant-input)
-		  (unless (member (car rest) constants :test #'eq)
-		    (setf modify-p t)
-		    (setf (car rest)
-			  (find (sicl-mir:value (car rest)) constants
-				:key #'sicl-mir:value
-				:test #'equal)))))))
-    (when modify-p
-      (touch program 'instruction-graph))))
+	(constants '()))
+    (flet ((canonicalize (constant)
+	     (or (find (sicl-mir:value constant) constants
+		       :key #'sicl-mir:value :test #'equal)
+		 (push constant constants))))
+      (map-instructions
+       (lambda (instruction)
+	 (let ((new-inputs
+		 (loop for input in (inputs instruction)
+		       collect (if (typep input 'sicl-mir:constant-input)
+				   (canonicalize input)
+				   input))))
+	   (unless (every #'eq (inputs instruction) new-inputs)
+	     (setf (inputs instruction) new-inputs))))))))
 
 (set-processor 'unique-constants 'merge-similar-constants)
 
 (add-dependencies 'unique-constants
 		  '(instruction-info
-		    backend-specific-constants
-		    datum-info))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Eliminate redundant lexical locations.
-;;;
-;;; We look for patterns of a location IN (which might be any datum),
-;;; a lexical locations OUT, and an instructions I such that:
-;;;
-;;;   * I is an assignment instruction.
-;;;
-;;;   * IN is the input of I.
-;;;
-;;;   * OUT is the output of I.
-;;;
-;;;   * OUT is assigned to only by I.
-;;;
-;;;   * In all execution paths starting at I, OUT is used before IN is
-;;;     assigned to.
-;;;
-;;; The simplification consists of:
-;;;
-;;;   * Replacing OUT by IN as input in all instructions. 
-;;;
-;;;   * Replacing I by a NOP-INSTRUCTION.
-;;;
-;;; This is a dataflow problem that can be solved by fixpoint
-;;; iterations.  Before some instruction I, let T mean that there
-;;; exists an execution path starting at I where IN is assigned to
-;;; before OUT is used, i.e. the negation of what we want.  Start off
-;;; optimistically with the value NIL before each instruction.
-;;; 
-;;; For each instructions I that does not use OUT but that assigns to
-;;; IN, set the value to T, trace backward through its predecessors,
-;;; propagating the T until either:
-;;;
-;;;   * An instruction is reached that already has the value T.
-;;;  
-;;;   * An instruction I is found that assigns to IN or uses OUT.  If
-;;;     I does not assign to OUT, then it either has already been
-;;;     processed, or it will later.  If it does assign to OUT, then
-;;;     propatagtion should stop.
-
-(defun handle-one-candidate (instruction in out)
-  (let ((table (make-hash-table :test #'eq)))
-    (labels ((traverse (instruction)
-	       (unless (or (gethash instruction table)
-			   (member in (outputs instruction) :test #'eq)
-			   (member out (inputs instruction) :test #'eq))
-		 (setf (gethash instruction table) t)
-		 (mapc #'traverse (predecessors instruction)))))
-      (map-instructions
-       (lambda (instruction)
-	 (when (and (not (member out (inputs instruction) :test #'eq))
-		    (member in (outputs instruction) :test #'eq))
-	   (traverse instruction)))))
-    (if (gethash instruction table)
-	nil
-	(progn
-	  (map-instructions
-	   (lambda (instruction)
-	     (nsubstitute in out (inputs instruction))))
-	  (change-class instruction 'sicl-mir:nop-instruction)
-	  t))))
-	 
-(defun eliminate-redundant-temporaries (program)
-  (let ((modify-p nil))
-    (map-instructions
-     (lambda (instruction)
-       (when (typep instruction 'sicl-mir:assignment-instruction)
-	 (let ((out (car (outputs instruction))))
-	   (when (and (typep out 'sicl-mir:lexical-location)
-		      (= (length (assigning-instructions out)) 1))
-	     (let ((in (car (inputs instruction))))
-	       (setf modify-p
-		     (or (handle-one-candidate instruction in out)
-			 modify-p))))))))
-    (when modify-p
-      (touch program 'instruction-graph))))
-
-(set-processor 'no-redundant-temporaries 'eliminate-redundant-temporaries)
-
-(add-dependencies 'no-redundant-temporaries
-		  '(instruction-info
-		    datum-assign-use))
+		    backend-specific-constants))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -729,42 +590,6 @@
 (set-processor 'remove-nop-instructions 'remove-nop-instructions)
 
 (add-dependencies 'remove-nop-instructions
-		  '(instruction-info))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; The purpose of this transformation is to identify FUNCALL
-;;; instructions where the function called is known not to return.
-;;; For now, we only handle calls to CL:ERROR, but in the future, we
-;;; might handle calls to any CLHS function declared to return a value
-;;; of type NULL.  
-;;;
-;;; While this transformation might not seem worthwhile, in fact it
-;;; is, because it cuts off certain paths in the instruction graph
-;;; which decreases the number of basic blocks, and makes it easier
-;;; for the register allocator to do its job.
-;;;
-;;; For this transformation to work, the first input to the FUNCALL
-;;; instruction must be a GLOBAL-INPUT (where the NAME property is
-;;; CL:ERROR).  Therefore, It will only work right after redundant
-;;; temporaries have been eleminated.
-
-(defun eliminate-error-successors (program)
-  (let ((modify-p nil))
-    (map-instructions
-     (lambda (instruction)
-       (when (and (typep instruction 'sicl-mir:funcall-instruction)
-		  (let ((fun (car (inputs instruction))))
-		    (and (typep fun 'sicl-mir:global-input)
-			 (eq (sicl-mir:name fun) 'error))))
-	 (setf modify-p t)
-	 (setf (successors instruction) '()))))
-    (when modify-p
-      (touch program 'instruction-graph))))
-
-(set-processor 'no-error-successors 'eliminate-error-successors)
-
-(add-dependencies 'no-error-successors
 		  '(instruction-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -886,7 +711,7 @@
 (set-processor 'no-constant-inputs 'replace-constant-inputs)
 
 (add-dependencies 'no-constant-inputs
-		  '(datum-info))
+		  '())
 
 ;;; Insert a LOAD-EXTERNAL instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
@@ -913,7 +738,7 @@
 (set-processor 'no-global-inputs 'replace-global-inputs)
 
 (add-dependencies 'no-global-inputs
-		  '(datum-info))
+		  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -928,14 +753,14 @@
 (set-processor 'lir 'convert-from-mir-to-lir)
 
 (add-dependencies 'lir
-		  '(no-constant-inputs
-		    datum-info))
+		  '(no-constant-inputs))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute a set of conflicts for the register allocator.  Recall
 ;;; that two items generate a conflict when one is live at the point
-;;; where the other is written to.
+;;; where the other is written to.  Furthermore, all items that are
+;;; written to by the same instruction conflict with each other.
 ;;;
 ;;; We do not want to include conflicts between two registers in our
 ;;; set.  Nor do we want multiple copies of some conflict.  We have to
@@ -952,26 +777,29 @@
 (defun compute-conflicts (program)
   (let ((*program* program)
 	(conflicts '()))
-    (let ((atable (sicl-compiler-liveness:liveness
-		   (initial-instruction program)
-		   #'local-successors
-		   (lambda (instruction)
-		     (remove-if-not
-		      (lambda (input)
-			(or (typep input 'sicl-mir:lexical-location)
-			    (typep input 'sicl-mir:register-location)))
-		      (inputs instruction))) 
-		   #'outputs)))
+    (let ((liveness (sicl-compiler-liveness:liveness
+		     (initial-instruction program)
+		     #'local-successors
+		     (lambda (instruction)
+		       (remove-if-not
+			(lambda (input)
+			  (or (typep input 'sicl-mir:lexical-location)
+			      (typep input 'sicl-mir:register-location)))
+			(inputs instruction))) 
+		     #'outputs)))
       (map-instructions
        (lambda (instruction)
 	 (loop for output in (outputs instruction)
-	       do (loop for live in (gethash instruction atable)
+	       do (loop for live in (sicl-compiler-liveness:live-after
+				     liveness instruction)
 			do (when (or (typep output 'sicl-mir:lexical-location)
 				     (typep live 'sicl-mir:lexical-location))
-			     (when (typep live 'sicl-mir:register-location)
-			       (rotatef live output))
-			     (pushnew (cons live output) conflicts
-				      :test #'same-conflict-p)))))))
+			     (pushnew
+			      (if (typep live 'sicl-mir:register-location)
+				  (cons output live)
+				  (cons live output))
+			      conflicts
+			      :test #'same-conflict-p)))))))
     conflicts))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -986,7 +814,7 @@
 ;;;
 ;;; The conflicts are computed in the same way as for the register
 ;;; allocator.  For now, we use a very crude estimate of the number of
-;;; definitions/uses.  We just count the number of assigning and using
+;;; definitions/uses.  We just count the number of using and using
 ;;; instructions, except that if an instruction is part of a loop, we
 ;;; count it as 10 instead of as 1.  We could do much better here, by
 ;;; counting nested loops and by taking branches into account.
@@ -994,7 +822,7 @@
 (defun compute-spill-costs (program)
   (let* ((loops (remove 1 (sicl-compiler-loops:kosaraju
 			   (initial-instruction program) #'successors)
-			:test #'length))
+			:key #'length))
 	 (loop-instructions (reduce #'append loops :from-end t))
 	 (conflicts (compute-conflicts program)))
     (map-lexical-locations
@@ -1002,7 +830,7 @@
        (unless (eq (spill-cost location) t)
 	 (setf (spill-cost location)
 	       (/ (loop for inst in (append (using-instructions location)
-					    (assigning-instructions location))
+					    (defining-instructions location))
 			sum (if (member inst loop-instructions :test #'eq)
 				10
 				1))
@@ -1036,7 +864,7 @@
 	       (sicl-mir:insert-instruction-before assignment inst)
 	       (nsubstitute new lexical-location (inputs inst)
 			    :test #'eq))))
-  (loop for inst in (assigning-instructions lexical-location)
+  (loop for inst in (defining-instructions lexical-location)
 	do (unless (typep inst 'sicl-mir:assignment-instruction)
 	     (let* ((new (sicl-mir:new-temporary))
 		    (assignment (sicl-mir:make-assignment-instruction
@@ -1131,7 +959,7 @@
 (defun assign-registers (program)
   (let ((solution (allocate-registers program)))
     (loop for (lexical . reg) in solution
-	  do (loop for inst in (assigning-instructions lexical)
+	  do (loop for inst in (defining-instructions lexical)
 		   do (nsubstitute reg lexical (outputs inst)
 				   :test #'eq))
 	     (loop for inst in (using-instructions lexical)
@@ -1147,4 +975,7 @@
   (make program 'backend-specific-constants)
   (make program 'unique-constants)
   (make program 'no-constant-inputs)
-  (make program 'no-global-inputs))
+  (make program 'no-global-inputs)
+  (make program 'lir))
+;;  (make program 'instruction-ownership)
+;;  (make program 'location-ownership))
