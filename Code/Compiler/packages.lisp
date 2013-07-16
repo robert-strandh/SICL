@@ -184,7 +184,7 @@
 (defpackage #:sicl-mir
   (:use #:common-lisp)
   (:export
-   #:datum
+   #:datum #:defining-instructions #:using-instructions
    #:immediate-input #:make-immediate-input
    #:word-input #:make-word-input
    #:constant-input #:make-constant-input
