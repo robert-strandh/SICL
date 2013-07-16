@@ -1237,7 +1237,7 @@
 (defun find-type (entry env)
   `(and ,@(loop for e in (append env (proclamations *global-environment*))
 		when (and (typep e 'type-declaration-entry)
-			  (eq (location e) entry))
+			  (eq (base-entry e) entry))
 		  collect (type e))))
 
 (defun find-inline-info (entry env)
