@@ -287,8 +287,6 @@
    #:dominance
    #:no-constant-inputs
    #:initial-transformations
-   #:insert-instruction-before-instruction
-   #:insert-assignment-before
    #:convert-constant
    #:convert-to-lir
    #:required-register #:preferred-register

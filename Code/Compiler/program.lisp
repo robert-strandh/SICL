@@ -262,11 +262,9 @@
 
 (defun find-datum-info (datum)
   (assert (not (null *program*)))
-  (multiple-value-bind (info present-p)
-      (gethash datum (datum-info *program*))
-    (unless present-p
-      (error "no datum-info for datum ~s" datum))
-    info))
+  (or (gethash datum (datum-info *program*))
+      (setf (gethash datum (datum-info *program*))
+	    (make-datum-info datum))))
 
 (defmethod owner ((datum sicl-mir:lexical-location))
   (owner (find-datum-info datum)))
@@ -288,6 +286,20 @@
 
 (defmethod (setf using-instructions) (new (datum sicl-mir:datum))
   (setf (using-instructions (find-datum-info datum))
+	new))
+
+(defmethod required-register ((datum sicl-mir:datum))
+  (required-register (find-datum-info datum)))
+
+(defmethod (setf required-register) (new (datum sicl-mir:datum))
+  (setf (required-register (find-datum-info datum))
+	new))
+
+(defmethod preferred-register ((datum sicl-mir:datum))
+  (preferred-register (find-datum-info datum)))
+
+(defmethod (setf preferred-register) (new (datum sicl-mir:datum))
+  (setf (preferred-register (find-datum-info datum))
 	new))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -612,7 +624,8 @@
 
 (add-dependencies 'unique-constants
 		  '(instruction-info
-		    backend-specific-constants))
+		    backend-specific-constants
+		    datum-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -842,27 +855,18 @@
 ;;; elimination to remove unnecessary LOAD-CONSTANT instructions
 ;;; later.
 
-;;; Insert an instruction before INSTRUCTION.  The new instruction
-;;; already has INSTRUCTION as its successor.
-(defun insert-instruction-before-instruction (new instruction)
-  (loop for pred in (predecessors instruction)
-	do (nsubstitute new
-			instruction
-			(successors pred)
-			:test #'eq)))
-
 ;;; Insert an assignment instruction before INSTRUCTION, assigning IN
 ;;; to OUT.
 (defun insert-assignment-before (instruction in out)
   (let ((new (sicl-mir:make-assignment-instruction in out instruction)))
-    (insert-instruction-before-instruction new instruction)))
+    (sicl-mir:insert-instruction-before new instruction)))
 
 ;;; Insert a LOAD-CONSTANT instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
 (defun insert-load-constant-before (instruction in out)
   (let ((new (sicl-mir:make-load-constant-instruction
 	      (list in) out instruction)))
-    (insert-instruction-before-instruction new instruction)))
+    (sicl-mir:insert-instruction-before new instruction)))
 
 (defun replace-constant-inputs (program)
   (let ((modify-p nil))
@@ -889,11 +893,7 @@
 (defun insert-load-global-before (instruction in out)
   (let ((new (sicl-mir:make-load-global-instruction
 	      (list in) out instruction)))
-    (loop for pred in (predecessors instruction)
-	  do (nsubstitute new
-			  instruction
-			  (successors pred)
-			  :test #'eq))))
+    (sicl-mir:insert-instruction-before new instruction)))
 
 (defun replace-global-inputs (program)
   (let ((modify-p nil))
@@ -928,7 +928,8 @@
 (set-processor 'lir 'convert-from-mir-to-lir)
 
 (add-dependencies 'lir
-		  '(no-constant-inputs))
+		  '(no-constant-inputs
+		    datum-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1142,13 +1143,8 @@
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
-  (make program 'unique-webs)
-  (make program 'no-redundant-temporaries)
-  (make program 'no-error-successors)
-  (make program 'simplified-instructions)
   (make program 'remove-nop-instructions)
+  (make program 'backend-specific-constants)
   (make program 'unique-constants)
-  (make program 'basic-blocks)
   (make program 'no-constant-inputs)
   (make program 'no-global-inputs))
-  
