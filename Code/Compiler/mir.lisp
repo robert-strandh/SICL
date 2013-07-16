@@ -131,7 +131,9 @@
 ;;;
 ;;; This is the root class of all different kinds of data. 
 
-(defclass datum () ())
+(defclass datum ()
+  ((%defining-instructions :initform '() :accessor defining-instructions)
+   (%using-instructions :initform '() :accessor using-instructions)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -248,6 +250,10 @@
 (defun make-lexical-location (name)
   (make-instance 'lexical-location
     :name name))
+
+(defmethod print-object ((object lexical-location) stream)
+  (print-unreadable-object (object stream :type t)
+    (format stream "~a" (name object))))
 
 (defmethod draw-datum ((datum lexical-location) stream)
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
@@ -370,6 +376,10 @@
   (make-instance 'register-location
     :name name))
 
+(defmethod print-object ((object register-location) stream)
+  (print-unreadable-object (object stream :type t)
+    (format stream "~a" (name object))))
+
 (defmethod draw-datum ((datum register-location) stream)
   (format stream "   ~a [fillcolor = red, label = \"~a\"]~%"
 	  (gethash datum *datum-table*)
@@ -452,7 +462,19 @@
 
 (defmethod (setf inputs) :before (new-inputs instruction)
   (assert (listp new-inputs))
-  (assert (every (lambda (input) (typep input 'datum)) new-inputs)))
+  (assert (every (lambda (input) (typep input 'datum)) new-inputs))
+  ;; Remove this instruction as a using instruction from the existing
+  ;; inputs.
+  (loop for input in (inputs instruction)
+	do (setf (using-instructions input)
+		 (remove instruction (using-instructions input)
+			 :test #'eq))))
+
+(defmethod (setf inputs) :after (new-inputs instruction)
+  ;; Add this instruction as a using instruction to the existing
+  ;; inputs.
+  (loop for input in (inputs instruction)
+	do (push instruction (using-instructions input))))
 
 (defgeneric outputs (instruction))
 
@@ -460,7 +482,19 @@
 
 (defmethod (setf outputs) :before (new-outputs instruction)
   (assert (listp new-outputs))
-  (assert (every (lambda (output) (typep output 'datum)) new-outputs)))
+  (assert (every (lambda (output) (typep output 'datum)) new-outputs))
+  ;; Remove this instruction as a defining instruction from the
+  ;; existing outputs.
+  (loop for output in (outputs instruction)
+	do (setf (defining-instructions output)
+		 (remove instruction (defining-instructions output)
+			 :test #'eq))))
+
+(defmethod (setf outputs) :after (new-outputs instruction)
+  ;; Add this instruction as a defining instruction to the existing
+  ;; outputs.
+  (loop for output in (outputs instruction)
+	do (push instruction (defining-instructions output))))
 
 (defclass instruction ()
   ((%predecessors :initform '() :initarg :predecessors :accessor predecessors)
@@ -478,6 +512,13 @@
 	       (every (lambda (input) (typep input 'datum)) (inputs obj))))
   (assert (and (listp (outputs obj))
 	       (every (lambda (output) (typep output 'datum)) (outputs obj))))
+  ;; Add this instruction as a using instruction to its inputs.
+  (loop for input in (inputs obj)
+	do (push obj (using-instructions input)))
+  ;; Add this instruction as an assigning instruction to its outputs.
+  (loop for output in (outputs obj)
+	do (push obj (defining-instructions output)))
+  ;; Add this instruction as a successor of its predecessors.
   (loop for successor in (successors obj)
 	do (push obj (predecessors successor))))
 
@@ -575,6 +616,31 @@
 (defun insert-instruction-after (new existing)
   (assert (= (length (successors existing)) 1))
   (insert-instruction-between new existing (car (successors existing))))
+
+(defun delete-instruction (instruction)
+  (assert (= (length (successors instruction)) 1))
+  (setf (inputs instruction) '())
+  (setf (outputs instruction) '())
+  (let ((successor (car (successors instruction)))
+	(predecessors (predecessors instruction)))
+    ;; Avoid having our predecessors mention our successor multiple
+    ;; times in case our successor is already a successor of some of
+    ;; our predecessors.
+    (loop for predecessor in predecessors
+	  do (setf (successors predecessor)
+		   (remove instruction (successors predecessor)
+			   :test #'eq))
+	     (pushnew successor (successors predecessor)
+		      :test #'eq))
+    ;; Avoid having our successor mention som of our predecessors
+    ;; multiple times in case some of our predecessors are already a
+    ;; predecessors of our successor.
+    (setf (predecessors successor)
+	  (remove instruction (predecessors successor)
+		  :test #'eq))
+    (loop for predecessor in predecessors
+	  do (pushnew predecessor (predecessors successor)
+		      :test #'eq))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
