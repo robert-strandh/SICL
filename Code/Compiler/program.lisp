@@ -440,101 +440,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Find unused lexical locations of a program.
-
-(defun find-unused-lexical-locations (program)
-  (let ((*program* program)
-	(result '()))
-    (map-lexical-locations
-     (lambda (location)
-       (when (null (using-instructions location))
-	 (push location result))))
-    result))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Simplify an instruction with one or more outputs that are unused. 
-
-(defun location-unused-p (location)
-  (null (using-instructions location)))
-
-(defgeneric simplify-instruction (instruction))
-
-;;; By default don't do anything. 
-(defmethod simplify-instruction ((instruction sicl-mir:instruction))
-  nil)
-  
-;;; An ASSIGNMENT-INSTRUCTION has a single output, so if it has an
-;;; unused output, then all outputs are unused, and it can be replaced
-;;; by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:assignment-instruction))
-  (change-class instruction 'sicl-mir:nop-instruction))
-
-;;; If all the outputs of a GET-VALUES-INSTRUCTION are unused, then the
-;;; instruction can be replaced by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:get-values-instruction))
-  (when (every #'location-unused-p (outputs instruction))
-    (change-class instruction 'sicl-mir:nop-instruction)))
-  
-;;; An ENCLOSE-INSTRUCTION has a single output, so if it has an
-;;; unused output, then all outputs are unused, and it can be replaced
-;;; by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:enclose-instruction))
-  (change-class instruction 'sicl-mir:nop-instruction))
-
-;;; A GET-ARG-INSTRUCTION has a single output, so if it has an
-;;; unused output, then all outputs are unused, and it can be replaced
-;;; by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:get-arg-instruction))
-  (change-class instruction 'sicl-mir:nop-instruction))
-
-;;; A MEMREF-INSTRUCTION has a single output, so if it has an
-;;; unused output, then all outputs are unused, and it can be replaced
-;;; by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:memref-instruction))
-  (change-class instruction 'sicl-mir:nop-instruction))
-
-;;; FIXME: add arithetic instructions here.  It is complicated because
-;;; they may have more than one output, so they might be difficult to
-;;; simplify.
-
-;;; A &-INSTRUCTION has a single output, so if it has an
-;;; unused output, then all outputs are unused, and it can be replaced
-;;; by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:&-instruction))
-  (change-class instruction 'sicl-mir:nop-instruction))
-
-;;; A IOR-INSTRUCTION has a single output, so if it has an
-;;; unused output, then all outputs are unused, and it can be replaced
-;;; by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:ior-instruction))
-  (change-class instruction 'sicl-mir:nop-instruction))
-
-;;; A XOR-INSTRUCTION has a single output, so if it has an
-;;; unused output, then all outputs are unused, and it can be replaced
-;;; by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:xor-instruction))
-  (change-class instruction 'sicl-mir:nop-instruction))
-
-;;; A ~-INSTRUCTION has a single output, so if it has an
-;;; unused output, then all outputs are unused, and it can be replaced
-;;; by a NOP-INSTRUCTION.
-(defmethod simplify-instruction ((instruction sicl-mir:~-instruction))
-  (change-class instruction 'sicl-mir:nop-instruction))
-
-(defun simplify-instructions (program)
-  (let ((*program* program))
-    (loop for location in (find-unused-lexical-locations program)
-	  do (loop for instruction in (defining-instructions location)
-		   do (simplify-instruction instruction)))))
-
-(set-processor 'simplified-instructions 'simplify-instructions)
-
-(add-dependencies 'simplified-instructions
-		  '(datum-assign-use))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Merge similar constants
 ;;;
 ;;; This simplification consists of taking all the instances of some
@@ -963,8 +868,9 @@
   (let ((solution (allocate-registers program)))
     (loop for (lexical . reg) in solution
 	  do (loop for inst in (defining-instructions lexical)
-		   do (nsubstitute reg lexical (outputs inst)
-				   :test #'eq))
+		   do (setf (outupts inst)
+			    (substitute reg lexical (outputs inst)
+					:test #'eq)))
 	     (loop for inst in (using-instructions lexical)
 		   do (setf (inputs inst)
 			    (substitute reg lexical (inputs inst)
