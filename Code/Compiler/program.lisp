@@ -618,14 +618,14 @@
 (defun convert-constants-according-to-backend (program)
   (let ((backend (backend program))
 	(modify-p nil))
-    (flet ((maybe-replace (cons)
-	     (let ((replacement (convert-constant backend (car cons))))
-	       (unless (null replacement)
-		 (setf (car cons) replacement)
-		 (setf modify-p t)))))
+    (flet ((convert (input)
+	     (or (convert-constant backend input) input)))
       (map-instructions
        (lambda (instruction)
-	 (mapl #'maybe-replace (inputs instruction)))))
+	 (let ((new-inputs (mapcar #'convert (inputs instruction))))
+	   (unless (every #'eq (inputs instruction) new-inputs)
+	     (setf (inputs instruction) new-inputs)
+	     (setf modify-p t))))))
     (when modify-p
       (touch program 'instruction-graph))))
 
@@ -680,12 +680,6 @@
 ;;; elimination to remove unnecessary LOAD-CONSTANT instructions
 ;;; later.
 
-;;; Insert an assignment instruction before INSTRUCTION, assigning IN
-;;; to OUT.
-(defun insert-assignment-before (instruction in out)
-  (let ((new (sicl-mir:make-assignment-instruction in out instruction)))
-    (sicl-mir:insert-instruction-before new instruction)))
-
 ;;; Insert a LOAD-CONSTANT instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
 (defun insert-load-constant-before (instruction in out)
@@ -698,13 +692,17 @@
     (map-instructions
      (lambda (instruction)
        (unless (typep instruction 'sicl-mir:load-constant-instruction)
-	 (loop for rest on (sicl-mir:inputs instruction)
-	       do (when (typep (car rest) 'sicl-mir:constant-input)
-		    (let ((new (sicl-mir:new-temporary)))
-		      (insert-load-constant-before
-		       instruction (car rest) new)
-		      (setf (car rest) new))
-		    (setf modify-p t))))))
+	 (let ((new-inputs
+		 (loop for input in (inputs instruction)
+		       collect (if (typep input 'sicl-mir:constant-input)
+				   (let ((new (sicl-mir:new-temporary)))
+				     (insert-load-constant-before
+				      instruction input new)
+				     new)
+				   input))))
+	   (unless (every #'eq (inputs instruction) new-inputs)
+	     (setf (inputs instruction) new-inputs)
+	     (setf modify-p t))))))
     (when modify-p
       (touch program 'instruction-graph))))
 
@@ -725,13 +723,17 @@
     (map-instructions
      (lambda (instruction)
        (unless (typep instruction 'sicl-mir:load-global-instruction)
-	 (loop for rest on (sicl-mir:inputs instruction)
-	       do (when (typep (car rest) 'sicl-mir:global-input)
-		    (let ((new (sicl-mir:new-temporary)))
-		      (insert-load-global-before
-		       instruction (car rest) new)
-		      (setf (car rest) new))
-		    (setf modify-p t))))))
+	 (let ((new-inputs
+		 (loop for input in (inputs instruction)
+		       collect (if (typep input 'sicl-mir:global-input)
+				   (let ((new (sicl-mir:new-temporary)))
+				     (insert-load-global-before
+				      instruction input new)
+				     new)
+				   input))))
+	   (unless (every #'eq (inputs instruction) new-inputs)
+	     (setf (inputs instruction) new-inputs)
+	     (setf modify-p t))))))
     (when modify-p
       (touch program 'instruction-graph))))
 
@@ -872,8 +874,9 @@
 	       ;; We don't want to spill this one again.
 	       (setf (spill-cost new) t)
 	       (sicl-mir:insert-instruction-after assignment inst)
-	       (nsubstitute new lexical-location (outputs inst)
-			    :test #'eq))))
+	       (setf (outputs inst)
+		     (substitute new lexical-location (outputs inst)
+				 :test #'eq)))))
   (change-class lexical-location 'sicl-mir:dynamic-location)
   (touch *program* 'instruction-graph))
 
@@ -963,8 +966,9 @@
 		   do (nsubstitute reg lexical (outputs inst)
 				   :test #'eq))
 	     (loop for inst in (using-instructions lexical)
-		   do (nsubstitute reg lexical (inputs inst)
-				   :test #'eq)))))
+		   do (setf (inputs inst)
+			    (substitute reg lexical (inputs inst)
+					:test #'eq))))))
 		      
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
