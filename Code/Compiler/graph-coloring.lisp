@@ -38,8 +38,8 @@
 ;;;
 ;;; If such a lexical exists, this function returns it.  Otherwise it
 ;;; returns NIL.
-(defun optimistic-rule (lexicals conflicts register-count req-fun)
-  (loop with min-degree = (+ (length lexicals) register-count)
+(defun optimistic-rule (lexicals conflicts req-fun)
+  (loop with min-degree = most-positive-fixnum
 	with result = nil
 	for lexical in lexicals
 	do (let ((degree (degree lexical conflicts)))
@@ -99,15 +99,17 @@
     (cond ((null free-registers)
 	   ;; There are no free registers, so no solution was found.
 	   (throw 'no-solution nil))
-	  ((member (funcall pref-fun lexical) free-registers :test #'eq)
+	  ((and (not (null (funcall pref-fun lexical)))
+		(member (funcall pref-fun lexical) free-registers :test #'eq))
 	   ;; We are in luck.  The preferred register for the lexical
 	   ;; is free, so we assign it to the lexical and return the
 	   ;; resulting solution.
 	   (cons (cons lexical (funcall pref-fun lexical)) solution))
 	  (t
-	   ;; The preferred register of the lexical is not free, but
-	   ;; there are other free registers, so we pick a different
-	   ;; one.
+	   ;; Either the preferred register of the lexical is not
+	   ;; free, or the lexical does not have a preffered register,
+	   ;; but there are other free registers, so we pick a
+	   ;; different one.
 	   (cons (cons lexical (car free-registers)) solution)))))
 
 ;;; Solve the suproblem that is like the original problem but with one
@@ -128,7 +130,7 @@
   (flet ((rule-1 (lexicals conflicts)
 	   (safe-rule lexicals conflicts register-count req-fun))
 	 (rule-2 (lexicals conflicts)
-	   (optimistic-rule lexicals conflicts register-count req-fun)))
+	   (optimistic-rule lexicals conflicts req-fun)))
     (labels
 	((aux (lexicals conflicts)
 	   (if (null lexicals)
