@@ -657,9 +657,9 @@
 (defclass enter-instruction (instruction)
   ())
 
-(defun make-enter-instruction (successor)
+(defun make-enter-instruction (&optional (successor nil successor-p))
   (make-instance 'enter-instruction
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction enter-instruction) stream)
   (format stream "   ~a [label = \"enter\"];~%"
@@ -687,11 +687,12 @@
 (defclass assignment-instruction (instruction)
   ())
 
-(defun make-assignment-instruction (input output successor)
+(defun make-assignment-instruction
+    (input output &optional (successor nil successor-p))
   (make-instance 'assignment-instruction
     :inputs (list input)
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction
     ((instruction assignment-instruction) stream)
@@ -705,10 +706,10 @@
 (defclass funcall-instruction (instruction)
   ())
 
-(defun make-funcall-instruction (inputs successor)
+(defun make-funcall-instruction (inputs &optional (successor nil successor-p))
   (make-instance 'funcall-instruction
     :inputs inputs
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction funcall-instruction) stream)
   (format stream "   ~a [label = \"funcall\"];~%"
@@ -736,10 +737,11 @@
 (defclass get-values-instruction (instruction)
   ())
 
-(defun make-get-values-instruction (outputs successor)
+(defun make-get-values-instruction
+    (outputs &optional (successor nil successor-p))
   (make-instance 'get-values-instruction
     :outputs outputs
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction get-values-instruction) stream)
   (format stream "   ~a [label = \"get-values\"];~%"
@@ -793,10 +795,11 @@
 (defclass get-argcount-instruction (instruction)
   ())
 
-(defun make-get-argcount-instruction (output successor)
+(defun make-get-argcount-instruction
+    (output &optional (successor nil successor-p))
   (make-instance 'get-argcount-instruction
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction get-argcount-instruction) stream)
   (format stream "   ~a [label = \"AC\", color = orange];~%"
@@ -809,11 +812,12 @@
 (defclass get-arg-instruction (instruction)
   ())
 
-(defun make-get-arg-instruction (input output successor)
+(defun make-get-arg-instruction
+    (input output &optional (successor nil successor-p))
   (make-instance 'get-arg-instruction
     :inputs (list input)
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction get-arg-instruction) stream)
   (format stream "   ~a [label = \"arg\", color = orange];~%"
@@ -826,11 +830,12 @@
 (defclass load-constant-instruction (instruction)
   ())
 
-(defun make-load-constant-instruction (inputs output successor)
+(defun make-load-constant-instruction
+    (inputs output &optional (successor nil successor-p))
   (make-instance 'load-constant-instruction
     :inputs inputs
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction load-constant-instruction) stream)
   (format stream "   ~a [label = \"LC\"];~%"
@@ -843,11 +848,12 @@
 (defclass load-global-instruction (instruction)
   ())
 
-(defun make-load-global-instruction (inputs output successor)
+(defun make-load-global-instruction
+    (inputs output &optional (successor nil successor-p))
   (make-instance 'load-global-instruction
     :inputs inputs
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction load-global-instruction) stream)
   (format stream "   ~a [label = \"LX\"];~%"
@@ -860,11 +866,12 @@
 (defclass load-static-env-instruction (instruction)
   ())
 
-(defun make-load-static-env-instruction (input output successor)
+(defun make-load-static-env-instruction
+    (input output &optional (successor nil successor-p))
   (make-instance 'load-static-env-instruction
     :inputs (list input)
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction load-static-env-instruction) stream)
   (format stream "   ~a [label = \"LSE\"];~%"
@@ -877,11 +884,12 @@
 (defclass load-linkage-vector-instruction (instruction)
   ())
 
-(defun make-load-linkage-vector-instruction (input output successor)
+(defun make-load-linkage-vector-instruction
+    (input output &optional (successor nil successor-p))
   (make-instance 'load-linkage-vector-instruction
     :inputs (list input)
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction
     ((instruction load-linkage-vector-instruction) stream)
@@ -926,10 +934,10 @@
 (defclass memset-instruction (instruction)
   ())
 
-(defun make-memset-instruction (inputs successor)
+(defun make-memset-instruction (inputs &optional (successor nil successor-p))
   (make-instance 'memset-instruction
     :inputs inputs
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction memset-instruction) stream)
   (format stream "   ~a [label = \"memset\"];~%"
@@ -1027,11 +1035,11 @@
 (defclass &-instruction (instruction)
   ())
 
-(defun make-&-instruction (inputs output successor)
+(defun make-&-instruction (inputs output &optional (successor nil successor-p))
   (make-instance '&-instruction
     :inputs inputs
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction &-instruction) stream)
   (format stream "   ~a [label = \"&\"];~%"
@@ -1044,11 +1052,12 @@
 (defclass ior-instruction (instruction)
   ())
 
-(defun make-ior-instruction (inputs output successor)
+(defun make-ior-instruction
+    (inputs output &optional (successor nil successor-p))
   (make-instance 'ior-instruction
     :inputs inputs
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction ior-instruction) stream)
   (format stream "   ~a [label = \"ior\"];~%"
@@ -1061,11 +1070,12 @@
 (defclass xor-instruction (instruction)
   ())
 
-(defun make-xor-instruction (inputs output successor)
+(defun make-xor-instruction
+    (inputs output &optional (successor nil successor-p))
   (make-instance 'xor-instruction
     :inputs inputs
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction xor-instruction) stream)
   (format stream "   ~a [label = \"xor\"];~%"
@@ -1078,11 +1088,11 @@
 (defclass ~-instruction (instruction)
   ())
 
-(defun make-~-instruction (inputs output successor)
+(defun make-~-instruction (inputs output &optional (successor nil successor-p))
   (make-instance '~-instruction
     :inputs inputs
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction ~-instruction) stream)
   (format stream "   ~a [label = \"~\"];~%"
@@ -1200,10 +1210,10 @@
 (defclass catch-instruction (instruction)
   ())
 
-(defun make-catch-instruction (input successor)
+(defun make-catch-instruction (input &optional (successor nil successor-p))
   (make-instance 'catch-instruction
     :inputs (list input)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction catch-instruction) stream)
   (format stream "   ~a [label = \"catch\"];~%"
@@ -1228,10 +1238,10 @@
 (defclass unwind-instruction (instruction)
   ())
 
-(defun make-unwind-instruction (input successor)
+(defun make-unwind-instruction (input &optional (successor nil successor-p))
   (make-instance 'unwind-instruction
     :inputs (list input)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction unwind-instruction) stream)
   (format stream "   ~a [label = \"unwind\"];~%"
