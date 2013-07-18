@@ -52,39 +52,84 @@
 ;;; every class.
 (defparameter *program* nil)
 
+(defgeneric predecessors (object)
+  (:method ((object sicl-mir:instruction))
+    (sicl-mir:predecessors object)))
+
+(defgeneric (setf predecessors) (new-predecessors object)
+  (:method (new-predecessors (object sicl-mir:instruction))
+    (setf (sicl-mir:predecessors object) new-predecessors)))
+
+(defun successors (instruction)
+  (sicl-mir:successors instruction))
+
+(defun (setf successors) (new-successors instruction)
+  (setf (sicl-mir:successors instruction) new-successors))
+
+;;; FIXME: we need to deal with non-local transfers one day.
+;;; 
+;;;  (remove-if (lambda (successor)
+;;;	       (not (eq (owner instruction) (owner successor))))
+;;;	     (successors instruction)))
+(defun local-successors (instruction)
+  (successors instruction))
+
+(defun inputs (instruction)
+  (sicl-mir:inputs instruction))
+
+(defun (setf inputs) (new-inputs instruction)
+  (setf (sicl-mir:inputs instruction) new-inputs))
+
+(defun outputs (instruction)
+  (sicl-mir:outputs instruction))
+
+(defun (setf outputs) (new-outputs instruction)
+  (setf (sicl-mir:outputs instruction) new-outputs))
+
+(defun defining-instructions (datum)
+  (sicl-mir:defining-instructions datum))
+
+(defun using-instructions (datum)
+  (sicl-mir:using-instructions datum))
+
 ;;; Apply a function to every instruction of the program.
 (defun map-instructions (function)
   (assert (not (null *program*)))
-  (maphash (lambda (instruction info)
-	     (declare (ignore info))
-	     (funcall function instruction))
-	   (instruction-info *program*)))
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (funcall function instruction)
+		 (loop for succ in (sicl-mir:successors instruction)
+		       do (traverse succ)))))
+      (traverse (initial-instruction *program*)))))
 
 ;;; Apply a function to every datum of the program.
 (defun map-data (function)
   (assert (not (null *program*)))
-  (maphash (lambda (datum info)
-	     (declare (ignore info))
-	     (funcall function datum))
-	   (datum-info *program*)))
+  (let ((table (make-hash-table :test #'eq)))
+    (map-instructions
+     (lambda (instruction)
+       (loop for datum in (append (inputs instruction) (outputs instruction))
+	     do (unless (gethash datum table)
+		  (setf (gethash datum table) t)
+		  (funcall function datum)))))))
 
 ;;; Apply a function to every lexical location of the program.
 (defun map-lexical-locations (function)
   (assert (not (null *program*)))
-  (maphash (lambda (datum info)
-	     (declare (ignore info))
-	     (when (typep datum 'sicl-mir:lexical-location)
-	       (funcall function datum)))
-	   (datum-info *program*)))
+  (map-data
+   (lambda (datum)
+     (when (typep datum 'sicl-mir:lexical-location)
+       (funcall function datum)))))
 
 ;;; Apply a function to every constant input of the program.
 (defun map-constants (function)
   (assert (not (null *program*)))
-  (maphash (lambda (datum info)
-	     (declare (ignore info))
-	     (when (typep datum 'sicl-mir:constant-input)
-	       (funcall function datum)))
-	   (datum-info *program*)))
+  (map-data
+   (lambda (datum)
+     (when (typep datum 'sicl-mir:constant-input)
+       (funcall function datum)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -128,47 +173,6 @@
 (defmethod (setf basic-block) (new (instruction sicl-mir:instruction))
   (setf (basic-block (find-instruction-info instruction))
 	new))
-
-(defgeneric predecessors (object)
-  (:method ((object sicl-mir:instruction))
-    (sicl-mir:predecessors object)))
-
-(defgeneric (setf predecessors) (new-predecessors object)
-  (:method (new-predecessors (object sicl-mir:instruction))
-    (setf (sicl-mir:predecessors object) new-predecessors)))
-
-(defun successors (instruction)
-  (sicl-mir:successors instruction))
-
-(defun (setf successors) (new-successors instruction)
-  (setf (sicl-mir:successors instruction) new-successors))
-
-;;; FIXME: we need to deal with non-local transfers one day.
-;;; 
-;;;  (remove-if (lambda (successor)
-;;;	       (not (eq (owner instruction) (owner successor))))
-;;;	     (successors instruction)))
-(defun local-successors (instruction)
-  (successors instruction))
-
-(defun inputs (instruction)
-  (sicl-mir:inputs instruction))
-
-(defun (setf inputs) (new-inputs instruction)
-  (setf (sicl-mir:inputs instruction) new-inputs))
-
-(defun outputs (instruction)
-  (sicl-mir:outputs instruction))
-
-(defun (setf outputs) (new-outputs instruction)
-  (setf (sicl-mir:outputs instruction) new-outputs))
-
-(defun defining-instructions (datum)
-  (sicl-mir:defining-instructions datum))
-
-(defun using-instructions (datum)
-  (sicl-mir:using-instructions datum))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Creating an INSTRUCTION-INFO instance for each instruction in the
@@ -460,7 +464,8 @@
     (flet ((canonicalize (constant)
 	     (or (find (sicl-mir:value constant) constants
 		       :key #'sicl-mir:value :test #'equal)
-		 (push constant constants))))
+		 (progn (push constant constants)
+			constant))))
       (map-instructions
        (lambda (instruction)
 	 (let ((new-inputs
@@ -614,7 +619,7 @@
 (set-processor 'no-constant-inputs 'replace-constant-inputs)
 
 (add-dependencies 'no-constant-inputs
-		  '())
+		  '(instruction-graph))
 
 ;;; Insert a LOAD-EXTERNAL instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
@@ -645,7 +650,7 @@
 (set-processor 'no-global-inputs 'replace-global-inputs)
 
 (add-dependencies 'no-global-inputs
-		  '())
+		  '(instruction-graph))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -693,20 +698,27 @@
 			  (or (typep input 'sicl-mir:lexical-location)
 			      (typep input 'sicl-mir:register-location)))
 			(inputs instruction))) 
-		     #'outputs)))
+		     (lambda (instruction)
+		       (remove-if-not
+			(lambda (output)
+			  (or (typep output 'sicl-mir:lexical-location)
+			      (typep output 'sicl-mir:register-location)))
+			(outputs instruction))))))
       (map-instructions
        (lambda (instruction)
 	 (loop for output in (outputs instruction)
-	       do (loop for live in (sicl-compiler-liveness:live-after
-				     liveness instruction)
-			do (when (or (typep output 'sicl-mir:lexical-location)
-				     (typep live 'sicl-mir:lexical-location))
-			     (pushnew
-			      (if (typep live 'sicl-mir:register-location)
-				  (cons output live)
-				  (cons live output))
-			      conflicts
-			      :test #'same-conflict-p)))))))
+	       do (when (or (typep output 'sicl-mir:lexical-location)
+			    (typep output 'sicl-mir:register-location))
+		    (loop for live in (sicl-compiler-liveness:live-after
+				       liveness instruction)
+			  do (when (or (typep output 'sicl-mir:lexical-location)
+				       (typep live 'sicl-mir:lexical-location))
+			       (pushnew
+				(if (typep live 'sicl-mir:register-location)
+				    (cons output live)
+				    (cons live output))
+				conflicts
+				:test #'same-conflict-p))))))))
     conflicts))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -741,7 +753,7 @@
 			sum (if (member inst loop-instructions :test #'eq)
 				10
 				1))
-		  (sicl-graph-coloring:degree location conflicts))))))))
+		  (1+ (sicl-graph-coloring:degree location conflicts)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -769,13 +781,14 @@
 	       ;; We don't want to spill this one again.
 	       (setf (spill-cost new) t)
 	       (sicl-mir:insert-instruction-before assignment inst)
-	       (nsubstitute new lexical-location (inputs inst)
-			    :test #'eq))))
+	       (setf (inputs inst)
+		     (substitute new lexical-location (inputs inst)
+				 :test #'eq)))))
   (loop for inst in (defining-instructions lexical-location)
 	do (unless (typep inst 'sicl-mir:assignment-instruction)
 	     (let* ((new (sicl-mir:new-temporary))
 		    (assignment (sicl-mir:make-assignment-instruction
-				 lexical-location new inst)))
+				 new lexical-location inst)))
 	       ;; We don't want to spill this one again.
 	       (setf (spill-cost new) t)
 	       (sicl-mir:insert-instruction-after assignment inst)
@@ -822,15 +835,20 @@
 	 (setf cheapest lexical-location))))
     cheapest))
 
-(defun pseudo-allocate-registers (program)
-  (make program 'datum-assign-use)
-  (let ((lexical-locations '())
-	(registers (registers (backend program)))
-	(conflicts (compute-conflicts program)))
+(defun all-lexical-locations ()
+  (let ((lexical-locations '()))
     (map-lexical-locations
      (lambda (lexical-location)
        (push lexical-location lexical-locations)))
-    (loop for solution = (sicl-graph-coloring:solve registers
+    lexical-locations))
+  
+(defparameter *temp-counter* 0)
+
+(defun pseudo-allocate-registers (program)
+  (let ((registers (registers (backend program))))
+    (loop for lexical-locations = (all-lexical-locations)
+	  for conflicts = (compute-conflicts program)
+	  for solution = (sicl-graph-coloring:solve registers
 						    lexical-locations
 						    conflicts
 						    #'required-register
@@ -868,7 +886,7 @@
   (let ((solution (allocate-registers program)))
     (loop for (lexical . reg) in solution
 	  do (loop for inst in (defining-instructions lexical)
-		   do (setf (outupts inst)
+		   do (setf (outputs inst)
 			    (substitute reg lexical (outputs inst)
 					:test #'eq)))
 	     (loop for inst in (using-instructions lexical)
@@ -876,6 +894,27 @@
 			    (substitute reg lexical (inputs inst)
 					:test #'eq))))))
 		      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Remove redundant assignment instructions.
+
+(defun remove-redundant-assignment-instructions (program)
+  (declare (ignore program))
+  (let ((redundant-instructions '()))
+    (map-instructions
+     (lambda (instruction)
+       (when (and (typep instruction 'sicl-mir:assignment-instruction)
+		  (eq (car (inputs instruction))
+		      (car (outputs instruction))))
+	 (push instruction redundant-instructions))))
+    (mapc #'sicl-mir:delete-instruction redundant-instructions)))
+
+(set-processor 'no-redundant-assignments
+	       'remove-redundant-assignment-instructions)
+
+(add-dependencies 'no-redundant-assignments
+		  '(instruction-graph))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Do some initial transformations.
