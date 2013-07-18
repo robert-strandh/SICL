@@ -200,7 +200,7 @@
    #:linkage-location #:make-linkage-location
    #:instruction #:predecessors #:successors #:inputs #:outputs
    #:insert-instruction-before #:insert-instruction-after
-   #:insert-instruction-between
+   #:insert-instruction-between #:delete-instruction
    #:unique-id
    #:clone-instruction
    #:enter-instruction #:make-enter-instruction
