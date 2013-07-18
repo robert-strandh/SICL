@@ -487,13 +487,15 @@
 ;;; Remove instances of NOP-INSTRUCTION.
 
 (defun remove-nop-instructions (program)
-  (let ((modify-p nil))
+  (let ((modify-p nil)
+	(nop-instructions '()))
     (map-instructions
      (lambda (instruction)
-       (loop for rest on (successors instruction)
-	     do (loop while (typep (car rest) 'sicl-mir:nop-instruction)
-		      do (setf modify-p t)
-			 (setf (car rest) (car (successors (car rest))))))))
+       (when (typep instruction 'sicl-mir:nop-instruction)
+	 (push instruction nop-instructions))))
+    (unless (null nop-instructions)
+      (setf modify-p t)
+      (mapc #'sicl-mir:delete-instruction nop-instructions))
     (when modify-p
       (touch program 'instruction-graph))))
 
@@ -593,8 +595,7 @@
 ;;; Insert a LOAD-CONSTANT instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
 (defun insert-load-constant-before (instruction in out)
-  (let ((new (sicl-mir:make-load-constant-instruction
-	      (list in) out instruction)))
+  (let ((new (sicl-mir:make-load-constant-instruction (list in) out)))
     (sicl-mir:insert-instruction-before new instruction)))
 
 (defun replace-constant-inputs (program)
@@ -624,8 +625,7 @@
 ;;; Insert a LOAD-EXTERNAL instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
 (defun insert-load-global-before (instruction in out)
-  (let ((new (sicl-mir:make-load-global-instruction
-	      (list in) out instruction)))
+  (let ((new (sicl-mir:make-load-global-instruction (list in) out)))
     (sicl-mir:insert-instruction-before new instruction)))
 
 (defun replace-global-inputs (program)
@@ -771,30 +771,30 @@
 ;;; I.  A assigns M to L.  L is replaced by M as an output of I.
 ;;;
 ;;; Assignment instructions are left alone for now.  
-
+ 
 (defun spill-lexical-location (lexical-location)
   (loop for inst in (using-instructions lexical-location)
-	do (unless (typep inst 'sicl-mir:assignment-instruction)
-	     (let* ((new (sicl-mir:new-temporary))
-		    (assignment (sicl-mir:make-assignment-instruction
-				 lexical-location new inst)))
-	       ;; We don't want to spill this one again.
-	       (setf (spill-cost new) t)
-	       (sicl-mir:insert-instruction-before assignment inst)
-	       (setf (inputs inst)
-		     (substitute new lexical-location (inputs inst)
-				 :test #'eq)))))
+       do (unless (typep inst 'sicl-mir:assignment-instruction)
+            (let* ((new (sicl-mir:new-temporary))
+                   (assignment (sicl-mir:make-assignment-instruction
+                                lexical-location new)))
+              ;; We don't want to spill this one again.
+              (setf (spill-cost new) t)
+              (sicl-mir:insert-instruction-before assignment inst)
+              (setf (inputs inst)
+                    (substitute new lexical-location (inputs inst)
+                                :test #'eq)))))
   (loop for inst in (defining-instructions lexical-location)
-	do (unless (typep inst 'sicl-mir:assignment-instruction)
-	     (let* ((new (sicl-mir:new-temporary))
-		    (assignment (sicl-mir:make-assignment-instruction
-				 new lexical-location inst)))
-	       ;; We don't want to spill this one again.
-	       (setf (spill-cost new) t)
-	       (sicl-mir:insert-instruction-after assignment inst)
-	       (setf (outputs inst)
-		     (substitute new lexical-location (outputs inst)
-				 :test #'eq)))))
+       do (unless (typep inst 'sicl-mir:assignment-instruction)
+            (let* ((new (sicl-mir:new-temporary))
+                   (assignment (sicl-mir:make-assignment-instruction
+                                new lexical-location)))
+              ;; We don't want to spill this one again.
+              (setf (spill-cost new) t)
+              (sicl-mir:insert-instruction-after assignment inst)
+              (setf (outputs inst)
+                    (substitute new lexical-location (outputs inst)
+                                :test #'eq)))))
   (change-class lexical-location 'sicl-mir:dynamic-location)
   (touch *program* 'instruction-graph))
 
@@ -868,7 +868,7 @@
 	 ;; We have an illegal assignment.
 	 (let* ((new-temp (sicl-mir:new-temporary))
 		(new-inst (sicl-mir:make-assignment-instruction
-			   (car (inputs instruction)) new-temp instruction)))
+			   (car (inputs instruction)) new-temp)))
 	   (setf (spill-cost new-temp) t)
 	   (sicl-mir:insert-instruction-before new-inst instruction)
 	   (setf (sicl-mir:inputs instruction) (list new-temp))
