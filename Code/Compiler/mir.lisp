@@ -416,14 +416,14 @@
 ;;; compiler might decide to put objects with dynamic extent.  
 
 (defclass dynamic-location (datum)
-  ((%index :initarg :index :reader index)))
+  ((%index :initform 0 :initarg :index :reader index)))
 
 (defun make-dynamic-location (index)
   (make-instance 'dynamic-location
     :index index))
 
 (defmethod draw-datum ((datum dynamic-location) stream)
-  (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
+  (format stream "   ~a [fillcolor = darkorchid, label = \"~a\"]~%"
 	  (gethash datum *datum-table*)
 	  (index datum)))
 
