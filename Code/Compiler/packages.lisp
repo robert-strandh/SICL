@@ -67,6 +67,7 @@
 	   #:constantp
 	   #:defmacro
 	   #:deftype
+	   #:define-compiler-macro
 	   )
   (:export
    #:proclaim
@@ -120,6 +121,7 @@
    #:constantp
    #:defmacro
    #:deftype
+   #:define-compiler-macro
    ))
 
 (defpackage #:sicl-ast
