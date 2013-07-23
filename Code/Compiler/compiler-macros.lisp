@@ -36,16 +36,16 @@
 (define-compiler-macro > (number &rest more-numbers)
   (let ((temps (loop repeat (1+ (length more-numbers))
 		     collect (gensym))))
-    `(let ,@(loop for temp in temps
-		  for n in (cons number more-numbers)
-		  collect `(,temp ,n))
-       ,@(if (null more-numbers)
-	     `(if (realp ,(car temps)
-			 t
-			 (error "~a is not a real" ,(car temps))))
-	     `(and @,(loop for arg1 in temps
-			   for arg2 in (cdr temps)
-			   collect `(binary-> ,arg1 ,arg2)))))))
+    `(let ,(loop for temp in temps
+		 for n in (cons number more-numbers)
+		 collect `(,temp ,n))
+       ,(if (null more-numbers)
+	    `(if (realp ,(car temps)
+			t
+			(error "~a is not a real" ,(car temps))))
+	    `(and ,@(loop for arg1 in temps
+			  for arg2 in (cdr temps)
+			  collect `(binary-> ,arg1 ,arg2)))))))
 
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -55,16 +55,16 @@
 (define-compiler-macro < (number &rest more-numbers)
   (let ((temps (loop repeat (1+ (length more-numbers))
 		     collect (gensym))))
-    `(let ,@(loop for temp in temps
-		  for n in (cons number more-numbers)
-		  collect `(,temp ,n))
-       ,@(if (null more-numbers)
-	     `(if (realp ,(car temps)
-			 t
-			 (error "~a is not a real" ,(car temps))))
-	     `(and @,(loop for arg1 in temps
-			   for arg2 in (cdr temps)
-			   collect `(binary-< ,arg1 ,arg2)))))))
+    `(let ,(loop for temp in temps
+		 for n in (cons number more-numbers)
+		 collect `(,temp ,n))
+       ,(if (null more-numbers)
+	    `(if (realp ,(car temps)
+			t
+			(error "~a is not a real" ,(car temps))))
+	    `(and ,@(loop for arg1 in temps
+			  for arg2 in (cdr temps)
+			  collect `(binary-< ,arg1 ,arg2)))))))
 
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -74,16 +74,16 @@
 (define-compiler-macro >= (number &rest more-numbers)
   (let ((temps (loop repeat (1+ (length more-numbers))
 		     collect (gensym))))
-    `(let ,@(loop for temp in temps
-		  for n in (cons number more-numbers)
-		  collect `(,temp ,n))
-       ,@(if (null more-numbers)
-	     `(if (realp ,(car temps)
-			 t
-			 (error "~a is not a real" ,(car temps))))
-	     `(and @,(loop for arg1 in temps
-			   for arg2 in (cdr temps)
-			   collect `(binary->= ,arg1 ,arg2)))))))
+    `(let ,(loop for temp in temps
+		 for n in (cons number more-numbers)
+		 collect `(,temp ,n))
+       ,(if (null more-numbers)
+	    `(if (realp ,(car temps)
+			t
+			(error "~a is not a real" ,(car temps))))
+	    `(and ,@(loop for arg1 in temps
+			  for arg2 in (cdr temps)
+			  collect `(binary->= ,arg1 ,arg2)))))))
 
 	
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -93,15 +93,15 @@
 (define-compiler-macro <= (number &rest more-numbers)
   (let ((temps (loop repeat (1+ (length more-numbers))
 		     collect (gensym))))
-    `(let ,@(loop for temp in temps
+    `(let ,(loop for temp in temps
 		  for n in (cons number more-numbers)
 		  collect `(,temp ,n))
-       ,@(if (null more-numbers)
-	     `(if (realp ,(car temps)
-			 t
-			 (error "~a is not a real" ,(car temps))))
-	     `(and @,(loop for arg1 in temps
-			   for arg2 in (cdr temps)
-			   collect `(binary-<= ,arg1 ,arg2)))))))
+       ,(if (null more-numbers)
+	    `(if (realp ,(car temps)
+			t
+			(error "~a is not a real" ,(car temps))))
+	    `(and ,@(loop for arg1 in temps
+			  for arg2 in (cdr temps)
+			  collect `(binary-<= ,arg1 ,arg2)))))))
 
 	
