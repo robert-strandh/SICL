@@ -996,7 +996,7 @@
 		      :test #'eq)))
       ;; Add a new entry unless the new function is NIL.
       (unless (null new-function)
-	(push (make-compiler-macro-entry name new-function)
+	(push (make-compiler-macro-entry base-entry new-function)
 	      (compiler-macros *global-environment*)))))
   ;; Return the new value as required by the HyperSpec.
   new-function)
