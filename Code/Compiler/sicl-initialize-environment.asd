@@ -5,5 +5,6 @@
   :components
   ((:file "macros")
    (:file "constants")
-   (:file "functions")))
+   (:file "functions")
+   (:file "types")))
 
