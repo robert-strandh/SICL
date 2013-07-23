@@ -242,6 +242,7 @@
 (defclass variable-space () ())
 (defclass block-space () ())
 (defclass tag-space () ())
+(defclass type-space () ())
 (defclass declaration-space () ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -621,6 +622,19 @@
 (defun add-go-tag-entry (env name tag)
   (add-to-environment env (make-go-tag-entry name tag)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class TYPE-ENTRY.
+
+(defclass type-entry
+    (base-entry named-entry type-space definition-entry)
+  ())
+
+(defun make-type-entry (name expander)
+  (make-instance 'type-entry
+		 :name name
+		 :definition expander))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Declaration entries.
@@ -954,23 +968,26 @@
 ;;; If there is a compiler macro entry, it must refer to a base entry
 ;;; which is either a global macro entry or to a global function entry
 ;;; that is bound.  This function searches for such a base entry.
+;;;
+;;; FIXME: for now, don't require the function entry to be bound.
 (defun find-base-entry (name environment)
   (or (find-if (lambda (entry)
 		 (eq (name entry) name))
 	       (macros environment))
       (find-if (lambda (entry)
-		 (and (eq (name entry) name)
-		      (not (eq (car (storage (location entry))) +unbound+))))
+		 (eq (name entry) name))
+;;		 (and (eq (name entry) name)
+;;		      (not (eq (car (storage (location entry))) +unbound+))))
 	       (functions environment))))
 
 (defun (setf compiler-macro-function) (new-function name &optional environment)
   (unless (null environment)
     (error "Environment object must be nil."))
-  (let ((base-entry (find-base-entry name environment)))
+  (let ((base-entry (find-base-entry name *global-environment*)))
     (when (null base-entry)
       (error "A global macro or a global function must already exist."))
     (let ((c-m-entry (find-if (lambda (entry)
-				(eq (location entry) base-entry))
+				(eq (base-entry entry) base-entry))
 			      (compiler-macros *global-environment*))))
       ;; Remove the old entry if there was one.
       (unless (null c-m-entry)
@@ -1200,6 +1217,74 @@
 				;; No compiler macro found.  We are done.
 				(return-from fully-expand-form form))))))))
 	     (t (return-from fully-expand-form form)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Type expansion.
+
+(defun type-function (symbol)
+  (let ((entry (find symbol (types *global-environment*)
+		     :key #'name :test #'eq)))
+    (if (null entry)
+	nil
+	(definition entry))))
+
+;;; FIXME: check if the type is already there, maybe?
+(defun (setf type-function) (new-function symbol)
+  (push (make-type-entry symbol new-function)
+	(types *global-environment*)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function TYPEEXPAND-1.
+
+(defun typeexpand-1 (type)
+  (let* ((name (if (symbolp type) type (car type)))
+	 (expander (type-function name)))
+    (if (null expander)
+	type
+	(funcall expander
+		 (if (symbolp type) (list type) type)
+		 *global-environment*))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function TYPEEXPAND.
+
+(defun typeexpand (type)
+  (let ((expansion (typeexpand-1 type)))
+    (if (eq expansion type)
+	type
+	(typeexpand expansion))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function TYPEEXPAND-ALL.
+
+;;; FIXME: figure out what to do with the FUNCTION type specifier.
+(defun typeexpand-all (type)
+  (let ((expansion (typeexpand type)))
+    (if (or (symbolp expansion) (null (cdr expansion)))
+	(let ((name (if (symbolp expansion) expansion (car expansion))))
+	  (case name
+	    ((array cons integer rational
+	      float short-float single-float double-float long-float)
+	     `(,name * *))
+	    (complex '(complex *))
+	    (t
+	     name)))
+	(case (car expansion)
+	  ((array cons integer rational
+	    float short-float single-float double-float long-float)
+	   (if (null (cddr expansion))
+	       (append expansion '(*))
+	       expansion))
+	  ((and or values)
+	   (cons (car expansion) (mapcar #'typeexpand-all (cdr expansion))))
+	  (not
+	   (cons 'not (typeexpand-all (cadr expansion))))
+	  (t
+	   expansion)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
