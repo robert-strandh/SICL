@@ -536,6 +536,87 @@
 	(then-ast ast)
 	(else-ast ast)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class TYPEQ-AST.
+
+(defclass typeq-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%type-specifier :initarg :type-specifier :reader type-specifier)))
+
+(defun make-typeq-ast (form-ast type-specifier)
+  (make-instance 'typeq-ast
+    :form-ast form-ast
+    :type-specifier type-specifier))
+
+(defmethod stream-draw-ast ((ast typeq-ast) stream)
+  (format stream "   ~a [label = \"typeq\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast))))
+
+(defmethod children ((ast typeq-ast))
+  (list (form-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOAD-CAR-AST.
+
+(defclass load-car-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)))
+
+(defun make-load-car-ast (form-ast)
+  (make-instance 'load-car-ast
+    :form-ast form-ast))
+
+(defmethod stream-draw-ast ((ast load-car-ast) stream)
+  (format stream "   ~a [label = \"load-car\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOAD-CDR-AST.
+
+(defclass load-cdr-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)))
+
+(defun make-load-cdr-ast (form-ast)
+  (make-instance 'load-cdr-ast
+    :form-ast form-ast))
+
+(defmethod stream-draw-ast ((ast load-cdr-ast) stream)
+  (format stream "   ~a [label = \"load-cdr\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOAD-CLASS-AST.
+
+(defclass load-class-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)))
+
+(defun make-load-class-ast (form-ast)
+  (make-instance 'load-class-ast
+    :form-ast form-ast))
+
+(defmethod stream-draw-ast ((ast load-class-ast) stream)
+  (format stream "   ~a [label = \"load-class\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; AST classes for low-level operators.

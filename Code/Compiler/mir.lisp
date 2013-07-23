@@ -896,6 +896,63 @@
   (format stream "   ~a [label = \"LLV\"];~%"
 	  (unique-id instruction)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-CAR-INSTRUCTION.
+
+(defclass load-car-instruction (instruction)
+  ())
+
+(defun make-load-car-instruction
+    (input output &optional (successor nil successor-p))
+  (make-instance 'load-car-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (if successor-p (list successor) '())))
+
+(defmethod draw-instruction
+    ((instruction load-car-instruction) stream)
+  (format stream "   ~a [label = \"load-car\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-CDR-INSTRUCTION.
+
+(defclass load-cdr-instruction (instruction)
+  ())
+
+(defun make-load-cdr-instruction
+    (input output &optional (successor nil successor-p))
+  (make-instance 'load-cdr-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (if successor-p (list successor) '())))
+
+(defmethod draw-instruction
+    ((instruction load-cdr-instruction) stream)
+  (format stream "   ~a [label = \"load-cdr\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-CLASS-INSTRUCTION.
+
+(defclass load-class-instruction (instruction)
+  ())
+
+(defun make-load-class-instruction
+    (input output &optional (successor nil successor-p))
+  (make-instance 'load-class-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (if successor-p (list successor) '())))
+
+(defmethod draw-instruction
+    ((instruction load-class-instruction) stream)
+  (format stream "   ~a [label = \"load-class\"];~%"
+	  (unique-id instruction)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions for low-level operators.

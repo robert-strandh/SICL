@@ -147,6 +147,10 @@
    #:the-ast #:make-the-ast #:value-type
    #:draw-ast
    #:children
+   #:typeq-ast
+   #:load-car-ast
+   #:load-cdr-ast
+   #:load-class-ast
    #:word-ast #:make-word-ast
    #:memref-ast #:make-memref-ast
    #:memset-ast #:make-memset-ast
@@ -219,6 +223,9 @@
    #:load-global-instruction #:make-load-global-instruction 
    #:load-static-env-instruction #:make-load-static-env-instruction 
    #:load-linkage-vector-instruction #:make-load-linkage-vector-instruction 
+   #:load-car-instruction #:make-load-car-instruction 
+   #:load-cdr-instruction #:make-load-cdr-instruction 
+   #:load-class-instruction #:make-load-class-instruction 
    #:memref-instruction #:make-memref-instruction #:cacheable
    #:memset-instruction #:make-memset-instruction
    #:u+-instruction #:make-u+-instruction
