@@ -28,4 +28,6 @@
    (:file "make"
     :depends-on ("packages"))
    (:file "program"
-    :depends-on ("packages" "mir" "make"))))
+    :depends-on ("packages" "mir" "make"))
+   (:file "type-descriptor"
+    :depends-on ("packages"))))
