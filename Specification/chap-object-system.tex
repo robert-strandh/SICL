@@ -26,7 +26,7 @@ The AMOP stipulates the existence of four class metaclasses, namely:
   not yet been created by \texttt{defclass}.
 \end{itemize}
 
-\section{Standard classes}
+\subsection{Standard classes}
 \label{object-system-standard-classes}
 
 Instances of \texttt{standard-class} (i.e. ``standard classes'') are
@@ -88,7 +88,7 @@ ability to modify all aspects of an instance except its identity.  The
 identity is preserved by the fact that the \emph{header object}
 remains the same. 
 
-\section{Built-in classes}
+\subsection{Built-in classes}
 \label{object-system-built-in-classes}
 
 The HyperSpec contains a significant number of classes that every
@@ -135,7 +135,7 @@ method allows us to concentrate all important features of a built-in
 class and its instances in one place, which will simplify
 maintenance. 
 
-\section{Condition classes}
+\subsection{Condition classes}
 \label{object-system-condition-classes}
 
 The HyperSpec defines an entire hierarchy of classes with the class
@@ -168,7 +168,7 @@ condition (which is a symbol) rather than with a \emph{condition
   instance}, again to allow us to create this hierarchy later in the
 bootstrapping process. 
 
-\section{Structure classes}
+\subsection{Structure classes}
 \label{object-system-structure-classes}
 
 Just like condition classes \seesec{object-system-condition-classes},
@@ -221,3 +221,154 @@ With respect to bootstrapping, since \sysname{} does not use structure
 classes at all for its implementation, implementing \texttt{defstruct}
 can be done fairly late.  In fact, we may omit it in initial version
 of the system. 
+
+\section{Bootstrapping}
+
+\subsection{Definitions}
+
+\begin{definition}
+A \emph{host class} is a class in the host system.  If it is an
+instance of the host class \texttt{host:standard-class}, then it is
+typically created by \texttt{host:defclass}.
+\end{definition}
+
+\begin{definition}
+A \emph{host instance} is an instance of a host class.  If it is an
+instance of the class \texttt{host:standard-object}, then it is
+typically created by a call to \texttt{host:make-instance} using a
+host class or the name of a host class.
+\end{definition}
+
+\begin{definition}
+A \emph{target class} is a class metaobject represented as a target
+instance of some target class. 
+\end{definition}
+
+\begin{definition}
+A \emph{target instance} is an instance of a target class.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge class} is a representation of a target class as a host
+instance.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge instance} is a target instance, except that the class of
+the instance is not a target class but a bridge class.
+\end{definition}
+
+Notice that according to this definition, a bridge instance is not an
+instance of a bridge class.
+
+\begin{definition}
+A \emph{host generic function} is a generic function created by
+\texttt{host:defgeneric}, so it is a host instance of the host class
+\texttt{host:generic-function}.  Arguments to the discriminating
+function of such a generic function are host instances.
+\texttt{host:class-of} is called on some required arguments in order
+to determine what methods to call.
+\end{definition}
+
+\begin{definition}
+A \emph{host method} is a method created by \texttt{host:defmethod},
+so it is a host instance of the host class \texttt{host:method}.  The
+class specializers of such a method are host classes.
+\end{definition}
+
+\begin{definition}
+A \emph{target generic function} is an instance of the target class
+\texttt{target:generic-function}.  Arguments to the discriminating
+function of such a generic function are target instances.
+\texttt{target:class-of} is called on some required arguments in order
+to determine what methods to call, and the function
+\texttt{target:class-unique-number} is called to determine the unique
+number of the class.
+\end{definition}
+
+\begin{definition}
+A \emph{target method} is an instance of the target class
+\texttt{target:method}.  The class specializers of such a method are
+target classes.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge generic function} is a generic function which is a host
+instance of the host class \texttt{target:generic-function}.  Arguments to
+the discriminating function of such a generic function are
+typically target instances (but not necessarily, because of our
+definition of "target instance").  \texttt{target:class-of} is called on
+some required arguments in order to determine what methods to
+call, and \texttt{target:class-unique-number} is called to determine the
+unique number of the class.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge method} is a a method which is a host instance of the host
+class \texttt{target:method}.  The class specializers of such a method can
+be bridge classes or target classes depending on context, but the
+class accessors (\texttt{target:class-direct-superclasses}, etc.) as well
+as \texttt{target:class-unique-number} must be defined in that context to
+work on the specializers. 
+\end{definition}
+
+\subsection{Bootstrapping stages}
+
+\subsubsection{Stage 1}
+
+We use \texttt{host:defclass} to create a hierarchy of host classes
+corresponding to the hierarchy of MOP classes.  The names of those host
+classes will be \texttt{target:standard-object},
+\texttt{target:metaobject}, etc., except that we do not create a class
+named \texttt{T} because that would require shadowing the symbol
+\texttt{T} which would create many other problems.  It is however not
+required to have \texttt{T} as a superclass for these classes.  All
+that matters is that these classes have the right slots, and
+\texttt{T} does not supply any slots anyway.  These host classes have
+the analogous superclasses compared their corresponding target MOP
+classes, and they define the analogous slots.  Their metaclasses are
+all wrong of course, because each one of them has
+\texttt{host:standard-class} as metaclass.  The inheritance
+finalization protocol of the host will make sure that instances of
+these host classes have the effective slots determined by class
+inheritance.  In other words, each of the classes define slots with
+the right names, the right initargs, etc.
+
+\subsubsection{Stage 2}
+
+The purpose of this stage is to make it possible to create bridge
+generic functions.  In order to create a generic function, we need the
+existence of other generic functions.  We break this cycle by using
+host generic functions to create bridge generic functions.  Examples 
+of host generic functions that are defined in this stage are
+\texttt{ensure-generic-function-using-class},
+\texttt{compute-applicable-methods-using-classes},
+\texttt{compute-discriminating-function}, etc.  Furthermore, in this
+stage, we define \texttt{:after} method on
+\texttt{host:initialize-instance} specialized for the host classes
+\texttt{target:generic-function} and \texttt{target:method}.  
+
+\subsubsection{Stage 3}
+
+The purpose of this stage is to create bridge classes corresponding to
+the classes of the MOP hierarchy.  We do this by redefining
+\texttt{defclass} to call \texttt{target:ensure-class} which calls
+\texttt{host:make-instance} of the appropriate host class.  When a
+bridge class is created, it will automatically create generic
+functions corresponding to slot readers and writers.  This is done by
+calling \texttt{host:make-instance} directly or indirectly through
+\texttt{ensure-generic-function}.  Thus the generic functions created
+this ware are bridge generic functions, and the methods are bridge
+methods.
+
+Creating bridge classes this way will also instantiate the host class
+\texttt{target:direct-slot-definition}, so that our bridge classes
+contain bridge instances in their slots. 
+
+Before creating the bridge classes, we must define \texttt{:after}
+methods on \texttt{host:initialize-instance} specialized for the host
+classes \texttt{target:standard-class} and
+\texttt{target:funcallable-standard-class}.  
+
+\subsubsection{Stage 4}
+
