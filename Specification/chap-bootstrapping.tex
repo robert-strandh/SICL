@@ -1,0 +1,55 @@
+\chapter{Bootstrapping}
+
+An image I is said to be \emph{viable} if and only if it is possible
+to obtain a complete \cl{} system by starting with I and loading a
+sequence of ordinary compiled files.
+
+There are many ways of making a viable image.  We are interested in
+making a \emph{small} viable image.  In particular, we want the
+initial image \emph{not to contain the compiler}, because we want to
+be able to load the compiler as a bunch of compiled files. 
+
+By requiring the viable image not to contain the compiler, we place
+some restrictions on the code in it.  
+
+One such restriction is that creating the discriminating function of a
+generic function is not allowed to invoke the compiler.  Since doing
+so is typical in any CLOS implementation, we must find a different
+way.
+
+Another such restriction concerns the creation of classes.  Typically,
+when a class is created, the reader and writer methods are created by
+invoking the compiler.  Again, a different way must be found.
+
+In order to create an instance of a class, the following functions
+are called, so they must exist and be executable:
+
+\begin{itemize}
+\item \texttt{make-instance}.  Called directly to create the instance.
+\item \texttt{allocate-instance}.  Called by \texttt{make-instance} to
+  allocate storage for the instance.
+\item \texttt{initialize-instance}.  Called by \texttt{make-instance}
+  to initialize the slots of the instance.
+\item \texttt{shared-initialize}.  Called by
+  \texttt{initialize-instance}.
+\item \texttt{slot-value}.  Called by \texttt{shared-initialize}.
+\item \texttt{(setf slot-value)}.  Called by
+  \texttt{shared-initialize}.
+\end{itemize}
+
+Most of these functions are generic functions, so the functionality
+that implements generic function dispatch must also be in place,
+including:
+
+\begin{itemize}
+\item \texttt{compute-discriminating-function}.
+\item \texttt{compute-applicable-methods}.
+\item \texttt{compute-applicable-methods-using-classes}.
+\item \texttt{compute-effective-method}.  This function returns a form
+  to be compiled, but since we do not have the compiler, we instead
+  use some more direct method similar to what is shown in chapter 1 of
+  the AMOP.  Furthermore, in order to take into account different
+  method combinations, we also need the compiler, so only the method
+  combinations used by the compiler will be considered at
+  bootstrapping.
+\end{itemize}

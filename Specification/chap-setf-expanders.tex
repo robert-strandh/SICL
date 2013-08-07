@@ -1,0 +1,40 @@
+\chapter{Setf expanders}
+
+The \hs{} requires%
+\footnote{See figure 5.7 in section 5.1.2.2 in the \hs{}} 
+the following function call forms to have a corresponding
+\texttt{setf} form:
+
+\begin{itemize}
+\item Accessors for parts of a list: 
+  car, cdr, caar, cadr, cdar, cddr, caaar, caadr, cadar, caddr,
+  cdaar, cdadr, cddar, cdddr, caaaar, caaadr, caadar, caaddr, 
+  cadaar, cadadr, caddar, cadddr, 
+  cdaaar, cdaadr, cdadar, cdaddr, 
+  cddaar, cddadr, cdddar, cddddr, 
+  first, second, third, fourth, fifth,
+  sixth, seventh, eighth, ninth, tenth
+  rest, nth.
+\item Array element accessors: 
+  aref, row-major-aref, char, schar, bit, sbit, svref.
+\item Other array accessors: fill-pointer
+\item Sequence element accessors: elt.
+\item Other sequence accessors: subseq.
+\item Symbol properties: symbol-plist.
+\item Environment accessors:
+  symbol-function, symbol-value, fdefinition, 
+  macro-function, compiler-macro-function.
+\item Hash table accessors: gethash.
+\item CLOS-related accessors: class-name, slot-value, find-class.
+\item Miscellaneous: documentation,
+  logical-pathname-translations, get, 
+  readtable-case.
+\end{itemize}
+
+The \hs{} also gives the implementer a choice concerning the
+implementation of \texttt{setf} forms either as functions or as
+\texttt{setf} expanders.  For \sysname{} we always choose a function
+whenever possible.  Consequently, every \texttt{setf} form in
+the list above is implemented as a function.
+
+
