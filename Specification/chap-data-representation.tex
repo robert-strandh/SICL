@@ -162,7 +162,7 @@ The system class \texttt{sequence} can not be directly instantiated.
 Instead, it serves as a superclass for the classes \texttt{list} and
 \texttt{vector}.  
 
-The HyperSpec is a bit contradictory here, because
+The \hs{} is a bit contradictory here, because
 in some places it says that \texttt{list} and \texttt{vector}
 represent an exhaustive partition of \texttt{sequence}%
 \footnote{See for instance section 17.1}
@@ -211,8 +211,8 @@ We suggest providing specialized arrays for the following data types:
 \item \texttt{(signed-byte 32)}.  
 \item \texttt{(unsigned-byte 8)}, used for code, interface with the
   operating system, etc. 
-\item \texttt{character} (i.e., strings) as required by the HyperSpec.
-\item \texttt{bit}, as required by the HyperSpec.
+\item \texttt{character} (i.e., strings) as required by the \hs{}.
+\item \texttt{bit}, as required by the \hs{}.
 \end{itemize}
 
 Since the element type determines where an element is located and how
