@@ -47,7 +47,7 @@ R8 & Register variable (callee saved) \\
 R9 & Frame pointer\\
 R10 & Dynamic environment (callee saved) \\
 R11 & Register variable (callee saved)\\
-R12, IP & Linkage vector argument\\
+R12, IP & Linkage vector/function argument\\
 R13, SP & Stack pointer \\
 R14, LR & Link register, scratch \\
 R15, PC & Program counter \\
@@ -112,18 +112,22 @@ form some other purpose.  However, before a function call, it needs to
 be restored.  A CATCH will store R10 along with other callee-saved
 registers so that it can be restored in case of a throw.
 
-R12 is also treated specially.  It contains the linkage vector
-argument established by the caller for the benefit of the callee.
-Notice that the linkage vector is an ordinary \cl{} vector with header
-object and all.  When a function A calls a function B, if A can be
-sure that B uses the same code-object and thus the same linkage
-vector, then as A is about to call B, A makes sure that this register
-contains the same value as it did upon entry to A.  It can do that
-either by not using the register for any other purpose, or by spilling
-it and restoring it before the call to B.  B guarantees that the
-register will contain the same value as it did when B was called.  In
-the opposite case, i.e., if the compiler can not determine that A and
-B use the same code object, then upon calling B, A must save the
+R12 is also treated specially.  When an external call is made, the
+caller puts the function object to call in this register, and then
+calls the function-call code of the class of the object.  That
+function-call code replaces the function by the linkage vector, and
+also initializes R3.  When an internal call is made, the caller does
+not change this register, because it already contains the correct
+linkage vector.  Notice that the linkage vector is an ordinary \cl{}
+vector with header object and all.  When a function A calls a function
+B, if A can be sure that B uses the same code-object and thus the same
+linkage vector, then as A is about to call B, A makes sure that this
+register contains the same value as it did upon entry to A.  It can do
+that either by not using the register for any other purpose, or by
+spilling it and restoring it before the call to B.  B guarantees that
+the register will contain the same value as it did when B was called.
+In the opposite case, i.e., if the compiler can not determine that A
+and B use the same code object, then upon calling B, A must save the
 register and load the linkage vector of B into it.  Sometime after B
 returns and before A itself returns to its caller, A must restore the
 register in case A's caller uses the same linkage vector as A.  Notice
