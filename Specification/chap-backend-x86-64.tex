@@ -1,23 +1,57 @@
 \chapter{x86-64}
 \label{chapter-backend-x86-64}
 
-The registers are used as follows:
+The standard calling conventions use the registers as follows
 
-\begin{itemize}
-\item RAX: Temporary register.  First return value. 
-\item RBX: Dynamic environment.
-\item RCX: Second argument. 
-\item RDX: First argument. 
-\item RSP: Stack pointer.
-\item RBP: Frame pointer.
-\item RSI: Code object argument.
-\item RDI: Argument-count argument.  Return value count value.
-\item R8: Third argument. 
-\item R9: Fourth argument. 
-\item R10: Static environment argument.
-\item R11: Temporary register.
-\item R12-R15: Callee-saved registers
-\end{itemize}
+\begin{tabular}{|l|l|l|}
+\hline
+Name & Used for & Saved by\\
+\hline
+\hline
+RAX & First return value & Caller\\
+RBX & Optional base pointer & Callee\\
+RCX & Fourth argument & Caller \\
+RDX & Third argument, second return value & Caller\\
+RSP & Stack pointer &\\
+RBP & Frame pointer & Callee\\
+RSI & Second argument & Caller\\
+RDI & First argument & Caller\\
+R8 & Fifth argument & Caller\\
+R9 & Sixth argument & Caller\\
+R10 & Temporary, static chain pointer & Caller\\
+R11 & Temporary & Caller\\
+R12 & Temporary & Callee\\
+R13 & Temporary & Callee\\
+R14 & Temporary & Callee\\
+R15 & Temporary & Callee\\
+\hline
+\end{tabular}
+
+We mostly respect this standard, and allocate as follows:
+
+\begin{tabular}{|l|l|l|}
+\hline
+Name & Used for & Saved by\\
+\hline
+\hline
+RAX & First return value & Caller\\
+RBX & Dynamic environment & Callee\\
+RCX & Fourth argument, third return value & Caller \\
+RDX & Third argument, second return value & Caller\\
+RSP & Stack pointer &\\
+RBP & Frame pointer & Callee\\
+RSI & Second argument, fourth return value & Caller\\
+RDI & First argument, value count & Caller\\
+R8 &  Fifth argument, return value pointer& Caller\\
+R9 & Linkage vector/function argument & Caller\\
+R10 & Static env. argument &\\
+R11 & Scratch & Caller\\
+R12 & Register variable & Callee\\
+R13 & Register variable & Callee\\
+R14 & Register variable & Callee\\
+R15 & Register variable & Callee\\
+\hline
+\end{tabular}
 
 \refFig{fig-x86-64-stack-frame} shows the layout of a stack frame. 
 
