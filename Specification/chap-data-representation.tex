@@ -296,7 +296,16 @@ An \emph{ordinary} (i.e., non-generic) function is represented as a
 two-word header (as usual) and a contents vector of three words:
 
 \begin{enumerate}
-\item A \emph{code object} (see below).
+\item A simple vector called the \emph{linkage vector} which contains
+  objects that executing functions need to access such as values of
+  complex constant objects, cells containing function objects for
+  global functions used in the code, symbols naming special variables,
+  etc.  The linkage vector is created and filled as a result of a
+  \emph{fasl} file being loaded, or as a result of calling
+  \texttt{compile}.  The same linkage vector is shared between all the
+  functions resulting from compiling a single \emph{compilation unit}.
+  The first entry of the linkage vector is the \emph{code object} (see
+  below).
 \item An \emph{entry point} which gives an offset from the start of
   the instructions in the code object to the first instruction of the
   function. 
@@ -314,13 +323,6 @@ and a contents vector containing:
 \begin{enumerate}
 \item A byte vector containing the machine instructions for one or
   more functions.
-\item A simple vector called the \emph{linkage vector} which contains
-  objects that executing functions need to access such as values of
-  complex constant objects, cells containing function objects
-  for global functions used in the code, symbols naming special
-  variables, etc.  The linkage vector is created and filled as a
-  result of a \emph{fasl} file being loaded, or as a result of calling
-  \texttt{compile}. 
 \item Correspondence between values of the program counter
   (represented as offsets into the byte vector of instructions) and
   source code locations.  
@@ -329,14 +331,13 @@ and a contents vector containing:
   garbage collector and by the debugger. 
 \end{enumerate}
 
-By having several functions share the same code object, we can
+By having several functions share the same linkage vector, we can
 simplify calls between functions in the same compilation unit, because
-the caller and the callee would then share the same code object,
-including the linkage vector.  In contrast, a call from a function in
-one compilation unit to a function in a different compilation unit
-involves (in the most general case) storing the linkage vector in a
-register and setting a slot in the stack frame containing the code
-object of the callee. 
+the caller and the callee would then share the same linkage vector.
+In contrast, a call from a function in one compilation unit to a
+function in a different compilation unit involves (in the most general
+case) accessing the linkage vector of the callee and storing it in a
+register.
 
 For a \emph{generic function}, each method contains a separate
 ordinary function.  
