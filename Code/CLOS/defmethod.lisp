@@ -147,7 +147,6 @@
   (multiple-value-bind (name qualifiers lambda-list specializers body)
       (parse-defmethod arguments)
     (let ((generic-function-var (gensym)))
-    ;; FIXME: do the lambda list
       `(let ((,generic-function-var (ensure-generic-function ',name)))
 	 (ensure-method
 	  ,generic-function-var
