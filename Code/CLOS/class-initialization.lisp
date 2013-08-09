@@ -124,6 +124,8 @@
     (set-direct-slots class direct-slots))
   (create-readers-and-writers class))
 
+;;; FIXME: According to the AMOP, calling initialize-instance on a
+;;; subclass of built-in-class signals an error.  
 (defmethod initialize-instance :after
     ((class built-in-class)
      &key
