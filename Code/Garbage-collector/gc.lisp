@@ -33,10 +33,10 @@
 (defvar *nursery*)
 
 ;;; In each thread, this variable gets bound to a bitvector (though
-;;; not represented as a common Lisp bitvecto).  The representation is
+;;; not represented as a common Lisp bitvector).  The representation is
 ;;; as follows: we use a vector of words.  The length of the vector is
 ;;; (/ +nursery-size+ +word-size 2), so to each bit in the bitvector
-;;; corresponds a pair of wrds in the nursery.  Each word if the
+;;; corresponds a pair of words in the nursery.  Each word if the
 ;;; bitvector is a +word-size+ unsigned integer, representing liveness
 ;;; information for +word-size+ consecutive double words in the
 ;;; nursery.  The word at index i of the bitvector vector represents
