@@ -917,6 +917,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction STORE-CAR-INSTRUCTION.
+
+(defclass store-car-instruction (instruction)
+  ())
+
+(defun make-store-car-instruction
+    (inputs &optional (successor nil successor-p))
+  (make-instance 'store-car-instruction
+    :inputs inputs
+    :outputs '()
+    :successors (if successor-p (list successor) '())))
+
+(defmethod draw-instruction
+    ((instruction store-car-instruction) stream)
+  (format stream "   ~a [label = \"store-car\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction LOAD-CDR-INSTRUCTION.
 
 (defclass load-cdr-instruction (instruction)
@@ -936,6 +955,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction STORE-CDR-INSTRUCTION.
+
+(defclass store-cdr-instruction (instruction)
+  ())
+
+(defun make-store-cdr-instruction
+    (inputs &optional (successor nil successor-p))
+  (make-instance 'store-cdr-instruction
+    :inputs inputs
+    :outputs '()
+    :successors (if successor-p (list successor) '())))
+
+(defmethod draw-instruction
+    ((instruction store-cdr-instruction) stream)
+  (format stream "   ~a [label = \"store-cdr\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction LOAD-CLASS-INSTRUCTION.
 
 (defclass load-class-instruction (instruction)
@@ -951,6 +989,63 @@
 (defmethod draw-instruction
     ((instruction load-class-instruction) stream)
   (format stream "   ~a [label = \"load-class\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction STORE-CLASS-INSTRUCTION.
+
+(defclass store-class-instruction (instruction)
+  ())
+
+(defun make-store-class-instruction
+    (inputs &optional (successor nil successor-p))
+  (make-instance 'store-class-instruction
+    :inputs inputs
+    :outputs '()
+    :successors (if successor-p (list successor) '())))
+
+(defmethod draw-instruction
+    ((instruction store-class-instruction) stream)
+  (format stream "   ~a [label = \"store-class\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LOAD-CONTENTS-INSTRUCTION.
+
+(defclass load-contents-instruction (instruction)
+  ())
+
+(defun make-load-contents-instruction
+    (inputs output &optional (successor nil successor-p))
+  (make-instance 'load-contents-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (if successor-p (list successor) '())))
+
+(defmethod draw-instruction
+    ((instruction load-contents-instruction) stream)
+  (format stream "   ~a [label = \"load-contents\"];~%"
+	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction STORE-CONTENTS-INSTRUCTION.
+
+(defclass store-contents-instruction (instruction)
+  ())
+
+(defun make-store-contents-instruction
+    (inputs &optional (successor nil successor-p))
+  (make-instance 'store-contents-instruction
+    :inputs inputs
+    :outputs '()
+    :successors (if successor-p (list successor) '())))
+
+(defmethod draw-instruction
+    ((instruction store-contents-instruction) stream)
+  (format stream "   ~a [label = \"store-contents\"];~%"
 	  (unique-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

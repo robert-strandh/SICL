@@ -132,6 +132,13 @@
   (let ((*location-asts* (make-hash-table :test #'eq)))
     (convert `(function (lambda () ,form)) nil)))
 
+(defun convert-top-level-lamda-expression (lambda-expression)
+  (unless (and (consp lambda-expression)
+	       (eq (car lambda-expression) 'lambda))
+    (error "argument must be a lambda expression"))
+  (let ((*location-asts* (make-hash-table :test #'eq)))
+    (convert `(function ,lambda-expression) nil)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a sequence of forms.
@@ -648,6 +655,84 @@
     ((symbol (eql 'funcall)) form environment)
   (let ((args (convert-sequence (cdr form) environment)))
     (sicl-ast:make-call-ast (car args) (cdr args))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting LOAD-CAR.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:load-car)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 1)
+  (sicl-ast:make-load-car-ast (convert (cadr form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting STORE-CAR.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:store-car)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 2 2)
+  (sicl-ast:make-store-car-ast (convert (cadr form) env)
+			       (convert (caddr form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting LOAD-CDR.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:load-cdr)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 1)
+  (sicl-ast:make-load-cdr-ast (convert (cadr form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting STORE-CDR.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:store-cdr)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 2 2)
+  (sicl-ast:make-store-cdr-ast (convert (cadr form) env)
+			       (convert (caddr form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting LOAD-CLASS.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:load-class)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 1)
+  (sicl-ast:make-load-class-ast (convert (cadr form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting STORE-CLASS.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:store-class)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 2 2)
+  (sicl-ast:make-store-class-ast (convert (cadr form) env)
+				 (convert (caddr form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting LOAD-CONTENTS.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:load-contents)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 2 2)
+  (sicl-ast:make-load-contents-ast (convert (cadr form) env)
+				   (convert (caddr form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting STORE-CONTENTS.
+
+(defmethod convert-compound ((symbol (eql 'sicl-word:store-contents)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 3 3)
+  (sicl-ast:make-store-contents-ast (convert (cadr form) env)
+				    (convert (caddr form) env)
+				    (convert (cadddr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

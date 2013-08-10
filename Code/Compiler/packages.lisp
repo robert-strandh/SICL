@@ -150,9 +150,14 @@
    #:draw-ast
    #:children
    #:typeq-ast
-   #:load-car-ast
-   #:load-cdr-ast
-   #:load-class-ast
+   #:load-car-ast #:make-load-car-ast
+   #:store-car-ast #:make-store-car-ast
+   #:load-cdr-ast #:make-load-cdr-ast
+   #:store-cdr-ast #:make-store-cdr-ast
+   #:load-class-ast #:make-load-class-ast
+   #:store-class-ast #:make-store-class-ast
+   #:load-contents-ast #:offset-ast #:make-load-contents-ast
+   #:store-contents-ast #:offset-ast #:make-store-contents-ast
    #:word-ast #:make-word-ast
    #:memref-ast #:make-memref-ast
    #:memset-ast #:make-memset-ast
@@ -186,6 +191,7 @@
   (:export
    #:ast
    #:convert-top-level-form
+   #:convert-top-level-lamda-expression
    #:convert #:convert-compound
    ))
 
@@ -226,8 +232,13 @@
    #:load-static-env-instruction #:make-load-static-env-instruction 
    #:load-linkage-vector-instruction #:make-load-linkage-vector-instruction 
    #:load-car-instruction #:make-load-car-instruction 
+   #:store-car-instruction #:make-store-car-instruction 
    #:load-cdr-instruction #:make-load-cdr-instruction 
+   #:store-cdr-instruction #:make-store-cdr-instruction 
    #:load-class-instruction #:make-load-class-instruction 
+   #:store-class-instruction #:make-store-class-instruction 
+   #:load-contents-instruction #:make-load-contents-instruction 
+   #:store-contents-instruction #:make-store-contents-instruction 
    #:memref-instruction #:make-memref-instruction #:cacheable
    #:memset-instruction #:make-memset-instruction
    #:u+-instruction #:make-u+-instruction
@@ -261,6 +272,10 @@
 (defpackage #:sicl-word
   (:use #:common-lisp)
   (:export
+   #:load-car #:store-car
+   #:load-cdr #:store-cdr
+   #:load-class #:store-class
+   #:load-contents #:store-contents
    #:word
    #:memalloc #:memref #:memset
    #:u+ #:u- #:s+ #:s- #:neg

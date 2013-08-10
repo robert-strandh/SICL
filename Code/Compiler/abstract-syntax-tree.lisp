@@ -581,6 +581,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class STORE-CAR-AST.
+
+(defclass store-car-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+   
+(defun make-store-car-ast (form-ast value-ast)
+  (make-instance 'store-car-ast
+    :form-ast form-ast
+    :value-ast value-ast))
+
+(defmethod stream-draw-ast ((ast store-car-ast) stream)
+  (format stream "   ~a [label = \"store-car\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast)))
+  (stream-draw-ast (value-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (value-ast ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LOAD-CDR-AST.
 
 (defclass load-cdr-ast (ast)
@@ -600,6 +625,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class STORE-CDR-AST.
+
+(defclass store-cdr-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-store-cdr-ast (form-ast value-ast)
+  (make-instance 'store-cdr-ast
+    :form-ast form-ast
+    :value-ast value-ast))
+
+(defmethod stream-draw-ast ((ast store-cdr-ast) stream)
+  (format stream "   ~a [label = \"store-cdr\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast)))
+  (stream-draw-ast (value-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (value-ast ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LOAD-CLASS-AST.
 
 (defclass load-class-ast (ast)
@@ -616,6 +666,87 @@
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (form-ast ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class STORE-CLASS-AST.
+
+(defclass store-class-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-store-class-ast (form-ast value-ast)
+  (make-instance 'store-class-ast
+    :form-ast form-ast
+    :value-ast value-ast))
+
+(defmethod stream-draw-ast ((ast store-class-ast) stream)
+  (format stream "   ~a [label = \"store-class\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast)))
+  (stream-draw-ast (value-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (value-ast ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOAD-CONTENTS-AST.
+
+(defclass load-contents-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%offset-ast :initarg :offset-ast :reader offset-ast)))
+
+(defun make-load-contents-ast (form-ast offset-ast)
+  (make-instance 'load-contents-ast
+    :form-ast form-ast
+    :offset-ast offset-ast))
+
+(defmethod stream-draw-ast ((ast load-contents-ast) stream)
+  (format stream "   ~a [label = \"load-contents\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast)))
+  (stream-draw-ast (offset-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (offset-ast ast))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class STORE-CONTENTS-AST.
+
+(defclass store-contents-ast (ast)
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%offset-ast :initarg :offset-ast :reader offset-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-store-contents-ast (form-ast offset-ast value-ast)
+  (make-instance 'store-contents-ast
+    :form-ast form-ast
+    :offset-ast offset-ast
+    :value-ast value-ast))
+
+(defmethod stream-draw-ast ((ast store-contents-ast) stream)
+  (format stream "   ~a [label = \"store-contents\"];~%"
+	  (id ast))
+  (stream-draw-ast (form-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (form-ast ast)))
+  (stream-draw-ast (offset-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (offset-ast ast)))
+  (stream-draw-ast (value-ast ast) stream)
+  (format stream "   ~a -> ~a~%"
+	  (id ast)
+	  (id (value-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
