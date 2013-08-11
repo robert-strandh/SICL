@@ -597,6 +597,178 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a LOAD-CAR-AST.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:load-car-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (let* ((temp (make-temp (car (sicl-ast:argument-asts ast))))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "LOAD-CAR operation in a context of no results.")
+			   next)
+			  ((eq results t)
+			   (let ((temp2 (sicl-mir:new-temporary)))
+			     (setf next 
+				   (sicl-mir:make-return-instruction
+				    (list temp2)))
+			     (sicl-mir:make-load-car-instruction
+			      temp temp2 next)))
+			  (t
+			   (setf next (nil-fill (cdr results) next))
+			   (sicl-mir:make-load-car-instruction
+			    temp (car results) next)))))
+	       (2 (if (eq results t)
+		      (error "Illegal context for LOAD-CAR")
+		      (let* ((location (if (null results)
+					   (sicl-mir:new-temporary)
+					   (car results)))
+			     (next (sicl-mir:make-==-instruction
+				    (list location
+					  (sicl-mir:make-constant-input nil))
+				    successors)))
+			(setf next
+			      (sicl-mir:make-load-car-instruction
+			       temp location next))
+			(nil-fill (cdr results) next)))))))
+      (compile-arguments
+       (sicl-ast:argument-asts ast) (list temp) instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a LOAD-CDR-AST.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:load-cdr-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (let* ((temp (make-temp (car (sicl-ast:argument-asts ast))))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "LOAD-CDR operation in a context of no results.")
+			   next)
+			  ((eq results t)
+			   (let ((temp2 (sicl-mir:new-temporary)))
+			     (setf next 
+				   (sicl-mir:make-return-instruction
+				    (list temp2)))
+			     (sicl-mir:make-load-cdr-instruction
+			      temp temp2 next)))
+			  (t
+			   (setf next (nil-fill (cdr results) next))
+			   (sicl-mir:make-load-cdr-instruction
+			    temp (car results) next)))))
+	       (2 (if (eq results t)
+		      (error "Illegal context for LOAD-CDR")
+		      (let* ((location (if (null results)
+					   (sicl-mir:new-temporary)
+					   (car results)))
+			     (next (sicl-mir:make-==-instruction
+				    (list location
+					  (sicl-mir:make-constant-input nil))
+				    successors)))
+			(setf next
+			      (sicl-mir:make-load-cdr-instruction
+			       temp location next))
+			(nil-fill (cdr results) next)))))))
+      (compile-arguments
+       (sicl-ast:argument-asts ast) (list temp) instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a LOAD-CLASS-AST.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:load-class-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (let* ((temp (make-temp (car (sicl-ast:argument-asts ast))))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "LOAD-CLASS operation in a context of no results.")
+			   next)
+			  ((eq results t)
+			   (let ((temp2 (sicl-mir:new-temporary)))
+			     (setf next 
+				   (sicl-mir:make-return-instruction
+				    (list temp2)))
+			     (sicl-mir:make-load-class-instruction
+			      temp temp2 next)))
+			  (t
+			   (setf next (nil-fill (cdr results) next))
+			   (sicl-mir:make-load-class-instruction
+			    temp (car results) next)))))
+	       (2 (if (eq results t)
+		      (error "Illegal context for LOAD-CLASS")
+		      (let* ((location (if (null results)
+					   (sicl-mir:new-temporary)
+					   (car results)))
+			     (next (sicl-mir:make-==-instruction
+				    (list location
+					  (sicl-mir:make-constant-input nil))
+				    successors)))
+			(setf next
+			      (sicl-mir:make-load-class-instruction
+			       temp location next))
+			(nil-fill (cdr results) next)))))))
+      (compile-arguments
+       (sicl-ast:argument-asts ast) (list temp) instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a LOAD-CONTENTS-AST.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:load-contents-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+	   (instruction
+	     (ecase (length successors)
+	       (1 (let ((next (car successors)))
+		    (cond ((null results)
+			   (warn "LOAD-CONTENTS operation in a context of no results.")
+			   next)
+			  ((eq results t)
+			   (let ((temp2 (sicl-mir:new-temporary)))
+			     (setf next 
+				   (sicl-mir:make-return-instruction
+				    (list temp2)))
+			     (sicl-mir:make-load-contents-instruction
+			      temps temp2 next)))
+			  (t
+			   (setf next (nil-fill (cdr results) next))
+			   (sicl-mir:make-load-contents-instruction
+			    temps (car results) next)))))
+	       (2 (if (eq results t)
+		      (error "Illegal context for LOAD-CONTENTS")
+		      (let* ((location (if (null results)
+					   (sicl-mir:new-temporary)
+					   (car results)))
+			     (next (sicl-mir:make-==-instruction
+				    (list location
+					  (sicl-mir:make-constant-input nil))
+				    successors)))
+			(setf next
+			      (sicl-mir:make-load-contents-instruction
+			       temps location next))
+			(nil-fill (cdr results) next)))))))
+      (compile-arguments
+       (sicl-ast:argument-asts ast) temps instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a MEMREF-AST.
 ;;;
 
@@ -636,6 +808,11 @@
 			       (car temps) location next))
 			(nil-fill (cdr results) next)))))))
       (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a MEMSET-AST.
+;;;
 
 (defmethod compile-ast ((ast sicl-ast:memset-ast) context)
   (with-accessors ((results results)
