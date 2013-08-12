@@ -640,6 +640,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a STORE-CAR.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:store-car-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (and (= (length successors) 1)
+		 (zerop (length results)))
+      (error "Illegal context for store-car."))
+    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+	   (instruction
+	     (sicl-mir:make-store-car-instruction
+	      temps (car successors))))
+      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a LOAD-CDR-AST.
 ;;;
 
@@ -680,6 +698,24 @@
 			(nil-fill (cdr results) next)))))))
       (compile-arguments
        (sicl-ast:argument-asts ast) (list temp) instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a STORE-CDR.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:store-cdr-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (and (= (length successors) 1)
+		 (zerop (length results)))
+      (error "Illegal context for store-cdr."))
+    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+	   (instruction
+	     (sicl-mir:make-store-cdr-instruction
+	      temps (car successors))))
+      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -726,6 +762,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a STORE-CLASS.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:store-class-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (and (= (length successors) 1)
+		 (zerop (length results)))
+      (error "Illegal context for store-class."))
+    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+	   (instruction
+	     (sicl-mir:make-store-class-instruction
+	      temps (car successors))))
+      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a LOAD-CONTENTS-AST.
 ;;;
 
@@ -766,6 +820,24 @@
 			(nil-fill (cdr results) next)))))))
       (compile-arguments
        (sicl-ast:argument-asts ast) temps instruction))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a STORE-CONTENTS.
+;;;
+
+(defmethod compile-ast ((ast sicl-ast:store-contents-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (unless (and (= (length successors) 1)
+		 (zerop (length results)))
+      (error "Illegal context for store-contents."))
+    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+	   (instruction
+	     (sicl-mir:make-store-contents-instruction
+	      temps (car successors))))
+      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
