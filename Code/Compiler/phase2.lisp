@@ -604,20 +604,20 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((temp (make-temp (car (sicl-ast:argument-asts ast))))
+    (let* ((temp (make-temp (sicl-ast:form-ast ast)))
 	   (instruction
 	     (ecase (length successors)
+	       (0 (let ((temp2 (sicl-mir:new-temporary)))
+		    (sicl-mir:make-load-car-instruction
+		     temp temp2
+		     (sicl-mir:make-return-instruction
+		      (list temp2)))))
 	       (1 (let ((next (car successors)))
 		    (cond ((null results)
 			   (warn "LOAD-CAR operation in a context of no results.")
 			   next)
 			  ((eq results t)
-			   (let ((temp2 (sicl-mir:new-temporary)))
-			     (setf next 
-				   (sicl-mir:make-return-instruction
-				    (list temp2)))
-			     (sicl-mir:make-load-car-instruction
-			      temp temp2 next)))
+			   (error "this should not happen"))
 			  (t
 			   (setf next (nil-fill (cdr results) next))
 			   (sicl-mir:make-load-car-instruction
@@ -636,7 +636,7 @@
 			       temp location next))
 			(nil-fill (cdr results) next)))))))
       (compile-arguments
-       (sicl-ast:argument-asts ast) (list temp) instruction))))
+       (list (sicl-ast:form-ast ast)) (list temp) instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -650,11 +650,13 @@
     (unless (and (= (length successors) 1)
 		 (zerop (length results)))
       (error "Illegal context for store-car."))
-    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+    (let* ((argument-asts
+	     (list (sicl-ast:form-ast ast) (sicl-ast:value-ast ast)))
+	   (temps (make-temps argument-asts))
 	   (instruction
 	     (sicl-mir:make-store-car-instruction
 	      temps (car successors))))
-      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
+      (compile-arguments argument-asts temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -665,20 +667,20 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((temp (make-temp (car (sicl-ast:argument-asts ast))))
+    (let* ((temp (make-temp (sicl-ast:form-ast ast)))
 	   (instruction
 	     (ecase (length successors)
+	       (0 (let ((temp2 (sicl-mir:new-temporary)))
+		    (sicl-mir:make-load-cdr-instruction
+		     temp temp2
+		     (sicl-mir:make-return-instruction
+		      (list temp2)))))
 	       (1 (let ((next (car successors)))
 		    (cond ((null results)
 			   (warn "LOAD-CDR operation in a context of no results.")
 			   next)
 			  ((eq results t)
-			   (let ((temp2 (sicl-mir:new-temporary)))
-			     (setf next 
-				   (sicl-mir:make-return-instruction
-				    (list temp2)))
-			     (sicl-mir:make-load-cdr-instruction
-			      temp temp2 next)))
+			   (error "this should not happen"))
 			  (t
 			   (setf next (nil-fill (cdr results) next))
 			   (sicl-mir:make-load-cdr-instruction
@@ -697,7 +699,7 @@
 			       temp location next))
 			(nil-fill (cdr results) next)))))))
       (compile-arguments
-       (sicl-ast:argument-asts ast) (list temp) instruction))))
+       (list (sicl-ast:form-ast ast)) (list temp) instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -711,11 +713,13 @@
     (unless (and (= (length successors) 1)
 		 (zerop (length results)))
       (error "Illegal context for store-cdr."))
-    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+    (let* ((argument-asts
+	     (list (sicl-ast:form-ast ast) (sicl-ast:value-ast ast)))
+	   (temps (make-temps argument-asts))
 	   (instruction
 	     (sicl-mir:make-store-cdr-instruction
 	      temps (car successors))))
-      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
+      (compile-arguments argument-asts temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -726,20 +730,20 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((temp (make-temp (car (sicl-ast:argument-asts ast))))
+    (let* ((temp (make-temp (sicl-ast:form-ast ast)))
 	   (instruction
 	     (ecase (length successors)
+	       (0 (let ((temp2 (sicl-mir:new-temporary)))
+		    (sicl-mir:make-load-class-instruction
+		     temp temp2
+		     (sicl-mir:make-return-instruction
+		      (list temp2)))))
 	       (1 (let ((next (car successors)))
 		    (cond ((null results)
 			   (warn "LOAD-CLASS operation in a context of no results.")
 			   next)
 			  ((eq results t)
-			   (let ((temp2 (sicl-mir:new-temporary)))
-			     (setf next 
-				   (sicl-mir:make-return-instruction
-				    (list temp2)))
-			     (sicl-mir:make-load-class-instruction
-			      temp temp2 next)))
+			   (error "this should not happen"))
 			  (t
 			   (setf next (nil-fill (cdr results) next))
 			   (sicl-mir:make-load-class-instruction
@@ -758,7 +762,7 @@
 			       temp location next))
 			(nil-fill (cdr results) next)))))))
       (compile-arguments
-       (sicl-ast:argument-asts ast) (list temp) instruction))))
+       (list (sicl-ast:form-ast ast)) (list temp) instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -772,11 +776,13 @@
     (unless (and (= (length successors) 1)
 		 (zerop (length results)))
       (error "Illegal context for store-class."))
-    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+    (let* ((argument-asts
+	     (list (sicl-ast:form-ast ast) (sicl-ast:value-ast ast)))
+	   (temps (make-temps argument-asts))
 	   (instruction
 	     (sicl-mir:make-store-class-instruction
 	      temps (car successors))))
-      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
+      (compile-arguments argument-asts temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -787,20 +793,22 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+    (let* ((argument-asts
+	     (list (sicl-ast:form-ast ast) (sicl-ast:offset-ast ast)))
+	   (temps (make-temps argument-asts))
 	   (instruction
 	     (ecase (length successors)
+	       (0 (let ((temp2 (sicl-mir:new-temporary)))
+		    (sicl-mir:make-load-contents-instruction
+		     temps temp2
+		     (sicl-mir:make-return-instruction
+		      (list temp2)))))
 	       (1 (let ((next (car successors)))
 		    (cond ((null results)
 			   (warn "LOAD-CONTENTS operation in a context of no results.")
 			   next)
 			  ((eq results t)
-			   (let ((temp2 (sicl-mir:new-temporary)))
-			     (setf next 
-				   (sicl-mir:make-return-instruction
-				    (list temp2)))
-			     (sicl-mir:make-load-contents-instruction
-			      temps temp2 next)))
+			   (error "this should not happen"))
 			  (t
 			   (setf next (nil-fill (cdr results) next))
 			   (sicl-mir:make-load-contents-instruction
@@ -819,7 +827,7 @@
 			       temps location next))
 			(nil-fill (cdr results) next)))))))
       (compile-arguments
-       (sicl-ast:argument-asts ast) temps instruction))))
+       argument-asts temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -833,11 +841,14 @@
     (unless (and (= (length successors) 1)
 		 (zerop (length results)))
       (error "Illegal context for store-contents."))
-    (let* ((temps (make-temps (sicl-ast:argument-asts ast)))
+    (let* ((argument-asts (list (sicl-ast:form-ast ast)
+				(sicl-ast:offset-ast ast)
+				(sicl-ast:value-ast ast)))
+	   (temps (make-temps argument-asts))
 	   (instruction
 	     (sicl-mir:make-store-contents-instruction
 	      temps (car successors))))
-      (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
+      (compile-arguments argument-asts temps instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
