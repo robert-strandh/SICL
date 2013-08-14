@@ -162,12 +162,13 @@
 ;;; We only convert GET-ARG instructions that have immediate inputs
 ;;; that are small enough to correspond to a register argument. 
 (defmethod convert-instruction ((instruction sicl-mir:get-arg-instruction))
-  (let* ((input (car (sicl-mir:inputs instruction)))
-	 (value (sicl-mir:value input)))
-    (when (and (typep input 'sicl-mir:immediate-input) (<= value 12))
-      (setf (sicl-mir:inputs instruction)
-	    (elt (list *a1-vc-reg* *a2-v4-reg* *a3-v2-reg* *a4-v3-reg*)
-		 (/ value 4))))))
+  (let ((input (car (sicl-mir:inputs instruction))))
+    (when (typep input 'sicl-mir:immediate-input)
+      (let ((value (sicl-mir:value input)))
+	(when (<= value 12)
+	  (setf (sicl-mir:inputs instruction)
+		(elt (list *a1-vc-reg* *a2-v4-reg* *a3-v2-reg* *a4-v3-reg*)
+		     (/ value 4))))))))
 
 (defmethod convert-instruction ((instruction sicl-mir:get-argcount-instruction))
   (change-class instruction 'sicl-mir:assignment-instruction)
