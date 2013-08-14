@@ -72,11 +72,15 @@
 ;;; fixnums this way.
 
 (defmethod sicl-program:convert-constant ((backend backend-x86-64) constant)
-  (if (and (or (typep constant 'sicl-mir:constant-input)
-	       (typep constant 'sicl-mir:word-input))
-	   (typep (sicl-mir:value constant) 'integer))
-      (sicl-mir:make-immediate-input (sicl-mir:value constant))
-      nil))
+  (cond ((and (typep constant 'sicl-mir:constant-input)
+	      (typep (sicl-mir:value constant) 'integer))
+	 ;; FIXME: compute the immediate from the fixnum in a better
+	 ;; way, without assuming a particular representation.
+	 (sicl-mir:make-immediate-input (* 4 (sicl-mir:value constant))))
+	((typep constant 'sicl-mir:word-input)
+	 (sicl-mir:make-immediate-input (sicl-mir:value constant)))
+	(t
+	 nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -167,8 +171,9 @@
       (let ((value (sicl-mir:value input)))
 	(when (<= value 12)
 	  (setf (sicl-mir:inputs instruction)
-		(elt (list *a1-vc-reg* *a2-v4-reg* *a3-v2-reg* *a4-v3-reg*)
-		     (/ value 4))))))))
+		(list (elt (list *a1-vc-reg* *a2-v4-reg*
+				 *a3-v2-reg* *a4-v3-reg*)
+			   (/ value 4)))))))))
 
 (defmethod convert-instruction ((instruction sicl-mir:get-argcount-instruction))
   (change-class instruction 'sicl-mir:assignment-instruction)
