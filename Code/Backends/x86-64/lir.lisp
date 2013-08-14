@@ -169,6 +169,11 @@
 	    (elt (list *a1-vc-reg* *a2-v4-reg* *a3-v2-reg* *a4-v3-reg*)
 		 (/ value 4))))))
 
+(defmethod convert-instruction ((instruction sicl-mir:get-argcount-instruction))
+  (change-class instruction 'sicl-mir:assignment-instruction)
+  (setf (sicl-mir:inputs instruction)
+	(list *ac-vp-reg*)))
+
 (defmethod convert-instruction ((instruction sicl-mir:funcall-instruction))
   (let ((new-inputs (copy-list (sicl-mir:inputs instruction))))
     ;; Insert four assignment instructions preceding the
