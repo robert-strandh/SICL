@@ -61,7 +61,7 @@
 ;;; the stack pointer (RSP) and the frame pointer (RBP). 
 (defmethod sicl-program:registers ((backend backend-x86-64))
   (loop for i in '(0 1 2 3 6 7 8 9 10 11 12 13 14)
-	collect aref *registsers* i))
+	collect (aref *registers* i)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -71,7 +71,7 @@
 ;;; input to a machine integer.  Furthermore, we can only convert
 ;;; fixnums this way.
 
-(defmethod sicl-program:convert-constant ((backend backend-arm) constant)
+(defmethod sicl-program:convert-constant ((backend backend-x86-64) constant)
   (if (and (or (typep constant 'sicl-mir:constant-input)
 	       (typep constant 'sicl-mir:word-input))
 	   (typep (sicl-mir:value constant) 'integer))
@@ -191,8 +191,8 @@
      (sicl-mir:make-assignment-instruction
       ;; FIXME: do this better than to assume the representation of a
       ;; fixnum.
-      (sicl-mir:make-immediate-input (* 4 (length new-inputs)) *ac-vp-reg*)
-      instruction))
+      (sicl-mir:make-immediate-input (* 4 (length new-inputs))) *ac-vp-reg*)
+     instruction)
     ;; Insert instructions for loading the static environment and the
     ;; linkage vector of the callee into appropriate registers.
     (sicl-mir:insert-instruction-before
@@ -239,8 +239,8 @@
      (sicl-mir:make-assignment-instruction
       ;; FIXME: do this better than to assume the representation of a
       ;; fixnum.
-      (sicl-mir:make-immediate-input (* 4 (length new-inputs)) *ac-vp-reg*)
-      instruction))
+      (sicl-mir:make-immediate-input (* 4 (length new-inputs))) *ac-vp-reg*)
+     instruction)
     ;; Insert instructions for loading the static environment and the
     ;; linkage vector of the callee into appropriate registers.
     (sicl-mir:insert-instruction-before
