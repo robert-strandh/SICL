@@ -23,13 +23,13 @@ file.  Starting immediately after the first word is \emph{executable
   space. 
 \end{enumerate}
 
-Since a \emph{fasl} file can contain arbitrary code to be executed at
-load time, the entire system can be bootstrapped by loading a sequence
-of \emph{fasl} files. 
+The executable code in the \emph{fasl} file can be seen as a \cl{}
+function that takes 5 functions as arguments, namely
+\texttt{make-string}, \texttt{(setf schar)}, \texttt{find-package},
+\texttt{intern}, and \texttt{fdefinition}.  
 
-Most ``normal'' \emph{fasl} files will need to call some functions in
-order to accomplish the processing that must happen at load time.
-They do this by executing the following steps:
+In order to create objects and modify the environment, the code in the
+\emph{fasl} file executes the following steps:
 
 \begin{enumerate}
 \item Call \texttt{make-string} to allocate a string to contain the
@@ -48,15 +48,9 @@ They do this by executing the following steps:
 \end{enumerate}
 
 If the name of the function that is wanted is of the form
-\texttt{(setf \emph{name})}, then the function named \texttt{CONS}
+\texttt{(setf \emph{name})}, then the function named \texttt{cons}
 first has to be found with the method indicated above.  Then the 
-symbols \texttt{SETF}, and \texttt{NIL}, must also be found using the
-same method as above.  The function \texttt{CONS} must then be called
+symbols \texttt{setf}, and \texttt{NIL}, must also be found using the
+same method as above.  The function \texttt{cons} must then be called
 in order to build the list that gives the name of the desired
 function.  Finally, \texttt{fdefinition} is called with that list. 
-
-Clearly, the functions \texttt{make-string}, \texttt{(setf schar)},
-\texttt{find-package}, and \texttt{intern} must be found through a
-different mechanism than the normal one.  For that reason, these
-functions are referred to from memory locations with fixed addresses
-in the system.  
