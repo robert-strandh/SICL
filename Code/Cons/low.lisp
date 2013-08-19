@@ -1,18 +1,18 @@
 (cl:in-package #:sicl-cons)
 
-(defun consp (x)
-  (sicl-type:typeq x cons))
+(defun consp (object)
+  (sicl-type:typeq object cons))
 
-(defun car (x)
-  (declare (type list x))
-  (if (consp x)
-      (load-car x)
+(defun car (list)
+  (declare (type list list))
+  (if (consp list)
+      (load-car list)
       nil))
 
-(defun cdr (x)
-  (declare (type list x))
-  (if (consp x)
-      (load-cdr x)
+(defun cdr (list)
+  (declare (type list list))
+  (if (consp list)
+      (load-cdr list)
       nil))
   
 (defun rplaca (cons object)
