@@ -517,12 +517,21 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let ((temp (sicl-mir:new-temporary)))
-      (compile-ast (sicl-ast:index-ast ast)
-		   (context (list temp)
-			    (list t)
-			    (list (sicl-mir:make-get-arg-instruction
-				   temp (car results) (car successors))))))))
+    ;; This is a kludge.  If the INDEX-AST of the AST is a
+    ;; CONSTANT-AST, then we make a special case, so that we later can
+    ;; easily recognize a GET-ARG instruction with a constant input.
+    (if (typep (sicl-ast:index-ast ast) 'sicl-ast:constant-ast)
+	(let ((value (sicl-ast:value (sicl-ast:index-ast ast))))
+	  (sicl-mir:make-get-arg-instruction
+	   (sicl-mir:make-constant-input value)
+	   (car results) (car successors)))
+	(let ((temp (sicl-mir:new-temporary)))
+	  (compile-ast (sicl-ast:index-ast ast)
+		       (context
+			(list temp)
+			(list t)
+			(list (sicl-mir:make-get-arg-instruction
+			       temp (car results) (car successors)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
