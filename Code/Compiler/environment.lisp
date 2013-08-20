@@ -388,7 +388,14 @@
 
 (defclass function-entry
     (base-entry named-entry function-space location-entry)
-  ())
+  (;; The AST is present if the function was declared INLINE when it
+   ;; was defined.  Otherwise, the value of this slot is NIL.
+   (%ast :initform nil :initarg :ast :accessor ast)
+   ;; When the AST i present (i.e., non-NIL), this slot is valid and
+   ;; contains a list of LEXICAL-ASTs, one for each required
+   ;; parameter.
+   (%parameters :initform nil :initarg :parameters :accessor parameters)
+   (%lambda-list :initform :none :initarg :lambda-list :accessor lambda-list)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -831,9 +838,13 @@
 (defclass location-info (info)
   ((%location :initarg :location :reader location)
    (%type :initarg :type :reader type)
-   (%inline-info :initarg :inline-info :reader inline-info)
    (%ignore-info :initarg :ignore-info :reader ignore-info)
    (%dynamic-extent-p :initarg :dynamic-extent-p :reader dynamic-extent-p)))
+
+(defclass function-info-mixin ()
+  ((%inline-info :initarg :inline-info :reader inline-info)
+   (%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%ast :initarg :ast :reader ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -851,9 +862,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class LEXICAL-FUNCTION-LOCATION-INFO.
+
+(defclass lexical-function-location-info
+    (lexical-location-info function-info-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class GLOBAL-LOCATION-INFO.
 
 (defclass global-location-info (location-info)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class GLOBAL-FUNCTION-LOCATION-INFO.
+
+(defclass global-function-location-info
+    (global-location-info function-info-mixin)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1440,11 +1467,13 @@
 		 (ignore-info (find-ignore-info entry env))
 		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
 	     (make-instance (if (typep entry 'global-function-entry)
-				'global-location-info
-				'lexical-location-info)
+				'global-function-location-info
+				'lexical-function-location-info)
 			    :location (location entry)
 			    :type type
 			    :inline-info inline-info
+			    :ast (ast entry)
+			    :lambda-list (lambda-list entry)
 			    :ignore-info ignore-info
 			    :dynamic-extent-p dynamic-extent-p))))))
 
