@@ -60,7 +60,7 @@
 ;;; available.  For this backend, it is all registers except
 ;;; the stack pointer (RSP) and the frame pointer (RBP). 
 (defmethod sicl-program:registers ((backend backend-x86-64))
-  (loop for i in '(0 1 2 3 6 7 8 9 10 11 12 13 14)
+  (loop for i in '(0 1 2 3 6 7 8 9 10 11 12 13 14 15)
 	collect (aref *registers* i)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -95,6 +95,11 @@
 (defvar *var2-lexical*)
 (defvar *var3-lexical*)
 (defvar *var4-lexical*)
+(defvar *a1-lexical*)
+(defvar *a2-lexical*)
+(defvar *a3-lexical*)
+(defvar *a4-lexical*)
+
 
 (defgeneric convert-instruction (instruction))
 
@@ -113,6 +118,10 @@
 	(*var2-lexical* (sicl-mir:new-temporary))
 	(*var3-lexical* (sicl-mir:new-temporary))
 	(*var4-lexical* (sicl-mir:new-temporary))
+	(*a1-lexical* (sicl-mir:new-temporary))
+	(*a2-lexical* (sicl-mir:new-temporary))
+	(*a3-lexical* (sicl-mir:new-temporary))
+	(*a4-lexical* (sicl-mir:new-temporary))
 	(all-instructions '()))
     (setf (sicl-program:required-register *denv-lexical*) *denv-reg*)
     (setf (sicl-program:required-register *lv-lexical*) *lv-fun-reg*)
@@ -121,6 +130,10 @@
     (setf (sicl-program:required-register *var2-lexical*) *var2-reg*)
     (setf (sicl-program:required-register *var3-lexical*) *var3-reg*)
     (setf (sicl-program:required-register *var4-lexical*) *var4-reg*)
+    (setf (sicl-program:preferred-register *a1-lexical*) *a1-vc-reg*)
+    (setf (sicl-program:preferred-register *a2-lexical*) *a2-v4-reg*)
+    (setf (sicl-program:preferred-register *a3-lexical*) *a3-v2-reg*)
+    (setf (sicl-program:preferred-register *a4-lexical*) *a4-v3-reg*)
     ;; Start by collecting all the instructions to be processed, so as
     ;; to avoid converting an instruction twice as the instruction
     ;; graph changes.
@@ -153,6 +166,10 @@
   (let ((saves (list (cons *denv-reg* *denv-lexical*)
 		     (cons *lv-fun-reg* *lv-lexical*)
 		     (cons *senv-reg* *senv-lexical*)
+		     (cons *a4-v3-reg* *a4-lexical*)
+		     (cons *a3-v2-reg* *a3-lexical*)
+		     (cons *a2-v4-reg* *a2-lexical*)
+		     (cons *a1-vc-reg* *a1-lexical*)
 		     (cons *var4-reg* *var4-lexical*)
 		     (cons *var3-reg* *var3-lexical*)
 		     (cons *var2-reg* *var2-lexical*)
@@ -171,9 +188,10 @@
       (let ((value (sicl-mir:value input)))
 	(when (<= value 12)
 	  (setf (sicl-mir:inputs instruction)
-		(list (elt (list *a1-vc-reg* *a2-v4-reg*
-				 *a3-v2-reg* *a4-v3-reg*)
-			   (/ value 4)))))))))
+		(list (elt (list *a1-lexical* *a2-lexical*
+				 *a3-lexical* *a4-lexical*)
+			   (/ value 4))))
+	  (change-class instruction 'sicl-mir:assignment-instruction))))))
 
 (defmethod convert-instruction ((instruction sicl-mir:get-argcount-instruction))
   (change-class instruction 'sicl-mir:assignment-instruction)
@@ -299,8 +317,8 @@
 (defmethod convert-instruction ((instruction sicl-mir:get-values-instruction))
   (let ((new-outputs (copy-list (sicl-mir:outputs instruction))))
     (loop for rest on new-outputs
-	  for reg in (list *a1-vc-reg* *a2-v4-reg*
-			   *a3-v2-reg* *a4-v3-reg* *senv-reg*)
+	  for reg in (list *v1-reg* *a3-v2-reg*
+			   *a4-v3-reg* *a2-v4-reg*)
 	  do (sicl-mir:insert-instruction-after
 	      (sicl-mir:make-assignment-instruction reg (car rest))
 	      instruction)
