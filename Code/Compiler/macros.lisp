@@ -239,3 +239,14 @@
     (if (null forms)
 	t
 	(aux forms))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Macros that should not exist at all, but that we include in order
+;;; to continue with the backend work.
+
+(defmacro binary-< (x y)
+  `(sicl-word:s< ,x ,y))
+
+(defmacro binary-> (x y)
+  `(sicl-word:s< ,y ,x))
