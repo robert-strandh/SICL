@@ -1406,7 +1406,6 @@
 			:name name
 			:location (location entry)
 			:type t
-			:inline-info nil
 			:ignore-info nil
 			:dynamic-extent-p nil))
 	       nil))
@@ -1421,7 +1420,6 @@
 			  :type (find-type entry env)))
 	  (t
 	   (let ((type (find-type entry env))
-		 (inline-info (find-inline-info entry env))
 		 (ignore-info (find-ignore-info entry env))
 		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
 	     (make-instance (if (typep entry 'special-variable-entry)
@@ -1429,7 +1427,6 @@
 				'lexical-location-info)
 			    :location (location entry)
 			    :type type
-			    :inline-info inline-info
 			    :ignore-info ignore-info
 			    :dynamic-extent-p dynamic-extent-p))))))
 
@@ -1450,7 +1447,7 @@
 	       (progn (warn "Undefined function: ~a" name)
 		      (setf entry (make-global-function-entry name))
 		      (push entry (functions *global-environment*))
-		      (make-instance 'global-location-info
+		      (make-instance 'global-function-location-info
 			:location (location entry)
 			:type t
 			:inline-info nil
