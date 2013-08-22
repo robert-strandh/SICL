@@ -220,7 +220,8 @@
      (sicl-mir:make-assignment-instruction
       ;; FIXME: do this better than to assume the representation of a
       ;; fixnum.
-      (sicl-mir:make-immediate-input (* 4 (length new-inputs))) *ac-vp-reg*)
+      (sicl-mir:make-immediate-input
+       (* 4 (length (cdr new-inputs)))) *ac-vp-reg*)
      instruction)
     ;; Insert instructions for loading the callee into the register
     ;; dedicated for that purpose.
@@ -262,7 +263,8 @@
      (sicl-mir:make-assignment-instruction
       ;; FIXME: do this better than to assume the representation of a
       ;; fixnum.
-      (sicl-mir:make-immediate-input (* 4 (length new-inputs))) *ac-vp-reg*)
+      (sicl-mir:make-immediate-input
+       (* 4 (length (cdr new-inputs)))) *ac-vp-reg*)
      instruction)
     ;; Insert instructions for loading the callee into the register
     ;; dedicated for that purpose.
