@@ -222,23 +222,17 @@
       ;; fixnum.
       (sicl-mir:make-immediate-input (* 4 (length new-inputs))) *ac-vp-reg*)
      instruction)
-    ;; Insert instructions for loading the static environment and the
-    ;; linkage vector of the callee into appropriate registers.
+    ;; Insert instructions for loading the callee into the register
+    ;; dedicated for that purpose.
     (sicl-mir:insert-instruction-before
-     (sicl-mir:make-load-static-env-instruction
-      (car new-inputs) *senv-reg*)
+     (sicl-mir:make-assignment-instruction (car new-inputs) *lv-fun-reg*)
      instruction)
-    (sicl-mir:insert-instruction-before
-     (sicl-mir:make-load-linkage-vector-instruction
-      (car new-inputs) *lv-fun-reg*)
-     instruction)
-    ;; Add the static environment register, the linkage vector
-    ;; registers, and the argument count register as input to the
-    ;; funcall instruction, right after the callee input itself.
+    ;; Add the linkage vector registers, and the argument count
+    ;; register as input to the funcall instruction, right after the
+    ;; callee input itself.
     (setf (sicl-mir:inputs instruction)
 	  (cons (car new-inputs)
-		(append (list *senv-reg* *lv-fun-reg* *ac-vp-reg*)
-			(cdr new-inputs))))
+		(append (list *lv-fun-reg* *ac-vp-reg*) (cdr new-inputs))))
     ;; Indicate that the FUNCALL-INSTRUCTION returns values in some
     ;; registers, and trashes some others by adding those registers as
     ;; outputs to the FUNCALL-INSTRUCTION.
@@ -270,23 +264,17 @@
       ;; fixnum.
       (sicl-mir:make-immediate-input (* 4 (length new-inputs))) *ac-vp-reg*)
      instruction)
-    ;; Insert instructions for loading the static environment and the
-    ;; linkage vector of the callee into appropriate registers.
+    ;; Insert instructions for loading the callee into the register
+    ;; dedicated for that purpose.
     (sicl-mir:insert-instruction-before
-     (sicl-mir:make-load-static-env-instruction
-      (car new-inputs) *senv-reg*)
+     (sicl-mir:make-assignment-instruction (car new-inputs) *lv-fun-reg*)
      instruction)
-    (sicl-mir:insert-instruction-before
-     (sicl-mir:make-load-linkage-vector-instruction
-      (car new-inputs) *lv-fun-reg*)
-     instruction)
-    ;; Add the static environment register, the linkage vector
-    ;; registers, and the argument count register as input to the
-    ;; tailcall instruction, right after the callee input itself.
+    ;; Add the linkage vector registers, and the argument count
+    ;; register as input to the funcall instruction, right after the
+    ;; callee input itself.
     (setf (sicl-mir:inputs instruction)
 	  (cons (car new-inputs)
-		(append (list *senv-reg* *lv-fun-reg* *ac-vp-reg*)
-			(cdr new-inputs)))))
+		(append (list *lv-fun-reg* *ac-vp-reg*) (cdr new-inputs)))))
   ;; The tailcall instruction is a combination of a funcall and a
   ;; return instruction.  For that reason, we must also restore the
   ;; callee-saved registers just the way we do with a return
