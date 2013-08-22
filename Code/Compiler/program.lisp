@@ -917,6 +917,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; We need to find out how much stack space to allocate and to what
+;;; stack location each spilled register belongs.  For that reason, we
+;;; need to collect all the dynamic locations of the program.
+
+(defun collect-dynamic-locations (program)
+  (declare (ignore program))
+  (let ((dynamic-locations '()))
+    (map-instructions
+     (lambda (instruction)
+       (let ((data (append (sicl-mir:inputs instruction)
+			   (sicl-mir:outputs instruction))))
+	 (loop for datum in data
+	       do (when (typep datum 'sicl-mir:dynamic-location)
+		    (pushnew datum dynamic-locations :test #'eq))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)

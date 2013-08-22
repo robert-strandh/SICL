@@ -317,6 +317,7 @@
    #:convert-to-lir
    #:required-register #:preferred-register
    #:spill-cost
+   #:collect-dynamic-locations
    ))
 
 (defpackage #:sicl-type-proclamations
