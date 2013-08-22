@@ -930,7 +930,8 @@
 			   (sicl-mir:outputs instruction))))
 	 (loop for datum in data
 	       do (when (typep datum 'sicl-mir:dynamic-location)
-		    (pushnew datum dynamic-locations :test #'eq))))))))
+		    (pushnew datum dynamic-locations :test #'eq))))))
+    dynamic-locations))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
