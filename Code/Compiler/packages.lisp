@@ -65,9 +65,6 @@
 	   #:boundp
 	   #:makunbound
 	   #:constantp
-	   #:defmacro
-	   #:deftype
-	   #:define-compiler-macro
 	   )
   (:export
    #:proclaim
@@ -190,6 +187,7 @@
   (:export
    #:ast
    #:*compile-file*
+   #:convert-initial
    #:convert-top-level-form
    #:convert-top-level-lamda-expression
    #:convert #:convert-compound
