@@ -189,6 +189,7 @@
    )
   (:export
    #:ast
+   #:*compile-file*
    #:convert-top-level-form
    #:convert-top-level-lamda-expression
    #:convert #:convert-compound
