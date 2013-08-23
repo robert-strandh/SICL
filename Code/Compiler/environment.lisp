@@ -2207,3 +2207,12 @@
     ;; FIXME: handle more proclamations
     ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The expansion of the macro IN-PACKAGE results in a call to this
+;;; function.
+
+(defun in-package-function (string-designator)
+  (declare ((or character symbol string) string-designator))
+  (setq *package* (find-package string-designator)))
+
