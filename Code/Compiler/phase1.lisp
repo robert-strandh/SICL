@@ -33,7 +33,7 @@
 ;;; The value of this variable is normally FALSE.  It is bound to the
 ;;; value of *TOP-LEVEL-FORM-P* by certain converters that need to
 ;;; process subforms the same way as the form itself.
-(defparameter *top-level-subform-p* nil)
+(defparameter *top-level-subform-p* t)
 
 ;;; When this variable is false, non-immediate constants will be
 ;;; converted into a LOAD-TIME-VALUE ast, which means that the machine
@@ -249,14 +249,14 @@
 	      (if l
 		  (let ((*compile-time-too* t))
 		    (convert new-form environment))
-		  (eval new-form))
+		  (progn (eval new-form) nil))
 	      (if l
 		  (if e
 		      (convert new-form environment)
 		      (let ((*compile-time-too* nil))
 			(convert new-form environment)))
 		  (when (and e *compile-time-too*)
-		    (eval new-form))))
+		    (progn (eval new-form) nil))))
 	  (when e
 	    (convert new-form environment))))))
 
