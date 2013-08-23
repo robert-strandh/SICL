@@ -128,6 +128,10 @@
 
 (defgeneric convert (form environment))
 
+(defun convert-initial (form)
+  (let ((*location-asts* (make-hash-table :test #'eq)))
+    (convert form nil)))
+
 (defun convert-top-level-form (form)
   (let ((*location-asts* (make-hash-table :test #'eq)))
     (convert `(function (lambda () ,form)) nil)))
@@ -244,19 +248,21 @@
 	 (e (not (null (intersection '(:execute eval) situations)))))
     (let ((new-form (cons 'progn (cddr form))))
       (if (and *compile-file* *top-level-form-p*)
-	  ;; This test tree corresponds to figure 3-7 of the HyperSpec.
-	  (if c
-	      (if l
-		  (let ((*compile-time-too* t))
-		    (convert new-form environment))
-		  (progn (eval new-form) nil))
-	      (if l
-		  (if e
-		      (convert new-form environment)
-		      (let ((*compile-time-too* nil))
-			(convert new-form environment)))
-		  (when (and e *compile-time-too*)
-		    (progn (eval new-form) nil))))
+	  (let ((*top-level-subform-p* *top-level-form-p*))
+	    ;; This test tree corresponds to figure 3-7 of the
+	    ;; HyperSpec.
+	    (if c
+		(if l
+		    (let ((*compile-time-too* t))
+		      (convert new-form environment))
+		    (progn (eval new-form) nil))
+		(if l
+		    (if e
+			(convert new-form environment)
+			(let ((*compile-time-too* nil))
+			  (convert new-form environment)))
+		    (when (and e *compile-time-too*)
+		      (progn (eval new-form) nil)))))
 	  (when e
 	    (convert new-form environment))))))
 
@@ -373,20 +379,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting LET.
-;;;
-;;; We convert a LET form recursively.  If it has a single binding, we
-;;; convert it into a SETQ.  If it has more than one binding, we
-;;; convert it as follows:
-;;;
-;;; (let ((<var> <init-form>)
-;;;       <more-bindings>)
-;;;   <body>)
-;;; =>
-;;; (let ((temp <init-form>))
-;;;   (let (<more-bindings>)
-;;;     (let ((<var> temp))
-;;;       <body>)))
+;;; Converting LET and LET*
 
 (define-condition bindings-must-be-proper-list
     (compilation-program-error)
@@ -465,6 +458,19 @@
 	  collect spec into second
 	finally (return (values first second))))
 
+;;; We convert a LET form recursively.  If it has a single binding, we
+;;; convert it into a SETQ.  If it has more than one binding, we
+;;; convert it as follows:
+;;;
+;;; (let ((<var> <init-form>)
+;;;       <more-bindings>)
+;;;   <body>)
+;;; =>
+;;; (let ((temp <init-form>))
+;;;   (let (<more-bindings>)
+;;;     (let ((<var> temp))
+;;;       <body>)))
+
 (defmethod convert-compound
     ((symbol (eql 'let)) form env)
   (sicl-code-utilities:check-form-proper-list form)
@@ -491,6 +497,44 @@
 		    (let ((,var ,temp))
 		      (declare ,@first)
 		      ,@forms)))
+	       env)))))))
+
+;;; We convert a LET* form recursively.  If it has a single binding,
+;;; we convert it into a SETQ.  If it has more than one binding, we
+;;; convert it as follows:
+;;;
+;;; (let* ((<var> <init-form>)
+;;;        <more-bindings>)
+;;;   <body>)
+;;; =>
+;;; (let ((<var> <init-form>))
+;;;   (let (<more-bindings>)
+;;;      <body>)))
+
+(defmethod convert-compound
+    ((symbol (eql 'let*)) form env)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 nil)
+  (destructuring-bind (bindings &rest body) (cdr form)
+    (check-binding-forms bindings)
+    (if (= (length bindings) 1)
+	(convert-simple-let (car bindings) body env)
+	(let* ((first (car bindings))
+	       (var (if (symbolp first) first (car first)))
+	       (init-form (if (symbolp first) nil (cadr first))))
+	  (multiple-value-bind (declarations forms)
+	      (sicl-code-utilities:separate-ordinary-body body)
+	    (multiple-value-bind (first remaining)
+		(separate-declarations 
+		 (sicl-code-utilities:canonicalize-declaration-specifiers 
+		  (mapcar #'cdr declarations))
+		 var)
+	      (convert
+	       `(let ((,var ,init-form))
+		  (declare ,@first)
+		  (let* ,(cdr bindings)
+		    (declare ,@remaining)
+		    ,@forms))
 	       env)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
