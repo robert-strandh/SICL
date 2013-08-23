@@ -462,24 +462,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class EVAL-WHEN-AST.
-
-(defclass eval-when-ast (ast)
-  ((%situations :initarg :situations :reader situations)
-   (%body-ast :initarg :body-ast :reader body-ast)))
-
-(defun make-eval-when-ast (situations body-ast)
-  (make-instance 'eval-when-ast
-    :situations situations
-    :body-ast body-ast))
-
-;;; FIXME: define a method on STREAM-DRAW-AST specialized to EVAL-WHEN-AST.
-
-(defmethod children ((ast eval-when-ast))
-  (list (body-ast ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class LOAD-TIME-VALUE-AST.
 
 (defclass load-time-value-ast (ast)
