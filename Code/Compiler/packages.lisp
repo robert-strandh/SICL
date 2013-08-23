@@ -134,7 +134,6 @@
    #:lexical-ast #:make-lexical-ast
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
-   #:eval-when-ast #:make-eval-when-ast #:situations
    #:function-ast #:make-function-ast
    #:required-only-p #:required #:argparse-ast #:body-ast
    #:go-ast #:make-go-ast #:tag-ast
@@ -358,3 +357,9 @@
    #:type-descriptor-or
    #:type-descriptor-diff))
 
+
+(defpackage #:sicl-compiler
+  (:use #:common-lisp)
+  (:shadow #:compile-file)
+  (:export
+   ))
