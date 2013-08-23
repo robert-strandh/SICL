@@ -17,7 +17,7 @@
       (loop with eof-value = (list nil)
 	    for form = (read stream nil eof-value)
 	    until (eq form eof-value)
-	    for result = (sicl-compiler-phase-1:convert form nil)
+	    for result = (sicl-compiler-phase-1:convert-initial form)
 	    unless (null result)
 	      collect result))))
 
