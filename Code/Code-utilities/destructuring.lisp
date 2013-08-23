@@ -182,12 +182,16 @@
 		(destructure-pattern (cadar key) temp)
 		(destructure-keys (cdr keys) var)))))
 
-;; We return two values.  The first value is a list of bindings to be
-;; used with a LET* and the purpose of which is to destructure the
-;; arguments in VAR according to the LAMBDA-LIST.  The second value is
-;; a list of variables that ar bound in the bindings, but that should
-;; be declared IGNORE because they are introduced for technical
-;; reasons and not used anywhere.
+;;; We return two values.  The first value is a list of bindings to be
+;;; used with a LET* and the purpose of which is to destructure the
+;;; arguments in VAR according to the LAMBDA-LIST.  The second value
+;;; is a list of variables that ar bound in the bindings, but that
+;;; should be declared IGNORE because they are introduced for
+;;; technical reasons and not used anywhere.
+;;;
+;;; This code is used in macro functions, so we want to avoid using
+;;; macros in the expansion for the simple case of no keyword
+;;; arguments.
 (defun destructure-lambda-list (lambda-list var)
   (multiple-value-bind (required-bindings var1)
       (destructure-required (required lambda-list) var)
@@ -203,8 +207,8 @@
 	       ;; else we signal an error.
 	       (let ((temp (gensym)))
 		 (push temp variables-to-ignore)
-		 (push `(,temp (unless (null ,var2)
-				 (error "too many arguments supplied")))
+		 (push `(,temp (if (not (null ,var2))
+				   (error "too many arguments supplied")))
 		       error-check-bindings)))
 	      ((not (eq (keys lambda-list) :none))
 	       ;; If there are keyword parameters, then we must check
@@ -465,13 +469,13 @@
 (defun check-arg-count
     (variable arg-count-var required-count optional-count rest-p key-p)
   `((,variable (progn ,@(if (plusp required-count)
-			    `((when (< ,arg-count-var ,required-count)
-				(error "too few arguments")))
+			    `((if (< ,arg-count-var ,required-count)
+				  (error "too few arguments")))
 			    '())
 		      ,@(if (and (not rest-p) (not key-p))
-			    `((when (> ,arg-count-var
-				       ,(+ required-count optional-count))
-				(error "too many arguments")))
+			    `((if (> ,arg-count-var
+				     ,(+ required-count optional-count))
+				  (error "too many arguments")))
 			    '())
 		      ,@(if key-p
 			    (if (evenp (+ required-count optional-count))
