@@ -24,9 +24,9 @@ file.  Starting immediately after the first word is \emph{executable
 \end{enumerate}
 
 The executable code in the \emph{fasl} file can be seen as a \cl{}
-function that takes 5 functions as arguments, namely
-\texttt{make-string}, \texttt{(setf schar)}, \texttt{find-package},
-\texttt{intern}, and \texttt{fdefinition}.  
+function that takes 4 functions as arguments, namely
+\texttt{make-string}, \texttt{(setf schar)}, \texttt{intern}, and
+\texttt{fdefinition}.
 
 In order to create objects and modify the environment, the code in the
 \emph{fasl} file executes the following steps:
@@ -36,13 +36,12 @@ In order to create objects and modify the environment, the code in the
   name of a package.
 \item Call \texttt{(setf schar)} multiple times to set the characters
   of the string to the name of the desired package.
-\item Call \texttt{find-package} to find a package with that name.
 \item Call \texttt{make-string} again to allocate a string to contain
   the name of a symbol.
 \item Call \texttt{(setf schar)} multiple times to set the characters
   of the string to the name of the desired symbol.
-\item Call \texttt{intern} with the name of the symbol and the package
-  in order to obtain a symbol.
+\item Call \texttt{intern} with the name of the symbol and the name of
+  the package in order to obtain a symbol.
 \item Call \texttt{fdefinition} with the symbol to obtain the desired
   function. 
 \end{enumerate}
