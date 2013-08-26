@@ -92,18 +92,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro IN-PACKAGE.
-
-(defun in-package-function (string-designator)
-  (declare ((or character symbol string) string-designator))
-  (setq *package* (find-package string-designator)))
-
-(defmacro in-package (string-designator)
-  `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (in-package-function ,string-designator)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; A few macros that really belong elsewhere, but that 
 ;;; we include here now for testing purposes.
 
