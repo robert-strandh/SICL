@@ -38,30 +38,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro DEFVAR.
-;;;
-;;; The HyperSpec says that when DEFVAR is processed as a top-level
-;;; form, then the rest of the compilation must treat the variable as
-;;; special, but the initial-value form must not be evaluated, and
-;;; there must be no assignment of any value to the variable.
-;;;
-;;; This is not the final version of DEFVAR, because we ignore the
-;;; documentation for now.
-
-(defmacro defvar
-    (name &optional (initial-value nil initial-value-p) documentation)
-  (declare (ignore documentation))
-  (if initial-value-p
-      `(progn
-	 (eval-when (:compile-toplevel)
-	   (ensure-defined-variable ,name))
-	 (eval-when (:load-toplevel :execute)
-	   (unless (boundp ,name)
-	     (setf (symbol-value ,name) ,initial-value))))
-      `(ensure-defined-variable ,name)))
-		     
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro LAMBDA.
 
 (defmacro lambda (lambda-list &body body)
