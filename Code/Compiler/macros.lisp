@@ -38,45 +38,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro DEFCONSTANT.
-;;;
-;;; The HyperSpec says that we have a choice as to whether the
-;;; initial-value form is evaluated at compile-time, at load-time, or
-;;; both, but that in either case, the compiler must recognize the
-;;; name as a constant variable.  We have chosen to evaluate it both
-;;; at compile-time and at load-time.  We evaluate it at compile time
-;;; so that successive references to the variable can be replaced by
-;;; the value.
-;;;
-;;; This is not the final version of the macro.  For one thing, we
-;;; need to handle the optional DOCUMENTATION argument.
-
-(defun %defconstant (name initial-value)
-  (unless (null (find name (special-variables *global-environment*)
-		      :key #'name :test #'eq))
-    (error "attempt to redefine a special variable as a constant variable."))
-  (unless (null (find name (symbol-macros *global-environment*)
-		      :key #'name :test #'eq))
-    (error "attempt to redefine a global symbol macro as a constant variable."))
-  (let ((existing-entry (find name (constant-variables *global-environment*)
-			      :key #'name :test #'eq)))
-    (cond ((null existing-entry)
-	   (push (make-constant-variable-entry name initial-value)
-		 (constant-variables *global-environment*)))
-	  ((not (eql initial-value (definition existing-entry)))
-	   (error "attempt to redefine a constant variable"))
-	  (t
-	   nil)))
-  ;; Return the name as the HyperSpec requires
-  name)
-
-(defmacro defconstant (name initial-value &optional documentation)
-  (declare (ignore documentation))
-  `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (%defconstant ',name ,initial-value)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro DEFVAR.
 ;;;
 ;;; The HyperSpec says that when DEFVAR is processed as a top-level
