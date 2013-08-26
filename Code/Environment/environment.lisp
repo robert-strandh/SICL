@@ -1402,7 +1402,7 @@
 	       (progn (warn "Undefined variable: ~a" name)
 		      (setf entry (make-special-variable-entry name))
 		      (push entry (special-variables *global-environment*))
-		      (make-instance 'special-variable-entry
+		      (make-instance 'special-location-info
 			:name name
 			:location (location entry)
 			:type t
