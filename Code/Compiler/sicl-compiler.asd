@@ -9,17 +9,16 @@
 	       :sicl-compiler-reaching-definitions
 	       :sicl-compiler-def-use-chains
 	       :sicl-compiler-ssa-form
-	       :sicl-compiler-loops)
+	       :sicl-compiler-loops
+	       :sicl-environment)
   :components
   ((:file "packages" :depends-on ())
-   (:file "environment"
-    :depends-on ("packages"))
    (:file "abstract-syntax-tree"
-    :depends-on ("packages" "environment"))
+    :depends-on ("packages"))
    (:file "mir"
     :depends-on ("packages"))
    (:file "phase1"
-    :depends-on ("packages" "environment" "abstract-syntax-tree"))
+    :depends-on ("packages" "abstract-syntax-tree"))
    (:file "phase2"
     :depends-on ("packages" "abstract-syntax-tree" "mir"))
    (:file "procedure-integration"
