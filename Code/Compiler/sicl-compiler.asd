@@ -21,8 +21,6 @@
     :depends-on ("packages" "abstract-syntax-tree"))
    (:file "phase2"
     :depends-on ("packages" "abstract-syntax-tree" "mir"))
-   (:file "procedure-integration"
-    :depends-on ("packages" "abstract-syntax-tree"))
    (:file "graph-coloring" :depends-on ("packages"))
    (:file "make"
     :depends-on ("packages"))

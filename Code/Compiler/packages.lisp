@@ -209,10 +209,6 @@
    #:halt
    ))
 
-(defpackage #:sicl-procedure-integration
-  (:use #:common-lisp)
-  (:export #:integrate-procedures))
-
 (defpackage #:externals-elimination
   (:use #:common-lisp)
   (:export #:eliminate-externals))
