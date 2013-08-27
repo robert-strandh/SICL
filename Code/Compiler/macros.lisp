@@ -38,14 +38,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Macro LAMBDA.
-
-(defmacro lambda (lambda-list &body body)
-  `(function (lambda ,lambda-list ,@body)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Macro DEFUN.
 ;;;
 ;;; For now, we don't use setf.
