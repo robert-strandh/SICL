@@ -53,3 +53,112 @@ including:
   combinations used by the compiler will be considered at
   bootstrapping.
 \end{itemize}
+
+\section{Bootstrapping stages}
+
+\subsection{Stage 1, compiling macro definitions}
+
+Stage 1 of the bootstrapping process consists of using the cross
+compiler to compile files containing definitions of standard macros
+that will be needed for compiling other files. 
+
+When a \texttt{defmacro} form is compiled by the cross compiler, we
+distinguish between the two parts of that defmacro form, namely the
+\emph{expander code} and the \emph{resulting expansion code}.  The
+\emph{expander code} is the code that will be executed in order to
+compute the resulting expansion code when the macro is invoked.  The
+\emph{resulting expansion code} is the code that replaces the macro
+call form. 
+
+As an example, consider the hypothetical definition of the
+\texttt{and} macro shown in \refCode{code-defmacro-and}.
+
+\begin{codefragment}
+\inputcode{code-defmacro-and.code}
+\caption{\label{code-defmacro-and}
+Example implementation of the \texttt{and} macro.}
+\end{codefragment}
+
+In \refCode{code-defmacro-and}, the occurrences of \texttt{car},
+\texttt{cdr}, \texttt{null}, and \texttt{cond} are part of the
+\emph{expander code} whereas the occurrence of \texttt{when}, of
+\texttt{t}, and the occurrence of \texttt{and} in the last line are
+part of the resulting expansion code. 
+
+The result of expanding the \texttt{defmacro} form in
+\refCode{code-defmacro-and} is shown in
+\refCode{code-macro-expansion-and}. 
+
+\begin{codefragment}
+\inputcode{code-macro-expansion-and.code}
+\caption{\label{code-macro-expansion-and}
+Expansion of the macro call.}
+\end{codefragment}
+
+Thus, when the code in \refCode{code-defmacro-and} is compiled by the
+cross compiler, it is first expanded to the code in
+\refCode{code-macro-expansion-and}, and the resulting code is compiled
+instead.  Now \refCode{code-macro-expansion-and} contains an
+\texttt{eval-when} at the top level with all three situations (i.e.,
+\texttt{:compile-toplevel}, \texttt{:load-toplevel}, and
+\texttt{:execute}.  As a result, two things happen to the
+\texttt{funcall} form of \refCode{code-macro-expansion-and}:
+
+\begin{enumerate}
+\item It is \emph{evaluated} by the \emph{host function}
+  \texttt{eval}.
+\item It is \emph{minimally compiled} by the cross compiler.
+\end{enumerate}
+
+In order for the evaluation by the host function \texttt{eval} to be
+successful, the following must be true:
+
+\begin{itemize}
+\item All the \emph{functions} and \emph{macros} that are
+  \emph{invoked} as a result of the call to \texttt{eval} must exist.
+  In the case of \refCode{code-macro-expansion-and}, the function
+  \texttt{(setf sicl-environment::macro-function)} must exist, and that
+    is all.
+\item All the \emph{macros} that occur in macro forms that are
+  \emph{compiled} as a result of the call to \texttt{eval} must
+  exist.  These are the macros of the expansion code; in our example
+  only \texttt{cond}.  Clearly, if only standard \cl{} macros are
+  used in the expansion code of macros, this requirement is
+  automatically fulfilled.
+\item It is \emph{preferable}, though not absolutely necessary for the
+  \emph{functions} that occur in function forms that are
+  \emph{compiled} as a result of the call to \texttt{eval} exist.  If
+  they do not exist, the compilation will succeed, but a warning will
+  probably be issued.  These functions are the functions of the
+  expansion code; in our example \texttt{car}, \texttt{cdr}, and
+  \texttt{null}.  Again, if only standard \cl{} function are used in
+  the expansion code of macros, this requirement is automatically
+  fulfilled.  It is common, however, for other functions to be used as
+  well.  In that case, those functions should preferably have been
+  loaded into the host environment first. 
+\end{itemize}
+
+In order for the minimal compilation by the cross compiler to be
+successful, the following must be true:
+
+\begin{itemize}
+\item All the \emph{macros} that occur in macro forms that are
+  \emph{minimally compiled} by the cross compiler must exist.  These
+  are again the macros of the expansion code; in our example only
+  \texttt{cond}.  Now, the cross compiler uses the \emph{compilation
+    environment} of the \emph{target} when looking up macro
+  definitions.  Therefore, in order for the example in
+  \refCode{code-defmacro-and} to work, a file containing the
+  definition of the macro \texttt{cond} must first be compiled by the
+  cross compiler. 
+\item While it would have been desirable for the \emph{functions} that
+  occur in function forms that are \emph{minimally compiled} by the
+  cross compiler to exist, this is typically not the case.%
+  \fixme{Investigate the possibility of first compiling a bunch of
+    \texttt{declaim} forms containing type signatures of most
+    standard \cl{} functions used in macro expansion code.}
+  As a
+  result, the cross compiler will emit warnings about undefined
+  functions.  The generated code will still work, however.
+\end{itemize}
+
