@@ -162,3 +162,32 @@ successful, the following must be true:
   functions.  The generated code will still work, however.
 \end{itemize}
 
+Of the constraints listed above, the most restrictive is the one that
+imposes an order between the files to be cross compiled, i.e., that
+the macros of the expansion code must be cross compiled first.  It is
+possible to avoid this restriction entirely by using \emph{auxiliary
+  functions} rather than macros.  The alternative implementation of
+the \texttt{and} macro in \refCode{code-defmacro-and-2} shows how this
+is done in the extreme case.
+
+\begin{codefragment}
+\inputcode{code-defmacro-and-2.code}
+\caption{\label{code-defmacro-and-2}
+Alternative implementation of the \texttt{and} macro.}
+\end{codefragment}
+
+We use the technique of \refCode{code-defmacro-and-2} only when the
+expansion code is fairly complex.  An example of a rather complex
+expansion code is that of the macro \texttt{loop} which uses mutually
+recursive functions and fairly complex data structures.  When this
+technique is used, we can even use a macro to implement its own
+expansion code.  For instance, nothing prevents us from using
+\texttt{loop} to implement the functions of the expander code of
+\texttt{loop}, because when the \texttt{loop} macro is used to expand
+code in the cross compiler, the occurrences of \texttt{loop} in the
+functions called by the expander code are executed by the host.  As it
+turns out, we do not do that, because we would like for the \sysname{}
+implementation of \texttt{loop} to be used as a drop-in extension in
+implementations other than \sysname{}.
+
+
