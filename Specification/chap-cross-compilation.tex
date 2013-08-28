@@ -1,6 +1,8 @@
 \chapter{Cross compilation}
 \label{chap-cross-compilation}
 
+\section{General issues with cross compilation}
+
 While it may seem obvious and straightforward (though perhaps not
 easy) to write a cross compiler for \cl{}, there are some minor issues
 that have to be considered. 
@@ -11,7 +13,12 @@ which generates a \emph{fasl} file for some other \cl{} system called
 the \emph{target}.  When we say \emph{entirely}, we mean that it is
 the \texttt{read} function of the host that is used.  It would be
 possible, of course to use the \emph{read} function of the target, but
-the difference is small.
+the difference is small.%
+\footnote{The main difference that is important to bootstrapping is
+  that some implementations use implementation-specific functions in
+  the result of the \emph{backquote} reader macro.  This practice is
+  explicitly allowed by the \hs{} (Section 2.4.6), and also encouraged
+  (Section 2.4.6.1).}
 
 Clearly, since we are talking about the \emph{file compiler} we face
 the same restrictions concerning literal objects as a native file
@@ -27,11 +34,97 @@ code as the native file compiler for the target would.  Code to be
 compiled by the cross compiler must therefore either avoid
 floating-point literals altogether, or instead use some expression to
 create it and make sure that the expression is not evaluated until
-load time. 
+load time.  
 
 The other restriction has to do with \emph{potential numbers} which
 different systems may define differently.  The easy solution is to
 avoid potential numbers in source code.  This should not be hard to
 do. 
 
+\section{Environments}
 
+The \hs{}\footnote{See section 3.2.1 of the \hs{}.} gives a list of
+the environments that are related to compilation.  We briefly
+summarize them here:
+
+\begin{itemize}
+\item The \emph{startup environment} is the environment of the image
+  from which the compiler was invoked.
+\item The \emph{compilation environment} is used to hold information
+  that is required by the compiler in order to accomplish its task
+  correctly.  Such information consists of definitions and
+  declarations that the compiler needs, for instance definitions of
+  macros and constant variables,  and declarations such as
+  \texttt{inline} or \texttt{special}. 
+\item The \emph{evaluation environment} which the \hs{} says is a
+  run-time environment in which evaluations by the compiler takes
+  place, typically executions of macro expanders, but also any other
+  code that is indicated by \texttt{eval-when} to be evaluated at
+  compile time.
+\item The \emph{run-time environment} in which the program resulting
+  from the compilation is eventually executed.
+\end{itemize}
+
+The run-time environment is clearly not relevant to cross
+compilation. 
+
+For the purpose of cross compilation, it is practical to think of the
+startup environment as containing two distinct parts, that we call the
+\emph{host startup environment} and the \emph{target startup
+  environment}.
+
+The \emph{host startup environment} is the environment of the image
+from which the cross compiler was invoked.  In \sysname{}, the
+\emph{evaluation environment} of the cross compiler is the same as the
+\emph{host startup environment}.
+
+The \emph{target startup environment} is the initial compilation
+environment, in that it contains definitions and declarations that
+must already exist when the cross compiler is invoked.  In \sysname{}
+the \emph{target startup environment} is represented explicitly as a
+standard object (i.e., an instance of \texttt{standard-object}).
+Furthermore, the compilation environment of the cross compiler is the
+same as the \emph{target startup environment} so that any side effects
+on the compilation environment as a result of the cross compilation
+persist after the compilation terminates.  
+
+The relevant functions of the target startup environment are all \cl{}
+functions that access or modify the environment, such as
+\texttt{fdefinition}, \texttt{proclaim}, \texttt{(setf
+  macro-function)}, etc., but also implementation-specific functions
+such as functions for accessing and storing type expanders and
+\texttt{setf} expanders.
+
+As with other bundles of related functionality, environment
+manipulation uses its own package, named \texttt{sicl-environment}.
+In the native environment, this package \texttt{use}es the
+\texttt{common-lisp} package so that the symbols \texttt{fdefinition},
+\texttt{proclaim}, etc. are the imported symbols from the
+\texttt{common-lisp} package.  During cross compilation, however,
+these symbols are \texttt{shadow}ed by the \texttt{sicl-environment}
+package, so that they are distinct from the analogous symbols of the
+host \texttt{common-lisp} package.  Symbols naming macros such as
+\texttt{declaim} and \texttt{defun}, however, are not
+\texttt{shadow}ed, but the resulting expansion code contains symbols
+that are qualified by the \texttt{sicl-environment} package.  
+
+Let us take an example.  \refCode{code-defparameter} shows a
+simplified implementation of the \texttt{defparameter} macro.  It is
+simplified in that it does not handle the documentation. 
+
+\begin{codefragment}
+\inputcode{code-defparameter.code}
+\caption{\label{code-defparameter}
+Simplified definition of the \texttt{defparameter} macro.}
+\end{codefragment}
+
+The definition of \refCode{code-defparameter} is established with the
+package \texttt{sicl-environment} as the current package.  For that
+reason, the symbols \texttt{ensure-defined-variable} and
+\texttt{symbol-value} are internal to the \texttt{sicl-environment}
+package.  When code that invokes the \texttt{defparameter} macro is
+compiled by the cross compiler, the host compiler will evaluate the
+form \texttt{(ensure-defined-variable ,name)}.  The result of that
+evaluation is that the variable is created in the target startup
+environment.  Subsequent compilations by the cross compiler will
+``see'' this definition and consider the variable as \texttt{special}.
