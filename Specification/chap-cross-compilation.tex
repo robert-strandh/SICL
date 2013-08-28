@@ -128,3 +128,6 @@ form \texttt{(ensure-defined-variable ,name)}.  The result of that
 evaluation is that the variable is created in the target startup
 environment.  Subsequent compilations by the cross compiler will
 ``see'' this definition and consider the variable as \texttt{special}.
+When the resulting code is loaded into the run-time environment, the
+symbol \texttt{symbol-value} in the package \texttt{sicl-environment}
+is imported from the package \texttt{common-lisp}.
