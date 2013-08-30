@@ -49,6 +49,7 @@
   (:use #:common-lisp)
   (:export
    #:ast
+   #:immediate-ast #:make-immediate-ast
    #:constant-ast #:make-constant-ast #:value
    #:global-ast #:make-global-ast #:storage
    #:special-ast #:make-special-ast
