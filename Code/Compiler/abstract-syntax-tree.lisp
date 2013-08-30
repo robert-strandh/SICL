@@ -186,6 +186,9 @@
 	  (id ast)
 	  (name ast)))
 
+(defmethod children ((ast global-ast))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SPECIAL-AST.
@@ -211,6 +214,9 @@
 	  (id ast)
 	  (name ast)))
 
+(defmethod children ((ast special-ast))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LEXICAL-AST.
@@ -235,6 +241,9 @@
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (name ast)))
+
+(defmethod children ((ast lexical-ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1288,6 +1297,9 @@
   (format stream "   ~a [label = \"AC\"];~%"
 	  (id ast)))
 
+(defmethod children ((ast argcount-ast))
+  '())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class ARG-AST.
@@ -1309,6 +1321,9 @@
   (stream-draw-ast (index-ast ast) stream)
   (format stream "   ~a -> ~a~%" (id ast) (id (index-ast ast))))
 
+(defmethod children ((ast arg-ast))
+  (list (index-ast ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class HALT-AST.
@@ -1325,4 +1340,5 @@
   (format stream "   ~a [label = \"halt\"];~%"
 	  (id ast)))
 
-
+(defmethod children ((ast halt-ast))
+  '())
