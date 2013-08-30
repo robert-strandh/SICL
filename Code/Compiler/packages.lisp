@@ -117,6 +117,10 @@
    #:convert #:convert-compound
    ))
 
+(defpackage #:sicl-ast-transformations
+  (:use #:common-lisp)
+  (:export #:introduce-immediates))
+
 (defpackage #:sicl-mir
   (:use #:common-lisp)
   (:export

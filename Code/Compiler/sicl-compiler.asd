@@ -19,6 +19,8 @@
     :depends-on ("packages"))
    (:file "phase1"
     :depends-on ("packages" "abstract-syntax-tree"))
+   (:file "ast-transformations"
+    :depends-on ("packages"))
    (:file "phase2"
     :depends-on ("packages" "abstract-syntax-tree" "mir"))
    (:file "graph-coloring" :depends-on ("packages"))
