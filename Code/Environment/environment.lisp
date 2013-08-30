@@ -1403,7 +1403,6 @@
 		      (setf entry (make-special-variable-entry name))
 		      (push entry (special-variables *global-environment*))
 		      (make-instance 'special-location-info
-			:name name
 			:location (location entry)
 			:type t
 			:ignore-info nil
