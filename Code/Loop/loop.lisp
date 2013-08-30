@@ -1,4 +1,4 @@
-;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012
+;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;; 
@@ -26,7 +26,7 @@
 ;;; point how important it is to avoid such circular dependencies, but
 ;;; I don't want to take the risk either. 
 
-(in-package #:sicl-loop)
+(cl:in-package #:sicl-loop)
 
 (declaim (optimize (debug 3)))
 
@@ -1607,14 +1607,3 @@
                 ((not (eq (accumulation-type body) clause-accumulation-type))
                  (error "Conflicting accumulation types")))))
       (initialize-accumulation (rest clauses) body))))
-
-(defmacro loop (&rest forms)
-  (let* ((body (parse-loop-body forms))
-         (block-name (if (typep (car (clauses body)) 'name-clause)
-			 (name (car (clauses body)))
-			 nil)))
-    (verify-clause-order body)
-    (initialize-accumulation (clauses body) body)
-    `(block ,block-name
-       ,(generate-bindings-and-body (clauses body) body))))
-
