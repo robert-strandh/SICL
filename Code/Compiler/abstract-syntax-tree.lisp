@@ -105,6 +105,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class IMMEDIATE-AST. 
+;;;
+;;; This class represents constants that can be represented as
+;;; immediate values in compiled code.  Since the restrictions on
+;;; immediate values depend on the backend, this AST is introduced in
+;;; a backend-specific transformation that converts certain constants
+;;; to immediates.
+
+(defclass immediate-ast (ast)
+  ((%value :initarg :value :reader value)))
+
+(defun make-immediate-ast (value)
+  (make-instance 'immediate-ast :value value))
+
+(defmethod stream-draw-ast ((ast immediate-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = aquamarine];~%" (id ast))
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (value ast)))
+
+(defmethod children ((ast immediate-ast))
+  '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CONSTANT-AST. 
 ;;;
 ;;; This class represents Lisp constants in source code.  
@@ -474,7 +499,7 @@
     :read-only-p read-only-p))
 
 (defmethod stream-draw-ast ((ast load-time-value-ast) stream)
-  (format stream "   ~a [label = \"~s\"];~%"
+  (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast) (form-ast ast))
   (format stream "   ~a [style = filled, fillcolor = pink];~%"
 	  (id ast)))
