@@ -1,4 +1,4 @@
-(in-package #:sicl-x86-64-lir)
+(cl:in-package #:sicl-x86-64)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -52,9 +52,6 @@
 (defparameter *var2-reg* (aref *registers* 13))
 (defparameter *var3-reg* (aref *registers* 14))
 (defparameter *var4-reg* (aref *registers* 15))
-
-(defclass backend-x86-64 (sicl-program:backend)
-  ())
 
 ;;; Indicate to the register allocator which registers are
 ;;; available.  For this backend, it is all registers except
@@ -362,7 +359,4 @@
 (defmethod convert-instruction
     ((instruction sicl-mir:load-global-instruction))
   (push *lv-lexical* (sicl-mir:inputs instruction)))
-
-
-
 
