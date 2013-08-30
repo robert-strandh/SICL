@@ -112,9 +112,7 @@
 ;;; When the constant is quoted, this function is called with the 
 ;;; surrounding QUOTE form stripped off. 
 (defun convert-constant (constant)
-  (if *compile-file*
-      (sicl-ast:make-load-time-value-ast `(quote ,constant) t)
-      (sicl-ast:make-constant-ast constant)))
+  (sicl-ast:make-constant-ast constant))
 
 (defun convert-variable (form env)
   (let ((info (sicl-env:variable-info form env t)))
