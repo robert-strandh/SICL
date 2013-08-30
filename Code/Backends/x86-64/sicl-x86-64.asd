@@ -4,4 +4,6 @@
   :depends-on (:sicl-compiler)
   :components
   ((:file "packages")
-   (:file "lir" :depends-on ("packages"))))
+   (:file "backend")
+   (:file "ast-transformations" :depends-on ("packages" "backend"))
+   (:file "lir" :depends-on ("packages" "backend"))))
