@@ -195,8 +195,10 @@
     ;; Check the order of keywords.
     (loop for rem = to-process then (cdr rem)
 	  until (null (cdr rem))
-	  do (when (> (position (car rem) *lambda-list-keywords* :key #'car)
-		      (position (cadr rem) *lambda-list-keywords* :key #'car))
+	  do (when (and (not (eq (car rem) '&environment))
+			(not (eq (cadr rem) '&environment))
+			(> (position (car rem) *lambda-list-keywords* :key #'car)
+			   (position (cadr rem) *lambda-list-keywords* :key #'car)))
 	       (error 'incorrect-keyword-order
 		      :form lambda-list
 		      :keyword1 (car rem)
@@ -256,7 +258,7 @@
    (%environment :initform :none :initarg :environment :accessor environment)
    ;; Either:
    ;;  * :none, meaning &whole was not given, or
-   ;;  * a single pattern.
+   ;;  * a single variable, represented as a symbol.
    (%whole :initform :none :initarg :whole :accessor whole)
    ;; Either:
    ;;  * :none, meaning &optional was not given at all,
@@ -715,7 +717,7 @@
 			(not (constantp arg)))
 	     (error 'environment-must-be-followed-by-variable
 		    :code lambda-list))
-	   (values arg (cddr positions))))
+	   (values arg (cdr positions))))
 	(t
 	 (values :none positions))))
 
@@ -733,7 +735,7 @@
 			(not (constantp arg)))
 	     (error 'rest/body-must-be-followed-by-variable
 		    :code lambda-list))
-	   (values arg (cddr positions))))
+	   (values arg (cdr positions))))
 	(t
 	 (values :none positions))))
 
@@ -741,7 +743,7 @@
   (cond ((and
 	  ;; there is a keyword yet to be processed.
 	  (not (null (cdr positions)))
-	  ;; that keyword is &environment.
+	  ;; that keyword is &whole
 	  (eq (elt lambda-list (car positions)) '&whole))
 	 ;; The arity has already been checked so we know there is
 	 ;; something after it, but we don't know what.
@@ -750,7 +752,7 @@
 			(not (constantp arg)))
 	     (error 'whole-must-be-followed-by-variable
 		    :code lambda-list))
-	   (values arg (cddr positions))))
+	   (values arg (cdr positions))))
 	(t
 	 (values :none positions))))
 
