@@ -286,4 +286,5 @@
   (:use #:common-lisp)
   (:shadow #:compile-file)
   (:export
+   #:compile-file
    ))
