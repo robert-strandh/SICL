@@ -29,4 +29,11 @@
    (:file "program"
     :depends-on ("packages" "mir" "make"))
    (:file "type-descriptor"
-    :depends-on ("packages"))))
+    :depends-on ("packages"))
+   (:file "compile-file"
+    :depends-on ("program"
+		 "ast-transformations"
+		 "type-descriptor"
+		 "graph-coloring"
+		 "phase1"
+		 "phase2"))))
