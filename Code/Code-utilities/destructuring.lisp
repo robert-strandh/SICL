@@ -555,11 +555,12 @@
   (let* ((parsed-lambda-list (parse-macro-lambda-list lambda-list))
 	 (env-var (environment parsed-lambda-list))
 	 (final-env-var (if (eq env-var :none) (gensym) env-var))
-	 (form-var (gensym))
+	 (form-var (whole parsed-lambda-list))
+	 (final-form-var (if (eq form-var :none) (gensym) form-var))
 	 (args-var (gensym)))
     (multiple-value-bind (bindings ignored-variables)
 	(destructure-lambda-list parsed-lambda-list args-var)
-      `(lambda (,form-var ,final-env-var)
+      `(lambda (,final-form-var ,final-env-var)
 	 ;; If the lambda list does not contain &environment, then
 	 ;; we IGNORE the GENSYMed parameter to avoid warnings.
 	 ;; If the lambda list does contain &envionrment, we do
@@ -568,7 +569,7 @@
 	 ,@(if (eq env-var :none)
 	       `((declare (ignore ,final-env-var)))
 	       `())
-	 (let ((,args-var (cdr ,form-var)))
+	 (let ((,args-var (cdr ,final-form-var)))
 	   (let* ,bindings
 	     (declare (ignore ,@ignored-variables))
 	     ,@body))))))
@@ -583,11 +584,12 @@
   (let* ((parsed-lambda-list (parse-deftype-lambda-list lambda-list))
 	 (env-var (environment parsed-lambda-list))
 	 (final-env-var (if (eq env-var :none) (gensym) env-var))
-	 (form-var (gensym))
+	 (form-var (whole parsed-lambda-list))
+	 (final-form-var (if (eq form-var :none) (gensym) form-var))
 	 (args-var (gensym)))
     (multiple-value-bind (bindings ignored-variables)
 	(destructure-lambda-list parsed-lambda-list args-var)
-      `(lambda (,form-var ,final-env-var)
+      `(lambda (,final-form-var ,final-env-var)
 	 ;; If the lambda list does not contain &environment, then
 	 ;; we IGNORE the GENSYMed parameter to avoid warnings.
 	 ;; If the lambda list does contain &envionrment, we do
@@ -596,7 +598,7 @@
 	 ,@(if (eq env-var :none)
 	       `((declare (ignore ,final-env-var)))
 	       `())
-	 (let ((,args-var (cdr ,form-var)))
+	 (let ((,args-var (cdr ,final-form-var)))
 	   (let* ,bindings
 	     (declare (ignore ,@ignored-variables))
 	     ,@body))))))
