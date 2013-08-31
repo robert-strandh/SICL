@@ -1893,7 +1893,11 @@
 		  (remove-if (lambda (entry)
 			       (and (typep entry 'auxiliary-entry)
 				    (eq (base-entry entry) function-entry)))
-			     (proclamations *global-environment*))))
+			     (proclamations *global-environment*)))
+	    (push (make-instance 'global-macro-entry
+		    :name symbol
+		    :definition new-function)
+		  (macros *global-environment*)))
 	  ;; No function entry exists.  check whether there is a
 	  ;; global macro entry with this name.
 	  (let ((macro-entry
