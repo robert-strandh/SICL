@@ -76,4 +76,5 @@
   ((%parameter :initarg :parameter :reader parameter)
    (%macro-name :initarg :macro-name :reader macro-name)))
   
-  
+(define-condition read-time-evaluation-inhibited (reader-error)
+  ())

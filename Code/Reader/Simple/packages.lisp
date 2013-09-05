@@ -5,6 +5,7 @@
   (:shadow
    #:readtable
    #:*readtable*
+   #:*read-eval*
    #:read
    #:read-preserving-whitespace
    #:make-dispatch-macro-character
@@ -19,6 +20,7 @@
   (:export
    #:readtable
    #:*readtable*
+   #:*read-eval*
    #:read
    #:read-preserving-whitespace
    #:make-dispatch-macro-character

@@ -302,3 +302,17 @@
 			  do (setf (aref result i) (aref result (1- index))))))
 	      (return-from sharpsign-left-parenthesis result)))))))
       
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macro for sharpsign dot.
+
+(defparameter *read-eval* t)
+
+(defun sharpsign-dot (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-single-quote))
+  (eval (read stream t nil t)))
+
