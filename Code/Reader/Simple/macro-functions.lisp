@@ -244,3 +244,61 @@
   (error 'invalid-context-for-right-parenthesis
 	 :stream stream))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macro for sharpsign single quote.
+
+(defun sharpsign-single-quote (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-single-quote))
+  `(function ,(read stream t nil t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macro for sharpsign left parenthesis.
+
+(defun sharpsign-left-parenthesis (stream char parameter)
+  (declare (ignore char))
+  (let ((*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
+    (if (null parameter)
+	(let ((reversed-elements '()))
+	  (handler-case
+	      (loop for object = (read stream t nil t)
+		    do (push object reversed-elements))
+	    (end-of-list ()
+	      (return-from sharpsign-left-parenthesis
+		(coerce (nreverse reversed-elements) 'simple-vector)))))
+	(let ((result (make-array parameter))
+	      (index 0))
+	  (handler-case
+	      (progn 
+		(loop until (= index parameter)
+		      for object = (read stream t nil t)
+		      do (setf (aref result index) object)
+			 (incf index))
+		;; Read the closing right parenthesis
+		(read stream t nil t)
+		;; If we come here, then there were more objects
+		;; than specified by the parameter.
+		(warn 'extraneous-objects-ignored
+		      :parameter parameter
+		      :macro-name 'sharpsign-left-parenthesis)
+		;; Read until the handler is invoked.
+		(loop do (read stream t nil t)))
+	    (end-of-list ()
+	      ;; Come here when a closing parenthesis was found.
+	      (unless (= index parameter)
+		(if (zerop index)
+		    ;; No objects were supplied, but the parameter given
+		    ;; was greater than zero.
+		    (warn 'no-objects-supplied
+			  :parameter parameter
+			  :macro-name 'sharpsign-left-parenthesis)
+		    ;; Duplicate the last object supplied.
+		    (loop for i from index below parameter
+			  do (setf (aref result i) (aref result (1- index))))))
+	      (return-from sharpsign-left-parenthesis result)))))))
+      
