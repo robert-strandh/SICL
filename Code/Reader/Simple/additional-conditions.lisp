@@ -64,3 +64,16 @@
     :initarg :desired-symbol
     :reader desired-symbol)))
   
+(define-condition numeric-parameter-supplied-but-ignored (warning)
+  ((%parameter :initarg :parameter :reader parameter)
+   (%macro-name :initarg :macro-name :reader macro-name)))
+
+(define-condition extraneous-objects-ignored (warning)
+  ((%parameter :initarg :parameter :reader parameter)
+   (%macro-name :initarg :macro-name :reader macro-name)))
+
+(define-condition no-objects-supplied (warning)
+  ((%parameter :initarg :parameter :reader parameter)
+   (%macro-name :initarg :macro-name :reader macro-name)))
+  
+  
