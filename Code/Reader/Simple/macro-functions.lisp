@@ -314,3 +314,91 @@
 	  :macro-name 'sharpsign-single-quote))
   (eval (read stream t nil t)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macro for sharpsign backslash.
+
+(defparameter *character-names*
+  (let ((table (make-hash-table :test 'equal)))
+    (loop for (name . char) in '(("NEWLINE" .   #.(code-char 10))
+				 ("SPACE" .     #.(code-char 32))
+				 ("RUBOUT" .    #.(code-char 127))
+				 ("PAGE" .      #.(code-char 12))
+				 ("TAB" .       #.(code-char 9))
+				 ("BACKSPACE" . #.(code-char 8))
+				 ("RETURN" .    #.(code-char 13))
+				 ("LINEFEED" .  #.(code-char 10)))
+	  do (setf (gethash name table) char))
+    table))
+
+(defun sharpsign-backslash (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-single-quote))
+  (let ((char1 (read-char stream nil nil t)))
+    (when (null char1)
+      (error 'end-of-file :stream stream))
+    (let ((char2 (read-char stream nil nil t)))
+      (cond ((null char2)
+	     char1)
+	    ((not (eq (syntax-type char2) :constituent))
+	     (unread-char char2 stream)
+	     char1)
+	    (t
+	     (let ((token (make-array 10
+				      :element-type 'character
+				      :adjustable t
+				      :fill-pointer 0)))
+	       (vector-push-extend char1 token)
+	       (vector-push-extend char2 token)
+	       (tagbody
+		even-escapes
+		  (let ((char (read-char stream nil nil t)))
+		    (when (null char)
+		      (go terminate))
+		    (ecase (syntax-type char)
+		      ((:constituent :non-terminating-macro)
+		       (vector-push-extend char token)
+		       (go even-escapes))
+		      (:single-escape
+		       (let ((char (read-char stream nil nil t)))
+			 (when (null char)
+			   (error 'end-of-file :stream stream))
+			 (vector-push-extend char token))
+		       (go even-escapes))
+		      (:multiple-escape
+		       (go odd-escapes))
+		      (:terminating-macro
+		       (unread-char char stream)
+		       (go terminate))
+		      (:whitespace
+		       (when *preserve-whitespace*
+			 (unread-char char stream))
+		       (go terminate))))
+		odd-escapes
+		  (let ((char (read-char stream nil nil t)))
+		    (when (null char)
+		      (error 'end-of-file :stream stream))
+		    (ecase (syntax-type char)
+		      ((:constituent :terminating-macro
+			:non-terminating-macro :whitespace)
+		       (vector-push-extend char token)
+		       (go odd-escapes))
+		      (:single-escape
+		       (let ((char (read-char stream nil nil t)))
+			 (when (null char)
+			   (error 'end-of-file :stream stream))
+			 (vector-push-extend char token))
+		       (go odd-escapes))
+		      (:multiple-escape
+		       (go even-escapes))))
+		terminate
+		  (let ((char (gethash token *character-names*)))
+		    (if (null char)
+			(error 'unknown-character-name
+			       :stream stream
+			       :name token)
+			(return-from sharpsign-backslash char))))))))))
+

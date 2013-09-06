@@ -57,6 +57,7 @@
    #:two-package-markers-must-be-adjacent
    #:two-package-markers-must-not-be-first
    #:symbol-can-have-at-most-two-package-markers
+   #:unknown-character-name
    ;; Names of macros related to backquote.
    ;; We export them so that the pretty printer
    ;; can use them properly.

@@ -78,3 +78,6 @@
   
 (define-condition read-time-evaluation-inhibited (reader-error)
   ())
+
+(define-condition unknown-character-name (reader-error)
+  ((%name :initarg :name :reader name)))
