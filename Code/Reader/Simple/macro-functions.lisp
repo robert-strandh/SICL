@@ -390,87 +390,102 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Reader macro for sharpsign B.
+;;; Reader macro for sharpsign B, X, and O.
 
-(defun sharpsign-b (stream char parameter)
-  (declare (ignore char))
-  (unless (null parameter)
-    (warn 'numeric-parameter-supplied-but-ignored
-	  :parameter parameter
-	  :macro-name 'sharpsign-single-quote))
-  (let ((numerator 0)
-	(denominator 0))
-    (tagbody
-     start
-       (let ((char (read-char stream t nil t)))
-	 (ecase (syntax-type char)
-	   ((:whitespace :terminating-macro
-	     :non-terminating-macro :single-escape :multiple-escape)
-	    (error 'binary-digit-expected
-		   :character-found char))
-	   (:constituent
-	    (unless (digit-char-p char 2)
-	      (error 'binary-digit-expected
-		     :character-found char))
-	    (setf numerator (+ (* 2 numerator) (digit-char-p char 2)))
-	    (go numerator))))
-     numerator
-       (let ((char (read-char stream nil nil t)))
-	 (when (null char)
-	   (return-from sharpsign-b numerator))
-	 (ecase (syntax-type char)
-	   (:whitespace
-	    (when *preserve-whitespace*
-	      (unread-char char stream))
-	    (return-from sharpsign-b numerator))
-	   (:terminating-macro
-	    (unread-char char stream)
-	    (return-from sharpsign-b numerator))
-	   ((:non-terminating-macro :single-escape :multiple-escape)
-	    (error 'binary-digit-expected
-		   :character-found char))
-	   (:constituent
-	    (when (eql char #\/)
-	      (go denominator-start))
-	    (unless (digit-char-p char 2)
-	      (error 'binary-digit-expected
-		     :character-found char))
-	    (setf numerator (+ (* 2 numerator) (digit-char-p char 2)))
-	    (go numerator))))
-     denominator-start
-       (let ((char (read-char stream t nil t)))
-	 (ecase (syntax-type char)
-	   ((:whitespace :terminating-macro
-	     :non-terminating-macro :single-escape :multiple-escape)
-	    (error 'binary-digit-expected
-		   :character-found char))
-	   (:constituent
-	    (unless (digit-char-p char 2)
-	      (error 'binary-digit-expected
-		     :character-found char))
-	    (setf denominator (+ (* 2 denominator) (digit-char-p char 2)))
-	    (go denominator))))
-     denominator
-       (let ((char (read-char stream nil nil t)))
-	 (when (null char)
-	   (return-from sharpsign-b (/ numerator denominator)))
-	 (ecase (syntax-type char)
-	   (:whitespace
-	    (when *preserve-whitespace*
-	      (unread-char char stream))
-	    (return-from sharpsign-b (/ numerator denominator)))
-	   (:terminating-macro
-	    (unread-char char stream)
-	    (return-from sharpsign-b (/ numerator denominator)))
-	   ((:non-terminating-macro :single-escape :multiple-escape)
-	    (error 'binary-digit-expected
-		   :character-found char))
-	   (:constituent
-	    (unless (digit-char-p char 2)
-	      (error 'binary-digit-expected
-		     :character-found char))
-	    (setf denominator (+ (* 2 denominator) (digit-char-p char 2)))
-	    (go denominator)))))))
+(defun sharpsign-b/x/o (stream char parameter)
+  (let ((base (ecase char
+		((#\b #\B) 2.)
+		((#\x #\X) 16.)
+		((#\o #\O) 8.))))
+    (unless (null parameter)
+      (warn 'numeric-parameter-supplied-but-ignored
+	    :parameter parameter
+	    :macro-name 'sharpsign-single-quote))
+    (let ((numerator 0)
+	  (denominator 0))
+      (tagbody
+       start
+	 (let ((char (read-char stream t nil t)))
+	   (ecase (syntax-type char)
+	     ((:whitespace :terminating-macro
+	       :non-terminating-macro :single-escape :multiple-escape)
+	      (error 'digit-expected
+		     :character-found char
+		     :base base))
+	     (:constituent
+	      (unless (digit-char-p char base)
+		(error 'digit-expected
+		       :character-found char
+		       :base base))
+	      (setf numerator
+		    (+ (* base numerator) (digit-char-p char base)))
+	      (go numerator))))
+       numerator
+	 (let ((char (read-char stream nil nil t)))
+	   (when (null char)
+	     (return-from sharpsign-b/x/o numerator))
+	   (ecase (syntax-type char)
+	     (:whitespace
+	      (when *preserve-whitespace*
+		(unread-char char stream))
+	      (return-from sharpsign-b/x/o numerator))
+	     (:terminating-macro
+	      (unread-char char stream)
+	      (return-from sharpsign-b/x/o numerator))
+	     ((:non-terminating-macro :single-escape :multiple-escape)
+	      (error 'digit-expected
+		     :character-found char
+		     :base base))
+	     (:constituent
+	      (when (eql char #\/)
+		(go denominator-start))
+	      (unless (digit-char-p char base)
+		(error 'digit-expected
+		       :character-found char
+		       :base base))
+	      (setf numerator
+		    (+ (* base numerator) (digit-char-p char base)))
+	      (go numerator))))
+       denominator-start
+	 (let ((char (read-char stream t nil t)))
+	   (ecase (syntax-type char)
+	     ((:whitespace :terminating-macro
+	       :non-terminating-macro :single-escape :multiple-escape)
+	      (error 'digit-expected
+		     :character-found char
+		     :base base))
+	     (:constituent
+	      (unless (digit-char-p char base)
+		(error 'digit-expected
+		       :character-found char
+		       :base base))
+	      (setf denominator
+		    (+ (* base denominator) (digit-char-p char base)))
+	      (go denominator))))
+       denominator
+	 (let ((char (read-char stream nil nil t)))
+	   (when (null char)
+	     (return-from sharpsign-b/x/o (/ numerator denominator)))
+	   (ecase (syntax-type char)
+	     (:whitespace
+	      (when *preserve-whitespace*
+		(unread-char char stream))
+	      (return-from sharpsign-b/x/o (/ numerator denominator)))
+	     (:terminating-macro
+	      (unread-char char stream)
+	      (return-from sharpsign-b/x/o (/ numerator denominator)))
+	     ((:non-terminating-macro :single-escape :multiple-escape)
+	      (error 'digit-expected
+		     :character-found char
+		     :base base))
+	     (:constituent
+	      (unless (digit-char-p char base)
+		(error 'digit-expected
+		       :character-found char
+		       :base base))
+	      (setf denominator
+		    (+ (* base denominator) (digit-char-p char base)))
+	      (go denominator))))))))
        
 	   
 
