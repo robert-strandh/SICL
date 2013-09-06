@@ -29,7 +29,7 @@
 (defun get-macro-character (char &optional (readtable *readtable*))
   (let ((entry (gethash char (macro-characters readtable))))
     (values
-     (if (functionp entry) entry nil)
+     entry
      (eq (gethash char (syntax-types readtable)) :non-terminating-macro))))
 
 (defun sharpsign (stream char)
@@ -54,7 +54,7 @@
 	(if non-terminating-p
 	    :non-terminating-macro
 	    :terminating-macro))
-  (set-macro-character char #'sharpsign
+  (set-macro-character char 'sharpsign
 		       non-terminating-p
 		       readtable)
   (setf (gethash char (dispatch-macro-characters readtable))
@@ -67,7 +67,6 @@
     (error 'sub-char-must-not-be-a-decimal-digit
 	   :disp-char disp-char
 	   :sub-char sub-char))
-  (setf sub-char (char-upcase sub-char))
   (let ((subtable (gethash disp-char (dispatch-macro-characters readtable))))
     (when (null subtable)
       (error 'char-must-be-a-dispatching-character
@@ -78,8 +77,7 @@
     (disp-char sub-char &optional (readtable *readtable*))
   ;; The HyperSpec does not say whether we should convert
   ;; to upper case here, but we think we should.
-  (setf sub-char (char-upcase sub-char))
-  (let ((subtable (gethash disp-char (macro-characters readtable))))
+  (let ((subtable (gethash disp-char (dispatch-macro-characters readtable))))
     (when (null subtable)
       (error 'char-must-be-a-dispatching-character
 	     :disp-char disp-char))
