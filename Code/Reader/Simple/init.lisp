@@ -12,44 +12,44 @@
 (setf (gethash #\| (syntax-types *standard-readtable*))
       :multiple-escape)
 
-(set-macro-character #\( #'left-parenthesis nil *standard-readtable*)
-(set-macro-character #\) #'right-parenthesis nil *standard-readtable*)
-(set-macro-character #\' #'single-quote nil *standard-readtable*)
-(set-macro-character #\" #'double-quote nil *standard-readtable*)
-(set-macro-character #\; #'semicolon nil *standard-readtable*)
-(set-macro-character #\` #'backquote nil *standard-readtable*)
-(set-macro-character #\, #'comma nil *standard-readtable*)
+(set-macro-character #\( 'left-parenthesis nil *standard-readtable*)
+(set-macro-character #\) 'right-parenthesis nil *standard-readtable*)
+(set-macro-character #\' 'single-quote nil *standard-readtable*)
+(set-macro-character #\" 'double-quote nil *standard-readtable*)
+(set-macro-character #\; 'semicolon nil *standard-readtable*)
+(set-macro-character #\` 'backquote nil *standard-readtable*)
+(set-macro-character #\, 'comma nil *standard-readtable*)
 
 (make-dispatch-macro-character #\# t *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\'
- #'sharpsign-single-quote
- *standard-readtable*)
+ #\# #\' 'sharpsign-single-quote *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\(
- #'sharpsign-left-parenthesis
- *standard-readtable*)
+ #\# #\( 'sharpsign-left-parenthesis *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\.
- #'sharpsign-dot
- *standard-readtable*)
+ #\# #\. 'sharpsign-dot *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\\
- #'sharpsign-backslash
- *standard-readtable*)
+ #\# #\\ 'sharpsign-backslash *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\b
- #'sharpsign-b
- *standard-readtable*)
+ #\# #\b 'sharpsign-b/x/o *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\B
- #'sharpsign-b
- *standard-readtable*)
+ #\# #\B 'sharpsign-b/x/o *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\x 'sharpsign-b/x/o *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\X 'sharpsign-b/x/o *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\o 'sharpsign-b/x/o *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\O 'sharpsign-b/x/o *standard-readtable*)
 
 (setf *readtable* (copy-readtable *standard-readtable*))
