@@ -58,7 +58,7 @@
    #:two-package-markers-must-not-be-first
    #:symbol-can-have-at-most-two-package-markers
    #:unknown-character-name
-   #:binary-digit-expected
+   #:digit-expected
    ;; Names of macros related to backquote.
    ;; We export them so that the pretty printer
    ;; can use them properly.
