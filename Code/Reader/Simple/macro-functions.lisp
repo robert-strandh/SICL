@@ -306,8 +306,6 @@
 ;;;
 ;;; Reader macro for sharpsign dot.
 
-(defparameter *read-eval* t)
-
 (defun sharpsign-dot (stream char parameter)
   (declare (ignore char))
   (unless (null parameter)
