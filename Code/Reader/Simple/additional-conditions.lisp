@@ -64,6 +64,9 @@
     :initarg :desired-symbol
     :reader desired-symbol)))
   
+(define-condition unknown-macro-sub-character (reader-error)
+  ((%sub-char :initarg :sub-char :reader sub-char)))
+
 (define-condition numeric-parameter-supplied-but-ignored (warning)
   ((%parameter :initarg :parameter :reader parameter)
    (%macro-name :initarg :macro-name :reader macro-name)))

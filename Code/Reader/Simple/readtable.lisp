@@ -3,23 +3,20 @@
 (defparameter *readtable* nil)
 
 (defclass readtable ()
-  ((%syntax-types :initform (make-hash-table) :reader syntax-types)
-   (%macro-characters :initform (make-hash-table) :reader macro-characters)
+  ((%syntax-types
+    :initform (make-hash-table)
+    :reader syntax-types)
+   (%macro-characters
+    :initform (make-hash-table)
+    :reader macro-characters)
+   (%dispatch-macro-characters
+    :initform (make-hash-table)
+    :reader dispatch-macro-characters)
    (%readtable-case :initform :upcase :accessor readtable-case)))
 
 (defun syntax-type (char)
   (or (gethash char (syntax-types *readtable*))
       :constituent))
-
-(defun make-dispatch-macro-character
-    (char &optional (non-terminating-p nil) (readtable *readtable*))
-  (setf (gethash char (syntax-types readtable))
-	(if non-terminating-p
-	    :non-terminating-macro
-	    :terminating-macro))
-  (setf (gethash char (macro-characters readtable))
-	(make-hash-table))
-  t)
 
 (defun set-macro-character
     (char function &optional (non-terminating-p nil) (readtable *readtable*))
@@ -36,6 +33,33 @@
     (values
      (if (functionp entry) entry nil)
      (eq (gethash char (syntax-types readtable)) :non-terminating-macro))))
+
+(defun make-dispatch-macro-character
+    (char &optional (non-terminating-p nil) (readtable *readtable*))
+  (setf (gethash char (syntax-types readtable))
+	(if non-terminating-p
+	    :non-terminating-macro
+	    :terminating-macro))
+  (set-macro-character
+   char
+   (lambda (stream char)
+     (loop with table = (dispatch-macro-characters *readtable*)
+	   with subtable = (gethash char table)
+	   for parameter = 0 then (+ (* 10 parameter) value)
+	   for char2 = (read-char stream t nil t)
+	   for value = (digit-char-p char2)
+	   until (null value)
+	   finally (let ((fun (gethash char2 subtable)))
+		     (when (null fun)
+		       (error 'unknown-macro-sub-character
+			      :stream stream
+			      :sub-char char2))
+		     (funcall fun stream char2 parameter))))
+   non-terminating-p
+   readtable)
+  (setf (gethash char (dispatch-macro-characters readtable))
+	(make-hash-table))
+  t)
 
 (defun set-dispatch-macro-character
     (disp-char sub-char function &optional (readtable *readtable*))
