@@ -52,9 +52,7 @@
      step-8-even-escapes
        (let ((char (read-char input-stream nil nil)))
 	 (when (null char)
-	   (if eof-error-p
-	       (error 'end-of-file :stream input-stream)
-	       (return-from read-common eof-value)))
+	   (go step-10-terminate-token))
 	 (ecase (syntax-type char)
 	   ((:constituent :non-terminating-macro)
 	    (vector-push-extend char token)
