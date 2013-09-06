@@ -42,4 +42,14 @@
  #'sharpsign-backslash
  *standard-readtable*)
 
+(set-dispatch-macro-character
+ #\# #\b
+ #'sharpsign-b
+ *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\B
+ #'sharpsign-b
+ *standard-readtable*)
+
 (setf *readtable* (copy-readtable *standard-readtable*))

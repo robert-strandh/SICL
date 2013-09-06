@@ -84,3 +84,6 @@
 
 (define-condition unknown-character-name (reader-error)
   ((%name :initarg :name :reader name)))
+
+(define-condition binary-digit-expected (reader-error)
+  ((%character-found :initarg :character-found :reader character-found)))

@@ -402,3 +402,89 @@
 			       :name token)
 			(return-from sharpsign-backslash char))))))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macro for sharpsign B.
+
+(defun sharpsign-b (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-single-quote))
+  (let ((numerator 0)
+	(denominator 0))
+    (tagbody
+     start
+       (let ((char (read-char stream t nil t)))
+	 (ecase (syntax-type char)
+	   ((:whitespace :terminating-macro
+	     :non-terminating-macro :single-escape :multiple-escape)
+	    (error 'binary-digit-expected
+		   :character-found char))
+	   (:constituent
+	    (unless (or (eql char #\0) (eql char #\1) )
+	      (error 'binary-digit-expected
+		     :character-found char))
+	    (setf numerator (+ (* 2 numerator) (digit-char-p char)))
+	    (go numerator))))
+     numerator
+       (let ((char (read-char stream nil nil t)))
+	 (when (null char)
+	   (return-from sharpsign-b numerator))
+	 (ecase (syntax-type char)
+	   (:whitespace
+	    (when *preserve-whitespace*
+	      (unread-char char stream))
+	    (return-from sharpsign-b numerator))
+	   (:terminating-macro
+	    (unread-char char stream)
+	    (return-from sharpsign-b numerator))
+	   ((:non-terminating-macro :single-escape :multiple-escape)
+	    (error 'binary-digit-expected
+		   :character-found char))
+	   (:constituent
+	    (when (eql char #\/)
+	      (go denominator-start))
+	    (unless (or (eql char #\0) (eql char #\1) )
+	      (error 'binary-digit-expected
+		     :character-found char))
+	    (setf numerator (+ (* 2 numerator) (digit-char-p char)))
+	    (go numerator))))
+     denominator-start
+       (let ((char (read-char stream t nil t)))
+	 (ecase (syntax-type char)
+	   ((:whitespace :terminating-macro
+	     :non-terminating-macro :single-escape :multiple-escape)
+	    (error 'binary-digit-expected
+		   :character-found char))
+	   (:constituent
+	    (unless (or (eql char #\0) (eql char #\1) )
+	      (error 'binary-digit-expected
+		     :character-found char))
+	    (setf denominator (+ (* 2 denominator) (digit-char-p char)))
+	    (go denominator))))
+     denominator
+       (let ((char (read-char stream nil nil t)))
+	 (when (null char)
+	   (return-from sharpsign-b (/ numerator denominator)))
+	 (ecase (syntax-type char)
+	   (:whitespace
+	    (when *preserve-whitespace*
+	      (unread-char char stream))
+	    (return-from sharpsign-b (/ numerator denominator)))
+	   (:terminating-macro
+	    (unread-char char stream)
+	    (return-from sharpsign-b (/ numerator denominator)))
+	   ((:non-terminating-macro :single-escape :multiple-escape)
+	    (error 'binary-digit-expected
+		   :character-found char))
+	   (:constituent
+	    (unless (or (eql char #\0) (eql char #\1) )
+	      (error 'binary-digit-expected
+		     :character-found char))
+	    (setf denominator (+ (* 2 denominator) (digit-char-p char)))
+	    (go denominator)))))))
+       
+	   
+
