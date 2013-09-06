@@ -34,29 +34,31 @@
      (if (functionp entry) entry nil)
      (eq (gethash char (syntax-types readtable)) :non-terminating-macro))))
 
+(defun sharpsign (stream char)
+  (loop with table = (dispatch-macro-characters *readtable*)
+	with subtable = (gethash char table)
+	for parameter = 0 then (+ (* 10 parameter) value)
+	for parameter-given = nil then t
+	for char2 = (read-char stream t nil t)
+	for value = (digit-char-p char2)
+	until (null value)
+	finally (let ((fun (gethash char2 subtable)))
+		  (when (null fun)
+		    (error 'unknown-macro-sub-character
+			   :stream stream
+			   :sub-char char2))
+		  (return (funcall fun stream char2
+				   (if parameter-given parameter nil))))))
+
 (defun make-dispatch-macro-character
     (char &optional (non-terminating-p nil) (readtable *readtable*))
   (setf (gethash char (syntax-types readtable))
 	(if non-terminating-p
 	    :non-terminating-macro
 	    :terminating-macro))
-  (set-macro-character
-   char
-   (lambda (stream char)
-     (loop with table = (dispatch-macro-characters *readtable*)
-	   with subtable = (gethash char table)
-	   for parameter = 0 then (+ (* 10 parameter) value)
-	   for char2 = (read-char stream t nil t)
-	   for value = (digit-char-p char2)
-	   until (null value)
-	   finally (let ((fun (gethash char2 subtable)))
-		     (when (null fun)
-		       (error 'unknown-macro-sub-character
-			      :stream stream
-			      :sub-char char2))
-		     (funcall fun stream char2 parameter))))
-   non-terminating-p
-   readtable)
+  (set-macro-character char #'sharpsign
+		       non-terminating-p
+		       readtable)
   (setf (gethash char (dispatch-macro-characters readtable))
 	(make-hash-table))
   t)
@@ -68,22 +70,22 @@
 	   :disp-char disp-char
 	   :sub-char sub-char))
   (setf sub-char (char-upcase sub-char))
-  (let ((entry (gethash disp-char (macro-characters readtable))))
-    (unless (hash-table-p entry)
+  (let ((subtable (gethash disp-char (dispatch-macro-characters readtable))))
+    (when (null subtable)
       (error 'char-must-be-a-dispatching-character
 	     :disp-char disp-char))
-    (setf (gethash sub-char entry) function)))
+    (setf (gethash sub-char subtable) function)))
 
 (defun get-dispatch-macro-character
     (disp-char sub-char &optional (readtable *readtable*))
   ;; The HyperSpec does not say whether we should convert
   ;; to upper case here, but we think we should.
   (setf sub-char (char-upcase sub-char))
-  (let ((entry (gethash disp-char (macro-characters readtable))))
-    (unless (hash-table-p entry)
+  (let ((subtable (gethash disp-char (macro-characters readtable))))
+    (when (null subtable)
       (error 'char-must-be-a-dispatching-character
 	     :disp-char disp-char))
-    (gethash sub-char entry)))
+    (gethash sub-char subtable)))
 
 (defun copy-readtable (&optional (from-readtable *readtable*) to-readtable)
   (when (null to-readtable)
@@ -94,16 +96,17 @@
 	     (setf (gethash key (syntax-types to-readtable)) value))
 	   (syntax-types from-readtable))
   (maphash (lambda (char entry)
-	     (if (functionp entry)
-		 (setf (gethash char (macro-characters to-readtable))
-		       entry)
-		 (let ((table (make-hash-table)))
-		   (maphash (lambda (sub-char function)
-			      (setf (gethash sub-char table) function))
-			    entry)
-		   (setf (gethash char (macro-characters to-readtable))
-			 table))))
+	     (setf (gethash char (macro-characters to-readtable))
+		   entry))
 	   (macro-characters from-readtable))
+  (maphash (lambda (char entry)
+	     (let ((table (make-hash-table)))
+	       (maphash (lambda (sub-char function)
+			  (setf (gethash sub-char table) function))
+			entry)
+	       (setf (gethash char (dispatch-macro-characters to-readtable))
+		     table)))
+	   (dispatch-macro-characters from-readtable))
   (setf (readtable-case to-readtable)
 	(readtable-case from-readtable))
   to-readtable)
