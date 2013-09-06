@@ -1,6 +1,4 @@
-(in-package #:sicl-reader)
-
-(defparameter *preserve-whitespace* nil)
+(cl:in-package #:sicl-reader)
 
 ;;; FIXME: handle characters with invalid consituent traits.
 (defun read-common (&optional

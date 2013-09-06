@@ -106,12 +106,6 @@
 ;;; macro that expands to a CL form that will build the final data
 ;;; structure.
 
-(defparameter *backquote-allowed-p* t)
-
-(defparameter *backquote-in-subforms-allowed-p* t)
-
-(defparameter *backquote-depth* 0)
-
 (defun backquote (stream char)
   (declare (ignore char))
   (unless *backquote-allowed-p*
@@ -202,14 +196,6 @@
 ;;; should return normally, we have a problem, because this means that
 ;;; there was a second subform after the consing dot in the list, so
 ;;; we signal an ERROR.
-
-(defvar *consing-dot* '#:|.|)
-
-(defparameter *consing-dot-allowed-p* nil)
-
-(define-condition end-of-list () ())
-
-(defvar *end-of-list* (make-condition 'end-of-list))
 
 (defun left-parenthesis (stream char)
   (declare (ignore char))
@@ -423,10 +409,10 @@
 	    (error 'binary-digit-expected
 		   :character-found char))
 	   (:constituent
-	    (unless (or (eql char #\0) (eql char #\1) )
+	    (unless (digit-char-p char 2)
 	      (error 'binary-digit-expected
 		     :character-found char))
-	    (setf numerator (+ (* 2 numerator) (digit-char-p char)))
+	    (setf numerator (+ (* 2 numerator) (digit-char-p char 2)))
 	    (go numerator))))
      numerator
        (let ((char (read-char stream nil nil t)))
@@ -446,10 +432,10 @@
 	   (:constituent
 	    (when (eql char #\/)
 	      (go denominator-start))
-	    (unless (or (eql char #\0) (eql char #\1) )
+	    (unless (digit-char-p char 2)
 	      (error 'binary-digit-expected
 		     :character-found char))
-	    (setf numerator (+ (* 2 numerator) (digit-char-p char)))
+	    (setf numerator (+ (* 2 numerator) (digit-char-p char 2)))
 	    (go numerator))))
      denominator-start
        (let ((char (read-char stream t nil t)))
@@ -459,10 +445,10 @@
 	    (error 'binary-digit-expected
 		   :character-found char))
 	   (:constituent
-	    (unless (or (eql char #\0) (eql char #\1) )
+	    (unless (digit-char-p char 2)
 	      (error 'binary-digit-expected
 		     :character-found char))
-	    (setf denominator (+ (* 2 denominator) (digit-char-p char)))
+	    (setf denominator (+ (* 2 denominator) (digit-char-p char 2)))
 	    (go denominator))))
      denominator
        (let ((char (read-char stream nil nil t)))
@@ -480,10 +466,10 @@
 	    (error 'binary-digit-expected
 		   :character-found char))
 	   (:constituent
-	    (unless (or (eql char #\0) (eql char #\1) )
+	    (unless (digit-char-p char 2)
 	      (error 'binary-digit-expected
 		     :character-found char))
-	    (setf denominator (+ (* 2 denominator) (digit-char-p char)))
+	    (setf denominator (+ (* 2 denominator) (digit-char-p char 2)))
 	    (go denominator)))))))
        
 	   

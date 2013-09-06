@@ -1,7 +1,5 @@
 (cl:in-package #:sicl-reader)
 
-(defparameter *readtable* nil)
-
 (defclass readtable ()
   ((%syntax-types
     :initform (make-hash-table)

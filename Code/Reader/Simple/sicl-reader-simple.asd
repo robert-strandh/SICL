@@ -3,10 +3,18 @@
 (asdf:defsystem :sicl-reader-simple
   :components
   ((:file "packages")
-   (:file "macro-functions" :depends-on ("packages"))
-   (:file "additional-conditions" :depends-on ("packages"))
-   (:file "tokens" :depends-on ("packages"))
-   (:file "readtable" :depends-on ("packages"))
-   (:file "reader" :depends-on ("packages" "readtable" "tokens"))
-   (:file "init" :depends-on ("readtable" "macro-functions"))))
+   (:file "more-variables"
+    :depends-on ("packages"))
+   (:file "additional-conditions"
+    :depends-on ("packages"))
+   (:file "readtable"
+    :depends-on ("packages" "more-variables"))
+   (:file "tokens"
+    :depends-on ("packages" "readtable" "more-variables"))
+   (:file "reader"
+    :depends-on ("packages" "readtable" "tokens" "more-variables"))
+   (:file "macro-functions"
+    :depends-on ("packages" "more-variables"))
+   (:file "init"
+    :depends-on ("readtable" "macro-functions"))))
 
