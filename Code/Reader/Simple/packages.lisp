@@ -2,10 +2,19 @@
 
 (defpackage #:sicl-reader
   (:use #:common-lisp)
+  ;; When the reader is compiled for the purpose of cross compilation,
+  ;; we must shadow a certain number of symbols that would otherwise
+  ;; clash with the corresponding symbols in the host package
+  ;; COMMON-LISP.
   (:shadow
    #:readtable
+   ;; Contrary to other variables affecting the reader, we cannot use
+   ;; the host version of *READTABLE* because we do not necessarily
+   ;; use the same representation of readtables as the host does, and
+   ;; Common Lisp does not have a standardized API for manipulating
+   ;; readtables.  Perhaps we should write a CDR (Common Lisp Document
+   ;; Repository) document suggesting such an API.
    #:*readtable*
-   #:*read-eval*
    #:read
    #:read-preserving-whitespace
    #:make-dispatch-macro-character
@@ -20,7 +29,6 @@
   (:export
    #:readtable
    #:*readtable*
-   #:*read-eval*
    #:read
    #:read-preserving-whitespace
    #:make-dispatch-macro-character
