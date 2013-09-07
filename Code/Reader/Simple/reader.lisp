@@ -99,7 +99,9 @@
 	    (go step-8-even-escapes))))
      step-10-terminate-token
        (return-from read-common
-	 (interpret-token token token-escapes input-stream)))))
+	 (if *read-suppress*
+	     nil
+	     (interpret-token token token-escapes input-stream))))))
     
 (defun read (&optional
 	       (input-stream *standard-input*)
