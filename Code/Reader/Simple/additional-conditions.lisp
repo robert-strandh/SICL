@@ -98,3 +98,9 @@
 
 (define-condition no-elements-found (reader-error)
   ((%exptected-number :initarg :expected-number :reader expected-number)))
+
+(define-condition incorrect-initialization-length (error)
+  ((%expected-length :initarg :expected-length :reader expected-length )
+   (%datum :initarg :datum :reader datum)))
+
+  
