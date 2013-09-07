@@ -571,3 +571,25 @@
 	       (loop for i from index below parameter
 		     do (setf (sbit result i) (sbit result (1- index))))
 	       result)))))
+
+(defun sharpsign-vertical-bar (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-single-quote))
+  (loop for char = (read-char stream t nil t)
+	do (cond ((eql char #\#)
+		  (let ((char2 (read-char stream t nil t)))
+		    (if (eql char2 #\|)
+			(sharpsign-vertical-bar stream #\| nil)
+			(unread-char char2 stream))))
+		 ((eql char #\|)
+		  (let ((char2 (read-char stream t nil t)))
+		    (if (eql char2 #\#)
+			(return-from sharpsign-vertical-bar (values))
+			(unread-char char2 stream))))
+		 (t
+		  nil))))
+
+
