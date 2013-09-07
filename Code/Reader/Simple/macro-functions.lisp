@@ -510,5 +510,64 @@
 	   :stream stream
 	   :radix parameter))
   (read-rational stream parameter))
-	   
 
+(defun sharpsign-asterisk (stream char parameter)
+  (declare (ignore char))
+  (if (null parameter)
+      (let ((v (make-array 10 :element-type 'bit :adjustable t :fill-pointer 0))
+	    (illegal-character-p nil))
+	(loop for char = (read-char stream nil nil t)
+	      for syntax-type = (syntax-type char)
+	      for value = (digit-char-p char)
+	      until (or (null char)
+			(eq syntax-type :terminating-macro)
+			(eq syntax-type :whitespace))
+	      do (if (null value)
+		     (setf illegal-character-p char)
+		     (vector-push-extend value v)))
+	(cond (*read-suppress*
+	       nil)
+	      (illegal-character-p
+	       (error 'digit-expected
+		      :stream stream
+		      :character-found illegal-character-p
+		      :base 2.))
+	      (t
+	       (coerce v 'simple-bit-vector))))
+      (let ((result (make-array parameter :element-type 'bit))
+	    (index 0)
+	    (illegal-character-p nil)
+	    (too-many-bits-p nil))
+	(loop for char = (read-char stream nil nil t)
+	      for syntax-type = (syntax-type char)
+	      for value = (digit-char-p char)
+	      until (or (null char)
+			(eq syntax-type :terminating-macro)
+			(eq syntax-type :whitespace))
+	      do (cond ((null value)
+			(setf illegal-character-p char))
+		       ((>= index parameter)
+			(setf too-many-bits-p t))
+		       (t
+			(setf (sbit result index) value)))
+		 (incf index))
+	(cond (*read-suppress*
+	       nil)
+	      (illegal-character-p
+	       (error 'digit-expected
+		      :stream stream
+		      :character-found illegal-character-p
+		      :base 2.))
+	      (too-many-bits-p
+	       (error 'too-many-elements
+		      :stream stream
+		      :expected-number parameter
+		      :number-found index))
+	      ((zerop index)
+	       (error 'no-elements-found
+		      :stream stream
+		      :expected-number parameter))
+	      (t
+	       (loop for i from index below parameter
+		     do (setf (sbit result i) (sbit result (1- index))))
+	       result)))))

@@ -46,4 +46,7 @@
 (set-dispatch-macro-character
  #\# #\r 'sharpsign-r *standard-readtable*)
 
+(set-dispatch-macro-character
+ #\# #\* 'sharpsign-asterisk *standard-readtable*)
+
 (setf *readtable* (copy-readtable *standard-readtable*))

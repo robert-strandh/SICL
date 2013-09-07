@@ -92,3 +92,9 @@
 (define-condition invalid-radix (reader-error)
   ((%radix :initarg :radix :reader radix)))
 
+(define-condition too-many-elements (reader-error)
+  ((%exptected-number :initarg :expected-number :reader expected-number)
+   (%number-found :initarg :number-found :reader number-found)))
+
+(define-condition no-elements-found (reader-error)
+  ((%exptected-number :initarg :expected-number :reader expected-number)))
