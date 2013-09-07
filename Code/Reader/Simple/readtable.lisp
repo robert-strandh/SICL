@@ -33,14 +33,12 @@
      (eq (gethash char (syntax-types readtable)) :non-terminating-macro))))
 
 (defun sharpsign (stream char)
-  (loop with table = (dispatch-macro-characters *readtable*)
-	with subtable = (gethash char table)
-	for parameter = 0 then (+ (* 10 parameter) value)
+  (loop for parameter = 0 then (+ (* 10 parameter) value)
 	for parameter-given = nil then t
 	for char2 = (read-char stream t nil t)
 	for value = (digit-char-p char2)
 	until (null value)
-	finally (let ((fun (gethash char2 subtable)))
+	finally (let ((fun (get-dispatch-macro-character char char2)))
 		  (when (null fun)
 		    (error 'unknown-macro-sub-character
 			   :stream stream
@@ -67,6 +65,7 @@
     (error 'sub-char-must-not-be-a-decimal-digit
 	   :disp-char disp-char
 	   :sub-char sub-char))
+  (setf sub-char (char-upcase sub-char))
   (let ((subtable (gethash disp-char (dispatch-macro-characters readtable))))
     (when (null subtable)
       (error 'char-must-be-a-dispatching-character
@@ -77,11 +76,12 @@
     (disp-char sub-char &optional (readtable *readtable*))
   ;; The HyperSpec does not say whether we should convert
   ;; to upper case here, but we think we should.
+  (setf sub-char (char-upcase sub-char))
   (let ((subtable (gethash disp-char (dispatch-macro-characters readtable))))
     (when (null subtable)
       (error 'char-must-be-a-dispatching-character
 	     :disp-char disp-char))
-    (gethash sub-char subtable)))
+    (nth-value 0 (gethash sub-char subtable))))
 
 (defun copy-readtable (&optional (from-readtable *readtable*) to-readtable)
   (when (null to-readtable)
