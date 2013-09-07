@@ -35,21 +35,27 @@
  #\# #\\ 'sharpsign-backslash *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\b 'sharpsign-b/x/o *standard-readtable*)
+ #\# #\b 'sharpsign-b *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\B 'sharpsign-b/x/o *standard-readtable*)
+ #\# #\B 'sharpsign-b *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\x 'sharpsign-b/x/o *standard-readtable*)
+ #\# #\x 'sharpsign-x *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\X 'sharpsign-b/x/o *standard-readtable*)
+ #\# #\X 'sharpsign-x *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\o 'sharpsign-b/x/o *standard-readtable*)
+ #\# #\o 'sharpsign-o *standard-readtable*)
 
 (set-dispatch-macro-character
- #\# #\O 'sharpsign-b/x/o *standard-readtable*)
+ #\# #\O 'sharpsign-o *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\r 'sharpsign-r *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\R 'sharpsign-r *standard-readtable*)
 
 (setf *readtable* (copy-readtable *standard-readtable*))

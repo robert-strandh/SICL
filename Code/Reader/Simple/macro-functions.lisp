@@ -392,100 +392,123 @@
 ;;;
 ;;; Reader macro for sharpsign B, X, and O.
 
-(defun sharpsign-b/x/o (stream char parameter)
-  (let ((base (ecase char
-		((#\b #\B) 2.)
-		((#\x #\X) 16.)
-		((#\o #\O) 8.))))
-    (unless (null parameter)
-      (warn 'numeric-parameter-supplied-but-ignored
-	    :parameter parameter
-	    :macro-name 'sharpsign-single-quote))
-    (let ((numerator 0)
-	  (denominator 0))
-      (tagbody
-       start
-	 (let ((char (read-char stream t nil t)))
-	   (ecase (syntax-type char)
-	     ((:whitespace :terminating-macro
-	       :non-terminating-macro :single-escape :multiple-escape)
+(defun read-rational (stream base)
+  (let ((numerator 0)
+	(denominator 0))
+    (tagbody
+     start
+       (let ((char (read-char stream t nil t)))
+	 (ecase (syntax-type char)
+	   ((:whitespace :terminating-macro
+	     :non-terminating-macro :single-escape :multiple-escape)
+	    (error 'digit-expected
+		   :character-found char
+		   :base base))
+	   (:constituent
+	    (unless (digit-char-p char base)
 	      (error 'digit-expected
 		     :character-found char
 		     :base base))
-	     (:constituent
-	      (unless (digit-char-p char base)
-		(error 'digit-expected
-		       :character-found char
-		       :base base))
-	      (setf numerator
-		    (+ (* base numerator) (digit-char-p char base)))
-	      (go numerator))))
-       numerator
-	 (let ((char (read-char stream nil nil t)))
-	   (when (null char)
-	     (return-from sharpsign-b/x/o numerator))
-	   (ecase (syntax-type char)
-	     (:whitespace
-	      (when *preserve-whitespace*
-		(unread-char char stream))
-	      (return-from sharpsign-b/x/o numerator))
-	     (:terminating-macro
-	      (unread-char char stream)
-	      (return-from sharpsign-b/x/o numerator))
-	     ((:non-terminating-macro :single-escape :multiple-escape)
+	    (setf numerator
+		  (+ (* base numerator) (digit-char-p char base)))
+	    (go numerator))))
+     numerator
+       (let ((char (read-char stream nil nil t)))
+	 (when (null char)
+	   (return-from read-rational numerator))
+	 (ecase (syntax-type char)
+	   (:whitespace
+	    (when *preserve-whitespace*
+	      (unread-char char stream))
+	    (return-from read-rational numerator))
+	   (:terminating-macro
+	    (unread-char char stream)
+	    (return-from read-rational numerator))
+	   ((:non-terminating-macro :single-escape :multiple-escape)
+	    (error 'digit-expected
+		   :character-found char
+		   :base base))
+	   (:constituent
+	    (when (eql char #\/)
+	      (go denominator-start))
+	    (unless (digit-char-p char base)
 	      (error 'digit-expected
 		     :character-found char
 		     :base base))
-	     (:constituent
-	      (when (eql char #\/)
-		(go denominator-start))
-	      (unless (digit-char-p char base)
-		(error 'digit-expected
-		       :character-found char
-		       :base base))
-	      (setf numerator
-		    (+ (* base numerator) (digit-char-p char base)))
-	      (go numerator))))
-       denominator-start
-	 (let ((char (read-char stream t nil t)))
-	   (ecase (syntax-type char)
-	     ((:whitespace :terminating-macro
-	       :non-terminating-macro :single-escape :multiple-escape)
+	    (setf numerator
+		  (+ (* base numerator) (digit-char-p char base)))
+	    (go numerator))))
+     denominator-start
+       (let ((char (read-char stream t nil t)))
+	 (ecase (syntax-type char)
+	   ((:whitespace :terminating-macro
+	     :non-terminating-macro :single-escape :multiple-escape)
+	    (error 'digit-expected
+		   :character-found char
+		   :base base))
+	   (:constituent
+	    (unless (digit-char-p char base)
 	      (error 'digit-expected
 		     :character-found char
 		     :base base))
-	     (:constituent
-	      (unless (digit-char-p char base)
-		(error 'digit-expected
-		       :character-found char
-		       :base base))
-	      (setf denominator
-		    (+ (* base denominator) (digit-char-p char base)))
-	      (go denominator))))
-       denominator
-	 (let ((char (read-char stream nil nil t)))
-	   (when (null char)
-	     (return-from sharpsign-b/x/o (/ numerator denominator)))
-	   (ecase (syntax-type char)
-	     (:whitespace
-	      (when *preserve-whitespace*
-		(unread-char char stream))
-	      (return-from sharpsign-b/x/o (/ numerator denominator)))
-	     (:terminating-macro
-	      (unread-char char stream)
-	      (return-from sharpsign-b/x/o (/ numerator denominator)))
-	     ((:non-terminating-macro :single-escape :multiple-escape)
+	    (setf denominator
+		  (+ (* base denominator) (digit-char-p char base)))
+	    (go denominator))))
+     denominator
+       (let ((char (read-char stream nil nil t)))
+	 (when (null char)
+	   (return-from read-rational (/ numerator denominator)))
+	 (ecase (syntax-type char)
+	   (:whitespace
+	    (when *preserve-whitespace*
+	      (unread-char char stream))
+	    (return-from read-rational (/ numerator denominator)))
+	   (:terminating-macro
+	    (unread-char char stream)
+	    (return-from read-rational (/ numerator denominator)))
+	   ((:non-terminating-macro :single-escape :multiple-escape)
+	    (error 'digit-expected
+		   :character-found char
+		   :base base))
+	   (:constituent
+	    (unless (digit-char-p char base)
 	      (error 'digit-expected
 		     :character-found char
 		     :base base))
-	     (:constituent
-	      (unless (digit-char-p char base)
-		(error 'digit-expected
-		       :character-found char
-		       :base base))
-	      (setf denominator
-		    (+ (* base denominator) (digit-char-p char base)))
-	      (go denominator))))))))
-       
+	    (setf denominator
+		  (+ (* base denominator) (digit-char-p char base)))
+	    (go denominator)))))))
+
+(defun sharpsign-b (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-single-quote))
+  (read-rational stream 2.))
+	   
+(defun sharpsign-x (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-single-quote))
+  (read-rational stream 16.))
+	   
+(defun sharpsign-o (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-single-quote))
+  (read-rational stream 8.))
+	   
+(defun sharpsign-r (stream char parameter)
+  (declare (ignore char))
+  (unless (<= 2 parameter 36)
+    (error 'invalid-radix
+	   :stream stream
+	   :radix parameter))
+  (read-rational stream parameter))
 	   
 

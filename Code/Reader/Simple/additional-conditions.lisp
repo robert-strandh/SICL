@@ -88,3 +88,7 @@
 (define-condition digit-expected (reader-error)
   ((%character-found :initarg :character-found :reader character-found)
    (%base :initarg :base :reader base)))
+
+(define-condition invalid-radix (reader-error)
+  ((%radix :initarg :radix :reader radix)))
+
