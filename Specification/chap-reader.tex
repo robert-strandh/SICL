@@ -3,8 +3,16 @@
 The reader can be implemented in an almost entirely portable way.  
 
 The code for the reader is located in the \texttt{Code/Reader}
-directory.  The code is very incomplete and quite difficult to
-understand, mainly because it is over-engineered. 
+directory.  There are two subdirectories: \texttt{Code/Reader/Fast}
+and \texttt{Code/Reader/Simple}.  
+
+\section{The fast reader}
+
+The directory \texttt{Code/Reader/Fast} contains the code for the
+reader that we ultimately plan to make the main reader for \sysname{}.
+However, at the moment, the code for the fast reader is very
+incomplete and quite difficult to understand, mainly because it is
+over-engineered.  
 
 For one thing, we imagined an reader that would not only give
 expressions as a result of parsing text, but also abstract syntax
@@ -29,7 +37,7 @@ macros \#\# and \#=.
 
 The second reason for the reader to be over-engineered is that we
 wanted to create a very fast implementation (and we still do).  The
-way we imagined doing this was to create special versions of the
+way we imagined doing this was to create bspecial versions of the
 reader according to important parameters such as the input base and
 the readtable case.  We still think this is a good idea, but it might
 be better to do it in different phases.  Phase 1 would be to create a
@@ -41,12 +49,28 @@ obtaining good performance is to  provide a very fast tokenizer in the
 form of a state machine that builds up the token while it is being
 read.  
 
+\section{The simple reader}
+
+The directory \texttt{Code/Reader/Simple} contains the code for a
+simple, straightforward reader.  It is currently fairly complete.
+Only the macros \texttt{\#\#} and \texttt{\#=} (see
+\refSec{sec-reader-portability-problems}) and the \texttt{\#S} macro
+are missing.  
+
+We have made no attemp to make this reader fast.  Its main virtue is
+its simplicity.  
+
+\section{Reading floating-point numbers}
+
 The reader will use the method created by David Gay
 (\cite{Gay90correctlyrounded}, see also
 \cite{Clinger:1990:RFP:93542.93557}) for accurate and fast reading of
 floating-point numbers.
 
-The only problem as far as portability is concerned is with the reader
+\section{Portability problems}
+\label{sec-reader-portability-problems}
+
+The main problem as far as portability is concerned is with the reader
 macros \texttt{\#\#} and \texttt{\#=}.  When an object labeled with
 \texttt{\#=} is being read (and so has not been constructed yet) and a
 reference to it is being encountered (thus creating a circular
@@ -55,4 +79,16 @@ been constructed.  Then the object must be scanned for that temporary
 value.  However scanning arbitrary objects for some substructure
 cannot be done portably.
 
+Another (minor) problem with respect to portability has to do with the
+\emph{backquote} facility.  The \hs{} explicitly encourages
+implementations to use more specific constructs than the standard
+\cl{} functions \texttt{append}, \texttt{list}, and \texttt{cons} as a
+result of parsing the \emph{backquote} reader macro.  The reason for
+is so that the \emph{pretty printer} can print such forms in a more
+convenient way (i.e. using the backquote and comma characters).
+However, the result is often an implementation-specific encoding that
+would have to be translated into standard \cl{} constructs by the
+compiler, for instance by writing macros for this encoding.  Such
+macros would then necessarily be implementation specific, which is a
+problem for bootstrapping \sysname{}.  
 
