@@ -719,3 +719,22 @@
 	  :macro-name 'sharpsign-c))
   (apply #'complex (read stream t nil t)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macro for sharpsign P.
+
+(defun sharpsign-p (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-p))
+  (let ((expression (read stream t nil t)))
+    (unless (stringp expression)
+      (error 'type-error
+	     :expected-type 'string
+	     :datum expression))
+    (parse-namestring expression)))
+
+
+
