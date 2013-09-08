@@ -297,7 +297,7 @@
   (unless (null parameter)
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
-	  :macro-name 'sharpsign-single-quote))
+	  :macro-name 'sharpsign-dot))
   (eval (read stream t nil t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -322,7 +322,7 @@
   (unless (null parameter)
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
-	  :macro-name 'sharpsign-single-quote))
+	  :macro-name 'sharpsign-backslash))
   (let ((char1 (read-char stream nil nil t)))
     (when (null char1)
       (error 'end-of-file :stream stream))
@@ -484,7 +484,7 @@
   (unless (null parameter)
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
-	  :macro-name 'sharpsign-single-quote))
+	  :macro-name 'sharpsign-b))
   (read-rational stream 2.))
 	   
 (defun sharpsign-x (stream char parameter)
@@ -492,7 +492,7 @@
   (unless (null parameter)
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
-	  :macro-name 'sharpsign-single-quote))
+	  :macro-name 'sharpsign-x))
   (read-rational stream 16.))
 	   
 (defun sharpsign-o (stream char parameter)
@@ -500,7 +500,7 @@
   (unless (null parameter)
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
-	  :macro-name 'sharpsign-single-quote))
+	  :macro-name 'sharpsign-o))
   (read-rational stream 8.))
 	   
 (defun sharpsign-r (stream char parameter)
@@ -577,7 +577,7 @@
   (unless (null parameter)
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
-	  :macro-name 'sharpsign-single-quote))
+	  :macro-name 'sharpsign-vertical-bar))
   (loop for char = (read-char stream t nil t)
 	do (cond ((eql char #\#)
 		  (let ((char2 (read-char stream t nil t)))
@@ -641,3 +641,69 @@
       (check-dimensions dimensions init)
       (make-array dimensions :initial-contents init))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader for sharpsign colon.
+
+(defun symbol-from-token (token token-escapes)
+  (when *read-suppress*
+    (return-from symbol-from-token nil))
+  (convert-according-to-readtable-case token token-escapes)
+  (make-symbol (copy-seq token)))
+      
+
+(defun sharpsign-colon (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-colon))
+  (let ((token (make-array 10
+			   :element-type 'character
+			   :adjustable t
+			   :fill-pointer 0))
+	(token-escapes (make-array 10
+				   :adjustable t
+				   :fill-pointer 0)))
+    (tagbody
+     even-escapes
+       (let ((char (read-char stream nil nil t)))
+	 (if (null char)
+	     (return-from sharpsign-colon
+	       (symbol-from-token token token-escapes))
+	     (ecase (syntax-type char)
+	       (:whitespace
+		(when *preserve-whitespace*
+		  (unread-char char stream))
+		(return-from sharpsign-colon
+		  (symbol-from-token token token-escapes)))
+	       (:terminating-macro
+		(unread-char char stream)
+		(return-from sharpsign-colon
+		  (symbol-from-token token token-escapes)))
+	       (:single-escape
+		(let ((char2 (read-char stream t nil t)))
+		  (vector-push-extend char2 token)
+		  (vector-push-extend t token-escapes))
+		(go even-escapes))
+	       (:multiple-escape
+		(go odd-escapes))
+	       ((:constituent :non-terminating-macro)
+		(vector-push-extend char token)
+		(vector-push-extend nil token-escapes)
+		(go even-escapes)))))
+     odd-escapes
+       (let ((char (read-char stream t nil t)))
+	 (case (syntax-type char)
+	   (:single-escape
+	    (let ((char2 (read-char stream t nil t)))
+	      (vector-push-extend char2 token)
+	      (vector-push-extend t token-escapes)
+	      (go odd-escapes)))
+	   (:multiple-escape
+	    (go even-escapes))
+	   (t
+	    (vector-push-extend char token)
+	    (vector-push-extend t token-escapes)
+	    (go odd-escapes)))))))	    
+    
