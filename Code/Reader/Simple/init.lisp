@@ -70,4 +70,10 @@
 (set-dispatch-macro-character
  #\# #\- 'sharpsign-minus *standard-readtable*)
 
+(set-dispatch-macro-character
+ #\# #\< 'sharpsign-invalid *standard-readtable*)
+
+(set-dispatch-macro-character
+ #\# #\) 'sharpsign-invalid *standard-readtable*)
+
 (setf *readtable* (copy-readtable *standard-readtable*))

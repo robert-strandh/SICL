@@ -803,3 +803,12 @@
 	  (values))
 	(read stream t nil t))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macros for sharpsign < and sharpsign )
+
+(defun sharpsign-invalid (stream char parameter)
+  (declare (ignore parameter))
+  (error 'sharpsign-invalid
+	 :stream stream
+	 :character-found char))

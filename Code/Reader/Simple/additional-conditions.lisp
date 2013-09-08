@@ -105,3 +105,6 @@
 
 (define-condition single-feature-expected (error)
   ((%features :initarg :features :reader features)))
+
+(define-condition sharpsign-invalid (reader-error)
+  ((%character-found :initarg :character-found :reader character-found)))

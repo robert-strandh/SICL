@@ -38,7 +38,11 @@
 	for char2 = (read-char stream t nil t)
 	for value = (digit-char-p char2)
 	until (null value)
-	finally (let ((fun (get-dispatch-macro-character char char2)))
+	finally (when (eq (syntax-type char2) :whitespace)
+		  (error 'sharpsign-invalid
+			 :stream stream
+			 :character-found char2))
+		(let ((fun (get-dispatch-macro-character char char2)))
 		  (when (null fun)
 		    (error 'unknown-macro-sub-character
 			   :stream stream
