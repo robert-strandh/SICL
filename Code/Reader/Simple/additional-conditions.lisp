@@ -103,4 +103,5 @@
   ((%expected-length :initarg :expected-length :reader expected-length )
    (%datum :initarg :datum :reader datum)))
 
-  
+(define-condition single-feature-expected (error)
+  ((%features :initarg :features :reader features)))

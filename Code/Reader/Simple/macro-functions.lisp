@@ -736,5 +736,70 @@
 	     :datum expression))
     (parse-namestring expression)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macros for sharpsign + and sharpsign -.
 
+(defun check-feature-expression (feature-expression)
+  (unless (or (symbolp feature-expression)
+	      (and (sicl-code-utilities:proper-list-p feature-expression)
+		   (consp feature-expression)))
+    (error 'type-error
+	   :datum feature-expression
+	   :expected-type '(or symbol cons)))
+  (when (consp feature-expression)
+    (unless (member (car feature-expression) '(:not :or :and))
+      (error 'type-error
+	     :datum (car feature-expression)
+	     :expected-type '(member :not :or :and)))
+    (when (eq (car feature-expression) :not)
+      (unless (null (cddr feature-expression))
+	(error 'single-feature-expected
+	       :features (cdr feature-expression))))
+    (loop for feature in (cdr feature-expression)
+	  do (unless (symbolp feature)
+	       (error 'type-error
+		      :datum feature
+		      :expected-type 'symbol)))))
+
+(defun evaluate-feature-expression (feature-expression)
+  (if (symbolp feature-expression)
+      (member feature-expression *features* :test #'eq)
+      (ecase (car feature-expression)
+	(:not
+	 (evaluate-feature-expression (cadr feature-expression)))
+	(:or
+	 (some #'evaluate-feature-expression (cdr feature-expression)))
+	(:and
+	 (every #'evaluate-feature-expression (cdr feature-expression))))))
+
+(defun sharpsign-plus (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-p))
+  (let* ((*package* (find-package '#:keyword))
+	 (feature-expression (read stream t nil t)))
+    (check-feature-expression feature-expression)
+    (if (evaluate-feature-expression feature-expression)
+	(read stream t nil t)
+	(let ((*read-suppress* t))
+	  (read stream t nil t)
+	  (values)))))
+
+(defun sharpsign-minus (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-p))
+  (let* ((*package* (find-package '#:keyword))
+	 (feature-expression (read stream t nil t)))
+    (check-feature-expression feature-expression)
+    (if (evaluate-feature-expression feature-expression)
+	(let ((*read-suppress* t))
+	  (read stream t nil t)
+	  (values))
+	(read stream t nil t))))
 
