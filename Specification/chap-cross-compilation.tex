@@ -10,15 +10,17 @@ that have to be considered.
 First, let us define \emph{cross compiler} to mean a compiler that is
 entirely written using some \cl{} system called the \emph{host}, and
 which generates a \emph{fasl} file for some other \cl{} system called
-the \emph{target}.  When we say \emph{entirely}, we mean that it is
-the \texttt{read} function of the host that is used.  It would be
-possible, of course to use the \emph{read} function of the target, but
-the difference is small.%
+the \emph{target}.  When we say \emph{entirely}, we exclude the use of
+the \texttt{read} function of the host environment because it can
+cause some problem.  It would be possible, to use the \emph{read}
+function of the host, and the difference is small.%
 \footnote{The main difference that is important to bootstrapping is
   that some implementations use implementation-specific functions in
   the result of the \emph{backquote} reader macro.  This practice is
   explicitly allowed by the \hs{} (Section 2.4.6), and also encouraged
   (Section 2.4.6.1).}
+See \refSec{sec-reader-portability-problems} for a discussion of
+potential problems with the reader.
 
 Clearly, since we are talking about the \emph{file compiler} we face
 the same restrictions concerning literal objects as a native file
