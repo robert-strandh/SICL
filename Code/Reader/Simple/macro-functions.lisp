@@ -594,7 +594,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Reader for sharpsign A.
+;;; Reader macro for sharpsign A.
 
 (defun determine-dimensions (rank initial-contents)
   (cond ((zerop rank)
@@ -643,7 +643,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Reader for sharpsign colon.
+;;; Reader macro for sharpsign colon.
 
 (defun symbol-from-token (token token-escapes)
   (when *read-suppress*
@@ -707,3 +707,15 @@
 	    (vector-push-extend t token-escapes)
 	    (go odd-escapes)))))))	    
     
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Reader macro for sharpsign C.
+
+(defun sharpsign-c (stream char parameter)
+  (declare (ignore char))
+  (unless (null parameter)
+    (warn 'numeric-parameter-supplied-but-ignored
+	  :parameter parameter
+	  :macro-name 'sharpsign-c))
+  (apply #'complex (read stream t nil t)))
+
