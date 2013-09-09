@@ -1539,7 +1539,7 @@
 ;;; Function FBOUNDP.
 ;;;
 ;;; According to the HyperSpec, this function should return any true
-;;; value of the name is fbound in the global environment.  From the
+;;; value if the name is fbound in the global environment.  From the
 ;;; glossary, we learn that "fbound" means that the name has a
 ;;; definition as either a function, a macro, or a special operator in
 ;;; the global environment.
@@ -1548,17 +1548,8 @@
 ;;; code can not count on anything else, we might as well just return
 ;;; T.
 
-(defun function-name-p (object)
-  (or (symbolp object)
-      (and (consp object)
-	   (eq (car object) 'setf)
-	   (consp (cdr object))
-	   (symbolp (cadr object))
-	   (null (cddr object)))))
-
 (defun fboundp (function-name)
-  (unless (function-name-p function-name)
-    (error "not a function name ~s" function-name))
+  (declare (cl:type function-name function-name))
   (let ((entry (find function-name
 		     (append (macros *global-environment*)
 			     (functions *global-environment*)
@@ -1603,8 +1594,7 @@
 ;;; inline, etc.
 
 (defun fmakunbound (function-name)
-  (unless (function-name-p function-name)
-    (error "not a function name ~s" function-name))
+  (declare (cl:type function-name function-name))
   ;; Remove any compiler macro entry that refers to a base entry with 
   ;; this name.
   (setf (compiler-macros *global-environment*)
@@ -1657,8 +1647,7 @@
 ;;; macro entry is the one that is valid.  
 
 (defun fdefinition (function-name)
-  (unless (function-name-p function-name)
-    (error "not a function name ~s" function-name))
+  (declare (cl:type function-name function-name))
   ;; First see if there is a global macro entry with the right name.
   (let ((macro-entry
 	  ;; We can use EQ to test the name because names
@@ -1713,10 +1702,8 @@
 ;;; must remove that compiler macro entry as well.
 
 (defun (setf fdefinition) (new-definition function-name)
-  (unless (function-name-p function-name)
-    (error "not a function name ~s" function-name))
-  (unless (functionp new-definition)
-    (error 'type-error :datum new-definition :expected-type 'function))
+  (declare (cl:type function-name function-name)
+	   (cl:type function new-definition))
   ;; First see whether there is a special operator entry for the name.
   (let ((specop-entry
 	  (find function-name (special-operators *global-environment*)
@@ -1779,8 +1766,7 @@
 ;;; to call FDEFINITION to do the work. 
 
 (defun symbol-function (symbol)
-  (unless (symbolp symbol)
-    (error 'type-error :expected-type 'symbol :datum symbol))
+  (declare (cl:type symbol symbol))
   (fdefinition symbol))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1793,8 +1779,8 @@
 ;;; symbol, and then to call (SETF FDEFINITION) to do the work.
 
 (defun (setf symbol-function) (new-definition symbol)
-  (unless (symbolp symbol)
-    (error 'type-error :expected-type 'symbol :datum symbol))
+  (declare (cl:type function new-definition)
+	   (cl:type symbol symbol))
   (setf (fdefinition symbol) new-definition))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1806,8 +1792,7 @@
 ;;; T.
 
 (defun special-operator-p (symbol)
-  (unless (symbolp symbol)
-    (error 'type-error :datum symbol :expected-type 'symbol))
+  (declare (cl:type symbol symbol))
   (let ((entry (find symbol (special-operators *global-environment*)
 		     :key #'name :test #'eq)))
     (not (null entry))))
@@ -1868,12 +1853,10 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun (setf macro-function) (new-function symbol &optional environment)
-    (unless (null environment)
-      (error 'type-error :datum environment :expected-type 'null))
-    (unless (symbolp symbol)
-      (error 'type-error :datum symbol :expected-type 'symbol))
-    (unless (functionp new-function)
-      (error 'type-error :datum new-function 'function))
+    (declare (cl:type null environment)
+	     (cl:type symbol symbol)
+	     (cl:type function new-function)
+	     (ignore environment))
     ;; First check whether there is a global function entry with
     ;; this name.
     (let ((function-entry
@@ -1936,8 +1919,7 @@
 ;;; of that entry does not contain +unbound+.
 
 (defun boundp (symbol)
-  (unless (symbolp symbol)
-    (error 'type-error :datum symbol :expected-type 'symbol))
+  (declare (cl:type symbol symbol))
   (not (null (or (find symbol (constant-variables *global-environment*)
 		       :key #'name :test #'eq)
 		 (find symbol (symbol-macros *global-environment*)
@@ -1960,8 +1942,7 @@
 ;;; attempt is made to make a constant variable unbound.
 
 (defun makunbound (symbol)
-  (unless (symbolp symbol)
-    (error 'type-error :datum symbol :expected-type 'symbol))
+  (declare (cl:type symbol symbol))
   ;; Check whether the symbol has a definition as a constant variable.
   (let ((constant-variable-entry
 	  (find symbol (constant-variables *global-environment*)
@@ -2012,8 +1993,7 @@
 ;;; constant variables.  
 
 (defun symbol-value (symbol)
-  (unless (symbolp symbol)
-    (error 'type-error :datum symbol :expected-type 'symbol))
+  (declare (cl:type symbol symbol))
   ;; Handle keyword symbols specially here.
   (if (keywordp symbol)
       symbol
@@ -2061,7 +2041,8 @@
     (if (null entry)
 	(push (make-special-variable-entry name t)
 	      (special-variables *global-environment*))
-	(setf (defined-p entry) t))))
+	(setf (defined-p entry) t)))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2079,8 +2060,7 @@
 ;;; this case too.
 
 (defun (setf symbol-value) (new-value symbol)
-  (unless (symbolp symbol)
-    (error 'type-error :datum symbol :expected-type 'symbol))
+  (declare (symbol symbol))
   ;; Handle keyword symbols specially here.
   (when (keywordp symbol)
     (error "attempt to change the value of a keyword."))
