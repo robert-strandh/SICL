@@ -27,7 +27,8 @@
 
 (defun single-quote (stream char)
   (declare (ignore char))
-  (list 'quote (read stream t nil t)))
+  (let ((*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
+    (list 'quote (read stream t nil t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -240,7 +241,8 @@
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
 	  :macro-name 'sharpsign-single-quote))
-  `(function ,(read stream t nil t)))
+  (let ((*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
+    `(function ,(read stream t nil t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
