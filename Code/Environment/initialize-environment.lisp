@@ -1,5 +1,6 @@
 (sicl-compiler:compile-file "defmacro.lisp")
 (sicl-compiler:compile-file "in-package.lisp")
+(sicl-compiler:compile-file "../Reader/Simple/quasiquote-macro.lisp")
 (sicl-compiler:compile-file "declaim.lisp")
 (sicl-compiler:compile-file "defining-macros.lisp")
 (sicl-compiler:compile-file "lambda.lisp")
