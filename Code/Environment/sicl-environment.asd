@@ -4,4 +4,7 @@
   :depends-on (:sicl-code-utilities)
   :components
   ((:file "packages")
-   (:file "environment" :depends-on ("packages"))))
+   (:file "type-proclamations"
+    :depends-on ("packages"))
+   (:file "environment"
+    :depends-on ("packages" "type-proclamations"))))
