@@ -19,5 +19,7 @@
    (:file "macro-functions"
     :depends-on ("packages" "more-variables" "utilities"))
    (:file "init"
-    :depends-on ("readtable" "macro-functions"))))
+    :depends-on ("readtable" "macro-functions"))
+   (:file "quasiquote-macro"
+    :depends-on ("additional-conditions"))))
 
