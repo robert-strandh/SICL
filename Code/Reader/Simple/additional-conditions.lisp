@@ -6,9 +6,6 @@
 (define-condition invalid-context-for-backquote (backquote-condition)
   ())
 
-(define-condition invalid-context-for-comma (backquote-condition)
-  ())
-
 (define-condition comma-not-inside-backquote (backquote-condition)
   ())
 

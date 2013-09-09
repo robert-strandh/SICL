@@ -118,9 +118,6 @@
 
 (defun comma (stream char)
   (declare (ignore char))
-  (unless *backquote-allowed-p*
-    (error 'invalid-context-for-comma
-	   :stream stream))
   (unless (plusp *backquote-depth*)
     (error 'comma-not-inside-backquote
 	   :stream stream))
@@ -241,8 +238,7 @@
     (warn 'numeric-parameter-supplied-but-ignored
 	  :parameter parameter
 	  :macro-name 'sharpsign-single-quote))
-  (let ((*backquote-in-subforms-allowed-p* *backquote-allowed-p*))
-    `(function ,(read stream t nil t))))
+  `(function ,(read stream t nil t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
