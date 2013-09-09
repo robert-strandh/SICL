@@ -16,7 +16,7 @@
 	   (sicl-compiler-phase-1:*compile-file* t))
       (sicl-ast:make-progn-ast 
        (loop with eof-value = (list nil)
-	     for form = (read stream nil eof-value)
+	     for form = (sicl-reader:read stream nil eof-value)
 	     until (eq form eof-value)
 	     for result = (sicl-compiler-phase-1:convert-initial form)
 	     unless (null result)
