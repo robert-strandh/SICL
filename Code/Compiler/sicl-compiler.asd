@@ -10,7 +10,8 @@
 	       :sicl-compiler-def-use-chains
 	       :sicl-compiler-ssa-form
 	       :sicl-compiler-loops
-	       :sicl-environment)
+	       :sicl-environment
+	       :sicl-reader-simple)
   :components
   ((:file "packages" :depends-on ())
    (:file "abstract-syntax-tree"
