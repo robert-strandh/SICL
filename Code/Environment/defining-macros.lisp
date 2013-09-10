@@ -18,7 +18,7 @@
 (defmacro defconstant (name initial-value &optional documentation)
   (declare (ignore documentation))
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (%defconstant ',name ,initial-value)))
+     (defconstant-function ',name ,initial-value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
