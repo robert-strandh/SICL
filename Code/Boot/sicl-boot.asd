@@ -2,6 +2,8 @@
 
 (asdf:defsystem :sicl-boot
   :depends-on (:sicl-compiler
-	       :sicl-conditionals)
+	       :sicl-conditionals
+	       :sicl-arithmetic
+	       :sicl-conditions)
   :components
   ((:file "initialize-environment")))
