@@ -1,6 +1,8 @@
 (sicl-compiler:compile-file "../Environment/defmacro-1.lisp")
 (sicl-compiler:compile-file "../Environment/in-package-1.lisp")
 (sicl-compiler:compile-file "../Environment/declaim-1.lisp")
+(sicl-compiler:compile-file "../Environment/deftype-1.lisp")
+(sicl-compiler:compile-file "../Environment/type-proclamations.lisp")
 (sicl-compiler:compile-file "../Environment/defining-macros.lisp")
 (sicl-compiler:compile-file "../Environment/lambda.lisp")
 (sicl-compiler:compile-file "../Environment/multiple-value-call.lisp")
