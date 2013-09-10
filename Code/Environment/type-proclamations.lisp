@@ -75,3 +75,10 @@
 ;;; FIXME: do something better for the generalized boolean value.
 (declaim (ftype (function (symbol) t)
 		special-operator-p))
+
+(declaim (ftype (function (symbol) (or function null))
+		type-function))
+
+(declaim (ftype (function (function symbol) function)
+		(setf type-function)))
+
