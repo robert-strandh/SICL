@@ -423,7 +423,7 @@
 ;;;    special operator.  A LOCATION for the entry is created, and the
 ;;;    storage cell will be set to the new definition.
 ;;;
-;;;  * Proclaiming FTYPE, INLINE, NOTINLINE or DYNAMIC extent with
+;;;  * Proclaiming FTYPE, INLINE, NOTINLINE or DYNAMIC-EXTENT with
 ;;;    FUNCTION using the name.  Again, A LOCATION for the entry is
 ;;;    created, but the storage cell will be set +unbound+.  The
 ;;;    appropriate auxiliary entry is created and will refer to the
@@ -442,10 +442,38 @@
 (defclass global-function-entry (function-entry)
   ())
 
-(defun make-global-function-entry (name)
+(defun make-global-function-entry (name &optional (lambda-list :none))
+  (declare (cl:type function-name name))
   (make-instance 'global-function-entry
 		 :name name
+		 :lambda-list lambda-list
 		 :location (make-global-location name)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function ENSURE-GLOBAL-FUNCTION-ENTRY.
+;;;
+;;; Given a name and an optional lambda list, make sure there is a
+;;; global function entry in the global environment with that name.
+;;; If there is no such entry then create one and return it.  If there
+;;; already is an entry with that name, then if a lambda list is
+;;; given, then make that lambda list the new lambda list of the
+;;; existing entry.  Return either the newly created entry or the
+;;; existing entry.
+
+(defun ensure-global-function-entry (name &optional (lambda-list :none))
+  (declare (cl:type function-name name))
+  (let ((entry (find name (functions *global-environment*)
+		     :test #'equal :key #'name)))
+    (cond ((null entry)
+	   (let ((new-entry (make-global-function-entry name lambda-list)))
+	     (push new-entry (functions *global-environment*))
+	     new-entry))
+	  ((not (eq lambda-list :none))
+	   (setf (lambda-list entry) lambda-list)
+	   entry)
+	  (t
+	   entry))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2145,6 +2173,8 @@
 
 (defun proclaim-ftype (name type)
   (let ((entry (find-if (lambda (entry)
+			  ;; FIXME: Are there any other entry types
+			  ;; in this list?
 			  (and (typep entry 'global-function-entry)
 			       (eq (name entry) name)))
 			(functions *global-environment*))))
