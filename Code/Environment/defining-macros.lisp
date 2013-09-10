@@ -65,6 +65,3 @@
        (ensure-defined-variable ,name))
      (eval-when (:load-toplevel :execute)
        (setf (symbol-value ,name) ,initial-value))))
-
-
-		     
