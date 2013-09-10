@@ -48,6 +48,14 @@
 (declaim (ftype (function (function symbol &optional null) function)
 		(setf macro-function)))
 
+;;; FIXME: do something better for the optional environment. 
+(declaim (ftype (function (symbol &optional t) (or function null))
+		compiler-macro-function))
+
+(declaim (ftype (function ((or function null) symbol &optional null)
+			  (or function null))
+		(setf compiler-macro-function)))
+
 ;;; The function IN-PACKAGE-FUNCTION is used in the expansion of
 ;;; IN-PACKAGE.
 (declaim (ftype (function (string-designator) package)
