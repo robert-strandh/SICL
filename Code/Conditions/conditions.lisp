@@ -1,3 +1,5 @@
+(cl:in-package #:sicl-conditions)
+
 (define-condition condition () ())
 
 (defparameter *langauge* 'english)
