@@ -187,14 +187,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Entries in the package namespace.
- 
-(defclass package ()
-  ((%name :initarg :name :accessor name)
-   (%nicknames :initarg :nicknames :initform '() :accessor nicknames)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Augmenting an environment.
 
 (defun add-to-environment (environment entry)
@@ -1265,7 +1257,10 @@
 ;;; FIXME: check if the type is already there, maybe?
 (defun (setf type-function) (new-function symbol)
   (push (make-type-entry symbol new-function)
-	(types *global-environment*)))
+	(types *global-environment*))
+  ;; Respect the general rule that setters should return the new
+  ;; value.
+  new-function)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

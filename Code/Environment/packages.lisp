@@ -8,7 +8,6 @@
   ;; COMMON-LISP package that name functions and variables that have
   ;; to do with manipulating the environment.
   (:shadow #:type
-	   #:package
 	   #:proclaim
 	   #:macroexpand-1
 	   #:macroexpand
