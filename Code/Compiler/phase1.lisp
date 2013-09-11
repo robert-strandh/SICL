@@ -253,16 +253,20 @@
 		(if l
 		    (let ((*compile-time-too* t))
 		      (convert new-form environment))
-		    (progn (eval new-form) nil))
+		    (progn (eval new-form)
+			   (convert ''nil environment)))
 		(if l
 		    (if e
 			(convert new-form environment)
 			(let ((*compile-time-too* nil))
 			  (convert new-form environment)))
-		    (when (and e *compile-time-too*)
-		      (progn (eval new-form) nil)))))
-	  (when e
-	    (convert new-form environment))))))
+		    (if (and e *compile-time-too*)
+			(progn (eval new-form)
+			       (convert ''nil environment))
+			(convert ''nil environment)))))
+	  (if e
+	      (convert new-form environment)
+	      (convert ''nil environment))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
