@@ -79,6 +79,8 @@
    #:store-class-ast #:make-store-class-ast
    #:load-contents-ast #:offset-ast #:make-load-contents-ast
    #:store-contents-ast #:offset-ast #:make-store-contents-ast
+   #:load-constant-ast #:make-load-constant-ast
+   #:load-global-ast #:make-load-global-ast #:offset
    #:word-ast #:make-word-ast
    #:memref-ast #:make-memref-ast
    #:memset-ast #:make-memset-ast

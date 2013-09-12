@@ -64,7 +64,8 @@
 ;;;
 ;;; Class AST.  The base class for all AST classes.
 
-(defclass ast () ())
+(defclass ast ()
+  ((%children :initform '() :initarg :children :accessor children)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -125,9 +126,6 @@
 	  (id ast)
 	  (value ast)))
 
-(defmethod children ((ast immediate-ast))
-  '())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class CONSTANT-AST. 
@@ -152,9 +150,6 @@
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (value ast)))
-
-(defmethod children ((ast constant-ast))
-  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -186,9 +181,6 @@
 	  (id ast)
 	  (name ast)))
 
-(defmethod children ((ast global-ast))
-  '())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SPECIAL-AST.
@@ -214,9 +206,6 @@
 	  (id ast)
 	  (name ast)))
 
-(defmethod children ((ast special-ast))
-  '())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LEXICAL-AST.
@@ -230,8 +219,7 @@
 ;;; different parts of the code.
 
 (defclass lexical-ast (ast)
-  ((%name :initarg :name :reader name)
-   (%children :initform '() :allocation :class)))
+  ((%name :initarg :name :reader name)))
 
 (defun make-lexical-ast (name)
   (make-instance 'lexical-ast :name name))
@@ -241,9 +229,6 @@
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (name ast)))
-
-(defmethod children ((ast lexical-ast))
-  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -257,13 +242,11 @@
 ;;; FIXME: Why can't the callee be any AST?
 
 (defclass call-ast (ast)
-  ((%callee-ast :initarg :callee-ast :reader callee-ast)
-   (%argument-asts :initarg :argument-asts :reader argument-asts)))
+  ())
 
 (defun make-call-ast (callee-ast argument-asts)
   (make-instance 'call-ast
-    :callee-ast callee-ast
-    :argument-asts argument-asts))
+    :children (cons callee-ast argument-asts)))
 
 (defmethod stream-draw-ast ((ast call-ast) stream)
   (format stream "   ~a [label = \"call\"];~%"
@@ -276,9 +259,11 @@
 	   (format stream "   ~a -> ~a~%"
 		   (id ast) (id child))))
 
-(defmethod children ((ast call-ast))
-  (cons (callee-ast ast)
-	(argument-asts ast)))
+(defmethod callee-ast ((ast call-ast))
+  (first (children ast)))
+
+(defmethod argument-asts ((ast call-ast))
+  (cdr (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -293,15 +278,12 @@
    ;; this value is the number of required parameters.  Otherwise,
    ;; this value is false.  A function is considered for inlining only
    ;; if it has only required parameters. 
-   (%required-only-p :initarg :required-only-p :reader required-only-p)
-   ;; This AST contains the body of the function, so it excludes
-   ;; the code for parsing the arguments. 
-   (%body-ast :initarg :body-ast :accessor body-ast)))
+   (%required-only-p :initarg :required-only-p :reader required-only-p)))
 
 (defun make-function-ast (body-ast &optional required-only-p)
   (make-instance 'function-ast
-    :required-only-p required-only-p
-    :body-ast body-ast))
+    :children (list body-ast)
+    :required-only-p required-only-p))
 
 (defmethod stream-draw-ast ((ast function-ast) stream)
   (format stream "   ~a [label = \"function\"];~%"
@@ -310,20 +292,20 @@
   (format stream "   ~a -> ~a~%"
 	  (id ast)
 	  (id (body-ast ast))))
-  
-(defmethod children ((ast function-ast))
-  (list (body-ast ast)))
+
+(defmethod body-ast ((ast function-ast))
+  (first (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class PROGN-AST.
 
 (defclass progn-ast (ast)
-  ((%form-asts :initarg :form-asts :reader form-asts)))
+  ())
 
 (defun make-progn-ast (form-asts)
   (make-instance 'progn-ast
-    :form-asts form-asts))
+    :children form-asts))
 
 (defmethod stream-draw-ast ((ast progn-ast) stream)
   (format stream "   ~a [label = \"progn\"];~%"
@@ -333,19 +315,19 @@
 	   (format stream "   ~a -> ~a~%"
 		   (id ast) (id child))))
 
-(defmethod children ((ast progn-ast))
-  (form-asts ast))
+(defmethod form-asts ((ast progn-ast))
+  (children ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class BLOCK-AST.
 
 (defclass block-ast (ast)
-  ((%body-ast :initarg :body-ast :accessor body-ast)))
+  ())
 
 (defun make-block-ast (body-ast)
   (make-instance 'block-ast
-    :body-ast body-ast))
+    :children (list body-ast)))
 
 (defmethod stream-draw-ast ((ast block-ast) stream)
   (format stream "   ~a [label = \"block\"];~%"
@@ -355,21 +337,22 @@
 	  (id ast)
 	  (id (body-ast ast))))
   
-(defmethod children ((ast block-ast))
-  (list (body-ast ast)))
+(defmethod body-ast ((ast block-ast))
+  (first (children ast)))
+
+(defmethod (setf body-ast) (new-body (ast block-ast))
+  (setf (first (children ast)) new-body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class RETURN-FROM-AST.
 
 (defclass return-from-ast (ast)
-  ((%block-ast :initarg :block-ast :reader block-ast)
-   (%form-ast :initarg :form-ast :reader form-ast)))
+  ())
 
 (defun make-return-from-ast (block-ast form-ast)
   (make-instance 'return-from-ast
-    :block-ast block-ast
-    :form-ast form-ast))
+    :children (list block-ast form-ast)))
 
 (defmethod stream-draw-ast ((ast return-from-ast) stream)
   (format stream "   ~a [label = \"return-from\"];~%"
@@ -382,21 +365,22 @@
 	  (id ast)
 	  (id (form-ast ast))))
   
-(defmethod children ((ast return-from-ast))
-  (list (form-ast ast)))
+(defmethod block-ast ((ast return-from-ast))
+  (first (children ast)))
+
+(defmethod form-ast ((ast return-from-ast))
+  (second (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SETQ-AST.
 
 (defclass setq-ast (ast)
-  ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+  ())
 
 (defun make-setq-ast (lhs-ast value-ast)
   (make-instance 'setq-ast
-    :lhs-ast lhs-ast
-    :value-ast value-ast))
+    :children (list lhs-ast value-ast)))
 
 (defmethod stream-draw-ast ((ast setq-ast) stream)
   (format stream "   ~a [label = \"setq\"];~%"
@@ -410,9 +394,11 @@
 	  (id ast)
 	  (id (value-ast ast))))
 
-(defmethod children ((ast setq-ast))
-  (list (lhs-ast ast)
-	(value-ast ast)))
+(defmethod lhs-ast ((ast setq-ast))
+  (first (children ast)))
+
+(defmethod value-ast ((ast setq-ast))
+  (second (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -430,19 +416,16 @@
 	  (id ast)
 	  (name ast)))
 
-(defmethod children ((ast tag-ast))
-  '())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TAGBODY-AST.
 
 (defclass tagbody-ast (ast)
-  ((%items :initarg :items :reader items)))
+  ())
 
 (defun make-tagbody-ast (items)
   (make-instance 'tagbody-ast
-    :items items))
+    :children items))
 
 (defmethod stream-draw-ast ((ast tagbody-ast) stream)
   (format stream "   ~a [label = \"tagbody\"];~%"
@@ -452,19 +435,19 @@
 	   (format stream "   ~a -> ~a~%"
 		   (id ast) (id item))))
 
-(defmethod children ((ast tagbody-ast))
-  (items ast))
+(defmethod items ((ast tagbody-ast))
+  (children ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class GO-AST.
 
 (defclass go-ast (ast)
-  ((%tag-ast :initarg :tag-ast :reader tag-ast)))
+  ())
 
 (defun make-go-ast (tag-ast)
   (make-instance 'go-ast
-    :tag-ast tag-ast))
+    :children  (list tag-ast)))
 
 (defmethod stream-draw-ast ((ast go-ast) stream)
   (format stream "   ~a [label = \"go\"];~%"
@@ -473,38 +456,36 @@
   (format stream "   ~a -> ~a~%"
 	  (id ast) (id (tag-ast ast))))
 
-(defmethod children ((ast go-ast))
-  '())
+(defmethod tag-ast ((ast go-ast))
+  (first (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class THE-AST.
 
 (defclass the-ast (ast)
-  ((%value-type :initarg :value-type :reader value-type)
-   (%form-ast :initarg :form-ast :reader form-ast)))
+  ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-the-ast (value-type form-ast)
   (make-instance 'the-ast
     :value-type value-type
-    :form-ast form-ast))
+    :children  (list form-ast)))
 
 ;;; FIXME: define a method on STREAM-DRAW-AST specialized to THE-AST.
 
-(defmethod children ((ast the-ast))
-  (list (form-ast ast)))
+(defmethod form-ast ((ast the-ast))
+  (first (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOAD-TIME-VALUE-AST.
 
 (defclass load-time-value-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)
-   (%read-only-p :initarg :read-only-p :reader read-only-p)))
+  ((%read-only-p :initarg :read-only-p :reader read-only-p)))
 
 (defun make-load-time-value-ast (form-ast &optional read-only-p)
   (make-instance 'load-time-value-ast
-    :form-ast form-ast
+    :children  (list form-ast)
     :read-only-p read-only-p))
 
 (defmethod stream-draw-ast ((ast load-time-value-ast) stream)
@@ -513,23 +494,19 @@
   (format stream "   ~a [style = filled, fillcolor = pink];~%"
 	  (id ast)))
 
-(defmethod children ((ast load-time-value-ast))
-  '())
+(defmethod form-ast ((ast load-time-value-ast))
+  (first (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class IF-AST.
 
 (defclass if-ast (ast)
-  ((%test-ast :initarg :test-ast :reader test-ast)
-   (%then-ast :initarg :then-ast :reader then-ast)
-   (%else-ast :initarg :else-ast :reader else-ast)))
+  ())
 
 (defun make-if-ast (test-ast then-ast else-ast)
   (make-instance 'if-ast
-    :test-ast test-ast
-    :then-ast then-ast
-    :else-ast else-ast))
+    :children (list test-ast then-ast else-ast)))
 
 (defmethod stream-draw-ast ((ast if-ast) stream)
   (format stream "   ~a [label = \"if\"];~%"
@@ -547,22 +524,25 @@
 	  (id ast)
 	  (id (else-ast ast))))
 
-(defmethod children ((ast if-ast))
-  (list (test-ast ast)
-	(then-ast ast)
-	(else-ast ast)))
+(defmethod test-ast ((ast if-ast))
+  (first (children ast)))
+
+(defmethod then-ast ((ast if-ast))
+  (second (children ast)))
+
+(defmethod else-ast ((ast if-ast))
+  (third (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TYPEQ-AST.
 
 (defclass typeq-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)
-   (%type-specifier :initarg :type-specifier :reader type-specifier)))
+  ((%type-specifier :initarg :type-specifier :reader type-specifier)))
 
 (defun make-typeq-ast (form-ast type-specifier)
   (make-instance 'typeq-ast
-    :form-ast form-ast
+    :chldren (list form-ast)
     :type-specifier type-specifier))
 
 (defmethod stream-draw-ast ((ast typeq-ast) stream)
@@ -573,19 +553,19 @@
 	  (id ast)
 	  (id (form-ast ast))))
 
-(defmethod children ((ast typeq-ast))
-  (list (form-ast ast)))
+(defmethod form-ast ((ast typeq-ast))
+  (first (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOAD-CAR-AST.
 
 (defclass load-car-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)))
+  ())
 
 (defun make-load-car-ast (form-ast)
   (make-instance 'load-car-ast
-    :form-ast form-ast))
+    :chldren (list form-ast)))
 
 (defmethod stream-draw-ast ((ast load-car-ast) stream)
   (format stream "   ~a [label = \"load-car\"];~%"
@@ -595,18 +575,19 @@
 	  (id ast)
 	  (id (form-ast ast))))
 
+(defmethod form-ast ((ast load-car-ast))
+  (first (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class STORE-CAR-AST.
 
 (defclass store-car-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+  ())
    
 (defun make-store-car-ast (form-ast value-ast)
   (make-instance 'store-car-ast
-    :form-ast form-ast
-    :value-ast value-ast))
+    :children (list form-ast value-ast)))
 
 (defmethod stream-draw-ast ((ast store-car-ast) stream)
   (format stream "   ~a [label = \"store-car\"];~%"
@@ -620,16 +601,22 @@
 	  (id ast)
 	  (id (value-ast ast))))
 
+(defmethod form-ast ((ast store-car-ast))
+  (first (children ast)))
+
+(defmethod value-ast ((ast store-car-ast))
+  (second (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOAD-CDR-AST.
 
 (defclass load-cdr-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)))
+  ())
 
 (defun make-load-cdr-ast (form-ast)
   (make-instance 'load-cdr-ast
-    :form-ast form-ast))
+    :children (list form-ast)))
 
 (defmethod stream-draw-ast ((ast load-cdr-ast) stream)
   (format stream "   ~a [label = \"load-cdr\"];~%"
@@ -639,18 +626,19 @@
 	  (id ast)
 	  (id (form-ast ast))))
 
+(defmethod form-ast ((ast load-cdr-ast))
+  (first (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class STORE-CDR-AST.
 
 (defclass store-cdr-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+  ())
 
 (defun make-store-cdr-ast (form-ast value-ast)
   (make-instance 'store-cdr-ast
-    :form-ast form-ast
-    :value-ast value-ast))
+    :children (list form-ast value-ast)))
 
 (defmethod stream-draw-ast ((ast store-cdr-ast) stream)
   (format stream "   ~a [label = \"store-cdr\"];~%"
@@ -664,16 +652,22 @@
 	  (id ast)
 	  (id (value-ast ast))))
 
+(defmethod form-ast ((ast store-cdr-ast))
+  (first (children ast)))
+
+(defmethod value-ast ((ast store-cdr-ast))
+  (second (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOAD-CLASS-AST.
 
 (defclass load-class-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)))
+  ())
 
 (defun make-load-class-ast (form-ast)
   (make-instance 'load-class-ast
-    :form-ast form-ast))
+    :children (list form-ast)))
 
 (defmethod stream-draw-ast ((ast load-class-ast) stream)
   (format stream "   ~a [label = \"load-class\"];~%"
@@ -683,18 +677,19 @@
 	  (id ast)
 	  (id (form-ast ast))))
 
+(defmethod form-ast ((ast load-class-ast))
+  (first (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class STORE-CLASS-AST.
 
 (defclass store-class-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+  ())
 
 (defun make-store-class-ast (form-ast value-ast)
   (make-instance 'store-class-ast
-    :form-ast form-ast
-    :value-ast value-ast))
+    :children (list form-ast value-ast)))
 
 (defmethod stream-draw-ast ((ast store-class-ast) stream)
   (format stream "   ~a [label = \"store-class\"];~%"
@@ -708,18 +703,22 @@
 	  (id ast)
 	  (id (value-ast ast))))
 
+(defmethod form-ast ((ast store-class-ast))
+  (first (children ast)))
+
+(defmethod value-ast ((ast store-class-ast))
+  (second (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOAD-CONTENTS-AST.
 
 (defclass load-contents-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)
-   (%offset-ast :initarg :offset-ast :reader offset-ast)))
+  ())
 
 (defun make-load-contents-ast (form-ast offset-ast)
   (make-instance 'load-contents-ast
-    :form-ast form-ast
-    :offset-ast offset-ast))
+    :children (list form-ast offset-ast)))
 
 (defmethod stream-draw-ast ((ast load-contents-ast) stream)
   (format stream "   ~a [label = \"load-contents\"];~%"
@@ -733,20 +732,22 @@
 	  (id ast)
 	  (id (offset-ast ast))))
 
+(defmethod form-ast ((ast load-contents-ast))
+  (first (children ast)))
+
+(defmethod offset-ast ((ast load-contents-ast))
+  (second (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class STORE-CONTENTS-AST.
 
 (defclass store-contents-ast (ast)
-  ((%form-ast :initarg :form-ast :reader form-ast)
-   (%offset-ast :initarg :offset-ast :reader offset-ast)
-   (%value-ast :initarg :value-ast :reader value-ast)))
+  ())
 
 (defun make-store-contents-ast (form-ast offset-ast value-ast)
   (make-instance 'store-contents-ast
-    :form-ast form-ast
-    :offset-ast offset-ast
-    :value-ast value-ast))
+    :children (list form-ast offset-ast value-ast)))
 
 (defmethod stream-draw-ast ((ast store-contents-ast) stream)
   (format stream "   ~a [label = \"store-contents\"];~%"
@@ -764,16 +765,57 @@
 	  (id ast)
 	  (id (value-ast ast))))
 
+(defmethod form-ast ((ast store-contents-ast))
+  (first (children ast)))
+
+(defmethod offset-ast ((ast store-contents-ast))
+  (second (children ast)))
+
+(defmethod value-ast ((ast store-contents-ast))
+  (third (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOAD-CONSTANT-AST.
+
+(defclass load-constant-ast (ast)
+  ((%offset :initarg :offset :reader offset)))
+
+(defun make-load-constant-ast (offset)
+  (make-instance 'load-constant-ast :offset offset))
+
+(defmethod stream-draw-ast ((ast load-constant-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = green];~%" (id ast))
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (offset ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LOAD-GLOBAL-AST.
+
+(defclass load-global-ast (ast)
+  ((%offset :initarg :offset :reader offset)))
+
+(defun make-load-global-ast (offset)
+  (make-instance 'load-global-ast :offset offset))
+
+(defmethod stream-draw-ast ((ast load-global-ast) stream)
+  (format stream "   ~a [style = filled, fillcolor = cyan];~%" (id ast))
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast)
+	  (offset ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; AST classes for low-level operators.
 ;;;
 
 (defclass arguments-mixin ()
-  ((%argument-asts :initarg :argument-asts :accessor argument-asts)))
+  ())
 
-(defmethod children ((ast arguments-mixin))
-  (argument-asts ast))
+(defmethod argument-asts ((ast arguments-mixin))
+  (children ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -799,9 +841,6 @@
 (defun make-word-ast (value)
   (make-instance 'word-ast :value value))
 
-(defmethod children ((ast word-ast))
-  '())
-
 (defmethod stream-draw-ast ((ast word-ast) stream)
   (format stream "   ~a [label = \"~d\"];~%" (id ast) (value ast))
   (format stream "   ~a [style = filled, fillcolor = lightblue];~%" (id ast)))
@@ -825,7 +864,7 @@
 
 (defun make-memref-ast (argument-ast)
   (make-instance 'memref-ast
-    :argument-asts (list argument-ast)))
+    :children (list argument-ast)))
 
 (defmethod stream-draw-ast ((ast memref-ast) stream)
   (format stream "   ~a [label = \"memref\"];~%"
@@ -852,7 +891,7 @@
 
 (defun make-memset-ast (argument-asts)
   (make-instance 'memset-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast memset-ast) stream)
   (format stream "   ~a [label = \"memset\"];~%"
@@ -886,7 +925,7 @@
 
 (defun make-u+-ast (argument-asts)
   (make-instance 'u+-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast u+-ast) stream)
   (format stream "   ~a [label = \"u+\"];~%"
@@ -919,7 +958,7 @@
 
 (defun make-u--ast (argument-asts)
   (make-instance 'u--ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast u--ast) stream)
   (format stream "   ~a [label = \"u-\"];~%"
@@ -949,7 +988,7 @@
 
 (defun make-s+-ast (argument-asts)
   (make-instance 's+-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast s+-ast) stream)
   (format stream "   ~a [label = \"s+\"];~%"
@@ -979,7 +1018,7 @@
 
 (defun make-s--ast (argument-asts)
   (make-instance 's--ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast s--ast) stream)
   (format stream "   ~a [label = \"s-\"];~%"
@@ -1008,7 +1047,7 @@
 
 (defun make-neg-ast (argument-asts)
   (make-instance 'neg-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast neg-ast) stream)
   (format stream "   ~a [label = \"neg\"];~%"
@@ -1037,7 +1076,7 @@
 
 (defun make-&-ast (argument-asts)
   (make-instance '&-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast &-ast) stream)
   (format stream "   ~a [label = \"&\"];~%"
@@ -1066,7 +1105,7 @@
 
 (defun make-ior-ast (argument-asts)
   (make-instance 'ior-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast ior-ast) stream)
   (format stream "   ~a [label = \"ior\"];~%"
@@ -1095,7 +1134,7 @@
 
 (defun make-xor-ast (argument-asts)
   (make-instance 'xor-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast xor-ast) stream)
   (format stream "   ~a [label = \"xor\"];~%"
@@ -1123,7 +1162,7 @@
 
 (defun make-~-ast (argument-asts)
   (make-instance '~-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast ~-ast) stream)
   (format stream "   ~a [label = \"~\"];~%"
@@ -1152,7 +1191,7 @@
 
 (defun make-==-ast (argument-asts)
   (make-instance '==-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast ==-ast) stream)
   (format stream "   ~a [label = \"==\"];~%"
@@ -1181,7 +1220,7 @@
 
 (defun make-s<-ast (argument-asts)
   (make-instance 's<-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast s<-ast) stream)
   (format stream "   ~a [label = \"s<\"];~%"
@@ -1211,7 +1250,7 @@
 
 (defun make-s<=-ast (argument-asts)
   (make-instance 's<=-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast s<=-ast) stream)
   (format stream "   ~a [label = \"s<=\"];~%"
@@ -1240,7 +1279,7 @@
 
 (defun make-u<-ast (argument-asts)
   (make-instance 'u<-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast u<-ast) stream)
   (format stream "   ~a [label = \"u<\"];~%"
@@ -1270,7 +1309,7 @@
 
 (defun make-u<=-ast (argument-asts)
   (make-instance 'u<=-ast
-    :argument-asts argument-asts))
+    :children argument-asts))
 
 (defmethod stream-draw-ast ((ast u<=-ast) stream)
   (format stream "   ~a [label = \"u<=\"];~%"
@@ -1309,10 +1348,11 @@
 ;;; lexical variable.  The argument is interpreted as a fixnum. 
 
 (defclass arg-ast (ast)
-  ((%index-ast :initarg :index-ast :reader index-ast)))
+  ())
 
 (defun make-arg-ast (index-ast)
-  (make-instance 'arg-ast :index-ast index-ast))
+  (make-instance 'arg-ast
+    :children (list index-ast)))
 
 (defmethod stream-draw-ast ((ast arg-ast) stream)
   (format stream "   ~a [style = filled, fillcolor = orange];~%" (id ast))
@@ -1321,8 +1361,8 @@
   (stream-draw-ast (index-ast ast) stream)
   (format stream "   ~a -> ~a~%" (id ast) (id (index-ast ast))))
 
-(defmethod children ((ast arg-ast))
-  (list (index-ast ast)))
+(defmethod index-ast ((ast arg-ast))
+  (first (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1339,6 +1379,3 @@
 (defmethod stream-draw-ast ((ast halt-ast) stream)
   (format stream "   ~a [label = \"halt\"];~%"
 	  (id ast)))
-
-(defmethod children ((ast halt-ast))
-  '())
