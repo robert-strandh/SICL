@@ -69,10 +69,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Find all external in an AST.
+;;; Find all externals in an AST.
 
 (defun find-externals (ast)
-  (labels ((traverse (ast in-function-p)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels
+	((traverse (ast in-function-p)
+	   (unless (gethash ast table)
+	     (setf (gethash ast table) t)
 	     (typecase ast
 	       (sicl-ast:constant-ast
 		(ensure-object (sicl-ast:value ast) in-function-p))
@@ -89,8 +93,8 @@
 	     (loop for child in (sicl-ast:children ast)
 		   do (traverse child
 				(or in-function-p
-				    (typep ast 'sicl-ast:function-ast))))))
-    (traverse ast nil)))
+				    (typep ast 'sicl-ast:function-ast)))))))
+      (traverse ast nil))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -202,3 +206,53 @@
 	  (t
 	   (error "unknown object")))))
 	     
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Replace instances of CONSTANT-AST and GLOBAL-AST.  If the
+;;; instances are inside a FUNCTION-AST, then replace them by
+;;; instances of LOAD-CONSTANT-AST and LOAD-GLOBAL-AST.  If they are
+;;; outside a FUNCTION-AST, then replace them by the corresponding
+;;; LEXICAL-AST.
+
+(defun find-offset (object)
+  (offset (find-item object)))
+
+(defun replace-externals (ast)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels
+	((traverse (ast in-function-p)
+	   (unless (gethash ast table)
+	     (setf (gethash ast table) t)
+	     (when (typep ast 'sicl-ast:function-ast)
+	       (setf in-function-p t))
+	     (loop for rest on (sicl-ast:children ast)
+		   for child = (car rest)
+		   do (typecase child
+			(sicl-ast:constant-ast
+			 (setf (car rest)
+			       (if in-function-p
+				   (sicl-ast:make-load-constant-ast
+				    (find-offset (sicl-ast:value child)))
+				   (find-lexical-location
+				    (sicl-ast:value child)))))
+			(sicl-ast:global-ast
+			 (setf (car rest)
+			       (if in-function-p
+				   (sicl-ast:make-load-global-ast
+				    (find-offset
+				     `(function-cell ,(sicl-ast:name child))))
+				   (find-lexical-location
+				    `(function ,(sicl-ast:name child))))))
+			(sicl-ast:special-ast
+			 (setf (car rest)
+			       (if in-function-p
+				   (sicl-ast:make-load-global-ast
+				    (find-offset
+				     `(value-cell ,(sicl-ast:name child))))
+				   (find-lexical-location
+				    `(symbol-value ,(sicl-ast:name child))))))
+			(t
+			 nil)))
+	     (loop for child in (sicl-ast:children ast)
+		   do (traverse child in-function-p)))))
+      (traverse ast nil))))
