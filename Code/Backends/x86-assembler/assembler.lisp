@@ -348,9 +348,16 @@
 
 (defmethod instruction-size-1 (desc (opnd immediate-operand))
   (destructuring-bind (type size) (first (operands desc))
-    (ecase type
-      ((imm label)
-       (+ (length (opcodes desc)) (/ size 8))))))
+    (let* ((rex-p (rex.w desc))
+	   (rex-contribution (if rex-p 1 0))
+	   (override (operand-size-override desc))
+	   (override-contribution (if override 1 0)))
+      (ecase type
+	((imm label)
+	 (+ (length (opcodes desc))
+	    (/ size 8)
+	    rex-contribution
+	    override-contribution))))))
 
 (defmethod instruction-size-1 (desc (opnd gpr-operand))
   (destructuring-bind (type size) (first (operands desc))
@@ -518,5 +525,14 @@
 ;;; Given an instruction descriptor and the operands to the command
 ;;; that the instruction descriptor matches, compute the encoding of
 ;;; the resulting instruction.
+
+;;; Return a list of SIZE integers of type (UNSIGNED-BYTE 8) making up
+;;; the representation of VALUE in a little-endian encoding, i.e., the
+;;; bytes in the resulting list are ordered from least to most
+;;; significant.
+(defun encode-immediate (value size)
+  (loop for position from 0 by 8
+	repeat size
+	collect (ldb (byte 8 position) value)))
 
 (defgeneric encode-instruction-1 (desc opnd))
