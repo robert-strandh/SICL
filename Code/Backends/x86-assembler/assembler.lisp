@@ -536,3 +536,15 @@
 	collect (ldb (byte 8 position) value)))
 
 (defgeneric encode-instruction-1 (desc opnd))
+
+(defmethod encode-instruction-1 (desc (opnd immediate-operand))
+  (destructuring-bind (type size) (first (operands desc))
+    (let* ((rex-p (rex.w desc))
+	   (override (operand-size-override desc)))
+      (ecase type
+	((imm label)
+	 `(,@(cond (rex-p '(#x48))
+		   (override '(#x66))
+		   (t '()))
+	   ,@(opcodes desc)
+	   ,@(encode-immediate (value opnd) size)))))))
