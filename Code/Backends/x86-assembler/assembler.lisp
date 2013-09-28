@@ -340,7 +340,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;;
+;;; Given an instruction descriptor and the operands to the command
+;;; that the instruction descriptor matches, compute the size of the
+;;; resulting instruction.
 
 (defgeneric instruction-size-1 (desc opnd))
 
@@ -511,3 +513,10 @@
 	     (setf (gethash item table) absolute-address))
 	finally (return table)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Given an instruction descriptor and the operands to the command
+;;; that the instruction descriptor matches, compute the encoding of
+;;; the resulting instruction.
+
+(defgeneric encode-instruction-1 (desc opnd))
