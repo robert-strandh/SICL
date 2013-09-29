@@ -373,12 +373,6 @@
 	  rex-contribution
 	  override-contribution))))))
 
-(defmethod instruction-size-1 (desc (opnd immediate-operand))
-  (destructuring-bind (type size) (first (operands desc))
-    (ecase type
-      (imm
-       (+ (length (opcodes desc)) (/ size 8))))))
-
 (defmethod instruction-size-1 (desc (opnd memory-operand))
   (destructuring-bind (type size) (first (operands desc))
     (declare (ignore size))
