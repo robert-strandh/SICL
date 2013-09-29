@@ -548,3 +548,25 @@
 		   (t '()))
 	   ,@(opcodes desc)
 	   ,@(encode-immediate (value opnd) size)))))))
+
+(defmethod encode-instruction-1 (desc (opnd gpr-operand))
+  (destructuring-bind (type size) (first (operands desc))
+    (declare (ignore size))
+    (let* ((override (operand-size-override desc)))
+      (ecase type
+	(modrm
+	 `(,@(if override
+		 '(#x66)
+		 (if (rex.w desc)
+		     (if (>= (code-number opnd) 7)
+			 '(#b01001001)
+			 '(#b01001000))
+		     (if (>= (code-number opnd) 7)
+			 '(#b01000001)
+			 '())))
+	   ,@(opcodes desc)
+	   ,(+ #b11000000
+	       (ash (opcode-extension desc) 3)
+	       (mod (code-number opnd) 8))))))))
+
+	       
