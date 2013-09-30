@@ -107,9 +107,85 @@ two kinds of edges (\emph{control-flow edges} and \emph{data-flow
   edges}).  For details on this representation, see
 \refChap{chap-mir}.
 
-\subsection{Optimizations}
+\subsection{Convert to SSA form}
+
+\subsection{Optimization}
+
+\subsection{Register allocation}
 
 \subsection{Code generation} 
+
+\section{Optimization}
+
+\subsection{Type inference}
+
+Type inference in the \sysname{} compiler is implemented as a
+\emph{forward data-flow problem} on the flowchart. 
+
+\subsection{Access to special variables and global functions}
+
+To access a special variable, the code must first search the dynamic
+environment in case a per-thread binding exists.  If such a binding
+exists, a tagged pointer of type CONS is returned, but the pointer
+refers to an entry on the stack; a dynamic value cell.  If no such
+binding exists, the global value cell is returned.
+
+In general, for every access to a special variable, the value cell
+must be searched for first.  There are many cases, however, where the
+compiler can detect that multiple accesses to some special variable
+must refer to the same value cell.  In that case, the (pointer to the)
+value cell is a candidate for register allocation, and computing it is
+loop invariant. 
+
+When it comes to the \emph{contents} of the value cell, however, the
+situation is more complicated because of the possibility that multiple
+threads might access the (global) value cell concurrently.  In fact,
+this is a common situation when a global variable is used for
+synchronization purposes.
+
+When some function accesses a special variable multiple times, it
+might seem required to read the contents of the value cell for each
+such access, even though the compiler can prove that the same cell is
+involved in each access.  However, this turns out not to be the case.
+If none of the accesses are part of a loop and there is no externally
+detectable activity between accesses (no assignment to a global
+variable, no function call), then there is always a possible scenario
+according to which the same value will be obtained in all the
+accesses.  In such cases, not only the value cell, but also the value
+itself is a candidate for register allocation.  Even if accesses are
+part of a loop, in some cases the value can be cached in a register.
+The necessary condition for such register allocation is that the loop
+provably \emph{terminates} and that there is no externally detectable
+activity between consecutive accesses. 
+
+The situation for global functions is similar to that of special
+variables, except simpler since no special binding can exist for such
+accesses.  While it is not very probable that anyone attempts to use
+global functions for synchronization purposes, this can not be
+excluded either.  An exception to the rule is when the global function
+is a standard \cl{} function, in which case it can not be replaced, so
+it is safe to cache the function in a register. 
+
+\subsection{Access to array elements}
+
+When an array has not been declared to be \texttt{simple} it might
+seem like every access to an array element would require locking to
+prevent a different thread from adjusting the array between the time
+the \emph{length} is determined and the time the element is accessed.
+
+However, in \sysname{} the contents vector of an array is always
+\emph{internally consistent} in that the \emph{length} information
+accurately reflects the number of elements.  When an array is
+adjusted, a different contents vector is allocated, and the new
+contents vector is put in place in a single memory store operation.
+Therefore, when the elements of an array are processed in some way,
+the compiler might access the contents vector only once and cache it
+in a register.  This optimization is possible even in a loop, as long
+as the compiler can prove that the loop eventually terminates, and as
+long as there is no externally detectable activity between the
+accesses. 
+
+\subsection{Access to slots of standard objects}
 
 \section{Random thoughts}
 
