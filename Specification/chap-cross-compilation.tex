@@ -1,19 +1,24 @@
 \chapter{Cross compilation}
 \label{chap-cross-compilation}
 
+In this chapter, we discuss issues specific to \emph{cross
+  compilation}, i.e. when a compiler produces code for a system other
+than the host \cl{} system it runs in.  For general compilation
+topics, see \refChap{chap-compiler}.
+
 \section{General issues with cross compilation}
 
 While it may seem obvious and straightforward (though perhaps not
 easy) to write a cross compiler for \cl{}, there are some minor issues
 that have to be considered. 
 
-First, let us define \emph{cross compiler} to mean a compiler that is
-entirely written using some \cl{} system called the \emph{host}, and
-which generates a \emph{fasl} file for some other \cl{} system called
-the \emph{target}.  When we say \emph{entirely}, we exclude the use of
-the \texttt{read} function of the host environment because it can
-cause some problem.  It would be possible, to use the \emph{read}
-function of the host, and the difference is small.%
+Perhaps the most important foreign compiler is the \emph{foreign file
+  compiler}.
+
+We exclude the use of the \texttt{read} function of the host
+environment because it can cause some problem.  It would be possible,
+to use the \emph{read} function of the host, and the difference is
+small.%
 \footnote{The main difference that is important to bootstrapping is
   that some implementations use implementation-specific functions in
   the result of the \emph{backquote} reader macro.  This practice is

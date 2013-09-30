@@ -1,19 +1,45 @@
 \chapter{Compiler}
+\label{chap-compiler}
 
-The compiler should be as portable as possible.  It should use
-portable Common Lisp for as many of the passes as possible.  
+\section{Different uses of the compiler}
 
-The compiler should keep information about which registers are live,
-and how values are represented in live registers, for all values of
-the program counter.  This information is used by the garbage
-collector to determine what registers should be scanned, and how.   It
-is also used by the debugger.  
+The compiler is used in several different situations.  There are
+essentially three use cases, so it is appropriate to talk about three
+different compilers:
 
-The compiler should do some extensive type inferencing.  It should be
-able to eliminate code for which the result of executing it is known
-as a result of the contents of the compilation environment.  
+\begin{itemize}
+\item The \emph{file compiler}.  This compiler is invoked by
+  \texttt{compile-file}.  It takes a \cl{} source file and generates a
+  file containing object code (a so called \emph{fasl} file). 
+\item The \emph{lambda expression compiler}.  This compiler is invoked
+  when \texttt{compile} is called with arguments \texttt{nil} and a
+  \emph{lambda expression}, and by \texttt{coerce} to convert a lambda
+  expression to a function.  It compiles the lambda expression in the
+  \emph{null lexical environment}.  It produces a \emph{function
+    object}.
+\item The \emph{top-level expression compiler}.  This compiler is
+  invoked by \texttt{eval}.  It produces a function with no parameters
+  which is then immediately \emph{called} by \texttt{eval}.  
+\end{itemize}
 
-\section{Phase 1}
+In addition to these use cases, we also distinguish between different
+compilers along an orthogonal dimension:
+
+\begin{itemize}
+\item A \emph{native} compiler is a compiler that produces code for
+  its host \cl{} system. 
+\item A \emph{foreign} compiler is a compiler that produces code for a
+  \cl{} system other than its host system.  A foreign compiler is
+  also known as a \emph{cross compiler}.
+\end{itemize}
+
+We now have potentially 6 different compilers.  Specific issues
+related to cross compilation are discussed in
+\refChap{chap-cross-compilation}. 
+
+\section{Compilation phases}
+
+\subsection{Phase 1}
 
 In phase 1 of the compilation, each expression is first converted into
 an abstract syntax tree.  Alternatively, the reader supplies this
@@ -68,7 +94,7 @@ forms as follows: \texttt{(let ((v1 e1) (v2 e2) ... (vn en)) body)}
 becomes \texttt{(progn (setq v1 e1) (setq v2 e2) ... (setq vn en)
   body)}.
 
-\section{Inlining}
+\subsection{Inlining}
 \label{section-inlining}
 
 The SICL compiler will use inlining in order to make type inferencing
@@ -76,4 +102,19 @@ more effective so that several tests can be avoided.  Implementors of
 SICL features other than the compiler can assume that inlining is done
 when it seems reasonable.  Therefore, even fairly low-level functions
 such as \texttt{aref} can be implemented as portable Lisp code. 
+
+\section{Random thoughts}
+
+The compiler should be as portable as possible.  It should use
+portable Common Lisp for as many of the passes as possible.  
+
+The compiler should keep information about which registers are live,
+and how values are represented in live registers, for all values of
+the program counter.  This information is used by the garbage
+collector to determine what registers should be scanned, and how.   It
+is also used by the debugger.  
+
+The compiler should do some extensive type inferencing.  It should be
+able to eliminate code for which the result of executing it is known
+as a result of the contents of the compilation environment.  
 
