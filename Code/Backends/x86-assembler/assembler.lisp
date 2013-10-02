@@ -338,181 +338,6 @@
   (and (= (length operands) (length descriptors))
        (every #'operand-matches-p operands descriptors)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Given an instruction descriptor and the operands to the command
-;;; that the instruction descriptor matches, compute the size of the
-;;; resulting instruction.
-
-(defgeneric instruction-size-1 (desc opnd))
-
-(defmethod instruction-size-1 (desc (opnd immediate-operand))
-  (destructuring-bind (type size) (first (operands desc))
-    (let* ((rex-p (rex.w desc))
-	   (rex-contribution (if rex-p 1 0))
-	   (override (operand-size-override desc))
-	   (override-contribution (if override 1 0)))
-      (ecase type
-	((imm label)
-	 (+ (length (opcodes desc))
-	    (/ size 8)
-	    rex-contribution
-	    override-contribution))))))
-
-(defmethod instruction-size-1 (desc (opnd gpr-operand))
-  (destructuring-bind (type size) (first (operands desc))
-    (declare (ignore size))
-    (let* ((rex-p (or (rex.w desc) (>= (code-number opnd) 7)))
-	   (rex-contribution (if rex-p 1 0))
-	   (override (operand-size-override desc))
-	   (override-contribution (if override 1 0)))
-    (ecase type
-      (modrm
-       (+ (length (opcodes desc))
-	  1 ; the ModRM byte
-	  rex-contribution
-	  override-contribution))))))
-
-(defmethod instruction-size-1 (desc (opnd memory-operand))
-  (destructuring-bind (type size) (first (operands desc))
-    (declare (ignore size))
-    (let* ((rex-p (or (rex.w desc) (>= (code-number opnd) 7)))
-	   (rex-contribution (if (or rex-p (rex-p opnd)) 1 0))
-	   (override (operand-size-override desc))
-	   (override-contribution (if override 1 0)))
-      (ecase type
-	(modrm
-	 (+ (length (opcodes desc))
-	    (memory-operand-size opnd)
-	    rex-contribution
-	    override-contribution))))))
-       
-(defgeneric instruction-size-2 (desc opnd1 opnd2))
-
-(defmethod instruction-size-2
-    (desc (opnd1 gpr-operand) (opnd2 immediate-operand))
-  (let* ((rex-p (or (rex.w desc) (>= (code-number opnd1) 7)))
-	 (rex-contribution (if rex-p 1 0))
-	 (override (operand-size-override desc))
-	 (override-contribution (if override 1 0)))
-    (destructuring-bind (type1 size1) (first (operands desc))
-      (declare (ignore size1))
-      (destructuring-bind (type2 size2) (second (operands desc))
-	(declare (ignore size2))
-	(ecase type2
-	  (imm
-	   (+ (length (opcodes desc))
-	      (ecase type1
-		(modrm 1)
-		(+r 0))
-	      (etypecase (value opnd2)
-		((or (unsigned-byte 1) (signed-byte 1)) 1)
-		((or (unsigned-byte 2) (signed-byte 2)) 2)
-		((or (unsigned-byte 4) (signed-byte 4)) 4))
-	      rex-contribution
-	      override-contribution)))))))
-
-(defmethod instruction-size-2
-  (desc (opnd1 gpr-operand) (opnd2 gpr-operand))
-  (assert (or (equal (encoding desc) '(reg modrm))
-	      (equal (encoding desc) '(modrm reg))))
-  (let* ((rex-p (or (rex.w desc)
-		    (>= (code-number opnd1) 7)
-		    (>= (code-number opnd2) 7)))
-	 (rex-contribution (if rex-p 1 0))
-	 (override (operand-size-override desc))
-	 (override-contribution (if override 1 0)))
-    (+ (length (opcodes desc))
-       1 ; There is always a ModRM byte
-       rex-contribution
-       override-contribution)))
-
-(defmethod instruction-size-2
-  (desc (opnd1 gpr-operand) (opnd2 memory-operand))
-  (assert (equal (encoding desc) '(reg modrm)))
-  (let* ((rex-p (or (rex.w desc)
-		    (>= (code-number opnd1) 7)
-		    (rex-p opnd2)))
-	 (rex-contribution (if rex-p 1 0))
-	 (override (operand-size-override desc))
-	 (override-contribution (if override 1 0)))
-    (+ (length (opcodes desc))
-       (memory-operand-size opnd2)
-       rex-contribution
-       override-contribution)))
-
-(defmethod instruction-size-2
-  (desc (opnd1 memory-operand) (opnd2 immediate-operand))
-  (assert (equal (encoding desc) '(modrm imm)))
-  (let* ((rex-p (or (rex.w desc) (rex-p opnd2)))
-	 (rex-contribution (if rex-p 1 0))
-	 (override (operand-size-override desc))
-	 (override-contribution (if override 1 0)))
-    (+ (length (opcodes desc))
-       (memory-operand-size opnd2)
-       (etypecase (value opnd2)
-	 ((or (unsigned-byte 1) (signed-byte 1)) 1)
-	 ((or (unsigned-byte 2) (signed-byte 2)) 2)
-	 ((or (unsigned-byte 4) (signed-byte 4)) 4))
-       rex-contribution
-       override-contribution)))
-
-(defmethod instruction-size-2
-  (desc (opnd1 memory-operand) (opnd2 gpr-operand))
-  (assert (equal (encoding desc) '(modrm reg)))
-  (let* ((rex-p (or (rex.w desc)
-		    (>= (code-number opnd2) 7)
-		    (rex-p opnd1)))
-	 (rex-contribution (if rex-p 1 0))
-	 (override (operand-size-override desc))
-	 (override-contribution (if override 1 0)))
-    (+ (length (opcodes desc))
-       (memory-operand-size opnd1)
-       rex-contribution
-       override-contribution)))
-  
-(defun instruction-size (desc operands)
-  (ecase (length operands)
-    (1 (instruction-size-1 desc (first operands)))
-    (2 (instruction-size-2 desc (first operands) (second operands)))))
-
-;;; Take an item and return the preliminary size of that item. When
-;;; the item is a label, the preliminary size is 0.  When the item is
-;;; a CODE-COMMAND and it has a single operand of type LABEL, then the
-;;; preliminary size is the MAXIMUM of the size of each candidate
-;;; instruction.  When the item is a CODE-COMMAND and it has some
-;;; other operands then the preliminary size is the MINIMUM of the
-;;; size of each candidate instruction.
-(defun preliminary-size (item)
-  (cond ((typep item 'label)
-	 0)
-	((typep item 'data-command)
-	 ;; We have no data commands right now
-	 (error "can't handle data commands yet"))
-	((typep item 'code-command)
-	 (let* ((operands (operands item))
-		(candidates (candidates (mnemonic item) operands)))
-	   (reduce (if (and (= (length operands) 1)
-			    (typep (first operands) 'label))
-		       #'max
-		       #'min)
-		   (mapcar (lambda (desc)
-			     (instruction-size desc operands))
-			   candidates))))
-	(t
-	 (error "Item of unknown type: ~s" item))))
-
-;;; From a list if items and a list of preliminary sizes, compute a
-;;; dictionary (represented as a hash table) mapping items to
-;;; preliminary absolute addresses from the beginning of the program.
-(defun compute-preliminary-addresses (items preliminary-sizes)
-  (loop with table = (make-hash-table :test #'eq)
-	for absolute-address = 0 then (+ absolute-address size)
-	for size in preliminary-sizes
-	for item in items
-	do (when (typep item 'label)
-	     (setf (gethash item table) absolute-address))
-	finally (return table)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -779,3 +604,73 @@
 	  ,@(opcodes desc)
 	  ,(logior modrm (ash reg 3))
 	  ,@rest)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Given an instruction descriptor and the operands to the command
+;;; that the instruction descriptor matches, compute the size of the
+;;; resulting instruction.
+
+(defgeneric instruction-size-1 (desc opnd))
+
+(defmethod instruction-size-1 (desc opnd)
+  (length (encode-instruction-1 desc opnd)))
+
+(defmethod instruction-size-1 (desc (opnd immediate-operand))
+  (destructuring-bind (type size) (first (operands desc))
+    (declare (ignore size))
+    (ecase type
+      (imm
+       (call-next-method))
+      (label
+       (+ (if (operand-size-override desc) 1 0)
+	  (if (rex.w desc) 1 0)
+	  (length (opcodes desc)))))))
+
+(defgeneric instruction-size-2 (desc opnd1 opnd2))
+
+(defmethod instruction-size-2 (desc opnd1 opnd2)
+  (length (encode-instruction-2 desc opnd1 opnd2)))
+  
+(defun instruction-size (desc operands)
+  (ecase (length operands)
+    (1 (instruction-size-1 desc (first operands)))
+    (2 (instruction-size-2 desc (first operands) (second operands)))))
+
+;;; Take an item and return the preliminary size of that item. When
+;;; the item is a label, the preliminary size is 0.  When the item is
+;;; a CODE-COMMAND and it has a single operand of type LABEL, then the
+;;; preliminary size is the MAXIMUM of the size of each candidate
+;;; instruction.  When the item is a CODE-COMMAND and it has some
+;;; other operands then the preliminary size is the MINIMUM of the
+;;; size of each candidate instruction.
+(defun preliminary-size (item)
+  (cond ((typep item 'label)
+	 0)
+	((typep item 'data-command)
+	 ;; We have no data commands right now
+	 (error "can't handle data commands yet"))
+	((typep item 'code-command)
+	 (let* ((operands (operands item))
+		(candidates (candidates (mnemonic item) operands)))
+	   (reduce (if (and (= (length operands) 1)
+			    (typep (first operands) 'label))
+		       #'max
+		       #'min)
+		   (mapcar (lambda (desc)
+			     (instruction-size desc operands))
+			   candidates))))
+	(t
+	 (error "Item of unknown type: ~s" item))))
+
+;;; From a list if items and a list of preliminary sizes, compute a
+;;; dictionary (represented as a hash table) mapping items to
+;;; preliminary absolute addresses from the beginning of the program.
+(defun compute-preliminary-addresses (items preliminary-sizes)
+  (loop with table = (make-hash-table :test #'eq)
+	for absolute-address = 0 then (+ absolute-address size)
+	for size in preliminary-sizes
+	for item in items
+	do (when (typep item 'label)
+	     (setf (gethash item table) absolute-address))
+	finally (return table)))
