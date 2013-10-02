@@ -35,7 +35,7 @@
   :modes (32 64)
   :operands ((gpr-a 8) (imm 8))
   :opcodes (#x04)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -48,7 +48,7 @@
   :modes (32 64)
   :operands ((gpr-a 16) (imm 16))
   :opcodes (#x05)
-  :encoding (imm)
+  :encoding (- imm)
   :operand-size-override t)
 
 ;;; Add imm32 to GPR EAX
@@ -56,14 +56,14 @@
   :modes (32 64)
   :operands ((gpr-a 32) (imm 32))
   :opcodes (#x05)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;; Add sign-extended imm32 to GPR RAX
 (define-instruction "ADD"
   :modes (64)
   :operands ((gpr-a 64) (imm 32))
   :opcodes (#x05)
-  :encoding (imm)
+  :encoding (- imm)
   :rex.w t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -425,7 +425,7 @@
   :modes (32 64)
   :operands ((gpr-a 8) (imm 8))
   :opcodes (#x24)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -440,7 +440,7 @@
   :modes (32 64)
   :operands ((gpr-a 16) (imm 16))
   :opcodes (#x25)
-  :encoding (imm)
+  :encoding (- imm)
   :operand-size-override t)
 
 ;;; AND the contents of GPR EAX with an immediate 32-bit value and
@@ -449,7 +449,7 @@
   :modes (32 64)
   :operands ((gpr-a 32) (imm 32))
   :opcodes (#x25)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;; AND the contents of GPR RAX with a sign-extended 32-bit immediate
 ;;; value and store the result in GPR RAX.
@@ -457,7 +457,7 @@
   :modes (64)
   :operands ((gpr-a 64) (imm 32))
   :opcodes (#x25)
-  :encoding (imm)
+  :encoding (- imm)
   :rex.w t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -961,7 +961,7 @@
   :modes (32 64)
   :operands ((gpr-a 8) (imm 8))
   :opcodes (#x3C)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -972,7 +972,7 @@
   :modes (32 64)
   :operands ((gpr-a 16) (imm 16))
   :opcodes (#x3D)
-  :encoding (imm)
+  :encoding (- imm)
   :operand-size-override t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -984,7 +984,7 @@
   :modes (32 64)
   :operands ((gpr-a 32) (imm 32))
   :opcodes (#x3D)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -995,7 +995,7 @@
   :modes (64)
   :operands ((gpr-a 64) (imm 32))
   :opcodes (#x3D)
-  :encoding (imm)
+  :encoding (- imm)
   :rex.w t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2354,7 +2354,7 @@
   :modes (32 64)
   :operands ((gpr-a 8) (imm 8))
   :opcodes (#x0C)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2369,7 +2369,7 @@
   :modes (32 64)
   :operands ((gpr-a 16) (imm 16))
   :opcodes (#x0D)
-  :encoding (imm)
+  :encoding (- imm)
   :operand-size-override t)
 
 ;;; OR the contents of GPR EAX with an immediate 32-bit value and
@@ -2378,7 +2378,7 @@
   :modes (32 64)
   :operands ((gpr-a 32) (imm 32))
   :opcodes (#x0D)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;; OR the contents of GPR RAX with a sign-extended 32-bit immediate
 ;;; value and store the result in GPR RAX.
@@ -2386,7 +2386,7 @@
   :modes (64)
   :operands ((gpr-a 64) (imm 32))
   :opcodes (#x0D)
-  :encoding (imm)
+  :encoding (- imm)
   :rex.w t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2818,7 +2818,7 @@
   :modes (32 64)
   :operands ((gpr-a 8) (imm 8))
   :opcodes (#x34)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2833,7 +2833,7 @@
   :modes (32 64)
   :operands ((gpr-a 16) (imm 16))
   :opcodes (#x35)
-  :encoding (imm)
+  :encoding (- imm)
   :operand-size-override t)
 
 ;;; XOR the contents of GPR EAX with an immediate 32-bit value and
@@ -2842,7 +2842,7 @@
   :modes (32 64)
   :operands ((gpr-a 32) (imm 32))
   :opcodes (#x35)
-  :encoding (imm))
+  :encoding (- imm))
 
 ;;; XOR the contents of GPR RAX with a sign-extended 32-bit immediate
 ;;; value and store the result in GPR RAX.
@@ -2850,7 +2850,7 @@
   :modes (64)
   :operands ((gpr-a 64) (imm 32))
   :opcodes (#x35)
-  :encoding (imm)
+  :encoding (- imm)
   :rex.w t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

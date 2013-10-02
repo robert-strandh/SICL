@@ -513,6 +513,18 @@
 	(destructuring-bind (type2 size2) (second (operands desc))
 	  (declare (ignore size2))
 	  (ecase type1
+	    (-
+	     (ecase type2
+	       (imm
+		`(,@(if (operand-size-override desc) '(#x66) '())
+		  ,@(if (plusp rex-low) (+ #x40 rex-low) '())
+		  ,@(opcodes desc)
+		  ,@(encode-integer
+		     (value opnd2)
+		     (etypecase (value opnd2)
+		       ((or (unsigned-byte 1) (signed-byte 1)) 1)
+		       ((or (unsigned-byte 2) (signed-byte 2)) 2)
+		       ((or (unsigned-byte 4) (signed-byte 4)) 4)))))))
 	    (modrm
 	     (ecase type2
 	       (imm
