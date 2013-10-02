@@ -12,8 +12,6 @@
 	(y `(#x83 ,(+ #xC0 (ash extension 3) reg) 33)))
     (assert (equal (list y) (assemble (list x))))))
 
-(defun run-test-add-83
-
 (defun run-test-1 ()
   (loop for mnemonic in '("ADD" "OR" "AND" "XOR")
 	for extension in '(0 1 4 6)
