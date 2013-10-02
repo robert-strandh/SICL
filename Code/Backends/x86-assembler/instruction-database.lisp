@@ -61,7 +61,7 @@
 ;;; Add sign-extended imm32 to GPR RAX
 (define-instruction "ADD"
   :modes (64)
-  :operands ((gpr-a 64) (imm 32))
+  :operands ((gpr-a 64) (simm 32))
   :opcodes (#x05)
   :encoding (- imm)
   :rex.w t)
@@ -145,7 +145,7 @@
 ;;; Add imm32 to reg64
 (define-instruction "ADD"
   :modes (64)
-  :operands ((gpr 64) (imm 32))
+  :operands ((gpr 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 0
   :encoding (modrm imm)
@@ -154,7 +154,7 @@
 ;;; Add imm32 to mem64
 (define-instruction "ADD"
   :modes (64)
-  :operands ((memory 64) (imm 32))
+  :operands ((memory 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 0
   :encoding (modrm imm)
@@ -173,7 +173,7 @@
 ;;; Add sign-extended imm8 to reg16
 (define-instruction "ADD"
   :modes (32 64)
-  :operands ((gpr 16) (imm 8))
+  :operands ((gpr 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 0
   :encoding (modrm imm)
@@ -182,7 +182,7 @@
 ;;; Add sign-extended imm8 to mem16
 (define-instruction "ADD"
   :modes (32 64)
-  :operands ((memory 16) (imm 8))
+  :operands ((memory 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 0
   :encoding (modrm imm)
@@ -195,7 +195,7 @@
 ;;; Add sign-extended imm8 to reg32
 (define-instruction "ADD"
   :modes (32 64)
-  :operands ((gpr 32) (imm 8))
+  :operands ((gpr 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 0
   :encoding (modrm imm))
@@ -203,7 +203,7 @@
 ;;; Add sign-extended imm8 to mem32
 (define-instruction "ADD"
   :modes (32 64)
-  :operands ((memory 32) (imm 8))
+  :operands ((memory 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 0
   :encoding (modrm imm))
@@ -215,7 +215,7 @@
 ;;; Add sign-extended imm8 to reg64
 (define-instruction "ADD"
   :modes (64)
-  :operands ((gpr 64) (imm 8))
+  :operands ((gpr 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 0
   :encoding (modrm imm)
@@ -224,7 +224,7 @@
 ;;; Add sign-extended imm8 to mem64
 (define-instruction "ADD"
   :modes (64)
-  :operands ((memory 64) (imm 8))
+  :operands ((memory 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 0
   :encoding (modrm imm)
@@ -455,7 +455,7 @@
 ;;; value and store the result in GPR RAX.
 (define-instruction "AND"
   :modes (64)
-  :operands ((gpr-a 64) (imm 32))
+  :operands ((gpr-a 64) (simm 32))
   :opcodes (#x25)
   :encoding (- imm)
   :rex.w t)
@@ -551,7 +551,7 @@
 ;;; 32-bit value and store the result in reg64.
 (define-instruction "AND"
   :modes (64)
-  :operands ((gpr 64) (imm 32))
+  :operands ((gpr 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 4
   :encoding (modrm imm)
@@ -561,7 +561,7 @@
 ;;; 32-bit value and store the result in mem64.
 (define-instruction "AND"
   :modes (64)
-  :operands ((memory 64) (imm 32))
+  :operands ((memory 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 4
   :encoding (modrm imm)
@@ -584,7 +584,7 @@
 ;;; value, and store the result in reg16.
 (define-instruction "AND"
   :modes (32 64)
-  :operands ((gpr 16) (imm 8))
+  :operands ((gpr 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 4
   :encoding (modrm imm)
@@ -594,7 +594,7 @@
 ;;; value, and store the result in mem16.
 (define-instruction "AND"
   :modes (32 64)
-  :operands ((memory 16) (imm 8))
+  :operands ((memory 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 4
   :encoding (modrm imm)
@@ -609,7 +609,7 @@
 ;;; value, and store the result in reg32.
 (define-instruction "AND"
   :modes (32 64)
-  :operands ((gpr 32) (imm 8))
+  :operands ((gpr 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 4
   :encoding (modrm imm))
@@ -618,7 +618,7 @@
 ;;; value, and store the result in mem32.
 (define-instruction "AND"
   :modes (32 64)
-  :operands ((memory 32) (imm 8))
+  :operands ((memory 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 4
   :encoding (modrm imm))
@@ -632,7 +632,7 @@
 ;;; value, and store the result in reg64.
 (define-instruction "AND"
   :modes (64)
-  :operands ((gpr 64) (imm 8))
+  :operands ((gpr 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 4
   :encoding (modrm imm)
@@ -642,7 +642,7 @@
 ;;; value, and store the result in mem64.
 (define-instruction "AND"
   :modes (64)
-  :operands ((memory 64) (imm 8))
+  :operands ((memory 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 4
   :encoding (modrm imm)
@@ -1066,7 +1066,7 @@
 
 (define-instruction "CMP"
   :modes (64)
-  :operands ((gpr 64) (imm 32))
+  :operands ((gpr 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 7
   :encoding (modrm imm)
@@ -1079,7 +1079,7 @@
 
 (define-instruction "CMP"
   :modes (64)
-  :operands ((memory 64) (imm 32))
+  :operands ((memory 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 7
   :encoding (modrm imm)
@@ -1092,7 +1092,7 @@
 
 (define-instruction "CMP"
   :modes (32 64)
-  :operands ((gpr 16) (imm 8))
+  :operands ((gpr 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 7
   :encoding (modrm imm)
@@ -1105,7 +1105,7 @@
 
 (define-instruction "CMP"
   :modes (32 64)
-  :operands ((memory 16) (imm 8))
+  :operands ((memory 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 7
   :encoding (modrm imm)
@@ -1118,7 +1118,7 @@
 
 (define-instruction "CMP"
   :modes (32 64)
-  :operands ((gpr 32) (imm 8))
+  :operands ((gpr 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 7
   :encoding (modrm imm))
@@ -1130,7 +1130,7 @@
 
 (define-instruction "CMP"
   :modes (32 64)
-  :operands ((memory 32) (imm 8))
+  :operands ((memory 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 7
   :encoding (modrm imm))
@@ -1142,7 +1142,7 @@
 
 (define-instruction "CMP"
   :modes (64)
-  :operands ((gpr 64) (imm 8))
+  :operands ((gpr 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 7
   :encoding (modrm imm)
@@ -1155,7 +1155,7 @@
 
 (define-instruction "CMP"
   :modes (64)
-  :operands ((memory 64) (imm 8))
+  :operands ((memory 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 7
   :encoding (modrm imm)
@@ -2480,7 +2480,7 @@
 ;;; 32-bit value and store the result in reg64.
 (define-instruction "OR"
   :modes (64)
-  :operands ((gpr 64) (imm 32))
+  :operands ((gpr 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 1
   :encoding (modrm imm)
@@ -2490,7 +2490,7 @@
 ;;; 32-bit value and store the result in mem64.
 (define-instruction "OR"
   :modes (64)
-  :operands ((memory 64) (imm 32))
+  :operands ((memory 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 1
   :encoding (modrm imm)
@@ -2513,7 +2513,7 @@
 ;;; value, and store the result in reg16.
 (define-instruction "OR"
   :modes (32 64)
-  :operands ((gpr 16) (imm 8))
+  :operands ((gpr 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 1
   :encoding (modrm imm)
@@ -2523,7 +2523,7 @@
 ;;; value, and store the result in mem16.
 (define-instruction "OR"
   :modes (32 64)
-  :operands ((memory 16) (imm 8))
+  :operands ((memory 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 1
   :encoding (modrm imm)
@@ -2538,7 +2538,7 @@
 ;;; value, and store the result in reg32.
 (define-instruction "OR"
   :modes (32 64)
-  :operands ((gpr 32) (imm 8))
+  :operands ((gpr 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 1
   :encoding (modrm imm))
@@ -2547,7 +2547,7 @@
 ;;; value, and store the result in mem32.
 (define-instruction "OR"
   :modes (32 64)
-  :operands ((memory 32) (imm 8))
+  :operands ((memory 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 1
   :encoding (modrm imm))
@@ -2561,7 +2561,7 @@
 ;;; value, and store the result in reg64.
 (define-instruction "OR"
   :modes (64)
-  :operands ((gpr 64) (imm 8))
+  :operands ((gpr 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 1
   :encoding (modrm imm)
@@ -2571,7 +2571,7 @@
 ;;; value, and store the result in mem64.
 (define-instruction "OR"
   :modes (64)
-  :operands ((memory 64) (imm 8))
+  :operands ((memory 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 1
   :encoding (modrm imm)
@@ -2944,7 +2944,7 @@
 ;;; 32-bit value and store the result in reg64.
 (define-instruction "XOR"
   :modes (64)
-  :operands ((gpr 64) (imm 32))
+  :operands ((gpr 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 6
   :encoding (modrm imm)
@@ -2954,7 +2954,7 @@
 ;;; 32-bit value and store the result in mem64.
 (define-instruction "XOR"
   :modes (64)
-  :operands ((memory 64) (imm 32))
+  :operands ((memory 64) (simm 32))
   :opcodes (#x81)
   :opcode-extension 6
   :encoding (modrm imm)
@@ -2977,7 +2977,7 @@
 ;;; value, and store the result in reg16.
 (define-instruction "XOR"
   :modes (32 64)
-  :operands ((gpr 16) (imm 8))
+  :operands ((gpr 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 6
   :encoding (modrm imm)
@@ -2987,7 +2987,7 @@
 ;;; value, and store the result in mem16.
 (define-instruction "XOR"
   :modes (32 64)
-  :operands ((memory 16) (imm 8))
+  :operands ((memory 16) (simm 8))
   :opcodes (#x83)
   :opcode-extension 6
   :encoding (modrm imm)
@@ -3002,7 +3002,7 @@
 ;;; value, and store the result in reg32.
 (define-instruction "XOR"
   :modes (32 64)
-  :operands ((gpr 32) (imm 8))
+  :operands ((gpr 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 6
   :encoding (modrm imm))
@@ -3011,7 +3011,7 @@
 ;;; value, and store the result in mem32.
 (define-instruction "XOR"
   :modes (32 64)
-  :operands ((memory 32) (imm 8))
+  :operands ((memory 32) (simm 8))
   :opcodes (#x83)
   :opcode-extension 6
   :encoding (modrm imm))
@@ -3025,7 +3025,7 @@
 ;;; value, and store the result in reg64.
 (define-instruction "XOR"
   :modes (64)
-  :operands ((gpr 64) (imm 8))
+  :operands ((gpr 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 6
   :encoding (modrm imm)
@@ -3035,7 +3035,7 @@
 ;;; value, and store the result in mem64.
 (define-instruction "XOR"
   :modes (64)
-  :operands ((memory 64) (imm 8))
+  :operands ((memory 64) (simm 8))
   :opcodes (#x83)
   :opcode-extension 6
   :encoding (modrm imm)

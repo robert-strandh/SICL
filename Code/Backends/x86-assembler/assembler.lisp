@@ -324,6 +324,9 @@
     (memory
      (and (typep operand 'memory-operand)
 	  (= (size operand) (cadr descriptor))))
+    (simm
+     (and (typep operand 'immediate-operand)
+	  (typep (value operand) `(signed-byte ,(cadr descriptor)))))
     (imm
      (and (typep operand 'immediate-operand)
 	  (or (typep (value operand) `(signed-byte ,(cadr descriptor)))
