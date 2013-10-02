@@ -357,18 +357,38 @@
 (defgeneric encode-instruction-1 (desc opnd))
 
 (defmethod encode-instruction-1 (desc (opnd immediate-operand))
-  (destructuring-bind (type size) (first (operands desc))
-    (let* ((rex-p (rex.w desc)))
-      (ecase type
-	((imm label)
+  (let ((type (first (encoding desc)))
+	(length (/ (second (first (operands desc))) 8)))
+    (ecase type
+      (imm
+       (let* ((rex-p (rex.w desc)))
 	 `(,@(if (operand-size-override desc) '(#x66) '())
 	   ,@(if rex-p '(#x48) '())
 	   ,@(opcodes desc)
-	   ,@(encode-integer (value opnd) size)))))))
+	   ,@(encode-integer (value opnd) length)))))))
+
+;;; A hash table mapping items to addresses relative to the
+;;; beginning of the program.
+(defparameter *addresses* nil)
+
+;;; The address (relative to the beginning of the program) of the
+;;; instruction immediately following the one being encoded.
+(defparameter *instruction-pointer* nil)
+
+(defmethod encode-instruction-1 (desc (opnd label))
+  (let ((type (first (encoding desc))))
+    (ecase type
+      (label
+       (let* ((rex-p (rex.w desc)))
+	 `(,@(if (operand-size-override desc) '(#x66) '())
+	   ,@(if rex-p '(#x48) '())
+	   ,@(opcodes desc)
+	   ,@(encode-integer (- *instruction-pointer*
+				(gethash opnd *addresses*))
+			     4)))))))
 
 (defmethod encode-instruction-1 (desc (opnd gpr-operand))
-  (destructuring-bind (type size) (first (operands desc))
-    (declare (ignore size))
+  (let ((type (first (encoding desc))))
     (ecase type
       (modrm
        `(,@(if (operand-size-override desc) '(#x66) '())
@@ -488,15 +508,14 @@
 		     ,@(encode-integer displacement 4)))))))))
 
 (defmethod encode-instruction-1 (desc (opnd memory-operand))
-  (destructuring-bind (type size) (first (operands desc))
-    (declare (ignore size))
+  (let ((type (first (encoding desc))))
     (ecase type
       (modrm
        (destructuring-bind (rex.xb modrm &rest rest)
 	   (encode-memory-operand opnd)
 	 (let ((rex-low (+ (if (rex.w opnd) #b1000 0) rex.xb)))
 	   `(,@(if (operand-size-override desc) '(#x66) '())
-	     ,@(if (plusp rex-low) (+ #x40 rex-low) '())
+	     ,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
 	     ,@(opcodes desc)
 	     ,(logior modrm (ash (opcode-extension opnd) 3))
 	     ,@rest)))))))
@@ -506,52 +525,36 @@
 (defmethod encode-instruction-2
     (desc (opnd1 gpr-operand) (opnd2 immediate-operand))
   (multiple-value-bind (rex.b r/m)
-      (floor (code-number opnd1))
+      (floor (code-number opnd1) 8)
     (let* ((rex-low (+ (if (rex.w desc) #b1000 0) rex.b)))
-      (destructuring-bind (type1 size1) (first (operands desc))
-	(declare (ignore size1))
-	(destructuring-bind (type2 size2) (second (operands desc))
-	  (declare (ignore size2))
-	  (ecase type1
-	    (-
-	     (ecase type2
-	       (imm
-		`(,@(if (operand-size-override desc) '(#x66) '())
-		  ,@(if (plusp rex-low) (+ #x40 rex-low) '())
-		  ,@(opcodes desc)
-		  ,@(encode-integer
-		     (value opnd2)
-		     (etypecase (value opnd2)
-		       ((or (unsigned-byte 1) (signed-byte 1)) 1)
-		       ((or (unsigned-byte 2) (signed-byte 2)) 2)
-		       ((or (unsigned-byte 4) (signed-byte 4)) 4)))))))
-	    (modrm
-	     (ecase type2
-	       (imm
-		`(,@(if (operand-size-override desc) '(#x66) '())
-		  ,@(if (plusp rex-low) (+ #x40 rex-low) '())
-		  ,@(opcodes desc)
-		  ,(+ (ash #b11 6)
-		      (ash (opcode-extension desc) 3)
-		      r/m)
-		  ,@(encode-integer
-		     (value opnd2)
-		     (etypecase (value opnd2)
-		       ((or (unsigned-byte 1) (signed-byte 1)) 1)
-		       ((or (unsigned-byte 2) (signed-byte 2)) 2)
-		       ((or (unsigned-byte 4) (signed-byte 4)) 4)))))))
-	    (+r
-	     (ecase type2
-	       (imm
-		`(,@(if (operand-size-override desc) '(#x66) '())
-		  ,@(if (plusp rex-low) (+ #x40 rex-low) '())
-		  ,(+ (car (opcodes desc)) (opcode-extension desc))
-		  ,@(encode-integer
-		     (value opnd2)
-		     (etypecase (value opnd2)
-		       ((or (unsigned-byte 1) (signed-byte 1)) 1)
-		       ((or (unsigned-byte 2) (signed-byte 2)) 2)
-		       ((or (unsigned-byte 4) (signed-byte 4)) 4)))))))))))))
+      (let ((type1 (first (encoding desc)))
+	    (type2 (second (encoding desc)))
+	    (length2 (/ (second (second (operands desc))) 8)))
+	(ecase type1
+	  (-
+	   (ecase type2
+	     (imm
+	      `(,@(if (operand-size-override desc) '(#x66) '())
+		,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
+		,@(opcodes desc)
+		,@(encode-integer (value opnd2) length2)))))
+	  (modrm
+	   (ecase type2
+	     (imm
+	      `(,@(if (operand-size-override desc) '(#x66) '())
+		,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
+		,@(opcodes desc)
+		,(+ (ash #b11 6)
+		    (ash (opcode-extension desc) 3)
+		    r/m)
+		,@(encode-integer (value opnd2) length2)))))
+	  (+r
+	   (ecase type2
+	     (imm
+	      `(,@(if (operand-size-override desc) '(#x66) '())
+		,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
+		,(+ (car (opcodes desc)) (opcode-extension desc))
+		,@(encode-integer (value opnd2) length2))))))))))
 
 (defmethod encode-instruction-2
   (desc (opnd1 gpr-operand) (opnd2 gpr-operand))
@@ -567,7 +570,7 @@
 			(ash rex.r 2)
 			rex.b)))
 	`(,@(if (operand-size-override desc) '(#x66) '())
-	  ,@(if (plusp rex-low) (+ #x40 rex-low) '())
+	  ,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
 	  ,@(opcodes desc)
 	  ,(+ #b11000000
 	      (ash reg 3)
@@ -579,12 +582,12 @@
   (destructuring-bind (rex.xb modrm &rest rest)
       (encode-memory-operand opnd2)
     (multiple-value-bind (rex.r reg)
-	(floor (code-number opnd1))
+	(floor (code-number opnd1) 8)
       (let ((rex-low (+ (if (rex.w desc) #b1000 0)
 			rex.xb
 			(ash rex.r 2))))
 	`(,@(if (operand-size-override desc) '(#x66) '())
-	  ,@(if (plusp rex-low) (+ #x40 rex-low) '())
+	  ,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
 	  ,@(opcodes desc)
 	  ,(logior modrm (ash reg 3))
 	  ,@rest)))))
@@ -596,7 +599,7 @@
       (encode-memory-operand opnd1)
     (let ((rex-low (+ (if (rex.w desc) #b1000 0) rex.xb)))
       `(,@(if (operand-size-override desc) '(#x66) '())
-	,@(if (plusp rex-low) (+ #x40 rex-low) '())
+	,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
 	,@(opcodes desc)
 	,(logior modrm (ash (opcode-extension desc) 3))
 	,@rest))))
@@ -607,15 +610,20 @@
   (destructuring-bind (rex.xb modrm &rest rest)
       (encode-memory-operand opnd1)
     (multiple-value-bind (rex.r reg)
-	(floor (code-number opnd2))
+	(floor (code-number opnd2) 8)
       (let ((rex-low (+ (if (rex.w desc) #b1000 0)
 			rex.xb
 			(ash rex.r 2))))
 	`(,@(if (operand-size-override desc) '(#x66) '())
-	  ,@(if (plusp rex-low) (+ #x40 rex-low) '())
+	  ,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
 	  ,@(opcodes desc)
 	  ,(logior modrm (ash reg 3))
 	  ,@rest)))))
+
+(defun encode-instruction (desc operands)
+  (ecase (length operands)
+    (1 (encode-instruction-1 desc (first operands)))
+    (2 (encode-instruction-2 desc (first operands) (second operands)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -629,15 +637,16 @@
   (length (encode-instruction-1 desc opnd)))
 
 (defmethod instruction-size-1 (desc (opnd immediate-operand))
-  (destructuring-bind (type size) (first (operands desc))
-    (declare (ignore size))
+  (let ((type (first (encoding desc))))
     (ecase type
       (imm
        (call-next-method))
       (label
        (+ (if (operand-size-override desc) 1 0)
 	  (if (rex.w desc) 1 0)
-	  (length (opcodes desc)))))))
+	  (length (opcodes desc))
+	  ;; Always assume 32-bit relative address.
+	  4)))))
 
 (defgeneric instruction-size-2 (desc opnd1 opnd2))
 
@@ -677,7 +686,7 @@
 
 ;;; From a list if items and a list of preliminary sizes, compute a
 ;;; dictionary (represented as a hash table) mapping items to
-;;; preliminary absolute addresses from the beginning of the program.
+;;; preliminary addresses relative to the beginning of the program.
 (defun compute-preliminary-addresses (items preliminary-sizes)
   (loop with table = (make-hash-table :test #'eq)
 	for absolute-address = 0 then (+ absolute-address size)
@@ -686,3 +695,41 @@
 	do (when (typep item 'label)
 	     (setf (gethash item table) absolute-address))
 	finally (return table)))
+
+(defun compute-encoding (item)
+  (cond ((typep item 'label)
+	 '())
+	((typep item 'data-command)
+	 ;; We have no data commands right now
+	 (error "can't handle data commands yet"))
+	((typep item 'code-command)
+	 (let* ((operands (operands item))
+		(candidates (candidates (mnemonic item) operands)))
+	   (flet ((best-candidate (c1 c2)
+		    (if (and (= (length operands) 1)
+			     (typep (first operands) 'label))
+			(if (> (instruction-size c1 operands)
+			       (instruction-size c2 operands))
+			    c1
+			    c2)
+			(if (< (instruction-size c1 operands)
+			       (instruction-size c2 operands))
+			    c1
+			    c2))))
+	     (encode-instruction (reduce #'best-candidate candidates)
+				 operands))))
+	(t
+	 (error "Item of unknown type: ~s" item))))
+
+
+(defun assemble (items)
+  (let* ((preliminary-sizes (mapcar #'preliminary-size items))
+	 (addresses (compute-preliminary-addresses items preliminary-sizes)))
+    (let ((*addresses* addresses))
+      (loop for item in items
+	    for address = 0 then (+ address size)
+	    for size in preliminary-sizes
+	    collect (let ((*instruction-pointer* (+ address size)))
+		      (compute-encoding item))))))
+    
+    
