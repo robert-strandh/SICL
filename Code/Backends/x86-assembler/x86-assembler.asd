@@ -9,5 +9,8 @@
    (:file "instruction-descriptors"
     :depends-on ("packages"))
    (:file "instruction-database"
-    :depends-on ("packages" "instruction-descriptors"))))
+    :depends-on ("packages" "instruction-descriptors"))
+   (:file "test"
+    :depends-on ("packages" "assembler" "instruction-descriptors"))))
+
     
