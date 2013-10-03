@@ -146,22 +146,98 @@
 			  :size 32)
 			(make-instance 'immediate-operand
 			  :value imm))))
-	(y `(#x41 ; Rex byte.
+	(y `(#x41 ; Rex prefix.
 	     #x83
 	     ,(+ #x00 (ash extension 3) (- reg 8))
 	     ,(if (minusp imm) (+ imm 256) imm))))
     (assert (equal (list y) (assemble (list x))))))
   
+;;; Test instructions with an opcode of #x83 and where the first
+;;; operand is a 16-bit memory operand with only a base register, one
+;;; of 0, 1, 2, 3, 6, and 7.
+(defun run-test-83-mem-3 (mnemonic extension reg imm)
+  (let ((x (make-instance 'code-command
+	     :mnemonic mnemonic
+	     :operands (list
+			(make-instance 'memory-operand
+			  :base-register reg
+			  :size 16)
+			(make-instance 'immediate-operand
+			  :value imm))))
+	(y `(#x66 ; Operand-size override prefix.
+	     #x83
+	     ,(+ #x00 (ash extension 3) reg)
+	     ,(if (minusp imm) (+ imm 256) imm))))
+    (assert (equal (list y) (assemble (list x))))))
+  
+;;; Test instructions with an opcode of #x83 and where the first
+;;; operand is a 16-bit memory operand with only a base register, one
+;;; of 8, 9, 10, 11, 14, and 15.
+(defun run-test-83-mem-4 (mnemonic extension reg imm)
+  (let ((x (make-instance 'code-command
+	     :mnemonic mnemonic
+	     :operands (list
+			(make-instance 'memory-operand
+			  :base-register reg
+			  :size 16)
+			(make-instance 'immediate-operand
+			  :value imm))))
+	(y `(#x66 ; Operand-size override prefix.
+	     #x41 ; Rex prefix.
+	     #x83
+	     ,(+ #x00 (ash extension 3) (- reg 8))
+	     ,(if (minusp imm) (+ imm 256) imm))))
+    (assert (equal (list y) (assemble (list x))))))
+  
+;;; Test instructions with an opcode of #x83 and where the first
+;;; operand is a 64-bit memory operand with only a base register, one
+;;; of 0, 1, 2, 3, 6, and 7.
+(defun run-test-83-mem-5 (mnemonic extension reg imm)
+  (let ((x (make-instance 'code-command
+	     :mnemonic mnemonic
+	     :operands (list
+			(make-instance 'memory-operand
+			  :base-register reg
+			  :size 64)
+			(make-instance 'immediate-operand
+			  :value imm))))
+	(y `(#x48 ; Rex prefix
+	     #x83
+	     ,(+ #x00 (ash extension 3) reg)
+	     ,(if (minusp imm) (+ imm 256) imm))))
+    (assert (equal (list y) (assemble (list x))))))
+  
+;;; Test instructions with an opcode of #x83 and where the first
+;;; operand is a 64-bit memory operand with only a base register, one
+;;; of 8, 9, 10, 11, 14, and 15.
+(defun run-test-83-mem-6 (mnemonic extension reg imm)
+  (let ((x (make-instance 'code-command
+	     :mnemonic mnemonic
+	     :operands (list
+			(make-instance 'memory-operand
+			  :base-register reg
+			  :size 64)
+			(make-instance 'immediate-operand
+			  :value imm))))
+	(y `(#x49 ; Rex prefix.
+	     #x83
+	     ,(+ #x00 (ash extension 3) (- reg 8))
+	     ,(if (minusp imm) (+ imm 256) imm))))
+    (assert (equal (list y) (assemble (list x))))))
 
 (defun run-test-83-mem ()
   (loop for mnemonic in '("ADD" "OR" "AND" "XOR")
 	for extension in '(0 1 4 6)
 	do (loop for reg in '(0 1 2 3 6 7)
 		 do (loop for imm from -128 to 127
-			  do (run-test-83-mem-1 mnemonic extension reg imm)))
+			  do (run-test-83-mem-1 mnemonic extension reg imm)
+			     (run-test-83-mem-3 mnemonic extension reg imm)
+			     (run-test-83-mem-5 mnemonic extension reg imm)))
 	   (loop for reg in '(8 9 10 11 14 15)
 		 do (loop for imm from -128 to 127
-			  do (run-test-83-mem-2 mnemonic extension reg imm)))))
+			  do (run-test-83-mem-2 mnemonic extension reg imm)
+			     (run-test-83-mem-4 mnemonic extension reg imm)
+			     (run-test-83-mem-6 mnemonic extension reg imm)))))
 
 (defun run-test-83 ()
   (run-test-83-reg)
