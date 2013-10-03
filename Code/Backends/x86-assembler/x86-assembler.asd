@@ -10,6 +10,8 @@
     :depends-on ("packages"))
    (:file "instruction-database"
     :depends-on ("packages" "instruction-descriptors"))
+   (:file "print"
+    :depends-on ("packages" "assembler"))
    (:file "test"
     :depends-on ("packages" "assembler" "instruction-descriptors"))))
 
