@@ -243,12 +243,12 @@
   ())
 
 (defclass memory-operand (sized-operand)
-  (;; An instance of gpr-operand, or NIL
+  (;; An integer or NIL.
    (%base-register
     :initform nil
     :initarg :base-register
     :reader base-register)
-   ;; An instance of gpr-operand, or NIL
+   ;; An integer or NIL
    (%index-register
     :initform nil
     :initarg :index-register
@@ -269,9 +269,9 @@
 		   (index-register index-register))
       memory-operand
     (or (and (not (null base-register))
-	     (>= (code-number base-register) 8))
+	     (>= base-register 8))
 	(and (not (null index-register))
-	     (>= (code-number index-register) 8)))))
+	     (>= index-register 8)))))
 
 (defun sib-byte-p (memory-operand)
   (with-accessors ((base-register base-register)
@@ -284,7 +284,7 @@
 	  ;; If there is no index register, but there is a base
 	  ;; register, then there is a SIB byte only if the R/M field
 	  ;; is #b100.
-	  (not (member (code-number base-register) '(4 12)))))))
+	  (not (member base-register '(4 12)))))))
 
 (defun displacement-size (memory-operand)
   (with-accessors ((displacement displacement))
@@ -424,7 +424,7 @@
 		(null displacement))
 	   ;; We have only a base register.
 	   (multiple-value-bind (rex.b r/m)
-	       (floor (code-number base-register) 8)
+	       (floor base-register 8)
 	     (if (= r/m 4)
 		 `(,rex.b
 		   #b00000100  ; ModR/M byte
@@ -435,7 +435,7 @@
 		(typep displacement '(signed-byte 8)))
 	   ;; We have a base register and an 8-bit displacement.
 	   (multiple-value-bind (rex.b r/m)
-	       (floor (code-number base-register) 8)
+	       (floor base-register 8)
 	     (if (= r/m 4)
 		 `(,rex.b
 		   #b01000100 ; ModR/M byte
@@ -448,7 +448,7 @@
 		(typep displacement '(signed-byte 32)))
 	   ;; We have a base register and a 32-bit displacement.
 	   (multiple-value-bind (rex.b r/m)
-	       (floor (code-number base-register) 8)
+	       (floor base-register 8)
 	     (if (= r/m 4)
 		 `(,rex.b
 		   #b10000100 ; ModR/M byte
@@ -463,7 +463,7 @@
 	   ;; displacement is small or even 0, we must use this
 	   ;; encoding.
 	   (multiple-value-bind (rex.x i)
-	       (floor (code-number index-register) 8)
+	       (floor index-register 8)
 	     `(,(ash rex.x 1)
 	       #b00000100 ; ModR/M byte
 	       ,(+ (ash (round (log scale 2)) 6)
@@ -472,9 +472,9 @@
 	       ,@(encode-integer (or displacement 0) 4))))
 	  ((null displacement)
 	   (multiple-value-bind (rex.b b)
-	       (floor (code-number base-register) 8)
+	       (floor base-register 8)
 	     (multiple-value-bind (rex.x i)
-		 (floor (code-number index-register) 8)
+		 (floor index-register 8)
 	       (if (= b 5)
 		   ;; If the base register is 5 (EBP) or 13, then we
 		   ;; have a problem, because there is no encoding for
@@ -493,9 +493,9 @@
 			 b))))))
 	  (t
 	   (multiple-value-bind (rex.b b)
-	       (floor (code-number base-register) 8)
+	       (floor base-register 8)
 	     (multiple-value-bind (rex.x i)
-		 (floor (code-number index-register) 8)
+		 (floor index-register 8)
 	       (if (typep displacement '(signed-byte 8))
 		   `(,(+ (ash rex.x 1) rex.b)
 		     #b01000100 ; ModR/M byte
@@ -605,7 +605,9 @@
 	,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
 	,@(opcodes desc)
 	,(logior modrm (ash (opcode-extension desc) 3))
-	,@rest))))
+	,@rest
+	,@(encode-integer (value opnd2)
+			  (/ (second (second (operands desc))) 8))))))
 
 (defmethod encode-instruction-2
   (desc (opnd1 memory-operand) (opnd2 gpr-operand))
