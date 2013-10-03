@@ -103,7 +103,7 @@
     (assert (equal (list y) (assemble (list x))))))
 
 
-(defun run-test-1 ()
+(defun run-test-83-reg ()
   (loop for mnemonic in '("ADD" "OR" "AND" "XOR")
 	for extension in '(0 1 4 6)
 	do (loop for reg from 1 to 7
@@ -117,5 +117,55 @@
 			     (run-test-83-reg-4 mnemonic extension reg imm)
 			     (run-test-83-reg-6 mnemonic extension reg imm)))))
 
+;;; Test instructions with an opcode of #x83 and where the first
+;;; operand is a 32-bit memory operand with only a base register, one
+;;; of 0, 1, 2, 3, 6, and 7.
+(defun run-test-83-mem-1 (mnemonic extension reg imm)
+  (let ((x (make-instance 'code-command
+	     :mnemonic mnemonic
+	     :operands (list
+			(make-instance 'memory-operand
+			  :base-register reg
+			  :size 32)
+			(make-instance 'immediate-operand
+			  :value imm))))
+	(y `(#x83
+	     ,(+ #x00 (ash extension 3) reg)
+	     ,(if (minusp imm) (+ imm 256) imm))))
+    (assert (equal (list y) (assemble (list x))))))
+  
+;;; Test instructions with an opcode of #x83 and where the first
+;;; operand is a 32-bit memory operand with only a base register, one
+;;; of 8, 9, 10, 11, 14, and 15.
+(defun run-test-83-mem-2 (mnemonic extension reg imm)
+  (let ((x (make-instance 'code-command
+	     :mnemonic mnemonic
+	     :operands (list
+			(make-instance 'memory-operand
+			  :base-register reg
+			  :size 32)
+			(make-instance 'immediate-operand
+			  :value imm))))
+	(y `(#x41 ; Rex byte.
+	     #x83
+	     ,(+ #x00 (ash extension 3) (- reg 8))
+	     ,(if (minusp imm) (+ imm 256) imm))))
+    (assert (equal (list y) (assemble (list x))))))
+  
+
+(defun run-test-83-mem ()
+  (loop for mnemonic in '("ADD" "OR" "AND" "XOR")
+	for extension in '(0 1 4 6)
+	do (loop for reg in '(0 1 2 3 6 7)
+		 do (loop for imm from -128 to 127
+			  do (run-test-83-mem-1 mnemonic extension reg imm)))
+	   (loop for reg in '(8 9 10 11 14 15)
+		 do (loop for imm from -128 to 127
+			  do (run-test-83-mem-2 mnemonic extension reg imm)))))
+
+(defun run-test-83 ()
+  (run-test-83-reg)
+  (run-test-83-mem))
+
 (defun run-tests ()
-  (run-test-1))
+  (run-test-83))
