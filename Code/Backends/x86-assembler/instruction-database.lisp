@@ -865,7 +865,7 @@
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#xE8)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 ;;; Near call with target specified by a 32-bit relative displacement.
@@ -873,7 +873,7 @@
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#xE8)
-  :encoding (imm))
+  :encoding (label))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1344,571 +1344,571 @@
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x70)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JO"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x80)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JO"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x80)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNO"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x71)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNO"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x81)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNO"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x81)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JB"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x72)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JB"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x82)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JB"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x82)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JC"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x72)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JC"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x82)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JC"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x82)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNAE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x72)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNAE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x82)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNAE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x82)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNB"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x73)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNB"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x83)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNB"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x83)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNC"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x73)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNC"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x83)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNC"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x83)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JAE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x73)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JAE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x83)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JAE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x83)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JZ"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x74)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JZ"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x84)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JZ"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x84)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x74)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x84)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x84)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNZ"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x75)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNZ"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x85)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNZ"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x85)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x75)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x85)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x85)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JBE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x76)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JBE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x86)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JBE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x86)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNA"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x76)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNA"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x86)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNA"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x86)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNBE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x77)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNBE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x87)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNBE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x87)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JA"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x77)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JA"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x87)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JA"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x87)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JS"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x78)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JS"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x88)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JS"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x88)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNS"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x79)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNS"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x89)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNS"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x89)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JP"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7A)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JP"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8A)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JP"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8A)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JPE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7A)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JPE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8A)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JPE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8A)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNP"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7B)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNP"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8B)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNP"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8B)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JPO"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7B)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JPO"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8B)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JPO"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8B)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JL"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7C)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JL"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8C)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JL"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8C)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNGE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7C)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNGE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8C)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNGE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8C)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNL"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7D)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNL"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8D)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNL"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8D)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JGE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7D)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JGE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8D)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JGE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8D)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JLE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7E)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JLE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8E)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JLE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8E)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNG"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7E)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNG"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8E)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNG"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8E)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNLE"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7F)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JNLE"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8F)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JNLE"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8F)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JG"
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#x7F)
-  :encoding (imm))
+  :encoding (label))
 
 (define-instruction "JG"
   :modes (32 64)
   :operands ((label 16))
   :opcodes (#x0F #x8F)
-  :encoding (imm)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JG"
   :modes (32 64)
   :operands ((label 32))
   :opcodes (#x0F #x8F)
-  :encoding (imm))
+  :encoding (label))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1925,7 +1925,7 @@
   :modes (32 64)
   :operands ((label 8))
   :opcodes (#xEB)
-  :encoding (imm))
+  :encoding (label))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1937,15 +1937,15 @@
 (define-instruction "JMP"
   :modes (32 64)
   :operands ((label 16))
-  :opcodes (E9)
-  :encoding (imm)
+  :opcodes (#xE9)
+  :encoding (label)
   :operand-size-override t)
 
 (define-instruction "JMP"
   :modes (32 64)
   :operands ((label 32))
-  :opcodes (E9)
-  :encoding (imm))
+  :opcodes (#xE9)
+  :encoding (label))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

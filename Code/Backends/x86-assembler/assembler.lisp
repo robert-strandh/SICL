@@ -464,11 +464,9 @@
 (defmethod instruction-size-1 (desc opnd)
   (length (encode-instruction-1 desc opnd)))
 
-(defmethod instruction-size-1 (desc (opnd immediate-operand))
+(defmethod instruction-size-1 (desc (opnd label))
   (let ((type (first (encoding desc))))
     (ecase type
-      (imm
-       (call-next-method))
       (label
        (+ (if (operand-size-override desc) 1 0)
 	  (if (rex.w desc) 1 0)
