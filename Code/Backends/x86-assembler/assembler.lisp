@@ -27,7 +27,7 @@
 ;;; for short), a ModRM byte, a SIB byte, a sequence (containing 1, 2,
 ;;; or 4 bytes) of bytes of DISPLACEMENT, and a sequence (containing
 ;;; 1, 2, or 4 bytes) of bytes of IMMEDIATES.  Only the OPCODE is
-;;; mandatory.  The SIB byte may contain an OPCODE EXTENSION.
+;;; mandatory.  The ModRM byte may contain an OPCODE EXTENSION.
 ;;; Together, the opcode and the opcode extension (when present)
 ;;; determine the operation to be accomplished.
 ;;;
@@ -81,139 +81,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Registers
-
-(defparameter *32-bit-gprs*
-  '(eax ecx edx ebx esp ebp esi edi))
-
-(defparameter *64-bit-gprs*
-  '(rax rcx rdx rbx rsp rbp rsi rdi r8 r9 r10 r11 r12 r13 r14 r15))
-
-(defun register-name-p (object)
-  (or (member object *32-bit-gprs*)
-      (member object *64-bit-gprs*)))
-
-(defun register-type (object)
-  (assert (register-name-p object))
-  (cond ((member object *32-bit-gprs*) 'reg32)
-	((member object *64-bit-gprs*) 'reg64)
-	(t nil)))
-
-(defparameter *register-numbers*
-  (let ((table (make-hash-table :test #'eq)))
-    (loop for reg in *32-bit-gprs*
-	  for i from 0
-	  do (setf (gethash reg table) i))
-    (loop for reg in *64-bit-gprs*
-	  for i from 0
-	  do (setf (gethash reg table) i))
-    table))
-
-(defun register-number (register)
-  (gethash register *register-numbers*))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Input.
-
-;;; An INSTRUCTION LINE has the following form:
-;;;
-;;;   (<operation> <operand1> <operand2>)
-;;;
-
-;;; We allow for an effective address to take on one of the following
-;;; forms:
-;;;
-;;;   * (<base-register>)
-;;;     Base register only.
-;;;
-;;;   * (<base-register> <displacement>)
-;;;     Base register and displacement.
-;;;
-;;;   * (<scale> <index-register> <base-register>)
-;;;     Scale, index register, and base register.
-;;;
-;;;   * (<scale> <index-register> <base-register> <displacement>)
-;;;     Scale, index register, base register, and displacement.
-
-(defun form-modrm-byte (mod r/m reg)
-  (declare (type (unsigned-byte 2) mod)
-	   (type (unsigned-byte 3) r/m reg))
-  (+ (ash mod 6) (ash reg 3) r/m))
-
-(defun form-sib-byte (s i b)
-  (declare (type (unsigned-byte 2) s)
-	   (type (unsigned-byte 3) i b))
-  (+ (ash s 6) (ash i 3) b))
-
-(defun modrm-byte (reg effective-address)
-  (ecase (length effective-address)
-    (1
-     (let* ((regno (register-number (car effective-address)))
-	    (r/m (if (member (mod regno 8) '(4 5))
-		     4
-		     (mod regno 8))))
-       (form-modrm-byte 0 reg r/m)))))
-
-;;; Return true if and only if an effective address needs the SIB
-;;; byte.
-
-
-;;; Return 3 values: the S, I and B fields of the SIB byte.
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Operands.
-
-(defun operand-type (operand)
-  (cond ((listp operand)
-	 'mem)
-	((typep operand '(integer -128 127))
-	 'imm8)
-	((typep operand '(integer #.(- (expt 2 31)) #.(1- (expt 2 31))))
-	 'imm32)
-	((register-name-p operand)
-	 (register-type operand))
-	(t
-	 (assert nil))))
-
-(defun check-effective-address (effective-address)
-  (let ((regtype (if (eq *mode* '64-bit) 'reg64 'reg32)))
-    (assert (and (listp effective-address)
-		 (case (length effective-address)
-		   (1
-		    (eq (register-type (first effective-address))
-			regtype))
-		   (2
-		    (and (eq (register-type (first effective-address))
-			     regtype)
-			 (typep (second effective-address)
-				'(signed-byte 32))))
-		   (3
-		    (and (typep (first effective-address)
-				'(integer 1 8))
-			 (eq (register-type (second effective-address))
-			     regtype)
-			 (not (member (second effective-address)
-				      '(esp rsp)))
-			 (eq (register-type (third effective-address))
-			     regtype)))
-		   (4
-		    (and (typep (first effective-address)
-				'(integer 1 8))
-			 (eq (register-type (second effective-address))
-			     regtype)
-			 (not (member (second effective-address)
-				      '(esp rsp)))
-			 (eq (register-type (third effective-address))
-			     regtype)
-			 (typep (fourth effective-address)
-				'(signed-byte 32)))))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;;
+;;; Items of the list making up a source program.
 
 (defclass item () ())
 
@@ -264,50 +132,6 @@
     :initarg :displacement
     :reader displacement)))
 
-(defun rex-p (memory-operand)
-  (with-accessors ((base-register base-register)
-		   (index-register index-register))
-      memory-operand
-    (or (and (not (null base-register))
-	     (>= base-register 8))
-	(and (not (null index-register))
-	     (>= index-register 8)))))
-
-(defun sib-byte-p (memory-operand)
-  (with-accessors ((base-register base-register)
-		   (index-register index-register))
-      memory-operand
-    (or
-     ;; When there is an index register, there is always a SIB byte.
-     (not (null index-register))
-     (and (not (null base-register))
-	  ;; If there is no index register, but there is a base
-	  ;; register, then there is a SIB byte only if the R/M field
-	  ;; is #b100.
-	  (not (member base-register '(4 12)))))))
-
-(defun displacement-size (memory-operand)
-  (with-accessors ((displacement displacement))
-      memory-operand
-    (cond ((null displacement)
-	   0)
-	  ((typep displacement '(signed-byte 8))
-	   1)
-	  (t
-	   4))))
-
-;;; We don't count the contribution of the REX prefix because we count
-;;; that separately, in case the operand size requires a REX prefix as
-;;; well.
-(defun memory-operand-size (memory-operand)
-  (+
-   ;; The ModRM byte.
-   1
-   ;; The contribution of the SIB byte, if any.
-   (if (sib-byte-p memory-operand) 1 0)
-   ;; The contribution of the displacement.
-   (displacement-size memory-operand)))
-
 (defclass immediate-operand (operand)
   (;; A signed integer.
    (%value :initarg :value :reader value)))
@@ -340,7 +164,6 @@
 (defun operands-match-p (operands descriptors)
   (and (= (length operands) (length descriptors))
        (every #'operand-matches-p operands descriptors)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
