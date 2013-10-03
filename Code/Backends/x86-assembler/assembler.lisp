@@ -209,8 +209,8 @@
 	 `(,@(if (operand-size-override desc) '(#x66) '())
 	   ,@(if rex-p '(#x48) '())
 	   ,@(opcodes desc)
-	   ,@(encode-integer (- *instruction-pointer*
-				(gethash opnd *addresses*))
+	   ,@(encode-integer (- (gethash opnd *addresses*)
+				*instruction-pointer*)
 			     4)))))))
 
 (defmethod encode-instruction-1 (desc (opnd gpr-operand))
@@ -471,8 +471,7 @@
        (+ (if (operand-size-override desc) 1 0)
 	  (if (rex.w desc) 1 0)
 	  (length (opcodes desc))
-	  ;; Always assume 32-bit relative address.
-	  4)))))
+	  (/ (second (first (operands desc))) 8))))))
 
 (defgeneric instruction-size-2 (desc opnd1 opnd2))
 
