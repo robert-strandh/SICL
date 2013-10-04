@@ -68,6 +68,11 @@
    #:malformed-aux
    #:malformed-lambda-list-pattern
    #:required-must-be-variable
+   #:too-few-arguments
+   #:too-many-arguments
+   #:unrecognized-keyword-argument
+   #:invalid-keyword-argument
+   #:odd-number-of-keyword-arguments
    #:sicl-unbound-variable
    #:sicl-unbound-function
    #:no-such-class-name
