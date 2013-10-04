@@ -100,15 +100,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add imm to reg/mem, 16/32/64
+;;; To a GPR or memory location (16/32/64) (destination), add an
+;;; immediate value (16/32) (source), and store the result in the
+;;; destination.
+;;;
 ;;; Opcodes: 81
 ;;; Opcode extension 0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add imm16 to reg/mem16
+;;; To a 16-bit GPR or memory location (destination), add an immediate
+;;; 16-bit value (source), and store the result in the destination.
 
-;;; Add imm16 to reg16
+;;; To a 16-bit GPR (destination), add an immediate 16-bit value
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 16) (imm 16))
@@ -117,7 +122,8 @@
   :encoding (modrm imm)
   :operand-size-override t)
 
-;;; Add imm16 to mem16
+;;; To a 16-bit memory location (destination), add an immediate 16-bit
+;;; value (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((memory 16) (imm 16))
@@ -128,9 +134,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; To a 32-bit GPR or memory location (destination), add an immediate
+;;; 32-bit value (source), and store the result in the destination.
 ;;; Add imm32 to reg/mem32
 
-;;; Add imm32 to reg32
+;;; To a 32-bit GPR (destination), add an immediate 32-bit value
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 32) (imm 32))
@@ -138,7 +147,8 @@
   :opcode-extension 0
   :encoding (modrm imm))
 
-;;; Add imm32 to mem32
+;;; To a 32-bit memory location (destination), add an immediate 32-bit
+;;; value (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((memory 32) (imm 32))
@@ -148,9 +158,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add sign-extended imm32 to reg/mem64
+;;; To a 32-bit GPR or memory location (destination), add an immediate
+;;; 32-bit sign-extended value (source), and store the result in the
+;;; destination.
 
-;;; Add imm32 to reg64
+;;; To a 32-bit GPR (destination), add an immediate 32-bit
+;;; sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((gpr 64) (simm 32))
@@ -159,7 +173,9 @@
   :encoding (modrm imm)
   :rex.w t)
 
-;;; Add imm32 to mem64
+;;; To a 32-bit memory location (destination), add an immediate 32-bit
+;;; sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((memory 64) (simm 32))
