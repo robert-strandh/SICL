@@ -26,9 +26,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add an 8-bit immediate value to the contents of GPR A and store
-;;; the result in GPR A.
-;;; 
+;;; To the contents of GPR A (destination), add an 8-bit immediate
+;;; value (source) and store the result in the destination.
+;;;
 ;;; Opcodes: 04
 
 (define-instruction "ADD"
@@ -39,11 +39,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add an immediate value (16/32) to GPR A (16/32/64).
+;;; To the contents of GPR A (16/32/64) (destination), add an
+;;; immediate value (16/32) (source), and store the result in the
+;;; destination.
 ;;; 
 ;;; Opcodes: 05
 
-;;; Add imm16 to GPR AX
+;;; To the contents of GPR AX (destination), add an immediate 16-bit
+;;; value (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr-a 16) (imm 16))
@@ -51,14 +54,17 @@
   :encoding (- imm)
   :operand-size-override t)
 
-;;; Add imm32 to GPR EAX
+;;; To the contents of GPR EAX (destination), add an immediate 32-bit
+;;; value (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr-a 32) (imm 32))
   :opcodes (#x05)
   :encoding (- imm))
 
-;;; Add sign-extended imm32 to GPR RAX
+;;; To the contents of GPR RAX (destination), add an immediate
+;;; sign-extended 32-bit value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((gpr-a 64) (simm 32))
@@ -68,13 +74,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add an immediate 8-bit value to an 8-bit register or memory
-;;; location.
+;;; To an 8-bit GPR or memory location (destination), add an immediate
+;;; 8-bit value (source), and store the result in the destination.
 ;;; 
 ;;; Opcodes: 80
 ;;; Opcode extension: 0
 
-;;; Add an immediate 8-bit value to an 8-bit register.
+;;; To an 8-bit GPR (destination), add an immediate 8-bit value
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 8) (imm 8))
@@ -82,7 +89,8 @@
   :opcode-extension 0
   :encoding (modrm imm))
 
-;;; Add an immediate 8-bit value to an 8-bit memory location.
+;;; To an 8-bit memory location (destination), add an immediate 8-bit
+;;; value (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((memory 8) (imm 8))
