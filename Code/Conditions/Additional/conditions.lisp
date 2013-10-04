@@ -299,6 +299,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;;  Argument mismatch conditions.
+
+(define-condition too-few-arguments (program-error)
+  ())
+
+(define-condition too-many-arguments (program-error)
+  ())
+
+(define-condition unrecognized-keyword-argument (program-error)
+  ((%keyword-argument
+    :initarg :keyword
+    :reader keyword-argument)))
+
+(define-condition invalid-keyword-argument (program-error)
+  ((%keyword-argument
+    :initarg :keyword
+    :reader keyword-argument)))
+
+(define-condition odd-number-of-keyword-arguments (program-error)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; CLOS/MOP-related conditions. 
 
 (define-condition no-such-class-name (sicl-type-error)
