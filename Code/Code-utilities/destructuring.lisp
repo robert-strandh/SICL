@@ -468,28 +468,30 @@
 
 (defun check-arg-count
     (variable arg-count-var required-count optional-count rest-p key-p)
-  `((,variable (progn ,@(if (plusp required-count)
-			    `((if (< ,arg-count-var ,required-count)
-				  (error "too few arguments")))
-			    '())
-		      ,@(if (and (not rest-p) (not key-p))
-			    `((if (> ,arg-count-var
-				     ,(+ required-count optional-count))
-				  (error "too many arguments")))
-			    '())
-		      ,@(if key-p
-			    (if (evenp (+ required-count optional-count))
-				`((when (and (> ,arg-count-var
-						,(+ required-count
-						    optional-count))
-					     (oddp ,arg-count-var))
-				    (error "odd number of keyword arguments")))
-				`((when (and (> ,arg-count-var
-						,(+ required-count
-						    optional-count))
-					     (evenp ,arg-count-var))
-				    (error "odd number of keyword arguments"))))
-			    '())))))
+  `((,variable
+     (progn
+       ,@(if (plusp required-count)
+	     `((if (< ,arg-count-var ,required-count)
+		   (error 'sicl-additional-conditions:too-few-arguments)))
+	     '())
+       ,@(if (and (not rest-p) (not key-p))
+	     `((if (> ,arg-count-var
+		      ,(+ required-count optional-count))
+		   (error 'sicl-additional-conditions:too-many-arguments)))
+	     '())
+       ,@(if key-p
+	     (if (evenp (+ required-count optional-count))
+		 `((when (and (> ,arg-count-var
+				 ,(+ required-count
+				     optional-count))
+			      (oddp ,arg-count-var))
+		     (error 'sicl-additional-conditions:odd-number-of-keyword-arguments)))
+		 `((when (and (> ,arg-count-var
+				 ,(+ required-count
+				     optional-count))
+			      (evenp ,arg-count-var))
+		     (error 'sicl-additional-conditions:odd-number-of-keyword-arguments))))
+	     '())))))
 
 (defun match-lambda-list (lambda-list arg-count-op arg-op)
   (with-accessors ((required required)
