@@ -104,8 +104,8 @@
 
 
 (defun run-test-83-reg ()
-  (loop for mnemonic in '("ADD" "OR" "AND" "XOR")
-	for extension in '(0 1 4 6)
+  (loop for mnemonic in '("ADD" "OR" "AND" "SUB" "XOR")
+	for extension in '(0 1 4 5 6)
 	do (loop for reg from 1 to 7
 		 do (loop for imm from -128 to 127
 			  do (run-test-83-reg-1 mnemonic extension reg imm)
@@ -226,8 +226,8 @@
     (assert (equal (list y) (assemble (list x))))))
 
 (defun run-test-83-mem ()
-  (loop for mnemonic in '("ADD" "OR" "AND" "XOR")
-	for extension in '(0 1 4 6)
+  (loop for mnemonic in '("ADD" "OR" "AND" "SUB" "XOR")
+	for extension in '(0 1 4 5 6)
 	do (loop for reg in '(0 1 2 3 6 7)
 		 do (loop for imm from -128 to 127
 			  do (run-test-83-mem-1 mnemonic extension reg imm)
@@ -245,3 +245,35 @@
 
 (defun run-tests ()
   (run-test-83))
+
+(defparameter *t*
+  (let ((label1 (make-instance 'label))
+	(label2 (make-instance 'label)))
+    (list
+     (make-instance 'code-command
+       :mnemonic "ADD"
+       :operands (list
+		  (make-instance 'gpr-operand
+		    :size 64
+		    :code-number 2)
+		  (make-instance 'immediate-operand
+		    :value 33)))
+     label1
+     (make-instance 'code-command
+       :mnemonic "ADD"
+       :operands (list
+		  (make-instance 'gpr-operand
+		    :size 32
+		    :code-number 3)
+		  (make-instance 'immediate-operand
+		    :value 44)))
+     label2
+     (make-instance 'code-command
+       :mnemonic "JMP"
+       :operands (list label1))
+     (make-instance 'code-command
+       :mnemonic "JNE"
+       :operands (list label2)))))
+     
+     
+   
