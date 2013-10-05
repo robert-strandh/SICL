@@ -186,15 +186,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add sign-extended imm8 to reg/mem 16/32/64
+;;; To a GPR or memory location (16/32/64) (destination), add an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
+;;;
 ;;; Opcodes: 83
 ;;; Opcode extension: 0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add sign-extended imm8 to reg/mem16
+;;; To a 16-bit GPR or memory location (destination), add an immediate
+;;; 8-bit sign-extended value (source), and store the result in the
+;;; destination.
 
-;;; Add sign-extended imm8 to reg16
+;;; To a 16-bit GPR (destination), add an immediate 8-bit
+;;; sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 16) (simm 8))
@@ -203,7 +210,9 @@
   :encoding (modrm imm)
   :operand-size-override t)
 
-;;; Add sign-extended imm8 to mem16
+;;; To a 16-bit memory location (destination), add an immediate 8-bit
+;;; sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((memory 16) (simm 8))
@@ -214,9 +223,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add sign-extended imm8 to reg/mem32
+;;; To a 32-bit GPR or memory location (destination), add an immediate
+;;; 8-bit sign-extended value (source), and store the result in the
+;;; destination.
 
-;;; Add sign-extended imm8 to reg32
+;;; To a 32-bit GPR (destination), add an immediate 8-bit
+;;; sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 32) (simm 8))
@@ -224,7 +237,9 @@
   :opcode-extension 0
   :encoding (modrm imm))
 
-;;; Add sign-extended imm8 to mem32
+;;; To a 32-bit memory location (destination), add an immediate 8-bit
+;;; sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((memory 32) (simm 8))
@@ -234,9 +249,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add sign-extended imm8 to reg/mem64
+;;; To a 64-bit GPR or memory location (destination), add an immediate
+;;; 8-bit sign-extended value (source), and store the result in the
+;;; destination.
 
-;;; Add sign-extended imm8 to reg64
+;;; To a 64-bit GPR (destination), add an immediate 8-bit
+;;; sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((gpr 64) (simm 8))
@@ -245,7 +264,9 @@
   :encoding (modrm imm)
   :rex.w t)
 
-;;; Add sign-extended imm8 to mem64
+;;; To a 64-bit memory location (destination), add an immediate 8-bit
+;;; sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((memory 64) (simm 8))
@@ -256,23 +277,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg8 to reg/mem8
+;;; To an 8-bit GPR or memory location (destination), add an immediate
+;;; 8-bit value (source), and store the result in the destination.
+;;;
 ;;; Opcodes: 00
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Add reg8 to reg8
-
+;;; To an 8-bit GPR (destination), add an immediate 8-bit value
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x00)
   :encoding (modrm reg))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Add reg8 to mem8
-
+;;; To an 8-bit memory location (destination), add an immediate 8-bit
+;;; value (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((memory 8) (gpr 8))
@@ -282,14 +301,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg to reg/mem, 16/32/64
+;;; To a GPR or memory location (16/32/64) (destination), add the
+;;; contents of a GPR (16/32/64) (source), and store the result in the
+;;; destination.
+;;;
 ;;; Opcodes: 01
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg16 to reg/mem16
+;;; To a 16-bit GPR or memory location (destination), add the contents
+;;; of a 16-bit GPR (source), and store the result in the destination.
 
-;;; Add reg16 to reg16
+;;; To a 16-bit GPR (destination), add the contents of a 16-bit GPR
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -297,7 +321,8 @@
   :encoding (modrm reg)
   :operand-size-override t)
 
-;;; Add reg16 to mem16
+;;; To a 16-bit memory location (destination), add the contents of a
+;;; 16-bit GPR (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((memory 16) (gpr 16))
@@ -308,16 +333,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg32 to reg/mem32
+;;; To a 32-bit GPR or memory location (destination), add the contents
+;;; of a 32-bit GPR (source), and store the result in the destination.
 
-;;; Add reg32 to reg32
+;;; To a 32-bit GPR (destination), add the contents of a 32-bit GPR
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x01)
   :encoding (modrm reg))
 
-;;; Add reg32 to mem32
+;;; To a 32-bit memory location (destination), add the contents of a
+;;; 32-bit GPR (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((memory 32) (gpr 32))
@@ -327,9 +355,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg64 to reg/mem64
+;;; To a 64-bit GPR or memory location (destination), add the contents
+;;; of a 64-bit GPR (source), and store the result in the destination.
 
-;;; Add reg64 to reg64
+;;; To a 64-bit GPR (destination), add the contents of a 64-bit GPR
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -337,7 +367,8 @@
   :encoding (modrm reg)
   :rex.w t)
 
-;;; Add reg64 to mem64
+;;; To a 64-bit memory location (destination), add the contents of a
+;;; 64-bit GPR (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((memory 64) (gpr 64))
@@ -348,23 +379,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg/mem8 to reg8
+;;; To an 8-bit GPR (destination), add the contents of an 8-bit GPR or
+;;; memory location (source), and store the result in the destination.
+;;;
 ;;; Opcodes: 02
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Add reg8 to reg8
-
+;;; To an 8-bit GPR (destination), add the contents of an 8-bit GPR
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x02)
   :encoding (reg modrm))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Add mem8 to reg8
-
+;;; To an 8-bit GPR (destination), add the contents of an 8-bit memory
+;;; location (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 8) (memory 8))
@@ -373,14 +402,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg/mem to reg, 16/32/64
+;;; To a GPR (16/32/64) (destination), add the contents of a GPR or
+;;; memory location (16/32/64) (source), and store the result in the
+;;; destination.
+;;;
 ;;; Opcodes: 03
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg/mem16 to reg16
+;;; To a 16-bit GPR (destination), add the contents of a 16-bit GPR or
+;;; memory location (source), and store the result in the destination.
 
-;;; Add reg16 to reg16
+;;; To a 16-bit GPR (destination), add the contents of a 16-bit GPR
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -388,7 +422,8 @@
   :encoding (reg modrm)
   :operand-size-override t)
 
-;;; Add mem16 to reg16
+;;; To a 16-bit GPR (destination), add the contents of a 16-bit memory
+;;; location (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 16) (memory 16))
@@ -398,16 +433,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg/mem32 to reg32
+;;; To a 32-bit GPR (destination), add the contents of a 32-bit GPR or
+;;; memory location (source), and store the result in the destination.
 
-;;; Add reg32 to reg32
+;;; To a 32-bit GPR (destination), add the contents of a 32-bit GPR
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x03)
   :encoding (reg modrm))
 
-;;; Add mem32 to reg32
+;;; To a 32-bit GPR (destination), add the contents of a 32-bit memory
+;;; location (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (32 64)
   :operands ((gpr 32) (memory 32))
@@ -416,9 +454,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Add reg/mem64 to reg64
+;;; To a 64-bit GPR (destination), add the contents of a 64-bit GPR or
+;;; memory location (source), and store the result in the destination.
 
-;;; Add reg64 to reg64
+;;; To a 64-bit GPR (destination), add the contents of a 64-bit GPR
+;;; (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -426,7 +466,8 @@
   :encoding (reg modrm)
   :rex.w t)
 
-;;; Add mem64 to reg64
+;;; To a 64-bit GPR (destination), add the contents of a 64-bit memory
+;;; location (source), and store the result in the destination.
 (define-instruction "ADD"
   :modes (64)
   :operands ((gpr 64) (memory 64))
