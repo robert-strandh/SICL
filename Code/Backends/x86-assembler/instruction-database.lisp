@@ -645,19 +645,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of reg/mem (16/32/64) with a sign-extended 8-bit
-;;; immediate value, and store the result in reg/mem.
+;;; AND the contents of a GPR or memory location (16/32/64)
+;;; (destination), with a an immediate 8-bit sign-extended value
+;;; (source), and store the result in the destination.
 ;;;
 ;;; Opcodes: 83
 ;;; Opcode extension: 4
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of reg/mem16 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem16.
+;;; AND the contents of a 16-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; AND the contents of reg16 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg16.
+;;; AND the contents of a 16-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 16) (simm 8))
@@ -666,8 +669,9 @@
   :encoding (modrm imm)
   :operand-size-override t)
 
-;;; AND the contents of mem16 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem16.
+;;; AND the contents of a 16-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((memory 16) (simm 8))
@@ -678,11 +682,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of reg/mem32 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem32.
+;;; AND the contents of a 32-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; AND the contents of reg32 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg32.
+;;; AND the contents of a 32-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 32) (simm 8))
@@ -690,8 +696,9 @@
   :opcode-extension 4
   :encoding (modrm imm))
 
-;;; AND the contents of mem32 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem32.
+;;; AND the contents of a 32-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((memory 32) (simm 8))
@@ -701,11 +708,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of reg/mem64 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem64.
+;;; AND the contents of a 64-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; AND the contents of reg64 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg64.
+;;; AND the contents of a 64-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "AND"
   :modes (64)
   :operands ((gpr 64) (simm 8))
@@ -714,8 +723,9 @@
   :encoding (modrm imm)
   :rex.w t)
 
-;;; AND the contents of mem64 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem64.
+;;; AND the contents of a 64-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "AND"
   :modes (64)
   :operands ((memory 64) (simm 8))
@@ -726,21 +736,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a reg/mem8 and a reg8 and store the result in
-;;; reg/mem8.
+;;; AND the contents of an 8-bit GPR or memory location (destination)
+;;; with the contents of an 8-bit GPR (source) and store the result in
+;;; the destination.
 ;;;
 ;;; Opcodes: 20
 
-;;; AND the contents of a reg8 and a reg8 and store the result in
-;;; reg8.
+;;; AND the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR (source) and store the result in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x20)
   :encoding (modrm reg))
 
-;;; AND the contents of a mem8 and a reg8 and store the result in
-;;; mem8.
+;;; AND the contents of an 8-bit memory location (destination) with
+;;; the contents of an 8-bit GPR (source) and store the result in the
+;;; destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((memory 8) (gpr 8))
@@ -750,18 +762,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a reg/mem and a reg and store the contents in
-;;; reg/mem (16/32/64).
+;;; AND the contents of a GPR or memory location (16/32/64)
+;;; (destination), with the contents of a GPR (16/32/64) (source), and
+;;; store the result in the destination.
 ;;; 
 ;;; Opcodes: 21
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a reg/mem16 and a reg16 and store the contents
-;;; in reg/mem16.
+;;; AND the contents of a 16-bit GPR or memory location (destination),
+;;; with the contents of a 16-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; AND the contents of a reg16 and a reg16 and store the contents
-;;; in reg16.
+;;; AND the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR (source), and store the result in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -769,8 +783,9 @@
   :encoding (modrm reg)
   :operand-size-override t)
 
-;;; AND the contents of a mem16 and a reg16 and store the contents
-;;; in mem16.
+;;; AND the contents of a 16-bit memory location (destination), with
+;;; the contents of a 16-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((memory 16) (gpr 16))
@@ -781,19 +796,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a reg/mem32 and a reg32 and store the contents
-;;; in reg/mem32.
+;;; AND the contents of a 32-bit GPR or memory location (destination),
+;;; with the contents of a 32-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; AND the contents of a reg32 and a reg32 and store the contents
-;;; in reg32.
+;;; AND the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR (source), and store the result in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x21)
   :encoding (modrm reg))
 
-;;; AND the contents of a mem32 and a reg32 and store the contents
-;;; in mem32.
+;;; AND the contents of a 32-bit memory location (destination), with
+;;; the contents of a 32-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((memory 32) (gpr 32))
@@ -803,11 +820,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a reg/mem64 and a reg64 and store the contents
-;;; in reg/mem64.
+;;; AND the contents of a 64-bit GPR or memory location (destination),
+;;; with the contents of a 64-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; AND the contents of a reg64 and a reg64 and store the contents
-;;; in reg64.
+;;; AND the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR (source), and store the result in the destination.
 (define-instruction "AND"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -815,8 +833,9 @@
   :encoding (modrm reg)
   :rex.w t)
 
-;;; AND the contents of a mem64 and a reg64 and store the contents
-;;; in mem64.
+;;; AND the contents of a 64-bit memory location (destination), with
+;;; the contents of a 64-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "AND"
   :modes (64)
   :operands ((memory 64) (gpr 64))
@@ -827,21 +846,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of an 8-bit register and an 8-bit reg/mem and
-;;; store the result in the register.
+;;; AND the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR or memory location (source), and store the result
+;;; in the destination.
 ;;;
 ;;; Opcodes: 22
 
-;;; AND the contents of an 8-bit register and an 8-bit register and
-;;; store the result in the register.
+;;; AND the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR (source), and store the result in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x22)
   :encoding (reg modrm))
 
-;;; AND the contents of an 8-bit register and an 8-bit memory location
-;;; and store the result in the register.
+;;; AND the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 8) (memory 8))
@@ -850,20 +871,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a register and the contents of a memory
-;;; location or a register, and store the result in the register
-;;; (16/32/64).
+;;; AND the contents of a GPR (16/32/64) (destination), with the
+;;; contents of a GPR or memory location (16/32/64) (source), and
+;;; store the result in the destination.
 ;;;
 ;;; Opcodes: 23
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a 16-bit register and the contents of a 16-bit
-;;; memory location or a 16-bit register, and store the result in the
-;;; 16-bit register.
+;;; AND the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; AND the contents of a 16-bit register and the contents of a 16-bit
-;;; a 16-bit register, and store the result in the 16-bit register.
+;;; AND the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR (source), and store the result in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -871,8 +892,9 @@
   :encoding (reg modrm)
   :operand-size-override t)
 
-;;; AND the contents of a 16-bit register and the contents of a 16-bit
-;;; memory location, and store the result in the 16-bit register.
+;;; AND the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 16) (memory 16))
@@ -882,20 +904,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a 32-bit register and the contents of a 32-bit
-;;; memory location or a 32-bit register, and store the result in the
-;;; 32-bit register.
+;;; AND the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; AND the contents of a 32-bit register and the contents of a 32-bit
-;;; a 32-bit register, and store the result in the 32-bit register.
+;;; AND the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR (source), and store the result in the destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x23)
   :encoding (reg modrm))
 
-;;; AND the contents of a 32-bit register and the contents of a 32-bit
-;;; memory location, and store the result in the 32-bit register.
+;;; AND the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "AND"
   :modes (32 64)
   :operands ((gpr 32) (memory 32))
@@ -904,12 +927,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; AND the contents of a 64-bit register and the contents of a 64-bit
-;;; memory location or a 64-bit register, and store the result in the
-;;; 64-bit register.
+;;; AND the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; AND the contents of a 64-bit register and the contents of a 64-bit
-;;; a 64-bit register, and store the result in the 64-bit register.
+;;; AND the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR (source), and store the result in the destination.
 (define-instruction "AND"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -917,8 +940,9 @@
   :encoding (reg modrm)
   :rex.w t)
 
-;;; AND the contents of a 64-bit register and the contents of a 64-bit
-;;; memory location, and store the result in the 64-bit register.
+;;; AND the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "AND"
   :modes (64)
   :operands ((gpr 64) (memory 64))
@@ -2421,8 +2445,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of AL with an immediate 8-bit value and store the
-;;; result in AL.
+;;; OR the contents of AL (destination) with an immediate 8-bit value
+;;; (source) and store the result in AL.
 ;;;
 ;;; Opcodes: OC
 
@@ -2434,13 +2458,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of GPR A (16/32/64) with an immediate value
-;;; (16/32) and store the result in GPR A.
+;;; OR the contents of GPR A (16/32/64) (destination) with an
+;;; immediate value (16/32) (source), and store the result in the
+;;; destination.
 ;;;
 ;;; Opcodes: 0D
 
-;;; OR the contents of GPR AX with an immediate 16-bit value and
-;;; store the result in GPR AX.
+;;; OR the contents of GPR AX (destination) with an immediate 16-bit
+;;; value (source) and store the result in GPR AX.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr-a 16) (imm 16))
@@ -2448,16 +2473,16 @@
   :encoding (- imm)
   :operand-size-override t)
 
-;;; OR the contents of GPR EAX with an immediate 32-bit value and
-;;; store the result in GPR EAX.
+;;; OR the contents of GPR EAX (destination) with an immediate 32-bit
+;;; value (source), and store the result in GPR EAX.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr-a 32) (imm 32))
   :opcodes (#x0D)
   :encoding (- imm))
 
-;;; OR the contents of GPR RAX with a sign-extended 32-bit immediate
-;;; value and store the result in GPR RAX.
+;;; OR the contents of GPR RAX (destination) with a sign-extended
+;;; 32-bit immediate value (source) and store the result in GPR RAX.
 (define-instruction "OR"
   :modes (64)
   :operands ((gpr-a 64) (imm 32))
@@ -2467,14 +2492,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem8 with an immediate 8-bit value, and
-;;; store the result in reg/mem8.
+;;; OR the contents of an 8-bit GPR or memory location (destination)
+;;; with an immediate 8-bit value (source), and store the result in
+;;; the destination.
 ;;;
 ;;; Opcodes: 80
 ;;; Opcode extension: 1
 
-;;; OR the contents of reg8 with an immediate 8-bit value, and store
-;;; the result in reg8.
+;;; OR the contents of an 8-bit GPR (destination) with an immediate
+;;; 8-bit value (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 8) (imm 8))
@@ -2482,8 +2508,9 @@
   :opcode-extension 1
   :encoding (modrm imm))
 
-;;; OR the contents of mem8 with an immediate 8-bit value, and store
-;;; the result in mem8.
+;;; OR the contents of an 8-bit memory location (destination) with an
+;;; immediate 8-bit value (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((memory 8) (imm 8))
@@ -2493,19 +2520,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem (16/32/64) with an immediate value
-;;; (16/32) and store the result in reg/mem.
+;;; OR the contents of a GPR or a memory location (16/32/64)
+;;; (destination) with an immediate value (16/32) (source), and store
+;;; the result in the destination.
 ;;;
 ;;; Opcodes: 81
 ;;; Opcode extension 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem16 with an immediate 16-bit value and
-;;; store the result in reg/mem16.
+;;; OR the contents of a 16-bit GPR or a memory location
+;;; (destination) with an immediate 16-bit value (source), and store
+;;; the result in the destination.
 
-;;; OR the contents of reg16 with an immediate 16-bit value and
-;;; store the result in reg16.
+;;; OR the contents of a 16-bit GPR (destination) with an immediate
+;;; 16-bit value (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 16) (imm 16))
@@ -2514,8 +2543,9 @@
   :encoding (modrm imm)
   :operand-size-override t)
 
-;;; OR the contents of mem16 with an immediate 16-bit value and
-;;; store the result in mem16.
+;;; OR the contents of a 16-bit a memory location (destination) with
+;;; an immediate 16-bit value (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((memory 16) (imm 16))
@@ -2526,11 +2556,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem32 with an immediate 32-bit value and
-;;; store the result in reg/mem32.
+;;; OR the contents of a 32-bit GPR or a memory location
+;;; (destination) with an immediate 32-bit value (source), and store
+;;; the result in the destination.
 
-;;; OR the contents of reg32 with an immediate 32-bit value and
-;;; store the result in reg32.
+;;; OR the contents of a 32-bit GPR (destination) with an immediate
+;;; 32-bit value (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 32) (imm 32))
@@ -2538,8 +2569,9 @@
   :opcode-extension 1
   :encoding (modrm imm))
 
-;;; OR the contents of mem32 with an immediate 32-bit value and
-;;; store the result in mem32.
+;;; OR the contents of a 32-bit a memory location (destination) with
+;;; an immediate 32-bit value (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((memory 32) (imm 32))
@@ -2549,11 +2581,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem64 with a sign-extended immediate
-;;; 32-bit value and store the result in reg/mem64.
+;;; OR the contents of a 64-bit GPR or a memory location
+;;; (destination) with an immediate 32-bit sign-extended value
+;;; (source), and store the result in the destination.
 
-;;; OR the contents of reg64 with a sign-extended immediate
-;;; 32-bit value and store the result in reg64.
+;;; OR the contents of a 64-bit GPR (destination) with an immediate
+;;; 32-bit sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (64)
   :operands ((gpr 64) (simm 32))
@@ -2562,8 +2596,9 @@
   :encoding (modrm imm)
   :rex.w t)
 
-;;; OR the contents of mem64 with a sign-extended immediate
-;;; 32-bit value and store the result in mem64.
+;;; OR the contents of a 64-bit a memory location (destination) with
+;;; an immediate 32-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "OR"
   :modes (64)
   :operands ((memory 64) (simm 32))
@@ -2574,19 +2609,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem (16/32/64) with a sign-extended 8-bit
-;;; immediate value, and store the result in reg/mem.
+;;; OR the contents of a GPR or memory location (16/32/64)
+;;; (destination), with a an immediate 8-bit sign-extended value
+;;; (source), and store the result in the destination.
 ;;;
 ;;; Opcodes: 83
 ;;; Opcode extension: 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem16 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem16.
+;;; OR the contents of a 16-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; OR the contents of reg16 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg16.
+;;; OR the contents of a 16-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 16) (simm 8))
@@ -2595,8 +2633,9 @@
   :encoding (modrm imm)
   :operand-size-override t)
 
-;;; OR the contents of mem16 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem16.
+;;; OR the contents of a 16-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((memory 16) (simm 8))
@@ -2607,11 +2646,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem32 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem32.
+;;; OR the contents of a 32-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; OR the contents of reg32 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg32.
+;;; OR the contents of a 32-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 32) (simm 8))
@@ -2619,8 +2660,9 @@
   :opcode-extension 1
   :encoding (modrm imm))
 
-;;; OR the contents of mem32 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem32.
+;;; OR the contents of a 32-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((memory 32) (simm 8))
@@ -2630,11 +2672,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of reg/mem64 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem64.
+;;; OR the contents of a 64-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; OR the contents of reg64 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg64.
+;;; OR the contents of a 64-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "OR"
   :modes (64)
   :operands ((gpr 64) (simm 8))
@@ -2643,8 +2687,9 @@
   :encoding (modrm imm)
   :rex.w t)
 
-;;; OR the contents of mem64 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem64.
+;;; OR the contents of a 64-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "OR"
   :modes (64)
   :operands ((memory 64) (simm 8))
@@ -2655,21 +2700,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a reg/mem8 and a reg8 and store the result in
-;;; reg/mem8.
+;;; OR the contents of an 8-bit GPR or memory location (destination)
+;;; with the contents of an 8-bit GPR (source) and store the result in
+;;; the destination.
 ;;;
 ;;; Opcodes: 08
 
-;;; OR the contents of a reg8 and a reg8 and store the result in
-;;; reg8.
+;;; OR the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR (source) and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x08)
   :encoding (modrm reg))
 
-;;; OR the contents of a mem8 and a reg8 and store the result in
-;;; mem8.
+;;; OR the contents of an 8-bit memory location (destination) with
+;;; the contents of an 8-bit GPR (source) and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((memory 8) (gpr 8))
@@ -2679,18 +2726,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a reg/mem and a reg and store the contents in
-;;; reg/mem (16/32/64).
+;;; OR the contents of a GPR or memory location (16/32/64)
+;;; (destination), with the contents of a GPR (16/32/64) (source), and
+;;; store the result in the destination.
 ;;; 
 ;;; Opcodes: 09
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a reg/mem16 and a reg16 and store the contents
-;;; in reg/mem16.
+;;; OR the contents of a 16-bit GPR or memory location (destination),
+;;; with the contents of a 16-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; OR the contents of a reg16 and a reg16 and store the contents
-;;; in reg16.
+;;; OR the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -2698,8 +2747,9 @@
   :encoding (modrm reg)
   :operand-size-override t)
 
-;;; OR the contents of a mem16 and a reg16 and store the contents
-;;; in mem16.
+;;; OR the contents of a 16-bit memory location (destination), with
+;;; the contents of a 16-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((memory 16) (gpr 16))
@@ -2710,19 +2760,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a reg/mem32 and a reg32 and store the contents
-;;; in reg/mem32.
+;;; OR the contents of a 32-bit GPR or memory location (destination),
+;;; with the contents of a 32-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; OR the contents of a reg32 and a reg32 and store the contents
-;;; in reg32.
+;;; OR the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x09)
   :encoding (modrm reg))
 
-;;; OR the contents of a mem32 and a reg32 and store the contents
-;;; in mem32.
+;;; OR the contents of a 32-bit memory location (destination), with
+;;; the contents of a 32-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((memory 32) (gpr 32))
@@ -2732,11 +2784,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a reg/mem64 and a reg64 and store the contents
-;;; in reg/mem64.
+;;; OR the contents of a 64-bit GPR or memory location (destination),
+;;; with the contents of a 64-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; OR the contents of a reg64 and a reg64 and store the contents
-;;; in reg64.
+;;; OR the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -2744,8 +2797,9 @@
   :encoding (modrm reg)
   :rex.w t)
 
-;;; OR the contents of a mem64 and a reg64 and store the contents
-;;; in mem64.
+;;; OR the contents of a 64-bit memory location (destination), with
+;;; the contents of a 64-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (64)
   :operands ((memory 64) (gpr 64))
@@ -2756,21 +2810,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of an 8-bit register and an 8-bit reg/mem and
-;;; store the result in the register.
+;;; OR the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR or memory location (source), and store the result
+;;; in the destination.
 ;;;
 ;;; Opcodes: 0A
 
-;;; OR the contents of an 8-bit register and an 8-bit register and
-;;; store the result in the register.
+;;; OR the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x0A)
   :encoding (reg modrm))
 
-;;; OR the contents of an 8-bit register and an 8-bit memory location
-;;; and store the result in the register.
+;;; OR the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 8) (memory 8))
@@ -2779,20 +2835,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a register and the contents of a memory
-;;; location or a register, and store the result in the register
-;;; (16/32/64).
+;;; OR the contents of a GPR (16/32/64) (destination), with the
+;;; contents of a GPR or memory location (16/32/64) (source), and
+;;; store the result in the destination.
 ;;;
 ;;; Opcodes: 0B
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a 16-bit register and the contents of a 16-bit
-;;; memory location or a 16-bit register, and store the result in the
-;;; 16-bit register.
+;;; OR the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; OR the contents of a 16-bit register and the contents of a 16-bit
-;;; a 16-bit register, and store the result in the 16-bit register.
+;;; OR the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -2800,8 +2856,9 @@
   :encoding (reg modrm)
   :operand-size-override t)
 
-;;; OR the contents of a 16-bit register and the contents of a 16-bit
-;;; memory location, and store the result in the 16-bit register.
+;;; OR the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 16) (memory 16))
@@ -2811,20 +2868,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a 32-bit register and the contents of a 32-bit
-;;; memory location or a 32-bit register, and store the result in the
-;;; 32-bit register.
+;;; OR the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; OR the contents of a 32-bit register and the contents of a 32-bit
-;;; a 32-bit register, and store the result in the 32-bit register.
+;;; OR the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x0B)
   :encoding (reg modrm))
 
-;;; OR the contents of a 32-bit register and the contents of a 32-bit
-;;; memory location, and store the result in the 32-bit register.
+;;; OR the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (32 64)
   :operands ((gpr 32) (memory 32))
@@ -2833,12 +2891,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; OR the contents of a 64-bit register and the contents of a 64-bit
-;;; memory location or a 64-bit register, and store the result in the
-;;; 64-bit register.
+;;; OR the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; OR the contents of a 64-bit register and the contents of a 64-bit
-;;; a 64-bit register, and store the result in the 64-bit register.
+;;; OR the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR (source), and store the result in the destination.
 (define-instruction "OR"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -2846,8 +2904,9 @@
   :encoding (reg modrm)
   :rex.w t)
 
-;;; OR the contents of a 64-bit register and the contents of a 64-bit
-;;; memory location, and store the result in the 64-bit register.
+;;; OR the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "OR"
   :modes (64)
   :operands ((gpr 64) (memory 64))
