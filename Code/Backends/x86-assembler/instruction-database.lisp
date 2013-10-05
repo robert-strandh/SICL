@@ -136,7 +136,6 @@
 ;;;
 ;;; To a 32-bit GPR or memory location (destination), add an immediate
 ;;; 32-bit value (source), and store the result in the destination.
-;;; Add imm32 to reg/mem32
 
 ;;; To a 32-bit GPR (destination), add an immediate 32-bit value
 ;;; (source), and store the result in the destination.
@@ -977,7 +976,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Near call with target specified by a register or a value in
+;;; Near call with target specified by a GPR or a value in
 ;;; memory.
 ;;;
 ;;; Opcodes : FF
@@ -985,10 +984,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Near call with target specified by a 16-bit register or a 16-bit
+;;; Near call with target specified by a 16-bit GPR or a 16-bit
 ;;; value in memory.
 
-;;; Near call with target specified by a 16-bit register.
+;;; Near call with target specified by a 16-bit GPR.
 (define-instruction "CALL"
   :modes (32 64)
   :operands ((gpr 16))
@@ -1008,10 +1007,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Near call with target specified by a 32-bit register or a 32-bit
+;;; Near call with target specified by a 32-bit GPR or a 32-bit
 ;;; value in memory.
 
-;;; Near call with target specified by a 32-bit register.
+;;; Near call with target specified by a 32-bit GPR.
 (define-instruction "CALL"
   :modes (32)
   :operands ((gpr 32))
@@ -1029,10 +1028,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Near call with target specified by a 64-bit register or a 64-bit
+;;; Near call with target specified by a 64-bit GPR or a 64-bit
 ;;; value in memory.
 
-;;; Near call with target specified by a 64-bit register.
+;;; Near call with target specified by a 64-bit GPR.
 (define-instruction "CALL"
   :modes (64)
   :operands ((gpr 64))
@@ -1065,8 +1064,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare a 16-bit immediate value (source) with the contents of
-;;; the AX GPR (destination)
+;;; Compare a 16-bit immediate value (source) with the contents of the
+;;; AX GPR (destination)
 
 (define-instruction "CMP"
   :modes (32 64)
@@ -1077,8 +1076,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare a 32-bit immediate value (source) with the contents of
-;;; the EAX GPR (destination)
+;;; Compare a 32-bit immediate value (source) with the contents of the
+;;; EAX GPR (destination)
 
 (define-instruction "CMP"
   :modes (32 64)
@@ -1088,8 +1087,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare a 32-bit immediate value (source) with the contents of
-;;; the RAX GPR (destination)
+;;; Compare a 32-bit immediate value (source) with the contents of the
+;;; RAX GPR (destination)
 
 (define-instruction "CMP"
   :modes (64)
@@ -1263,13 +1262,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of an 8-bit register or memory location
-;;; (destination) with the contents of an 8-bit register (source).
+;;; Compare the contents of an 8-bit GPR or memory location
+;;; (destination) with the contents of an 8-bit GPR (source).
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of an 8-bit register (destination) with the
-;;; contents of an 8-bit register (source).
+;;; Compare the contents of an 8-bit GPR (destination) with the
+;;; contents of an 8-bit GPR (source).
 
 (define-instruction "CMP"
   :modes (32 64)
@@ -1280,7 +1279,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compare the contents of an 8-bit memory location (destination)
-;;; with the contents of an 8-bit register (source).
+;;; with the contents of an 8-bit GPR (source).
 
 (define-instruction "CMP"
   :modes (32 64)
@@ -1290,18 +1289,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of a register or memory location
-;;; (destination) with the contents of a register (source).
+;;; Compare the contents of a GPR or memory location
+;;; (destination) with the contents of a GPR (source).
 ;;;
 ;;; Opcodes: 39
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of a 16-bit register or memory location
-;;; (destination) with the contents of a 16-bit register (source).
+;;; Compare the contents of a 16-bit GPR or memory location
+;;; (destination) with the contents of a 16-bit GPR (source).
 
-;;; Compare the contents of a 16-bit register (destination) with the
-;;; contents of a 16-bit register (source).
+;;; Compare the contents of a 16-bit GPR (destination) with the
+;;; contents of a 16-bit GPR (source).
 (define-instruction "CMP"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -1310,7 +1309,7 @@
   :operand-size-override t)
 
 ;;; Compare the contents of a 16-bit memory location (destination)
-;;; with the contents of a 16-bit register (source).
+;;; with the contents of a 16-bit GPR (source).
 (define-instruction "CMP"
   :modes (32 64)
   :operands ((memory 16) (gpr 16))
@@ -1320,11 +1319,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of a 32-bit register or memory location
-;;; (destination) with the contents of a 32-bit register (source).
+;;; Compare the contents of a 32-bit GPR or memory location
+;;; (destination) with the contents of a 32-bit GPR (source).
 
-;;; Compare the contents of a 32-bit register (destination) with the
-;;; contents of a 32-bit register (source).
+;;; Compare the contents of a 32-bit GPR (destination) with the
+;;; contents of a 32-bit GPR (source).
 (define-instruction "CMP"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
@@ -1332,7 +1331,7 @@
   :encoding (modrm reg))
 
 ;;; Compare the contents of a 32-bit memory location (destination)
-;;; with the contents of a 32-bit register (source).
+;;; with the contents of a 32-bit GPR (source).
 (define-instruction "CMP"
   :modes (32 64)
   :operands ((memory 32) (gpr 32))
@@ -1341,11 +1340,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of a 64-bit register or memory location
-;;; (destination) with the contents of a 64-bit register (source).
+;;; Compare the contents of a 64-bit GPR or memory location
+;;; (destination) with the contents of a 64-bit GPR (source).
 
-;;; Compare the contents of a 64-bit register (destination) with the
-;;; contents of a 64-bit register (source).
+;;; Compare the contents of a 64-bit GPR (destination) with the
+;;; contents of a 64-bit GPR (source).
 (define-instruction "CMP"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -1354,7 +1353,7 @@
   :rex.w t)
 
 ;;; Compare the contents of a 64-bit memory location (destination)
-;;; with the contents of a 64-bit register (source).
+;;; with the contents of a 64-bit GPR (source).
 (define-instruction "CMP"
   :modes (64)
   :operands ((memory 64) (gpr 64))
@@ -1364,18 +1363,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of a register (destination) with the contents
-;;; of a register or memory location (source).
+;;; Compare the contents of a GPR (destination) with the contents
+;;; of a GPR or memory location (source).
 ;;;
 ;;; Opcodes: 3B
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of a 16-bit register (destination) with the
-;;; contents of a 16-bit register or memory location (source).
+;;; Compare the contents of a 16-bit GPR (destination) with the
+;;; contents of a 16-bit GPR or memory location (source).
 
-;;; Compare the contents of a 16-bit register (destination) with the
-;;; contents of a 16-bit register (source).
+;;; Compare the contents of a 16-bit GPR (destination) with the
+;;; contents of a 16-bit GPR (source).
 (define-instruction "CMP"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -1383,7 +1382,7 @@
   :encoding (reg modrm)
   :operand-size-override t)
 
-;;; Compare the contents of a 16-bit register (destination) with the
+;;; Compare the contents of a 16-bit GPR (destination) with the
 ;;; contents of a 16-bit memory location (source).
 (define-instruction "CMP"
   :modes (32 64)
@@ -1394,18 +1393,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of a 32-bit register (destination) with the
-;;; contents of a 32-bit register or memory location (source).
+;;; Compare the contents of a 32-bit GPR (destination) with the
+;;; contents of a 32-bit GPR or memory location (source).
 
-;;; Compare the contents of a 32-bit register (destination) with the
-;;; contents of a 32-bit register (source).
+;;; Compare the contents of a 32-bit GPR (destination) with the
+;;; contents of a 32-bit GPR (source).
 (define-instruction "CMP"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x3B)
   :encoding (reg modrm))
 
-;;; Compare the contents of a 32-bit register (destination) with the
+;;; Compare the contents of a 32-bit GPR (destination) with the
 ;;; contents of a 32-bit memory location (source).
 (define-instruction "CMP"
   :modes (32 64)
@@ -1415,11 +1414,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compare the contents of a 64-bit register (destination) with the
-;;; contents of a 64-bit register or memory location (source).
+;;; Compare the contents of a 64-bit GPR (destination) with the
+;;; contents of a 64-bit GPR or memory location (source).
 
-;;; Compare the contents of a 64-bit register (destination) with the
-;;; contents of a 64-bit register (source).
+;;; Compare the contents of a 64-bit GPR (destination) with the
+;;; contents of a 64-bit GPR (source).
 (define-instruction "CMP"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -1427,7 +1426,7 @@
   :encoding (reg modrm)
   :rex.w t)
 
-;;; Compare the contents of a 64-bit register (destination) with the
+;;; Compare the contents of a 64-bit GPR (destination) with the
 ;;; contents of a 64-bit memory location (source).
 (define-instruction "CMP"
   :modes (64)
@@ -2050,7 +2049,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Near jump with the target specified by a 16-bit, 32-bit, or 64-bit
-;;; address in register or memory.
+;;; address in GPR or memory.
 ;;;
 ;;; Opcodes: FF
 
@@ -2104,13 +2103,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To an 8-bit register or memory location (destination), move the
-;;; contents of an 8-bit register (source).
+;;; To an 8-bit GPR or memory location (destination), move the
+;;; contents of an 8-bit GPR (source).
 ;;;
 ;;; Opcodes: 88
 
-;;; To an 8-bit register (destination), move the contents of an 8-bit
-;;; register (source).
+;;; To an 8-bit GPR (destination), move the contents of an 8-bit
+;;; GPR (source).
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
@@ -2118,7 +2117,7 @@
   :encoding (modrm reg))
 
 ;;; To an 8-bit memory location (destination), move the contents of an
-;;; 8-bit register (source).
+;;; 8-bit GPR (source).
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((memory 8) (reg 8))
@@ -2127,18 +2126,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a register or memory location (destination), move the
-;;; contents of a register (source).
+;;; To a GPR or memory location (destination), move the
+;;; contents of a GPR (source).
 ;;;
 ;;; Opcodes: 89
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 16-bit register or memory location (destination), move the
-;;; contents of a 16-bit register (source).
+;;; To a 16-bit GPR or memory location (destination), move the
+;;; contents of a 16-bit GPR (source).
 
-;;; To a 16-bit register (destination), move the contents of a 16-bit
-;;; register (source).
+;;; To a 16-bit GPR (destination), move the contents of a 16-bit
+;;; GPR (source).
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -2147,7 +2146,7 @@
   :operand-size-override t)
 
 ;;; To a 16-bit memory location (destination), move the contents of a
-;;; 16-bit register (source).
+;;; 16-bit GPR (source).
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((memory 16) (gpr 16))
@@ -2157,11 +2156,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 32-bit register or memory location (destination), move the
-;;; contents of a 32-bit register (source).
+;;; To a 32-bit GPR or memory location (destination), move the
+;;; contents of a 32-bit GPR (source).
 
-;;; To a 32-bit register (destination), move the contents of a 32-bit
-;;; register (source).
+;;; To a 32-bit GPR (destination), move the contents of a 32-bit
+;;; GPR (source).
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
@@ -2169,7 +2168,7 @@
   :encoding (modrm reg))
 
 ;;; To a 32-bit memory location (destination), move the contents of a
-;;; 32-bit register (source).
+;;; 32-bit GPR (source).
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((memory 32) (gpr 32))
@@ -2178,11 +2177,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 64-bit register or memory location (destination), move the
-;;; contents of a 64-bit register (source).
+;;; To a 64-bit GPR or memory location (destination), move the
+;;; contents of a 64-bit GPR (source).
 
-;;; To a 64-bit register (destination), move the contents of a 64-bit
-;;; register (source).
+;;; To a 64-bit GPR (destination), move the contents of a 64-bit
+;;; GPR (source).
 (define-instruction "MOV"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -2191,7 +2190,7 @@
   :rex.w t)
 
 ;;; To a 64-bit memory location (destination), move the contents of a
-;;; 64-bit register (source).
+;;; 64-bit GPR (source).
 (define-instruction "MOV"
   :modes (64)
   :operands ((memory 64) (gpr 64))
@@ -2201,20 +2200,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; 
-;;; To an 8-bit register (destination), move the contents of an 8-bit
-;;; register or memory location.
+;;; To an 8-bit GPR (destination), move the contents of an 8-bit
+;;; GPR or memory location.
 ;;;
 ;;; Opcodes: 8A
 
-;;; To an 8-bit register (destination), move the contents of an 8-bit
-;;; register.
+;;; To an 8-bit GPR (destination), move the contents of an 8-bit
+;;; GPR.
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x8A)
   :encoding (reg modrm))
 
-;;; To an 8-bit register (destination), move the contents of an 8-bit
+;;; To an 8-bit GPR (destination), move the contents of an 8-bit
 ;;; memory location.
 (define-instruction "MOV"
   :modes (32 64)
@@ -2224,18 +2223,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a register (destination), move the contents of a register or
+;;; To a GPR (destination), move the contents of a GPR or
 ;;; memory location.
 ;;;
 ;;; Opcodes: 8B
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 16-bit register (destination), move the contents of a 16-bit
-;;; register or memory location.
+;;; To a 16-bit GPR (destination), move the contents of a 16-bit
+;;; GPR or memory location.
 
-;;; To a 16-bit register (destination), move the contents of a 16-bit
-;;; register.
+;;; To a 16-bit GPR (destination), move the contents of a 16-bit
+;;; GPR.
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -2243,7 +2242,7 @@
   :encoding (reg modrm)
   :operand-size-override t)
 
-;;; To a 16-bit register (destination), move the contents of a 16-bit
+;;; To a 16-bit GPR (destination), move the contents of a 16-bit
 ;;; memory location.
 (define-instruction "MOV"
   :modes (32 64)
@@ -2254,18 +2253,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 32-bit register (destination), move the contents of a 32-bit
-;;; register or memory location.
+;;; To a 32-bit GPR (destination), move the contents of a 32-bit
+;;; GPR or memory location.
 
-;;; To a 32-bit register (destination), move the contents of a 32-bit
-;;; register.
+;;; To a 32-bit GPR (destination), move the contents of a 32-bit
+;;; GPR.
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x8B)
   :encoding (reg modrm))
 
-;;; To a 32-bit register (destination), move the contents of a 32-bit
+;;; To a 32-bit GPR (destination), move the contents of a 32-bit
 ;;; memory location.
 (define-instruction "MOV"
   :modes (32 64)
@@ -2275,11 +2274,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 64-bit register (destination), move the contents of a 64-bit
-;;; register or memory location.
+;;; To a 64-bit GPR (destination), move the contents of a 64-bit
+;;; GPR or memory location.
 
-;;; To a 64-bit register (destination), move the contents of a 64-bit
-;;; register.
+;;; To a 64-bit GPR (destination), move the contents of a 64-bit
+;;; GPR.
 (define-instruction "MOV"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -2287,7 +2286,7 @@
   :encoding (reg modrm)
   :rex.w t)
 
-;;; To a 64-bit register (destination), move the contents of a 64-bit
+;;; To a 64-bit GPR (destination), move the contents of a 64-bit
 ;;; memory location.
 (define-instruction "MOV"
   :modes (64)
@@ -2298,7 +2297,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To an 8-bit register (destination) move an 8-bit immediate value.
+;;; To an 8-bit GPR (destination) move an 8-bit immediate value.
 ;;;
 ;;; Opcodes: B0, B1, ..., B7
 
@@ -2310,11 +2309,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a register (destination) move an immediate value.
+;;; To a GPR (destination) move an immediate value.
 ;;;
 ;;; Opcodes: B8, B9, ..., BF
 
-;;; To a 16-bit register (destination) move a 16-bit immediate value.
+;;; To a 16-bit GPR (destination) move a 16-bit immediate value.
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 16) (imm 16))
@@ -2322,14 +2321,14 @@
   :encoding (+r imm)
   :operand-size-override t)
 
-;;; To a 32-bit register (destination) move a 32-bit immediate value.
+;;; To a 32-bit GPR (destination) move a 32-bit immediate value.
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 32) (imm 32))
   :opcodes (#xB8)
   :encoding (+r imm))
 
-;;; To a 64-bit register (destination) move a 64-bit immediate value.
+;;; To a 64-bit GPR (destination) move a 64-bit immediate value.
 (define-instruction "MOV"
   :modes (64)
   :operands ((gpr 64) (imm 64))
@@ -2339,12 +2338,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To an 8-bit register or memory location, move an 8-bit immediate
+;;; To an 8-bit GPR or memory location, move an 8-bit immediate
 ;;; value.
 ;;;
 ;;; Opcodes: C6
 
-;;; To an 8-bit register, move an 8-bit immediate value.
+;;; To an 8-bit GPR, move an 8-bit immediate value.
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 8) (imm 8))
@@ -2362,16 +2361,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a register or memory location, move an immediate value.
+;;; To a GPR or memory location, move an immediate value.
 ;;;
 ;;; Opcodes: C7
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 16-bit register or memory location, move a 16-bit immediate
+;;; To a 16-bit GPR or memory location, move a 16-bit immediate
 ;;; value.
 
-;;; To a 16-bit register, move a 16-bit immediate
+;;; To a 16-bit GPR, move a 16-bit immediate
 ;;; value.
 (define-instruction "MOV"
   :modes (32 64)
@@ -2393,10 +2392,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 32-bit register or memory location, move a 32-bit immediate
+;;; To a 32-bit GPR or memory location, move a 32-bit immediate
 ;;; value.
 
-;;; To a 32-bit register, move a 32-bit immediate
+;;; To a 32-bit GPR, move a 32-bit immediate
 ;;; value.
 (define-instruction "MOV"
   :modes (32 64)
@@ -2416,10 +2415,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; To a 64-bit register or memory location, move a 64-bit immediate
+;;; To a 64-bit GPR or memory location, move a 64-bit immediate
 ;;; value.
 
-;;; To a 64-bit register, move a 64-bit immediate
+;;; To a 64-bit GPR, move a 64-bit immediate
 ;;; value.
 (define-instruction "MOV"
   :modes (64)
@@ -2990,7 +2989,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From an 8-bit register or memory location (destination), subtract
+;;; From an 8-bit GPR or memory location (destination), subtract
 ;;; an 8-bit immediate value (source), and store the result in the
 ;;; destination.
 ;;; 
@@ -3017,7 +3016,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a register or memory location (16/32/64) (destination),
+;;; From a GPR or memory location (16/32/64) (destination),
 ;;; subtract an immediate value (16/32) (source) and store the result
 ;;; in the destination.
 ;;;
@@ -3026,7 +3025,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a 16-bit register or memory location (destination), subtract
+;;; From a 16-bit GPR or memory location (destination), subtract
 ;;; an immediate 16-bit value (source) and store the result in the
 ;;; destination.
 
@@ -3052,7 +3051,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a 32-bit register or memory location (destination), subtract
+;;; From a 32-bit GPR or memory location (destination), subtract
 ;;; an immediate 32-bit value (source) and store the result in the
 ;;; destination.
 
@@ -3076,7 +3075,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a 64-bit register or memory location (destination), subtract
+;;; From a 64-bit GPR or memory location (destination), subtract
 ;;; an immediate sign-extended 32-bit value (source) and store the
 ;;; result in the destination.
 
@@ -3104,7 +3103,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a register or memory location (16/32/64) (destination),
+;;; From a GPR or memory location (16/32/64) (destination),
 ;;; subtract an 8-bit sign-extended immediate value (source), and
 ;;; store the result in the destination.
 ;;;
@@ -3113,7 +3112,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a 16-bit register or memory location (destination), subtract
+;;; From a 16-bit GPR or memory location (destination), subtract
 ;;; an 8-bit sign-extended immediate value (source), and store the
 ;;; result in the destination.
 
@@ -3140,7 +3139,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a 32-bit register or memory location (destination), subtract
+;;; From a 32-bit GPR or memory location (destination), subtract
 ;;; an 8-bit sign-extended immediate value (source), and store the
 ;;; result in the destination.
 
@@ -3165,7 +3164,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a 64-bit register or memory location (destination), subtract
+;;; From a 64-bit GPR or memory location (destination), subtract
 ;;; an 8-bit sign-extended immediate value (source), and store the
 ;;; result in the destination.
 
@@ -3192,14 +3191,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From an 8-bit register or memory location (destination), subtract
-;;; the contents of an 8-bit register (source) and store the result in
+;;; From an 8-bit GPR or memory location (destination), subtract
+;;; the contents of an 8-bit GPR (source) and store the result in
 ;;; the destination.
 ;;;
 ;;; Opcodes: 28
 
 ;;; From an 8-bit GPR (destination), subtract the contents of an 8-bit
-;;; register (source) and store the result in the destination.
+;;; GPR (source) and store the result in the destination.
 (define-instruction "SUB"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
@@ -3207,7 +3206,7 @@
   :encoding (modrm reg))
 
 ;;; From an 8-bit memory location (destination), subtract the contents
-;;; of an 8-bit register (source) and store the result in the
+;;; of an 8-bit GPR (source) and store the result in the
 ;;; destination.
 (define-instruction "SUB"
   :modes (32 64)
@@ -3405,8 +3404,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of AL with an immediate 8-bit value and store the
-;;; result in AL.
+;;; XOR the contents of AL (destination) with an immediate 8-bit value
+;;; (source) and store the result in AL.
 ;;;
 ;;; Opcodes: 34
 
@@ -3418,13 +3417,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of GPR A (16/32/64) with an immediate value
-;;; (16/32) and store the result in GPR A.
+;;; XOR the contents of GPR A (16/32/64) (destination) with an
+;;; immediate value (16/32) (source), and store the result in the
+;;; destination.
 ;;;
 ;;; Opcodes: 35
 
-;;; XOR the contents of GPR AX with an immediate 16-bit value and
-;;; store the result in GPR AX.
+;;; XOR the contents of GPR AX (destination) with an immediate 16-bit
+;;; value (source) and store the result in GPR AX.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr-a 16) (imm 16))
@@ -3432,16 +3432,16 @@
   :encoding (- imm)
   :operand-size-override t)
 
-;;; XOR the contents of GPR EAX with an immediate 32-bit value and
-;;; store the result in GPR EAX.
+;;; XOR the contents of GPR EAX (destination) with an immediate 32-bit
+;;; value (source), and store the result in GPR EAX.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr-a 32) (imm 32))
   :opcodes (#x35)
   :encoding (- imm))
 
-;;; XOR the contents of GPR RAX with a sign-extended 32-bit immediate
-;;; value and store the result in GPR RAX.
+;;; XOR the contents of GPR RAX (destination) with a sign-extended
+;;; 32-bit immediate value (source) and store the result in GPR RAX.
 (define-instruction "XOR"
   :modes (64)
   :operands ((gpr-a 64) (imm 32))
@@ -3451,14 +3451,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem8 with an immediate 8-bit value, and
-;;; store the result in reg/mem8.
+;;; XOR the contents of an 8-bit GPR or memory location (destination)
+;;; with an immediate 8-bit value (source), and store the result in
+;;; the destination.
 ;;;
 ;;; Opcodes: 80
 ;;; Opcode extension: 6
 
-;;; XOR the contents of reg8 with an immediate 8-bit value, and store
-;;; the result in reg8.
+;;; XOR the contents of an 8-bit GPR (destination) with an immediate
+;;; 8-bit value (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 8) (imm 8))
@@ -3466,8 +3467,9 @@
   :opcode-extension 6
   :encoding (modrm imm))
 
-;;; XOR the contents of mem8 with an immediate 8-bit value, and store
-;;; the result in mem8.
+;;; XOR the contents of an 8-bit memory location (destination) with an
+;;; immediate 8-bit value (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((memory 8) (imm 8))
@@ -3477,19 +3479,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem (16/32/64) with an immediate value
-;;; (16/32) and store the result in reg/mem.
+;;; XOR the contents of a GPR or a memory location (16/32/64)
+;;; (destination) with an immediate value (16/32) (source), and store
+;;; the result in the destination.
 ;;;
 ;;; Opcodes: 81
 ;;; Opcode extension 6
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem16 with an immediate 16-bit value and
-;;; store the result in reg/mem16.
+;;; XOR the contents of a 16-bit GPR or a memory location
+;;; (destination) with an immediate 16-bit value (source), and store
+;;; the result in the destination.
 
-;;; XOR the contents of reg16 with an immediate 16-bit value and
-;;; store the result in reg16.
+;;; XOR the contents of a 16-bit GPR (destination) with an immediate
+;;; 16-bit value (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 16) (imm 16))
@@ -3498,8 +3502,9 @@
   :encoding (modrm imm)
   :operand-size-override t)
 
-;;; XOR the contents of mem16 with an immediate 16-bit value and
-;;; store the result in mem16.
+;;; XOR the contents of a 16-bit a memory location (destination) with
+;;; an immediate 16-bit value (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((memory 16) (imm 16))
@@ -3510,11 +3515,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem32 with an immediate 32-bit value and
-;;; store the result in reg/mem32.
+;;; XOR the contents of a 32-bit GPR or a memory location
+;;; (destination) with an immediate 32-bit value (source), and store
+;;; the result in the destination.
 
-;;; XOR the contents of reg32 with an immediate 32-bit value and
-;;; store the result in reg32.
+;;; XOR the contents of a 32-bit GPR (destination) with an immediate
+;;; 32-bit value (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 32) (imm 32))
@@ -3522,8 +3528,9 @@
   :opcode-extension 6
   :encoding (modrm imm))
 
-;;; XOR the contents of mem32 with an immediate 32-bit value and
-;;; store the result in mem32.
+;;; XOR the contents of a 32-bit a memory location (destination) with
+;;; an immediate 32-bit value (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((memory 32) (imm 32))
@@ -3533,11 +3540,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem64 with a sign-extended immediate
-;;; 32-bit value and store the result in reg/mem64.
+;;; XOR the contents of a 64-bit GPR or a memory location
+;;; (destination) with an immediate 32-bit sign-extended value
+;;; (source), and store the result in the destination.
 
-;;; XOR the contents of reg64 with a sign-extended immediate
-;;; 32-bit value and store the result in reg64.
+;;; XOR the contents of a 64-bit GPR (destination) with an immediate
+;;; 32-bit sign-extended value (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (64)
   :operands ((gpr 64) (simm 32))
@@ -3546,8 +3555,9 @@
   :encoding (modrm imm)
   :rex.w t)
 
-;;; XOR the contents of mem64 with a sign-extended immediate
-;;; 32-bit value and store the result in mem64.
+;;; XOR the contents of a 64-bit a memory location (destination) with
+;;; an immediate 32-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "XOR"
   :modes (64)
   :operands ((memory 64) (simm 32))
@@ -3558,19 +3568,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem (16/32/64) with a sign-extended 8-bit
-;;; immediate value, and store the result in reg/mem.
+;;; XOR the contents of a GPR or memory location (16/32/64)
+;;; (destination), with a an immediate 8-bit sign-extended value
+;;; (source), and store the result in the destination.
 ;;;
 ;;; Opcodes: 83
 ;;; Opcode extension: 6
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem16 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem16.
+;;; XOR the contents of a 16-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; XOR the contents of reg16 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg16.
+;;; XOR the contents of a 16-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 16) (simm 8))
@@ -3579,8 +3592,9 @@
   :encoding (modrm imm)
   :operand-size-override t)
 
-;;; XOR the contents of mem16 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem16.
+;;; XOR the contents of a 16-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((memory 16) (simm 8))
@@ -3591,11 +3605,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem32 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem32.
+;;; XOR the contents of a 32-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; XOR the contents of reg32 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg32.
+;;; XOR the contents of a 32-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 32) (simm 8))
@@ -3603,8 +3619,9 @@
   :opcode-extension 6
   :encoding (modrm imm))
 
-;;; XOR the contents of mem32 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem32.
+;;; XOR the contents of a 32-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((memory 32) (simm 8))
@@ -3614,11 +3631,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of reg/mem64 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg/mem64.
+;;; XOR the contents of a 64-bit GPR or memory location (destination),
+;;; with a an immediate 8-bit sign-extended value (source), and store
+;;; the result in the destination.
 
-;;; XOR the contents of reg64 with a sign-extended 8-bit immediate
-;;; value, and store the result in reg64.
+;;; XOR the contents of a 64-bit GPR (destination), with a an
+;;; immediate 8-bit sign-extended value (source), and store the result
+;;; in the destination.
 (define-instruction "XOR"
   :modes (64)
   :operands ((gpr 64) (simm 8))
@@ -3627,8 +3646,9 @@
   :encoding (modrm imm)
   :rex.w t)
 
-;;; XOR the contents of mem64 with a sign-extended 8-bit immediate
-;;; value, and store the result in mem64.
+;;; XOR the contents of a 64-bit memory location (destination), with a
+;;; an immediate 8-bit sign-extended value (source), and store the
+;;; result in the destination.
 (define-instruction "XOR"
   :modes (64)
   :operands ((memory 64) (simm 8))
@@ -3639,21 +3659,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a reg/mem8 and a reg8 and store the result in
-;;; reg/mem8.
+;;; XOR the contents of an 8-bit GPR or memory location (destination)
+;;; with the contents of an 8-bit GPR (source) and store the result in
+;;; the destination.
 ;;;
 ;;; Opcodes: 30
 
-;;; XOR the contents of a reg8 and a reg8 and store the result in
-;;; reg8.
+;;; XOR the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR (source) and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x30)
   :encoding (modrm reg))
 
-;;; XOR the contents of a mem8 and a reg8 and store the result in
-;;; mem8.
+;;; XOR the contents of an 8-bit memory location (destination) with
+;;; the contents of an 8-bit GPR (source) and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((memory 8) (gpr 8))
@@ -3663,18 +3685,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a reg/mem and a reg and store the contents in
-;;; reg/mem (16/32/64).
+;;; XOR the contents of a GPR or memory location (16/32/64)
+;;; (destination), with the contents of a GPR (16/32/64) (source), and
+;;; store the result in the destination.
 ;;; 
 ;;; Opcodes: 31
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a reg/mem16 and a reg16 and store the contents
-;;; in reg/mem16.
+;;; XOR the contents of a 16-bit GPR or memory location (destination),
+;;; with the contents of a 16-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; XOR the contents of a reg16 and a reg16 and store the contents
-;;; in reg16.
+;;; XOR the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -3682,8 +3706,9 @@
   :encoding (modrm reg)
   :operand-size-override t)
 
-;;; XOR the contents of a mem16 and a reg16 and store the contents
-;;; in mem16.
+;;; XOR the contents of a 16-bit memory location (destination), with
+;;; the contents of a 16-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((memory 16) (gpr 16))
@@ -3694,19 +3719,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a reg/mem32 and a reg32 and store the contents
-;;; in reg/mem32.
+;;; XOR the contents of a 32-bit GPR or memory location (destination),
+;;; with the contents of a 32-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; XOR the contents of a reg32 and a reg32 and store the contents
-;;; in reg32.
+;;; XOR the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x31)
   :encoding (modrm reg))
 
-;;; XOR the contents of a mem32 and a reg32 and store the contents
-;;; in mem32.
+;;; XOR the contents of a 32-bit memory location (destination), with
+;;; the contents of a 32-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((memory 32) (gpr 32))
@@ -3716,11 +3743,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a reg/mem64 and a reg64 and store the contents
-;;; in reg/mem64.
+;;; XOR the contents of a 64-bit GPR or memory location (destination),
+;;; with the contents of a 64-bit GPR (source), and store the result
+;;; in the destination.
 
-;;; XOR the contents of a reg64 and a reg64 and store the contents
-;;; in reg64.
+;;; XOR the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -3728,8 +3756,9 @@
   :encoding (modrm reg)
   :rex.w t)
 
-;;; XOR the contents of a mem64 and a reg64 and store the contents
-;;; in mem64.
+;;; XOR the contents of a 64-bit memory location (destination), with
+;;; the contents of a 64-bit GPR (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (64)
   :operands ((memory 64) (gpr 64))
@@ -3740,21 +3769,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of an 8-bit register and an 8-bit reg/mem and
-;;; store the result in the register.
+;;; XOR the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR or memory location (source), and store the result
+;;; in the destination.
 ;;;
 ;;; Opcodes: 32
 
-;;; XOR the contents of an 8-bit register and an 8-bit register and
-;;; store the result in the register.
+;;; XOR the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit GPR (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 8) (gpr 8))
   :opcodes (#x32)
   :encoding (reg modrm))
 
-;;; XOR the contents of an 8-bit register and an 8-bit memory location
-;;; and store the result in the register.
+;;; XOR the contents of an 8-bit GPR (destination) with the contents
+;;; of an 8-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 8) (memory 8))
@@ -3763,20 +3794,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a register and the contents of a memory
-;;; location or a register, and store the result in the register
-;;; (16/32/64).
+;;; XOR the contents of a GPR (16/32/64) (destination), with the
+;;; contents of a GPR or memory location (16/32/64) (source), and
+;;; store the result in the destination.
 ;;;
 ;;; Opcodes: 33
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a 16-bit register and the contents of a 16-bit
-;;; memory location or a 16-bit register, and store the result in the
-;;; 16-bit register.
+;;; XOR the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; XOR the contents of a 16-bit register and the contents of a 16-bit
-;;; a 16-bit register, and store the result in the 16-bit register.
+;;; XOR the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit GPR (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 16) (gpr 16))
@@ -3784,8 +3815,9 @@
   :encoding (reg modrm)
   :operand-size-override t)
 
-;;; XOR the contents of a 16-bit register and the contents of a 16-bit
-;;; memory location, and store the result in the 16-bit register.
+;;; XOR the contents of a 16-bit GPR (destination), with the contents
+;;; of a 16-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 16) (memory 16))
@@ -3795,20 +3827,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a 32-bit register and the contents of a 32-bit
-;;; memory location or a 32-bit register, and store the result in the
-;;; 32-bit register.
+;;; XOR the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; XOR the contents of a 32-bit register and the contents of a 32-bit
-;;; a 32-bit register, and store the result in the 32-bit register.
+;;; XOR the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit GPR (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 32) (gpr 32))
   :opcodes (#x33)
   :encoding (reg modrm))
 
-;;; XOR the contents of a 32-bit register and the contents of a 32-bit
-;;; memory location, and store the result in the 32-bit register.
+;;; XOR the contents of a 32-bit GPR (destination), with the contents
+;;; of a 32-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (32 64)
   :operands ((gpr 32) (memory 32))
@@ -3817,12 +3850,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; XOR the contents of a 64-bit register and the contents of a 64-bit
-;;; memory location or a 64-bit register, and store the result in the
-;;; 64-bit register.
+;;; XOR the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR or memory location (source), and store the result
+;;; in the destination.
 
-;;; XOR the contents of a 64-bit register and the contents of a 64-bit
-;;; a 64-bit register, and store the result in the 64-bit register.
+;;; XOR the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit GPR (source), and store the result in the destination.
 (define-instruction "XOR"
   :modes (64)
   :operands ((gpr 64) (gpr 64))
@@ -3830,8 +3863,9 @@
   :encoding (reg modrm)
   :rex.w t)
 
-;;; XOR the contents of a 64-bit register and the contents of a 64-bit
-;;; memory location, and store the result in the 64-bit register.
+;;; XOR the contents of a 64-bit GPR (destination), with the contents
+;;; of a 64-bit memory location (source), and store the result in the
+;;; destination.
 (define-instruction "XOR"
   :modes (64)
   :operands ((gpr 64) (memory 64))
