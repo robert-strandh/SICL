@@ -5,13 +5,12 @@
       (sicl-code-utilities:separate-function-body body)
     ;; FIXME: handle documentation
     (declare (ignore documentation))
-    `(progn
-       (eval-when (:compile-toplevel)
-	 (ensure-global-function-entry ',name ',lambda-list))
-       (eval-when (:load-toplevel :execute)
-	 (funcall #'(setf fdefinition)
-		  (lambda ,lambda-list
-		    ,declarations
-		    (block ,name
-		      ,@forms))
-		  ',name)))))
+    (let ((definition `(lambda ,lambda-list
+			 ,declarations
+			 (block ,name
+			   ,@forms))))
+      `(progn
+	 (eval-when (:compile-toplevel)
+	   (ensure-global-function-entry ',name ',definition))
+	 (eval-when (:load-toplevel :execute)
+	   (funcall #'(setf fdefinition) ,definition ',name))))))

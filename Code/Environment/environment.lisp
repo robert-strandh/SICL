@@ -442,38 +442,50 @@
 (defclass global-function-entry (function-entry)
   ())
 
-(defun make-global-function-entry (name &optional (lambda-list :none))
+(defun make-global-function-entry (name &optional
+					  (lambda-list :none)
+					  ast
+					  parameters)
   (declare (cl:type function-name name))
   (make-instance 'global-function-entry
 		 :name name
 		 :lambda-list lambda-list
+		 :ast ast
+		 :parameters parameters
 		 :location (make-global-location name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function ENSURE-GLOBAL-FUNCTION-ENTRY.
 ;;;
-;;; Given a name and an optional lambda list, make sure there is a
-;;; global function entry in the global environment with that name.
+;;; Given a name and an optional lambda expression, make sure there is
+;;; a global function entry in the global environment with that name.
 ;;; If there is no such entry then create one and return it.  If there
 ;;; already is an entry with that name, then if a lambda list is
 ;;; given, then make that lambda list the new lambda list of the
-;;; existing entry.  Return either the newly created entry or the
-;;; existing entry.
+;;; existing entry.  If the function to be defined has an INLINE
+;;; proclamation in effect, then create the abstract syntax tree for
+;;; the function and store it in the function entry.  Return either
+;;; the newly created entry or the existing entry.
 
-(defun ensure-global-function-entry (name &optional (lambda-list :none))
+(defun ensure-global-function-entry (name lambda-expression)
   (declare (cl:type function-name name))
   (let ((entry (find name (functions *global-environment*)
-		     :test #'equal :key #'name)))
-    (cond ((null entry)
-	   (let ((new-entry (make-global-function-entry name lambda-list)))
-	     (push new-entry (functions *global-environment*))
-	     new-entry))
-	  ((not (eq lambda-list :none))
-	   (setf (lambda-list entry) lambda-list)
-	   entry)
-	  (t
-	   entry))))
+		     :test #'equal :key #'name))
+	(lambda-list (cadr lambda-expression)))
+    ;; FIXME: Right now we always save the AST, but we should probably
+    ;; save it only when the function is currently declared INLINE.
+    (multiple-value-bind (lexical-asts ast)
+	(sicl-compiler-phase-1:convert-for-inlining lambda-expression)
+      (if (null entry)
+	  (let ((new-entry (make-global-function-entry
+			    name lambda-list ast lexical-asts)))
+	    (push new-entry (functions *global-environment*))
+	    new-entry)
+	  (progn (setf (lambda-list entry) lambda-list)
+		 (setf (ast entry) ast)
+		 (setf (parameters entry) lexical-asts)
+		 entry)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
