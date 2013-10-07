@@ -191,41 +191,6 @@
 	    byte-size
 	    byte-position))
 
-(proclaim '(ftype (or
-		   (function (null) null)
-		   (function (cons) t))
-	    car cdr))
-
-(proclaim '(ftype (function (list) t)
-	    caar
-	    cadr
-	    cdar
-	    cddr
-	    caaar
-	    caadr
-	    cadar
-	    caddr
-	    cdaar
-	    cdadr
-	    cddar
-	    cdddr
-	    caaaar
-	    caaadr
-	    caadar
-	    caaddr
-	    cadaar
-	    cadadr
-	    caddar
-	    cadddr
-	    cdaaar
-	    cdaadr
-	    cdadar
-	    cdaddr
-	    cddaar
-	    cddadr
-	    cdddar
-	    cddddr))
-
 (proclaim '(ftype (function (number &optional (real 0))
 		   (values integer real))
 	    floor
