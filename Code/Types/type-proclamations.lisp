@@ -207,42 +207,6 @@
 (proclaim '(ftype (function (t (or symbol class) &key &allow-other-keys) t)
 	    change-class))
 
-(proclaim '(ftype (function (string (integer 0)) character)
-	    char))
-
-(proclaim '(ftype (function (character) t)
-	    char-code))
-
-(proclaim '(ftype (function (character) character)
-	    char-upcase char-downcase))
-
-(proclaim '(ftype (function (&rest list) t)
-	    char=
-	    char/=
-	    char<
-	    char>
-	    char<=
-	    char>=
-	    char-equal
-	    char-not-equal
-	    char-lessp
-	    char-greaterp
-	    char-not-greaterp
-	    char-not-lessp))
-
-(proclaim '(ftype (function (character) (integer 0))
-	    char-int))
-
-(proclaim '(ftype (function (character) (or string null))
-	    char-name))
-
-(proclaim '(ftype (function (character-designator)
-		   character)
-	    character))
-
-(proclaim '(ftype general-predicate
-	    characterp))
-
 (proclaim '(ftype (function (real) complex)
 	    cis))
 
