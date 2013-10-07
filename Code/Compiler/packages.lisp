@@ -117,6 +117,7 @@
    #:convert-initial
    #:convert-top-level-form
    #:convert-top-level-lamda-expression
+   #:convert-for-inlining
    #:convert #:convert-compound
    ))
 

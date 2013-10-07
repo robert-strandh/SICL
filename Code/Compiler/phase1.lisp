@@ -141,6 +141,21 @@
   (let ((*location-asts* (make-hash-table :test #'eq)))
     (convert `(function ,lambda-expression) nil)))
 
+(defun convert-for-inlining (lambda-expression)
+  (let* ((lambda-list (cadr lambda-expression))
+	 (let-bindings (loop for var in lambda-list
+			     for i from 0
+			     collect `(,var (arg ,i))))
+	 (*location-asts* (make-hash-table :test #'eq)))
+    (let ((ast (convert `(let ,let-bindings ,@(cddr lambda-expression)) nil)))
+      ;; The AST looks like this:
+      ;; (progn (setq <a0> (arg 0)) (progn (setq <a1> (arg 1)) ....
+      (loop for arg in lambda-list
+	    collect (first (sicl-ast:children (first (sicl-ast:children ast))))
+	      into lexical-asts
+	    do (setf ast (second (sicl-ast:children ast)))
+	    finally (return (values lexical-asts ast))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a sequence of forms.
