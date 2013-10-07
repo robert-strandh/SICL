@@ -56,3 +56,31 @@
 		    (function (long-float)
 			      (values long-float integer (member -1 1))))
 		integer-decode-float))
+
+(declaim (ftype (function (number) (real 0.0))
+		abs))
+
+(declaim (ftype (function (t t list) list)
+		acons))
+
+(declaim (ftype (function (number) number)
+		acos))
+
+(declaim (ftype (function (number) number)
+		acosh))
+
+(declaim (ftype (function (integer integer) integer)
+		ash))
+
+(declaim (ftype (function (number) number)
+		asin
+		asinh
+		atanh
+		cosh
+		sinh
+		tanh))
+
+(declaim (ftype (or (function (number) number)
+		    (function (real real) number))
+		atan))
+

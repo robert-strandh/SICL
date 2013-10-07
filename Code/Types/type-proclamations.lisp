@@ -37,21 +37,6 @@
 
 (deftype radix () '(integer 2 36))
 
-(proclaim '(ftype (function (&optional (or null condition)) nil)
-	    abort))
-
-(proclaim '(ftype (function (number) (real 0.0))
-	    abs))
-
-(proclaim '(ftype (function (t t list) list)
-	    acons))
-
-(proclaim '(ftype (function (number) number)
-	    acos))
-
-(proclaim '(ftype (function (number) number)
-	    acosh))
-
 (proclaim '(ftype (function (function method) function)
 	    add-method))
 
@@ -135,9 +120,6 @@
 (proclaim '(ftype (function (array) t)
 	    arrayp))
 
-(proclaim '(ftype (function (integer integer) integer)
-	    ash))
-
 (proclaim '(ftype (function (t list
 			     &key (key keyfun-designator)
 			     (test testfun2-designator)
@@ -153,18 +135,6 @@
 		   (or cons nil))
 	    assoc-if
 	    assoc-if-not))
-
-(proclaim '(ftype (function (number) number)
-	    asin
-	    asinh
-	    atanh
-	    cosh
-	    sinh
-	    tanh))
-
-(proclaim '(ftype (or (function (number) number)
-		   (function (real real) number))
-	    atan))
 
 (proclaim '(ftype general-predicate
 	    atom))
