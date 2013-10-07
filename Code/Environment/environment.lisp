@@ -874,9 +874,20 @@
    (%dynamic-extent-p :initarg :dynamic-extent-p :reader dynamic-extent-p)))
 
 (defclass function-info-mixin ()
-  ((%inline-info :initarg :inline-info :reader inline-info)
-   (%lambda-list :initarg :lambda-list :reader lambda-list)
-   (%ast :initarg :ast :reader ast)))
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+   ;; This slot contains either NIL (meaning that no inline
+   ;; information has been established for this function), INLINE
+   ;; (which means that the function has been declared INLINE in this
+   ;; context), or NOTINLINE (which means that the function has been
+   ;; declared NOTINLINE in this context).
+   (%inline-info :initarg :iniline-info :reader inline-info)
+   ;; When this slot contains NIL, there is no available
+   ;; AST, so the function can not be inlined.  
+   (%ast :initarg :ast :reader ast)
+   ;; When the AST slot contains an AST (and not NIL), then this slot
+   ;; contains a list of lexical locations corresponding to the
+   ;; parameters of the function.
+   (%parameters :initarg :parameters :reader parameters)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1485,6 +1496,8 @@
 			:location (location entry)
 			:type t
 			:inline-info nil
+			:ast nil
+			:parameters nil
 			:ignore-info nil
 			:dynamic-extent-p nil))
 	       nil))
@@ -1503,8 +1516,9 @@
 			    :location (location entry)
 			    :type type
 			    :inline-info inline-info
-			    :ast (ast entry)
 			    :lambda-list (lambda-list entry)
+			    :ast (ast entry)
+			    :parameters (parameters entry)
 			    :ignore-info ignore-info
 			    :dynamic-extent-p dynamic-extent-p))))))
 
