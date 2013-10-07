@@ -171,11 +171,19 @@
 ;;; Default method when there is not a more specific method for
 ;;; the head symbol.
 (defmethod convert-compound ((head symbol) form env)
-  (let* ((info (sicl-env:function-info head env t))
-	 (location (sicl-env:location info)))
-    (sicl-ast:make-call-ast
-     (find-or-create-ast location)
-     (convert-sequence (cdr form) env))))
+  (let ((info (sicl-env:function-info head env t))
+	(arguments (convert-sequence (cdr form) env)))
+    (if (and (eq (sicl-env:inline-info info) 'inline)
+	     (not (null (sicl-env:ast info)))
+	     (= (length (cdr form)) (length (sicl-env:parameters info))))
+	(sicl-ast:make-progn-ast
+	 (append (loop for parameter in (sicl-env:parameters info)
+		       for argument in arguments
+		       collect (sicl-ast:make-setq-ast parameter argument))
+		 (list (sicl-env:ast info))))
+	(sicl-ast:make-call-ast
+	 (find-or-create-ast (sicl-env:location info))
+	 arguments))))
 
 ;;; Method to be used when the head of a compound form is a
 ;;; CONS.  Then the head must be a lambda expression.
