@@ -290,4 +290,5 @@
   (:shadow #:compile-file)
   (:export
    #:compile-file
+   #:compile-time-compile
    ))
