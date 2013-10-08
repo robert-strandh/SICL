@@ -173,7 +173,7 @@
 (defmethod convert-compound ((head symbol) form env)
   (let ((info (sicl-env:function-info head env t))
 	(arguments (convert-sequence (cdr form) env)))
-    (if (and (eq (sicl-env:inline-info info) 'inline)
+    (if (and (eq (sicl-env:inline-info info) :inline)
 	     (not (null (sicl-env:ast info)))
 	     (= (length (cdr form)) (length (sicl-env:parameters info))))
 	(sicl-ast:make-progn-ast
@@ -1006,7 +1006,16 @@
 
 (defmethod convert-compound ((symbol (eql 'arg)) form env)
   (sicl-ast:make-arg-ast
-   (convert (cadr form) env)))
+   (convert (second form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting TYPEQ.
+
+(defmethod convert-compound ((symbol (eql 'sicl-type:typeq)) form env)
+  (sicl-ast:make-typeq-ast
+   (convert (second form) env)
+   (third form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
