@@ -717,9 +717,9 @@
 (defclass inline-declaration-entry (inline-or-notinline-declaration-entry)
   ())
 
-(defun make-inline-declaration-entry (location-entry)
+(defun make-inline-declaration-entry (base-entry)
   (make-instance 'inline-declaration-entry
-		 :location (location location-entry)))
+		 :base-entry base-entry))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -728,9 +728,9 @@
 (defclass notinline-declaration-entry (inline-or-notinline-declaration-entry)
   ())
 
-(defun make-notinline-declaration-entry (location-entry)
+(defun make-notinline-declaration-entry (base-entry)
   (make-instance 'notinline-declaration-entry
-		 :location (location location-entry)))
+		 :base-entry base-entry))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1403,7 +1403,7 @@
 (defun find-inline-info (entry env)
   (loop for e in (append env (proclamations *global-environment*))
 	do (when (and (typep e 'inline-or-notinline-declaration-entry)
-		      (eq (location e) entry))
+		      (eq (base-entry e) entry))
 	     (return (if (typep e 'inline-declaration-entry)
 			 :inline
 			 :notinline)))))
@@ -1411,12 +1411,12 @@
 (defun find-ignore-info (entry env)
   (cond ((loop for e in (append env (proclamations *global-environment*))
 	       when (and (typep e 'ignore-declaration-entry)
-			 (eq (location e) entry))
+			 (eq (base-entry e) entry))
 		 return t)
 	 :ignore)
 	((loop for e in (append env (proclamations *global-environment*))
 	       when (and (typep e 'ignorable-declaration-entry)
-			 (eq (location e) entry))
+			 (eq (base-entry e) entry))
 		 return t)
 	 :ignorable)
 	(t nil)))
@@ -1424,7 +1424,7 @@
 (defun find-dynamic-extent-info (entry env)
   (loop for e in (append env (proclamations *global-environment*))
 	when (and (typep e 'dynamic-extent-declaration-entry)
-		  (eq (location e) entry))
+		  (eq (base-entry e) entry))
 	  return t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2223,6 +2223,54 @@
 	   :key #'name
 	   :test #'eq))
 
+(defun proclaim-inline (name)
+  (let ((base-entry (find name (functions *global-environment*)
+			  :key #'name)))
+    ;; If there is not an base entry for the function, then create
+    ;; one.
+    (when (null base-entry)
+      (setf base-entry (make-global-function-entry name))
+      (push base-entry (functions *global-environment*)))
+    ;; Next, check whether there is already an INLINE or a NOTINLINE
+    ;; proclamation.
+    (let ((aux-entry (find-if
+		      (lambda (entry)
+			(and (or (typep entry 'inline-declaration-entry)
+				 (typep entry 'notinline-declaration-entry))
+			     (eq (base-entry entry) base-entry)))
+		      (proclamations *global-environment*))))
+      (cond ((null aux-entry)
+	     (push (make-inline-declaration-entry base-entry)
+		   (proclamations *global-environment*)))
+	    ((typep aux-entry 'notinline-declaration-entry)
+	     (change-class aux-entry 'inline-declaration-entry))
+	    (t
+	     nil)))))
+  
+(defun proclaim-notinline (name)
+  (let ((base-entry (find name (functions *global-environment*)
+			  :key #'name)))
+    ;; If there is not an base entry for the function, then create
+    ;; one.
+    (when (null base-entry)
+      (setf base-entry (make-global-function-entry name))
+      (push base-entry (functions *global-environment*)))
+    ;; Next, check whether there is already an INLINE or a NOTINLINE
+    ;; proclamation.
+    (let ((aux-entry (find-if
+		      (lambda (entry)
+			(and (or (typep entry 'inline-declaration-entry)
+				 (typep entry 'notinline-declaration-entry))
+			     (eq (base-entry entry) base-entry)))
+		      (proclamations *global-environment*))))
+      (cond ((null aux-entry)
+	     (push (make-notinline-declaration-entry base-entry)
+		   (proclamations *global-environment*)))
+	    ((typep aux-entry 'inline-declaration-entry)
+	     (change-class aux-entry 'notinline-declaration-entry))
+	    (t
+	     nil)))))
+  
 (defun proclaim (declaration-specifier)
   (case (car declaration-specifier)
     (declaration
@@ -2233,6 +2281,12 @@
 	   (cddr declaration-specifier)))
     (special
      (mapc #'proclaim-special
+	   (cdr declaration-specifier)))
+    (inline
+     (mapc #'proclaim-inline
+	   (cdr declaration-specifier)))
+    (notinline
+     (mapc #'proclaim-notinline
 	   (cdr declaration-specifier)))
     ;; FIXME: handle more proclamations
     ))
