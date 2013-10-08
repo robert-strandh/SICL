@@ -12,7 +12,7 @@
 ;;; arguments are given
 (define-compiler-macro - (x &rest args)
   (cond ((null args) `(negate ,x))
-	((null (cdr args)) `(binary-- ,x (car args)))
+	((null (cdr args)) `(binary-- ,x ,(car args)))
 	(t `(binary-- (- ,@(butlast args)) ,(car (last args))))))
 
 (define-compiler-macro * (&rest args)
@@ -27,6 +27,36 @@
 ;;; arguments are given
 (define-compiler-macro / (x &rest args)
   (cond ((null args) `(invert ,x))
-	((null (cdr args)) `(binary-/ ,x (car args)))
+	((null (cdr args)) `(binary-/ ,x ,(car args)))
 	(t `(binary-/ (/ ,@(butlast args)) ,(car (last args))))))
+
+(define-compiler-macro < (x &rest args)
+  (if (null args)
+      t
+      `(and (binary-< ,x ,(car args))
+	    (< ,@args))))
+
+(define-compiler-macro <= (x &rest args)
+  (if (null args)
+      t
+      `(and (binary-<= ,x ,(car args))
+	    (<= ,@args))))
+
+(define-compiler-macro > (x &rest args)
+  (if (null args)
+      t
+      `(and (binary-> ,x ,(car args))
+	    (> ,@args))))
+
+(define-compiler-macro >= (x &rest args)
+  (if (null args)
+      t
+      `(and (binary->= ,x ,(car args))
+	    (>= ,@args))))
+
+(define-compiler-macro = (x &rest args)
+  (if (null args)
+      t
+      `(and (binary-= ,x ,(car args))
+	    (= ,@args))))
 
