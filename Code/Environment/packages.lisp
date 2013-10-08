@@ -62,6 +62,7 @@
    #:lexical-location-info
    #:global-location-info
    #:function-info
+   #:inline-info #:ast #:parameters
    #:variable-info
    #:fdefinition
    #:fboundp

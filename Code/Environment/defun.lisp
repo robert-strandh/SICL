@@ -11,6 +11,6 @@
 			   ,@forms))))
       `(progn
 	 (eval-when (:compile-toplevel)
-	   (ensure-global-function-entry ',name ',definition))
+	   (sicl-compiler:compile-time-compile ',name ',definition))
 	 (eval-when (:load-toplevel :execute)
 	   (funcall #'(setf fdefinition) ,definition ',name))))))

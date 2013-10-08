@@ -468,24 +468,20 @@
 ;;; the function and store it in the function entry.  Return either
 ;;; the newly created entry or the existing entry.
 
-(defun ensure-global-function-entry (name lambda-expression)
+(defun ensure-global-function-entry
+    (name lambda-list ast parameters)
   (declare (cl:type function-name name))
   (let ((entry (find name (functions *global-environment*)
-		     :test #'equal :key #'name))
-	(lambda-list (cadr lambda-expression)))
-    ;; FIXME: Right now we always save the AST, but we should probably
-    ;; save it only when the function is currently declared INLINE.
-    (multiple-value-bind (lexical-asts ast)
-	(sicl-compiler-phase-1:convert-for-inlining lambda-expression)
-      (if (null entry)
-	  (let ((new-entry (make-global-function-entry
-			    name lambda-list ast lexical-asts)))
-	    (push new-entry (functions *global-environment*))
-	    new-entry)
-	  (progn (setf (lambda-list entry) lambda-list)
-		 (setf (ast entry) ast)
-		 (setf (parameters entry) lexical-asts)
-		 entry)))))
+		     :test #'equal :key #'name)))
+    (if (null entry)
+	(let ((new-entry (make-global-function-entry
+			  name lambda-list ast parameters)))
+	  (push new-entry (functions *global-environment*))
+	  new-entry)
+	(progn (setf (lambda-list entry) lambda-list)
+	       (setf (ast entry) ast)
+	       (setf (parameters entry) parameters)
+	       entry))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -880,7 +876,7 @@
    ;; (which means that the function has been declared INLINE in this
    ;; context), or NOTINLINE (which means that the function has been
    ;; declared NOTINLINE in this context).
-   (%inline-info :initarg :iniline-info :reader inline-info)
+   (%inline-info :initarg :inline-info :reader inline-info)
    ;; When this slot contains NIL, there is no available
    ;; AST, so the function can not be inlined.  
    (%ast :initarg :ast :reader ast)
