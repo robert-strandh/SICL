@@ -179,10 +179,10 @@
 (defmethod convert-instruction ((instruction sicl-mir:tailcall-instruction))
   (let ((new-inputs (copy-list (sicl-mir:inputs instruction))))
     ;; Insert three assignment instructions preceding the
-    ;; FUNCALL-INSTRUCTION, assigning lexical variables to the
+    ;; TAILCALL-INSTRUCTION, assigning lexical variables to the
     ;; physical registers used to store the corresponding arguments,
     ;; and replace the corresponding argument in the
-    ;; FUNCALL-INSTRUCTION by the register.
+    ;; TAILCALL-INSTRUCTION by the register.
     (loop for rest on (cdr new-inputs)
 	  for i from 0 below 3
 	  do (sicl-mir:insert-instruction-before
@@ -191,18 +191,18 @@
 	       (aref *registers* i))
 	      instruction)
 	     (setf (car rest) (aref *registers* i)))
-  (let ((saves (list (cons (aref *registers* 14) *return-address-lexical*)
-		     (cons (aref *registers* 10) *r10-lexical*)
-		     (cons (aref *registers* 11) *r11-lexical*)
-		     (cons (aref *registers* 8) *r8-lexical*)
-		     (cons (aref *registers* 7) *r7-lexical*)
-		     (cons (aref *registers* 6) *r6-lexical*)
-		     (cons (aref *registers* 5) *r5-lexical*)
-		     (cons (aref *registers* 4) *r4-lexical*))))
-    (loop for (register . lexical) in saves
-	  do (sicl-mir:insert-instruction-before
-	      (sicl-mir:make-assignment-instruction lexical register)
-	      instruction)))
+    (let ((saves (list (cons (aref *registers* 14) *return-address-lexical*)
+		       (cons (aref *registers* 10) *r10-lexical*)
+		       (cons (aref *registers* 11) *r11-lexical*)
+		       (cons (aref *registers* 8) *r8-lexical*)
+		       (cons (aref *registers* 7) *r7-lexical*)
+		       (cons (aref *registers* 6) *r6-lexical*)
+		       (cons (aref *registers* 5) *r5-lexical*)
+		       (cons (aref *registers* 4) *r4-lexical*))))
+      (loop for (register . lexical) in saves
+	    do (sicl-mir:insert-instruction-before
+		(sicl-mir:make-assignment-instruction lexical register)
+		instruction)))
     ;; Insert instructions for loading the static environment and the
     ;; linkage vector of the callee into appropriate registers.
     (sicl-mir:insert-instruction-before
@@ -216,7 +216,7 @@
       (aref *registers* 12))
      instruction)
     ;; Add the static environment and linkage vector registers as
-    ;; input to the funcall instruction, right after the callee input
+    ;; input to the tailcall instruction, right after the callee input
     ;; itself.
     (setf (sicl-mir:inputs instruction)
 	  (append (loop for i in '(3 4 5 6 7 8 10 11 12 14)
