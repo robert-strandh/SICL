@@ -4,6 +4,7 @@
   :depends-on (:sicl-compiler
 	       :sicl-conditionals
 	       :sicl-arithmetic
-	       :sicl-conditions)
+	       :sicl-conditions
+	       :sicl-type)
   :components
   ((:file "initialize-environment")))

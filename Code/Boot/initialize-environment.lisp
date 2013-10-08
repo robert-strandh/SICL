@@ -11,6 +11,8 @@
 (sicl-compiler:compile-file "../Conditionals/conditional-macros.lisp")
 (sicl-compiler:compile-file "../Arithmetic/type-proclamations.lisp")
 (sicl-compiler:compile-file "../Arithmetic/compiler-macros.lisp")
+(sicl-compiler:compile-file "../Types/type-proclamations.lisp")
+(sicl-compiler:compile-file "../Types/compiler-macros.lisp")
 (sicl-compiler:compile-file "../Conditions/type-proclamations.lisp")
 (sicl-compiler:compile-file "../Environment/multiple-value-call.lisp")
 (sicl-compiler:compile-file "../Environment/multiple-value-bind.lisp")
