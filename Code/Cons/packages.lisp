@@ -6,14 +6,6 @@
    . #.(loop for symbol being each external-symbol of '#:common-lisp
 	     collect (symbol-name symbol))))
 
-(defpackage #:sicl-type
-  (:use #:sicl-common-lisp)
-  (:export
-   ;; The symbol TYPEQ names a special operator.  It is similar to
-   ;; TYPEP, except that it does not evaluate its TYPE argument. 
-   #:typeq
-   ))
-
 (defpackage #:sicl-cons
   (:use #:sicl-common-lisp)
   (:export
