@@ -11,7 +11,8 @@
 	       :sicl-compiler-ssa-form
 	       :sicl-compiler-loops
 	       :sicl-environment
-	       :sicl-reader-simple)
+	       :sicl-reader-simple
+	       :sicl-type)
   :components
   ((:file "packages" :depends-on ())
    (:file "abstract-syntax-tree"
@@ -37,4 +38,6 @@
 		 "type-descriptor"
 		 "graph-coloring"
 		 "phase1"
-		 "phase2"))))
+		 "phase2"))
+   (:file "compile-time-compile"
+    :depends-on ("phase1"))))
