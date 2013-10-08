@@ -70,7 +70,7 @@
    #:the-ast #:make-the-ast #:value-type
    #:draw-ast
    #:children
-   #:typeq-ast
+   #:typeq-ast #:make-typeq-ast
    #:load-car-ast #:make-load-car-ast
    #:store-car-ast #:make-store-car-ast
    #:load-cdr-ast #:make-load-cdr-ast
