@@ -542,7 +542,7 @@
 
 (defun make-typeq-ast (form-ast type-specifier)
   (make-instance 'typeq-ast
-    :chldren (list form-ast)
+    :children (list form-ast)
     :type-specifier type-specifier))
 
 (defmethod stream-draw-ast ((ast typeq-ast) stream)
@@ -565,7 +565,7 @@
 
 (defun make-load-car-ast (form-ast)
   (make-instance 'load-car-ast
-    :chldren (list form-ast)))
+    :children (list form-ast)))
 
 (defmethod stream-draw-ast ((ast load-car-ast) stream)
   (format stream "   ~a [label = \"load-car\"];~%"
