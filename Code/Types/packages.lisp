@@ -1,20 +1,9 @@
-(defpackage #:sicl-type-proclamations
-  (:import-from #:common-lisp
-		#:in-package
-		#:deftype
-		#:proclaim
-		#:and #:or #:satisfies
-		#:ftype
-		#:function
-		#:character
-		#:fixnum
-		#:bignum
-		#:number
-		#:cons
-		#:atom
-		#:list
-		#:null
-		#:eql
-		#:t))
-		
-		
+(cl:in-package #:common-lisp-user)
+
+(defpackage #:sicl-type
+  (:use #:common-lisp)
+  (:export
+   ;; The symbol TYPEQ names a special operator.  It is similar to
+   ;; TYPEP, except that it does not evaluate its TYPE argument. 
+   #:typeq
+   ))
