@@ -738,9 +738,12 @@
     ((symbol (eql 'the)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
-  (sicl-ast:make-the-ast
-   (cadr form)
-   (convert (caddr form) environment)))
+  (apply #'sicl-ast:make-the-ast
+	 (convert (caddr form) environment)
+	 (mapcar #'convert-constant
+		 (if (and (consp (cadr form)) (eq (car (cadr form)) 'values))
+		     (cdr (cadr form))
+		     (list (cadr form))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1015,7 +1018,7 @@
 (defmethod convert-compound ((symbol (eql 'sicl-type:typeq)) form env)
   (sicl-ast:make-typeq-ast
    (convert (second form) env)
-   (third form)))
+   (convert-constant (third form))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
