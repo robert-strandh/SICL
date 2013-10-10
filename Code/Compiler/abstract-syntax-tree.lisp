@@ -462,16 +462,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class THE-AST.
+;;;
+;;; As with the TYPEQ-AST, we keep the list of types in a separate
+;;; slot, so that even if the type specifiers stored in the children
+;;; get replaced by a reference to the linkage vector, we still have
+;;; access to the types for static type inference purposes. 
 
 (defclass the-ast (ast)
-  ((%value-type :initarg :value-type :reader value-type)))
+  ((%type-specifiers :initarg :type-specifiers :reader type-specifiers)))
 
-(defun make-the-ast (value-type form-ast)
+(defun make-the-ast (form-ast &rest types)
   (make-instance 'the-ast
-    :value-type value-type
-    :children  (list form-ast)))
-
-;;; FIXME: define a method on STREAM-DRAW-AST specialized to THE-AST.
+    :children (list* form-ast types)
+    :type-specifiers (mapcar #'value types)))
+     
+(defmethod stream-draw-ast ((ast the-ast) stream)
+  (format stream "   ~a [label = \"the\"];~%"
+	  (id ast)))
 
 (defmethod form-ast ((ast the-ast))
   (first (children ast)))
@@ -536,14 +543,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TYPEQ-AST.
+;;;
+;;; The type specifier becomes both a child in the form of a
+;;; CONSTANT-AST and the value of a separate slot.  The reason for
+;;; this is that the child might be replaced by a reference to the
+;;; linkage vector, but we still need the type specifier in order to
+;;; do static type inference.
 
 (defclass typeq-ast (ast)
   ((%type-specifier :initarg :type-specifier :reader type-specifier)))
 
-(defun make-typeq-ast (form-ast type-specifier)
+(defun make-typeq-ast (form-ast type-specifier-ast)
   (make-instance 'typeq-ast
-    :children (list form-ast)
-    :type-specifier type-specifier))
+    :children (list form-ast type-specifier-ast)
+    :type-specifier (sicl-ast:value type-specifier-ast)))
 
 (defmethod stream-draw-ast ((ast typeq-ast) stream)
   (format stream "   ~a [label = \"typeq\"];~%"

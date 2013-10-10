@@ -67,10 +67,10 @@
    #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
    #:tagbody-ast #:make-tagbody-ast #:items
    #:tag-ast #:make-tag-ast #:name
-   #:the-ast #:make-the-ast #:value-type
+   #:the-ast #:make-the-ast #:type-specifiers
    #:draw-ast
    #:children
-   #:typeq-ast #:make-typeq-ast
+   #:typeq-ast #:make-typeq-ast #:type-specifier
    #:load-car-ast #:make-load-car-ast
    #:store-car-ast #:make-store-car-ast
    #:load-cdr-ast #:make-load-cdr-ast
@@ -171,6 +171,7 @@
    #:store-contents-instruction #:make-store-contents-instruction 
    #:memref-instruction #:make-memref-instruction #:cacheable
    #:memset-instruction #:make-memset-instruction
+   #:typeq-instruction #:make-typeq-instruction
    #:u+-instruction #:make-u+-instruction
    #:u--instruction #:make-u--instruction
    #:s+-instruction #:make-s+-instruction
