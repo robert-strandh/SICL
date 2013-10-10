@@ -1097,6 +1097,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction TYPEQ-INSTRUCTION.
+
+(defclass typeq-instruction (instruction)
+  ((%value-type :initarg :value-type :reader value-type)))
+
+(defun make-typeq-instruction (input successors value-type)
+  (make-instance 'typeq-instruction
+    :inputs (list input)
+    :successors successors
+    :value-type value-type))
+
+(defmethod draw-instruction ((instruction typeq-instruction) stream)
+  (format stream "   ~a [label = \"typeq ~a\"];~%"
+	  (unique-id instruction)
+	  (value-type instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction U+-INSTRUCTION.
 
 (defclass u+-instruction (instruction)
