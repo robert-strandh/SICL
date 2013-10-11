@@ -58,7 +58,10 @@
     (setf (gethash ast *table*) (gensym))
     (format stream "  ~a [shape = box];~%"
 	    (id ast))
-    (call-next-method)))
+    (call-next-method)
+    (loop for child in (children ast)
+	  do (stream-draw-ast child stream)
+	     (format stream "   ~a -> ~a~%" (id ast) (id child)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -250,14 +253,7 @@
 
 (defmethod stream-draw-ast ((ast call-ast) stream)
   (format stream "   ~a [label = \"call\"];~%"
-	  (id ast))
-  (let ((location (callee-ast ast)))
-    (stream-draw-ast location stream)
-    (format stream "   ~a -> ~a~%" (id ast) (id location)))
-  (loop for child in (argument-asts ast)
-	do (stream-draw-ast child stream)
-	   (format stream "   ~a -> ~a~%"
-		   (id ast) (id child))))
+	  (id ast)))
 
 (defmethod callee-ast ((ast call-ast))
   (first (children ast)))
@@ -287,11 +283,7 @@
 
 (defmethod stream-draw-ast ((ast function-ast) stream)
   (format stream "   ~a [label = \"function\"];~%"
-	  (id ast))
-  (stream-draw-ast (body-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (body-ast ast))))
+	  (id ast)))
 
 (defmethod body-ast ((ast function-ast))
   (first (children ast)))
@@ -309,11 +301,7 @@
 
 (defmethod stream-draw-ast ((ast progn-ast) stream)
   (format stream "   ~a [label = \"progn\"];~%"
-	  (id ast))
-  (loop for child in (form-asts ast)
-	do (stream-draw-ast child stream)
-	   (format stream "   ~a -> ~a~%"
-		   (id ast) (id child))))
+	  (id ast)))
 
 (defmethod form-asts ((ast progn-ast))
   (children ast))
@@ -331,11 +319,7 @@
 
 (defmethod stream-draw-ast ((ast block-ast) stream)
   (format stream "   ~a [label = \"block\"];~%"
-	  (id ast))
-  (stream-draw-ast (body-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (body-ast ast))))
+	  (id ast)))
   
 (defmethod body-ast ((ast block-ast))
   (first (children ast)))
@@ -356,14 +340,7 @@
 
 (defmethod stream-draw-ast ((ast return-from-ast) stream)
   (format stream "   ~a [label = \"return-from\"];~%"
-	  (id ast))
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (block-ast ast)))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast))))
+	  (id ast)))
   
 (defmethod block-ast ((ast return-from-ast))
   (first (children ast)))
@@ -384,15 +361,7 @@
 
 (defmethod stream-draw-ast ((ast setq-ast) stream)
   (format stream "   ~a [label = \"setq\"];~%"
-	  (id ast))
-  (stream-draw-ast (lhs-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (lhs-ast ast)))
-  (stream-draw-ast (value-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (value-ast ast))))
+	  (id ast)))
 
 (defmethod lhs-ast ((ast setq-ast))
   (first (children ast)))
@@ -429,11 +398,7 @@
 
 (defmethod stream-draw-ast ((ast tagbody-ast) stream)
   (format stream "   ~a [label = \"tagbody\"];~%"
-	  (id ast))
-  (loop for item in (items ast)
-	do (stream-draw-ast item stream)
-	   (format stream "   ~a -> ~a~%"
-		   (id ast) (id item))))
+	  (id ast)))
 
 (defmethod items ((ast tagbody-ast))
   (children ast))
@@ -451,10 +416,7 @@
 
 (defmethod stream-draw-ast ((ast go-ast) stream)
   (format stream "   ~a [label = \"go\"];~%"
-	  (id ast))
-  (stream-draw-ast (tag-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast) (id (tag-ast ast))))
+	  (id ast)))
 
 (defmethod tag-ast ((ast go-ast))
   (first (children ast)))
@@ -517,19 +479,7 @@
 
 (defmethod stream-draw-ast ((ast if-ast) stream)
   (format stream "   ~a [label = \"if\"];~%"
-	  (id ast))
-  (stream-draw-ast (test-ast ast) stream)
-  (stream-draw-ast (then-ast ast) stream)
-  (stream-draw-ast (else-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (test-ast ast)))
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (then-ast ast)))
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (else-ast ast))))
+	  (id ast)))
 
 (defmethod test-ast ((ast if-ast))
   (first (children ast)))
@@ -560,11 +510,7 @@
 
 (defmethod stream-draw-ast ((ast typeq-ast) stream)
   (format stream "   ~a [label = \"typeq\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast typeq-ast))
   (first (children ast)))
@@ -582,11 +528,7 @@
 
 (defmethod stream-draw-ast ((ast load-car-ast) stream)
   (format stream "   ~a [label = \"load-car\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast load-car-ast))
   (first (children ast)))
@@ -604,15 +546,7 @@
 
 (defmethod stream-draw-ast ((ast store-car-ast) stream)
   (format stream "   ~a [label = \"store-car\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast)))
-  (stream-draw-ast (value-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (value-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast store-car-ast))
   (first (children ast)))
@@ -633,11 +567,7 @@
 
 (defmethod stream-draw-ast ((ast load-cdr-ast) stream)
   (format stream "   ~a [label = \"load-cdr\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast load-cdr-ast))
   (first (children ast)))
@@ -655,15 +585,7 @@
 
 (defmethod stream-draw-ast ((ast store-cdr-ast) stream)
   (format stream "   ~a [label = \"store-cdr\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast)))
-  (stream-draw-ast (value-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (value-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast store-cdr-ast))
   (first (children ast)))
@@ -684,11 +606,7 @@
 
 (defmethod stream-draw-ast ((ast load-class-ast) stream)
   (format stream "   ~a [label = \"load-class\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast load-class-ast))
   (first (children ast)))
@@ -706,15 +624,7 @@
 
 (defmethod stream-draw-ast ((ast store-class-ast) stream)
   (format stream "   ~a [label = \"store-class\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast)))
-  (stream-draw-ast (value-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (value-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast store-class-ast))
   (first (children ast)))
@@ -735,15 +645,7 @@
 
 (defmethod stream-draw-ast ((ast load-contents-ast) stream)
   (format stream "   ~a [label = \"load-contents\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast)))
-  (stream-draw-ast (offset-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (offset-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast load-contents-ast))
   (first (children ast)))
@@ -764,19 +666,7 @@
 
 (defmethod stream-draw-ast ((ast store-contents-ast) stream)
   (format stream "   ~a [label = \"store-contents\"];~%"
-	  (id ast))
-  (stream-draw-ast (form-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (form-ast ast)))
-  (stream-draw-ast (offset-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (offset-ast ast)))
-  (stream-draw-ast (value-ast ast) stream)
-  (format stream "   ~a -> ~a~%"
-	  (id ast)
-	  (id (value-ast ast))))
+	  (id ast)))
 
 (defmethod form-ast ((ast store-contents-ast))
   (first (children ast)))
@@ -881,10 +771,7 @@
 
 (defmethod stream-draw-ast ((ast memref-ast) stream)
   (format stream "   ~a [label = \"memref\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -908,10 +795,7 @@
 
 (defmethod stream-draw-ast ((ast memset-ast) stream)
   (format stream "   ~a [label = \"memset\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -942,10 +826,7 @@
 
 (defmethod stream-draw-ast ((ast u+-ast) stream)
   (format stream "   ~a [label = \"u+\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -975,10 +856,7 @@
 
 (defmethod stream-draw-ast ((ast u--ast) stream)
   (format stream "   ~a [label = \"u-\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1005,10 +883,7 @@
 
 (defmethod stream-draw-ast ((ast s+-ast) stream)
   (format stream "   ~a [label = \"s+\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1035,10 +910,7 @@
 
 (defmethod stream-draw-ast ((ast s--ast) stream)
   (format stream "   ~a [label = \"s-\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1064,10 +936,7 @@
 
 (defmethod stream-draw-ast ((ast neg-ast) stream)
   (format stream "   ~a [label = \"neg\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1093,10 +962,7 @@
 
 (defmethod stream-draw-ast ((ast &-ast) stream)
   (format stream "   ~a [label = \"&\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1122,10 +988,7 @@
 
 (defmethod stream-draw-ast ((ast ior-ast) stream)
   (format stream "   ~a [label = \"ior\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1151,10 +1014,7 @@
 
 (defmethod stream-draw-ast ((ast xor-ast) stream)
   (format stream "   ~a [label = \"xor\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1179,10 +1039,7 @@
 
 (defmethod stream-draw-ast ((ast ~-ast) stream)
   (format stream "   ~a [label = \"~\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1208,10 +1065,7 @@
 
 (defmethod stream-draw-ast ((ast ==-ast) stream)
   (format stream "   ~a [label = \"==\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1237,10 +1091,7 @@
 
 (defmethod stream-draw-ast ((ast s<-ast) stream)
   (format stream "   ~a [label = \"s<\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1267,10 +1118,7 @@
 
 (defmethod stream-draw-ast ((ast s<=-ast) stream)
   (format stream "   ~a [label = \"s<=\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1296,10 +1144,7 @@
 
 (defmethod stream-draw-ast ((ast u<-ast) stream)
   (format stream "   ~a [label = \"u<\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1326,10 +1171,7 @@
 
 (defmethod stream-draw-ast ((ast u<=-ast) stream)
   (format stream "   ~a [label = \"u<=\"];~%"
-	  (id ast))
-  (loop for argument-ast in (argument-asts ast)
-	do (stream-draw-ast argument-ast stream)
-	   (format stream "   ~a -> ~a~%" (id ast) (id argument-ast))))
+	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1370,9 +1212,7 @@
 (defmethod stream-draw-ast ((ast arg-ast) stream)
   (format stream "   ~a [style = filled, fillcolor = orange];~%" (id ast))
   (format stream "   ~a [label = \"arg\"];~%"
-	  (id ast))
-  (stream-draw-ast (index-ast ast) stream)
-  (format stream "   ~a -> ~a~%" (id ast) (id (index-ast ast))))
+	  (id ast)))
 
 (defmethod index-ast ((ast arg-ast))
   (first (children ast)))
