@@ -102,8 +102,7 @@
 			(typep successor 'sicl-mir:instruction))
 		      successors))
     (error "illegal successors: ~s" results))
-  (when (or (and (null successors) (not (null results)))
-	    (and (null results) (not (null successors))))
+  (when (and (null successors) (not (null results)))
     (error "Illegal combination of results and successors"))
   (make-instance 'context
     :results results
@@ -491,6 +490,75 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a TYPEQ-AST.
+
+(defmethod compile-ast ((ast sicl-ast:typeq-ast) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (ecase (length successors)
+      (0 
+       (let* ((temp1 (make-temp nil))
+	      (next (sicl-mir:make-return-instruction (list temp1)))
+	      (false (make-boolean nil temp1 next))
+	      (true (make-boolean t temp1 next))
+	      (temp2 (make-temp nil)))
+	 (compile-ast
+	  (sicl-ast:form-ast ast)
+	  (context
+	   (list temp2)
+	   (list (sicl-mir:make-typeq-instruction
+		  (list temp2
+			(sicl-mir:make-constant-input
+			 (sicl-ast:type-specifier ast)))
+		  (list false true)
+		  (sicl-ast:type-specifier ast)))))))
+      (1 (if (null results)
+	     (progn (warn "test compiled in a context with no results")
+		    (car successors))
+	     (let* ((false (make-boolean nil (car results) (car successors)))
+		    (true (make-boolean t (car results) (car successors)))
+		    (temp (make-temp nil)))
+	       (compile-ast
+		(sicl-ast:form-ast ast)
+		(context
+		 (list temp)
+		 (list
+		  (nil-fill
+		   (cdr results)
+		   (sicl-mir:make-typeq-instruction
+		    (list temp
+			  (sicl-mir:make-constant-input
+			   (sicl-ast:type-specifier ast)))
+		    (list false true)
+		    (sicl-ast:type-specifier ast)))))))))
+      (2 (if (null results)
+	     (let ((temp (make-temp nil)))
+	       (compile-ast
+		(sicl-ast:form-ast ast)
+		(context
+		 (list temp)
+		 (list (sicl-mir:make-typeq-instruction
+			(list temp
+			      (sicl-mir:make-constant-input
+			       (sicl-ast:type-specifier ast)))
+			successors
+			(sicl-ast:type-specifier ast))))))
+	     (let ((false (make-boolean nil (car results) (car successors)))
+		   (true (make-boolean t (car results) (cadr successors)))
+		   (temp (make-temp nil)))
+	       (compile-ast
+		(sicl-ast:form-ast ast)
+		(context
+		 (list temp)
+		 (list
+		  (nil-fill
+		   (cdr results)
+		   (sicl-mir:make-typeq-instruction
+		    (list temp
+			  (sicl-mir:make-constant-input
+			   (sicl-ast:type-specifier ast)))
+		    (list false true)
+		    (sicl-ast:type-specifier ast))))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1114,7 +1182,8 @@
 (defun make-boolean (boolean result successor)
   (sicl-mir:make-assignment-instruction
    (sicl-mir:make-external-input boolean)
-   result successor))
+   result
+   successor))
 
 (defun compile-test (argument-asts constructor context)
   (with-accessors ((results results)
