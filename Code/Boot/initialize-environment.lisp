@@ -18,4 +18,4 @@
 (sicl-compiler:compile-file "../Environment/multiple-value-bind.lisp")
 (sicl-compiler:compile-file "../Reader/Simple/quasiquote-macro.lisp")
 (sicl-compiler:compile-file "../Environment/constants.lisp")
-
+(sicl-compiler:compile-file "../Arithmetic/low.lisp")
