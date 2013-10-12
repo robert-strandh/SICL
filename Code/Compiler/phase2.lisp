@@ -421,25 +421,28 @@
 ;;;
 ;;; Compile a THE-AST.
 
-(defun make-type-check (type var successor)
-  (let ((error-branch
-	  (sicl-mir:make-funcall-instruction
-	   ;; We do not know the storage for the ERROR function, but
-	   ;; it should already have been processed so that it is
-	   ;; present in the linkage vector.
-	   (list (sicl-mir:make-global-input 'error nil)
-		 (sicl-mir:make-constant-input :datum)
-		 var
-		 (sicl-mir:make-constant-input :expected-type)
-		 type))))
+(defun make-type-check (type-ast var successor)
+  (check-type type-ast sicl-ast:constant-ast)
+  (let* ((type-input (sicl-mir:make-constant-input (sicl-ast:value type-ast)))
+	 (error-branch
+	   (sicl-mir:make-funcall-instruction
+	    ;; We do not know the storage for the ERROR function, but
+	    ;; it should already have been processed so that it is
+	    ;; present in the linkage vector.
+	    (list (sicl-mir:make-global-input 'error nil)
+		  (sicl-mir:make-constant-input :datum)
+		  var
+		  (sicl-mir:make-constant-input :expected-type)
+		  type-input))))
     (sicl-mir:make-typeq-instruction
-     var (list error-branch successor) type)))
+     (list var type-input)
+     (list error-branch successor))))
 
 (defmethod compile-ast ((ast sicl-ast:the-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (destructuring-bind (form . types)
+    (destructuring-bind (form-ast . type-asts)
 	(sicl-ast:children ast)
       (ecase (length successors)
 	(0
@@ -448,9 +451,9 @@
 	 ;; THE-AST.  For now, do what we are allowed to do according to
 	 ;; the HyperSpec (i.e., don't check the types).  Eventually we
 	 ;; hope to implement a better solution.
-	 (compile-ast form context))
+	 (compile-ast form-ast context))
 	(1
-	 (let* ((temp-count (max (length results) (length types)))
+	 (let* ((temp-count (max (length results) (length type-asts)))
 		(temps (make-temps (make-list temp-count))))
 	   (let ((next (car successors)))
 	     ;; The last actions to take are to assign the temps to
@@ -462,9 +465,9 @@
 			     temp result next)))
 	     ;; Before assigning to the results, check the
 	     ;; types of the values.
-	     (loop for type in types
+	     (loop for type-ast in type-asts
 		   for temp in temps
-		   do (setf next (make-type-check type temp next)))
+		   do (setf next (make-type-check type-ast temp next)))
 	     next)))
 	(2
 	 (if (null results)
@@ -510,8 +513,7 @@
 		  (list temp2
 			(sicl-mir:make-constant-input
 			 (sicl-ast:type-specifier ast)))
-		  (list false true)
-		  (sicl-ast:type-specifier ast)))))))
+		  (list false true)))))))
       (1 (if (null results)
 	     (progn (warn "test compiled in a context with no results")
 		    (car successors))
@@ -529,8 +531,7 @@
 		    (list temp
 			  (sicl-mir:make-constant-input
 			   (sicl-ast:type-specifier ast)))
-		    (list false true)
-		    (sicl-ast:type-specifier ast)))))))))
+		    (list false true)))))))))
       (2 (if (null results)
 	     (let ((temp (make-temp nil)))
 	       (compile-ast
@@ -541,8 +542,7 @@
 			(list temp
 			      (sicl-mir:make-constant-input
 			       (sicl-ast:type-specifier ast)))
-			successors
-			(sicl-ast:type-specifier ast))))))
+			successors)))))
 	     (let ((false (make-boolean nil (car results) (car successors)))
 		   (true (make-boolean t (car results) (cadr successors)))
 		   (temp (make-temp nil)))
@@ -557,8 +557,7 @@
 		    (list temp
 			  (sicl-mir:make-constant-input
 			   (sicl-ast:type-specifier ast)))
-		    (list false true)
-		    (sicl-ast:type-specifier ast))))))))))))
+		    (list false true))))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -755,14 +754,14 @@
 	      (nil-fill (cdr results) (car successors)))))
       (2 (if (null results)
 	     (if (null (sicl-ast:value ast))
-		 (cadr successors)
-		 (car successors))
+		 (car successors)
+		 (cadr successors))
 	     (sicl-mir:make-assignment-instruction
 	      (sicl-mir:make-constant-input (sicl-ast:value ast))
 	      (car results)
 	      (if (null (sicl-ast:value ast))
-		  (cadr successors)
-		  (car successors))))))))
+		  (car successors)
+		  (cadr successors))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
