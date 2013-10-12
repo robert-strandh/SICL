@@ -552,10 +552,12 @@
   (loop for next in (successors instruction)
 	do (draw-instruction next stream))
   (loop for next in (successors instruction)
+	for i from 1
 	do (format stream
-		   "  ~a -> ~a [style = bold];~%"
+		   "  ~a -> ~a [style = bold, label = \"~d\"];~%"
 		   (unique-id instruction)
-		   (gethash next *instruction-table*))))
+		   (gethash next *instruction-table*)
+		   i)))
   
 (defmethod draw-instruction (instruction stream)
   (format stream "   ~a [label = \"~a\"];~%"
@@ -564,15 +566,21 @@
 
 (defmethod draw-instruction :after (instruction stream)
   (loop for datum in (inputs instruction)
+	for i from 1
 	do (draw-datum datum stream)
-	   (format stream "  ~a -> ~a [color = red, style = dashed];~%"
+	   (format stream
+		   "  ~a -> ~a [color = red, style = dashed, label = \"~d\"];~%"
 		   (gethash datum *datum-table*)
-		   (unique-id instruction)))
-  (loop for datum in (outputs instruction)
-	do (draw-datum datum stream)
-	   (format stream "  ~a -> ~a [color = blue, style = dashed];~%"
 		   (unique-id instruction)
-		   (gethash datum *datum-table*))))
+		   i))
+  (loop for datum in (outputs instruction)
+	for i from 1
+	do (draw-datum datum stream)
+	   (format stream
+		   "  ~a -> ~a [color = blue, style = dashed, label = \"~d\"];~%"
+		   (unique-id instruction)
+		   (gethash datum *datum-table*)
+		   i)))
 
 (defun draw-flowchart (start filename)
   (with-open-file (stream filename
@@ -1098,15 +1106,34 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TYPEQ-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs; a datum and a constant input
+;;; that represents the type that the datum should be tested for.
+;;;
+;;; As a result of various transformations of the instruction graph,
+;;; this instruction will either be eliminated (because we can
+;;; determine statically the result of the test), or it will be
+;;; replaced by a call to TYPEP.  When it is replaced by a call to
+;;; TYPEP, we use the constant input as the second argument to TYPEP.
+;;;
+;;; However, constant inputs are always replaced by references to an
+;;; element of the linkage vector, and this transformation may take
+;;; place fairly early in the process.  But we need to know the type
+;;; that is tested for, for the purpose of type inference.  While we
+;;; could maintain enough information to determine the type from the
+;;; reference to the linkage vector, it is easier just to keep the
+;;; type specifier around in a separate slot.  This is the purpose of
+;;; the VALUE-TYPE slot.
 
 (defclass typeq-instruction (instruction)
   ((%value-type :initarg :value-type :reader value-type)))
 
-(defun make-typeq-instruction (input successors value-type)
+(defun make-typeq-instruction (inputs successors)
+  (assert (typep (second inputs) 'constant-input))
   (make-instance 'typeq-instruction
-    :inputs (list input)
+    :inputs inputs
     :successors successors
-    :value-type value-type))
+    :value-type (value (second inputs))))
 
 (defmethod draw-instruction ((instruction typeq-instruction) stream)
   (format stream "   ~a [label = \"typeq ~a\"];~%"
