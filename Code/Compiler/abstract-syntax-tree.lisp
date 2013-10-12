@@ -60,8 +60,10 @@
 	    (id ast))
     (call-next-method)
     (loop for child in (children ast)
+	  for i from 1
 	  do (stream-draw-ast child stream)
-	     (format stream "   ~a -> ~a~%" (id ast) (id child)))))
+	     (format stream "   ~a -> ~a [label = \"~d\"];~%"
+		     (id ast) (id child) i))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -514,6 +516,9 @@
 
 (defmethod form-ast ((ast typeq-ast))
   (first (children ast)))
+
+(defmethod type-specifier-ast ((ast typeq-ast))
+  (second (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
