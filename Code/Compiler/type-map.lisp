@@ -196,6 +196,10 @@
 	       (non-integer-upper-bound-or
 		(third descriptor1) (third descriptor2))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Combine rational descriptors using AND.
+
 (defun rational-and (descriptor1 descriptor2)
   (cond ((or (null descriptor1) (null descriptor2))
 	 nil)
@@ -203,6 +207,10 @@
 	 (list (and (first descriptor1) (first descriptor2))
 	       (lower-bound-and (second descriptor1) (second descriptor2))
 	       (upper-bound-and (third descriptor1) (third descriptor2))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Take the DIFF between two rational descriptors.
 
 (defun rational-diff (descriptor1 descriptor2)
   (if (equal descriptor2 '(T * *))
@@ -738,7 +746,7 @@
 ;;;
 ;;; Canonicalization.
 ;;;
-;;; We assume that a type descriptor has been canonicalized:
+;;; We assume that a type specifier has been canonicalized:
 ;;;
 ;;;   * It no longer contains MOD, FIXNUM, or BYTE (signed or
 ;;;     unsigned).  They have been replaced by INTEGER.
