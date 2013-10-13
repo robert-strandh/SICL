@@ -30,12 +30,12 @@
     :depends-on ("packages"))
    (:file "program"
     :depends-on ("packages" "mir" "make"))
-   (:file "type-descriptor"
+   (:file "type-map"
     :depends-on ("packages"))
    (:file "compile-file"
     :depends-on ("program"
 		 "ast-transformations"
-		 "type-descriptor"
+		 "type-map"
 		 "graph-coloring"
 		 "phase1"
 		 "phase2"))
