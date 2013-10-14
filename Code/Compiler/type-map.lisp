@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler-types)
+(cl:in-package #:sicl-compiler-types)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -752,6 +752,49 @@
     :others-descriptor (others-diff (others-descriptor descriptor1)
 			            (others-descriptor descriptor2))))
 
+(defun type-descriptor-equal (type-descriptor-1 type-descriptor-2)
+  (and (equal (rational-descriptor type-descriptor-1)
+	      (rational-descriptor type-descriptor-2))
+       (equal (short-float-descriptor type-descriptor-1)
+	      (short-float-descriptor type-descriptor-2))
+       (equal (single-float-descriptor type-descriptor-1)
+	      (single-float-descriptor type-descriptor-2))
+       (equal (double-float-descriptor type-descriptor-1)
+	      (double-float-descriptor type-descriptor-2))
+       (equal (long-float-descriptor type-descriptor-1)
+	      (long-float-descriptor type-descriptor-2))
+       (equal (complex-descriptor type-descriptor-1)
+	      (complex-descriptor type-descriptor-2))
+       (equal (character-descriptor type-descriptor-1)
+	      (character-descriptor type-descriptor-2))
+       (equal (cons-descriptor type-descriptor-1)
+	      (cons-descriptor type-descriptor-2))
+       (equal (array-t-descriptor type-descriptor-1)
+	      (array-t-descriptor type-descriptor-2))
+       (equal (array-single-float-descriptor type-descriptor-1)
+	      (array-single-float-descriptor type-descriptor-2))
+       (equal (array-double-float-descriptor type-descriptor-1)
+	      (array-double-float-descriptor type-descriptor-2))
+       (equal (array-character-descriptor type-descriptor-1)
+	      (array-character-descriptor type-descriptor-2))
+       (equal (array-bit-descriptor type-descriptor-1)
+	      (array-bit-descriptor type-descriptor-2))
+       (equal (array-unsigned-byte-8-descriptor type-descriptor-1)
+	      (array-unsigned-byte-8-descriptor type-descriptor-2))
+       (equal (array-unsigned-byte-32-descriptor type-descriptor-1)
+	      (array-unsigned-byte-32-descriptor type-descriptor-2))
+       (equal (array-signed-byte-32-descriptor type-descriptor-1)
+	      (array-signed-byte-32-descriptor type-descriptor-2))
+       (equal (array-unsigned-byte-64-descriptor type-descriptor-1)
+	      (array-unsigned-byte-64-descriptor type-descriptor-2))
+       (equal (array-signed-byte-64-descriptor type-descriptor-1)
+	      (array-signed-byte-64-descriptor type-descriptor-2))
+       (equal (null-descriptor type-descriptor-1)
+	      (null-descriptor type-descriptor-2))
+       (null (set-exclusive-or (others-descriptor type-descriptor-1)
+			       (others-descriptor type-descriptor-1)))))
+       
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Canonicalization.
@@ -975,21 +1018,44 @@
     
 (defun type-map-diff (type-map-1 type-map-2)
   (let ((result (make-hash-table :test #'eq)))
-    (maphash (lambda (key descriptor1)
-	       (let ((descriptor2 (gethash key type-map-2)))
-		 (setf (gethash key result)
+    (maphash (lambda (var descriptor1)
+	       (let ((descriptor2 (gethash var type-map-2)))
+		 (setf (gethash var result)
 		       (type-descriptor-diff
 			descriptor1
 			(if (null descriptor2)
 			    (make-t-type-descriptor)
 			    descriptor2)))))
 	     type-map-1)
-    (maphash (lambda (key descriptor2)
-	       (let ((descriptor1 (gethash key type-map-1)))
+    (maphash (lambda (var descriptor2)
+	       (let ((descriptor1 (gethash var type-map-1)))
 		 (when (null descriptor1)
-		   (setf (gethash key result)
+		   (setf (gethash var result)
 			 (type-descriptor-diff
 			  (make-t-type-descriptor)
 			  descriptor2)))))
 	     type-map-2)
     result))
+
+(defun type-map-equal (type-map-1 type-map-2)
+  (maphash (lambda (var descriptor1)
+	     (let ((descriptor2 (gethash var type-map-2)))
+	       (if (null descriptor2)
+		   (unless (type-descriptor-equal
+			    descriptor1 (make-t-type-descriptor))
+		     (return-from type-map-equal nil))
+		   (unless (type-descriptor-equal
+			    descriptor1 descriptor2)
+		     (return-from type-map-equal nil)))))
+	   type-map-1)
+  (maphash (lambda (var descriptor2)
+	     (let ((descriptor1 (gethash var type-map-1)))
+	       (when (null descriptor1)
+		 (unless (type-descriptor-equal
+			  descriptor2 (make-t-type-descriptor))
+		   (return-from type-map-equal nil)))))
+	   type-map-2))
+  
+;;; Make a type map in which all variables have type T.
+(defun make-t-type-map ()
+  (make-hash-table :test #'eq))
