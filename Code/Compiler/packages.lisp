@@ -283,7 +283,13 @@
    #:others-descriptor
    #:type-descriptor-and
    #:type-descriptor-or
-   #:type-descriptor-diff))
+   #:type-descriptor-diff
+   #:type-descriptor
+   #:make-t-type-map
+   #:type-map-or
+   #:type-map-and
+   #:type-map-diff
+   ))
 
 
 (defpackage #:sicl-compiler
