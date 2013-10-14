@@ -1059,3 +1059,10 @@
 ;;; Make a type map in which all variables have type T.
 (defun make-t-type-map ()
   (make-hash-table :test #'eq))
+
+(defun make-single-variable-type-map (variable type)
+  (let ((result (make-hash-table :test #'eq)))
+    (setf (gethash variable result)
+	  (type-descriptor-from-type type))
+    result))
+

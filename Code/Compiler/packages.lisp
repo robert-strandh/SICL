@@ -289,6 +289,8 @@
    #:type-map-or
    #:type-map-and
    #:type-map-diff
+   #:type-map-equal
+   #:make-single-variable-type-map
    ))
 
 
