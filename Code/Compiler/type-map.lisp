@@ -2,6 +2,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Functions and classes for type descriptors.  
+;;;
+;;; A type descriptor describes the possible types of a single
+;;; variable.  
+;;;
+;;; Type descriptors are immutable. 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Descriptors for real numbers.
 ;;;
 ;;; All these descriptors contain lower and upper bounds.  Such a
@@ -99,7 +109,7 @@
 		(coerce 0 (type-of x)))
 	       (t '*)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Descriptors for rational numbers.
 ;;;
@@ -176,7 +186,7 @@
 		most-positive-fixnum)
 	       (t '*)))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Combine rational descriptors using OR.
 
@@ -196,7 +206,7 @@
 	       (non-integer-upper-bound-or
 		(third descriptor1) (third descriptor2))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Combine rational descriptors using AND.
 
@@ -208,7 +218,7 @@
 	       (lower-bound-and (second descriptor1) (second descriptor2))
 	       (upper-bound-and (third descriptor1) (third descriptor2))))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Take the DIFF between two rational descriptors.
 
@@ -217,7 +227,7 @@
       nil
       descriptor1))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Float descriptor.
 ;;;
@@ -237,7 +247,7 @@
       nil
       descriptor1))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Complex descriptor
 ;;;
@@ -317,7 +327,7 @@
 	(t
 	 descriptor1)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Character descriptor
 ;;;
@@ -335,7 +345,7 @@
       descriptor1
       nil))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Cons descriptor
 ;;;
@@ -353,7 +363,7 @@
       descriptor1
       nil))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Array descriptor
 ;;;
@@ -457,7 +467,7 @@
 	     nil
 	     descriptor1))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; NULL descriptor.
 ;;;
@@ -475,7 +485,7 @@
       descriptor1
       nil))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Others descriptor.
 ;;;
@@ -512,7 +522,7 @@
 	 (set-difference descriptor1 descriptor2
 			 :test #'eq))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Type descriptor.
 
@@ -742,7 +752,7 @@
     :others-descriptor (others-diff (others-descriptor descriptor1)
 			            (others-descriptor descriptor2))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Canonicalization.
 ;;;
@@ -920,3 +930,66 @@
 ;;; FIXME: do a better job here.
 (defmethod make-type-descriptor ((symbol (eql 'member)) rest)
   (make-t-type-descriptor))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions and classes for type maps.
+;;;
+;;; A type map is a dictionary mapping variables to type descriptors.
+;;; We represent a type map as an EQ hash table.  Client code can use
+;;; whatever object it wants to represent variables, as long as those
+;;; objects can be compared using EQ.
+;;;
+;;; Only variables whose types are something other than T need
+;;; acutally be present in the hash table.  
+
+(defun type-descriptor (variable type-map)
+  (gethash variable type-map (make-t-type-descriptor)))
+
+(defun type-map-or (type-map-1 type-map-2)
+  (let ((result (make-hash-table :test #'eq)))
+    (maphash (lambda (key descriptor1)
+	       (let ((descriptor2 (gethash key type-map-2)))
+		 (unless (null descriptor2)
+		   (setf (gethash key result)
+			 (type-descriptor-or descriptor1 descriptor2)))))
+	     type-map-1)
+    result))
+
+(defun type-map-and (type-map-1 type-map-2)
+  (let ((result (make-hash-table :test #'eq)))
+    (maphash (lambda (key descriptor1)
+	       (let ((descriptor2 (gethash key type-map-2)))
+		 (setf (gethash key result)
+		       (if (null descriptor2)
+			   descriptor1
+			   (type-descriptor-and descriptor1 descriptor2)))))
+	     type-map-1)
+    (maphash (lambda (key descriptor2)
+	       (let ((descriptor1 (gethash key type-map-1)))
+		 (when (null descriptor1)
+		   (setf (gethash key result)
+			 descriptor2))))
+	     type-map-2)
+    result))
+    
+(defun type-map-diff (type-map-1 type-map-2)
+  (let ((result (make-hash-table :test #'eq)))
+    (maphash (lambda (key descriptor1)
+	       (let ((descriptor2 (gethash key type-map-2)))
+		 (setf (gethash key result)
+		       (type-descriptor-diff
+			descriptor1
+			(if (null descriptor2)
+			    (make-t-type-descriptor)
+			    descriptor2)))))
+	     type-map-1)
+    (maphash (lambda (key descriptor2)
+	       (let ((descriptor1 (gethash key type-map-1)))
+		 (when (null descriptor1)
+		   (setf (gethash key result)
+			 (type-descriptor-diff
+			  (make-t-type-descriptor)
+			  descriptor2)))))
+	     type-map-2)
+    result))
