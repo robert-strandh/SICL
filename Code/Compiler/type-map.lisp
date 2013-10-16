@@ -222,10 +222,159 @@
 ;;;
 ;;; Take the DIFF between two rational descriptors.
 
+(defun ratio-lower-bound-<= (x y)
+  (cond ((eq x '*)
+	 t)
+	((eq y '*)
+	 nil)
+	((and (numberp x) (numberp y))
+	 (<= x y))
+	((and (consp x) (consp y))
+	 (<= (car x) (car y)))
+	((consp x)
+	 (< (car x) y))
+	(t
+	 (<= x (car y)))))
+
+(defun ratio-upper-bound->= (x y)
+  (cond ((eq x '*)
+	 t)
+	((eq y '*)
+	 nil)
+	((and (numberp x) (numberp y))
+	 (>= x y))
+	((and (consp x) (consp y))
+	 (>= (car x) (car y)))
+	((consp x)
+	 (> (car x) y))
+	(t
+	 (>= x (car y)))))
+
+(defun integer-lower-bound-<= (x y)
+  (cond ((eq x '*)
+	 t)
+	((eq y '*)
+	 nil)
+	((and (numberp x) (numberp y))
+	 (<= x y))
+	((and (consp x) (consp y))
+	 (<= (car x) (car y)))
+	((consp x)
+	 (< (car x) y))
+	(t
+	 (<= x (1+ (car y))))))
+
+(defun integer-upper-bound->= (x y)
+  (cond ((eq x '*)
+	 t)
+	((eq y '*)
+	 nil)
+	((and (numberp x) (numberp y))
+	 (>= x y))
+	((and (consp x) (consp y))
+	 (>= (car x) (car y)))
+	((consp x)
+	 (> (car x) y))
+	(t
+	 (>= x (1- (car y))))))
+
 (defun rational-diff (descriptor1 descriptor2)
-  (if (equal descriptor2 '(T * *))
-      nil
-      descriptor1))
+  (cond ((null descriptor1)
+	 nil)
+	((null descriptor2)
+	 descriptor1)
+	(t
+	 (destructuring-bind (t1 l1 u1) descriptor1
+	   (destructuring-bind (t2 l2 u2) descriptor2
+	     (cond ((and (eq t1 nil) (eq t2 nil))
+		    ;; We have two integer intervals.
+		    (cond ((and (integer-lower-bound-<= l2 l1)
+				(integer-upper-bound->= u2 u1))
+			   ;; The second interval covers all of the
+			   ;; first interval.
+			   nil)
+			  ((integer-lower-bound-<= l2 l1)
+			   ;; The upper bound of the second interval
+			   ;; is necessarily less than the upper bound
+			   ;; of the third interval, so the upper
+			   ;; bound of the second interval is either a
+			   ;; number or a CONS.
+			   `(nil
+			     ,(if (consp u2) (car u2) (1+ u2))
+			     ,u1))
+			  ((integer-upper-bound->= u2 u1)
+			   ;; The lower bound of the second interval
+			   ;; is necessarily greater than the lower
+			   ;; bound of the third interval, so the
+			   ;; lower bound of the second interval is
+			   ;; either a number or a CONS.
+			   `(nil
+			     ,l1
+			     ,(if (consp l2) (car l2) (1- l2))))
+			  (t
+			   ;; We are trying to remove an interval in
+			   ;; the middle of a wider interval.  We give
+			   ;; up and just allow the entire original
+			   ;; interval.
+			   descriptor1)))
+		   ((and (eq t1 t) (eq t2 t))
+		    ;; We have two ratio intervals.
+		    (cond ((and (ratio-lower-bound-<= l2 l1)
+				(ratio-upper-bound->= u2 u1))
+			   ;; The second interval covers all of the
+			   ;; first interval.
+			   nil)
+			  ((ratio-lower-bound-<= l2 l1)
+			   ;; The upper bound of the second interval
+			   ;; is necessarily less than the upper bound
+			   ;; of the third interval, so the upper
+			   ;; bound of the second interval is either a
+			   ;; number or a CONS.
+			   `(t
+			     ,(if (consp u2) (car u2) (list u2))
+			     ,u1))
+			  ((ratio-upper-bound->= u2 u1)
+			   ;; The lower bound of the second interval
+			   ;; is necessarily greater than the lower
+			   ;; bound of the third interval, so the
+			   ;; lower bound of the second interval is
+			   ;; either a number or a CONS.
+			   `(t
+			     ,l1
+			     ,(if (consp l2) (car l2) (list l2))))
+			  (t
+			   ;; We are trying to remove an interval in
+			   ;; the middle of a wider interval.  We give
+			   ;; up and just allow the entire original
+			   ;; interval.
+			   descriptor1)))
+		   (t
+		    ;; The first interval is an integer interval and
+		    ;; the second interval is a ratio interval.  We
+		    ;; handle this situation by converting the second
+		    ;; interval to an integer interval and calling the
+		    ;; function recursively.
+		    (rational-diff
+		     descriptor1
+		     `(nil
+		       ,(cond ((numberp l2)
+			       (ceiling l2))
+			      ((consp l2)
+			       (if (integerp (car l2))
+				   (1+ (car l2))
+				   (ceiling (car l2))))
+			      (t
+			       ;; l2 is *.
+			       l2))
+		       ,(cond ((numberp u2)
+			       (floor u2))
+			      ((consp u2)
+			       (if (integerp (car u2))
+				   (1- (car u2))
+				   (floor (car u2))))
+			      (t
+			       ;; u2 is *.
+			       u2)))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -235,12 +384,19 @@
 ;;; or a list of two elements, the lower and the upper bound.
 
 (defun float-or (descriptor1 descriptor2)
-  (list (non-integer-lower-bound-or (first descriptor1) (first descriptor2) )
-	(non-integer-upper-bound-or (second descriptor1) (second descriptor2))))
+  (cond ((null descriptor1) descriptor2)
+	((null descriptor2) descriptor1)
+	(t
+	 (list (non-integer-lower-bound-or
+		(first descriptor1) (first descriptor2) )
+	       (non-integer-upper-bound-or
+		(second descriptor1) (second descriptor2))))))
 
 (defun float-and (descriptor1 descriptor2)
-  (list (lower-bound-and (first descriptor1) (first descriptor2) )
-	(upper-bound-and (second descriptor1) (second descriptor2))))
+  (if (or (null descriptor1) (null descriptor2))
+      nil
+      (list (lower-bound-and (first descriptor1) (first descriptor2) )
+	    (upper-bound-and (second descriptor1) (second descriptor2)))))
 
 (defun float-diff (descriptor1 descriptor2)
   (if (equal descriptor2 '(* *))
@@ -624,6 +780,8 @@
 			            (complex-descriptor descriptor2))
     :character-descriptor (character-or (character-descriptor descriptor1)
 			                (character-descriptor descriptor2))
+    :cons-descriptor (or (cons-descriptor descriptor1)
+		         (cons-descriptor descriptor2))
     :array-double-float-descriptor
     (array-or (array-double-float-descriptor descriptor1)
               (array-double-float-descriptor descriptor2))
@@ -672,6 +830,8 @@
 			             (complex-descriptor descriptor2))
     :character-descriptor (character-and (character-descriptor descriptor1)
 			                 (character-descriptor descriptor2))
+    :cons-descriptor (and (cons-descriptor descriptor1)
+		          (cons-descriptor descriptor2))
     :array-character-descriptor
     (array-and (array-character-descriptor descriptor1)
                (array-character-descriptor descriptor2))
@@ -720,6 +880,8 @@
 			              (complex-descriptor descriptor2))
     :character-descriptor (character-diff (character-descriptor descriptor1)
 			                  (character-descriptor descriptor2))
+    :cons-descriptor (and (cons-descriptor descriptor1)
+		          (not (cons-descriptor descriptor2)))
     :array-character-descriptor
     (array-diff (array-character-descriptor descriptor1)
                 (array-character-descriptor descriptor2))
@@ -791,26 +953,14 @@
 	      (array-signed-byte-64-descriptor type-descriptor-2))
        (equal (null-descriptor type-descriptor-1)
 	      (null-descriptor type-descriptor-2))
-       (null (set-exclusive-or (others-descriptor type-descriptor-1)
-			       (others-descriptor type-descriptor-1)))))
+       (or (and (eq (others-descriptor type-descriptor-1) '*)
+		(eq (others-descriptor type-descriptor-2) '*))
+	   (and (not (eq (others-descriptor type-descriptor-1) '*))
+		(not (eq (others-descriptor type-descriptor-2) '*))
+		(null (set-exclusive-or
+		       (others-descriptor type-descriptor-1)
+		       (others-descriptor type-descriptor-1)))))))
        
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Canonicalization.
-;;;
-;;; We assume that a type specifier has been canonicalized:
-;;;
-;;;   * It no longer contains MOD, FIXNUM, or BYTE (signed or
-;;;     unsigned).  They have been replaced by INTEGER.
-;;;
-;;;   * It no longer contains references to STRINGs or VECTORs.  They
-;;;     have all been replaced by ARRAY.
-;;;
-;;;   * Abbreviated types have been expanded, so that for instanced 
-;;;     INTEGER becomes (INTEGER * *).  
-;;;
-;;; The canonicalization is achieved by the use of DEFTYPE.
 
 (defun make-t-type-descriptor ()
   (make-instance 'type-descriptor
@@ -839,16 +989,74 @@
 
 (defun type-descriptor-from-type (type)
   (if (symbolp type)
-      (cond ((null type)
-	     (make-instance 'type-descriptor
-	       :null-descriptor t))
-	    ((eq type 'character)
-	     (make-instance 'type-descriptor
-	       :character-descriptor t))
-	    (t
-	     (make-instance 'type-descriptor
-	       :others-descriptor (list type))))
+      (case type
+	(nil
+	 (make-instance 'type-descriptor))
+	(null
+	 (make-instance 'type-descriptor
+	   :null-descriptor t))
+	(character
+	 (make-instance 'type-descriptor
+	   :character-descriptor t))
+	;; FIXME: make this depend on the backend
+	(fixnum (type-descriptor-from-type
+		 '(integer #.(- (expt 2 29)) #.(1- (expt 2 29)))))
+	;; FIXME: make this depend on the backend
+	(bignum (type-descriptor-from-type
+		 '(or
+		   (integer * #.(1- (- (expt 2 29))))
+		   (integer #.(expt 2 29) *))))
+	(bit (type-descriptor-from-type '(integer 0 1)))
+	(integer (type-descriptor-from-type '(integer * *)))
+	(short-float (type-descriptor-from-type '(short-float * *)))
+	(single-float (type-descriptor-from-type '(single-float * *)))
+	(double-float (type-descriptor-from-type '(double-float * *)))
+	(long-float (type-descriptor-from-type '(long-float * *)))
+	(float (type-descriptor-from-type
+		'(or
+		  (short-float '(short-float * *))
+		  (single-float '(single-float * *))
+		  (double-float '(double-float * *))
+		  (long-float '(long-float * *)))))
+	(ratio (type-descriptor-from-type
+		'(and
+		  (rational * *)
+		  (not (integer * *)))))
+	(rational (type-descriptor-from-type '(rational * *)))
+	(complex (type-descriptor-from-type '(complex *)))
+	(number (type-descriptor-from-type
+		 '(or
+		   (rational * *)
+		   (short-float '(short-float * *))
+		   (single-float '(single-float * *))
+		   (double-float '(double-float * *))
+		   (long-float '(long-float * *))
+		   (complex *))))
+	(cons (type-descriptor-from-type '(cons * *)))
+	(list (type-descriptor-from-type '(or (cons * *) null)))
+	(array (type-descriptor-from-type '(array * *)))
+	(vector (type-descriptor-from-type '(array * 1)))
+	(string (type-descriptor-from-type '(array character 1)))
+	(t (make-instance 'type-descriptor
+	     :others-descriptor (list type))))
       (make-type-descriptor (car type) (cdr type))))
+
+(defmethod make-type-descriptor ((symbol (eql 'mod)) rest)
+  (type-descriptor-from-type
+   `(integer 0 (,(car rest)))))
+
+(defmethod make-type-descriptor ((symbol (eql 'signed-byte)) rest)
+  (type-descriptor-from-type
+   (if (eq (car rest) '*)
+       'integer
+       `(integer ,(- (expt 2 (1- (car rest))))
+		 ,(1- (expt 2 (1- (car rest))))))))
+
+(defmethod make-type-descriptor ((symbol (eql 'unsigned-byte)) rest)
+  (type-descriptor-from-type
+   (if (eq (car rest) '*)
+       '(integer 0 *)
+       `(mod ,(expt 2 (car rest))))))
 
 (defmethod make-type-descriptor ((symbol (eql 'integer)) rest)
   (make-instance 'type-descriptor
@@ -951,6 +1159,18 @@
 	    (make-instance 'type-descriptor
 	      :array-double-float-descriptor (cdr rest)))))))
 
+(defmethod make-type-descriptor ((symbol (eql 'string)) rest)
+  (type-descriptor-from-type
+   (if (or (null rest) (eq (car rest) '*))
+       '(array character)
+       `(array character (,(car rest))))))
+
+(defmethod make-type-descriptor ((symbol (eql 'vector)) rest)
+  (type-descriptor-from-type
+   (if (or (null rest) (equal rest '(*)))
+       '(array *)
+       `(array ,(car rest) (,(cadr rest))))))
+
 (defmethod make-type-descriptor ((symbol (eql 'or)) rest)
   (reduce #'type-descriptor-or
 	  (mapcar #'type-descriptor-from-type rest)))
@@ -989,6 +1209,10 @@
 (defun type-descriptor (variable type-map)
   (gethash variable type-map (make-t-type-descriptor)))
 
+(defun (setf type-descriptor) (new-descriptor variable type-map)
+  (check-type new-descriptor type-descriptor)
+  (setf (gethash variable type-map) new-descriptor))
+
 (defun type-map-or (type-map-1 type-map-2)
   (let ((result (make-hash-table :test #'eq)))
     (maphash (lambda (key descriptor1)
@@ -1016,27 +1240,6 @@
 	     type-map-2)
     result))
     
-(defun type-map-diff (type-map-1 type-map-2)
-  (let ((result (make-hash-table :test #'eq)))
-    (maphash (lambda (var descriptor1)
-	       (let ((descriptor2 (gethash var type-map-2)))
-		 (setf (gethash var result)
-		       (type-descriptor-diff
-			descriptor1
-			(if (null descriptor2)
-			    (make-t-type-descriptor)
-			    descriptor2)))))
-	     type-map-1)
-    (maphash (lambda (var descriptor2)
-	       (let ((descriptor1 (gethash var type-map-1)))
-		 (when (null descriptor1)
-		   (setf (gethash var result)
-			 (type-descriptor-diff
-			  (make-t-type-descriptor)
-			  descriptor2)))))
-	     type-map-2)
-    result))
-
 (defun type-map-equal (type-map-1 type-map-2)
   (maphash (lambda (var descriptor1)
 	     (let ((descriptor2 (gethash var type-map-2)))
@@ -1056,13 +1259,35 @@
 		   (return-from type-map-equal nil)))))
 	   type-map-2))
   
+(defun copy-type-map (type-map)
+  (let ((result (make-hash-table :test #'eq)))
+    (maphash (lambda (variable type-descriptor)
+	       (setf (gethash variable result) type-descriptor))
+	     type-map)
+    result))
+
+(defun split-type-map (type-map variable type-specifier)
+  (let ((result1 (make-hash-table :test #'eq))
+	(result2 (make-hash-table :test #'eq))
+	(type-descriptor (type-descriptor-from-type type-specifier)))
+    ;; Copy entries in TYPE-MAP to RESULT1 and RESULT2.
+    (maphash (lambda (variable type-descriptor)
+	       (setf (gethash variable result1) type-descriptor)
+	       (setf (gethash variable result2) type-descriptor))
+	     type-map)
+    ;; Modify entry for VARIABLE in RESULT1
+    (setf (gethash variable result1)
+	  (type-descriptor-diff (sicl-compiler-types:type-descriptor
+				 variable result1)
+				type-descriptor))
+    ;; Modify entry for VARIABLE in RESULT2
+    (setf (gethash variable result2)
+	  (type-descriptor-and (sicl-compiler-types:type-descriptor
+				variable result2)
+			       type-descriptor))
+    (values result1 result2)))
+
 ;;; Make a type map in which all variables have type T.
 (defun make-t-type-map ()
   (make-hash-table :test #'eq))
-
-(defun make-single-variable-type-map (variable type)
-  (let ((result (make-hash-table :test #'eq)))
-    (setf (gethash variable result)
-	  (type-descriptor-from-type type))
-    result))
 
