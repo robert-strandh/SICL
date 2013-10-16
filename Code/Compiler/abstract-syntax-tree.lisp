@@ -163,17 +163,14 @@
 ;;; A GLOBAL-AST represents a reference to a global FUNCTION, i.e., a
 ;;; name that is known to be associated with a function in the global
 ;;; environment.  Such a reference contains the name of the function,
-;;; and the STORAGE cell where the function can be found.  The storage
-;;; cell is a CONS cell where the CAR contains the function and the
-;;; CDR is NIL.
-;;;
-;;; We do not include information about the type of the function, nor
-;;; whether the function is declared inline/notinline, because such
-;;; information is not intrinsic properties of the function, and can
-;;; vary according to the place where the function is called. 
+;;; the STORAGE cell where the function can be found, and the TYPE of
+;;; the function as it was declared in the context where the AST was
+;;; created.  The storage cell is a CONS cell where the CAR contains
+;;; the function and the CDR is NIL.
 
 (defclass global-ast (ast)
   ((%name :initarg :name :reader name)
+   (%function-type :initarg :function-type :accessor function-type)
    (%storage :initarg :storage :reader storage)
    (%children :initform '() :allocation :class)))
 
@@ -240,11 +237,6 @@
 ;;; Class CALL-AST. 
 ;;;
 ;;; A CALL-AST represents a function call.  
-;;;
-;;; The callee can be a function-ast or a location.  An argument can
-;;; be any AST. 
-;;;
-;;; FIXME: Why can't the callee be any AST?
 
 (defclass call-ast (ast)
   ())
