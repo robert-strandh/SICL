@@ -44,26 +44,75 @@
     (initialize-type-info initial-instruction)
     (initialize-worklist initial-instruction)
     (loop until (null *worklist*)
-	  do (process-instruction (pop *worklist*)))))
+	  do (process-instruction (pop *worklist*)))
+    *type-info*))
     
+(defun combine-predecessor-type-maps (instruction)
+  (let ((predecessors (sicl-mir:predecessors instruction)))
+    (cond ((null predecessors)
+	   (sicl-compiler-types:make-t-type-map))
+	  ((null (cdr predecessors))
+	   (sicl-compiler-types:copy-type-map
+	    (gethash (list (car predecessors) instruction) *type-info*)))
+	  (t
+	   (reduce #'sicl-compiler-types:type-map-or 
+		   (loop for pred in predecessors
+			 collect (gethash (list pred instruction)
+					  *type-info*)))))))
+
+(defun set-type-map (instruction successor type-map)
+  (setf (gethash (list instruction successor) *type-info*) type-map))
+
 ;;; By default, we take the OR of the type maps of the incoming arcs,
 ;;; and propagate the result to every outgoing arc.
 (defmethod process-instruction (instruction)
-  (let* ((in-maps (loop for prec in (sicl-mir:predecessors instruction)
-			collect (gethash (list prec instruction) *type-info*)))
-	 (result (reduce #'sicl-compiler-types:type-map-or in-maps)))
+  (let ((result (combine-predecessor-type-maps instruction)))
     (loop for succ in (sicl-mir:successors instruction)
 	  do (setf (gethash (list instruction succ) *type-info*) result))))
 
-(defmethod process-instruction ((instruction sicl-mir:get-argcount-instruction))
-  (setf (gethash (list instruction (car (sicl-mir:successors instruction)))
-		 *type-info*)
-	(sicl-compiler-types:type-map-and
-	 (reduce #'sicl-compiler-types:type-map-or
-		 (loop for pred in (sicl-mir:predecessors instruction)
-		       collect (gethash (list pred instruction)
-					*type-info*)))
-	 (sicl-compiler-types:make-single-variable-type-map
-	  (car (sicl-mir:outputs instruction))
-	  '(integer 0 #.(expt 2 30))))))
+(defmethod process-instruction ((instruction sicl-mir:enter-instruction))
+  (let ((result (combine-predecessor-type-maps instruction)))
+    (loop for succ in (sicl-mir:successors instruction)
+	  do (set-type-map instruction succ result))))
 
+(defmethod process-instruction ((instruction sicl-mir:get-argcount-instruction))
+  (let ((result (combine-predecessor-type-maps instruction))
+	(output (car (sicl-mir:outputs instruction))))
+    (setf (sicl-compiler-types:type-descriptor output result)
+	  (sicl-compiler-types:type-descriptor-from-type 'fixnum))
+    (set-type-map instruction (car (sicl-mir:successors instruction)) result)))
+
+(defmethod process-instruction ((instruction sicl-mir:typeq-instruction))
+  (let ((result (combine-predecessor-type-maps instruction)))
+    (destructuring-bind (false true) (sicl-mir:successors instruction)
+      (multiple-value-bind (result1 result2)
+	  (sicl-compiler-types:split-type-map
+	   result
+	   (car (sicl-mir:inputs instruction))
+	   (sicl-mir:value-type instruction))
+	(set-type-map instruction false result1)
+	(set-type-map instruction true result2)))))
+
+(defun type-descriptor-of-input (type-map input)
+  (etypecase input
+    (sicl-mir:lexical-location
+     (sicl-compiler-types:type-descriptor input type-map))
+    (sicl-mir:immediate-input
+     (let ((value (sicl-mir:value input)))
+       (sicl-compiler-types:type-descriptor-from-type
+	`(integer ,value ,value))))
+    (sicl-mir:constant-input
+     (let ((value (sicl-mir:value input)))
+       (sicl-compiler-types:type-descriptor-from-type
+	(type-of value))))
+    (sicl-mir:global-input
+     (sicl-compiler-types:make-t-type-descriptor))))
+
+(defmethod process-instruction ((instruction sicl-mir:assignment-instruction))
+  (let ((result (combine-predecessor-type-maps instruction))
+	(input (car (sicl-mir:inputs instruction)))
+	(output (car (sicl-mir:outputs instruction)))
+	(successor (car (sicl-mir:successors instruction))))
+    (setf (sicl-compiler-types:type-descriptor output result)
+	  (type-descriptor-of-input result input))
+    (set-type-map instruction successor result)))

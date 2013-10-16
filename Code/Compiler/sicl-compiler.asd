@@ -32,6 +32,8 @@
     :depends-on ("packages" "mir" "make"))
    (:file "type-map"
     :depends-on ("packages"))
+   (:file "type-inference"
+    :depends-on ("packages" "type-map" "mir"))
    (:file "compile-file"
     :depends-on ("program"
 		 "ast-transformations"
