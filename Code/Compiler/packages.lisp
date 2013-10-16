@@ -171,7 +171,7 @@
    #:store-contents-instruction #:make-store-contents-instruction 
    #:memref-instruction #:make-memref-instruction #:cacheable
    #:memset-instruction #:make-memset-instruction
-   #:typeq-instruction #:make-typeq-instruction
+   #:typeq-instruction #:make-typeq-instruction #:value-type
    #:u+-instruction #:make-u+-instruction
    #:u--instruction #:make-u--instruction
    #:s+-instruction #:make-s+-instruction
@@ -285,12 +285,13 @@
    #:type-descriptor-or
    #:type-descriptor-diff
    #:type-descriptor
+   #:make-t-type-descriptor
    #:make-t-type-map
    #:type-map-or
    #:type-map-and
-   #:type-map-diff
    #:type-map-equal
-   #:make-single-variable-type-map
+   #:copy-type-map
+   #:split-type-map
    ))
 
 
