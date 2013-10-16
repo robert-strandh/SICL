@@ -116,3 +116,36 @@
     (setf (sicl-compiler-types:type-descriptor output result)
 	  (type-descriptor-of-input result input))
     (set-type-map instruction successor result)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Trim the instruction graph by replacing TYPEQ instructions that
+;;; have one "impossible" successor.  A successor is impossible if the
+;;; transition from the TYPEQ instruction to that successor contains a
+;;; variable with NIL type. 
+
+(defun trim-instruction-graph (initial-instruction type-info)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (when (typep instruction 'sicl-mir:typeq-instruction)
+		   (destructuring-bind (false true)
+		       (sicl-mir:successors instruction)
+		     (cond ((sicl-compiler-types:impossible-type-map-p
+			     (gethash (list instruction false) type-info))
+			    (setf (sicl-mir:successors instruction)
+				  (list true))
+			    (setf (sicl-mir:inputs instruction) '())
+			    (change-class instruction
+					  'sicl-mir:nop-instruction))
+			   ((sicl-compiler-types:impossible-type-map-p
+			     (gethash (list instruction true) type-info))
+			    (setf (sicl-mir:successors instruction)
+				  (list false))
+			    (setf (sicl-mir:inputs instruction) '())
+			    (change-class instruction
+					  'sicl-mir:nop-instruction))
+			   (t nil))))
+		 (mapc #'traverse (sicl-mir:successors instruction)))))
+      (traverse initial-instruction))))
