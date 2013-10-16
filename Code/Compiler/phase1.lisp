@@ -181,9 +181,11 @@
 		       for argument in arguments
 		       collect (sicl-ast:make-setq-ast parameter argument))
 		 (list (sicl-env:ast info))))
-	(sicl-ast:make-call-ast
-	 (find-or-create-ast (sicl-env:location info))
-	 arguments))))
+	(let* ((global-ast (find-or-create-ast (sicl-env:location info)))
+	       (ast (sicl-ast:make-call-ast global-ast arguments)))
+	  (setf (sicl-ast:function-type global-ast)
+		(sicl-env:type info))
+	  ast))))
 
 ;;; Method to be used when the head of a compound form is a
 ;;; CONS.  Then the head must be a lambda expression.
