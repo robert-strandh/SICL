@@ -1194,6 +1194,31 @@
 (defmethod make-type-descriptor ((symbol (eql 'member)) rest)
   (make-t-type-descriptor))
 
+;;; Return true if the argument is a type descriptor with all the
+;;; slots equal to NIL.
+
+(defun nil-type-descriptor-p (type-descriptor)
+  (and (null (rational-descriptor type-descriptor))
+       (null (short-float-descriptor type-descriptor))
+       (null (single-float-descriptor type-descriptor))
+       (null (double-float-descriptor type-descriptor))
+       (null (long-float-descriptor type-descriptor))
+       (null (complex-descriptor type-descriptor))
+       (null (character-descriptor type-descriptor))
+       (null (cons-descriptor type-descriptor))
+       (null (array-t-descriptor type-descriptor))
+       (null (array-single-float-descriptor type-descriptor))
+       (null (array-double-float-descriptor type-descriptor))
+       (null (array-character-descriptor type-descriptor))
+       (null (array-bit-descriptor type-descriptor))
+       (null (array-unsigned-byte-8-descriptor type-descriptor))
+       (null (array-unsigned-byte-32-descriptor type-descriptor))
+       (null (array-signed-byte-32-descriptor type-descriptor))
+       (null (array-unsigned-byte-64-descriptor type-descriptor))
+       (null (array-signed-byte-64-descriptor type-descriptor))
+       (null (null-descriptor type-descriptor))
+       (null (others-descriptor type-descriptor))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Functions and classes for type maps.
@@ -1291,3 +1316,14 @@
 (defun make-t-type-map ()
   (make-hash-table :test #'eq))
 
+;;; Return true if a type map is "impossible", i.e., it contains a
+;;; type descriptor describing the type NIL.
+
+(defun impossible-type-map-p (type-map)
+  (maphash (lambda (variable type-descriptor)
+	     (declare (ignore variable))
+	     (when (nil-type-descriptor-p type-descriptor)
+	       (return-from impossible-type-map-p t)))
+	   type-map)
+  nil)
+	   

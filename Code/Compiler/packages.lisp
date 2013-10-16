@@ -292,6 +292,7 @@
    #:type-map-equal
    #:copy-type-map
    #:split-type-map
+   #:impossible-type-map-p
    ))
 
 
