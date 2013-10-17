@@ -218,10 +218,6 @@
    #:halt
    ))
 
-(defpackage #:externals-elimination
-  (:use #:common-lisp)
-  (:export #:eliminate-externals))
-
 (defpackage #:sicl-program
   (:use #:common-lisp)
   (:export
