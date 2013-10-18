@@ -561,8 +561,8 @@
 ;;;
 ;;; Before this computation is done, it is advantageous to uniquify
 ;;; the inputs for which an index is to be computed, so as to avoid
-;;; multiple entries in the linkage vector containg the same constant
-;;; or the same global function. 
+;;; multiple entries in the linkage vector containing the same
+;;; constant or the same global function.
 ;;;
 ;;; FIXME: consider introducting a common superclass for the three
 ;;; kinds of data that we handle here. 
@@ -897,6 +897,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Remove redundant assignment instructions.
+;;;
+;;; An assignment instruction is redundant when it has the same input
+;;; and output.
 
 (defun remove-redundant-assignment-instructions (program)
   (declare (ignore program))
@@ -940,7 +943,8 @@
 (defun type-inference (program)
   (let* ((initial-instruction (initial-instruction program))
 	 (type-info (sicl-compiler:type-inference initial-instruction)))
-    (sicl-compiler:trim-instruction-graph initial-instruction type-info)))
+    (sicl-compiler:trim-instruction-graph initial-instruction type-info))
+  (touch program 'instruction-graph))
 
 (set-processor 'type-inference
 	       'type-inference)
@@ -950,10 +954,61 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Remove unused locations.
+;;;
+;;; This transformation checks whether there are any lexical locations
+;;; that are only assigned to and never used.  For any such location,
+;;; it removes any assignment instruction having that location as an
+;;; output.  Removing such an assignment instruction might create
+;;; another instance of an unused lexical location (the input of the
+;;; assignment instruction), and in that case the new location is
+;;; added to the worklist.
+;;;
+;;; For now, we only remove ASSIGNMENT-INSTRUCTIONs with the unused
+;;; location as its output.  Later, we may consider removing other
+;;; kinds of instructions as well, but this has to be done with some
+;;; precautions.
+
+(defun remove-unused-locations (program)
+  (let ((worklist '())
+	(modified-p nil))
+    (map-lexical-locations
+     (lambda (lexical-location)
+       (when (null (sicl-mir:using-instructions lexical-location))
+	 (pushnew lexical-location worklist :test #'eq))))
+    (loop until (null worklist)
+	  do (loop with location = (pop worklist)
+		   for instruction in (sicl-mir:defining-instructions location)
+		   do (when (typep instruction 'sicl-mir:assignment-instruction)
+			(setf modified-p t)
+			(let ((input (car (sicl-mir:inputs instruction))))
+			  (sicl-mir:delete-instruction instruction)
+			  ;; Deleting the instruction will remove it from
+			  ;; the using instructions of its inputs.
+			  (when (and (typep input 'sicl-mir:lexical-location)
+				     (null (sicl-mir:using-instructions input)))
+			    (push input worklist))))))
+    (when modified-p
+      (touch program 'instruction-graph))))
+
+(set-processor 'no-unused-locations
+	       'remove-unused-locations)
+
+(add-dependencies 'no-unused-locations
+		  '(instruction-graph))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
+  ;; There are typically unused locations in the initial
+  ;; program. 
+  (make program 'no-unused-locations)
   (make program 'type-inference)
+  ;; Type inference may create unused locations, so apply
+  ;; this transformation again.
+  (make program 'no-unused-locations)
   (make program 'remove-nop-instructions)
   (make program 'backend-specific-constants)
   (make program 'unique-constants)
