@@ -6,6 +6,7 @@
 				(print *compile-print*)
 				(external-format :default))
   
+  (declare (ignore output-file output-file-p verbose print))
   (with-open-file (stream input-file
 			  :direction :input
 			  :external-format external-format)
