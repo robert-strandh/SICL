@@ -935,14 +935,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Type inference.
+
+(defun type-inference (program)
+  (let* ((initial-instruction (initial-instruction program))
+	 (type-info (sicl-compiler:type-inference initial-instruction)))
+    (sicl-compiler:trim-instruction-graph initial-instruction type-info)))
+
+(set-processor 'type-inference
+	       'type-inference)
+
+(add-dependencies 'type-inference
+		  '(instruction-graph))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
+  (make program 'type-inference)
   (make program 'remove-nop-instructions)
   (make program 'backend-specific-constants)
   (make program 'unique-constants)
   (make program 'no-constant-inputs)
   (make program 'no-global-inputs)
-  (make program 'lir))
+;;  (make program 'lir)
 ;;  (make program 'instruction-ownership)
-;;  (make program 'location-ownership))
+;;  (make program 'location-ownership)
+  )
