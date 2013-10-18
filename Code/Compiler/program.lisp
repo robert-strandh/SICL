@@ -999,16 +999,91 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Remove redundant temporaries.
+;;;
+;;; This little transformation is subsumed by global value numbering,
+;;; but until we have implemented global value numbering, this
+;;; transformation comes in handy.
+;;;
+;;; For the purpose of this transformation, a REDUNDANT TEMPORARY is
+;;; defined to be a lexical location L with the following properties.
+;;; L has a single defining instruction and a single using
+;;; instruction.  The defining instruction must be an
+;;; ASSIGNMENT-INSTRUCTION (call it I0), but the using instruction can
+;;; be any type of instruction (call it In).  Call the single input of
+;;; I0 X.  X can be a lexical location or a constant input.  If X is a
+;;; lexical location, then there must also be a simple execution path
+;;; I0 -> I1 -> ... -> In such that each instruction Ii in the path
+;;; has I(i+1) as its only successor, and none of the instructions in
+;;; the path (except possibly In) may have X in its outputs. 
+;;;
+;;; If such a lexical location L can be found, then L can be replaced
+;;; by X in In and the instruction I0 can be removed. 
+;;;
+;;; An important observation is that applying this transformation to a
+;;; single location L can not remove the conditions for the
+;;; transformation to be applied to some other location.
+
+;;; Return true if and only if there is a straight execution path from
+;;; INSTRUCTION1 to INSTRUCTION2 such that each instruction in the
+;;; path (except possibly INSTRUCTION2) has a single successor and
+;;; such that LEXICAL-LOCATION is not an output of any of the
+;;; instruction in the path (except possibly INSTRUCTION2).
+(defun simple-path-p (instruction1 instruction2 lexical-location)
+  (loop for instruction = instruction1 then successor
+	for successors = (sicl-mir:successors instruction)
+	for successor = (car successors)
+	until (eq instruction instruction2)
+	do (when (or (/= (length successors) 1)
+		     (member lexical-location (sicl-mir:outputs instruction)
+			     :test #'eq))
+	     (return-from simple-path-p nil)))
+  t)
+
+(defun remove-redundant-temporaries (program)
+  (let ((modified-p nil))
+    (map-lexical-locations
+     (lambda (location)
+       (let ((defining-instructions (sicl-mir:defining-instructions location))
+	     (using-instructions (sicl-mir:using-instructions location)))
+	 (when (and (= 1 (length defining-instructions))
+		    (= 1 (length using-instructions))
+		    (typep (car defining-instructions)
+			   'sicl-mir:assignment-instruction))
+	   (let* ((defining (car defining-instructions))
+		  (using (car using-instructions))
+		  (input (car (sicl-mir:inputs defining))))
+	     (when (or (typep input 'sicl-mir:constant-input)
+		       (typep input 'sicl-mir:immediate-input)
+		       (and (typep input 'sicl-mir:lexical-location)
+			    (simple-path-p defining using input)))
+	       (setf modified-p t)
+	       (sicl-mir:delete-instruction defining)
+	       (setf (sicl-mir:inputs using)
+		     (substitute input location (sicl-mir:inputs using)))))))))
+    (when modified-p
+      (touch program 'instruction-graph))))
+
+(set-processor 'no-redundant-temporaries
+	       'remove-redundant-temporaries)
+
+(add-dependencies 'no-redundant-temporaries
+		  '(instruction-graph))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Do some initial transformations.
 
 (defun initial-transformations (program)
   ;; There are typically unused locations in the initial
   ;; program. 
   (make program 'no-unused-locations)
+  (make program 'no-redundant-temporaries)
   (make program 'type-inference)
   ;; Type inference may create unused locations, so apply
   ;; this transformation again.
   (make program 'no-unused-locations)
+  (make program 'no-redundant-temporaries)
   (make program 'remove-nop-instructions)
   (make program 'backend-specific-constants)
   (make program 'unique-constants)
