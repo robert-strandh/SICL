@@ -137,6 +137,7 @@
    #:instruction #:predecessors #:successors #:inputs #:outputs
    #:insert-instruction-before #:insert-instruction-after
    #:insert-instruction-between #:delete-instruction
+   #:reinitialize-data
    #:unique-id
    #:clone-instruction
    #:enter-instruction #:make-enter-instruction
