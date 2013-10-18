@@ -148,4 +148,9 @@
 					  'sicl-mir:nop-instruction))
 			   (t nil))))
 		 (mapc #'traverse (sicl-mir:successors instruction)))))
-      (traverse initial-instruction))))
+      (traverse initial-instruction)
+      ;; With such radical modifications to the instruction graph
+      ;; (entire subgraphs may have been removed), we must
+      ;; reinitialize the set of defining/using instructions of each
+      ;; datum.
+      (sicl-mir:reinitialize-data initial-instruction))))
