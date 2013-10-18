@@ -323,20 +323,27 @@
       (compile-arguments
        all-args
        temps
-       (ecase (length successors)
-	 (0 (sicl-mir:make-tailcall-instruction temps))
-	 (1 (sicl-mir:make-funcall-instruction
-	     temps
-	     (sicl-mir:make-get-values-instruction
-	      results (car successors))))
-	 (2 (let ((temp (sicl-mir:new-temporary)))
-	      (sicl-mir:make-funcall-instruction
-	       temps
-	       (sicl-mir:make-get-values-instruction
-		(list temp)
-		(sicl-mir:make-==-instruction
-		 (list temp (sicl-mir:make-constant-input nil))
-		 successors))))))))))
+       ;; This is a temporary kludge to take advantage of the fact
+       ;; that the function ERROR never returns.  A more systematic
+       ;; approach would be to check that the function is system
+       ;; supplied and that its return type is NIL.
+       (if (and (typep (sicl-ast:callee-ast ast) 'sicl-ast:global-ast)
+		(eq (sicl-ast:name (sicl-ast:callee-ast ast)) 'error))
+	   (sicl-mir:make-funcall-instruction temps)
+	   (ecase (length successors)
+	     (0 (sicl-mir:make-tailcall-instruction temps))
+	     (1 (sicl-mir:make-funcall-instruction
+		 temps
+		 (sicl-mir:make-get-values-instruction
+		  results (car successors))))
+	     (2 (let ((temp (sicl-mir:new-temporary)))
+		  (sicl-mir:make-funcall-instruction
+		   temps
+		   (sicl-mir:make-get-values-instruction
+		    (list temp)
+		    (sicl-mir:make-==-instruction
+		     (list temp (sicl-mir:make-constant-input nil))
+		     successors)))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
