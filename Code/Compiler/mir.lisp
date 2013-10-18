@@ -631,16 +631,10 @@
   (setf (outputs instruction) '())
   (let ((successor (car (successors instruction)))
 	(predecessors (predecessors instruction)))
-    ;; Avoid having our predecessors mention our successor multiple
-    ;; times in case our successor is already a successor of some of
-    ;; our predecessors.
     (loop for predecessor in predecessors
 	  do (setf (successors predecessor)
-		   (remove instruction (successors predecessor)
-			   :test #'eq))
-	     (pushnew successor (successors predecessor)
-		      :test #'eq))
-    ;; Avoid having our successor mention som of our predecessors
+		   (substitute successor instruction (successors predecessor))))
+    ;; Avoid having our successor mention some of our predecessors
     ;; multiple times in case some of our predecessors are already a
     ;; predecessors of our successor.
     (setf (predecessors successor)
@@ -649,6 +643,42 @@
     (loop for predecessor in predecessors
 	  do (pushnew predecessor (predecessors successor)
 		      :test #'eq))))
+
+;;; When there has been some significant modifications to an
+;;; instruction graph, it is possible that some instructions that are
+;;; no longer reachable from the initial instruction refer to the same
+;;; data as instructions that are still reachable.  In that case, we
+;;; offer the possibility of reinitializing the data so that only
+;;; reachable instructions are considered defining or using
+;;; instructions.
+(defun reinitialize-data (initial-instruction)
+  ;; In the first pass, we set the defining and the using instructions
+  ;; of every datum to the empty set.
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (loop for datum in (inputs instruction)
+		       do (setf (using-instructions datum) '())
+			  (setf (defining-instructions datum) '()))
+		 (loop for datum in (outputs instruction)
+		       do (setf (using-instructions datum) '())
+			  (setf (defining-instructions datum) '()))
+		 (mapc #'traverse (successors instruction)))))
+      (traverse initial-instruction)))
+  ;; In the second pass, we add each instruction as a using
+  ;; instruction of its inputs, and a defining instruction of its
+  ;; outputs.
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (loop for datum in (inputs instruction)
+		       do (push instruction (using-instructions datum)))
+		 (loop for datum in (outputs instruction)
+		       do (push instruction (defining-instructions datum)))
+		 (mapc #'traverse (successors instruction)))))
+      (traverse initial-instruction))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
