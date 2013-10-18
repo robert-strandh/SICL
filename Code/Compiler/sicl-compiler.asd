@@ -41,5 +41,12 @@
 		 "graph-coloring"
 		 "phase1"
 		 "phase2"))
+   (:file "compile-lambda-expression"
+    :depends-on ("program"
+		 "ast-transformations"
+		 "type-map"
+		 "graph-coloring"
+		 "phase1"
+		 "phase2"))
    (:file "compile-time-compile"
     :depends-on ("phase1"))))
