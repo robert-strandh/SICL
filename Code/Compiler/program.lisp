@@ -597,26 +597,30 @@
  
 ;;; Insert a LOAD-CONSTANT instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
-(defun insert-load-constant-before (instruction in out)
-  (let ((new (sicl-mir:make-load-constant-instruction (list in) out)))
+(defun insert-load-constant-before (instruction lv-index out)
+  (let ((new (sicl-mir:make-load-constant-instruction
+	      lv-index
+	      out)))
     (sicl-mir:insert-instruction-before new instruction)))
 
 (defun replace-constant-inputs (program)
   (let ((modify-p nil))
-    (map-instructions
-     (lambda (instruction)
-       (unless (typep instruction 'sicl-mir:load-constant-instruction)
-	 (let ((new-inputs
-		 (loop for input in (inputs instruction)
-		       collect (if (typep input 'sicl-mir:constant-input)
-				   (let ((new (sicl-mir:new-temporary)))
-				     (insert-load-constant-before
-				      instruction input new)
-				     new)
-				   input))))
-	   (unless (every #'eq (inputs instruction) new-inputs)
-	     (setf (inputs instruction) new-inputs)
-	     (setf modify-p t))))))
+    (flet ((lv-offset (input)
+	     (position input (linkage-vector program))))
+      (map-instructions
+       (lambda (instruction)
+	 (unless (typep instruction 'sicl-mir:load-constant-instruction)
+	   (let ((new-inputs
+		   (loop for input in (inputs instruction)
+			 collect (if (typep input 'sicl-mir:constant-input)
+				     (let ((new (sicl-mir:new-temporary)))
+				       (insert-load-constant-before
+					instruction (lv-offset input) new)
+					new)
+				     input))))
+	     (unless (every #'eq (inputs instruction) new-inputs)
+	       (setf (inputs instruction) new-inputs)
+	       (setf modify-p t)))))))
     (when modify-p
       (touch program 'instruction-graph))))
 
@@ -627,26 +631,30 @@
 
 ;;; Insert a LOAD-EXTERNAL instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
-(defun insert-load-global-before (instruction in out)
-  (let ((new (sicl-mir:make-load-global-instruction (list in) out)))
+(defun insert-load-global-before (instruction lv-index out)
+  (let ((new (sicl-mir:make-load-global-instruction
+	      lv-index
+	      out)))
     (sicl-mir:insert-instruction-before new instruction)))
 
 (defun replace-global-inputs (program)
   (let ((modify-p nil))
-    (map-instructions
-     (lambda (instruction)
-       (unless (typep instruction 'sicl-mir:load-global-instruction)
-	 (let ((new-inputs
-		 (loop for input in (inputs instruction)
-		       collect (if (typep input 'sicl-mir:global-input)
-				   (let ((new (sicl-mir:new-temporary)))
-				     (insert-load-global-before
-				      instruction input new)
-				     new)
-				   input))))
-	   (unless (every #'eq (inputs instruction) new-inputs)
-	     (setf (inputs instruction) new-inputs)
-	     (setf modify-p t))))))
+    (flet ((lv-offset (input)
+	     (position input (linkage-vector program))))
+      (map-instructions
+       (lambda (instruction)
+	 (unless (typep instruction 'sicl-mir:load-global-instruction)
+	   (let ((new-inputs
+		   (loop for input in (inputs instruction)
+			 collect (if (typep input 'sicl-mir:global-input)
+				     (let ((new (sicl-mir:new-temporary)))
+				       (insert-load-global-before
+					instruction (lv-offset input) new)
+				       new)
+				     input))))
+	     (unless (every #'eq (inputs instruction) new-inputs)
+	       (setf (inputs instruction) new-inputs)
+	       (setf modify-p t)))))))
     (when modify-p
       (touch program 'instruction-graph))))
 
