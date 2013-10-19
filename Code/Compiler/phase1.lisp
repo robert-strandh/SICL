@@ -782,8 +782,10 @@
 
 (defmethod convert-compound ((symbol (eql 'sicl-word:memref)) form env)
   (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 1 1)
-  (sicl-ast:make-memref-ast (car (convert-arguments (cdr form) env))))
+  (sicl-code-utilities:check-argcount form 2 2)
+  (sicl-ast:make-memref-ast
+   (car (convert-arguments (list (cadr form)) env))
+   (caddr form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

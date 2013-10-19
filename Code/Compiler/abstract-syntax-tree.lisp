@@ -586,27 +586,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class MEMREF-AST.
-;;; 
-;;; Load a word from memory.
-;;; 
-;;; Arguments (1):
-;;;
-;;;   * An address of a word in memory.
-;;;
-;;; Values (1):
-;;;  
-;;;   * The contents of memory at that address. 
 
 (defclass memref-ast (ast arguments-mixin)
-  ())
+  ((%displacement :initarg displacement :reader displacement)))
 
-(defun make-memref-ast (argument-ast)
+(defun make-memref-ast (argument-ast displacement)
   (make-instance 'memref-ast
-    :children (list argument-ast)))
+    :children (list argument-ast)
+    :displacement displacement))
 
 (defmethod stream-draw-ast ((ast memref-ast) stream)
-  (format stream "   ~a [label = \"memref\"];~%"
-	  (id ast)))
+  (format stream "   ~a [label = \"memref ~d\"];~%"
+	  (id ast)
+	  (displacement ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

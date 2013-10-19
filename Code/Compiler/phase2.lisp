@@ -792,11 +792,17 @@
 				   (sicl-mir:make-return-instruction
 				    (list temp2)))
 			     (sicl-mir:make-memref-instruction
-			      (car temps) temp2 next)))
+			      (car temps)
+			      (sicl-ast:displacement ast)
+			      temp2
+			      next)))
 			  (t
 			   (setf next (nil-fill (cdr results) next))
 			   (sicl-mir:make-memref-instruction
-			    (car temps) (car results) next)))))
+			    (car temps)
+			    (sicl-ast:displacement ast)
+			    (car results)
+			    next)))))
 	       (2 (if (eq results t)
 		      (error "Illegal context for memref")
 		      (let* ((location (if (null results)
@@ -808,7 +814,10 @@
 				    successors)))
 			(setf next
 			      (sicl-mir:make-memref-instruction
-			       (car temps) location next))
+			       (car temps)
+			       (sicl-ast:displacement ast)
+			       location
+			       next))
 			(nil-fill (cdr results) next)))))))
       (compile-arguments (sicl-ast:argument-asts ast) temps instruction))))
 

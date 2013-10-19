@@ -74,7 +74,7 @@
    #:load-constant-ast #:make-load-constant-ast
    #:load-global-ast #:make-load-global-ast #:offset
    #:word-ast #:make-word-ast
-   #:memref-ast #:make-memref-ast
+   #:memref-ast #:make-memref-ast #:displacement
    #:memset-ast #:make-memset-ast
    #:u+-ast #:make-u+-ast
    #:u--ast #:make-u--ast
@@ -154,7 +154,7 @@
    #:load-global-instruction #:make-load-global-instruction 
    #:load-static-env-instruction #:make-load-static-env-instruction 
    #:load-linkage-vector-instruction #:make-load-linkage-vector-instruction 
-   #:memref-instruction #:make-memref-instruction #:cacheable
+   #:memref-instruction #:make-memref-instruction #:cacheable #:displacement
    #:memset-instruction #:make-memset-instruction
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:u+-instruction #:make-u+-instruction

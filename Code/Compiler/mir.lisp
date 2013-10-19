@@ -952,18 +952,22 @@
 ;;; a register if the register allocator decides to do that.
 
 (defclass memref-instruction (instruction)
-  ())
+  ((%cacheable :initarg :cacheable :reader cacheable)
+   (%displacement :initarg :displacement :reader displacement)))
 
-(defun make-memref-instruction (input output successor &optional cacheable)
+(defun make-memref-instruction
+    (input displacement output successor &optional cacheable)
   (make-instance 'memref-instruction
     :inputs (list input)
+    :displacement displacement
     :outputs (list output)
     :successors (list successor)
     :cacheable cacheable))
 
 (defmethod draw-instruction ((instruction memref-instruction) stream)
-  (format stream "   ~a [label = \"memref\"];~%"
-	  (unique-id instruction)))
+  (format stream "   ~a [label = \"memref ~d\"];~%"
+	  (unique-id instruction)
+	  (displacement instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
