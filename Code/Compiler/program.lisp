@@ -894,6 +894,12 @@
 			    (substitute reg lexical (inputs inst)
 					:test #'eq))))))
 		      
+(set-processor 'register-assignment
+	       'assign-registers)
+
+(add-dependencies 'register-assignment
+		  '(instruction-graph))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Remove redundant assignment instructions.
@@ -1091,6 +1097,8 @@
   (make program 'no-global-inputs)
   (make program 'lir)
   (make program 'no-unused-locations)
+  (make program 'register-assignment)
+  (make program 'no-redundant-assignments)
 ;;  (make program 'instruction-ownership)
 ;;  (make program 'location-ownership)
   )
