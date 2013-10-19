@@ -39,7 +39,8 @@
    (%datum-info
     :initform (make-hash-table :test #'eq) :accessor datum-info)
    ;; All the procedures of this program.
-   (%procedures :initform '() :accessor procedures)))
+   (%procedures :initform '() :accessor procedures)
+   (%linkage-vector :initform '() :accessor linkage-vector)))
 
 (set-processor 'instruction-graph nil)
 
@@ -567,20 +568,22 @@
 ;;; FIXME: consider introducting a common superclass for the three
 ;;; kinds of data that we handle here. 
 
-(defun compute-linkage-vector-indices (program)
-  (declare (ignore program))
-  (let ((index 0)
-	(result '()))
+(defun compute-linkage-vector (program)
+  (let ((result '()))
     (map-data
      (lambda (datum)
        (when (and (or (typep datum 'sicl-mir:constant-input)
 		      (typep datum 'sicl-mir:global-input)
 		      (typep datum 'sicl-mir:load-time-input)
-		      (typep datum 'sicl-mir:special-location))
-		  (null (assoc datum result :test #'eq)))
-	 (push (cons datum index) result)
-	 (incf index))))
-    result))
+		      (typep datum 'sicl-mir:special-location)))
+	 (pushnew datum result :test #'eq))))
+    (setf (linkage-vector program) result)))
+
+(set-processor 'linkage-vector
+	       'compute-linkage-vector)
+
+(add-dependencies 'linkage-vector
+		  '(instruction-graph))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -591,7 +594,7 @@
 ;;; We count on transformations such as common subexpression
 ;;; elimination to remove unnecessary LOAD-CONSTANT instructions
 ;;; later.
-
+ 
 ;;; Insert a LOAD-CONSTANT instruction before INSTRUCTION, with
 ;;; IN as its single input and OUT as its single output.
 (defun insert-load-constant-before (instruction in out)
@@ -1093,6 +1096,7 @@
   (make program 'remove-nop-instructions)
   (make program 'backend-specific-constants)
   (make program 'unique-constants)
+  (make program 'linkage-vector)
   (make program 'no-constant-inputs)
   (make program 'no-global-inputs)
   (make program 'lir)
