@@ -152,6 +152,7 @@
    #:get-arg-instruction #:make-get-arg-instruction
    #:load-constant-instruction #:make-load-constant-instruction 
    #:load-global-instruction #:make-load-global-instruction 
+   #:linkage-vector-index
    #:load-static-env-instruction #:make-load-static-env-instruction 
    #:load-linkage-vector-instruction #:make-load-linkage-vector-instruction 
    #:memref-instruction #:make-memref-instruction #:cacheable #:displacement
