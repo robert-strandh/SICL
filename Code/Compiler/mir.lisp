@@ -866,36 +866,42 @@
 ;;; Instruction LOAD-CONSTANT-INSTRUCTION.
 
 (defclass load-constant-instruction (instruction)
-  ())
+  ((%linkage-vector-index
+    :initarg :linkage-vector-index
+    :reader linkage-vector-index)))
 
 (defun make-load-constant-instruction
-    (inputs output &optional (successor nil successor-p))
+    (linkage-vector-index output &optional (successor nil successor-p))
   (make-instance 'load-constant-instruction
-    :inputs inputs
+    :linkage-vector-index linkage-vector-index
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction load-constant-instruction) stream)
-  (format stream "   ~a [label = \"LC\"];~%"
-	  (unique-id instruction)))
+  (format stream "   ~a [label = \"LC ~d\"];~%"
+	  (unique-id instruction)
+	  (linkage-vector-index instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction LOAD-GLOBAL-INSTRUCTION.
 
 (defclass load-global-instruction (instruction)
-  ())
+  ((%linkage-vector-index
+    :initarg :linkage-vector-index
+    :reader linkage-vector-index)))
 
 (defun make-load-global-instruction
-    (inputs output &optional (successor nil successor-p))
+    (linkage-vector-index output &optional (successor nil successor-p))
   (make-instance 'load-global-instruction
-    :inputs inputs
+    :linkage-vector-index linkage-vector-index
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
 
 (defmethod draw-instruction ((instruction load-global-instruction) stream)
-  (format stream "   ~a [label = \"LX\"];~%"
-	  (unique-id instruction)))
+  (format stream "   ~a [label = \"LX ~d\"];~%"
+	  (unique-id instruction)
+	  (linkage-vector-index instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
