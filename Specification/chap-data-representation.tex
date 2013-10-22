@@ -77,7 +77,11 @@ significant half of the word is unused except for the tag bits.
 
 The unbound object is represented as a word in which every bit except
 the least significant one is equal to 1.  As a signed machine integer,
-this value is equal to $-2$
+this value is equal to $-2$.  The unbound immediate object is used
+as the value of special variables and of slots in arrays and instances
+of (subclasses of) \texttt{standard-object}.  It is \emph{not} used to
+indicate that a \emph{function name} is unbound.  For that purpose, a
+special function that signals an error is used instead. 
 
 \section{Representation of \texttt{cons} cells}
 
@@ -92,9 +96,27 @@ The header object always consists of two consecutive words aligned on
 a double-word boundary (just like \texttt{cons} cells).  The first
 word always contains a tagged pointer to a \emph{class} object (which
 is another heap object).  The second word contains a \emph{raw
-  pointer} to the first word of the contents vector.  In the following
-sections we give the details of the representation for all possible
-heap objects.
+  pointer} to the first word of the contents vector.  In most cases,
+the only place that can contain a raw pointer to a contents vector is
+the second word of a header object.  However, in some cases (for
+performance reasons) a raw pointer to a contents vector can be the
+value of some slot.  In this case, we say that we have a
+\emph{disembodied} pointer to a contents vector.  An object containing
+such a disembodied pointer must be known to the garbage collector, and
+the object must also contain (directly or indirectly) an ordinary
+tagged \cl{} pointer to a header object containing that contents
+vector.%
+\footnote{The reason for this restriction is that it must always be possible
+  to find the header object of a contents vector so as to determine
+  the class of which the object is an instance.  If we could have
+  an object X that contained only the disembodied raw pointer to the
+  contents vector, then it may be the case that the pointer to the
+  header object is no longer referenced by any other object, whereas
+  the disembodied pointer in X is still reachable.  Then it would be
+  impossible to determine the class of the object.}
+
+In the following sections we give the details of the representation
+for all possible heap objects.
 
 \section{Instances of subclasses of \texttt{standard-object}}
 
@@ -290,39 +312,60 @@ is a proper list of packages that use this package.
 
 \subsection{Streams}
 
-\subsection{Ordinary functions}
+\subsection{Functions}
 
-An \emph{ordinary} (i.e., non-generic) function is represented as a
-two-word header (as usual) and a contents vector of three words:
+The \emph{class} of a function is a subclass of \texttt{function}.
+
+In order to obtain reasonable performance, we represent functions in a
+somewhat complex way, as illustrated by
+\refFig{fig-function-representation}. 
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-function-representation.pdf_t}
+\end{center}
+\caption{\label{fig-function-representation}
+Representation of functions.}
+\end{figure}
+
+A function is represented as a two-word header (as usual) and a
+contents vector with five slots in addition to the inherited slots.
 
 \begin{enumerate}
-\item A simple vector called the \emph{linkage vector} which contains
-  objects that executing functions need to access such as values of
-  complex constant objects, cells containing function objects for
-  global functions used in the code, symbols naming special variables,
-  etc.  The linkage vector is created and filled as a result of a
-  \emph{fasl} file being loaded, or as a result of calling
-  \texttt{compile}.  The same linkage vector is shared between all the
-  functions resulting from compiling a single \emph{compilation unit}.
-  The first entry of the linkage vector is the \emph{code object} (see
-  below).
-\item An \emph{entry point} which gives an offset from the start of
-  the instructions in the code object to the first instruction of the
-  function. 
+\item The \emph{code object} for this function (see below).
 \item An \emph{environment}, which is the local environment in which
-  the function was defined. If it is a global function, then the
-  environment is \texttt{NIL}. 
+  the function was defined. If the function does not close over any
+  variables, then the value of this slot is \texttt{NIL}.
+\item The \emph{linkage vector} for this function, which is a raw
+  disembodied contents vector pointer pointing to the contents vector
+  of the linkage vector object for this function.  The ordinary \cl{}
+  object containing this contents vector is referred to from the code
+  object in the slot described previously.  The garbage collector must
+  update the value of this slot if it decides to move the contents
+  vector of the linkage vector object.
+\item A \emph{raw address} to the entry point for the function that
+  also checks argument count.  The garbage collector must update the
+  value of this slot if it decides to move the contents vector of the
+  code vector.
+\item A \emph{raw address} to the entry point for the function that
+  omits the checks for argument count.  The garbage collector must
+  update the value of this slot if it decides to move the contents
+  vector of the code vector.
 \end{enumerate}
 
-The \emph{class} of an ordinary function is a subclass of
-\texttt{function}. 
+Since raw addresses are word aligned, they show up as \texttt{fixnum}s
+when inspected by tools that are unaware of their special
+signification.  
 
 A \emph{code object} is represented as a two-word header (as usual)
-and a contents vector containing:
+and a contents vector containing (in addition to inherited slots):
 
 \begin{enumerate}
-\item A byte vector containing the machine instructions for one or
-  more functions.
+\item The \emph{linkage vector} which is an ordinary \cl{} simple
+  vector.
+\item The \emph{code vector} which is an ordinary \cl{} vector with
+  elements of type \texttt{(unsigned-byte 8)} containing the machine
+  instructions for one or more functions.
 \item Correspondence between values of the program counter
   (represented as offsets into the byte vector of instructions) and
   source code locations.  
@@ -339,5 +382,57 @@ function in a different compilation unit involves (in the most general
 case) accessing the linkage vector of the callee and storing it in a
 register.
 
-For a \emph{generic function}, each method contains a separate
-ordinary function.  
+For a \emph{generic function}, the description of the slots above
+applies to the \emph{discriminating function} of the generic function.
+In addition to these slots, a generic function also contains other
+slots holding the list of its methods, and other information.
+
+When a function is called, there are several possible situations that
+can occur:
+
+\begin{itemize}
+\item The most general case is when an object of unknown type is given
+  as an argument to \texttt{funcall}.  Then no optimization is
+  attempted, and \texttt{funcall} is responsible for determining
+  whether the object is a function, a name that designates a function,
+  or an object that does not designate a function in which an error is
+  signaled. 
+\item When it can be determined statically that the object called is a
+  function (i.e. its class is a subclass of the class
+  \texttt{function}), but nothing else is know about it, then an
+  \emph{external call} is made.  Such a call consists of copying the
+  contents of the \emph{static environment} slot and the \emph{linkage
+    vector} slot to the predetermined place specific to the backend,
+  and then to issue a \emph{call} instruction (or equivalent) to the
+  address indicated by the most general \emph{entry point} slot of the
+  function object.  When the call is to a \emph{global function}, then
+  the linkage vector contains a \texttt{cons} cell whose \texttt{car}
+  is guaranteed to contain a function object, so this situation is
+  applicable in this case. 
+\item When it can not only be determined statically that the object
+  being called is a function, but also that the number of arguments
+  that will be passed to it is acceptable, then the alternative entry
+  point can be used.  This is often the case when the function being
+  called is a \emph{global system function}. 
+\item When it can be determined statically that the object being
+  called is a function object in the \emph{same compilation unit} as
+  the caller, then we can make an \emph{internal call}.  If both the
+  caller and the callee are \emph{global functions} (so that the
+  static environment is NIL for both), then it suffices to issue a
+  \texttt{call} instruction (or equivalent) to a relative address that
+  can be determined statically.  The linkage vector does not need to
+  be passed because it is shared between the caller and the callee.
+  The relative address can be chosen so as to avoid type checking of
+  arguments with known types. 
+\item Even when it can not be determined statically that the object
+  being called is a function, there are some situations that can be
+  optimized.  For instance, when it is likely that the object is going
+  to be called multiple times with the same number of arguments, then
+  it may pay off to start by checking that the object is a function,
+  then accessing its \emph{lambda list} to determine that the number
+  of arguments is acceptable, and then cache the static environment,
+  the linkage vector, and the alternative entry point in \emph{local
+    registers}.   A typical use for this situation is in the
+  \emph{sequence functions} for the keyword arguments \texttt{:test},
+  \texttt{:test-not}, and \texttt{:key}.  
+\end{itemize}
