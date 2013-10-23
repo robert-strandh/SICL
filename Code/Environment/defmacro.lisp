@@ -1,8 +1,8 @@
 ;;;; This file is the first one to be compiled by the cross compiler.
 ;;;; When it is compiled, the global environment is empty.  In
-;;;; particular, it has not macros in it.  The purpose of the code
+;;;; particular, it has no macros in it.  The purpose of the code in
 ;;;; this file is to create the first macro DEFMACRO.  But this must
-;;;; be done "manually".  
+;;;; be done "manually".
 
 ;;; Since IN-PACKAGE is a macro, it does not exist when this file is
 ;;; compiled, so we must do what IN-PACKAGE does manually.  In this
