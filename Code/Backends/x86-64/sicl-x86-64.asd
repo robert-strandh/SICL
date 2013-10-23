@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-x86-64
-  :depends-on (:sicl-compiler :sicl-boot)
+  :depends-on (:sicl-compiler :sicl-boot :x86-assembler)
   :components
   ((:file "packages")
    (:file "backend" :depends-on ("packages"))
