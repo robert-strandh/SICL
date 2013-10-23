@@ -434,6 +434,27 @@
     (format stream "     CALL RAX~%")))
 
 (defmethod generate-instruction
+    ((instruction sicl-mir:tailcall-instruction) stream)
+  (let ((name (sicl-mir:name *lv-fun-reg*)))
+    ;; Start by loading the contents vector of the function object to
+    ;; *lv-fun-reg*.
+    (format stream "     MOV ~a, [~a 1]~%" name name)
+    ;; Next, load the entry point address to RAX.
+    ;; FIXME: check the offset of the entry point.
+    ;; FIXME: generate the offset of the entry point automatically.
+    (format stream "     MOV RAX, [~a 40]~%" name)
+    ;; Next, load the static environment into *senv-reg*.
+    ;; FIXME: check the offset of the static environment.
+    ;; FIXME: generate the offset of the static environment automatically.
+    (format stream "     MOV ~a, [~a 24]~%" (sicl-mir:name *senv-reg*) name)
+    ;; Next, load the linkage vector into *lv-fun-reg*.
+    ;; FIXME: check the offset of the linkage vector.
+    ;; FIXME: generate the offset of the linkage vector automatically.
+    (format stream "     MOV ~a, [~a 32]~%" name name)
+    ;; Finally, jump to the entry point.
+    (format stream "     JMP RAX~%")))
+
+(defmethod generate-instruction
     ((instruction sicl-mir:assignment-instruction) stream)
   (let ((input (first (sicl-mir:inputs instruction)))
 	(output (first (sicl-mir:outputs instruction))))
@@ -504,11 +525,6 @@
 		  displacement)
 	  (format stream "     MOV [RBP ~d], RAX~%"
 		  (* -8 (1+ (sicl-mir:index output))))))))))
-
-
-(defmethod generate-instruction
-    ((instruction sicl-mir:tailcall-instruction) stream)
-  (format stream "     TAILCALL~%"))
 
 (defun generate-code (first-instruction)
   (let ((*label-table* (make-hash-table :test #'eq))
