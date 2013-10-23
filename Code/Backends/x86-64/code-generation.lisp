@@ -1,22 +1,5 @@
 (cl:in-package #:sicl-x86-64)
 
-(defgeneric print-datum (datum stream))
-
-(defmethod print-datum ((datum sicl-mir:immediate-input) stream)
-  (format stream "~a" (sicl-mir:value datum)))
-
-(defmethod print-datum ((datum sicl-mir:global-input) stream)
-  (format stream "[GLOBAL ~a]" (sicl-mir:name datum)))
-
-(defmethod print-datum ((datum sicl-mir:constant-input) stream)
-  (format stream "[CONSTANT ~a]" (sicl-mir:value datum)))
-
-(defmethod print-datum ((datum sicl-mir:register-location) stream)
-  (format stream "[REG ~a]" (sicl-mir:name datum)))
-
-(defmethod print-datum ((datum sicl-mir:dynamic-location) stream)
-  (format stream "[DYN ~a]" (sicl-mir:index datum)))
-
 (defvar *label-table*)
 
 (defun assign-label (instruction)
@@ -382,20 +365,6 @@
     (assign-label (cadr successors))
     (format stream "     JNE ~a~%"
 	    (gethash (cadr successors) *label-table*))))
-
-(defmethod generate-instruction (instruction stream)
-  (format stream "     ")
-  (unless (null (sicl-mir:outputs instruction))
-    (loop for output in (sicl-mir:outputs instruction)
-	  do (print-datum output stream)
-	     (format stream " "))
-    (format stream "  <-  "))
-  (format stream "~a  "
-	  (class-name (class-of instruction)))
-  (loop for input in (sicl-mir:inputs instruction)
-	do (print-datum input stream)
-	   (format stream " "))
-  (format stream "~%"))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:enter-instruction) stream)
