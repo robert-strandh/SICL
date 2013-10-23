@@ -59,45 +59,66 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~d, ~a~%"
-		  (sicl-mir:value input1)
-		  (sicl-mir:name input2)))
+	  (format stream "     CMP ~a, ~d~%"
+		  (sicl-mir:name input2)
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JL ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~d, [RBP ~d]~%"
-		  (sicl-mir:value input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+	  (format stream "     CMP [RBP ~d], ~d~%"
+		  (* -8 (1+ (sicl-mir:index input2)))
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNL ~a~%"
+		  (gethash (cadr successors) *label-table*)))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
 	  (format stream "     CMP ~a, ~d~%"
 		  (sicl-mir:name input1)
-		  (sicl-mir:value input2)))
+		  (sicl-mir:value input2))
+	  (assign-label (cadr successors))
+	  (format stream "     JNL ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:register-location
 	  (format stream "     CMP ~a, ~a~%"
 		  (sicl-mir:name input1)
-		  (sicl-mir:name input2)))
+		  (sicl-mir:name input2))
+	  (assign-label (cadr successors))
+	  (format stream "     JNL ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
 	  (format stream "     CMP ~a, [RBP ~d]~%"
 		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+		  (* -8 (1+ (sicl-mir:index input2))))
+	  (assign-label (cadr successors))
+	  (format stream "     JNL ~a~%"
+		  (gethash (cadr successors) *label-table*)))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
 	  (format stream "     CMP [RBP ~d], ~d~%"
 		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1)))
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNL ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:register-location
 	  (format stream "     CMP [RBP ~d], ~a~%"
 		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1)))
+		  (sicl-mir:name input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNL ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
 	  (format stream "     MOV RAX, [RBP ~d]~%"
 		  (* -8 (1+ (sicl-mir:index input1))))
 	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))))))
-    (assign-label (cadr successors))
-    (format stream "     JNL ~a~%"
-	    (gethash (cadr successors) *label-table*))))
+		  (* -8 (1+ (sicl-mir:index input2))))
+	  (assign-label (cadr successors))
+	  (format stream "     JNL ~a~%"
+		  (gethash (cadr successors) *label-table*))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:s<=-instruction) stream)
@@ -109,45 +130,66 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~d, ~a~%"
-		  (sicl-mir:value input1)
-		  (sicl-mir:name input2)))
+	  (format stream "     CMP ~a, ~d~%"
+		  (sicl-mir:name input2)
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JLE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~d, [RBP ~d]~%"
-		  (sicl-mir:value input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+	  (format stream "     CMP [RBP ~d], ~d~%"
+		  (* -8 (1+ (sicl-mir:index input2)))
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JLE ~a~%"
+		  (gethash (cadr successors) *label-table*)))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
 	  (format stream "     CMP ~a, ~d~%"
 		  (sicl-mir:name input1)
-		  (sicl-mir:value input2)))
+		  (sicl-mir:value input2))
+	  (assign-label (cadr successors))
+	  (format stream "     JNLE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:register-location
 	  (format stream "     CMP ~a, ~a~%"
 		  (sicl-mir:name input1)
-		  (sicl-mir:name input2)))
+		  (sicl-mir:name input2))
+	  (assign-label (cadr successors))
+	  (format stream "     JNLE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
 	  (format stream "     CMP ~a, [RBP ~d]~%"
 		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+		  (* -8 (1+ (sicl-mir:index input2))))
+	  (assign-label (cadr successors))
+	  (format stream "     JNLE ~a~%"
+		  (gethash (cadr successors) *label-table*)))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
 	  (format stream "     CMP [RBP ~d], ~d~%"
 		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1)))
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNLE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:register-location
 	  (format stream "     CMP [RBP ~d], ~a~%"
 		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1)))
+		  (sicl-mir:name input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNLE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
 	  (format stream "     MOV RAX, [RBP ~d]~%"
 		  (* -8 (1+ (sicl-mir:index input1))))
 	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))))))
-    (assign-label (cadr successors))
-    (format stream "     JNLE ~a~%"
-	    (gethash (cadr successors) *label-table*))))
+		  (* -8 (1+ (sicl-mir:index input2))))
+	  (assign-label (cadr successors))
+	  (format stream "     JNLE ~a~%"
+		  (gethash (cadr successors) *label-table*))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:u<-instruction) stream)
@@ -159,45 +201,66 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~d, ~a~%"
-		  (sicl-mir:value input1)
-		  (sicl-mir:name input2)))
+	  (format stream "     CMP ~a, ~d~%"
+		  (sicl-mir:name input2)
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JB ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~d, [RBP ~d]~%"
-		  (sicl-mir:value input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+	  (format stream "     CMP [RBP ~d], ~d~%"
+		  (* -8 (1+ (sicl-mir:index input2)))
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JB ~a~%"
+		  (gethash (cadr successors) *label-table*)))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
 	  (format stream "     CMP ~a, ~d~%"
 		  (sicl-mir:name input1)
-		  (sicl-mir:value input2)))
+		  (sicl-mir:value input2))
+	  (assign-label (cadr successors))
+	  (format stream "     JNB ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:register-location
 	  (format stream "     CMP ~a, ~a~%"
 		  (sicl-mir:name input1)
-		  (sicl-mir:name input2)))
+		  (sicl-mir:name input2))
+	  (assign-label (cadr successors))
+	  (format stream "     JNB ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
 	  (format stream "     CMP ~a, [RBP ~d]~%"
 		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+		  (* -8 (1+ (sicl-mir:index input2))))
+	  (assign-label (cadr successors))
+	  (format stream "     JNB ~a~%"
+		  (gethash (cadr successors) *label-table*)))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
 	  (format stream "     CMP [RBP ~d], ~d~%"
 		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1)))
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNB ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:register-location
 	  (format stream "     CMP [RBP ~d], ~a~%"
 		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1)))
+		  (sicl-mir:name input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNB ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
 	  (format stream "     MOV RAX, [RBP ~d]~%"
 		  (* -8 (1+ (sicl-mir:index input1))))
 	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))))))
-    (assign-label (cadr successors))
-    (format stream "     JNB ~a~%"
-	    (gethash (cadr successors) *label-table*))))
+		  (* -8 (1+ (sicl-mir:index input2))))
+	  (assign-label (cadr successors))
+	  (format stream "     JNB ~a~%"
+		  (gethash (cadr successors) *label-table*))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:u<=-instruction) stream)
@@ -209,45 +272,66 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~d, ~a~%"
-		  (sicl-mir:value input1)
-		  (sicl-mir:name input2)))
+	  (format stream "     CMP ~a, ~d~%"
+		  (sicl-mir:name input2)
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JBE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~d, [RBP ~d]~%"
-		  (sicl-mir:value input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+	  (format stream "     CMP [RBP ~d], ~d~%"
+		  (* -8 (1+ (sicl-mir:index input2)))
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JBE ~a~%"
+		  (gethash (cadr successors) *label-table*)))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
 	  (format stream "     CMP ~a, ~d~%"
 		  (sicl-mir:name input1)
-		  (sicl-mir:value input2)))
+		  (sicl-mir:value input2))
+	  (assign-label (cadr successors))
+	  (format stream "     JNBE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:register-location
 	  (format stream "     CMP ~a, ~a~%"
 		  (sicl-mir:name input1)
-		  (sicl-mir:name input2)))
+		  (sicl-mir:name input2))
+	  (assign-label (cadr successors))
+	  (format stream "     JNBE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
 	  (format stream "     CMP ~a, [RBP ~d]~%"
 		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+		  (* -8 (1+ (sicl-mir:index input2))))
+	  (assign-label (cadr successors))
+	  (format stream "     JNBE ~a~%"
+		  (gethash (cadr successors) *label-table*)))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
 	  (format stream "     CMP [RBP ~d], ~d~%"
 		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1)))
+		  (sicl-mir:value input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNBE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:register-location
 	  (format stream "     CMP [RBP ~d], ~a~%"
 		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1)))
+		  (sicl-mir:name input1))
+	  (assign-label (cadr successors))
+	  (format stream "     JNBE ~a~%"
+		  (gethash (cadr successors) *label-table*)))
 	 (sicl-mir:dynamic-location
 	  (format stream "     MOV RAX, [RBP ~d]~%"
 		  (* -8 (1+ (sicl-mir:index input1))))
 	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))))))
-    (assign-label (cadr successors))
-    (format stream "     JNBE ~a~%"
-	    (gethash (cadr successors) *label-table*))))
+		  (* -8 (1+ (sicl-mir:index input2))))
+	  (assign-label (cadr successors))
+	  (format stream "     JNBE ~a~%"
+		  (gethash (cadr successors) *label-table*))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:==-instruction) stream)
