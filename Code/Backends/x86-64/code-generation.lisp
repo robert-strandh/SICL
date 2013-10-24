@@ -1,10 +1,61 @@
 (cl:in-package #:sicl-x86-64)
 
+;;; Define a correspondance bettween MIR register locations and
+;;; register operands as the assembler wants.
+
+(defparameter *regs*
+  `((rax . ,(x86-assembler:make-gpr-operand 64 0))
+    (rcx . ,(x86-assembler:make-gpr-operand 64 1))
+    (rdx . ,(x86-assembler:make-gpr-operand 64 2))
+    (rbx . ,(x86-assembler:make-gpr-operand 64 3))
+    (rsp . ,(x86-assembler:make-gpr-operand 64 4))
+    (rbp . ,(x86-assembler:make-gpr-operand 64 5))
+    (rsi . ,(x86-assembler:make-gpr-operand 64 6))
+    (rdi . ,(x86-assembler:make-gpr-operand 64 7))
+    (r8 . ,(x86-assembler:make-gpr-operand 64 8))
+    (r9 . ,(x86-assembler:make-gpr-operand 64 9))
+    (r10 . ,(x86-assembler:make-gpr-operand 64 10))
+    (r11 . ,(x86-assembler:make-gpr-operand 64 11))
+    (r12 . ,(x86-assembler:make-gpr-operand 64 12))
+    (r13 . ,(x86-assembler:make-gpr-operand 64 13))
+    (r14 . ,(x86-assembler:make-gpr-operand 64 14))
+    (r15 . ,(x86-assembler:make-gpr-operand 64 15))))
+
+(defun make-reg (register)
+  (let ((reg-name (if (symbolp register)
+		      register
+		      (sicl-mir:name register))))
+    (cdr (assoc reg-name *regs*))))
+
+(defun make-imm (immediate-location)
+  (x86-assembler:make-immediate-operand (sicl-mir:value immediate-location)))
+
+(defun make-mem (register displacement)
+  (let ((reg-name (if (symbolp register)
+		      register
+		      (sicl-mir:name register))))
+    (x86-assembler:make-memory-operand
+     64
+     :base-register (position reg-name *regs*)
+     :displacement displacement)))
+
+(defvar *assembly-program*)
+
+(defun add-item (item)
+  (push item *assembly-program*))
+
+(defun make-code (mnemonic operands)
+  (x86-assembler:make-code-command mnemonic operands))
+
+(defun add-code (mnemonic operands)
+  (add-item (make-code mnemonic operands)))
+
 (defvar *label-table*)
 
 (defun assign-label (instruction)
   (unless (gethash instruction *label-table*)
-    (setf (gethash instruction *label-table*) (gensym))))
+    (setf (gethash instruction *label-table*)
+	  (x86-assembler:make-label))))
 
 (defvar *processed-p-table*)
 
@@ -12,8 +63,7 @@
 
 (defmethod generate-instruction :around (instruction stream)
   (if (gethash instruction *processed-p-table*)
-      (format stream "     JMP ~a~%"
-	      (gethash instruction *label-table*))
+      (add-code "JMP" (list (gethash instruction *label-table*)))
       (call-next-method)))
 
 (defmethod generate-instruction :before (instruction stream)
@@ -21,7 +71,7 @@
     (assign-label instruction))
   (let ((label (gethash instruction *label-table*)))
     (unless (null label)
-      (format stream "~a:~%" label)))
+      (add-item label)))
   (setf (gethash instruction *processed-p-table*) t))
 
 (defmethod generate-instruction :after (instruction stream)
@@ -42,66 +92,54 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input2)
-		  (sicl-mir:value input1))
+	  (add-code "CMP" (list (make-reg input2) (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JL ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JL" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNL ~a~%"
-		  (gethash (cadr successors) *label-table*)))))
+	  (add-code "JL" (list (gethash (cadr successors) *label-table*))))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:value input2))
+	  (add-code "CMP" (list (make-reg input1) (make-imm input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNL ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNL" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~a~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:name input2))
+	  (add-code "CMP" (list (make-reg input1) (make-reg input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNL ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNL" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~a, [RBP ~d]~%"
-		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2))))
+	  (add-code "CMP"
+		    (list (make-reg input1)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))
 	  (assign-label (cadr successors))
-	  (format stream "     JNL ~a~%"
-		  (gethash (cadr successors) *label-table*)))))
+	  (add-code "JNL" (list (gethash (cadr successors) *label-table*))))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input1))))
+			  (make-imm input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNL ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNL" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP [RBP ~d], ~a~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input1))))
+			  (make-reg input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNL ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNL" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input1))))
-	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input1))))))
+	  (add-code "CMP"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))
 	  (assign-label (cadr successors))
-	  (format stream "     JNL ~a~%"
-		  (gethash (cadr successors) *label-table*))))))))
+	  (add-code "JNL" (list (gethash (cadr successors) *label-table*)))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:s<=-instruction) stream)
@@ -113,66 +151,54 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input2)
-		  (sicl-mir:value input1))
+	  (add-code "CMP" (list (make-reg input2) (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JLE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JLE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JLE ~a~%"
-		  (gethash (cadr successors) *label-table*)))))
+	  (add-code "JLE" (list (gethash (cadr successors) *label-table*))))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:value input2))
+	  (add-code "CMP" (list (make-reg input1) (make-imm input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNLE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNLE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~a~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:name input2))
+	  (add-code "CMP" (list (make-reg input1) (make-reg input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNLE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNLE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~a, [RBP ~d]~%"
-		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2))))
+	  (add-code "CMP"
+		    (list (make-reg input1)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))
 	  (assign-label (cadr successors))
-	  (format stream "     JNLE ~a~%"
-		  (gethash (cadr successors) *label-table*)))))
+	  (add-code "JNLE" (list (gethash (cadr successors) *label-table*))))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNLE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNLE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP [RBP ~d], ~a~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-reg input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNLE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNLE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input1))))
-	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input1))))))
+	  (add-code "CMP"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))
 	  (assign-label (cadr successors))
-	  (format stream "     JNLE ~a~%"
-		  (gethash (cadr successors) *label-table*))))))))
+	  (add-code "JNLE" (list (gethash (cadr successors) *label-table*)))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:u<-instruction) stream)
@@ -184,66 +210,54 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input2)
-		  (sicl-mir:value input1))
+	  (add-code "CMP" (list (make-reg input2) (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JB ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JB" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JB ~a~%"
-		  (gethash (cadr successors) *label-table*)))))
+	  (add-code "JB" (list (gethash (cadr successors) *label-table*))))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:value input2))
+	  (add-code "CMP" (list (make-reg input1) (make-imm input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNB ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNB" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~a~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:name input2))
+	  (add-code "CMP" (list (make-reg input1) (make-reg input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNB ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNB" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~a, [RBP ~d]~%"
-		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2))))
+	  (add-code "CMP"
+		    (list (make-reg input1)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))
 	  (assign-label (cadr successors))
-	  (format stream "     JNB ~a~%"
-		  (gethash (cadr successors) *label-table*)))))
+	  (add-code "JNB" (list (gethash (cadr successors) *label-table*))))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNB ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNB" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP [RBP ~d], ~a~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-reg input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNB ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNB" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input1))))
-	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input1))))))
+	  (add-code "CMP"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))
 	  (assign-label (cadr successors))
-	  (format stream "     JNB ~a~%"
-		  (gethash (cadr successors) *label-table*))))))))
+	  (add-code "JNB" (list (gethash (cadr successors) *label-table*)))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:u<=-instruction) stream)
@@ -255,66 +269,54 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input2)
-		  (sicl-mir:value input1))
+	  (add-code "CMP" (list (make-reg input2) (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JBE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JBE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JBE ~a~%"
-		  (gethash (cadr successors) *label-table*)))))
+	  (add-code "JBE" (list (gethash (cadr successors) *label-table*))))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:value input2))
+	  (add-code "CMP" (list (make-reg input1) (make-imm input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNBE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNBE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~a~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:name input2))
+	  (add-code "CMP" (list (make-reg input1) (make-reg input2)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNBE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNBE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~a, [RBP ~d]~%"
-		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2))))
+	  (add-code "CMP"
+		    (list (make-reg input1)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))
 	  (assign-label (cadr successors))
-	  (format stream "     JNBE ~a~%"
-		  (gethash (cadr successors) *label-table*)))))
+	  (add-code "JNBE" (list (gethash (cadr successors) *label-table*))))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNBE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNBE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP [RBP ~d], ~a~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-reg input1)))
 	  (assign-label (cadr successors))
-	  (format stream "     JNBE ~a~%"
-		  (gethash (cadr successors) *label-table*)))
+	  (add-code "JNBE" (list (gethash (cadr successors) *label-table*))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input1))))
-	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input1))))))
+	  (add-code "CMP"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))
 	  (assign-label (cadr successors))
-	  (format stream "     JNBE ~a~%"
-		  (gethash (cadr successors) *label-table*))))))))
+	  (add-code "JNBE" (list (gethash (cadr successors) *label-table*)))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:==-instruction) stream)
@@ -326,45 +328,40 @@
       (sicl-mir:immediate-input
        (etypecase input2
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~d, ~a~%"
-		  (sicl-mir:value input1)
-		  (sicl-mir:name input2)))
+	  (add-code "CMP" (list (make-reg input2) (make-imm input1))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~d, [RBP ~d]~%"
-		  (sicl-mir:value input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1))))))
       (sicl-mir:register-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP ~a, ~d~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:value input2)))
+	  (add-code "CMP" (list (make-reg input1) (make-imm input2))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP ~a, ~a~%"
-		  (sicl-mir:name input1)
-		  (sicl-mir:name input2)))
+	  (add-code "CMP" (list (make-reg input1) (make-reg input2))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     CMP ~a, [RBP ~d]~%"
-		  (sicl-mir:name input1)
-		  (* -8 (1+ (sicl-mir:index input2)))))))
+	  (add-code "CMP"
+		    (list (make-reg input1)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2)))))))))
       (sicl-mir:dynamic-location
        (etypecase input2
 	 (sicl-mir:immediate-input
-	  (format stream "     CMP [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:value input1)))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-imm input1))))
 	 (sicl-mir:register-location
-	  (format stream "     CMP [RBP ~d], ~a~%"
-		  (* -8 (1+ (sicl-mir:index input2)))
-		  (sicl-mir:name input1)))
+	  (add-code "CMP"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))
+			  (make-reg input1))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input1))))
-	  (format stream "     CMP RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input2))))))))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input1))))))
+	  (add-code "CMP"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input2))))))))))
     (assign-label (cadr successors))
-    (format stream "     JNE ~a~%"
-	    (gethash (cadr successors) *label-table*))))
+    (add-code "JNE" (list (gethash (cadr successors) *label-table*)))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:enter-instruction) stream)
@@ -375,7 +372,7 @@
 
 (defmethod generate-instruction
     ((instruction sicl-mir:return-instruction) stream)
-  (format stream "     RET~%"))
+  (add-code "RET" '()))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:funcall-instruction) stream)
@@ -386,42 +383,42 @@
   (let ((name (sicl-mir:name *lv-fun-reg*)))
     ;; Start by loading the contents vector of the function object to
     ;; *lv-fun-reg*.
-    (format stream "     MOV ~a, [~a 1]~%" name name)
+    (add-code "MOV" (list (make-reg name) (make-mem name 1)))
     ;; Next, load the entry point address to RAX.
     ;; FIXME: check the offset of the entry point.
     ;; FIXME: generate the offset of the entry point automatically.
-    (format stream "     MOV RAX, [~a 40]~%" name)
+    (add-code "MOV" (list (make-reg 'rax) (make-mem name 40)))
     ;; Next, load the static environment into *senv-reg*.
     ;; FIXME: check the offset of the static environment.
     ;; FIXME: generate the offset of the static environment automatically.
-    (format stream "     MOV ~a, [~a 24]~%" (sicl-mir:name *senv-reg*) name)
+    (add-code "MOV" (list (make-reg *senv-reg*) (make-mem name 24)))
     ;; Next, load the linkage vector into *lv-fun-reg*.
     ;; FIXME: check the offset of the linkage vector.
     ;; FIXME: generate the offset of the linkage vector automatically.
-    (format stream "     MOV ~a, [~a 32]~%" name name)
+    (add-code "MOV" (list (make-reg name) (make-mem name 32)))
     ;; Finally, call the entry point.
-    (format stream "     CALL RAX~%")))
+    (add-code "CALL" (list (make-reg 'rax)))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:tailcall-instruction) stream)
   (let ((name (sicl-mir:name *lv-fun-reg*)))
     ;; Start by loading the contents vector of the function object to
     ;; *lv-fun-reg*.
-    (format stream "     MOV ~a, [~a 1]~%" name name)
+    (add-code "MOV" (list (make-reg name) (make-mem name 1)))
     ;; Next, load the entry point address to RAX.
     ;; FIXME: check the offset of the entry point.
     ;; FIXME: generate the offset of the entry point automatically.
-    (format stream "     MOV RAX, [~a 40]~%" name)
+    (add-code "MOV" (list (make-reg 'rax) (make-mem name 40)))
     ;; Next, load the static environment into *senv-reg*.
     ;; FIXME: check the offset of the static environment.
     ;; FIXME: generate the offset of the static environment automatically.
-    (format stream "     MOV ~a, [~a 24]~%" (sicl-mir:name *senv-reg*) name)
+    (add-code "MOV" (list (make-reg *senv-reg*) (make-mem name 24)))
     ;; Next, load the linkage vector into *lv-fun-reg*.
     ;; FIXME: check the offset of the linkage vector.
     ;; FIXME: generate the offset of the linkage vector automatically.
-    (format stream "     MOV ~a, [~a 32]~%" name name)
+    (add-code "MOV" (list (make-reg name) (make-mem name 32)))
     ;; Finally, jump to the entry point.
-    (format stream "     JMP RAX~%")))
+    (add-code "JMP" (list (make-reg 'rax)))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:assignment-instruction) stream)
@@ -431,34 +428,32 @@
       (sicl-mir:immediate-input
        (etypecase output
 	 (sicl-mir:register-location
-	  (format stream "     MOV ~a, ~d~%"
-		  (sicl-mir:name output)
-		  (sicl-mir:value input)))
+	  (add-code "MOV" (list (make-reg output) (make-imm input))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV [RBP ~d], ~d~%"
-		  (* -8 (1+ (sicl-mir:index output)))
-		  (sicl-mir:value input)))))
+	  (add-code "MOV"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index output))))
+			  (make-imm input))))))
       (sicl-mir:register-location
        (etypecase output
 	 (sicl-mir:register-location
-	  (format stream "     MOV ~a, ~a~%"
-		  (sicl-mir:name output)
-		  (sicl-mir:name input)))
+	  (add-code "MOV" (list (make-reg output) (make-reg input))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV [RBP ~d], ~a~%"
-		  (* -8 (1+ (sicl-mir:index output)))
-		  (sicl-mir:name input)))))
+	  (add-code "MOV"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index output))))
+			  (make-reg input))))))
       (sicl-mir:dynamic-location
        (etypecase output
 	 (sicl-mir:register-location
-	  (format stream "     MOV ~a, [RBP ~d]~%"
-		  (sicl-mir:name output)
-		  (* -8 (1+ (sicl-mir:index input)))))
+	  (add-code "MOV"
+		    (list (make-reg output)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input)))))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input))))
-	  (format stream "     MOV [RBP ~d], RAX~%"
-		  (* -8 (1+ (sicl-mir:index output))))))))))
+	  (add-code "MOV"
+		    (list  (make-reg 'rax)
+			   (make-mem 'rbp (* -8 (1+ (sicl-mir:index input))))))
+	  (add-code "MOV"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index output))))
+			  (make-reg 'rax)))))))))
 
 (defmethod generate-instruction
     ((instruction sicl-mir:memref-instruction) stream)
@@ -469,34 +464,40 @@
       (sicl-mir:register-location
        (etypecase output
 	 (sicl-mir:register-location
-	  (format stream "     MOV ~a, [~a ~d]~%"
-		  (sicl-mir:name output)
-		  (sicl-mir:name input)
-		  displacement))
+	  (add-code "MOV"
+		    (list (make-reg output)
+			  (make-mem input displacement))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV RAX, [~a ~d]~%"
-		  (sicl-mir:name input)
-		  displacement)
-	  (format stream "     MOV [RBP ~d], RAX~%"
-		  (* -8 (1+ (sicl-mir:index output)))))))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem input displacement)))
+	  (add-code "MOV"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index output))))
+			  (make-reg 'rax))))))
       (sicl-mir:dynamic-location
        (etypecase output
 	 (sicl-mir:register-location
-	  (format stream "     MOV RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input))))
-	  (format stream "     MOV ~a, [RAX ~d]~%"
-		  (sicl-mir:name output)
-		  displacement))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input))))))
+	  (add-code "MOV"
+		    (list (make-reg output)
+			  (make-mem 'rax displacement))))
 	 (sicl-mir:dynamic-location
-	  (format stream "     MOV RAX, [RBP ~d]~%"
-		  (* -8 (1+ (sicl-mir:index input))))
-	  (format stream "     MOV RAX, [RAX ~d]~%"
-		  displacement)
-	  (format stream "     MOV [RBP ~d], RAX~%"
-		  (* -8 (1+ (sicl-mir:index output))))))))))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem 'rbp (* -8 (1+ (sicl-mir:index input))))))
+	  (add-code "MOV"
+		    (list (make-reg 'rax)
+			  (make-mem 'rax displacement)))
+	  (add-code "MOV"
+		    (list (make-mem 'rbp (* -8 (1+ (sicl-mir:index output))))
+			  (make-reg 'rax)))))))))
 
 (defun generate-code (first-instruction)
   (let ((*label-table* (make-hash-table :test #'eq))
-	(*processed-p-table* (make-hash-table :test #'eq)))
-    (generate-instruction first-instruction *standard-output*)))
+	(*processed-p-table* (make-hash-table :test #'eq))
+	(*assembly-program* '()))
+    (generate-instruction first-instruction *standard-output*)
+    (x86-assembler:assemble (reverse *assembly-program*))))
       
