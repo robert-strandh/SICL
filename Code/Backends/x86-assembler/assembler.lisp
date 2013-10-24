@@ -87,11 +87,19 @@
 
 (defclass label (item) ())
 
+(defun make-label ()
+  (make-instance 'label))
+
 (defclass command (item) ())
 
 (defclass code-command (command)
   ((%mnemonic :initarg :mnemonic :reader mnemonic)
    (%operands :initarg :operands :reader operands)))
+
+(defun make-code-command (mnemonic operands)
+  (make-instance 'code-command
+    :mnemonic mnemonic
+    :operands operands))
 
 (defclass data-command (command)
   ())
@@ -106,6 +114,11 @@
 
 (defclass gpr-operand (register-operand)
   ())
+
+(defun make-gpr-operand (size code-number)
+  (make-instance 'gpr-operand
+    :size size
+    :code-number code-number))
 
 (defclass mmx-register-operand (register-operand)
   ())
@@ -132,9 +145,22 @@
     :initarg :displacement
     :reader displacement)))
 
+(defun make-memory-operand
+    (size &key base-register index-register scale displacement)
+  (make-instance 'memory-operand
+    :size size
+    :base-register base-register
+    :index-register index-register
+    :scale scale
+    :displacement displacement))
+
 (defclass immediate-operand (operand)
   (;; A signed integer.
    (%value :initarg :value :reader value)))
+
+(defun make-immediate-operand (value)
+  (make-instance 'immediate-operand
+    :value value))
 
 (defun operand-matches-p (operand descriptor)
   (ecase (car descriptor)
