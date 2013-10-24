@@ -2820,7 +2820,7 @@
   :operands ((gpr 64) (imm 64))
   :opcodes (#xB8)
   :encoding (+r imm)
-  :operand-size-override t)
+  :rex.w t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -2833,7 +2833,7 @@
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((gpr 8) (imm 8))
-  :opcodes C6
+  :opcodes (#xC6)
   :opcode-extension 0
   :encoding (modrm imm))
 
@@ -2841,7 +2841,7 @@
 (define-instruction "MOV"
   :modes (32 64)
   :operands ((memory 8) (imm 8))
-  :opcodes C6
+  :opcodes (#xC6)
   :opcode-extension 0
   :encoding (modrm imm))
 
