@@ -405,7 +405,7 @@
 	     (imm
 	      `(,@(if (operand-size-override desc) '(#x66) '())
 		,@(if (plusp rex-low) `(,(+ #x40 rex-low)) '())
-		,(+ (car (opcodes desc)) (opcode-extension desc))
+		,(+ (car (opcodes desc)) r/m)
 		,@(encode-integer (value opnd2) length2))))))))))
 
 (defmethod encode-instruction-2
@@ -476,6 +476,7 @@
 
 (defun encode-instruction (desc operands)
   (ecase (length operands)
+    (0 (opcodes desc))
     (1 (encode-instruction-1 desc (first operands)))
     (2 (encode-instruction-2 desc (first operands) (second operands)))))
 
@@ -506,6 +507,7 @@
   
 (defun instruction-size (desc operands)
   (ecase (length operands)
+    (0 (length (opcodes desc)))
     (1 (instruction-size-1 desc (first operands)))
     (2 (instruction-size-2 desc (first operands) (second operands)))))
 
@@ -576,11 +578,14 @@
 (defun assemble (items)
   (let* ((preliminary-sizes (mapcar #'preliminary-size items))
 	 (addresses (compute-preliminary-addresses items preliminary-sizes)))
-    (let ((*addresses* addresses))
-      (loop for item in items
-	    for address = 0 then (+ address size)
-	    for size in preliminary-sizes
-	    collect (let ((*instruction-pointer* (+ address size)))
-		      (compute-encoding item))))))
+    (let* ((*addresses* addresses)
+	   (encodings (loop for item in items
+			    for address = 0 then (+ address size)
+			    for size in preliminary-sizes
+			    collect
+			    (let ((*instruction-pointer* (+ address size)))
+			      (compute-encoding item)))))
+      (coerce (reduce #'append encodings :from-end t)
+	      '(simple-array (unsigned-byte 8) (*))))))
     
     
