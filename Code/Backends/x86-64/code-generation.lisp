@@ -36,7 +36,7 @@
 		      (sicl-mir:name register))))
     (x86-assembler:make-memory-operand
      64
-     :base-register (position reg-name *regs*)
+     :base-register (position reg-name *regs* :test #'eq :key #'car)
      :displacement displacement)))
 
 (defvar *assembly-program*)
