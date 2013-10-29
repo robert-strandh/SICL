@@ -120,7 +120,29 @@ two kinds of edges (\emph{control-flow edges} and \emph{data-flow
 \subsection{Type inference}
 
 Type inference in the \sysname{} compiler is implemented as a
-\emph{forward data-flow problem} on the flowchart. 
+\emph{forward data-flow problem} on the flowchart.  Each \emph{arc} in
+the flowchart contains a \emph{type descriptor} for each variable in
+the program.  A type descriptor is a canonical representation of the
+disjunction of a large number of mutually disjoint types.  
+
+Each instruction type influences the possible types of its output as a
+function of the types of its inputs.  In particular, the
+\texttt{typeq} instruction takes the type of its input and a constant
+type and computes the \emph{set intersection}
+between the two in one successor arc and the \emph{set difference} in
+the other successor arc.  
+
+Initially, every type descriptor for every variable represents the
+type T.  Then, the influence of each instruction is applied until
+a fixpoint is obtained.  If any variable has the type \texttt{NIL} on
+some arc, then that arc represents an impossible transition and it can
+be removed. 
+
+Type descriptors represent not only \cl{} types, but also types such
+as \emph{raw pointer}, \emph{unboxed floats}, etc.  The type
+information computed by the type inference phase is stored in the
+\emph{code object} for use by the garbage collector, but also by tools
+such as debuggers and inspectors. 
 
 \subsection{Access to special variables and global functions}
 
@@ -202,3 +224,5 @@ The compiler should do some extensive type inferencing.  It should be
 able to eliminate code for which the result of executing it is known
 as a result of the contents of the compilation environment.  
 
+
+%%  LocalWords:  disjunction
