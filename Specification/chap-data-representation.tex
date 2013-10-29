@@ -329,7 +329,8 @@ Representation of functions.}
 \end{figure}
 
 A function is represented as a two-word header (as usual) and a
-contents vector with five slots in addition to the inherited slots.
+contents vector with at least four slots in addition to the inherited
+slots.
 
 \begin{enumerate}
 \item The \emph{code object} for this function (see below).
@@ -343,14 +344,14 @@ contents vector with five slots in addition to the inherited slots.
   object in the slot described previously.  The garbage collector must
   update the value of this slot if it decides to move the contents
   vector of the linkage vector object.
-\item A \emph{raw address} to the entry point for the function that
-  also checks argument count.  The garbage collector must update the
-  value of this slot if it decides to move the contents vector of the
-  code vector.
-\item A \emph{raw address} to the entry point for the function that
-  omits the checks for argument count.  The garbage collector must
-  update the value of this slot if it decides to move the contents
-  vector of the code vector.
+\item One ore more slots representing \emph{entry points}.  Each entry
+  point is a \emph{raw address} of an aligned word in the byte vector
+  containing the instructions of the function.  The garbage collector
+  must update the value of this slot if it decides to move the
+  contents vector of the code vector.  Each backend determines the number
+  of entry points and their significance, but they typically have to
+  do with the number of arguments and whether the call is an ordinary
+  call or a tail call.
 \end{enumerate}
 
 Since raw addresses are word aligned, they show up as \texttt{fixnum}s
