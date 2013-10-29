@@ -57,7 +57,7 @@
 ;;; available.  For this backend, it is all registers except
 ;;; the stack pointer (RSP) and the frame pointer (RBP). 
 (defmethod sicl-program:registers ((backend backend-x86-64))
-  (loop for i in '(0 1 2 3 6 7 8 9 10 11 12 13 14 15)
+  (loop for i in '(1 2 3 6 7 8 9 10 11 12 13 14 15)
 	collect (aref *registers* i)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
