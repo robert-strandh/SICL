@@ -118,7 +118,11 @@ vector.%
 In the following sections we give the details of the representation
 for all possible heap objects.
 
-\section{Instances of subclasses of \texttt{standard-object}}
+\section{Standard objects}
+\label{sec-data-representation-standard-objects}
+
+By definition, a \emph{standard object} is an instance of a subclass
+of the class \texttt{standard-object}.
 
 Subclasses of \texttt{standard-object} must allow for must allow for
 the class of an instance to be changed to some other class
@@ -164,6 +168,39 @@ the contents vector.  This comparison is fast, because it can be done
 using \texttt{eq}.  Clearly, this solution also allows the system to
 determine which slots have been added and which slots have been
 removed since the instance was created. 
+
+\section{Funcallable standard objects}
+\label{sec-data-representation-funcallable-standard-objects}
+
+By definition, a \emph{funcallable standard object} is an instance of
+a subclass of the class \texttt{funcallable-standard-object} which is
+itself a subclass of the class \texttt{standard-object}
+\seesec{sec-data-representation-standard-objects} and of the class
+\texttt{function} \seesec{sec-data-representation-functions}.
+
+To make function invocation fast, we want every subclass of the class
+\texttt{function} to be invoked in the same way, i.e. by loading the
+\emph{static environment} and the \emph{code vector} into registers
+and then transferring control to the \emph{entry point} of the
+function. The static environment, the code vector, and the entry point
+are all stored in the function object and are loaded into registers as
+part of the function-call protocol.
+
+When the funcallable standard object is a generic function, invoking
+it amounts to transferring control to the \emph{discriminating
+  function}.  However, the discriminating function can not \emph{be}
+the generic function, because the \clos{} specification requires that
+the discriminating function of a generic function can be replaced,
+without changing the identity of the generic function itself.  The
+discriminating function must therefore be stored in a slot of the
+generic function.  Transferring control to the discriminating function
+therefore requires access to the generic function \emph{instance}.  We
+accomplish this access by storing a reference to the generic function
+instance in the \emph{static environment} of the generic function
+object.
+
+As a consequence, every generic function contains the same code vector
+and the same entry point; only the static environment differs.  
 
 \section{Instance of built-in classes}
 
@@ -313,6 +350,7 @@ is a proper list of packages that use this package.
 \subsection{Streams}
 
 \subsection{Functions}
+\label{sec-data-representation-functions}
 
 The \emph{class} of a function is a subclass of \texttt{function}.
 
