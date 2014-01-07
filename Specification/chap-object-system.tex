@@ -222,6 +222,95 @@ classes at all for its implementation, implementing \texttt{defstruct}
 can be done fairly late.  In fact, we may omit it in initial version
 of the system. 
 
+\section{Implementing \texttt{slot-value} and \texttt{(setf slot-value)}}
+
+The functions \texttt{slot-value} and \texttt{(setf slot-value)} play
+a central role in the object system, because they are used by slot
+accessor functions, either directly or indirectly to determine a
+\emph{slot location} in an instance to be used.  
+
+In \emph{the Art of the Metaobject Protocol (AMOP)}
+\cite{Kiczales:1991:AMP:574212}, these functions are mentioned as
+prime examples of issues of \emph{metastability}.  The scenario that
+is cited is that \texttt{slot-value} of an instance calls
+\texttt{class-slots} on the class of the instance, and
+\texttt{class-slots} is an accessor which calls \texttt{slot-value}.
+The metastability problem is resolved by recognizing that the
+recursion must eventually reach \texttt{standard-class}, so that
+treating \texttt{standard-class} as a special case resolves the
+problem.
+
+However, the scenario cited above represents a simplification of the
+real one.  The specification requires \texttt{slot-value} to call
+\texttt{slot-value-using-class} with the instance, the class of the
+instance, and an \emph{effective slot definition metaobject}.  In
+order for \texttt{slot-value} to find the right effective slot
+definition metaobject, it has to traverse the list of effective slot
+definition metaobjects until one is found that has the \emph{name} of
+the slot given as an argument.  To find the name of an effective slot
+definition metaobject, \texttt{slot-value} has to call
+\texttt{slot-value} which is again a metastability issue. 
+
+We solve the problems indicated above%
+\fixme{We still need to prove that these special cases actually solve
+  the problem by preventing an infinite recursion.}
+by recognizing as special cases
+the following argument combinations to \texttt{slot-value}:
+
+\begin{itemize}
+\item The slot name is the name of the slot that stores the value
+  returned by \texttt{class-slots} when applied to the class named
+  \texttt{standard-class}, and the class of the instance is the class
+  named \texttt{standard-class}.
+\item The slot name is the name of the slot that stores the value
+  returned by \texttt{slot-definition-name} when applied to an
+  instance of the class \texttt{standard-effective-slot-definition},
+  and the class of the instance is the class named
+  \texttt{standard-effective-slot-definition}. 
+\item The slot name is the name of the slot that stores the value
+  returned by \texttt{slot-definition-location} when applied to an
+  instance of the class \texttt{standard-effective-slot-definition},
+  and the class of the instance is the class named
+  \texttt{standard-effective-slot-definition}. 
+\end{itemize}
+
+To handle the special cases, we store the classes named
+\texttt{standard-class} and
+\texttt{standard-effective-slot-definition} in global variables, and
+we store the \emph{slot location} (as returned by
+\texttt{slot-definition-location}) of the relevant slots, also in
+global variables.  The special case is handled by calling
+\texttt{standard-instance-access} with the instance and the relevant
+location.
+
+With these special cases, it is now possible to compute the
+\emph{method function} of any reader by calling the function
+\texttt{make-reader-method-function} shown in
+\refCode{code-make-reader}.  However, implementing readers this way is
+very slow, so this method is used only for bootstrapping purposes.
+
+\begin{codefragment}
+\inputcode{code-make-reader.code}
+\caption{\label{code-make-reader}
+Function for creating method functions for readers.}
+\end{codefragment}
+
+When none of the special cases apply, \texttt{slot-value} first calls
+\texttt{class-slots} of the class of the instance.  It then calls
+\texttt{find} to find the correct effective slot definition
+metaobject, passing it the class name and the \texttt{key} function
+being \texttt{(function slot-definition-name)} which is a reader.
+Finally, it calls \texttt{slot-value-using-class} as required by the
+specification.
+
+The standard methods on \texttt{slot-value-using-class} call the
+reader function \texttt{slot-definition-location} on the effective
+slot definition and use that location to call
+\texttt{standard-instance-access} on the instance.
+
+The cases of \texttt{(setf slot-value)} and \texttt{(setf
+  slot-value-using-class)} are handled in the analogous way.
+
 \section{Bootstrapping}
 
 \subsection{Definitions}
@@ -358,7 +447,7 @@ bridge class is created, it will automatically create generic
 functions corresponding to slot readers and writers.  This is done by
 calling \texttt{host:make-instance} directly or indirectly through
 \texttt{ensure-generic-function}.  Thus the generic functions created
-this ware are bridge generic functions, and the methods are bridge
+this way are bridge generic functions, and the methods are bridge
 methods.
 
 Creating bridge classes this way will also instantiate the host class
