@@ -1,20 +1,26 @@
 (in-package #:sicl-clos)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; FIXME: make all this faster by going through the instance slots
-;;; rather than the class slots.  This requires that the instance be
-;;; up to date. 
+(defun find-slot (object slot-name)
+  (let* ((class (class-of object))
+	 (slots (if (eq class *standard-class*)
+		    (standard-instance-access
+		     object *standard-class-class-slots-location*)
+		    (class-slots class)))
+	 (name-test (lambda (slot-definition)
+		      (if (eq (class-of slot-definition)
+			      *standard-effective-slot-definition*)
+			  (standard-instance-access
+			   object
+			   *standard-effective-slot-definition-name-location*)
+			  (slot-definition-name slot-definition)))))
+    (find slot-name slots :test #'eq :key name-test)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SLOT-EXISTS-P.
 
 (defun slot-exists-p (object slot-name)
-  (let* ((class (class-of object))
-	 (slots (class-slots class))
-	 (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))
-    (not (null slot))))
+  (not (null (find-slot object slot-name))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -112,17 +118,15 @@
   (error "no slots in an instance of a builtin class"))
 
 (defun slot-value (object slot-name)
-  (let* ((class (class-of object))
-	 (slots (class-slots class))
-	 (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))
+  (let ((slot (find-slot object slot-name))
+	(class (class-of object)))
     (if (null slot)
 	(slot-missing class object slot-name 'slot-value)
 	(slot-value-using-class class object slot))))
 
 (defun (setf slot-value) (new-value object slot-name)
-  (let* ((class (class-of object))
-	 (slots (class-slots class))
-	 (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))
+  (let ((slot (find-slot object slot-name))
+	(class (class-of object)))
     (if (null slot)
 	(slot-missing class object slot-name 'slot-value)
 	(setf (slot-value-using-class class object slot) new-value))))
@@ -157,6 +161,11 @@
 				    object
 				    slot)
   (error "no slots in an instance of a builtin class"))
+
+(defun slot-boundp (object slot-name)
+  (let ((slot (find-slot object slot-name))
+	(class (class-of object)))
+    (slot-boundp-using-class class object slot)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -193,11 +202,8 @@
   (error "no slots in an instance of a builtin class"))
 
 (defun slot-makunbound (object slot-name)
-  (let* ((class (class-of object))
-	 (slots (class-slots class))
-	 (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))
+  (let* ((slot (find-slot object slot-name))
+	 (class (class-of object)))
     (if (null slot)
 	(slot-missing class object slot-name 'slot-makunbound)
 	(slot-makunbound-using-class class object slot))))
-
-    
