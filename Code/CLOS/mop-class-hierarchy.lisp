@@ -159,9 +159,9 @@
 (defconstant +timestamp-offset+ 0)
 (defconstant +instance-slots-offset+ 1)
 
-(define-built-in-class t ())
+(define-built-in-class t () ())
 
-(define-built-in-class function (t))
+(define-built-in-class function (t) ())
 
 (defclass standard-object (t)
   (;; Every standard instance has a unique time stamp.  The next
