@@ -1,0 +1,176 @@
+(cl:in-package #:sicl-clos)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; ENSURE-CLASS and ENSURE-CLASS-USING-CLASS.
+
+;;; ENSURE-CLASS is called from code resulting from the macroexpansion
+;;; of a macro call to DEFCLASS, but it can also be called directly
+;;; from user code.  This means that we have to be careful about
+;;; default values of initialization arguments.
+;;;
+;;; When DEFCLASS is used, it is intened to mean that the class be
+;;; defined according to the specification in DEFCLASS, with omitted
+;;; options given proper defaults.  If the class already exists, and
+;;; DEFCLASS is called, the intended meaning is for the class to be
+;;; completely redefined according to the new specification, again
+;;; with omitted options given proper defaults.  The intended meaning
+;;; is NOT to redefine only the parts of the DEFCLASS specification
+;;; that were explicitly given.
+;;;
+;;; But when ENSURE-CLASS is used directly from user code, omitting
+;;; some initialization arguments may very well mean that if the class
+;;; already exists, we should use the previous values.
+;;;
+;;; Therefore, clearly, it is safe for DEFCLASS to pass a complete set
+;;; of initialization arguments to ENSURE-CLASS, but it is safe for
+;;; DEFCLASS to omit some arguments to ENSURE-CLASS only if
+;;; ENSURE-CLASS defaults them to the same values that DEFCLASS
+;;; requires.
+
+(defun process-direct-superclasses (direct-superclasses)
+  (unless (proper-list-p direct-superclasses)
+    (error "list of superclasses must be a proper list"))
+  (loop for class-or-name in direct-superclasses
+	collect (cond  ((classp class-or-name)
+			class-or-name)
+		       ((symbolp class-or-name)
+			(let ((class (find-class class-or-name nil)))
+			  (if (null class)
+			      (setf (find-class class-or-name)
+				    (make-instance 'forward-reference-class
+						   :name class-or-name))
+			      class)))
+		       (t
+			(error "~s must be a class or a class name"
+			       class-or-name)))))
+
+(defgeneric ensure-class-using-class
+    (class
+     name
+     &rest keys
+     &key
+       direct-default-initargs
+       direct-slots
+       direct-superclasses
+       metaclass
+       &allow-other-keys))
+
+;;; When the class is created, it is safe to use a default value of
+;;; the empty list for the :DIRECT-SUPERCLASSES initialization
+;;; argument, because the AMOP says that the default is the same
+;;; whether this argument is the empty list, or not given at all. 
+
+(defmethod ensure-class-using-class
+    ((class null)
+     name
+     &rest keys
+     &key
+       direct-superclasses
+       (metaclass nil metaclass-p)
+       &allow-other-keys)
+  (setf metaclass
+	(let ((class-metaobject
+		(if metaclass-p
+		    (if (symbolp metaclass)
+			(find-metaclass metaclass)
+			metaclass)
+		    (find-metaclass 'standard-class))))
+	  (unless (classp class-metaobject)
+	    (error "metaclass must be a class metaobject class"))
+	  class-metaobject))
+  (setf direct-superclasses
+	(process-direct-superclasses direct-superclasses))
+  (let ((remaining-keys (copy-list keys)))
+    (loop while (remf remaining-keys :metaclass))
+    (loop while (remf remaining-keys :direct-superclasses))
+    (setf (find-class name)
+	  (apply #'make-instance metaclass
+		 :name name
+		 :direct-superclasses direct-superclasses
+		 remaining-keys))))
+
+;;; When the class is reinitialized, it is NOT safe to use a default
+;;; value of the empty list for the :DIRECT-SUPERCLASSES
+;;; initialization argument.  Instead, we must distinguish the case
+;;; where the :DIRECT-SUPERCLASSES initialization argument is not
+;;; given, which is interpreted to mean that we keep the old value of
+;;; this slot, and the case where the :DIRECT-SUPERCLASSES
+;;; initialization argument is given as the empty list, which has
+;;; the same meaning as for initialization. 
+
+(defmethod ensure-class-using-class
+    ((class class)
+     name
+     &rest keys
+     &key
+       (direct-superclasses nil direct-superclasses-p)
+       (metaclass nil metaclass-p)
+       &allow-other-keys)
+  (when metaclass-p
+    (cond ((symbolp metaclass)
+	   (setf metaclass (find-metaclass metaclass)))
+	  ((classp metaclass)
+	   nil)
+	  (t
+	   (error "metaclass must be a symbol or a class metaobject class")))
+    (unless (eq metaclass (class-of class))
+      (error "can't change metaclass during reinitialization of class")))
+  (when direct-superclasses-p
+    (setf direct-superclasses
+	  (process-direct-superclasses direct-superclasses)))
+  (let ((remaining-keys (copy-list keys)))
+    (loop while (remf remaining-keys :metaclass))
+    (loop while (remf remaining-keys :direct-superclasses))
+    (if direct-superclasses-p
+	(apply #'reinitialize-instance
+	       :name name
+	       :direct-superclasses direct-superclasses
+	       remaining-keys)
+	(apply #'reinitialize-instance
+	       :name name
+	       remaining-keys)))
+  class)
+
+(defmethod ensure-class-using-class
+    ((class forward-reference-class)
+     name
+     &rest keys
+     &key
+       (direct-superclasses nil direct-superclasses-p)
+       (metaclass nil metaclass-p)
+       &allow-other-keys)
+  (unless metaclass-p
+    (error "metaclass must be given when ensuring a forward-reference class"))
+  (cond ((symbolp metaclass)
+	 (setf metaclass (find-metaclass metaclass)))
+	((classp metaclass)
+	 nil)
+	(t
+	 (error "metaclass must be a symbol or a class metaobject class")))
+  (change-class class metaclass)
+  (when direct-superclasses-p
+    (setf direct-superclasses
+	  (process-direct-superclasses direct-superclasses)))
+  (let ((remaining-keys (copy-list keys)))
+    (loop while (remf remaining-keys :metaclass))
+    (loop while (remf remaining-keys :direct-superclasses))
+    (if direct-superclasses-p
+	(apply #'reinitialize-instance class
+	       :name name
+	       :direct-superclasses direct-superclasses
+	       remaining-keys)
+	(apply #'reinitialize-instance class
+	       :name name
+	       remaining-keys)))
+  class)
+
+(defun ensure-class (name &rest arguments &key &allow-other-keys)
+  (unless (and (symbolp name) (not (null name)))
+    (error 'class-name-must-be-non-nil-symbol
+	   :name 'ensure-class
+	   :datum name))
+  (apply #'ensure-class-using-class
+	 (find-class name nil)
+	 name
+	 arguments))
