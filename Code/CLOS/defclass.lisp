@@ -16,7 +16,6 @@
 ;;; ENSURE-CLASS.  The CLHS requires that the DIRECT-SUPERCLASSES
 ;;; argument to DEFCLASS be a proper list of non-NIL symbols.
 
-
 (defmacro defclass (name
 		    superclass-names
 		    slot-specifiers
