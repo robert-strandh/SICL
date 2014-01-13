@@ -1,4 +1,4 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -78,7 +78,7 @@
 	  into required
 	finally (return (append required rest))))
 
-(defun extract-specizlier-names (specialized-lambda-list)
+(defun extract-specializer-names (specialized-lambda-list)
   (loop for rest = specialized-lambda-list then (cdr rest)
 	until (or (atom rest)
 		  (member (car rest) lambda-list-keywords))
@@ -99,7 +99,17 @@
 ;;;
 ;;; The automaton is created every time a new combination of classes
 ;;; of required arguments is seen.  It is computed from the call
-;;; history of the generic function.
+;;; history of the generic function.  At runtime, the automaton is
+;;; represented as nested IFs that test the unique numbers of the
+;;; classes of the call to what has already been seen.  On modern
+;;; computers, such tests can be very fast, because they only require
+;;; testing against small constant integers, so no memory accesses are
+;;; needed, other than for finding the unique number of each class at
+;;; the beginning of each call.  
+
+;;; At compile time, we represent the automaton as nested lists.  We
+;;; deliberately avoid using classes so as to avoid circular
+;;; dependencies.
 
 ;;; A state of the automaton is represented as a list of at least two
 ;;; elements, the NAME which is a gensym, and INFO which is typically
@@ -220,7 +230,7 @@
     (reverse result)))
 
 ;;; Minimize a layer, which is a list of states.  The next layer has
-;;; already been minimized, so that of there are two equivalent target
+;;; already been minimized, so that if there are two equivalent target
 ;;; states of any transition from a state in this layer, then the
 ;;; target states are also EQ.  This function returns an ALIST in
 ;;; which the CDR of each association does not occur as the CAR of any
@@ -469,215 +479,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; A few definitions:
-;;;
-;;; A METHOD FUNCTION is a function that represents a single method
-;;; metaobject of a generic function.  By default, when the generic
-;;; function is an instance of STANDARD-GENERIC-FUNCTION and the
-;;; method is an instance of STANDARD-METHOD, then the method function
-;;; takes two arguments: a list of all the arguments to the generic
-;;; function and a list of NEXT METHODS that the method may call using
-;;; CALL-NEXT-METHOD.  These next methods are METHOD METAOBJECTS, so
-;;; that calling them involves using the generic function
-;;; METHOD-FUNCTION to get the method function of the method
-;;; metaobject and use FUNCALL or APPLY to call it.  But for now we
-;;; don't do it that way, and they don't do it that way in the book
-;;; either.  Instead the next methods are just functions to call. 
-;;;
-;;; A METHOD LAMBDA is a lambda expression that must be converted into
-;;; a METHOD FUNCTION.  
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; MAKE-METHOD-LAMBDA.
-
-;;; This generic function takes four arguments: a generic function, a
-;;; method, a lambda expression, and an environment.  We are told from
-;;; the specification that "The generic function and method the method
-;;; function will be used with are not required to be the given
-;;; ones. Moreover, the method metaobject may be uninitialized."  This
-;;; all means that MAKE-METHOD-LAMBDA must do its job without
-;;; inspecting those arguments, and using only their classes to
-;;; determine what to do.  Presumably, the method argument will just
-;;; be a prototype instance of some class.
-;;;
-;;; The third argument, the lambda expression, is the lambda
-;;; expression resulting from some minor transformations of the
-;;; DEFMETHOD form.  In other words, MAKE-METHOD-LAMBDA must transform
-;;; the unspecialized lambda list and body of an invocation of
-;;; DEFMETHOD to a lambda expression.
-;;;
-;;; We are also told that the result of a call to MAKE-METHOD-LAMBDA
-;;; must be converted to a function an passed as the :function
-;;; initialization argument to MAKE-INSTANCE when an instance of the
-;;; method metaobject is created.  This means that we can not use any
-;;; information about the generic function (other than its class) to
-;;; which the method will eventually belong.  
-;;;
-;;; This function returns two values, the first is a lambda expression
-;;; and the second a list of initialization arguments and values.  As
-;;; indicated above, the lambda expression must be converted to a
-;;; function.  The initialization arguments and values are also passed
-;;; to MAKE-INSTANCE when the method metaobject is created. 
-
-(defgeneric make-method-lambda
-    (generic-function method lambda-expression environment))
-
-(defmethod make-method-lambda
-    ((generic-function standard-generic-function)
-     (method standard-method)
-     lambda-expression
-     environment)
-  (declare (ignore environment))
-  (let ((args (gensym))
-	(next-methods (gensym)))
-    (values `(lambda (,args ,next-methods)
-	       (flet ((next-method-p ()
-			(not (null ,next-methods)))
-		      (call-next-method (&rest args)
-			(when (null ,next-methods)
-			  ;; FIXME: do this better.
-			  (error "no next method"))
-			(funcall (car ,next-methods)
-				 (or args ,args)
-				 (cdr ,next-methods))))
-		 (declare (ignorable (function next-method-p)
-				     (function call-next-method)))
-		 (apply ,lambda-expression
-			,args)))
-	    '())))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; COMPUTE-APPLICABLE-METHODS.
-
-;;; Class C1 is a sub-specizlizer of class C2 with respect to some
-;;; argument class C if and only if C1 occurs before C2 in the class
-;;; precedence list of C.
-;;;
-;;; Recall that this function is used to determine whether one
-;;; applicable method is more specific than another applicable method.
-;;; Thus, we have already determined that C is more specific than both
-;;; C1 and C2, and therefore both C1 and C2 are in the class
-;;; precedence list of C,
-;;;
-;;; Should we ever be called with classes C1 and C2 that are not in
-;;; the class precedence list of C, then the method we use (numeric
-;;; comparison of the result of calling POSITION), will signal an
-;;; error, which is reassuring.
-(defun sub-specializer-p (class1 class2 class-of-argument)
-  (let ((precedence-list (class-precedence-list class-of-argument)))
-    (< (position class1 precedence-list) (position class2 precedence-list))))
-
-;;; Determine whether a method is more specific than another method
-;;; with respect to a list of classes of required arguments.  
-;;;
-;;; Recall that whether a method is more or less specific than another
-;;; method is also a function of the classes of the arguments, because
-;;; the order of two classes in the class precedence list of two
-;;; different argument classes can be different.  
-;;;
-;;; This function is called only with applicable methods with respect
-;;; to the classes of the arguments supplied.  
-;;;
-;;; It is possible for two methods of a generic function to be equally
-;;; specific (which then means that they have the same specializer in
-;;; every required position), but then they must have different
-;;; qualifiers.  This function is called with all applicable
-;;; functions, independent of the qualifiers, so this situation might
-;;; happen here.
-;;;
-;;; FIXME: take into account the argument precedence order.
-(defun method-more-specific-p (method1 method2 classes-of-arguments)
-  (loop for s1 in (method-specializers method1)
-	for s2 in (method-specializers method2)
-	for class-of-argument in classes-of-arguments
-	unless (eq s1 s2)
-	  return (sub-specializer-p s1 s2 class-of-argument)))
-
-;;; Determine whether a class C1 is a subclass of another class C2.
-;;; This can be done by checking whether C2 is in the class precedence
-;;; list of C1.  The relation is not strict, so that we return true if
-;;; the two are the same.
-(defun subclassp (class1 class2)
-  (member class2 (class-precedence-list class1)))
-
-;;; Determine whether a method is applicable to a sequence of argument
-;;; classes.  The result can be either T or NIL or :SOMETIMES.  The
-;;; result is :SOMETIMES when there is an EQL specializer with an
-;;; object whose class is identical to the corresponding argument
-;;; class, because if and only if this holds, the argument may or may
-;;; not be the one that is specialized for.
-(defun method-applicable-p (method classes)
-  (loop with result = t
-	for specializer in (method-specializers method)
-	for class in classes
-	do (if (classp specializer)
-	       (unless (subclassp class specializer)
-		 (return-from method-applicable-p nil))
-	       (when (eq (class-of (eql-specializer-object specializer)) class)
-		 (setf result :sometimes)))
-	finally (return result)))
-
-;;; Given a list of classes of the required arguments of a generic
-;;; function, compute the applicable methods, independently of their
-;;; qualifiers, but sorted in order from most to least specific. 
-;;;
-;;; The applicable methods are found by filtering out methods for
-;;; which every specializer is a (non-strict) subclass of the
-;;; corresponding argument class.  Then they are sorted according to
-;;; the order determined by METHOD-MORE-SPECIFIC-P as defined above. 
-
-(defgeneric compute-applicable-methods-using-classes
-    (generic-function classes-of-arguments))
-
-(defmethod compute-applicable-methods-using-classes
-    ((generic-function standard-generic-function) classes-of-arguments)
-  (values
-   (sort (loop for method in (generic-function-methods generic-function)
-	       when (let ((a (method-applicable-p method classes-of-arguments)))
-		      (if (eq a :somtimes)
-			  (return-from compute-applicable-methods-using-classes
-			    (values '() nil))
-			 a))
-		 collect method)
-	 (lambda (method1 method2)
-	   (method-more-specific-p method1 method2 classes-of-arguments)))
-   t))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; This little optimization is not in the AMOP.  When we are asked to
-;;; compute the effective method of a single method, we take advantage
-;;; of the class of that method to compute a more efficient effective
-;;; method when we can. 
-
-(defgeneric compute-singleton-effective-method-function (method))
-
-(defmethod compute-singleton-effective-method-function
-    ((method method))
-  (compile nil
-	   `(lambda (&rest args)
-	      (funcall ,(method-function method) args nil))))
-
-(defmethod compute-singleton-effective-method-function
-    ((method standard-reader-method))
-  (let* ((direct-slot (accessor-method-slot-definition method))
-	 
-	 (effective-slots (class-
-	   
-    
-    (if (eq (slot-definition-allocation slot) :class)
-	(compile
-	 nil
-	 `(lambda (arg)
-	    (car ',(slot-definition-storage slot))))
-	(let ((effective-slot
-	
-	 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; COMPUTE-EFFECTIVE-METHOD-FUNCTION.
 
 (defun primary-method-p (method)
@@ -761,8 +562,8 @@
 
 ;;; Same as above, but return a list of unique class numbers instead. 
 (defun compute-call-signature (args specialier-profile)
-  (mapcar #'class-unique-number
-	  (compute-call-classes args specialier-profile))
+  (mapcar #'unique-number
+	  (compute-call-classes args specialier-profile)))
 
 (defun compute-cache-lambda (specializer-profile call-history)
   (let* ((block-name (gensym))
@@ -776,14 +577,16 @@
 			 for i from 0
 			 when s
 			   collect `(,(gensym)
-				     (class-unique-number
+				     (unique-number
 				      (class-of (nth ,i args))))))
 	 (vars (mapcar #'car bindings)))
     `(lambda (args generic-function)
        (block ,block-name
 	 (let ,bindings
 	   (declare (ignorable ,@vars))
-	   ,(make-dispatch vars dispatch-entries)
+	   ,(if (null dispatch-entries)
+		nil
+		(make-dispatch vars dispatch-entries))
 	   (handle-cache-miss args generic-function))))))
 	 
 (defun compute-cache-function (specializer-profile call-history)
@@ -808,45 +611,45 @@
 		   do (pushnew super result :test #'eq)))
     result))
 
-(defclass call-history-entry-remover ()
-  (;; The call history entry to be removed.
-   (%call-history-entry
-    :initarg :call-history-entry :reader call-history-entry)
-   ;; The generic function containing this call history entry. 
-   (%function-of-entry
-    :initarg :function-of-entry
-    :reader function-of-entry)
-   ;; All the classes that have this dependent in its
-   ;; set of dependents
-   (%classes-containing-dependent
-    :initarg :classes-containing-dependent
-    :reader classes-containing-dependent)))
+;; (defclass call-history-entry-remover ()
+;;   (;; The call history entry to be removed.
+;;    (%call-history-entry
+;;     :initarg :call-history-entry :reader call-history-entry)
+;;    ;; The generic function containing this call history entry. 
+;;    (%function-of-entry
+;;     :initarg :function-of-entry
+;;     :reader function-of-entry)
+;;    ;; All the classes that have this dependent in its
+;;    ;; set of dependents
+;;    (%classes-containing-dependent
+;;     :initarg :classes-containing-dependent
+;;     :reader classes-containing-dependent)))
 
-(defmthod update-dependent (class (dependent call-history-entry-remover))
-  ;; This dependent is a dependent of several classes, but now that we
-  ;; remove the call-history entry, we do not need this dependent
-  ;; anymore in any classes, so we remove it.
-  (let ((gf (function-of-entry dependent)))
-    (loop for class in (classes-containing-dependent dependent)
-	  do (remove-dependent class dependent))
-    ;; Remove the call history entry from the call history of the
-    ;; generic function.
-    (setf (call-history gf)
-	  (remove (call-history-entry dependent)
-		  (call-history gf)
-		  :test #'eq))
-    ;; Create and set a new cache using the updated call history.
-    (compute-and-set-cache-from-call-history gf)))
+;; (defmethod update-dependent (class (dependent call-history-entry-remover))
+;;   ;; This dependent is a dependent of several classes, but now that we
+;;   ;; remove the call-history entry, we do not need this dependent
+;;   ;; anymore in any classes, so we remove it.
+;;   (let ((gf (function-of-entry dependent)))
+;;     (loop for class in (classes-containing-dependent dependent)
+;; 	  do (remove-dependent class dependent))
+;;     ;; Remove the call history entry from the call history of the
+;;     ;; generic function.
+;;     (setf (call-history gf)
+;; 	  (remove (call-history-entry dependent)
+;; 		  (call-history gf)
+;; 		  :test #'eq))
+;;     ;; Create and set a new cache using the updated call history.
+;;     (compute-and-set-cache-from-call-history gf)))
 
-(defun make-call-history-entry-remover (generic-function entry arg-classes)
-  (let* ((all-classes (all-unique-superclasses arg-classes))
-	 (remover (make-instance
-		   'call-history-entry-remover
-		   :call-history-entry entry
-		   :function generic-function
-		   :classes-containing-dependent all-classes)))
-    (loop for class in all-classes
-	  do (add-dependent class remover))))
+;; (defun make-call-history-entry-remover (generic-function entry arg-classes)
+;;   (let* ((all-classes (all-unique-superclasses arg-classes))
+;; 	 (remover (make-instance
+;; 		   'call-history-entry-remover
+;; 		   :call-history-entry entry
+;; 		   :function generic-function
+;; 		   :classes-containing-dependent all-classes)))
+;;     (loop for class in all-classes
+;; 	  do (add-dependent class remover))))
 
 (defun handle-cache-miss (args generic-function)
   (let* ((specializer-profile (specializer-profile generic-function))
@@ -870,28 +673,6 @@
 	    (compute-and-set-cache-from-call-history generic-function)
 	    (funcall effective-method-function args))
 	  (error "can't handle this yet")))))
-
-(defgeneric compute-discriminating-function (generic-function))
-
-;;; Usually, when this function is called, the call history is going
-;;; to be empty, so the initial cache that is computed is going to
-;;; consist of a call to HANDLE-CACHE-MISS.  But we don't want to
-;;; exclude the possibility of the call history containing entries, so
-;;; we make an expclicit call to COMPUTE-CACHE, rather than just
-;;; initializing the cache to #'HANDLE-CACHE-MISS.
-(defmethod compute-discriminating-function
-    ((generic-function standard-generic-function))
-  ;; It is important that the cache function not close over any local
-  ;; variables, because we are going to install cache functions that
-  ;; are the result of compiling lambda expressions in a null lexical
-  ;; environment.
-  (let* ((specializer-profile (specializer-profile generic-function))
-	 (call-history (call-history generic-function))
-	 (cache (compute-cache specializer-profile call-history)))
-    (setf (set-cache generic-function)
-	  (lambda (new-cache) (setf cache new-cache)))
-    (lambda (&rest args)
-      (funcall cache args generic-function))))
 
 (defun compute-and-set-discriminating-function (generic-function)
   (let ((fun (compute-discriminating-function generic-function)))
