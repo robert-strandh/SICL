@@ -1,4 +1,4 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
 (defgeneric make-instance (class &rest initargs))
 
