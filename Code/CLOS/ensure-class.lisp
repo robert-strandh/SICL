@@ -32,18 +32,18 @@
   (unless (proper-list-p direct-superclasses)
     (error "list of superclasses must be a proper list"))
   (loop for class-or-name in direct-superclasses
-	collect (cond  ((classp class-or-name)
-			class-or-name)
-		       ((symbolp class-or-name)
-			(let ((class (find-class class-or-name nil)))
-			  (if (null class)
-			      (setf (find-class class-or-name)
-				    (make-instance 'forward-reference-class
-						   :name class-or-name))
-			      class)))
-		       (t
-			(error "~s must be a class or a class name"
-			       class-or-name)))))
+	collect (cond ((classp class-or-name)
+		       class-or-name)
+		      ((symbolp class-or-name)
+		       (let ((class (find-class class-or-name nil)))
+			 (if (null class)
+			     (setf (find-class class-or-name)
+				   (make-instance 'forward-reference-class
+				     :name class-or-name))
+			     class)))
+		      (t
+		       (error "~s must be a class or a class name"
+			      class-or-name)))))
 
 (defgeneric ensure-class-using-class
     (class
