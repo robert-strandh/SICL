@@ -444,14 +444,14 @@
 ;;; STANDARD-CLASS.
 ;;;
 ;;; Some slots have an additional reader (in addition to the one
-;;; stipulated by the AMOP), because we want FINALIZE-INHERITANCE-AUX
-;;; to work on built-in classes as well as on standard classes.  And
-;;; FINALIZE-INHERITANCE-AUX needs to access slots both in standard
-;;; classes and built-in classes.  But the AMOP requires that the
-;;; specified readers return the empty list for built-in classes.  The
-;;; solution is to use an additional set of readers that do not appear
-;;; in the specification, and that work both for built-in and for
-;;; standard classes.
+;;; stipulated by the AMOP), because we want some functions of the
+;;; class-finalization protocol to work on built-in classes as well as
+;;; on standard classes.  And those functions need to access slots
+;;; both in standard classes and built-in classes.  But the AMOP
+;;; requires that the specified readers return the empty list for
+;;; built-in classes.  The solution is to use an additional set of
+;;; readers that do not appear in the specification, and that work
+;;; both for built-in and for standard classes.
 
 ;;; FIXME: it looks like some code factoring would be useful here.
 (defclass standard-class (class)
@@ -463,8 +463,6 @@
     :writer (setf c-direct-default-initargs))
    (%direct-slots 
     :reader class-direct-slots
-    ;; Additional reader; see remark above.
-    :reader direct-slots
     :writer (setf c-direct-slots))
    (%direct-superclasses 
     ;; This slot has no initform and no initarg, because it is set by
@@ -493,8 +491,6 @@
    (%effective-slots 
     :initform '() 
     :reader class-slots
-    ;; Additional reader; see remark above.
-    :reader effective-slots
     :writer (setf c-slots))
    (%prototype
     :reader class-prototype
@@ -517,8 +513,6 @@
    (%direct-slots 
     :initarg :direct-slots
     :reader class-direct-slots
-    ;; Additional reader; see remark above.
-    :reader direct-slots
     :writer (setf c-direct-slots))
    (%direct-superclasses 
     ;; This slot has no initform and no initarg, because it is set by
@@ -546,8 +540,6 @@
    (%effective-slots 
     :initform '() 
     :reader class-slots
-    ;; Additional reader; see remark above.
-    :reader effective-slots
     :writer (setf c-slots))
    (%prototype
     :reader class-prototype
