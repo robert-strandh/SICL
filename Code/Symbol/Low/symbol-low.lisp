@@ -1,6 +1,6 @@
 (in-package #:sicl-symbol-low)
 
-(define-builtin-class symbol ()
+(define-built-in-class symbol ()
   ((%name
     :initarg :name
     :reader symbol-name)

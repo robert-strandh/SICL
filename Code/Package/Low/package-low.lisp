@@ -1,6 +1,6 @@
 (in-package #:sicl-package-low)
 
-(define-builtin-class package ()
+(define-built-in-class package ()
   ((%name
     :initarg :name
     :accessor package-name)
