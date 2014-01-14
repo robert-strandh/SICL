@@ -30,7 +30,7 @@
 	;; Since we require for superclasses to exist, and since we
 	;; don't allow for built-in classes to be redefined, we can
 	;; finalize the inheritance immediately. 
-	(finalize-inheritance-aux result)
+	(finalize-built-in-inheritance result)
 	result))))
 
 	
