@@ -1,7 +1,7 @@
 (in-package #:sicl-clos)
 
-(defun add-reader-method (class function-name slot)
-  (let* ((slot-name (slot-definition-name slot))
+(defun add-reader-method (class function-name slot-definition)
+  (let* ((slot-name (slot-definition-name slot-definition))
 	 (lambda-list '(object))
 	 (generic-function (ensure-generic-function
 			    function-name :lambda-list lambda-list))
@@ -12,20 +12,20 @@
 			   (let ((object (car args)))
 			     (slot-value object ',slot-name)))))
 	 (method-class (reader-method-class
-			class slot
+			class slot-definition
 			:lambda-list lambda-list
 			:specializers specializers
 			:function method-function
-			:slot-definition slot))
+			:slot-definition slot-definition))
 	 (method (make-instance method-class
 				:lambda-list lambda-list
 				:specializers specializers
 				:function method-function
-				:slot-definition slot)))
+				:slot-definition slot-definition)))
     (add-method generic-function method)))
 
-(defun add-writer-method (class function-name slot)
-  (let* ((slot-name (slot-definition-name slot))
+(defun add-writer-method (class function-name slot-definition)
+  (let* ((slot-name (slot-definition-name slot-definition))
 	 (lambda-list '(new-value object))
 	 (generic-function (ensure-generic-function
 			    function-name :lambda-list lambda-list))
@@ -38,14 +38,14 @@
 			     (setf (slot-value object ',slot-name)
 				   new-value)))))
 	 (method-class (writer-method-class
-			class slot
+			class slot-definition
 			:lambda-list lambda-list
 			:specializers specializers
 			:function method-function
-			:slot-definition slot))
+			:slot-definition slot-definition))
 	 (method (make-instance method-class
 				:lambda-list lambda-list
 				:specializers specializers
 				:function method-function
-				:slot-definition slot)))
+				:slot-definition slot-definition)))
     (add-method generic-function method)))
