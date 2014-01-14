@@ -165,9 +165,8 @@
 (defmethod compute-slots ((class funcallable-standard-class))
   (compute-slots-aux class))
 
-(defmethod compute-slots :around ((class standard-class))
-  (let ((slots (call-next-method))
-	(next-location 0))
+(defun compute-slots-around-aux (slots)
+  (let ((next-location 0))
     (loop for slot in slots
 	  do (when (eq (slot-definition-allocation slot) :instance)
 	       (setf (slot-definition-location slot)
@@ -175,15 +174,13 @@
 	       (incf next-location)))
     slots))
 
+(defmethod compute-slots :around ((class standard-class))
+  (let ((slots (call-next-method)))
+    (compute-slots-around-aux slots)))
+
 (defmethod compute-slots :around ((class funcallable-standard-class))
-  (let ((slots (call-next-method))
-	(next-location 0))
-    (loop for slot in slots
-	  do (when (eq (slot-definition-allocation slot) :instance)
-	       (setf (slot-definition-location slot)
-		     next-location)
-	       (incf next-location)))
-    slots))
+  (let ((slots (call-next-method)))
+    (compute-slots-around-aux slots)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
