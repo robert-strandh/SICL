@@ -5,11 +5,6 @@
 (defmethod make-instance ((class symbol) &rest initargs)
   (apply #'make-instance (find-class class) initargs))
 
-(defun inintarg-valid-for-some-slot-p (initarg class)
-  (loop for slot in (class-slots class)
-	when (member initarg (slot-definition-initargs slot) :test #'eq)
-	  return t))
-
 ;;; FIXME: check validity also for generic functions
 
 (defun initarg-in-list-p (intarg list)
