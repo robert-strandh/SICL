@@ -79,10 +79,12 @@
 (defgeneric compute-effective-slot-definition
     (class name direct-slot-definitions))
 
-;;; Implement the behavior of compute-effective-slot-definition
-;;; for standard-class and funcallable-standard-class.
+;;; Implement the behavior of compute-effective-slot-definition for
+;;; standard-class and funcallable-standard-class.  By passing
+;;; slot-definition-class as an argument rather than looking it up in
+;;; this function, we can use this function for built-in classes as well. 
 (defun compute-effective-slot-definition-aux
-    (class name direct-slot-definitions)
+    (class name direct-slot-definitions slot-definition-class)
   (let (allocation initargs initform initfunction type location)
     (setf allocation
 	  (slot-definition-allocation (first direct-slot-definitions)))
@@ -105,22 +107,21 @@
 	      initfunction (slot-definition-initfunction first-init))))
     (setf type
 	  `(and ,@(mapcar #'slot-definition-type direct-slot-definitions)))
-    (let ((slot-definition-class (effective-slot-definition-class class)))
-      (if (null initfunction)
-	  (make-instance slot-definition-class
-			 :name name
-			 :allocation allocation
-			 :location location 
-			 :initargs initargs
-			 :type type)
-	  (make-instance slot-definition-class
-			 :name name
-			 :allocation allocation
-			 :location location 
-			 :initargs initargs
-			 :initform initform
-			 :initfunction initfunction
-			 :type type)))))
+    (if (null initfunction)
+	(make-instance slot-definition-class
+	  :name name
+	  :allocation allocation
+	  :location location 
+	  :initargs initargs
+	  :type type)
+	(make-instance slot-definition-class
+	  :name name
+	  :allocation allocation
+	  :location location 
+	  :initargs initargs
+	  :initform initform
+	  :initfunction initfunction
+	  :type type))))
 
 (defmethod compute-effective-slot-definition ((class standard-class)
 					      name
@@ -128,7 +129,8 @@
   (compute-effective-slot-definition-aux
    class
    name
-   direct-slot-definitions))
+   direct-slot-definitions
+   (effective-slot-definition-class class)))
 
 (defmethod compute-effective-slot-definition ((class funcallable-standard-class)
 					      name
@@ -136,14 +138,12 @@
   (compute-effective-slot-definition-aux
    class
    name
-   direct-slot-definitions))
+   direct-slot-definitions
+   (effective-slot-definition-class class)))
 
 (defun compute-slots-aux (class)
   (let* ((superclasses (class-precedence-list class))
-	 ;; We use the reader DIRECT-SLOTS rather than
-	 ;; CLASS-DIRECT-SLOTS so that this function works for
-	 ;; built-in classes as well as standard classes.
-	 (direct-slots (mapcar #'direct-slots superclasses))
+	 (direct-slots (mapcar #'class-direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
 	 (reverse-slots (reverse direct-slots))
 	 (reverse-concatenated (reduce #'append reverse-slots))
@@ -230,7 +230,3 @@
 
 (defmethod finalize-inheritance ((class funcallable-standard-class))
   (finalize-inheritance-aux class))
-
-(defmethod finalize-inheritance ((class built-in-class))
-  (setf (c-precedence-list class) (compute-class-precedence-list class))
-  (setf (c-finalized-p class) t))
