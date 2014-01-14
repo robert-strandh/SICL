@@ -140,7 +140,10 @@
 
 (defun compute-slots-aux (class)
   (let* ((superclasses (class-precedence-list class))
-	 (direct-slots (mapcar #'class-direct-slots superclasses))
+	 ;; We use the reader DIRECT-SLOTS rather than
+	 ;; CLASS-DIRECT-SLOTS so that this function works for
+	 ;; built-in classes as well as standard classes.
+	 (direct-slots (mapcar #'direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
 	 (reverse-slots (reverse direct-slots))
 	 (reverse-concatenated (reduce #'append reverse-slots))
@@ -191,7 +194,10 @@
 (defun compute-default-initargs-aux (class)
   (remove-duplicates
    (reduce #'append
-	   (mapcar #'class-direct-default-initargs
+	   ;; We use the reader DIRECT-DEFAULT-INITARGS rather than
+	   ;; CLASS-DIRECT-DEFAULT-INITARGS so that this function
+	   ;; works for built-in classes as well as standard classes.
+	   (mapcar #'direct-default-initargs
 		   (class-precedence-list class)))
    :test #'eq
    :key #'car

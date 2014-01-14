@@ -197,9 +197,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; GENERIC-FUNCTION and STANDARD-GENERIC-FUNCTION.
+;;;
+;;; FIXME: I can not remember why I decided not to use initargs for
+;;; the slots here, and instead calling explicit writers in :AFTER
+;;; methods on INITIALIZE-INSTANCE and REINITIALIZE-INSTANCE.
 
 (defclass generic-function (metaobject funcallable-standard-object)
-  ((%name 
+  (;; While there is a function named (SETF GENERIC-FUNCTION-NAME), it
+   ;; is not a writer function in that it works by calling
+   ;; REINITIALIZE-INSTANCE.
+   (%name 
+    :initform nil
     :reader generic-function-name
     :writer (setf gf-name))
    (%lambda-list 
@@ -253,13 +261,11 @@
   (:metaclass funcallable-standard-class))
 
 (defclass method (metaobject)
-  ())
-
-(defclass standard-method (method)
   ((%function 
     :initarg :function 
     :reader method-function)
    (%generic-function 
+    :initform nil
     :initarg :generic-function
     :accessor method-generic-function)
    (%lambda-list 
@@ -270,7 +276,17 @@
     :accessor method-specializers)
    (%qualifiers 
     :initarg :qualifiers 
-    :accessor method-qualifiers)))
+    :accessor method-qualifiers)
+   ;; This slot is not mentioned in the section "Readers for Method
+   ;; Metaobjects" in the AMOP.  However, it is mentioned in the
+   ;; section "Initialization of Method Metaobjects", so we include it
+   ;; here.
+   (%documentation 
+    :initform nil
+    :accessor method-documentation)))
+
+(defclass standard-method (method)
+  ())
 
 (defclass standard-accessor-method (standard-method)
   ((%slot-definition 
@@ -329,26 +345,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; BUILT-IN-CLASS.
+;;;
+;;; The AMOP says that the readers CLASS-DIRECT-DEFAULT-INITARGS,
+;;; CLASS-DIRECT-SLOTS, CLASS-DEFAULT-INITARGS, and CLASS-SLOTS should
+;;; return the empty list for a built-in class.  However, our built-in
+;;; classes have direct default initargs, direct slots, default
+;;; initargs, and effective slots.  So we keep the slots but we use
+;;; different readers: DIRECT-DEFAULT-INITARGS, DIRECT-SLOTS,
+;;; DEFAULT-INITARGS, and EFFECTIVE-SLOTS. 
 
 (defclass built-in-class (class)
   ((%direct-default-initargs
-    ;; The AMOP says that CLASS-DIRECT-DEFAULT-INITARGS should
-    ;; return the empty list for a built-in class.
-    :allocation :class
-    :initform '()
-    :reader class-direct-default-initargs)
+    :initarg :direct-default-initargs
+    :reader default-initargs)
    (%direct-superclasses 
-    ;; I am adding this :initarg as a patch that I don't know if
-    ;; it is the right thing to do -- RS 2013-03-12
     :initarg :direct-superclasses
     :reader class-direct-superclasses
     :writer (setf c-direct-superclasses))
    (%direct-slots
-    ;; The AMOP says that CLASS-DIRECT-SLOTS should return the empty
-    ;; list for a built-in class.
-    :allocation :class
-    :initform '()
-    :reader class-direct-slots)
+    :initarg :direct-slots
+    :reader direct-slots)
    (%documentation 
     :initform nil
     :accessor c-documentation)
@@ -360,18 +376,29 @@
     :initarg :precedence-list 
     :reader class-precedence-list
     :writer (setf c-precedence-list))
-    ;; The AMOP says that CLASS-DEFAULT-INITARGS should return the
-    ;; empty list for a built-in class.
    (%default-initargs 
-    :allocation :class
-    :initform '()
-    :reader class-default-initargs)
-    ;; The AMOP says that CLASS-SLOTS should return the empty list for
-    ;; a built-in class.
+    :initarg :default-initargs
+    :reader default-initargs
+    :writer (setf c-default-initargs))
    (%effective-slots 
-    :allocation :class
     :initform '() 
-    :reader class-slots)))
+    :reader effective-slots
+    :writer (setf c-slots))))
+
+;;; The AMOP says that CLASS-DIRECT-SLOTS should return the empty list
+;;; for a built-in class.
+(defmethod class-direct-slots ((class built-in-class))
+  '())
+
+;;; The AMOP says that CLASS-SLOTS should return the empty list for a
+;;; built-in class.
+(defmethod class-slots ((class built-in-class))
+  '())
+
+;;; The AMOP says that CLASS-DEFAULT-INITARGS should return the empty
+;;; list for a built-in class.
+(defmethod class-default-initargs ((class built-in-class))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -415,14 +442,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; STANDARD-CLASS.
+;;;
+;;; Some slots have an additional reader (in addition to the one
+;;; stipulated by the AMOP), because we want FINALIZE-INHERITANCE-AUX
+;;; to work on built-in classes as well as on standard classes.  And
+;;; FINALIZE-INHERITANCE-AUX needs to access slots both in standard
+;;; classes and built-in classes.  But the AMOP requires that the
+;;; specified readers return the empty list for built-in classes.  The
+;;; solution is to use an additional set of readers that do not appear
+;;; in the specification, and that work both for built-in and for
+;;; standard classes.
 
 ;;; FIXME: it looks like some code factoring would be useful here.
 (defclass standard-class (class)
   ((%direct-default-initargs 
+    :initform '()
     :reader class-direct-default-initargs
+    ;; Additional reader; see remark above.
+    :reader direct-default-initargs 
     :writer (setf c-direct-default-initargs))
    (%direct-slots 
     :reader class-direct-slots
+    ;; Additional reader; see remark above.
+    :reader direct-slots
     :writer (setf c-direct-slots))
    (%direct-superclasses 
     ;; This slot has no initform and no initarg, because it is set by
@@ -443,12 +485,16 @@
     :writer (setf c-precedence-list))
    (%default-initargs 
     :reader class-default-initargs
+    ;; Additional reader; see remark above.
+    :reader default-initargs
     :writer (setf c-default-initargs))
-   ;; For some reason, this accessor is not called
-   ;; class-effective-slots.
+   ;; For some reason, the specified reader for this slot is not
+   ;; called class-effective-slots, but class-slots. 
    (%effective-slots 
     :initform '() 
     :reader class-slots
+    ;; Additional reader; see remark above.
+    :reader effective-slots
     :writer (setf c-slots))
    (%prototype
     :reader class-prototype
@@ -465,10 +511,14 @@
   ((%direct-default-initargs 
     :initform '()
     :initarg :direct-default-initargs
-    :reader class-direct-default-initargs)
+    :reader class-direct-default-initargs
+    ;; Additional reader; see remark above.
+    :reader direct-default-initargs)
    (%direct-slots 
     :initarg :direct-slots
     :reader class-direct-slots
+    ;; Additional reader; see remark above.
+    :reader direct-slots
     :writer (setf c-direct-slots))
    (%direct-superclasses 
     ;; This slot has no initform and no initarg, because it is set by
@@ -488,12 +538,16 @@
     :writer (setf c-precedence-list))
    (%default-initargs 
     :reader class-default-initargs
+    ;; Additional reader; see remark above.
+    :reader default-initargs
     :writer (setf c-default-initargs))
    ;; For some reason, this accessor is not called
    ;; class-effective-slots.
    (%effective-slots 
     :initform '() 
     :reader class-slots
+    ;; Additional reader; see remark above.
+    :reader effective-slots
     :writer (setf c-slots))
    (%prototype
     :reader class-prototype
