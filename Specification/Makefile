@@ -33,3 +33,4 @@ clean:
 
 spotless: clean
 	rm -f *.ps *.dvi *.pdf *.pdf_t *.toc *.idx *.ilg *.ind *.fig.bak
+	rm -f *.out *.cb *.cb2
