@@ -32,7 +32,7 @@
 ;;; eql-specializer                    (specializer)
 ;;; class                              (specializer)
 ;;; built-in-class                     (class)
-;;; forward-reference-class            (class)
+;;; forward-referenced-class           (class)
 ;;; standard-class                     (class)
 ;;; funcallable-standard-class         (class)
 ;;; 
@@ -54,7 +54,7 @@
 ;;; The name of a class can be any object, but it is usually a symbol.
 ;;; If it is NIL, then it means that the class does not have a name.
 ;;; For a subclass of STANDARD-CLASS, FUNCALLABLE-STANDARD-CLASS, or
-;;; FORWARD-REFERENCE-CLASS, this function returns the defaulted value
+;;; FORWARD-REFERENCED-CLASS, this function returns the defaulted value
 ;;; of the argument :NAME, given when the class was initialized or
 ;;; reinitialized.  For a subclass of BUILT-IN-CLASS, it returns the
 ;;; name of the built-in class. 
@@ -407,37 +407,37 @@
 (defclass forward-referenced-class (class)
   ((%direct-default-initargs
     ;; The AMOP says that CLASS-DIRECT-DEFAULT-INITARGS should
-    ;; return the empty list for a forward reference class. 
+    ;; return the empty list for a forward referenced class. 
     :allocation :class
     :initform '()
     :reader class-direct-default-initargs)
    (%direct-slots
     ;; The AMOP says that CLASS-DIRECT-SLOTS should return the empty
-    ;; list for a forward reference class.
+    ;; list for a forward referenced class.
     :allocation :class
     :initform '()
     :reader class-direct-slots)
    (%direct-superclasses
     ;; The AMOP says that CLASS-DIRECT-SUPERCLASSES should return the
-    ;; empty list for a forward reference class.
+    ;; empty list for a forward referenced class.
     :allocation :class
     :initform '()
     :reader class-direct-superclasses)
    (%finalized-p
     ;; The AMOP says that CLASS-FINALIZED-P should return false for a
-    ;; forward reference class.
+    ;; forward referenced class.
     :allocation :class
     :initform nil
     :reader class-finalized-p)))
 
 (defmethod class-default-initargs ((class forward-referenced-class))
-  (error "A forward reference class does not have any default initargs"))
+  (error "A forward referenced class does not have any default initargs"))
 
 (defmethod class-precedence-list ((class forward-referenced-class))
-  (error "A forward reference class does not have a precedence list"))
+  (error "A forward referenced class does not have a precedence list"))
 
 (defmethod class-slots ((class forward-referenced-class))
-  (error "A forward reference class does not have any slots"))
+  (error "A forward referenced class does not have any slots"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
