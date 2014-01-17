@@ -7,14 +7,14 @@
      (direct-slot standard-direct-slot-definition)
      &rest initargs)
   (declare (ignore initargs))
-  (find-class 'standard-reader-method))
+  *standard-reader-method*)
 
 (defmethod reader-method-class
     ((class funcallable-standard-class)
      (direct-slot standard-direct-slot-definition)
      &rest initargs)
   (declare (ignore initargs))
-  (find-class 'standard-reader-method))
+  *standard-reader-method*)
 
 (defgeneric writer-method-class (class direct-slot &rest initargs))
 
@@ -23,11 +23,11 @@
      (direct-slot standard-direct-slot-definition)
      &rest initargs)
   (declare (ignore initargs))
-  (find-class 'standard-writer-method))
+  *standard-writer-method*)
 
 (defmethod writer-method-class
     ((class funcallable-standard-class)
      (direct-slot standard-direct-slot-definition)
      &rest initargs)
   (declare (ignore initargs))
-  (find-class 'standard-writer-method))
+  *standard-writer-method*)

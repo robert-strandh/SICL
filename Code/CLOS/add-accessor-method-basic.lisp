@@ -89,7 +89,7 @@
 	 (lambda-list '(new-value object))
 	 (generic-function (ensure-generic-function
 			    function-name :lambda-list lambda-list))
-	 (specializers (list class))
+	 (specializers (list *t* class))
 	 (method-function (make-writer-method-function slot-name))
 	 (method-class (writer-method-class
 			class slot-definition

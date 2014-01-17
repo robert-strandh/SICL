@@ -473,7 +473,7 @@
 		    specializers2))
 	  (mapcar (lambda (method)
 		    (mapcar (lambda (specializer)
-			      (not (eq specializer (find-class 't))))
+			      (not (eq specializer *t*)))
 			    (method-specializers method)))
 		  methods)))
 

@@ -38,7 +38,7 @@
 		       (let ((class (find-class class-or-name nil)))
 			 (if (null class)
 			     (setf (find-class class-or-name)
-				   (make-instance 'forward-reference-class
+				   (make-instance 'forward-referenced-class
 				     :name class-or-name))
 			     class)))
 		      (t
@@ -73,9 +73,9 @@
 	(let ((class-metaobject
 		(if metaclass-p
 		    (if (symbolp metaclass)
-			(find-metaclass metaclass)
+			(find-class metaclass)
 			metaclass)
-		    (find-metaclass 'standard-class))))
+		    *standard-class*)))
 	  (unless (classp class-metaobject)
 	    (error "metaclass must be a class metaobject class"))
 	  class-metaobject))
@@ -109,7 +109,7 @@
        &allow-other-keys)
   (when metaclass-p
     (cond ((symbolp metaclass)
-	   (setf metaclass (find-metaclass metaclass)))
+	   (setf metaclass (find-class metaclass)))
 	  ((classp metaclass)
 	   nil)
 	  (t
@@ -133,7 +133,7 @@
   class)
 
 (defmethod ensure-class-using-class
-    ((class forward-reference-class)
+    ((class forward-referenced-class)
      name
      &rest keys
      &key
@@ -141,9 +141,9 @@
        (metaclass nil metaclass-p)
        &allow-other-keys)
   (unless metaclass-p
-    (error "metaclass must be given when ensuring a forward-reference class"))
+    (error "metaclass must be given when ensuring a forward-referenced class"))
   (cond ((symbolp metaclass)
-	 (setf metaclass (find-metaclass metaclass)))
+	 (setf metaclass (find-class metaclass)))
 	((classp metaclass)
 	 nil)
 	(t

@@ -29,7 +29,7 @@
 	 (lambda-list '(new-value object))
 	 (generic-function (ensure-generic-function
 			    function-name :lambda-list lambda-list))
-	 (specializers (list (find-class t) class))
+	 (specializers (list *t* class))
 	 (method-function
 	   (compile nil `(lambda (args next-methods)
 			   (declare (ignore next-methods))

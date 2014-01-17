@@ -167,11 +167,6 @@
 
 (load "defclass.lisp")
 
-(fmakunbound 'sicl-clos::find-metaclass)
-
-(setf (fdefinition 'sicl-clos::find-metaclass)
-      (fdefinition 'find-class))
-
 (fmakunbound 'sicl-clos::classp)
 
 (defun sicl-clos::classp (object)
