@@ -22,6 +22,12 @@
 			      collect class))
 	  (remaining-keys (copy-list arguments)))
       (loop while (remf remaining-keys :direct-superclasses))
+      ;; During the bootstrapping phase, there is a method on
+      ;; INITIALIZE-INSTANCE specialized for BUILT-IN-CLASS, so we can
+      ;; safely call MAKE-INSTANCE on BUILT-IN-CLASS here.  Once the
+      ;; bootstrapping phase is finished, we remove that method so
+      ;; that MAKE-INSTANCE can no longer be used to create built-in
+      ;; classes.
       (let ((result (apply #'make-instance 'built-in-class
 			   :name name
 			   :direct-superclasses superclasses
@@ -31,6 +37,7 @@
 	;; don't allow for built-in classes to be redefined, we can
 	;; finalize the inheritance immediately. 
 	(finalize-built-in-inheritance result)
+	;; FIXME: this is where we add create the accessors.
 	result))))
 
 	
