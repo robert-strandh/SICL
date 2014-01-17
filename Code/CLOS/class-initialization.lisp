@@ -65,11 +65,10 @@
 
 (defun create-readers-and-writers (class)
   (loop for direct-slot in (class-direct-slots class)
-	for slot-name = (slot-definition-name direct-slot)
 	do (loop for reader in (slot-definition-readers direct-slot)
-		 do (add-reader-method class reader slot-name))
+		 do (add-reader-method class reader direct-slot))
 	   (loop for writer in (slot-definition-writers direct-slot)
-		 do (add-writer-method class writer slot-name))))
+		 do (add-writer-method class writer direct-slot))))
 
 (defun set-superclasses (class direct-superclasses default-superclass-name)
   (unless (proper-list-p direct-superclasses)
@@ -79,6 +78,17 @@
 		  (if (null direct-superclasses)
 		      (list default-superclass-name)
 		      direct-superclasses))))
+    (loop for direct-superclass in defaulted-direct-superclasses
+	  do (unless (validate-superclass class direct-superclass)
+	       (error "superclass not valid for class")))
+    (setf (c-direct-superclasses class)
+	  defaulted-direct-superclasses)))
+
+(defun set-superclasses-no-default (class direct-superclasses)
+  (unless (proper-list-p direct-superclasses)
+    (error "direct superclasses must be proper list"))
+  (let ((defaulted-direct-superclasses 
+	  (mapcar #'find-class direct-superclasses)))
     (loop for direct-superclass in defaulted-direct-superclasses
 	  do (unless (validate-superclass class direct-superclass)
 	       (error "superclass not valid for class")))
@@ -107,33 +117,45 @@
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
+  (setf (c-prototype class) (allocate-heap-instance class nil))
   (create-readers-and-writers class))
 
 (defmethod initialize-instance :after
     ((class funcallable-standard-class)
      &key
-       (direct-default-initargs nil direct-default-initargs-p)
+       direct-default-initargs
        direct-superclasses
-       (direct-slots nil direct-slots-p)
+       direct-slots
        &allow-other-keys)
   (set-superclasses class direct-superclasses 'funcallable-standard-class)
-  (when direct-default-initargs-p
-    (set-direct-default-initargs class direct-default-initargs))
+  (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
-  (when direct-slots-p
-    (set-direct-slots class direct-slots))
+  (set-direct-slots class direct-slots)
+  (setf (c-prototype class) (allocate-heap-instance class nil))
   (create-readers-and-writers class))
 
-;;; FIXME: According to the AMOP, calling initialize-instance on a
-;;; subclass of built-in-class signals an error.  
+;;; According to the AMOP, calling initialize-instance on a built-in
+;;; class (i.e., on an instance of a subclass of the class
+;;; BUILT-IN-CLASS) signals an error, because built-in classes can not
+;;; be created by the user.  But during the bootstrapping phase we
+;;; need to create built-in classes.  We solve this problem by
+;;; removing this method once the bootstrapping phase is finished.
+;;;
+;;; We do not add readers and writers here, because we do it in
+;;; ENSURE-BUILT-IN-CLASS after we have finalized inheritance.  The
+;;; reason for that is that we then know the slot location.
 (defmethod initialize-instance :after
     ((class built-in-class)
      &key
+       direct-default-initargs
        direct-superclasses
+       direct-slots
        &allow-other-keys)
-  (setf (c-direct-superclasses class)
-	(mapcar #'find-class direct-superclasses))
-  (add-as-subclass-to-superclasses class))
+  (set-superclasses-no-default class direct-superclasses)
+  (set-direct-default-initargs class direct-default-initargs)
+  (add-as-subclass-to-superclasses class)
+  (set-direct-slots class direct-slots)
+  (setf (c-prototype class) (allocate-heap-instance class nil)))
 
 ;;; I don't know why this definition makes SBCL go into an infinite
 ;;; recursion.
