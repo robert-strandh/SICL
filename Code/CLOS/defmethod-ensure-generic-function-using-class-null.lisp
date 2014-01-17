@@ -7,7 +7,7 @@
        all-keyword-arguments
      &key
        (generic-function-class
-	(find-generic-function-class 'standard-generic-function))
+	*standard-generic-function*)
        (method-class nil method-class-p)
      &allow-other-keys)
   (cond ((symbolp generic-function-class)
