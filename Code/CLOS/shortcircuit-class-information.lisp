@@ -75,3 +75,29 @@
 ;;; location stored in this variable to access the slot directly.
 (defvar *standard-effective-slot-definition-location-location*)
 
+;;; The value of this variable will be the class metaobject
+;;; corresponding to the class named FUNCALLABLE-STANDARD-CLASS.
+(defvar *funcallable-standard-class*)
+
+;;; The value of this variable will be the class metaobject
+;;; corresponding to the class named T.
+(defvar *t*)
+
+;;; The value of this variable will be the class metaobject
+;;; corresponding to the class named STANDARD-READER-METHOD.
+(defvar *standard-reader-method*)
+
+;;; The value of this variable will be the class metaobject
+;;; corresponding to the class named STANDARD-WRITER-METHOD.
+(defvar *standard-writer-method*)
+
+;;; The value of this variable will be the class metaobject
+;;; corresponding to the class named STANDARD-DIRECT-SLOT-DEFINITION.
+(defvar *standard-direct-slot-definition*)
+
+;;; The value of this variable will be the class metaobject
+;;; corresponding to the class named STANDARD-GENERIC-FUNCTION. 
+(defvar *standard-generic-function*)
+
+
+
