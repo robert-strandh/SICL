@@ -357,14 +357,16 @@
 (defclass built-in-class (class)
   ((%direct-default-initargs
     :initarg :direct-default-initargs
-    :reader default-initargs)
+    :writer (setf c-direct-default-initargs)
+    :reader direct-default-initargs)
    (%direct-superclasses 
     :initarg :direct-superclasses
     :reader class-direct-superclasses
     :writer (setf c-direct-superclasses))
    (%direct-slots
     :initarg :direct-slots
-    :reader direct-slots)
+    :reader direct-slots
+    :writer (setf c-direct-slots))
    (%documentation 
     :initform nil
     :accessor c-documentation)
@@ -508,6 +510,7 @@
     :initform '()
     :initarg :direct-default-initargs
     :reader class-direct-default-initargs
+    :writer (setf c-direct-default-initargs)
     ;; Additional reader; see remark above.
     :reader direct-default-initargs)
    (%direct-slots 
