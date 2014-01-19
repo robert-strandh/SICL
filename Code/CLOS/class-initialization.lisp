@@ -117,7 +117,9 @@
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
-  (setf (c-prototype class) (allocate-heap-instance class nil))
+  ;; FIXME: We can't possibly allocate a class prototype here, because
+  ;; in order to do that, the class has to be finalized. 
+  ;;  (setf (c-prototype class) (allocate-heap-instance class nil))
   (create-readers-and-writers class))
 
 (defmethod initialize-instance :after
@@ -131,7 +133,9 @@
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
-  (setf (c-prototype class) (allocate-heap-instance class nil))
+  ;; FIXME: We can't possibly allocate a class prototype here, because
+  ;; in order to do that, the class has to be finalized. 
+  ;;  (setf (c-prototype class) (allocate-heap-instance class nil))
   (create-readers-and-writers class))
 
 ;;; According to the AMOP, calling initialize-instance on a built-in
@@ -155,7 +159,10 @@
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
-  (setf (c-prototype class) (allocate-heap-instance class nil)))
+  ;; FIXME: We can't possibly allocate a class prototype here, because
+  ;; in order to do that, the class has to be finalized. 
+  ;;  (setf (c-prototype class) (allocate-heap-instance class nil))
+  )
 
 ;;; I don't know why this definition makes SBCL go into an infinite
 ;;; recursion.
