@@ -84,7 +84,7 @@
 ;;; slot-definition-class as an argument rather than looking it up in
 ;;; this function, we can use this function for built-in classes as well. 
 (defun compute-effective-slot-definition-aux
-    (class name direct-slot-definitions slot-definition-class)
+    (name direct-slot-definitions slot-definition-class)
   (let (allocation initargs initform initfunction type location)
     (setf allocation
 	  (slot-definition-allocation (first direct-slot-definitions)))
@@ -127,7 +127,6 @@
 					      name
 					      direct-slot-definitions)
   (compute-effective-slot-definition-aux
-   class
    name
    direct-slot-definitions
    (effective-slot-definition-class class)))
@@ -136,7 +135,6 @@
 					      name
 					      direct-slot-definitions)
   (compute-effective-slot-definition-aux
-   class
    name
    direct-slot-definitions
    (effective-slot-definition-class class)))
