@@ -4,7 +4,7 @@
 ;;;
 ;;; Computing the effective slots of a built-in class.
 
-(defun compute-built-in-slots ((class built-in-class))
+(defun compute-built-in-slots (class)
   (let* ((superclasses (class-precedence-list class))
 	 (direct-slots (mapcar #'direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
@@ -14,7 +14,6 @@
 	 (unique (remove-duplicates names :from-end t))
 	 (slots (loop for name in unique
 		      collect (compute-effective-slot-definition-aux
-			       class
 			       name
 			       (remove name concatenated
 				       :key #'slot-definition-name
