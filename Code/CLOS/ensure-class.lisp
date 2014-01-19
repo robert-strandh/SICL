@@ -73,7 +73,13 @@
 	(let ((class-metaobject
 		(if metaclass-p
 		    (if (symbolp metaclass)
-			(find-class metaclass)
+			(case metaclass
+			  (standard-class
+			   *standard-class*)
+			  (funcallable-standard-class
+			   *funcallable-standard-class*)
+			  (t
+			   (find-class metaclass)))
 			metaclass)
 		    *standard-class*)))
 	  (unless (classp class-metaobject)
