@@ -1,25 +1,43 @@
 (cl:in-package #:sicl-clos)
 
 ;;;; This file contains definitions of ordinary auxiliary functions
-;;;; used by COMPUTE-APPLICABLE-METHODS-USING-CLASSES.
+;;;; used by COMPUTE-APPLICABLE-METHODS and
+;;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES.
 
-;;; Class C1 is a sub-specizlizer of class C2 with respect to some
-;;; argument class C if and only if C1 occurs before C2 in the class
-;;; precedence list of C.
+;;; Given two specializers S1 and S2 that are not EQ, return true if
+;;; and only if S1 is a sub-specializer S2.  
 ;;;
 ;;; Recall that this function is used to determine whether one
 ;;; applicable method is more specific than another applicable method.
-;;; Thus, we have already determined that C is more specific than both
-;;; C1 and C2, and therefore both C1 and C2 are in the class
-;;; precedence list of C,
+;;; It follows that S1 and S2 can not both be EQL specializers,
+;;; because they would then either be EQ, and this function would not
+;;; be called, or they would not be EQ and one of the methods would
+;;; not be applicable.  
 ;;;
-;;; Should we ever be called with classes C1 and C2 that are not in
+;;; If S1 is an EQL specializer, then S1 is a sub-specializer of S2.
+;;; If S2 is an EQL specializer, then S2 is not a sub-specializer of
+;;; S2.  Otherwise, S1 and S2 are both classes.  Class S1 is a
+;;; sub-specizlizer of class S2 with respect to some argument class C
+;;; if and only if S1 occurs before S2 in the class precedence list of
+;;; C.
+;;;
+;;; If both S1 and S2 are classes, since both S1 and S2 belong to
+;;; applicable methods, we have already determined that C is more
+;;; specific than both S1 and S2, and therefore both S1 and S2 are in
+;;; the class precedence list of C,
+;;;
+;;; Should we ever be called with classes S1 and S2 that are not in
 ;;; the class precedence list of C, then the method we use (numeric
-;;; comparison of the result of calling POSITION), will signal an
+;;; comparison of the result of calling POSITION) will signal an
 ;;; error, which is reassuring.
-(defun sub-specializer-p (class1 class2 class-of-argument)
-  (let ((precedence-list (class-precedence-list class-of-argument)))
-    (< (position class1 precedence-list) (position class2 precedence-list))))
+(defun sub-specializer-p (specializer1 specializer2 class-of-argument)
+  (cond ((typep specializer1 'eql-specializer)
+	 t)
+	((typep specializer2 'eql-specializer)
+	 nil)
+	(t (let ((precedence-list (class-precedence-list class-of-argument)))
+	     (< (position specializer1 precedence-list)
+		(position specializer2 precedence-list))))))
 
 ;;; Determine whether a method is more specific than another method
 ;;; with respect to a list of classes of required arguments.  
@@ -56,17 +74,32 @@
 
 ;;; Determine whether a method is applicable to a sequence of argument
 ;;; classes.  The result can be either T or NIL or :SOMETIMES.  The
-;;; result is :SOMETIMES when there is an EQL specializer with an
-;;; object whose class is identical to the corresponding argument
-;;; class, because if and only if this holds, the argument may or may
-;;; not be the one that is specialized for.
-(defun method-applicable-p (method classes)
+;;; result is :SOMETIMES when the method has at least one EQL
+;;; specializer, and for each EQL specializer, the class of the
+;;; underlying object is identical to the corresponding argument
+;;; class.
+(defun maybe-applicable-p (method classes)
   (loop with result = t
 	for specializer in (method-specializers method)
 	for class in classes
 	do (if (classp specializer)
 	       (unless (subclassp class specializer)
-		 (return-from method-applicable-p nil))
-	       (when (eq (class-of (eql-specializer-object specializer)) class)
-		 (setf result :sometimes)))
+		 (return-from maybe-applicable-p nil))
+	       (if (eq (class-of (eql-specializer-object specializer)) class)
+		   (setf result :sometimes)
+		   (return-from maybe-applicable-p nil)))
 	finally (return result)))
+
+;;; Determine whether a method is applicable to a sequence of
+;;; arguments.  The list of arguments may contain more elements than
+;;; there are required parameters, and in that case the remaining
+;;; elements of the list of arguments are simply ignored.
+(defun definitely-applicable-p (method arguments)
+  (loop for specializer in (method-specializers method)
+	for argument in arguments
+	do (if (classp specializer)
+	       (unless (subclassp (class-of argument) specializer)
+		 (return-from definitely-applicable-p nil))
+	       (unless (eql (eql-specializer-object specializer) argument)
+		 (return-from definitely-applicable-p nil)))
+	finally (return t)))
