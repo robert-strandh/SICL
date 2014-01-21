@@ -28,7 +28,7 @@
 ;;; The special case for the discriminating function is introduced by
 ;;; COMPUTE-DISCRIMINATING-FUNCTION, so there is no trace of it here. 
 
-(defun compute-applicable-methods-using-classes-standard-generic-function
+(defun compute-applicable-methods-using-classes-default
     (standard-generic-function classes-of-arguments)
   (block b
     (values
@@ -44,6 +44,6 @@
 
 (defmethod compute-applicable-methods-using-classes
     ((generic-function standard-generic-function) classes-of-arguments)
-  (compute-applicable-methods-using-classes-standard-generic-function
+  (compute-applicable-methods-using-classes-default
    generic-function
    classes-of-arguments))
