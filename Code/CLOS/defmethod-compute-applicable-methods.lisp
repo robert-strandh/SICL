@@ -23,7 +23,7 @@
 ;;; The special case for the discriminating function is introduced by
 ;;; COMPUTE-DISCRIMINATING-FUNCTION, so there is no trace of it here. 
 
-(defun compute-applicable-methods-standard-generic-function
+(defun compute-applicable-methods-default
     (standard-generic-function classes-of-arguments)
   (sort (loop for method in (generic-function-methods generic-function)
 	      when (definitely-applicable-p method classes-of-arguments)
@@ -33,6 +33,6 @@
 
 (defmethod compute-applicable-methods
     ((generic-function standard-generic-function) classes-of-arguments)
-  (compute-applicable-methods-standard-generic-function
+  (compute-applicable-methods-default
    generic-function
    classes-of-arguments))
