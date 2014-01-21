@@ -55,32 +55,3 @@
 
 (defun instance-of (object class)
   (subclassp (class-of object) class))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Auxiliary function METHOD-MORE-SPECIFIC-P.
-;;;
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function COMPUTE-APPLICABLE-METHODS-USING-CLASSES.
-;;;
-;;; This function is used in an attempt to determine what methods are
-;;; applicable to a list of arguments, given only the classes of those
-;;; arguments.  This attempt might fail when one of the methods uses
-;;; an EQL specializer
-
-(defgeneric compute-applicable-methods-using-classes (generic-function classes))
-
-(defun compute-applicable-methods-using-classes-standard-generic-function
-    (generic-function  classes)
-  (flet ((method-applicable-p (method)
-	   
-  (let ((applicable-methods
-	  (loop for method in (generic-function-methods generic-function)
-		do (
-  
-
-(defmethod compute-applicable-methods-using-classes
-    ((generic-function standard-generic-function) classes)
