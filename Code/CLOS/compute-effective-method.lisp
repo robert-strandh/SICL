@@ -2,57 +2,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; COMPUTE-EFFECTIVE-METHOD-FUNCTION.
+;;; COMPUTE-EFFECTIVE-METHOD.
+;;;
+;;; There is a potential metastability problem in this generic
+;;; function namely when the first argument is the generic function
+;;; named COMPUTE-EFFECTIVE-METHOD, which is a standard generic
+;;; function using the standard method combination.  We avoid the
+;;; metastability problem by making the discriminating function of
+;;; this generic function recognize the special case when the class of
+;;; the first argument is STANDARD-GENERIC-FUNCTION and the class of
+;;; the second argument is METHOD-COMBINATION-STANDARD and by having
+;;; it call a default function in that case.  Thus, this generic
+;;; function will never be called in that case.
+;;;
+;;; There is no trace in this file of the special case mentioned
+;;; above, because it is handled by having the generic function
+;;; COMPUTE-DISCRIMINATING-FUNCTION recognize it and compute a
+;;; discriminating function that tests for the special case and calls
+;;; COMPUTE-EFFECTIVE-METHOD-DEFAULT to handle it. 
 
-(defun primary-method-p (method)
-  (null (method-qualifiers method)))
+(defgeneric compute-effective-method
+    (generic-function method-combination methods))
 
-(defun after-method-p (method)
-  (equal (method-qualifiers method) '(:after)))
+(defmethod compute-effective-method
+    ((generic-function standard-generic-function) method-combination methods)
+  (method-combination-compute-effective-method method-combination methods))
 
-(defun before-method-p (method)
-  (equal (method-qualifiers method) '(:before)))
-
-(defun around-method-p (method)
-  (equal (method-qualifiers method) '(:around)))
-
-(defun compute-effective-method-function (methods)
-  (let ((primary-methods (remove-if-not #'primary-method-p methods))
-	(before-methods (remove-if-not #'before-method-p methods))
-	(after-methods (remove-if-not  #'after-method-p methods))
-	(around-methods (remove-if-not  #'around-method-p methods)))
-    (when (null primary-methods)
-      (error "no primary method"))
-    (let ((primary-chain
-	    `(funcall ,(method-function (car primary-methods))
-		      args
-		      '(,@(loop for method in (cdr primary-methods)
-				collect (method-function method)))))
-	  (before-chain
-	    (loop for method in before-methods
-		  collect `(funcall ,(method-function method)
-				    args
-				    '())))
-	  (after-chain
-	    (loop for method in (reverse after-methods)
-		  collect `(funcall ,(method-function method)
-				    args
-				    '()))))
-      (compile
-       nil
-       (if (null around-methods)
-	   `(lambda (&rest args)
-	      ,@before-chain
-	      ,primary-chain
-	      ,@after-chain)
-	   `(lambda (&rest args)
-	      (funcall ,(method-function (car around-methods))
-		       args
-		       (list ,@(loop for method in (cdr around-methods)
-				     collect (method-function method))
-			     (lambda (args next-methods)
-			       (declare (ignore next-methods))
-			       ,@before-chain
-			       ,primary-chain
-			       ,@after-chain)))))))))
-	     
