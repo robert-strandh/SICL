@@ -66,14 +66,15 @@
   
 ;;;
 (defun compute-discriminating-function-default (generic-function)
-  (cond ((eq generic-function (fdefinition 'compute-applicable-methods))
-	 (make-df-for-compute-applicable-methods generic-function))
-	((eq generic-function (fdefinition 'compute-effective-method))
-	 (make-df-for-compute-effective-method generic-function))
-	((eq generic-function (fdefinition 'compute-discriminating-function))
-	 (make-df-for-compute-discriminating-function generic-function))
-	(t
-	 (make-default-discriminating-function generic-function))))
+  (case (generic-function-name generic-function)
+    (compute-applicable-methods
+     (make-df-for-compute-applicable-methods generic-function))
+    (compute-effective-method
+     (make-df-for-compute-effective-method generic-function))
+    (compute-discriminating-function
+     (make-df-for-compute-discriminating-function generic-function))
+    (t
+     (make-default-discriminating-function generic-function))))
 
 (defmethod compute-discriminating-function
     ((generic-function standard-generic-function))
