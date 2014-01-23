@@ -23,16 +23,14 @@
 ;;; The special case for the discriminating function is introduced by
 ;;; COMPUTE-DISCRIMINATING-FUNCTION, so there is no trace of it here. 
 
-(defun compute-applicable-methods-default
-    (standard-generic-function classes-of-arguments)
-  (sort (loop for method in (generic-function-methods generic-function)
-	      when (definitely-applicable-p method classes-of-arguments)
-		collect method)
-	(lambda (method1 method2)
-	  (method-more-specific-p method1 method2 classes-of-arguments))))
+(defun compute-applicable-methods-default (standard-generic-function arguments)
+  (let ((classes-of-arguments (mapcar #'class-of arguments)))
+    (sort (loop for method in (generic-function-methods generic-function)
+		when (definitely-applicable-p method arguments)
+		  collect method)
+	  (lambda (method1 method2)
+	    (method-more-specific-p method1 method2 classes-of-arguments))))
 
 (defmethod compute-applicable-methods
-    ((generic-function standard-generic-function) classes-of-arguments)
-  (compute-applicable-methods-default
-   generic-function
-   classes-of-arguments))
+    ((generic-function standard-generic-function) arguments)
+  (compute-applicable-methods-default generic-function arguments))
