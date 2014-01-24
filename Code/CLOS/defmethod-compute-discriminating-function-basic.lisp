@@ -13,6 +13,23 @@
 ;;;; not practical to include the compiler at runtime, but it would
 ;;;; very likely be unacceptably slow.
 
+;;; We need to test for a few particular generic functions, namely
+;;; COMPUTE-APPLICABLE-METHODS, COMPUTE-EFFECTIVE-METHOD, and
+;;; COMPUTE-DISCRIMINATING-FUNCTION so that they can be treated
+;;; specially.  We do this by having global variables containing
+;;; references to those functions.  During early stages of
+;;; bootstrapping, these functions exist only has host generic
+;;; functions, and the functions passed as argument to
+;;; COMPUTE-DISCRIMINATING-FUNCTION will all be readers and writers,
+;;; so we know they are not one of the ones that need special
+;;; treatment.  For that reason, we give these variables initial
+;;; values (NIL) so that they can be tested for, but the test will
+;;; always fail during early stages of bootstrapping.
+
+(defparameter *generic-function-compute-applicable-methods* nil)
+(defparameter *generic-function-compute-effective-method* nil)
+(defparameter *generic-function-compute-discriminating-function* nil)
+
 ;;; This function takes a generic function an returns a default
 ;;; discriminating function for it.
 (defun make-default-discriminating-function (generic-function)
@@ -66,15 +83,17 @@
   
 ;;;
 (defun compute-discriminating-function-default (generic-function)
-  (case (generic-function-name generic-function)
-    (compute-applicable-methods
-     (make-df-for-compute-applicable-methods generic-function))
-    (compute-effective-method
-     (make-df-for-compute-effective-method generic-function))
-    (compute-discriminating-function
-     (make-df-for-compute-discriminating-function generic-function))
-    (t
-     (make-default-discriminating-function generic-function))))
+  (cond ((eq generic-function
+	     *generic-function-compute-applicable-methods*)
+	 (make-df-for-compute-applicable-methods generic-function))
+	((eq generic-function
+	     *generic-function-compute-effective-method*)
+	 (make-df-for-compute-effective-method generic-function))
+	((eq generic-function
+	     *generic-function-compute-discriminating-function*)
+	 (make-df-for-compute-discriminating-function generic-function))
+	(t
+	 (make-default-discriminating-function generic-function))))
 
 (defmethod compute-discriminating-function
     ((generic-function standard-generic-function))
