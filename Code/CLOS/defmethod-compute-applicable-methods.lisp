@@ -29,7 +29,7 @@
 		when (definitely-applicable-p method arguments)
 		  collect method)
 	  (lambda (method1 method2)
-	    (method-more-specific-p method1 method2 classes-of-arguments))))
+	    (method-more-specific-p method1 method2 classes-of-arguments)))))
 
 (defmethod compute-applicable-methods
     ((generic-function standard-generic-function) arguments)
