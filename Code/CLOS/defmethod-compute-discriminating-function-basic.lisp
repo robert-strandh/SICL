@@ -34,15 +34,17 @@
 ;;; discriminating function for it.
 (defun make-default-discriminating-function (generic-function)
   (lambda (&rest arguments)
-    (let* ((applicable-methods
-	     (compute-applicable-methods generic-function arguments))
-	   (method-combination
-	     (generic-function-method-combination generic-function))
-	   (effective-method
-	     (compute-effective-method generic-function
-				       method-combination
-				       applicable-methods)))
-      (funcall effective-method arguments))))
+    (let ((applicable-methods
+	    (compute-applicable-methods generic-function arguments)))
+      (when (null applicable-methods)
+	(apply #'no-applicable-method generic-function arguments))
+      (let* ((method-combination
+	       (generic-function-method-combination generic-function))
+	     (effective-method
+	       (compute-effective-method generic-function
+					 method-combination
+					 applicable-methods)))
+	(funcall effective-method arguments)))))
 
 ;;; The generic function COMPUTE-APPLICABLE-METHODS needs a special
 ;;; discriminating function, because we don't want to invoke
