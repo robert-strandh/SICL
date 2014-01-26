@@ -1,87 +1,175 @@
 (cl:in-package #:sicl-clos)
 
-;;; Specified.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Accessors from the AMOP.
 
-;;; The name of a class can be any object, but it is usually a symbol.
-;;; If it is NIL, then it means that the class does not have a name.
-;;; For a subclass of STANDARD-CLASS, FUNCALLABLE-STANDARD-CLASS, or
-;;; FORWARD-REFERENCED-CLASS, this function returns the defaulted value
-;;; of the argument :NAME, given when the class was initialized or
-;;; reinitialized.  For a subclass of BUILT-IN-CLASS, it returns the
-;;; name of the built-in class. 
-(defgeneric class-name (class))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Readers for class metaobjects.
+;;;
+;;; For a list of specified readers of these metaobjects, see
+;;; http://metamodular.com/CLOS-MOP/readers-for-class-metaobjects.html
 
-;;; According to the AMOP, this function should call
-;;; REINITIALIZE-INSTANCE with three arguments: 
-;;; CLASS, :NAME, and NEW-NAME.
-(defgeneric (setf class-name) (new-name class))
-
-;;; Return the defaulted value of the argument :DIRECT-SUPERCLASSES
-;;; given when the class was initialized or reinitialized.  The value
-;;; is a list of class metaobjects, i.e. subclasses of the class
-;;; CLASS.
-(defgeneric class-direct-superclasses (class))
-
-;;; Return the defaulted value of the argument :DIRECT-SLOTS given
-;;; when the class was initialized or reinitialized.  The value is a
-;;; list of direct slot definition metaobjects, i.e., subclasses of
-;;; the class DIRECT-SLOT-DEFINITION. 
-(defgeneric class-direct-slots (class))
-
-;;; Return a SET (represented as alist, but with the elements in no
-;;; particular order) of subclasses of the class.
-(defgeneric class-direct-subclasses (class))
-
-;;; The functions ADD-DIRECT-SUBCLASS and REMOVE-DIRECT-SUBCLASS are
-;;; used to update the direct subclasses of a class, so this function
-;;; is not part of the public interface and should be used only from
-;;; these two functions. 
-(defgeneric (setf class-direct-subclasses) (new-value class))
-
-;;; FIXME: write more comments
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-default-initargs.html
 (defgeneric class-default-initargs (class))
 
-;;; FIXME: write more comments
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-default-initargs.html
+(defgeneric class-direct-default-initargs (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-name.html
+(defgeneric class-name (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-superclasses.html
+(defgeneric class-direct-superclasses (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-slots.html
+(defgeneric class-direct-slots (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-subclasses.html
+(defgeneric class-direct-subclasses (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-slots.html
 (defgeneric class-slots (class))
 
-;;; FIXME: write more comments
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-precedence-list.html
 (defgeneric class-precedence-list (class))
 
-;;; FIXME: write more comments
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-finalized-p.html
 (defgeneric class-finalized-p (class))
 
-;;; FIXME: write more comments
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-prototype.html
 (defgeneric class-prototype (class))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Readers for generic function metaobjects.
+;;;
+;;; For a list of specified readers of these metaobjects, see
+;;; see
+;;; http://metamodular.com/CLOS-MOP/readers-for-generic-function-metaobjects.html
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-name.html
 (defgeneric generic-function-name (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-lambda-list.html
 (defgeneric generic-function-lambda-list (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-argument-precedence-order.html
 (defgeneric generic-function-argument-precedence-order (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-declarations.html
 (defgeneric generic-function-declarations (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-method-class.html
 (defgeneric generic-function-method-class (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-method-combination.html
 (defgeneric generic-function-method-combination (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-methods.html
 (defgeneric generic-function-methods (generic-function))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Readers for method metaobjects.
+;;;
+;;; For a list of specified readers of these metaobjects, see
+;;; http://metamodular.com/CLOS-MOP/readers-for-method-metaobjects.html
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-function.html
 (defgeneric method-function (method))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-generic-function.html
 (defgeneric method-generic-function (method))
-(defgeneric (setf method-generic-function) (method))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-lambda-list.html
 (defgeneric method-lambda-list (method))
-(defgeneric (setf method-lambda-list) (method))
+
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-specializers.html
 (defgeneric method-specializers (method))
-(defgeneric (setf method-specializers) (method))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-qualifiers.html
 (defgeneric method-qualifiers (method))
-(defgeneric (setf method-qualifiers) (method))
-(defgeneric method-documentation (method))
-(defgeneric (setf method-documentation) (new-documentation method))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/accessor-method-slot-definition.html
 (defgeneric accessor-method-slot-definition (accessor-method))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Readers for slot definition metaobjects.
+;;;
+;;; For a list of specified readers of these metaobjects, see
+;;; http://metamodular.com/CLOS-MOP/readers-for-slot-definition-metaobjects.html
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-allocation.html
 (defgeneric slot-definition-allocation (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-initargs.html
 (defgeneric slot-definition-initargs (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-initform.html
 (defgeneric slot-definition-initform (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-initfunction.html
 (defgeneric slot-definition-initfunction (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-name.html
 (defgeneric slot-definition-name (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-type.html
 (defgeneric slot-definition-type (slot-definition))
 
-;;; SICL specific.
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-readers.html
+(defgeneric slot-definition-readers (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-writers.html
+(defgeneric slot-definition-writers (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-location.html
+(defgeneric slot-definition-location (slot-definition))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SICL-specific accessors.
+
+;;; The functions ADD-DIRECT-SUBCLASS and REMOVE-DIRECT-SUBCLASS are
+;;; used to update the direct subclasses of a class, so they call this
+;;; function.
+(defgeneric (setf c-direct-subclasses) (new-value class))
 
 (defgeneric standard-instance-slots (standard-instance))
 (defgeneric standard-instance-timestamp (standard-instance))
@@ -105,3 +193,4 @@
 (defgeneric (setf specializer-profile) (new-specializer-profile generic-function))
 (defgeneric set-cache (generic-function))
 (defgeneric (setf set-cache) (new-set-cache generic-function))
+
