@@ -158,16 +158,17 @@
    (%generic-function 
     :initform nil
     :initarg :generic-function
-    :accessor method-generic-function)
+    :reader method-generic-function
+    :writer (setf m-generic-function))
    (%lambda-list 
     :initarg :lambda-list 
-    :accessor method-lambda-list)
+    :reader method-lambda-list)
    (%specializers 
     :initarg :specializers 
-    :accessor method-specializers)
+    :reader method-specializers)
    (%qualifiers 
     :initarg :qualifiers 
-    :accessor method-qualifiers)
+    :reader method-qualifiers)
    ;; This slot is not mentioned in the section "Readers for Method
    ;; Metaobjects" in the AMOP.  However, it is mentioned in the
    ;; section "Initialization of Method Metaobjects", so we include it
@@ -196,10 +197,12 @@
 (defclass specializer (metaobject)
   ((%direct-generic-functions
     :initform '()
-    :accessor specializer-direct-generic-functions)
+    :reader specializer-direct-generic-functions
+    :writer (setf s-direct-generic-functions))
    (%direct-methods
     :initform '()
-    :accessor specializer-direct-methods)))
+    :reader specializer-direct-methods
+    :writer (setf s-direct-methods))))
 
 (defclass eql-specializer (specializer)
   ((%object 
@@ -219,19 +222,15 @@
    (%name 
     :initform nil
     :initarg :name 
-    ;; Make this just a :reader, because the AMOP says that the
-    ;; function (SETF CLASS-NAME) does not just set the name of the
-    ;; class.
+    ;; There is a specified function named (SETF CLASS-NAME), but it
+    ;; is not an accessor.  Instead it works by calling
+    ;; REINITIALIZE-INSTANCE with the new name.
     :reader class-name
     :writer (setf c-name))
    (%direct-subclasses 
     :initform '() 
     :reader class-direct-subclasses
-    :writer (setf c-direct-subclasses))
-   (%direct-methods 
-    :initform '() 
-    :reader class-direct-methods
-    :writer (setf c-direct-methods))))
+    :writer (setf c-direct-subclasses))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -384,6 +383,8 @@
    (%effective-slots 
     :initform '() 
     :reader class-slots
+    ;; Additional reader; see remark above.
+    :reader effective-slots
     :writer (setf c-slots))
    (%prototype
     :reader class-prototype
@@ -434,6 +435,8 @@
    (%effective-slots 
     :initform '() 
     :reader class-slots
+    ;; Additional reader; see remark above.
+    :reader effective-slots
     :writer (setf c-slots))
    (%prototype
     :reader class-prototype
