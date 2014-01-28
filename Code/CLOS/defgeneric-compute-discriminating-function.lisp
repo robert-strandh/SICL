@@ -1,2 +1,0 @@
-(in-package #:sicl-clos)
-
