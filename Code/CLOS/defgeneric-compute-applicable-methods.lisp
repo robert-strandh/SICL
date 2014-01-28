@@ -12,4 +12,3 @@
 ;;; to the number of required arguments.  This function simply ignores
 ;;; arguments beyond the last required arguments.
 
-(defgeneric compute-applicable-methods (generic-function arguments))

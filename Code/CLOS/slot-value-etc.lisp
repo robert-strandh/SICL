@@ -26,9 +26,6 @@
 ;;;
 ;;; SLOT-MISSING.
 
-(defgeneric slot-missing
-    (class object slot-name operation &optional new-value))
-
 (defmethod slot-missing
     (class object slot-name operation &optional new-value)
   (error "the slot named ~s is missing from the object ~s"
@@ -38,8 +35,6 @@
 ;;;
 ;;; SLOT-UNBOUND.
 
-(defgeneric slot-unbound (class object slot-name))
-
 (defmethod slot-unbound (class object slot-name)
   (error "the slot named ~s is unbound in the object ~s"
 	 slot-name object))
@@ -48,8 +43,6 @@
 ;;;
 ;;; SLOT-VALUE, (SETF SLOT-VALUE), 
 ;;; SLOT-VALUE-USING-CLASS (SETF SLOT-VALUE-USING-CLASS)
-
-(defgeneric slot-value-using-class (class object slot))
 
 (defun slot-value-using-class-aux (class object slot)
   (let* ((location (slot-definition-location slot))
@@ -77,8 +70,6 @@
 				   slot)
   (declare (ignore object))
   (error "no slots in an instance of a builtin class"))
-
-(defgeneric (setf slot-value-using-class) (new-value class object slot))
 
 (defun (setf slot-value-using-class-aux) (new-value object slot)
   (let ((location (slot-definition-location slot)))
@@ -137,8 +128,6 @@
 ;;;
 ;;; SLOT-BOUNDP SLOT-BOUNDP-USING-CLASS
 
-(defgeneric slot-boundp-using-class (class object slot))
-
 (defun slot-boundp-using-class-aux (object slot)
   (let ((location (slot-definition-location slot)))
     (not (eq (if (consp location)
@@ -172,8 +161,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SLOT-MAKUNBOUND, SLOT-MAKUNBOUND-USING-CLASS.
-
-(defgeneric slot-makunbound-using-class (class object slot))
 
 (defun slot-makunbound-using-class-aux (object slot)
   (let ((location (slot-definition-location slot)))

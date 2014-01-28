@@ -7,8 +7,6 @@
 ;;; classes.  Instead, we decide that something is a class if it is 
 ;;; a subclass of the class CLASS.
 
-(defgeneric classp (object))
-
 (defmethod classp (object)
   nil)
 

@@ -1,7 +1,5 @@
 (in-package #:sicl-clos)
 
-(defgeneric finalize-inheritance (class))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Computing the class precedence list
@@ -16,8 +14,6 @@
   (loop for prev = class then super
         for super in (class-direct-superclasses class)
         collect (cons prev super)))
-
-(defgeneric compute-class-precedence-list (class))
 
 (defmethod compute-class-precedence-list ((class class))
   ;; Make sure all the direct superclasses are already finalized so
@@ -75,9 +71,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Computing the effective slots of a class.
-
-(defgeneric compute-effective-slot-definition
-    (class name direct-slot-definitions))
 
 ;;; Implement the behavior of compute-effective-slot-definition for
 ;;; standard-class and funcallable-standard-class.  By passing
@@ -155,8 +148,6 @@
 			   :key #'slot-definition-name
 			   :test-not #'eql)))))
 
-(defgeneric compute-slots (class))
-
 (defmethod compute-slots ((class standard-class))
   (compute-slots-aux class))
 
@@ -183,8 +174,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; COMPUTE-DEFAULT-INITARGS.
-
-(defgeneric compute-default-initargs (class))
 
 (defun compute-default-initargs-aux (class)
   (remove-duplicates

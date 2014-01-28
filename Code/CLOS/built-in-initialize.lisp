@@ -34,9 +34,6 @@
     (incf *next-available-timestamp*))
   instance)
 
-(defgeneric initialize-built-in-instance
-    (instance &rest initargs &key &allow-other-keys))
-
 (defmethod initialize-built-in-instance
     (instance &rest initargs &key &allow-other-keys)
   (let ((slots (effective--slots (class-of instance))))

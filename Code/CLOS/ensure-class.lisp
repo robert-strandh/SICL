@@ -45,17 +45,6 @@
 		       (error "~s must be a class or a class name"
 			      class-or-name)))))
 
-(defgeneric ensure-class-using-class
-    (class
-     name
-     &rest keys
-     &key
-       direct-default-initargs
-       direct-slots
-       direct-superclasses
-       metaclass
-       &allow-other-keys))
-
 ;;; When the class is created, it is safe to use a default value of
 ;;; the empty list for the :DIRECT-SUPERCLASSES initialization
 ;;; argument, because the AMOP says that the default is the same

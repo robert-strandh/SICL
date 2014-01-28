@@ -1,9 +1,5 @@
 (in-package #:sicl-clos)
 
-(defgeneric finalize-inheritance (class))
-
-(defgeneric allocate-instance (class &rest initargs))
-
 (defun allocate-instance-aux (class)
   (unless (class-finalized-p class)
     (finalize-inheritance class))

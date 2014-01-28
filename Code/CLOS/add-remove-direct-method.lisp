@@ -12,8 +12,6 @@
 	(remove method (specializer-direct-methods specializer))))
 
 ;;; ADD-DIRECT-METHOD
-(defgeneric add-direct-method (specializer method))
-
 (defmethod add-direct-method ((specializer class) (method method))
   (pushnew method (specializer-direct-methods specializer)))
 

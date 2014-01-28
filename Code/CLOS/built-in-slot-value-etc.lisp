@@ -17,14 +17,10 @@
 ;;; BUILT-in-SLOT-VALUE, (SETF BUILT-IN-SLOT-VALUE), 
 ;;; BUILT-IN-SLOT-VALUE-USING-CLASS (SETF BUILT-IN-SLOT-VALUE-USING-CLASS)
 
-(defgeneric built-in-slot-value-using-class (class object slot))
-
 (defmethod built-in-slot-value-using-class ((class built-in-class)
 				   object
 				   (slot standard-effective-slot-definition))
   (slot-value-using-class-aux class object slot))
-
-(defgeneric (setf built-in-slot-value-using-class) (new-value class object slot))
 
 (defmethod (setf built-in-slot-value-using-class)
   (new-value
@@ -60,8 +56,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; BUILT-IN-SLOT-BOUNDP BUILT-IN-SLOT-BOUNDP-USING-CLASS
-
-(defgeneric built-in-slot-boundp-using-class (class object slot))
 
 (defmethod built-in-slot-boundp-using-class ((class built-in-class)
 				    object

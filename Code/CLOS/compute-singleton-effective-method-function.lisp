@@ -7,8 +7,6 @@
 ;;; of the class of that method to compute a more efficient effective
 ;;; method when we can. 
 
-(defgeneric compute-singleton-effective-method-function (method))
-
 (defmethod compute-singleton-effective-method-function
     ((method method))
   (compile nil

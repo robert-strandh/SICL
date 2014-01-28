@@ -4,8 +4,6 @@
 ;;;
 ;;;  DIRECT-SLOT-DEFINITION-CLASS and EFFECTIVE-SLOT-DEFINITION-CLASS.
 
-(defgeneric direct-slot-definition-class (class &rest initargs))
-
 (defmethod direct-slot-definition-class
     ((class standard-class) &rest initargs)
   (declare (ignore initargs))
@@ -15,8 +13,6 @@
     ((class funcallable-standard-class) &rest initargs)
   (declare (ignore initargs))
   *standard-direct-slot-definition*)
-
-(defgeneric effective-slot-definition-class (class &rest initargs))
 
 (defmethod effective-slot-definition-class
     ((class standard-class) &rest initargs)

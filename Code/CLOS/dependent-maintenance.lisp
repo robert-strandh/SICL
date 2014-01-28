@@ -1,13 +1,5 @@
 (in-package #:sicl-clos)
 
-(defgeneric add-dependent (metaobject dependent))
-
-(defgeneric remove-dependent (metaobject dependent))
-
-(defgeneric map-dependents (metaobject function))
-
-(defgeneric update-dependent (metaobject dependent &rest initargs))
-
 (defmethod add-dependent ((obj standard-class) dependent)
   (pushnew dependent (dependents obj)))
 

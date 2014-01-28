@@ -21,9 +21,6 @@
 ;;; discriminating function that tests for the special case and calls
 ;;; COMPUTE-EFFECTIVE-METHOD-DEFAULT to handle it. 
 
-(defgeneric compute-effective-method
-    (generic-function method-combination methods))
-
 (defmethod compute-effective-method
     ((generic-function standard-generic-function) method-combination methods)
   (method-combination-compute-effective-method method-combination methods))

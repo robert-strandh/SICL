@@ -1,7 +1,5 @@
 (cl:in-package #:sicl-clos)
 
-(defgeneric make-instance (class &rest initargs))
-
 (defmethod make-instance ((class symbol) &rest initargs)
   (apply #'make-instance (find-class class) initargs))
 

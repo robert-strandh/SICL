@@ -33,5 +33,3 @@
 ;;; qualifiers anyway, so the internal order does not matter in this
 ;;; case.
 
-(defgeneric compute-applicable-methods-using-classes
-    (generic-function classes-of-arguments))

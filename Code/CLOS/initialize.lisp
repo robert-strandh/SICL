@@ -14,11 +14,6 @@
 ;;;
 ;;; INITIALIZE-INSTANCE, REINITIALIZE-INSTANCE, SHARED-INITIALIZE.
 
-(defgeneric shared-initialize (instance
-			       slot-names
-			       &rest initargs
-			       &key &allow-other-keys))
-
 ;;; The spec requires the method on initialize-instance and
 ;;; reinitialize-instance specialized for standard-object to call
 ;;; shared-initialize as shown below.  The slot-name argument is a
@@ -64,10 +59,6 @@
     (incf *next-available-timestamp*))
   instance)
 
-(defgeneric initialize-instance (instance
-				 &rest initargs
-				 &key &allow-other-keys))
-
 ;;; The method on initialize-instance specialized for standard-object
 ;;; is especially important to bootstrapping, because all important
 ;;; metaobject classes are subclasses of standard-object.  So if
@@ -82,10 +73,6 @@
   ;; i.e., for every slot that is not explicitly initialized and which
   ;; is unbound, evaluate its initform if it has one. 
   (apply #'shared-initialize instance t initargs))
-
-(defgeneric reinitialize-instance (instance
-				   &rest initargs
-				   &key &allow-other-keys))
 
 (defmethod reinitialize-instance ((instance standard-object)
 				  &rest initargs
