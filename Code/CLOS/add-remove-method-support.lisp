@@ -11,7 +11,7 @@
 ;;; Generic function ADD-METHOD.
 ;;;
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/add-direct-subclass.html
+;;; http://metamodular.com/CLOS-MOP/add-method.html
 ;;;
 ;;; The specification includes a single method on this generic
 ;;; function, specialized for STANDARD-GENERIC-FUNCTION and
@@ -64,7 +64,7 @@
 ;;; Generic function REMOVE-METHOD.
 ;;;
 ;;; For the specification of this generic function, see
-;;; http://metamodular.com/CLOS-MOP/remove-direct-subclass.html
+;;; http://metamodular.com/CLOS-MOP/remove-method.html
 ;;;
 ;;; The specification includes a single method on this generic
 ;;; function, specialized for STANDARD-GENERIC-FUNCTION and
