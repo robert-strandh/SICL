@@ -1,8 +1,15 @@
 (cl:in-package #:sicl-clos)
 
-;;;; This file contains definitions of ordinary auxiliary functions
-;;;; used by COMPUTE-APPLICABLE-METHODS and
+;;;; This file contains the support code for the generic functions
+;;;; COMPUTE-APPLICABLE-METHODS and
 ;;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES.
+;;;;
+;;;; In this file, there are no definitions of generic functions, nor
+;;;; of any methods.  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Utilities.
 
 ;;; Given two specializers S1 and S2 that are not EQ, return true if
 ;;; and only if S1 is a sub-specializer S2.  
@@ -103,3 +110,49 @@
 	       (unless (eql (eql-specializer-object specializer) argument)
 		 (return-from definitely-applicable-p nil)))
 	finally (return t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Support for generic function COMPUTE-APPLICABLE-METHODS.
+;;;
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/compute-applicable-methods.html
+;;;
+;;; The specification includes a single method on this generic
+;;; function, specialized for STANDARD-GENERIC-FUNCTION.  The default
+;;; action below is valid for that method.
+
+(defun compute-applicable-methods-default (generic-function arguments)
+  (let ((classes-of-arguments (mapcar #'class-of arguments)))
+    (sort (loop for method in (generic-function-methods generic-function)
+		when (definitely-applicable-p method arguments)
+		  collect method)
+	  (lambda (method1 method2)
+	    (method-more-specific-p method1 method2 classes-of-arguments)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Support for generic function
+;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES.
+;;;
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/compute-applicable-methods-using-classes.html
+;;;
+;;; The specification includes a single method on this generic
+;;; function, specialized for STANDARD-GENERIC-FUNCTION.  The default
+;;; action below is valid for that method.
+
+(defun compute-applicable-methods-using-classes-default
+    (generic-function classes-of-arguments)
+  (block b
+    (values
+     (sort (loop for method in (generic-function-methods generic-function)
+		 when (let ((a (maybe-applicable-p method classes-of-arguments)))
+			(if (eq a :somtimes)
+			    (return-from b (values '() nil))
+			    a))
+		   collect method)
+	   (lambda (method1 method2)
+	     (method-more-specific-p method1 method2 classes-of-arguments)))
+     t)))
+
