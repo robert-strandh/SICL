@@ -53,11 +53,8 @@
 ;;; function.  The initialization arguments and values are also passed
 ;;; to MAKE-INSTANCE when the method metaobject is created. 
 
-(defmethod make-method-lambda
-    ((generic-function standard-generic-function)
-     (method standard-method)
-     lambda-expression
-     environment)
+(defun make-method-lambda-default
+    (generic-function method lambda-expression environment)
   (declare (ignore environment))
   (let ((args (gensym))
 	(next-methods (gensym)))
