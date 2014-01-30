@@ -1,9 +1,10 @@
 (in-package #:sicl-clos)
 
 ;;;; This file contains very basic versions of the functions
-;;;; ADD-READER-METHOD and ADD-WRITER-METHOD.  These functions are
-;;;; called when a class metaobject is created that has one or more
-;;;; slots with a :READER, :WRITER, or :ACCESSOR slot option.
+;;;; ADD-READER-METHOD and ADD-WRITER-METHOD.  These functions are not
+;;;; part of the spcification, but they conventient abstractions that
+;;;; are called when a class metaobject is created that has one or
+;;;; more slots with a :READER, :WRITER, or :ACCESSOR slot option.
 ;;;; Specifically, they are called from the :AFTER methods on
 ;;;; INITIALIZE-INSTANCE specialized for STANDARD-CLASS and
 ;;;; FUNCALLABLE-STANDARD-CLASS.
