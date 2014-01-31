@@ -1,29 +1,25 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
 (defmethod reader-method-class
     ((class standard-class)
      (direct-slot standard-direct-slot-definition)
      &rest initargs)
-  (declare (ignore initargs))
-  *standard-reader-method*)
+  (apply #'reader-method-class-default class direct-slot initargs))
 
 (defmethod reader-method-class
     ((class funcallable-standard-class)
      (direct-slot standard-direct-slot-definition)
      &rest initargs)
-  (declare (ignore initargs))
-  *standard-reader-method*)
+  (apply #'reader-method-class-default class direct-slot initargs))
 
 (defmethod writer-method-class
     ((class standard-class)
      (direct-slot standard-direct-slot-definition)
      &rest initargs)
-  (declare (ignore initargs))
-  *standard-writer-method*)
+  (apply #'writer-method-class-default class direct-slot initargs))
 
 (defmethod writer-method-class
     ((class funcallable-standard-class)
      (direct-slot standard-direct-slot-definition)
      &rest initargs)
-  (declare (ignore initargs))
-  *standard-writer-method*)
+  (apply #'writer-method-class-default class direct-slot initargs))
