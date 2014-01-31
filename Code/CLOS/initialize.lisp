@@ -25,9 +25,8 @@
 ;;; does not already have a value.  In that case, if no initform
 ;;; exists, the slot is left unbound.
 
-(defmethod shared-initialize ((instance standard-object)
-			      slot-names
-			      &rest initargs)
+(defun shared-initialize-default
+    (instance slot-names &rest initargs)
   (let ((class-slots (class-slots (class-of instance))))
     (loop for slot in class-slots
 	  for slot-name = (slot-definition-name slot)
@@ -66,17 +65,15 @@
 ;;; to create a metaobject class, then this method must already be in
 ;;; place.
 
-(defmethod initialize-instance ((instance standard-object)
-				&rest initargs
-				&key &allow-other-keys)
+(defun initialize-instance-default
+    (instance &rest initargs &key &allow-other-keys)
   ;; Call shared-initialize with a slot-list of t, meaning all slots,
   ;; i.e., for every slot that is not explicitly initialized and which
   ;; is unbound, evaluate its initform if it has one. 
   (apply #'shared-initialize instance t initargs))
 
-(defmethod reinitialize-instance ((instance standard-object)
-				  &rest initargs
-				  &key &allow-other-keys)
+(defun reinitialize-instance-default
+    (instance &rest initargs &key &allow-other-keys)
   ;; Call shared-initialize with a slot-list of (), meaning no slot,
   ;; i.e., only assign values to slots that have explicit
   ;; initialization arguments in initargs. 
