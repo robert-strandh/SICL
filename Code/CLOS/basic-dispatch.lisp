@@ -29,23 +29,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Auxiliary function SUBCLASSP.
-;;;
-;;; Determine whether some class C1 is a (not necessarily strict)
-;;; subclass of some other class C2.
-;;;
-;;; By definition, a class C1 is a subclass of a class C2 if and only 
-;;; if C2 is in the class precedence list of C1. 
-;;;
-;;; We use MEMBER (rather than (say) FIND) because MEMBER is a rather
-;;; simple function that works only on lists, whereas we might want to
-;;; make FIND a generic function.  
-
-(defun subclassp (class1 class2)
-  (member class2 (class-precedence-list class1) :test #'eq))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Auxiliary function INSTANCE-OF.
 ;;;
 ;;; Determine whether an object O is an instance of some class C or

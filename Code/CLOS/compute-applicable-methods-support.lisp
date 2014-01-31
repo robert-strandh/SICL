@@ -72,12 +72,16 @@
 	unless (eq s1 s2)
 	  return (sub-specializer-p s1 s2 class-of-argument)))
 
-;;; Determine whether a class C1 is a subclass of another class C2.
-;;; This can be done by checking whether C2 is in the class precedence
-;;; list of C1.  The relation is not strict, so that we return true if
-;;; the two are the same.
+;;; Determine whether a class C1 is a (not necessarily strict)
+;;; subclass of another class C2.  This can be done by checking
+;;; whether C2 is in the class precedence list of C1.  Since the
+;;; relation is not strict, we return true if the two are the same.
+;;;
+;;; We use MEMBER (rather than (say) FIND) because MEMBER is a rather
+;;; simple function that works only on lists, whereas we might want to
+;;; make FIND a generic function.  
 (defun subclassp (class1 class2)
-  (member class2 (class-precedence-list class1)))
+  (member class2 (class-precedence-list class1) :test #'eq))
 
 ;;; Determine whether a method is applicable to a sequence of argument
 ;;; classes.  The result can be either T or NIL or :SOMETIMES.  The
