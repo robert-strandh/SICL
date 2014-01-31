@@ -1,4 +1,4 @@
-(in-package :sicl-clos)
+(cl:in-package #:sicl-clos)
 
 ;;; Implement class initialization according to the section of the
 ;;; AMOP entitled "Initialization of Class Metaobjects".
@@ -106,36 +106,24 @@
 				    class canonicalized-slot-specification)
 			     canonicalized-slot-specification))))
 
-(defmethod initialize-instance :after
-    ((class standard-class)
-     &key
-       direct-default-initargs
-       direct-superclasses
-       direct-slots
-       &allow-other-keys)
+(defun initialize-instance-after-standard-class-default
+    (class
+     &key direct-default-initargs direct-superclasses direct-slots
+     &allow-other-keys)
   (set-superclasses class direct-superclasses 'standard-class)
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
-  ;; FIXME: We can't possibly allocate a class prototype here, because
-  ;; in order to do that, the class has to be finalized. 
-  ;;  (setf (c-prototype class) (allocate-heap-instance class nil))
   (create-readers-and-writers class))
 
-(defmethod initialize-instance :after
-    ((class funcallable-standard-class)
-     &key
-       direct-default-initargs
-       direct-superclasses
-       direct-slots
-       &allow-other-keys)
+(defun initialize-instance-after-funcallable-standard-class-default
+    (class
+     &key direct-default-initargs direct-superclasses direct-slots
+     &allow-other-keys)
   (set-superclasses class direct-superclasses 'funcallable-standard-class)
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
-  ;; FIXME: We can't possibly allocate a class prototype here, because
-  ;; in order to do that, the class has to be finalized. 
-  ;;  (setf (c-prototype class) (allocate-heap-instance class nil))
   (create-readers-and-writers class))
 
 ;;; According to the AMOP, calling initialize-instance on a built-in
@@ -148,29 +136,11 @@
 ;;; We do not add readers and writers here, because we do it in
 ;;; ENSURE-BUILT-IN-CLASS after we have finalized inheritance.  The
 ;;; reason for that is that we then know the slot location.
-(defmethod initialize-instance :after
-    ((class built-in-class)
-     &key
-       direct-default-initargs
-       direct-superclasses
-       direct-slots
-       &allow-other-keys)
+(defun initialize-instance-after-built-in-default
+    (class
+     &key direct-default-initargs direct-superclasses direct-slots
+     &allow-other-keys)
   (set-superclasses-no-default class direct-superclasses)
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
-  (set-direct-slots class direct-slots)
-  ;; FIXME: We can't possibly allocate a class prototype here, because
-  ;; in order to do that, the class has to be finalized. 
-  ;;  (setf (c-prototype class) (allocate-heap-instance class nil))
-  )
-
-;;; I don't know why this definition makes SBCL go into an infinite
-;;; recursion.
-;; (defmethod reinitialize-instance :after
-;;     ((class standard-class)
-;;      &rest args
-;;      &key
-;;      &allow-other-keys)
-;;   (map-dependents class
-;; 		  (lambda (dependent)
-;; 		    (apply #'update-dependent class dependent args))))
+  (set-direct-slots class direct-slots))
