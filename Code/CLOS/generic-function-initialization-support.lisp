@@ -57,7 +57,7 @@
        documentation
        declarations
        method-combination
-       (method-class (find-method-class 'standard-method))
+       (method-class (find-class 'standard-method))
        (name nil)
      &allow-other-keys)
   ;; FIXME: handle different method combinations.
@@ -81,6 +81,7 @@
 
 (defun reinitialize-instance-after-standard-generic-function-default
     (generic-function
+     &rest initargs
      &key
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
@@ -109,4 +110,4 @@
   (map-dependents
    generic-function
    (lambda (dependent)
-     (apply #'update-dependent generic-function dependent args))))
+     (apply #'update-dependent generic-function dependent initargs))))
