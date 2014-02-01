@@ -21,8 +21,6 @@
 		   (and (atom qualifier) (not (null qualifier))))
 		 qualifiers)
     (error "a qualifier must be a non-nil atom"))
-  ;; Everything seems OK. 
-  (setf (method-qualifiers method) qualifiers)
   ;; Next do the LAMBDA-LIST.  The AMOP also says that an error is
   ;; signaled if this value is not supplied, so we start by checking
   ;; that.
@@ -39,7 +37,6 @@
   ;; parameters against the specializers, below.
   (let ((parsed-lambda-list (parse-ordinary-lambda-list lambda-list)))
     ;; Everything is OK.
-    (setf (method-lambda-list method) lambda-list)
     ;; Next, we do the SPECIALIZERS.  Again, the AMOP says that an error
     ;; is signaled if this argument is not supplied.
     (unless specializers-p
@@ -54,10 +51,10 @@
       (error "there must be as many specializers as required parameters")))
   ;; Finally, the AMOP requires every specializer to be a specialier
   ;; metaobject.
-  (unless (every #'specializerp specializers)
+  (unless (every (lambda (specializer)
+		   (typep specializer 'specializer))
+		 specializers)
     (error "a specializer must be a specializer metaobject"))
-  ;; Everything is OK.
-  (setf (method-specializers method) specializers)
   ;; Now do the FUNCTION.  The AMOP also says that an error is
   ;; signaled if this value is not supplied, so we start by checking
   ;; that.
@@ -71,7 +68,6 @@
   (unless (functionp function)
     (error "the function argument must be a function."))
   ;; Everything is OK.
-  (setf (method-function method) function)
   ;; Next check the documentation.  Strangely, there is no mention
   ;;of the documentation in the section "Readers for Method
   ;;Metaobjects" in the AMOP, so we added it.  According to the AMOP
@@ -87,6 +83,6 @@
      &allow-other-keys)
   (unless slot-definition-p
     (error "the slot-definition argument must be supplied"))
-  (unless (direct-slot-definition-p slot-definition)
+  (unless (typep slot-definition 'direct-slot-definition)
     (error "the slot-definition argument must be a direct-slot-definition"))
-  (setf (accessor-method-slot-definition method) slot-definition))
+  (setf (slot-definition method) slot-definition))
