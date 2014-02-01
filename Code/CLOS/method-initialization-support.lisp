@@ -51,9 +51,7 @@
       (error "there must be as many specializers as required parameters")))
   ;; Finally, the AMOP requires every specializer to be a specialier
   ;; metaobject.
-  (unless (every (lambda (specializer)
-		   (typep specializer 'specializer))
-		 specializers)
+  (unless (every #'specializerp specializers)
     (error "a specializer must be a specializer metaobject"))
   ;; Now do the FUNCTION.  The AMOP also says that an error is
   ;; signaled if this value is not supplied, so we start by checking
