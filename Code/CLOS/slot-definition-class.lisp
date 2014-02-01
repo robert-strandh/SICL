@@ -6,20 +6,16 @@
 
 (defmethod direct-slot-definition-class
     ((class standard-class) &rest initargs)
-  (declare (ignore initargs))
-  *standard-direct-slot-definition*)
+  (apply #'direct-slot-definition-class-default class initargs))
 
 (defmethod direct-slot-definition-class
     ((class funcallable-standard-class) &rest initargs)
-  (declare (ignore initargs))
-  *standard-direct-slot-definition*)
+  (apply #'direct-slot-definition-class-default class initargs))
 
 (defmethod effective-slot-definition-class
     ((class standard-class) &rest initargs)
-  (declare (ignore initargs))
-  *standard-effective-slot-definition*)
+  (apply #'effective-slot-definition-class-default class initargs))
 
 (defmethod effective-slot-definition-class
     ((class funcallable-standard-class) &rest initargs)
-  (declare (ignore initargs))
-  *standard-effective-slot-definition*)
+  (apply #'effective-slot-definition-class-default class initargs))
