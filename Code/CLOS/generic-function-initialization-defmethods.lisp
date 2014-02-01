@@ -13,7 +13,7 @@
        declarations
        method-combination
        method-class
-       name nil
+       name
      &allow-other-keys)
   (declare (ignore lambda-list
 		   argument-precedence-order
