@@ -106,6 +106,7 @@
    lambda-list-p
    argument-precedence-order
    argument-precedence-order-p)
-  (map-dependents class
-		  (lambda (dependent)
-		    (apply #'update-dependent class dependent args))))
+  (map-dependents
+   generic-function
+   (lambda (dependent)
+     (apply #'update-dependent generic-function dependent args))))
