@@ -1,34 +1,28 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
-(defmethod add-dependent ((obj standard-class) dependent)
-  (pushnew dependent (dependents obj)))
+(defmethod add-dependent ((metaobject standard-class) dependent)
+  (add-dependent-default metaobject dependent))
 
-(defmethod add-dependent ((obj funcallable-standard-class) dependent)
-  (pushnew dependent (dependents obj)))
+(defmethod add-dependent ((metaobject funcallable-standard-class) dependent)
+  (add-dependent-default metaobject dependent))
 
-(defmethod add-dependent ((obj standard-generic-function) dependent)
-  (pushnew dependent (dependents obj)))
+(defmethod add-dependent ((metaobject standard-generic-function) dependent)
+  (add-dependent-default metaobject dependent))
 
-(defmethod remove-dependent ((obj standard-class) dependent)
-  (setf (dependents obj)
-	(remove dependent (dependents obj) :test #'eq)))
+(defmethod remove-dependent ((metaobject standard-class) dependent)
+  (remove-dependent-default metaobject dependent))
 
-(defmethod remove-dependent ((obj funcallable-standard-class) dependent)
-  (setf (dependents obj)
-	(remove dependent (dependents obj) :test #'eq)))
+(defmethod remove-dependent ((metaobject funcallable-standard-class) dependent)
+  (remove-dependent-default metaobject dependent))
 
-(defmethod remove-dependent ((obj standard-generic-function) dependent)
-  (setf (dependents obj)
-	(remove dependent (dependents obj) :test #'eq)))
+(defmethod remove-dependent ((metaobject standard-generic-function) dependent)
+  (remove-dependent-default metaobject dependent))
 
-(defmethod map-dependents ((obj standard-class) function)
-  (mapc function (dependents obj)))
+(defmethod map-dependents ((metaobject standard-class) function)
+  (map-dependents-default metaobject function))
 
-(defmethod map-dependents ((obj funcallable-standard-class) function)
-  (mapc function (dependents obj)))
+(defmethod map-dependents ((metaobject funcallable-standard-class) function)
+  (map-dependents-default metaobject function))
 
-(defmethod map-dependents ((obj standard-generic-function) function)
-  (mapc function (dependents obj)))
-
-
-
+(defmethod map-dependents ((metaobject standard-generic-function) function)
+  (map-dependents-default metaobject function))
