@@ -70,16 +70,17 @@
 	   (loop for writer in (slot-definition-writers direct-slot)
 		 do (add-writer-method class writer direct-slot))))
 
-(defun set-superclasses (class direct-superclasses default-superclass-name)
+(defun set-superclasses (class direct-superclasses default-superclass)
   (unless (proper-list-p direct-superclasses)
     (error "direct superclasses must be proper list"))
   (let ((defaulted-direct-superclasses
-	  (mapcar #'find-class
-		  (if (null direct-superclasses)
-		      (list default-superclass-name)
-		      direct-superclasses))))
+	  (if (null direct-superclasses)
+	      (list default-superclass)
+	      direct-superclasses)))
     (loop for direct-superclass in defaulted-direct-superclasses
-	  do (unless (validate-superclass class direct-superclass)
+	  do (unless (classp direct-superclass)
+	       (error "superclass must be a class metaobject"))
+	     (unless (validate-superclass class direct-superclass)
 	       (error "superclass not valid for class")))
     (setf (c-direct-superclasses class)
 	  defaulted-direct-superclasses)))
@@ -87,10 +88,11 @@
 (defun set-superclasses-no-default (class direct-superclasses)
   (unless (proper-list-p direct-superclasses)
     (error "direct superclasses must be proper list"))
-  (let ((defaulted-direct-superclasses 
-	  (mapcar #'find-class direct-superclasses)))
+  (let ((defaulted-direct-superclasses  direct-superclasses))
     (loop for direct-superclass in defaulted-direct-superclasses
-	  do (unless (validate-superclass class direct-superclass)
+	  do (unless (classp direct-superclass)
+	       (error "superclass must be a class metaobject"))
+	     (unless (validate-superclass class direct-superclass)
 	       (error "superclass not valid for class")))
     (setf (c-direct-superclasses class)
 	  defaulted-direct-superclasses)))
@@ -106,25 +108,37 @@
 				    class canonicalized-slot-specification)
 			     canonicalized-slot-specification))))
 
-(defun initialize-instance-after-standard-class-default
+(defun initialize-instance-after-common
     (class
-     &key direct-default-initargs direct-superclasses direct-slots
-     &allow-other-keys)
-  (set-superclasses class direct-superclasses 'standard-class)
+     direct-default-initargs
+     direct-superclasses
+     direct-slots
+     default-superclass)
+  (set-superclasses class direct-superclasses default-superclass)
   (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
   (create-readers-and-writers class))
 
+(defun initialize-instance-after-standard-class-default
+    (class
+     &key direct-default-initargs direct-superclasses direct-slots
+     &allow-other-keys)
+  (initialize-instance-after-common class
+				    direct-default-initargs
+				    direct-superclasses
+				    direct-slots
+				    *standard-object*))
+
 (defun initialize-instance-after-funcallable-standard-class-default
     (class
      &key direct-default-initargs direct-superclasses direct-slots
      &allow-other-keys)
-  (set-superclasses class direct-superclasses 'funcallable-standard-class)
-  (set-direct-default-initargs class direct-default-initargs)
-  (add-as-subclass-to-superclasses class)
-  (set-direct-slots class direct-slots)
-  (create-readers-and-writers class))
+  (initialize-instance-after-common class
+				    direct-default-initargs
+				    direct-superclasses
+				    direct-slots
+				    *funcallable-standard-object*))
 
 ;;; According to the AMOP, calling initialize-instance on a built-in
 ;;; class (i.e., on an instance of a subclass of the class
