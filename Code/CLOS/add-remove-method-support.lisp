@@ -79,7 +79,7 @@
   (loop for specializer in (method-specializers method)
 	do (remove-direct-method specializer method))
   ;; Disassociate GENERIC-FUNCTION from METHOD.
-  (setf (method-generic-function method) nil)
+  (setf (m-generic-function method) nil)
   ;; Call COMPUTE-DISCRIMINATING-FUNCTION and install its result
   ;; with SET-FUNCALLABLE-INSTANCE-FUNCTION. 
   (let ((df (compute-discriminating-function generic-function)))
