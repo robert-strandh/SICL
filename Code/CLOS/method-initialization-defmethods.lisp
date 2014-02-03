@@ -13,7 +13,8 @@
 					 lambda-list
 					 specializers
 					 function
-					 documentation)
+					 documentation
+				       &allow-other-keys)
   (declare (ignore qualifiers lambda-list specializers function documentation))
   (apply #'initialize-instance-after-method method keys))
 				       
