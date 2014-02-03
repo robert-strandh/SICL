@@ -150,7 +150,7 @@
 ;;; We do not add readers and writers here, because we do it in
 ;;; ENSURE-BUILT-IN-CLASS after we have finalized inheritance.  The
 ;;; reason for that is that we then know the slot location.
-(defun initialize-instance-after-built-in-default
+(defun initialize-instance-after-built-in-class-default
     (class
      &key direct-default-initargs direct-superclasses direct-slots
      &allow-other-keys)
