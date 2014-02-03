@@ -55,7 +55,7 @@
 
 (defun make-method-lambda-default
     (generic-function method lambda-expression environment)
-  (declare (ignore environment))
+  (declare (ignore generic-function method environment))
   (let ((args (gensym))
 	(next-methods (gensym)))
     (values `(lambda (,args ,next-methods)
