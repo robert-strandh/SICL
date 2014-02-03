@@ -10,4 +10,4 @@
     ,(canonicalize-direct-superclass-names superclass-names)
     :direct-slots
     ,(canonicalize-direct-slot-specs slot-specifiers)
-    ,@(canonicalize-defclass-options options)))))
+    ,@(canonicalize-defclass-options options)))
