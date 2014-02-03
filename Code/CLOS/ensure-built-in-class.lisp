@@ -6,8 +6,8 @@
 ;;; checking the validity of arguments.
 ;;;
 ;;; The argument DIRECT-SUPERCLASS-NAMES is a list of SYMBOLS.  Unlike
-;;; the function ENSURE-CLASS we do not allow for class class
-;;; metaobject superclasses.
+;;; the function ENSURE-CLASS we do not allow for class metaobject
+;;; superclasses.
 (defun ensure-built-in-class (name
 			      &rest arguments
 			      &key
