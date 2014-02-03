@@ -7,7 +7,8 @@
        (lambda-list nil lambda-list-p)
        (specializers nil specializers-p)
        (function nil function-p)
-       documentation)
+       documentation
+     &allow-other-keys)
   ;; Start by checking the QUALIFIERS.  The AMOP says it should be a
   ;; proper list, so check that first.
   (unless (proper-list-p qualifiers)
@@ -82,5 +83,4 @@
   (unless slot-definition-p
     (error "the slot-definition argument must be supplied"))
   (unless (typep slot-definition 'direct-slot-definition)
-    (error "the slot-definition argument must be a direct-slot-definition"))
-  (setf (slot-definition method) slot-definition))
+    (error "the slot-definition argument must be a direct-slot-definition")))
