@@ -80,6 +80,7 @@
      &key
        (slot-definition nil slot-definition-p)
      &allow-other-keys)
+  (declare (ignore method))
   (unless slot-definition-p
     (error "the slot-definition argument must be supplied"))
   (unless (typep slot-definition 'direct-slot-definition)
