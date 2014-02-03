@@ -8,6 +8,9 @@
        direct-superclasses
        direct-slots
        &allow-other-keys)
+  (declare (ignore direct-default-initargs
+		   direct-superclasses
+		   direct-slots))
   (apply #'initialize-instance-after-standard-class-default
 	 class initargs))
 
@@ -19,6 +22,9 @@
        direct-superclasses
        direct-slots
        &allow-other-keys)
+  (declare (ignore direct-default-initargs
+		   direct-superclasses
+		   direct-slots))
   (apply #'initialize-instance-after-funcallable-standard-class-default
 	 class initargs))
 
@@ -30,7 +36,10 @@
        direct-superclasses
        direct-slots
        &allow-other-keys)
-  (apply #'initialize-instance-after-built-in-default
+  (declare (ignore direct-default-initargs
+		   direct-superclasses
+		   direct-slots))
+  (apply #'initialize-instance-after-built-in-class-default
 	 class initargs))
 
 ;;; I don't know why this definition makes SBCL go into an infinite
