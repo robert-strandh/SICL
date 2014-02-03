@@ -77,7 +77,7 @@
     (setf (discriminating-function generic-function) fun)
     (setf (gf-name generic-function) name)
     (unless (null name)
-      (set-funcallable-instance-function fun generic-function))))
+      (set-funcallable-instance-function generic-function fun))))
 
 (defun reinitialize-instance-after-standard-generic-function-default
     (generic-function
