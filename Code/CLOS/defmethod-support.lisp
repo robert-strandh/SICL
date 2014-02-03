@@ -15,6 +15,15 @@
 	      (mapcar #'cadr required)
 	      args))))
 
+(defun canonicalize-specializer (specializer)
+  (cond ((symbolp specializer)
+	 `',specializer)
+	((and (consp specializer)
+	      (consp (cdr specializer))
+	      (null (cddr specializer)))
+	 `(make-instance 'eql-specializer :object ,(cadr specializer)))
+	(t
+	 (error "malformed specializer: ~s" specializer))))
+
 (defun canonicalize-specializers (specializers)
-  ;; FIXME: handle eql specializers.
-  `(mapcar #'find-class ',specializers))
+  `(list ,@(mapcar #'canonicalize-specializer specializers)))
