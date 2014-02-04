@@ -53,11 +53,13 @@
 	 (method-class (reader-method-class
 			class slot-definition
 			:lambda-list lambda-list
+			:qualifiers '()
 			:specializers specializers
 			:function method-function
 			:slot-definition slot-definition))
 	 (method (make-instance method-class
 		   :lambda-list lambda-list
+		   :qualifiers '()
 		   :specializers specializers
 		   :function method-function
 		   :slot-definition slot-definition)))
@@ -95,11 +97,13 @@
 	 (method-class (writer-method-class
 			class slot-definition
 			:lambda-list lambda-list
+			:qualifiers '()
 			:specializers specializers
 			:function method-function
 			:slot-definition slot-definition))
 	 (method (make-instance method-class
 				:lambda-list lambda-list
+				:qualifiers '()
 				:specializers specializers
 				:function method-function
 				:slot-definition slot-definition)))
