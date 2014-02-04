@@ -496,7 +496,8 @@
   ((%location 
     :initform nil
     :initarg :location 
-    :accessor slot-definition-location)))
+    :reader slot-definition-location
+    :writer (setf s-location))))
 
 (defclass standard-slot-definition (slot-definition)
   ())
