@@ -1,4 +1,4 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -15,7 +15,7 @@
         for super in (class-direct-superclasses class)
         collect (cons prev super)))
 
-(defmethod compute-class-precedence-list ((class class))
+(defun compute-class-precedence-list-default (class)
   ;; Make sure all the direct superclasses are already finalized so
   ;; that we can use their precedence lists.
   (loop for super in (class-direct-superclasses class)
@@ -76,7 +76,7 @@
 ;;; standard-class and funcallable-standard-class.  By passing
 ;;; slot-definition-class as an argument rather than looking it up in
 ;;; this function, we can use this function for built-in classes as well. 
-(defun compute-effective-slot-definition-aux
+(defun compute-effective-slot-definition-default
     (name direct-slot-definitions slot-definition-class)
   (let (allocation initargs initform initfunction type location)
     (setf allocation
@@ -116,23 +116,7 @@
 	  :initfunction initfunction
 	  :type type))))
 
-(defmethod compute-effective-slot-definition ((class standard-class)
-					      name
-					      direct-slot-definitions)
-  (compute-effective-slot-definition-aux
-   name
-   direct-slot-definitions
-   (effective-slot-definition-class class)))
-
-(defmethod compute-effective-slot-definition ((class funcallable-standard-class)
-					      name
-					      direct-slot-definitions)
-  (compute-effective-slot-definition-aux
-   name
-   direct-slot-definitions
-   (effective-slot-definition-class class)))
-
-(defun compute-slots-aux (class)
+(defun compute-slots-default (class)
   (let* ((superclasses (class-precedence-list class))
 	 (direct-slots (mapcar #'class-direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
@@ -148,13 +132,7 @@
 			   :key #'slot-definition-name
 			   :test-not #'eql)))))
 
-(defmethod compute-slots ((class standard-class))
-  (compute-slots-aux class))
-
-(defmethod compute-slots ((class funcallable-standard-class))
-  (compute-slots-aux class))
-
-(defun compute-slots-around-aux (slots)
+(defun compute-slots-around-default (slots)
   (let ((next-location 0))
     (loop for slot in slots
 	  do (when (eq (slot-definition-allocation slot) :instance)
@@ -163,19 +141,11 @@
 	       (incf next-location)))
     slots))
 
-(defmethod compute-slots :around ((class standard-class))
-  (let ((slots (call-next-method)))
-    (compute-slots-around-aux slots)))
-
-(defmethod compute-slots :around ((class funcallable-standard-class))
-  (let ((slots (call-next-method)))
-    (compute-slots-around-aux slots)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; COMPUTE-DEFAULT-INITARGS.
 
-(defun compute-default-initargs-aux (class)
+(defun compute-default-initargs-default (class)
   (remove-duplicates
    (reduce #'append
 	   ;; We use the reader DIRECT-DEFAULT-INITARGS rather than
@@ -187,17 +157,11 @@
    :key #'car
    :from-end t))
 
-(defmethod compute-default-initargs ((class standard-class))
-  (compute-default-initargs-aux class))
-
-(defmethod compute-default-initargs ((class funcallable-standard-class))
-  (compute-default-initargs-aux class))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; FINALIZE-INHERITANCE.
 
-(defun finalize-inheritance-aux (class)
+(defun finalize-inheritance-default (class)
   (setf (c-precedence-list class) (compute-class-precedence-list class))
   (setf (c-slots class) (compute-slots class))
   (setf (c-default-initargs class) (compute-default-initargs class))
@@ -208,9 +172,3 @@
   (setf (c-finalized-p class) t)
   (setf (c-prototype class)
 	(allocate-instance class)))
-
-(defmethod finalize-inheritance ((class standard-class))
-  (finalize-inheritance-aux class))
-
-(defmethod finalize-inheritance ((class funcallable-standard-class))
-  (finalize-inheritance-aux class))
