@@ -371,7 +371,7 @@
     :writer (setf c-finalized-p))
    (%precedence-list 
     :initform '() 
-    :accessor class-precedence-list
+    :reader class-precedence-list
     :writer (setf c-precedence-list))
    (%default-initargs 
     :reader class-default-initargs
@@ -423,7 +423,7 @@
     :writer (setf c-finalized-p))
    (%precedence-list 
     :initform '() 
-    :accessor class-precedence-list
+    :reader class-precedence-list
     :writer (setf c-precedence-list))
    (%default-initargs 
     :reader class-default-initargs
@@ -471,7 +471,7 @@
    (%initfunction 
     :initform nil
     :initarg :initfunction
-    :accessor slot-definition-initfunction)))
+    :reader slot-definition-initfunction)))
 
 ;;; The READERS and WRITERS slots only exist in direct slot
 ;;; definitions, because they are not combined the way other slot
