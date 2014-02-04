@@ -293,12 +293,12 @@
 ;;; This function is called by ADD-DIRECT-METHOD and
 ;;; REMOVE-DIRECT-METHOD so change the list of generic functions
 ;;; having SPECIALIZER as a specializer.
-(defgeneric s-direct-generic-functions (new-generic-functions specializer))
+(defgeneric (setf s-direct-generic-functions) (new-generic-functions specializer))
 
 ;;; This function is called by ADD-DIRECT-METHOD and
 ;;; REMOVE-DIRECT-METHOD so change the list of methods having
 ;;; SPECIALIZER as a specializer.
-(defgeneric s-direct-methods (new-methods specializer))
+(defgeneric (setf s-direct-methods) (new-methods specializer))
 
 ;;; This function returns the unique number of the class, assigned
 ;;; when the class was first created.
@@ -311,11 +311,22 @@
 ;;; REINITIALIZE-INSTANCE.
 (defgeneric (setf c-name) (new-name class))
 
+;;; This function sets the direct superclasses of the class.
+(defgeneric (setf c-direct-superclasses) (direct-superclasses class))
+
 ;;; This function sets the direct subclasses of the class.
 (defgeneric (setf c-direct-subclasses) (direct-subclasses class))
 
+;;; This function sets the direct slots of the class.
+(defgeneric (setf c-direct-slots) (direct-slots class))
+
 ;;; This function sets the direct methods of the class.
 (defgeneric (setf c-direct-methods) (direct-methods class))
+
+;;; This function sets the direct default initargs of the class.
+(defgeneric (setf c-direct-default-initargs) (new-value class))
+
+(defgeneric default-initargs (class))
 
 ;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function
 ;;; returns the same value as CLASS-DIRECT-DEFAULT-INITARGS.  However,
