@@ -68,8 +68,7 @@
 			(funcall (car ,next-methods)
 				 (or args ,args)
 				 (cdr ,next-methods))))
-		 (declare (ignorable (function next-method-p)
-				     (function call-next-method)))
+		 (declare (ignorable #'next-method-p #'call-next-method))
 		 (apply ,lambda-expression
 			,args)))
 	    '())))
