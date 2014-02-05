@@ -280,16 +280,19 @@
 ;;; The AMOP says that CLASS-DIRECT-SLOTS should return the empty list
 ;;; for a built-in class.
 (defmethod class-direct-slots ((class built-in-class))
+  (declare (ignore class))
   '())
 
 ;;; The AMOP says that CLASS-SLOTS should return the empty list for a
 ;;; built-in class.
 (defmethod class-slots ((class built-in-class))
+  (declare (ignore class))
   '())
 
 ;;; The AMOP says that CLASS-DEFAULT-INITARGS should return the empty
 ;;; list for a built-in class.
 (defmethod class-default-initargs ((class built-in-class))
+  (declare (ignore class))
   '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -323,12 +326,15 @@
     :reader class-finalized-p)))
 
 (defmethod class-default-initargs ((class forward-referenced-class))
+  (declare (ignore class))
   (error "A forward referenced class does not have any default initargs"))
 
 (defmethod class-precedence-list ((class forward-referenced-class))
+  (declare (ignore class))
   (error "A forward referenced class does not have a precedence list"))
 
 (defmethod class-slots ((class forward-referenced-class))
+  (declare (ignore class))
   (error "A forward referenced class does not have any slots"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
