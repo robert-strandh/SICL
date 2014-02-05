@@ -136,7 +136,7 @@
   (let ((next-location 0))
     (loop for slot in slots
 	  do (when (eq (slot-definition-allocation slot) :instance)
-	       (setf (slot-definition-location slot)
+	       (setf (s-location slot)
 		     next-location)
 	       (incf next-location)))
     slots))
@@ -170,5 +170,7 @@
   ;; finalized and if not, calls FINALIZE-INSTANCE, and we would have
   ;; an infinite recursion.
   (setf (c-finalized-p class) t)
-  (setf (c-prototype class)
-	(allocate-instance class)))
+  ;; FIXME: allocate a prototype here, maybe?
+  ;;(setf (c-prototype class)
+  ;;      (allocate-instance class)))
+  )
