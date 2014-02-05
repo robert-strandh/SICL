@@ -13,7 +13,7 @@
 	 (names (mapcar #'slot-definition-name reverse-concatenated))
 	 (unique (remove-duplicates names :from-end t))
 	 (slots (loop for name in unique
-		      collect (compute-effective-slot-definition-aux
+		      collect (compute-effective-slot-definition-default
 			       name
 			       (remove name concatenated
 				       :key #'slot-definition-name
@@ -22,7 +22,7 @@
 	 (next-location 0))
     (loop for slot in slots
 	  do (when (eq (slot-definition-allocation slot) :instance)
-	       (setf (slot-definition-location slot)
+	       (setf (s-location slot)
 		     next-location)
 	       (incf next-location)))
     slots))
@@ -34,5 +34,5 @@
 (defun finalize-built-in-inheritance (class)
   (setf (c-precedence-list class) (compute-class-precedence-list class))
   (setf (c-slots class) (compute-built-in-slots class))
-  (setf (c-default-initargs class) (compute-default-initargs-aux class))
+  (setf (c-default-initargs class) (compute-default-initargs-default class))
   (setf (c-finalized-p class) t))
