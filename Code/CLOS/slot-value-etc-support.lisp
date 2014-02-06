@@ -55,28 +55,18 @@
 	      new-value))))
 
 (defun slot-value (object slot-name)
-  (let ((class (class-of object)))
-    ;; FIXME: check that the object is up to date.  
-    ;; 
-    ;; The first element of the contents vector is the list of
-    ;; effective slots of the class of the object.
-    (let* ((slots (slot-contents (heap-instance-slots object) 0))
-	   (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))
-      (if (null slot)
-	  (slot-missing class object slot-name 'slot-value)
-	  (slot-value-using-class class object slot)))))
+  (let ((slot (find-slot object slot-name))
+	(class (class-of object)))
+    (if (null slot)
+	(slot-missing class object slot-name 'slot-value)
+	(slot-value-using-class class object slot))))
 
 (defun (setf slot-value) (new-value object slot-name)
-  (let ((class (class-of object)))
-    ;; FIXME: check that the object is up to date.  
-    ;; 
-    ;; The first element of the contents vector is the list of
-    ;; effective slots of the class of the object.
-    (let* ((slots (slot-contents (heap-instance-slots object) 0))
-	   (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))
-      (if (null slot)
-	  (slot-missing class object slot-name 'slot-value)
-	  (setf (slot-value-using-class class object slot) new-value)))))
+  (let ((slot (find-slot object slot-name))
+	(class (class-of object)))
+    (if (null slot)
+	(slot-missing class object slot-name 'slot-value)
+	(setf (slot-value-using-class class object slot) new-value))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -90,10 +80,8 @@
 	     *unbound-value*))))
 
 (defun slot-boundp (object slot-name)
-  ;; FIXME: We must check that the object is a standard instance.
   (let ((slot (find-slot object slot-name))
 	(class (class-of object)))
-    ;; FIXME: check that the object is up to date.  
     (slot-boundp-using-class class object slot)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -109,8 +97,8 @@
   nil)
 
 (defun slot-makunbound (object slot-name)
-  (let* ((slot (find-slot object slot-name))
-	 (class (class-of object)))
+  (let ((slot (find-slot object slot-name))
+	(class (class-of object)))
     (if (null slot)
 	(slot-missing class object slot-name 'slot-makunbound)
 	(slot-makunbound-using-class class object slot))))
