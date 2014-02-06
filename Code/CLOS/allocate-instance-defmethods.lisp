@@ -1,9 +1,7 @@
 (cl:in-package #:sicl-clos)
 
 (defmethod allocate-instance ((class standard-class) &rest initargs)
-  (declare (ignore initargs))
-  (allocate-instance-default class))
+  (apply #'allocate-instance-default class initargs))
 
 (defmethod allocate-instance ((class funcallable-standard-class) &rest initargs)
-  (declare (ignore initargs))
-  (allocate-instance-default class))
+  (apply #'allocate-instance-default class initargs))
