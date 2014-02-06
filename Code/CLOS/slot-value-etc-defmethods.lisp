@@ -1,4 +1,4 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -6,9 +6,7 @@
 
 (defmethod slot-missing
     (class object slot-name operation &optional new-value)
-  (slot-missing-default class object operation new-value)
-  (error "the slot named ~s is missing from the object ~s"
-	 slot-name object))
+  (slot-missing-default class object operation new-value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
