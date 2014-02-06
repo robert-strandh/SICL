@@ -10,4 +10,6 @@
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
    (:file "fmakunbound-make-instance")
+   (:file "standard-instance-access")
+   (:file "initialize-support")
    ))
