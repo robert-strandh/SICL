@@ -17,13 +17,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; SLOT-EXISTS-P.
-
-(defun slot-exists-p (object slot-name)
-  (not (null (find-slot object slot-name))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; SLOT-UNBOUND.
 
 (defun slot-unbound-default (class object slot-name)
@@ -54,23 +47,9 @@
   	(setf (slot-contents (heap-instance-slots object) location)
 	      new-value))))
 
-(defun slot-value (object slot-name)
-  (let ((slot (find-slot object slot-name))
-	(class (class-of object)))
-    (if (null slot)
-	(slot-missing class object slot-name 'slot-value)
-	(slot-value-using-class class object slot))))
-
-(defun (setf slot-value) (new-value object slot-name)
-  (let ((slot (find-slot object slot-name))
-	(class (class-of object)))
-    (if (null slot)
-	(slot-missing class object slot-name 'slot-value)
-	(setf (slot-value-using-class class object slot) new-value))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; SLOT-BOUNDP SLOT-BOUNDP-USING-CLASS
+;;; SLOT-BOUNDP-USING-CLASS
 
 (defun slot-boundp-using-class-default (object slot)
   (let ((location (slot-definition-location slot)))
@@ -78,11 +57,6 @@
 		 (car location)
 		 (slot-contents (heap-instance-slots object) location))
 	     *unbound-value*))))
-
-(defun slot-boundp (object slot-name)
-  (let ((slot (find-slot object slot-name))
-	(class (class-of object)))
-    (slot-boundp-using-class class object slot)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -95,10 +69,3 @@
   	(setf (slot-contents (heap-instance-slots object) location)
 	      *unbound-value*)))
   nil)
-
-(defun slot-makunbound (object slot-name)
-  (let ((slot (find-slot object slot-name))
-	(class (class-of object)))
-    (if (null slot)
-	(slot-missing class object slot-name 'slot-makunbound)
-	(slot-makunbound-using-class class object slot))))
