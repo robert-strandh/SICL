@@ -8,4 +8,5 @@
   :components
   ((:file "heap-instance")
    (:file "allocate-instance-support")
+   (:file "allocate-instance-defuns")
    ))
