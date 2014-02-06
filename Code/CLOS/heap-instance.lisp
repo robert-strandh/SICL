@@ -13,7 +13,7 @@
 (defun allocate-heap-instance (class slot-storage)
   (make-heap-instance :class class :slots slot-storage))
 
-(defun allocate-slot-storage (size initial-value)
+(defun allocate-slot-storage (size &optional (initial-value *unbound-value*))
   (make-array size :initial-element initial-value))
 
 (defun slot-contents (slot-storage location)
