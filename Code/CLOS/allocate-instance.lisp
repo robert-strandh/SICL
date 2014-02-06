@@ -1,22 +1,12 @@
-(in-package #:sicl-clos)
-
-(defun allocate-instance-aux (class)
-  (unless (class-finalized-p class)
-    (finalize-inheritance class))
-  (let ((number-of-slots (count :instance 
-				(class-slots class)
-				:test #'eq :key #'slot-definition-allocation)))
-    (allocate-heap-instance
-     class
-     (make-array number-of-slots :initial-element *secret-unbound-value*))))
+(cl:in-package #:sicl-clos)
 
 (defmethod allocate-instance ((class standard-class) &rest initargs)
   (declare (ignore initargs))
-  (allocate-instance-aux class))
+  (allocate-instance-default class))
 
 (defmethod allocate-instance ((class funcallable-standard-class) &rest initargs)
   (declare (ignore initargs))
-  (allocate-instance-aux class))
+  (allocate-instance-default class))
 
 (defun standard-instance-access (instance location)
   (slot-contents (heap-instance-slots instance) location))
