@@ -3,7 +3,7 @@
 (defun find-slot (object slot-name)
   (let* ((class (class-of object))
 	 (slots (class-slots class)))
-    (find slot-name slots :test #'eq :key #'slot-name)))
+    (find slot-name slots :test #'eq :key #'slot-definition-name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -40,7 +40,8 @@
 	(slot-unbound class object (slot-definition-name slot))
 	value)))
 
-(defun (setf slot-value-using-class-default) (new-value object slot)
+(defun (setf slot-value-using-class-default) (new-value class object slot)
+  (declare (ignore class))
   (let ((location (slot-definition-location slot)))
     (if (consp location)
 	(setf (car location) new-value)
@@ -51,7 +52,8 @@
 ;;;
 ;;; SLOT-BOUNDP-USING-CLASS
 
-(defun slot-boundp-using-class-default (object slot)
+(defun slot-boundp-using-class-default (class object slot)
+  (declare (ignore class))
   (let ((location (slot-definition-location slot)))
     (not (eq (if (consp location)
 		 (car location)
@@ -62,7 +64,8 @@
 ;;;
 ;;; SLOT-MAKUNBOUND, SLOT-MAKUNBOUND-USING-CLASS.
 
-(defun slot-makunbound-using-class-default (object slot)
+(defun slot-makunbound-using-class-default (class object slot)
+  (declare (ignore class))
   (let ((location (slot-definition-location slot)))
     (if (consp location)
 	(setf (car location) *unbound-value*)
