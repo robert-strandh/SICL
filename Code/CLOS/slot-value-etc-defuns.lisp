@@ -6,7 +6,7 @@
 
 (defun slot-missing
     (class object slot-name operation &optional new-value)
-  (slot-missing-default class object operation new-value))
+  (slot-missing-default class object slot-name operation new-value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -24,18 +24,18 @@
   (slot-value-using-class-default class object slot))
 
 (defun (setf slot-value-using-class) (new-value class object slot)
-  (setf (slot-value-using-class-default object slot) new-value))
+  (setf (slot-value-using-class-default class object slot) new-value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SLOT-BOUNDP SLOT-BOUNDP-USING-CLASS
 
 (defun slot-boundp-using-class (class object slot)
-  (slot-boundp-using-class-default object slot))
+  (slot-boundp-using-class-default class object slot))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; SLOT-MAKUNBOUND, SLOT-MAKUNBOUND-USING-CLASS.
 
 (defun slot-makunbound-using-class (class object slot)
-  (slot-makunbound-using-class-default object slot))
+  (slot-makunbound-using-class-default class object slot))

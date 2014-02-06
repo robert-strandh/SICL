@@ -6,7 +6,7 @@
 
 (defmethod slot-missing
     (class object slot-name operation &optional new-value)
-  (slot-missing-default class object operation new-value))
+  (slot-missing-default class object slot-name operation new-value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -41,21 +41,21 @@
    (class standard-class)
    object
    (slot standard-effective-slot-definition))
-  (setf (slot-value-using-class-default object slot) new-value))
+  (setf (slot-value-using-class-default class object slot) new-value))
 
 (defmethod (setf slot-value-using-class)
   (new-value
    (class funcallable-standard-class)
    object
    (slot standard-effective-slot-definition))
-  (setf (slot-value-using-class-default object slot) new-value))
+  (setf (slot-value-using-class-default class object slot) new-value))
 
 (defmethod (setf slot-value-using-class)
   (new-value
    (class built-in-class)
    object
    slot)
-  (declare (ignore object))
+  (declare (ignore object slot))
   (error "no slots in an instance of a builtin class"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -65,17 +65,17 @@
 (defmethod slot-boundp-using-class ((class standard-class)
 				    object
 				    (slot standard-effective-slot-definition))
-  (slot-boundp-using-class-default object slot))
+  (slot-boundp-using-class-default class object slot))
 
 (defmethod slot-boundp-using-class ((class funcallable-standard-class)
 				    object
 				    (slot standard-effective-slot-definition))
-  (slot-boundp-using-class-default object slot))
+  (slot-boundp-using-class-default class object slot))
 
 (defmethod slot-boundp-using-class ((class built-in-class)
 				    object
 				    slot)
-  (declare (ignore object))
+  (declare (ignore object slot))
   (error "no slots in an instance of a builtin class"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -86,13 +86,13 @@
   ((class standard-class)
    object
    (slot standard-effective-slot-definition))
-  (slot-makunbound-using-class-default object slot))
+  (slot-makunbound-using-class-default class object slot))
 
 (defmethod slot-makunbound-using-class
   ((class funcallable-standard-class)
    object
    (slot standard-effective-slot-definition))
-  (slot-makunbound-using-class-default object slot))
+  (slot-makunbound-using-class-default clas object slot))
 
 (defmethod slot-makunbound-using-class
   ((class built-in-class)
