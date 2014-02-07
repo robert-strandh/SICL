@@ -7,4 +7,4 @@
        (setf (fdefinition 'temporary-name) fun)
        (cl:defmethod temporary-name ,parameters
 	 (funcall (discriminating-function fun) ,@parameters))
-       (push (cons ',name fun) *generic-functions*))))
+       (push (cons ',name fun) *bridge-generic-functions*))))

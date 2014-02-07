@@ -1,3 +1,3 @@
 (cl:in-package #:sicl-clos)
 
-(defparameter *generic-functions* '())
+(defparameter *bridge-generic-functions* '())
