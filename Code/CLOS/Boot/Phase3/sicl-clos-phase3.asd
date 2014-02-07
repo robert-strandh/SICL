@@ -22,4 +22,5 @@
    (:file "generic-function-database")
    (:file "defgeneric-defmacro")
    (:file "accessor-defgenerics")
+   (:file "class-database")
    ))
