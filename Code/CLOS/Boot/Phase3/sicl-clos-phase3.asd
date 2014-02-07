@@ -21,4 +21,5 @@
    (:file "initialize-support")
    (:file "generic-function-database")
    (:file "defgeneric-defmacro")
+   (:file "accessor-defgenerics")
    ))
