@@ -14,7 +14,7 @@
 	       (compute-effective-method generic-function
 					 method-combination
 					 applicable-methods)))
-	(funcall effective-method arguments)))))
+	(apply effective-method arguments)))))
 
 (defun compute-discriminating-function-default (generic-function)
   (make-default-discriminating-function generic-function))
