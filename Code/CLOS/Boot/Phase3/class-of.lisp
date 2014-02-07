@@ -4,4 +4,6 @@
   (fmakunbound 'class-of))
 
 (defun class-of (object)
-  (heap-instance-class object))
+  (if (heap-instance-p object)
+      (heap-instance-class object)
+      (cdr (assoc t *classes*))))
