@@ -19,4 +19,5 @@
    (:file "fmakunbound-slot-value")
    (:file "slot-value-etc-specified-defuns")
    (:file "initialize-support")
+   (:file "generic-function-database")
    ))
