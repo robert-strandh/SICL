@@ -7,7 +7,9 @@
   (compute-default-initargs-default class))
 
 (defun compute-slots (class)
-  (compute-slots-default class))
+  (let ((slots (compute-slots-default class)))
+    (compute-slots-around-default slots)
+    slots))
 
 (defun compute-effective-slot-definition (class name direct-slot-definitions)
   (compute-effective-slot-definition-default
