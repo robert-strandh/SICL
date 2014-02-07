@@ -7,6 +7,7 @@
   :serial t
   :components
   ((:file "finalize-classes")
+   (:file "install-generic-functions")
    (:file "heap-instance")
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
