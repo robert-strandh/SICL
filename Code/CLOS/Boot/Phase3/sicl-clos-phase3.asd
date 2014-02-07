@@ -9,6 +9,7 @@
   ((:file "finalize-classes")
    (:file "install-generic-functions")
    (:file "heap-instance")
+   (:file "class-of")
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
    (:file "fmakunbound-make-instance")
