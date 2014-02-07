@@ -6,7 +6,8 @@
   ;; dependencies, and to make the order completely predictable.
   :serial t
   :components
-  ((:file "heap-instance")
+  ((:file "finalize-classes")
+   (:file "heap-instance")
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
    (:file "fmakunbound-make-instance")
