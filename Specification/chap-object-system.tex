@@ -329,17 +329,91 @@ If the call history has relatively few entries, then the
 discriminating function accesses the \emph{unique number} of each of
 the classes of the required arguments.  It then uses numeric
 comparisons in a tree-shaped computation to determine which (if any)
-effective method to invoke.  The class numbers become constants inside
-the compiled code of the discriminating function, making comparison
-fast.  Each argument class is tested in the order determined by the
-\emph{argument precedence order} of the generic function.  For each
-argument, the set of possible effective methods is filtered by a
-binary search, eliminating around half of the possibilities in each
-comparison.
+effective method to invoke.  In effect, the discriminating function
+becomes a very simple \emph{automaton} where each transition is
+determined by a comparison between two small integers.  The class
+numbers become constants inside the compiled code of the
+discriminating function, making comparison fast.  Each argument class
+is tested in the order determined by the \emph{argument precedence
+  order} of the generic function.  For each argument, the set of
+possible effective methods is filtered by a binary search, eliminating
+around half of the possibilities in each comparison.
+
+The automaton of the discriminating function can not contain class
+numbers that were discarded as a result of classes being
+reinitialized, simply because whenever a class is reinitialized, the
+call history of every generic function specializing on that class is
+updated and the discriminating function is recomputed.  
+
+When a generic function is invoked on some arguments, the first step
+is to compute the \emph{object class unique number}%
+\footnote{We clearly need to find a better (i.e., shorter) name for
+  this concept.} of each required argument.  The object class unique
+number is computed as follows:
+
+\begin{itemize}
+\item If the object is a \emph{heap instance}, then it is the first
+  element of the contents vector, i.e. the unique number of the class
+  of the instance as it was when the instance was created.
+\item Otherwise, it is the \emph{unique number} of the class of the
+  object.
+\end{itemize}
+
+The object class unique numbers are then used by the automaton to find
+an effective method to invoke.  If the automaton fails to find an
+effective method, the following steps are taken:
+
+\begin{enumerate}
+\item The object class unique number is checked against the unique
+  number of the class of the object.  If they are not the same, then
+  the object is a heap instance, and it is \emph{obsolete}.  The
+  machinery for updating the instance is invoked, and then a second
+  attempt with the automaton is made. 
+\item If the object class unique number and the unique number of the
+  class of the object are the same, then
+  \texttt{compute-applicable-methods-using-classes} is called.  If the
+  first return value is not the empty list and the second return value
+  is \textit{true}, then an effective method is computed and a new
+  entry is added to the call history and the automaton is recomputed.
+  Finally the effective method is invoked.
+\item If the first value is the empty list and the second value is
+  still \textit{true}, then \texttt{no-applicable-method} is called.
+\item If the second return value is \textit{false}, then 
+ \texttt{compute-applicable-methods} is called.  If the result is the
+ empty list, then \texttt{no-applicable-method} is called.  Otherwise
+ an effective method is computed and invoked. 
+\end{enumerate}
+
+Notice that in most cases, no explicit test is required to determine
+whether an instance is obsolete.  Also notice that for up-to-date heap
+instances, there is no need to access the class of the instance in
+order to determine an effective method to call.  For objects other
+than heap instances, there is a small fixed number of possible
+classes, so the object class unique number can be open coded. 
+
+Notice also that many interesting optimizations are possible here when
+the automaton is computed from the call history.
+
+\begin{itemize}
+\item If there is a single entry in the call history, the automaton
+  can be turned into a sequence of equality tests (one for each
+  required argument).  In particular, for an \emph{accessor method},
+  the automaton degenerates into a single test and a call to either
+  a method that directly accesses the slot or to
+  \texttt{no-applicable-method}. 
+\item In the case of a single entry in the call history, and a single
+  applicable accessor method for that entry, the slot access can be
+  open coded in the automaton. 
+\item In the case above and when in addition the specializer of the
+  accessor method is a class for a non-heap instance (such as
+  \texttt{fixnum}, \texttt{character}, or \texttt{cons}), the test for
+  the object class unique number is not required.  Instead, the
+  discriminating function can be a simple test for tag bits.
+\end{itemize}
 
 If the call history has a large number of entries, a different method
 may be used.  The generic function \texttt{print-object} may be such a
-function.  A simple hashing scheme might be better in that case.  
+function.  A simple hashing scheme might be better in that case.
 
 \subsection{Accessor methods}
 \label{sec-generic-function-dispatch-accessor-methods}
