@@ -37,6 +37,29 @@ classes.  More about built-in classes in
   not yet been created by \texttt{defclass}.
 \end{itemize}
 
+In addition, the \hs{} requires the existence of a class metaclass
+named \texttt{structure-class}.  Whether conditions have their own
+metaclass is not specified. 
+
+In \sysname{}, every class (i.e., ever instance of a class metaclass)
+contains a \emph{unique number} which is an integer assigned
+sequentially from $0$ as a class is initialized or reinitialized.
+When a class is reinitialized, its old unique number is never reused,
+leaving \emph{holes} in the sequence corresponding to numbers that no
+longer correspond to any classes.%
+\footnote{It might be possible for the garbage collector to change the
+  unique numbers of the classed, compacting the sequence, but that
+  probably will not be necessary.}
+
+Every \emph{heap instance}%
+\footnote{Recall that a \emph{heap instance} is an instance allocated
+  on the heap, excluding \texttt{cons} cells.}
+contains the unique number of its class as it was when the instance
+was created.  This number is always the first element of the contents
+vector of the heap instance.  Even though built-in classes can not be
+redefined, heap instances of built-in classes contain this unique
+number. 
+
 \subsection{Standard classes}
 \label{object-system-standard-classes}
 
@@ -72,21 +95,24 @@ so as to avoid memory leaks.
 Instead of keeping weak references from classes to instances,
 implementations solve the problem of updating obsolete instance by
 keeping some kind of \emph{version information} in each instance.
-When an access to some slot of the instance is attempted, the version
+When some operation on the instance is attempted, the version
 information is checked against the current version of the class.  If
 the instance is obsolete, it is first updated according to the new
 definition of the class.  Furthermore, the version information must
 contain enough information of the class as it was when the instance
-was created to determine whether slots have been added or removed. 
+was created to determine whether slots have been added or removed.
 
-In \sysname{} the contents vector of each instance of
+In \sysname{} the first location of the contents vector of each heap
+instance contains the \emph{unique number} of the class as it was when
+the instance was created.  In addition, each instance of
 \texttt{standard-object} contains a reference to the \emph{list of
   effective slots} of the class as it was when the instance was
 created.  This method makes the contents vector of the instance
 completely self contained.  It allows the garbage collector to trace
 the obsolete instance, or update it before tracing.  It allows for an
-inspector to inspect the obsolete instance if this should be
-required.  
+inspector to inspect the obsolete instance if this should be required.
+The main purpose of the list of effective slots, however, is making it
+possible to update an obsolete instance.
 
 Another very handy feature of standard classes, but a much simpler
 one, is that it allows for instances to \emph{change class}.  In other
@@ -303,13 +329,13 @@ If the call history has relatively few entries, then the
 discriminating function accesses the \emph{unique number} of each of
 the classes of the required arguments.  It then uses numeric
 comparisons in a tree-shaped computation to determine which (if any)
-effective method to invoke.  Since the unique number of a class never
-changes, the class numbers become constants inside the compiled code
-of the discriminating function, making comparison fast.  Each argument
-class is tested in the order determined by the \emph{argument
-  precedence order} of the generic function.  For each argument, the
-set of possible effective methods is filtered by a binary search,
-eliminating around half of the possibilities in each comparison.
+effective method to invoke.  The class numbers become constants inside
+the compiled code of the discriminating function, making comparison
+fast.  Each argument class is tested in the order determined by the
+\emph{argument precedence order} of the generic function.  For each
+argument, the set of possible effective methods is filtered by a
+binary search, eliminating around half of the possibilities in each
+comparison.
 
 If the call history has a large number of entries, a different method
 may be used.  The generic function \texttt{print-object} may be such a
@@ -321,11 +347,12 @@ function.  A simple hashing scheme might be better in that case.
 Accessor methods are treated specially when an effective method is
 computed from a list of applicable methods.  Rather than applying the
 default scheme of generating a call to the method function, when
-\texttt{compute-applicable-methods-using-classes} sees an accessor
-method, it determines the \emph{slot location} of the slot in
-instances of the class of the argument.  In the list of classes that
-it returns, it then replaces the method by a method that makes direct
-access to the slot in the instance, given the location.  
+\texttt{compute-applicable-methods-using-classes} sees an applicable
+accessor method, it determines the \emph{slot location} of the slot in
+instances of the class of the argument.  In the list of methods that
+it returns, it then replaces the original applicable accessor method
+by a method that makes direct access to the slot in the instance,
+given the location.
 
 Since the location of a slot may change when the class is
 reinitialized, an effective method computed this way may become
