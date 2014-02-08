@@ -7,7 +7,6 @@
   :serial t
   :components
   ((:file "finalize-classes")
-   (:file "install-generic-functions")
    (:file "heap-instance")
    (:file "class-of")
    (:file "allocate-instance-support")
@@ -19,6 +18,7 @@
    (:file "fmakunbound-slot-value")
    (:file "slot-value-etc-specified-defuns")
    (:file "initialize-support")
+   (:file "install-generic-functions")
    (:file "generic-function-database")
    (:file "defgeneric-defmacro")
    (:file "accessor-defgenerics")
