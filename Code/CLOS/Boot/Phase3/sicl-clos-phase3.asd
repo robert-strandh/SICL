@@ -19,6 +19,7 @@
    (:file "slot-value-etc-specified-defuns")
    (:file "initialize-support")
    (:file "initialize-defgenerics")
+   (:file "fmakunbound-initialize-instance")
    (:file "install-generic-functions")
    (:file "generic-function-database")
    (:file "defgeneric-defmacro")
