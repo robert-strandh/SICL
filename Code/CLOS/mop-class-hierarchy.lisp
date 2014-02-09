@@ -52,7 +52,10 @@
 
 (define-built-in-class t () ())
 
-(define-built-in-class function (t) ())
+(define-built-in-class function (t)
+  ((%entry-point :initarg :entry-point)
+   (%linkage-vector :initarg :linkage-vector)
+   (%environment :initform nil :initarg :environment)))
 
 (defclass standard-object (t) ())
 
@@ -290,6 +293,7 @@
     ;; list for a forward referenced class.
     :allocation :class
     :initform '()
+    :reader direct-slots
     :reader class-direct-slots)
    (%direct-superclasses
     ;; The AMOP says that CLASS-DIRECT-SUPERCLASSES should return the
@@ -339,6 +343,7 @@
     :reader direct-default-initargs 
     :writer (setf c-direct-default-initargs))
    (%direct-slots 
+    :reader direct-slots
     :reader class-direct-slots
     :writer (setf c-direct-slots))
    (%direct-superclasses 
@@ -392,6 +397,7 @@
     :reader direct-default-initargs)
    (%direct-slots 
     :initarg :direct-slots
+    :reader direct-slots
     :reader class-direct-slots
     :writer (setf c-direct-slots))
    (%direct-superclasses 
