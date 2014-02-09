@@ -54,16 +54,7 @@
 
 (define-built-in-class function (t) ())
 
-(defclass standard-object (t)
-  (;; We keep a copy of the effective slots of the class that were
-   ;; used to create an instance.  They are used when the instance
-   ;; needs to be updated because the class has changed, and it may
-   ;; also be used by the garbage collector for type information of
-   ;; the existing slots, etc.
-   (%instance-slots
-    :initarg :instance-slots
-    :initform nil
-    :accessor standard-instance-slots)))
+(defclass standard-object (t) ())
 
 (defclass funcallable-standard-object (standard-object function)
   ())

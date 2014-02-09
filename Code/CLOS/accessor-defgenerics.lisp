@@ -181,16 +181,6 @@
 ;;; function.
 (defgeneric (setf c-direct-subclasses) (new-value class))
 
-;;; Given a standard object, return a list of the effective slots that
-;;; the class of the object had when the object was initialized or
-;;; reinitialized.
-(defgeneric standard-instance-slots (standard-object))
-
-;;; Update the effective slots of a standard object.  This function is
-;;; called by UPDATE-INSTANCE-FOR-REDEFINED-CLASS, and it sets the
-;;; slots of the object to the slots of the class of the object.
-(defgeneric (setf standard-instance-slots) (new-slots standard-instance))
-
 ;;; This function sets the name of the generic function.
 ;;;
 ;;; FIXME: this function is probably unnecessary because the way the
