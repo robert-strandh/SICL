@@ -89,6 +89,7 @@ A \texttt{cons} cell is represented as two consecutive machine
 words aligned on a double-word boundary.
 
 \section{Representation of other heap objects}
+\label{sec-data-representation-other-heap-objects}
 
 All heap objects other than \texttt{cons} cells are represented in (at
 least) two parts, a \emph{header object} and a \emph{contents vector}.
@@ -115,6 +116,17 @@ vector.%
   the disembodied pointer in X is still reachable.  Then it would be
   impossible to determine the class of the object.}
 
+The first entry of the contents vector of every heap object is a small
+fixnum that indicates the \emph{object class unique number}.%
+\footnote{We need to find a better name for this concept.}
+This number indicates the \emph{unique class number} of the class of
+the heap object as it was when the heap object was created.  It is
+used to determine whether a heap object is an obsolete instance (in
+this case the \emph{object class unique number} of the heap object
+will not be the same as the \emph{current} unique class number of the
+class of the heap object).  Only standard objects can become
+obsolete. \seesec{sec-data-representation-standard-objects}
+
 In the following sections we give the details of the representation
 for all possible heap objects.
 
@@ -122,14 +134,14 @@ for all possible heap objects.
 \label{sec-data-representation-standard-objects}
 
 By definition, a \emph{standard object} is an instance of a subclass
-of the class \texttt{standard-object}.
+of the class with the name \texttt{standard-object}.
 
-Subclasses of \texttt{standard-object} must allow for must allow for
-the class of an instance to be changed to some other class
-(\texttt{change-class}) and for the definition of the class of the
-instance to be modified.  Changing the class of an instance is fairly
-straightforward because the instance is then passed as an argument and
-the slots of the instance can be updated as appropriate.
+Subclasses of \texttt{standard-object} must allow for the class of an
+instance to be changed to some other class (\texttt{change-class}) and
+for the definition of the class of the instance to be modified.
+Changing the class of an instance is fairly straightforward because
+the instance is then passed as an argument and the slots of the
+instance can be updated as appropriate.
 
 Allowing for the class of an instance to be redefined is significantly
 more complicated.  The main reason for that is that when a class is
@@ -155,19 +167,25 @@ update it, or the version information must allow the garbage collector
 to trace the obsolete version of the instance.  Our solution allows
 both.  We simply store a reference to the \emph{list of effective
   slots} that the class of the instance defined when the instance was
-created.  This reference is stored as the first word of the contents
-vector.  
+created.  This reference is stored as the \emph{second} word of the
+contents vector (recall that the first word is taken up by the
+\emph{object class unique
+  number}). \seesec{sec-data-representation-other-heap-objects} 
 
 This solution makes it possible to determine the layout of the
 contents vector of an obsolete instance, so that it can be traced by
-the garbage collector when necessary.  Furthermore, it is easy to
-determine whether some instance is obsolete, simply by comparing the
-list of effective slots in its \emph{class} (as contained in the first
-word of the header object) to the list of effective slots stored in
-the contents vector.  This comparison is fast, because it can be done
-using \texttt{eq}.  Clearly, this solution also allows the system to
-determine which slots have been added and which slots have been
-removed since the instance was created. 
+the garbage collector when necessary.  This solution also allows the
+system to determine which slots have been added and which slots have
+been removed since the instance was created.  As indicated in
+\refSec{sec-data-representation-other-heap-objects}, in order to
+detect whether an object is obsolete, the contents of the first word
+of the contents vector is compared to the \emph{class unique number}
+of the class of the object.  However, this test is performed
+automatically in most cases, because when an obsolete object is passed
+as an argument to a generic function, the \emph{automation} of the
+discriminating function of the generic function will fail to find an
+effective method, triggering an update of the object. 
+\seesec{sec-generic-function-dispatch-the-discriminating-function}
 
 \section{Funcallable standard objects}
 \label{sec-data-representation-funcallable-standard-objects}
@@ -193,14 +211,12 @@ the generic function, because the \clos{} specification requires that
 the discriminating function of a generic function can be replaced,
 without changing the identity of the generic function itself.  The
 discriminating function must therefore be stored in a slot of the
-generic function.  Transferring control to the discriminating function
-therefore requires access to the generic function \emph{instance}.  We
-accomplish this access by storing a reference to the generic function
-instance in the \emph{static environment} of the generic function
-object.
-
-As a consequence, every generic function contains the same code vector
-and the same entry point; only the static environment differs.  
+generic function.  In order for the generic function itself to behave
+in exactly the same way as its discriminating function, whenever a new
+discriminating function is \emph{installed}, the \emph{entry point},
+the \emph{linkage vector}, and the \emph{static environment} are
+copied from the discriminating function to the corresponding slots of
+the generic function itself. 
 
 \section{Instance of built-in classes}
 
@@ -210,10 +226,13 @@ instantiated.  The class definition might change as long as there are
 no instances, but the consequences are undefined if a built-in class
 is changed after it has been instantiated.
 
-As a consequence, it is not necessary to keep version information in
-the contents vector of an instance of a built-in class, and it is not
-necessary to check whether the instance is obsolete before accessing
-its contents.  
+As a consequence, in instances of built-in classes that are
+represented as heap objects, it is not necessary to keep a copy of the
+class slots in the contents vector of an instance of a built-in class.
+However, the first cell of the contents vector of such instances still
+contain the \emph{object class unique number}, so that every heap
+instance can be treated the same by all generic functions, thus
+avoiding a test for a special case.
 
 \subsection{Instances of \texttt{sequence}}
 
@@ -235,14 +254,14 @@ The general consensus seems to be that other subtypes are allowed.
 \label{sec-data-representation-arrays}
 
 An array being a heap object, it is represented as a two-word header
-object and a contents vector.  The first word of the contents vector
+object and a contents vector.  The second word of the contents vector
 contains a proper list of dimensions.  The length of the list is the
 \emph{rank} of the array.
 
-If the array is \emph{simple}, the initial word is directly followed
+If the array is \emph{simple}, the second word is directly followed
 by the elements of the array.  If the array is \emph{not} simple, then
 it is either displaced to another array, or it has a fill pointer, or
-both.  If it has a fill pointer, then it is stored in the second word
+both.  If it has a fill pointer, then it is stored in the third word
 of the contents vector.  Finally, if the array is displaced to another
 array, the contents vector contains two words with the array to which
 this one is displaced, and the displacement offset.  If the array is
@@ -281,7 +300,7 @@ to access it, \texttt{aref} and \texttt{(setf aref)} are \emph{generic
 \subsubsection{System class \texttt{vector}}
 
 A vector is a one-dimensional array.  As such, a vector has a contents
-vector where the first word is a proper list of a single element,
+vector where the second word is a proper list of a single element,
 namely the \emph{length} of the vector represented as a fixnum. 
 
 The remaining words of the contents vector contain an optional fill
@@ -296,6 +315,7 @@ could be represented in a single byte.  Thus the contents vector of a
 \emph{simple} string is represented as follows:
 
 \begin{itemize}
+\item The obligatory \emph{object class unique number}.
 \item A list of a single element corresponding to the \emph{length} of
   the string. 
 \item A number of consecutive words, each holding a tagged immediate
@@ -305,9 +325,10 @@ could be represented in a single byte.  Thus the contents vector of a
 \subsection{Symbols}
 
 A symbol is represented with a two-word header (as usual) and a
-contents vector of three consecutive words.  The tree words contain:
+contents vector of four consecutive words.  The four words contain:
 
 \begin{enumerate}
+\item The obligatory \emph{object class unique number}.
 \item The \emph{name} of the symbol.  The value of this slot is a
   string.
 \item The \emph{package} of the symbol.  The value of this slot is a
@@ -324,9 +345,10 @@ explicit \emph{global environment} object.
 \subsection{Packages}
 
 A package is represented with a two-word header (as usual) and a
-contents vector of 7 words:
+contents vector of 8 words:
 
 \begin{enumerate}
+\item The obligatory \emph{object class unique number}.
 \item The \emph{name} of the package.  The value of this slot is a
   string.
 \item The \emph{nicknames} of the package.  The value of this slot is
@@ -371,17 +393,7 @@ contents vector with at least four slots in addition to the inherited
 slots.
 
 \begin{enumerate}
-\item The \emph{code object} for this function (see below).
-\item An \emph{environment}, which is the local environment in which
-  the function was defined. If the function does not close over any
-  variables, then the value of this slot is \texttt{NIL}.
-\item The \emph{linkage vector} for this function, which is a raw
-  disembodied contents vector pointer pointing to the contents vector
-  of the linkage vector object for this function.  The ordinary \cl{}
-  object containing this contents vector is referred to from the code
-  object in the slot described previously.  The garbage collector must
-  update the value of this slot if it decides to move the contents
-  vector of the linkage vector object.
+\item The obligatory \emph{object class unique number}.
 \item One ore more slots representing \emph{entry points}.  Each entry
   point is a \emph{raw address} of an aligned word in the byte vector
   containing the instructions of the function.  The garbage collector
@@ -390,6 +402,17 @@ slots.
   of entry points and their significance, but they typically have to
   do with the number of arguments and whether the call is an ordinary
   call or a tail call.
+\item The \emph{linkage vector} for this function, which is a raw
+  disembodied contents vector pointer pointing to the contents vector
+  of the linkage vector object for this function.  The ordinary \cl{}
+  object containing this contents vector is referred to from the code
+  object in the slot described previously.  The garbage collector must
+  update the value of this slot if it decides to move the contents
+  vector of the linkage vector object.  The first word of the linkage
+  vector contains the \emph{code object} for this function (see below).
+\item An \emph{environment}, which is the local environment in which
+  the function was defined. If the function does not close over any
+  variables, then the value of this slot is \texttt{NIL}.
 \end{enumerate}
 
 Since raw addresses are word aligned, they show up as \texttt{fixnum}s
@@ -422,9 +445,10 @@ case) accessing the linkage vector of the callee and storing it in a
 register.
 
 For a \emph{generic function}, the description of the slots above
-applies to the \emph{discriminating function} of the generic function.
-In addition to these slots, a generic function also contains other
-slots holding the list of its methods, and other information.
+applies both to the generic function object itself and to the
+\emph{discriminating function} of the generic function.  In addition
+to these slots, a generic function also contains other slots holding
+the list of its methods, and other information.
 
 When a function is called, there are several possible situations that
 can occur:
