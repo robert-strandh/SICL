@@ -6,4 +6,4 @@
 (defun class-of (object)
   (if (heap-instance-p object)
       (heap-instance-class object)
-      (cdr (assoc t *classes*))))
+      (cdr (assoc t *bridge-classes*))))

@@ -5,7 +5,7 @@
 
 (defmacro defgeneric (name parameters)
   `(progn
-     (let* ((class (cdr (assoc 'standard-generic-function *classes*)))
+     (let* ((class (cdr (assoc 'standard-generic-function *bridge-classes*)))
 	    (fun (allocate-instance class)))
        (shared-initialize-default fun t
 				  :name ',name
