@@ -33,11 +33,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; In the native compiler, we use a special immediate value to
-;;; indicate that some location is unbound.  In the cross compiler, we
-;;; use a unique CONS cell. 
+;;; Unbound cells.
+;;;
+;;; We do not have a single universal bit pattern indicating that a
+;;; cell is unbound.
+;;; 
+;;; In the native environment, we use a special immediate value for
+;;; variable values and slot values.  In the cross compiler, we use a
+;;; unique CONS cell.
 
 (cl:defvar +unbound+ (list nil))
+
+;;; For function entries, we use a particular function to mean that
+;;; the function entry with a particular name is not fbound.  That
+;;; particular function accepts an arbitrary number of arguments, and
+;;; signals an error.  With this method, code that calls a named
+;;; function in the normal way, does not have to check whether the
+;;; cell contains a valid function.
+
+(cl:defvar +funbound+
+  (lambda (&rest arguments)
+    (declare (ignore arguments))
+    ;; Fixme, do something much smarter here.
+    (error "Attempt to call an undefined function.")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -158,7 +176,7 @@
 ;;; with it, and that storage is allocated directly in the global
 ;;; environment.  This is the case for globally defined functions.
 (defclass global-location (location)
-  ((%storage :initarg :storage :initform (list +unbound+) :reader storage)))
+  ((%storage :initarg :storage :initform (list +funbound+) :reader storage)))
 
 (defun make-global-location (name)
   (make-instance 'global-location :name name))
@@ -415,7 +433,7 @@
 ;;; simultaneously exist a global macro entry and a global function
 ;;; entry for the same name N.  However, in that case, the storage
 ;;; cell of the location of the global function entry always contains
-;;; +unbound+.
+;;; +funbound+.
 ;;;
 ;;; A global function entry can come into existence in several ways:
 ;;; 
@@ -425,14 +443,14 @@
 ;;;
 ;;;  * Proclaiming FTYPE, INLINE, NOTINLINE or DYNAMIC-EXTENT with
 ;;;    FUNCTION using the name.  Again, A LOCATION for the entry is
-;;;    created, but the storage cell will be set +unbound+.  The
+;;;    created, but the storage cell will be set to +funbound+.  The
 ;;;    appropriate auxiliary entry is created and will refer to the
 ;;;    base entry.
 ;;;
 ;;;  * When the compiler sees a compound form with the CAR containing
 ;;;    a symbol that is not associated with an entry in the FUNCTION
 ;;;    namespace.  In this case, a LOCATION for the entry is created
-;;;    and the storage cell of the entry is initialized to +unbound+.
+;;;    and the storage cell of the entry is initialized to +funbound+.
 ;;;    A warning is also signaled, indicating that the function is
 ;;;    undefined.
 ;;;
@@ -608,7 +626,7 @@
 ;;; the same name, then that global macro entry becomes the base entry
 ;;; for the compiler macro entry.  If not, and there is a global
 ;;; function entry with the same name, and that global function entry
-;;; has a location where the storage cell is not +unbound+, then that
+;;; has a location where the storage cell is not +funbound+, then that
 ;;; global function entry becomes the base entry for the compiler
 ;;; macro entry.
 ;;; 
@@ -1020,7 +1038,7 @@
 ;;; Since a compiler macro entry exists only if the name is fbound,
 ;;; this means that if the compiler macro entry exists, it refers
 ;;; either to a global macro entry, or to a global function entry
-;;; which does not have +unbound+ in its storage cell. 
+;;; which does not have +funbound+ in its storage cell. 
 ;;;
 ;;; I am not sure what the optional environment argument could be.  It
 ;;; seems to me that it must either be a global environment, i.e. an
@@ -1049,7 +1067,7 @@
       (find-if (lambda (entry)
 		 (eq (name entry) name))
 ;;		 (and (eq (name entry) name)
-;;		      (not (eq (car (storage (location entry))) +unbound+))))
+;;		      (not (eq (car (storage (location entry))) +funbound+))))
 	       (functions environment))))
 
 (defun (setf compiler-macro-function) (new-function name &optional environment)
@@ -1603,7 +1621,7 @@
 		     :test #'equal)))
     (typecase entry
       (global-function-entry
-       (not (eq (car (storage (location entry))) +unbound+)))
+       (not (eq (car (storage (location entry))) +funbound+)))
       (global-macro-entry
        t)
       (special-operator-entry
@@ -1632,7 +1650,7 @@
 ;;; remove it too.
 ;;;
 ;;; If there is a base entry and that entry is a global function
-;;; entry, we just mark it as +unbound+, but we remove any auxiliary
+;;; entry, we just mark it as +funbound+, but we remove any auxiliary
 ;;; entry that refers to it in PROCLAMATIONS.  This means that if
 ;;; anyone uses FMAKUNBOUND with the intention of later giving the
 ;;; function a new definition, then they must again proclaim its type,
@@ -1658,7 +1676,7 @@
 			      :key #'name :test #'equal)))
     (unless (null function-entry)
       ;; We found such an entry.  Make sure it is unbound.
-      (setf (car (storage (location function-entry))) +unbound+)
+      (setf (car (storage (location function-entry))) +funbound+)
       ;; Remove any proclamations that refer to this entry
       (setf (proclamations *global-environment*)
 	    (remove-if (lambda (entry)
@@ -1713,7 +1731,7 @@
 	      ;; In this case, there can not also be a special
 	      ;; operator entry for the same name.
 	      (let ((value (car (storage (location function-entry)))))
-		(if (eq value  +unbound+)
+		(if (eq value  +funbound+)
 		    (error 'undefined-function :name function-name)
 		    value))
 	      ;; If we did not find a global function entry, see if
@@ -1910,7 +1928,7 @@
       (if (not (null function-entry))
 	  (progn
 	    ;; Make it unbound.
-	    (setf (car (storage (location function-entry))) +unbound+)
+	    (setf (car (storage (location function-entry))) +funbound+)
 	    ;; Remove any compiler macro that might be present referring
 	    ;; to this entry.
 	    (setf (compiler-macros *global-environment*)
