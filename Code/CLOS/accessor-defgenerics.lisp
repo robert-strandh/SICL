@@ -292,8 +292,10 @@
 (defgeneric (setf s-direct-methods) (new-methods specializer))
 
 ;;; This function returns the unique number of the class, assigned
-;;; when the class was first created.
+;;; when the class is initialized or reinitialized.
 (defgeneric unique-number (class))
+
+(defgeneric (setf unique-number) (new-unique-number class))
 
 ;;; This function sets the name of the class. 
 ;;;
