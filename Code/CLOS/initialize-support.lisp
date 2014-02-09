@@ -2,16 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Timestamps. 
-;;;
-;;; Each object has a timestamp.  On a system where a fixnum has more
-;;; than 60 significant digits, this will always be a fixnum.  FIXME:
-;;; say more...
-
-(defparameter *next-available-timestamp* 0)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; INITIALIZE-INSTANCE, REINITIALIZE-INSTANCE, SHARED-INITIALIZE.
 
 ;;; The spec requires the method on initialize-instance and
@@ -61,11 +51,10 @@
     ;; when the class changes.
     (setf (standard-instance-access instance +instance-slots-offset+)
 	  class-slots)
-    ;; Assign a timestamp to the instance so that we know whether it
-    ;; is up to date.
-    (setf (standard-instance-access instance +timestamp-offset+)
-	  *next-available-timestamp*)
-    (incf *next-available-timestamp*))
+    ;; Store the unique number of the class in the instance so that we can
+    ;; recognize when the instance is obsolete.
+    (setf (standard-instance-access instance +class-unique-number-offset+)
+	  (unique-number class)))
   instance)
 
 ;;; The method on initialize-instance specialized for standard-object
