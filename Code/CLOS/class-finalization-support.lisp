@@ -118,7 +118,14 @@
 
 (defun compute-slots-default (class)
   (let* ((superclasses (class-precedence-list class))
-	 (direct-slots (mapcar #'class-direct-slots superclasses))
+	 ;; We can't use CLASS-DIRECT-SLOTS here, because according to
+	 ;; the AMOP it must return the empty list for built-in
+	 ;; classes, and we need to inherit slots from built-in
+	 ;; classes as well.  For that reason, we use a different
+	 ;; reader named DIRECT-SLOTS which does the same thing as
+	 ;; CLASS-DIRECT-SLOTS except that for built-in classes, it
+	 ;; retuns the direct slots of the built-in class.
+	 (direct-slots (mapcar #'direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
 	 (reverse-slots (reverse direct-slots))
 	 (reverse-concatenated (reduce #'append reverse-slots))
