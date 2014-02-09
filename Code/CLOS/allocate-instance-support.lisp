@@ -16,6 +16,7 @@
     (finalize-inheritance class))
   (let* ((slots (class-slots class))
 	 (slot-count (count :instance slots
-			       :key #'slot-definition-allocation))
-	 (slots (allocate-slot-storage (+ slot-count 2))))
+			    :test #'eq :key #'slot-definition-allocation))
+	 (size (+ slot-count 2))
+	 (slots (allocate-slot-storage size)))
     (allocate-heap-instance class slots)))
