@@ -47,7 +47,7 @@
 ;;;
 ;;; The MOP class hierarchy. 
 
-(defconstant +timestamp-offset+ 0)
+(defconstant +class-unique-number-offset+ 0)
 (defconstant +instance-slots-offset+ 1)
 
 (define-built-in-class t () ())
@@ -55,21 +55,7 @@
 (define-built-in-class function (t) ())
 
 (defclass standard-object (t)
-  (;; Every standard instance has a unique time stamp.  The next
-   ;; available consecutive timestamp is given to an instance when it
-   ;; is initialized or reinitialized.  Instances of a class hence get
-   ;; a timestamp that is greater than that of the class, unless the
-   ;; class is reinitialized after instances have been created.  To
-   ;; check whether an instance needs to be updated, we simply check
-   ;; the timestamp against that of its class.  This is done whenever
-   ;; CLASS-OF is used on an instance, so that essentially nothing can
-   ;; be done to an instance without this check being made.  It is
-   ;; important that the timestamp be the first slot of the instance
-   ;; so that low-level code knows where to look for it.
-   (%timestamp
-    :initform 0
-    :accessor standard-instance-timestamp)
-   ;; We keep a copy of the effective slots of the class that were
+  (;; We keep a copy of the effective slots of the class that were
    ;; used to create an instance.  They are used when the instance
    ;; needs to be updated because the class has changed, and it may
    ;; also be used by the garbage collector for type information of
@@ -220,7 +206,7 @@
 (defclass class (specializer)
   ((%unique-number 
     :initform (prog1 *class-unique-number* (incf *class-unique-number*))
-    :reader unique-number)
+    :accessor unique-number)
    (%name 
     :initform nil
     :initarg :name 
