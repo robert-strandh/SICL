@@ -191,15 +191,6 @@
 ;;; slots of the object to the slots of the class of the object.
 (defgeneric (setf standard-instance-slots) (new-slots standard-instance))
 
-;;; Return the time stamp of a standard object.  The time stamp
-;;; reflects the time when the object was initialized or
-;;; reinitialized.
-(defgeneric standard-instance-timestamp (standard-object))
-
-;;; This function assigns a new timestamp to a standard object when
-;;; that object is initialized or reinitialized.
-(defgeneric (setf standard-instance-timestamp) (new-timestamp standard-object))
-
 ;;; This function sets the name of the generic function.
 ;;;
 ;;; FIXME: this function is probably unnecessary because the way the
