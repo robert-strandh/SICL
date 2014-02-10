@@ -153,3 +153,51 @@
 
 (define-built-in-class vector (array sequence)
   ((%fill-pointer :initarg :fill-pointer)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Specialized vectors.
+
+(define-built-in-class vector-double-float
+    (vector array-double-float)
+  ())
+
+(define-built-in-class vector-single-float
+    (vector array-single-float)
+  ())
+
+(define-built-in-class vector-signed-byte-64
+    (vector array-signed-byte-64)
+  ())
+
+(define-built-in-class vector-unsigned-byte-64
+    (vector array-unsigned-byte-64)
+  ())
+
+(define-built-in-class vector-signed-byte-32
+    (vector array-signed-byte-32)
+  ())
+
+(define-built-in-class vector-unsigned-byte-32
+    (vector array-unsigned-byte-32)
+  ())
+
+(define-built-in-class vector-unsigned-byte-8
+    (vector array-unsigned-byte-8)
+  ())
+
+(define-built-in-class bit-vector
+    (vector array-bit)
+  ())
+
+(define-built-in-class string
+    (vector array-character)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Displaced vectors.
+
+(define-built-in-class displaced-vector
+    (vector displaced-array)
+  ())
