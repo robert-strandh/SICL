@@ -81,3 +81,13 @@
 
 (define-built-in-class null (symbol list)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class ARRAY.
+
+(define-built-in-class array (t)
+  ((%dimensions :initarg :dimensions)))
+
+(define-built-in-class simple-array (array)
+  ())
