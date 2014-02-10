@@ -1,5 +1,9 @@
 (in-package #:sicl-clos)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class STANDARD-FUNCTION.
+
 ;;; We need for funcallable standard objects and standard functions to
 ;;; be called the same way.  There is a slight difficulty in order for
 ;;; that to happen, though.  When a funcallable standard object is
@@ -28,17 +32,52 @@
 (define-built-in-class standard-function (function dummy-slot-supplier)
   ())
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SEQUENCE.
+;;;
+;;; As required by the HyperSpec, this class has T as its only
+;;; superclass.
+
 (define-built-in-class sequence (t)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LIST.
+;;;
+;;; As required by the HyperSpec, this class has SEQUENCE as a
+;;; superclass.
 
 (define-built-in-class list (sequence)
   ())
 
-(define-built-in-class symbol ()
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SYMBOL.
+;;;
+;;; We definitely do not want to have slots in the symbol for the
+;;; value returned by SYMBOL-FUNCTION and SYMBOL-VALUE, because those
+;;; functions are not really symbol accessors, but rather functions
+;;; that access the global environment.  And since we represent the
+;;; global environment as a first-class object, that is where we
+;;; associate symbols with values and function names with functions.   
+;;;
+;;; Whether we should have a slot in the symbol for the value returned
+;;; by SYMBOL-PLIST is debatable.  Tentatively, we treat the plist the
+;;; same way as we do SYMBOL-VALUE and SYMBOL-FUNCTION, i.e., we put
+;;; the plist in the global environment.
+;;;
+;;; The only intrinsic properties left for a symbol, then, is the name
+;;; and the package.
+
+(define-built-in-class symbol (t)
   ((%name :initarg :name :reader symbol-name)
    (%package :initarg :package :reader symbol-package)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class NULL.
+
 (define-built-in-class null (symbol list)
   ())
-
-
