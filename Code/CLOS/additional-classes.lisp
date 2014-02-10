@@ -91,3 +91,52 @@
 
 (define-built-in-class simple-array (array)
   ())
+
+(define-built-in-class array-double-float (array)
+  ())
+
+(define-built-in-class simple-array-double-float
+    (array-double-float simple-array)
+  ())
+
+(define-built-in-class array-single-float (array)
+  ())
+
+(define-built-in-class simple-array-single-float
+    (array-single-float simple-array)
+  ())
+
+(define-built-in-class array-signed-byte-64 (array)
+  ())
+
+(define-built-in-class simple-array-signed-byte-64
+    (array-signed-byte-64 simple-array)
+  ())
+
+(define-built-in-class array-unsigned-byte-64 (array)
+  ())
+
+(define-built-in-class simple-array-unsigned-byte-64
+    (array-unsigned-byte-64 simple-array)
+  ())
+
+(define-built-in-class array-signed-byte-32 (array)
+  ())
+
+(define-built-in-class simple-array-signed-byte-32
+    (array-signed-byte-32 simple-array)
+  ())
+
+(define-built-in-class array-unsigned-byte-32 (array)
+  ())
+
+(define-built-in-class simple-array-unsigned-byte-32
+    (array-unsigned-byte-32 simple-array)
+  ())
+
+(define-built-in-class array-unsigned-byte-8 (array)
+  ())
+
+(define-built-in-class simple-array-unsigned-byte-8
+    (array-unsigned-byte-8 simple-array)
+  ())
