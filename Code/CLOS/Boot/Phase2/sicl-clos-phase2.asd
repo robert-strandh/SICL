@@ -68,4 +68,5 @@
    (:file "ensure-method")
    (:file "defmethod-defmacro")
    (:file "mop-class-hierarchy")
+   (:file "additional-classes")
    ))
