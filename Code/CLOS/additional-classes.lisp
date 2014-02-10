@@ -25,7 +25,7 @@
 ;;; locations that take this order into account.  In this case, the
 ;;; slot supplied by DUMMY-SLOT-SUPPLIER will occupy the first
 ;;; location in instances of STANDARD-FUNCTION.
-(define-built-in-class standard-function (dummy-slot-supplier function)
+(define-built-in-class standard-function (function dummy-slot-supplier)
   ())
 
 (define-built-in-class sequence (t)
