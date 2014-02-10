@@ -140,3 +140,13 @@
 (define-built-in-class simple-array-unsigned-byte-8
     (array-unsigned-byte-8 simple-array)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class VECTOR.
+;;;
+;;; All our vectors have fill pointers. 
+;;; [Should that be the case also for displaced vectors?]
+
+(define-built-in-class vector (array sequence)
+  ((%fill-pointer :initarg :fill-pointer)))
