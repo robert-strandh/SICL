@@ -85,6 +85,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class ARRAY.
+;;;
+;;; It is entirely possible that these definitions are suboptimal, or
+;;; even that they violate some aspect of the HyperSpec.  More though
+;;; has to be given.
+;;;
+;;; Tentatively, all specialized arrays are simple.
 
 (define-built-in-class array (t)
   ((%dimensions :initarg :dimensions)))
@@ -92,54 +98,51 @@
 (define-built-in-class simple-array (array)
   ())
 
-(define-built-in-class array-double-float (array)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Specialized arrays.
+
+(define-built-in-class array-double-float (simple-array)
   ())
 
-(define-built-in-class simple-array-double-float
-    (array-double-float simple-array)
+(define-built-in-class array-single-float (simple-array)
   ())
 
-(define-built-in-class array-single-float (array)
+(define-built-in-class array-signed-byte-64 (simple-array)
   ())
 
-(define-built-in-class simple-array-single-float
-    (array-single-float simple-array)
+(define-built-in-class array-unsigned-byte-64 (simple-array)
   ())
 
-(define-built-in-class array-signed-byte-64 (array)
+(define-built-in-class array-signed-byte-32 (simple-array)
   ())
 
-(define-built-in-class simple-array-signed-byte-64
-    (array-signed-byte-64 simple-array)
+(define-built-in-class array-unsigned-byte-32 (simple-array)
   ())
 
-(define-built-in-class array-unsigned-byte-64 (array)
+(define-built-in-class array-unsigned-byte-8 (simple-array)
   ())
 
-(define-built-in-class simple-array-unsigned-byte-64
-    (array-unsigned-byte-64 simple-array)
+(define-built-in-class array-bit (simple-array)
   ())
 
-(define-built-in-class array-signed-byte-32 (array)
+(define-built-in-class array-character (simple-array)
   ())
 
-(define-built-in-class simple-array-signed-byte-32
-    (array-signed-byte-32 simple-array)
-  ())
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Displaced arrays.
+;;;
+;;; This thinking might be wrong, but we are thinking that there are
+;;; no specialized displaced arrays, because after all specialization
+;;; has to do with different representation, and all displaced arrays
+;;; are represented the same way,
+;;;
+;;; Could a displaced array also be simple?
 
-(define-built-in-class array-unsigned-byte-32 (array)
-  ())
-
-(define-built-in-class simple-array-unsigned-byte-32
-    (array-unsigned-byte-32 simple-array)
-  ())
-
-(define-built-in-class array-unsigned-byte-8 (array)
-  ())
-
-(define-built-in-class simple-array-unsigned-byte-8
-    (array-unsigned-byte-8 simple-array)
-  ())
+(define-built-in-class displaced-array (array)
+  ((%target :initarg :target)
+   (%offset :initarg :offset)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
