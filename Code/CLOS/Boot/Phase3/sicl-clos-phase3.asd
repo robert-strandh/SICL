@@ -11,6 +11,7 @@
    (:file "class-of")
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
+   (:file "allocate-built-in-instance")
    (:file "fmakunbound-make-instance")
    (:file "standard-instance-access")
    (:file "slot-value-etc-support")
