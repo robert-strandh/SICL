@@ -22,9 +22,9 @@
 (defun allocate-built-in-instance
     (class &rest initargs &key (additional-storage 0))
   (declare (ignore initargs))
-  (let* ((slots (class-slots class))
-	 (slots-count (count :instance slots
-			     :test #'eq :key #'slot-definition-allocation))
+  (let* ((slots (effective-slots class))
+	 (slot-count (count :instance slots
+			    :test #'eq :key #'slot-definition-allocation))
 	 (size (+ slot-count 1 additional-storage))
 	 (slots (allocate-slot-storage size)))
     (allocate-heap-instance class slots)))
