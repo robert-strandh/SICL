@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-clos)
 
+;;; The function in this file implements the action of the default
+;;; method on the generic function MAKE-BUILT-IN-INSTANCE, i.e. the
+;;; one specialized to BUILT-IN-CLASS.
+;;;
 ;;; We use the reader DEFAULT-INITARGS rather than
 ;;; CLASS-DEFAULT-INITARGS, because the AMOP stipulates that
 ;;; CLASS-DEFAULT-INITARGS must return the empty list for built-in
@@ -8,7 +12,7 @@
 ;;; DEFAULT-INITARGS.  This reader works for standard classes and
 ;;; funcallable standard classes as well.
 
-(defun make-built-in-instance (class &rest initargs)
+(defun make-built-in-instance-default (class &rest initargs)
   (let ((defaulted-initargs initargs))
     (loop for default-initarg in (default-initargs class)
 	  do (unless (initarg-in-list-p (car default-initarg) initargs)
