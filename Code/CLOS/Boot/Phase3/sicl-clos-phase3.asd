@@ -25,7 +25,6 @@
    (:file "built-in-initialize-defmethods")
    (:file "install-generic-functions")
    (:file "make-instance-support")
-   (:file "fmakunbound-initialize-instance")
    (:file "fmakunbound-make-instance")
    (:file "generic-function-database")
    (:file "defgeneric-defmacro")
