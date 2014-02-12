@@ -2,7 +2,7 @@
 
 ;;; FIXME: check validity also for generic functions
 
-(defun initarg-in-list-p (intarg list)
+(defun initarg-in-list-p (initarg list)
   (loop for indicator in list by #'cddr
 	when (eq initarg indicator)
 	  return t))
