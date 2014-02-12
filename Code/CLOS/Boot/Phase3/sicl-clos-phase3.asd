@@ -23,6 +23,7 @@
    (:file "built-in-initialize-support")
    (:file "built-in-initialize-defgenerics")
    (:file "built-in-initialize-defmethods")
+   (:file "make-instance-support")
    (:file "fmakunbound-initialize-instance")
    (:file "fmakunbound-make-instance")
    (:file "install-generic-functions")
