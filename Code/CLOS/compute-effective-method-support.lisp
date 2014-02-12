@@ -107,11 +107,11 @@
 	  (before-chain
 	    (lambda (args)
 	      (loop for method in before-methods
-		    do (funcall (method-function method) args))))
+		    do (funcall (method-function method) args '()))))
 	  (after-chain
 	    (lambda (args)
 	      (loop for method in after-methods
-		    do (funcall (method-function method) args)))))
+		    do (funcall (method-function method) args '())))))
       (lambda (&rest args)
 	(if (null around-methods)
 	    (progn (funcall before-chain args)
