@@ -73,8 +73,9 @@
        (if (null around-methods)
 	   `(lambda (&rest args)
 	      ,@before-chain
-	      ,primary-chain
-	      ,@after-chain)
+	      (multiple-value-prog1
+		  ,primary-chain
+		,@after-chain))
 	   `(lambda (&rest args)
 	      (funcall ,(method-function (car around-methods))
 		       args
@@ -83,8 +84,9 @@
 			     (lambda (args next-methods)
 			       (declare (ignore next-methods))
 			       ,@before-chain
-			       ,primary-chain
-			       ,@after-chain)))))))))
+			       (multiple-value-prog1
+				   ,primary-chain
+				 ,@after-chain))))))))))
 	     
 ;;; In this version of COMPUTE-EFFECTIVE-METHOD-DEFAULT, we do not
 ;;; use the compiler to produce the effective method.  As a
@@ -113,11 +115,13 @@
       (lambda (&rest args)
 	(if (null around-methods)
 	    (progn (funcall before-chain args)
-		   (funcall primary-chain args)
-		   (funcall after-chain args))
+		   (multiple-value-prog1
+		       (funcall primary-chain args)
+		     (funcall after-chain args)))
 	    (funcall (method-function (car around-methods))
 		     (append (cdr around-methods)
 			     (list (lambda (args)
 				     (funcall before-chain args)
-				     (funcall primary-chain args)
-				     (funcall after-chain args))))))))))
+				     (multiple-value-prog1
+					 (funcall primary-chain args)
+				       (funcall after-chain args)))))))))))
