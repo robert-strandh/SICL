@@ -20,6 +20,7 @@
    (:file "initialize-support")
    (:file "initialize-defgenerics")
    (:file "initialize-defmethods")
+   (:file "built-in-initialize-support")
    (:file "fmakunbound-initialize-instance")
    (:file "fmakunbound-make-instance")
    (:file "install-generic-functions")
