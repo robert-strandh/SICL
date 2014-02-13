@@ -29,7 +29,7 @@
     (setf s-direct-methods)
     ;; These are used directly by ADD-METHOD in order to add a method
     ;; to the methods of a generic function.
-    ;; generic-function-methods
+    gf-methods
     (setf gf-methods)
     ;; This one is used directly by ADD-METHOD in order to store a
     ;; back pointer from the method to its generic function.

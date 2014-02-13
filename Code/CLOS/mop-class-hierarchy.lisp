@@ -111,7 +111,10 @@
     :writer (setf gf-method-combination))
    (%methods 
     :initform '() 
+    ;; This reader is the one that the AMOP specifies.
     :reader generic-function-methods
+    ;; Additional reader.  FIXME: explain why this one is needed.    
+    :reader gf-methods
     :writer (setf gf-methods))
    ;; We maintain a CALL HISTORY of the generic function.  This call
    ;; history is a list of call records.  Whenever a call is made to

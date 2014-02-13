@@ -36,12 +36,12 @@
 				 (method-qualifiers existing-method)))
 			  (equal (method-specializers method)
 				 (method-specializers existing-method))))
-		   (generic-function-methods generic-function))))
+		   (gf-methods generic-function))))
     (unless (null method-to-remove)
       (remove-method generic-function method-to-remove)))
   ;; Add this method to the set of methods of this generic function.
   (setf (gf-methods generic-function)
-	(cons method (generic-function-methods generic-function)))
+	(cons method (gf-methods generic-function)))
   ;; Associate GENERIC-FUNCTION with METHOD.
   (setf (m-generic-function method) generic-function)
   ;; Call ADD-DIRECT-METHOD for each of the specializers of METHOD.
@@ -74,7 +74,7 @@
 (defun remove-method-default (generic-function method)
   ;; Remove METHOD from the methods of GENERIC-FUNCTION.
   (setf (gf-methods generic-function)
-	(remove method (generic-function-methods generic-function)))
+	(remove method (gf-methods generic-function)))
   ;; Call REMOVE-DIRECT-METHOD for each of the specializers of METHOD.
   (loop for specializer in (method-specializers method)
 	do (remove-direct-method specializer method))
