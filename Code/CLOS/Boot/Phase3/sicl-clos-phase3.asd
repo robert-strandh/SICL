@@ -20,6 +20,7 @@
    (:file "initialize-support")
    (:file "initialize-defgenerics")
    (:file "initialize-defmethods")
+   (:file "generic-function-initialization-defmethods")
    (:file "class-initialization-defmethods")
    (:file "built-in-initialize-support")
    (:file "built-in-initialize-defgenerics")
