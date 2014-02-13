@@ -5,15 +5,15 @@
 ;;; ENSURE-METHOD.
 ;;;
 ;;; During bootstrap, we know that the specializers are class names.
-;;; Furthermore, we know that the classes of those specializers are
-;;; members of the association list *bridge-classes*.
+;;; Furthermore, we know that the classes of those specializers can
+;;; be found by using FIND-BRIDGE-CLASS.
 
 (defun ensure-method (generic-function
 		      &rest keys
 		      &key specializers
 		      &allow-other-keys)
   (let ((specs (loop for s in specializers
-		     collect (cdr (assoc s *bridge-classes*))))
+		     collect (find-bridge-class s)))
 	(remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :specializers))
     (let ((method (apply #'make-instance

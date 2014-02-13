@@ -9,6 +9,8 @@
     (setf c-direct-superclasses)
     class-direct-slots
     (setf c-direct-slots)
+    class-direct-default-initargs
+    (setf c-direct-default-initargs)
     ;; These are used by the :AFTER method on initialize-instance,
     ;; specialized for STANDARD-GENERIC-FUNCTION.
     (setf gf-documentation)
@@ -22,11 +24,14 @@
     ;; These are used by the :AFTER method on initialize-instance,
     ;; specialized for STANDARD-METHOD
     (setf method-documentation)
+    ;; Generic functions for initialization
+    initialize-instance
+    reinitialize-instance
+    shared-initialize
+    initialize-built-in-instance
     ))
 
 (loop for name in *installable-generic-functions*
       do (setf (fdefinition name)
-	       (cdr (assoc name *bridge-generic-functions* :test #'equal)))
-	 (setf *bridge-generic-functions*
-	       (remove name *bridge-generic-functions*
-		       :key #'car :test #'equal)))
+	       (find-bridge-generic-function name))
+	 (delete-bridge-generic-function name))

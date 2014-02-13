@@ -4,4 +4,4 @@
   `(progn
      (let ((fun (cl:make-instance 'bridge-generic-function
 		  :name ',name :lambda-list ',parameters)))
-       (push (cons ',name fun) *bridge-generic-functions*))))
+       (add-bridge-generic-function ',name fun))))
