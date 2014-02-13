@@ -1,5 +1,30 @@
 (cl:in-package #:common-lisp-user)
 
+;;;; When phase 3 starts, we have a bunch of bridge generic functions
+;;;; in the association list *BRIDGE-GENERIC-FUNCTIONS* and a bunch of
+;;;; bridge classes in the association list *BRIDGE-CLASSES*.  The
+;;;; bridge generic functions are only the accessor functions for
+;;;; which accessor methods were automatically created when the bridge
+;;;; classes were created.  The bridge classes correspond to the class
+;;;; hierarchy specified in the AMOP.
+;;;;
+;;;; The purpose of phase 3 is repeat the action of phase 2, except
+;;;; that target generic functions and target classes will be created.
+;;;; For that to work, the bridge classes, which are host instances
+;;;; but not host classes, must be able to play the role of classes,
+;;;; i.e., it must be possible to instantiate them by calling some
+;;;; version of MAKE-INSTANCE.
+;;;;
+;;;; We accomplish the task in three stages.  First, we create more
+;;;; bridge generic functions, namely MAKE-INSTANCE and those generic
+;;;; functions that are needed by MAKE-INSTANCE such as
+;;;; ALLOCATE-INSTANCE, INITIALIZE-INSTANCE, etc.  Next, we INSTALL
+;;;; the bridge generic functions that are needed as host functions so
+;;;; that they can be called normally.  Finally, we use what was
+;;;; installed to create the standard accessor generic functions as
+;;;; target generic functions and to create the standard classes as
+;;;; target classes.
+
 (asdf:defsystem :sicl-clos-phase3
   :depends-on (:sicl-clos-phase1 :sicl-clos-phase2)
   ;; We use :SERIAL T so as to reduce the clutter with respect to the
