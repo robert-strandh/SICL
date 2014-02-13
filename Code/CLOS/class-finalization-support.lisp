@@ -140,7 +140,7 @@
 			   :test-not #'eql)))))
 
 (defun compute-slots-around-default (slots)
-  (let ((next-location 0))
+  (let ((next-location 2))
     (loop for slot in slots
 	  do (when (eq (slot-definition-allocation slot) :instance)
 	       (setf (s-location slot)
