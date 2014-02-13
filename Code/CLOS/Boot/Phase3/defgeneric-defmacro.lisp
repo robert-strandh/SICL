@@ -7,5 +7,7 @@
   `(progn
      (let* ((class (find-bridge-class 'standard-generic-function))
 	    (fun (make-instance-default class
-		   :name ',name :lambda-list ',parameters)))
+		   :name ',name
+		   :lambda-list ',parameters
+		   :method-class (find-bridge-class 'standard-method))))
        (push (cons ',name fun) *target-generic-functions*))))
