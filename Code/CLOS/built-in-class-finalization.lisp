@@ -19,7 +19,7 @@
 				       :key #'slot-definition-name
 				       :test-not #'eql)
 			       'standard-effective-slot-definition)))
-	 (next-location 0))
+	 (next-location 1))
     (loop for slot in slots
 	  do (when (eq (slot-definition-allocation slot) :instance)
 	       (setf (s-location slot)
