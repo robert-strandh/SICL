@@ -12,14 +12,14 @@
 ;;; This function is used only during bootstrapping, and bootstrapping
 ;;; is organized so that the this function will be called only when
 ;;; the class does not already exist.  Furthermore, the superclasses
-;;; (if any) are in the association list *bridge-classes*.
+;;; (if any) can be found by using FIND-BRIDGE-CLASS.
 (defun ensure-built-in-class (name
 			      &rest arguments
 			      &key
 				direct-superclasses
 			      &allow-other-keys)
   (let ((superclasses (loop for name in direct-superclasses
-			    for class = (cdr (assoc name *bridge-classes*))
+			    for class = (find-bridge-class name)
 			    do (when (null class)
 				 ;; This should not happen during
 				 ;; bootstrapping.
@@ -37,7 +37,7 @@
 			 :name name
 			 :direct-superclasses superclasses
 			 remaining-keys)))
-      (push (cons name result) *bridge-classes*)
+      (add-bridge-class name result)
       ;; Since we require for superclasses to exist, and since we
       ;; don't allow for built-in classes to be redefined, we can
       ;; finalize the inheritance immediately. 

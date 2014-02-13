@@ -1,6 +1,6 @@
 (cl:in-package #:sicl-clos)
 
 (defun find-class-named-t ()
-  (cdr (assoc t *bridge-classes*)))
+  (find-bridge-class t))
 
 (define-symbol-macro *t* (find-class-named-t))
