@@ -5,11 +5,7 @@
 
 (defmacro defgeneric (name parameters)
   `(progn
-     (let* ((class (cdr (assoc 'standard-generic-function *bridge-classes*)))
-	    (fun (allocate-instance class)))
-       (shared-initialize-default fun t
-				  :name ',name
-				  :lambda-list ',parameters)
-       (initialize-instance-after-standard-generic-function-default
-	fun :name ',name :lambda-list ',parameters)
+     (let* ((class (find-bridge-class 'standard-generic-function))
+	    (fun (make-instance-default class
+		   :name ',name :lambda-list ',parameters)))
        (push (cons ',name fun) *target-generic-functions*))))
