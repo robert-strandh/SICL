@@ -22,6 +22,7 @@
    (:file "initialize-defmethods")
    (:file "generic-function-initialization-defmethods")
    (:file "class-initialization-defmethods")
+   (:file "method-initialization-defmethods")
    (:file "built-in-initialize-support")
    (:file "built-in-initialize-defgenerics")
    (:file "built-in-initialize-defmethods")
