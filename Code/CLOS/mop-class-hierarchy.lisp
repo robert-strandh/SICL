@@ -150,7 +150,8 @@
     :reader method-lambda-list)
    (%specializers 
     :initarg :specializers 
-    :reader method-specializers)
+    :reader method-specializers
+    :reader m-specializers)
    (%qualifiers 
     :initarg :qualifiers 
     :reader method-qualifiers)

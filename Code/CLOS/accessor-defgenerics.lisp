@@ -189,6 +189,17 @@
 ;;; functions.
 (defgeneric gf-methods (generic-function))
 
+;;; During phase 3 of bootstrapping, the generic function
+;;; METHOD-SPECIALIZERS is used to compute wich methods are applicable
+;;; on a bridge generic function, so that the entire mechanism for
+;;; executing generic functions can work.  However, at the same time,
+;;; ADD-DIRECT-METHOD is called by ADD-METHOD for each specializer of
+;;; a method, so there must be a way to access the specializers of a
+;;; target method as well.  So we have a second reader for the slot
+;;; containing the specializers of a method which is used for target
+;;; generic functions.
+(defgeneric m-specializers (method))
+
 ;;; The functions ADD-DIRECT-SUBCLASS and REMOVE-DIRECT-SUBCLASS are
 ;;; used to update the direct subclasses of a class, so they call this
 ;;; function.
