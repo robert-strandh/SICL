@@ -19,14 +19,3 @@
 				       method-combination
 				       applicable-methods)))
       (apply effective-method arguments))))
-
-;;; This function takes a generic function an returns a discriminating
-;;; function for it that closes over the GENERIC-FUNCTION argument, so
-;;; that the discriminating function can pass the generic function to
-;;; the default discriminating function.
-(defun make-default-discriminating-function (generic-function)
-  (lambda (&rest arguments)
-    (default-discriminating-function generic-function arguments)))
-
-(defun compute-discriminating-function-default (generic-function)
-  (make-default-discriminating-function generic-function))
