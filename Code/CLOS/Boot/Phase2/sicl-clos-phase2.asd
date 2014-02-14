@@ -31,6 +31,7 @@
    (:file "compute-applicable-methods-support")
    (:file "compute-applicable-methods-defuns")
    (:file "compute-effective-method-support")
+   (:file "compute-effective-method-support-b")
    (:file "compute-effective-method-defuns")
    (:file "no-applicable-method-defuns")
    (:file "compute-discriminating-function-support")
