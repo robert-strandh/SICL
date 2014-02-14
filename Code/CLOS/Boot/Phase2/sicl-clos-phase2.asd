@@ -6,13 +6,42 @@
   ;; dependencies, and to make the order completely predictable.
   :serial t
   :components
-  ((:file "make-instance")
+  (;; The symbol MAKE-INSTANCE is shadowed in the SICL-CLOS package,
+   ;; but now, we need for MAKE-INSTANCE to do the same thing as
+   ;; CL:MAKE-INSTANCE, so we define SICL-CLOS as a function that just
+   ;; calls CL:MAKE-INSTANCE.
+   (:file "make-instance")
+   ;; The symbols INITIALIZE-INSTANCE, REINITIALIZE-INSTANCE, and
+   ;; SHARED-INITIALIZED are shadowed in the SICL-CLOS package.  But
+   ;; we still need for the :AFTER methods on INITIALIZE-INSTANCE
+   ;; defined here to be called as :AFTER method on
+   ;; CL:INITIALIZE-INSTANCE.  We solve this problem by 1: Defining
+   ;; SICL-CLOS:INITIALIZE-INSTANCE as a host generic function (this
+   ;; happens when we load "initialize-defgenerics"), 2: Defining a
+   ;; primary unspecialized method on SICL-CLOS:INITIALIZE-INSTANCE
+   ;; that does nothing (so that there is always a primary applicable
+   ;; method), and 3: Defining an :AFTER method on
+   ;; CL:INITIALIZE-INSTANCE specialized to SICL-CLOS:METAOBJECT that
+   ;; calls SICL-CLOS:INITIALIZE-INSTANCE (this is done in
+   ;; "initialize-instance")
    (:file "initialize-defgenerics")
    (:file "initialize-instance")
+   ;; Although we do not use the dependent maintenance facility, we
+   ;; define the specified functions as ordinary functions that do
+   ;; nothing, so that we can safely call them from other code.
    (:file "dependent-maintenance-support")
    (:file "dependent-maintenance-defuns")
+   ;; The symbol FIND-CLASS is shadowed in the SICL-CLOS package, but
+   ;; now, we need for FIND-CLASS to do the same thing as
+   ;; CL:FIND-CLASS, so we define SICL-CLOS as a function that just
+   ;; calls CL:FIND-CLASS.
    (:file "find-class")
+   ;; Define the specified ordinary function
+   ;; SET-FUNCALLABLE-INSTANCE-FUNCTION to set the discriminating
+   ;; function of the bridge generic function. 
    (:file "set-funcallable-instance-function")
+   ;; Define :AFTER methods on INITIALIZE-INSTANCE that implement the
+   ;; generic function initialization protocol
    (:file "generic-function-initialization-support")
    (:file "generic-function-initialization-defmethods")
    (:file "bridge-generic-function")
