@@ -71,9 +71,7 @@
    lambda-list-p
    argument-precedence-order
    argument-precedence-order-p)
-  (let ((fun (lambda (&rest args)
-	       (declare (ignore args))
-	       (error "no applicable methods"))))
+  (let ((fun (compute-discriminating-function generic-function)))
     (setf (discriminating-function generic-function) fun)
     (setf (gf-name generic-function) name)
     (unless (null name)
