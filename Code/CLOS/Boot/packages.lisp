@@ -51,5 +51,7 @@
    #:standard-method
    #:standard-object
    #:update-instance-for-different-class
-   #:update-instance-for-redefined-class)
+   #:update-instance-for-redefined-class
+   #:compile)
+  
   (:export))

@@ -11,6 +11,10 @@
    ;; CL:MAKE-INSTANCE, so we define SICL-CLOS as a function that just
    ;; calls CL:MAKE-INSTANCE.
    (:file "make-instance")
+   ;; The symbol COMPILE is shadowed in the SICL-CLOS package, but
+   ;; now, we need for COMPILE to do the same thing as CL:COMPILE, so
+   ;; we define SICL-CLOS as a function that just calls CL:COMPILE.
+   (:file "compile")
    ;; The symbols INITIALIZE-INSTANCE, REINITIALIZE-INSTANCE, and
    ;; SHARED-INITIALIZED are shadowed in the SICL-CLOS package.  But
    ;; we still need for the :AFTER methods on INITIALIZE-INSTANCE
