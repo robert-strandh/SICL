@@ -154,7 +154,12 @@
    ;; bridge class STANDARD-GENERIC-FUNCTION and adds the result to
    ;; the database of target generic functions.
    (:file "defgeneric-defmacro")
-   ;; Define all the standard accessors as target generic functions.
+   ;; Redefine COMPILE to call the cross compiler so that the
+   ;; discriminating function of newly-created target generic
+   ;; functions becomes a target function.
+   (:file "compile")
+   ;; Define all the standard accessors as target generic
+   ;; functions.
    (:file "accessor-defgenerics")
    ;; When we define classes in this phase, they are target classes,
    ;; so we need a new database for them.  We use an association list
