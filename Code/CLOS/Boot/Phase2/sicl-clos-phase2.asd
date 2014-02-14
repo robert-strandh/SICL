@@ -64,7 +64,7 @@
    (:file "compute-effective-method-defuns")
    (:file "no-applicable-method-defuns")
    (:file "compute-discriminating-function-support")
-   (:file "compute-discriminating-function-support-b")
+   (:file "compute-discriminating-function-support-a")
    (:file "compute-discriminating-function-defuns")
    (:file "add-remove-method-support")
    (:file "add-remove-method-defuns")
