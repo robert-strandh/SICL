@@ -171,6 +171,11 @@
    ;; so we need a new database for them.  We use an association list
    ;; which is the value of *TARGET-CLASSES*.
    (:file "class-database")
+   ;; In preparation for executing a bunch of DEFINE-BUILT-IN-CLASS
+   ;; forms for creating target classes, we must replace the version
+   ;; of ENSURE-BUILT-IN-CLASS used in phase 2 (for creating bridge
+   ;; classes) by a new version that creates target classes.
+   (:file "ensure-built-in-class")
    ;; In preparation for executing a bunch of DEFCLASS forms for
    ;; creating target classes, we must replace the version of
    ;; ENSURE-CLASS used in phase 2 (for creating bridge classes) by a
