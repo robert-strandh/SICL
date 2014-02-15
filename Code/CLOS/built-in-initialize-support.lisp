@@ -29,7 +29,6 @@
   (let* ((class (class-of instance))
 	 (slots (effective-slots class)))
     (loop for slot in slots
-	  for slot-name = (slot-definition-name slot)
 	  for location = (slot-definition-location slot)
 	  do (multiple-value-bind (key value foundp)
 		 ;; Find the first key/value pair in initargs where the
