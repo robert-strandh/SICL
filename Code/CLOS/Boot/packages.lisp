@@ -28,6 +28,7 @@
    #:find-class
    #:find-method
    #:function
+   #:functionp
    #:generic-function 
    #:initialize-instance
    #:make-instance
