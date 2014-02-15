@@ -190,4 +190,5 @@
    ;; target generic functions.
    (:file "ensure-method")
    (:file "ensure-generic-function")
+   (:file "slot-definition-classes")
    ))
