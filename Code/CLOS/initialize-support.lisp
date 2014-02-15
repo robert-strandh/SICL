@@ -28,7 +28,6 @@
   (let* ((class (class-of instance))
 	 (class-slots (class-slots class)))
     (loop for slot in class-slots
-	  for slot-name = (slot-definition-name slot)
 	  do (multiple-value-bind (key value foundp)
 		 ;; Find the first key/value pair in initargs where the
 		 ;; key is one of the initargs of the slot. 
@@ -43,7 +42,8 @@
 		   (when (and (not (slot-boundp-using-class class instance slot))
 			      (not (null (slot-definition-initfunction slot)))
 			      (or (eq slot-names t)
-				  (member slot-name slot-names)))
+				  (member (slot-definition-name slot)
+					  slot-names)))
 		     ;; Evaluate the initform by executing the initfunction. 
 		     (setf (slot-value-using-class class instance slot)
 			   (funcall (slot-definition-initfunction slot)))))))
