@@ -10,15 +10,19 @@
 ;;; bootstrapping is done) we do not allow for class metaobject
 ;;; superclasses.
 ;;;
-;;; Similarly, the METACLASS argument is a SYMBOL.  During Step 2 of
+;;; Similarly, the METACLASS argument is a SYMBOL.  During phase 2 of
 ;;; the bootstrapping process, the metaclass is a host class, and
 ;;; MAKE-INSTANCE is that of the host, so we can just call
 ;;; MAKE-INSTANCE with the name of the metaclass.
 ;;; 
 ;;; Since this function is used only during bootstrapping, and
 ;;; bootstrapping is organized so that the this function will be
-;;; called only when the class does not already exist.  Furthermore,
-;;; the superclasses (if any) can be found by using FIND-BRIDGE-CLASS.
+;;; called only when the class does not already exist, we do not have
+;;; to check whether the class already exists, because we know that
+;;; this is not the case.  
+;;; 
+;;; During phase 2 of the bootstrapping process, the superclasses (if
+;;; any) can be found by using FIND-BRIDGE-CLASS.
 (defun ensure-class (name
 		     &rest arguments
 		     &key
