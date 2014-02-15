@@ -153,6 +153,8 @@
    ;; generic functions, so we need a new database for them.  We use
    ;; an association list which is the value of
    ;; *TARGET-GENERIC-FUNCTIONS*.
+   (:file "make-built-in-instance-support")
+   (:file "make-built-in-instance")
    (:file "generic-function-database")
    ;; Define a version of the DEFGENERIC macro that instantiates the
    ;; bridge class STANDARD-GENERIC-FUNCTION and adds the result to
