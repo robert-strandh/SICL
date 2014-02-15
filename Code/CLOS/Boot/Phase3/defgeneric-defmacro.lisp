@@ -6,7 +6,7 @@
 (defmacro defgeneric (name parameters)
   `(progn
      (let* ((class (find-bridge-class 'standard-generic-function))
-	    (fun (make-instance-default class
+	    (fun (make-instance class
 		   :name ',name
 		   :lambda-list ',parameters
 		   :method-class (find-bridge-class 'standard-method))))
