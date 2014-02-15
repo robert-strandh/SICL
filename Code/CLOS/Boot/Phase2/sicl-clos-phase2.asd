@@ -77,6 +77,7 @@
    (:file "reader-writer-method-classes")
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defuns")
+   (:file "make-accessor-method-b")
    (:file "add-accessor-method")
    (:file "slot-definition-classes")
    (:file "slot-definition-class-support")
