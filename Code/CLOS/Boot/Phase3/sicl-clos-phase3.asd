@@ -191,4 +191,5 @@
    (:file "ensure-method")
    (:file "ensure-generic-function")
    (:file "slot-definition-classes")
+   (:file "reader-writer-method-classes")
    ))
