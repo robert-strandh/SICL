@@ -27,7 +27,7 @@
   (compile nil
 	   `(lambda (arguments next-methods)
 	      (declare (ignore next-methods))
-	      (slot-value (car arguments) ,slot-name))))
+	      (slot-value (car arguments) ',slot-name))))
 
 ;;; Given a slot name, return a writer method function that respects
 ;;; the default calling conventions of methods, i.e. the method
@@ -41,6 +41,6 @@
 (defun make-writer-method-function (slot-name)
   (compile nil
 	   `(lambda (arguments next-methods)
-	      (declare (ignore nextf-methods))
-	      (setf (slot-value (cadr arguments) ,slot-name)
+	      (declare (ignore next-methods))
+	      (setf (slot-value (cadr arguments) ',slot-name)
 		    (car arguments)))))
