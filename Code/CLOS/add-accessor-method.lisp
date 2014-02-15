@@ -1,4 +1,4 @@
-(in-package #:sicl-clos)
+(cl:in-package #:sicl-clos)
 
 ;;;; This file contains very basic versions of the functions
 ;;;; ADD-READER-METHOD and ADD-WRITER-METHOD.  These functions are not
@@ -8,31 +8,6 @@
 ;;;; Specifically, they are called from the :AFTER methods on
 ;;;; INITIALIZE-INSTANCE specialized for STANDARD-CLASS and
 ;;;; FUNCALLABLE-STANDARD-CLASS.
-;;;;
-;;;; The versions are very basic in that they directly apply the
-;;;; semantics of reader and writer methods, i.e., they are turned
-;;;; into calls to SLOT-VALUE and (SETF SLOT-VALUE).  
-;;;;
-;;;; These basic versions are quite slow, but they have the advantage
-;;;; that they do not require the presence of the compiler.  This
-;;;; feature can be useful for bootstrapping purposes, in that it
-;;;; becomes possible to create a new class in a very basic system
-;;;; that does not yet contain the compiler.  These versions could
-;;;; also be used in a runtime in which it is not desirable to include
-;;;; the compiler. 
-
-;;; Given a slot name, return a reader method function that respects
-;;; the default calling conventions of methods, i.e. the method
-;;; function takes two arguments: the list of arguments to the generic
-;;; function, and a list of next methods to be invoked by
-;;; CALL-NEXT-METHOD.  The reader method function returned by this
-;;; function closes over the slot name.  Since in the case of a reader
-;;; method function, CALL-NEXT-METHOD is never invoked, the
-;;; NEXT-METHODS argument is ignored.  
-(defun make-reader-method-function (slot-name)
-  (lambda (arguments next-methods)
-    (declare (ignore next-methods))
-    (slot-value (car arguments) slot-name)))
 
 ;;; Add a reader method to a generic function.  CLASS is a class
 ;;; metaobject that plays the role of specialize for the argument of
@@ -64,19 +39,6 @@
 		   :function method-function
 		   :slot-definition slot-definition)))
     (add-method generic-function method)))
-
-;;; Given a slot name, return a writer method function that respects
-;;; the default calling conventions of methods, i.e. the method
-;;; function takes two arguments: the list of arguments to the generic
-;;; function, and a list of next methods to be invoked by
-;;; CALL-NEXT-METHOD.  The writer method function returned by this
-;;; function closes over the slot name.  Since in the case of a writer
-;;; method function, CALL-NEXT-METHOD is never invoked, the
-;;; NEXT-METHODS argument is ignored.
-(defun make-writer-method-function (slot-name)
-  (lambda (arguments next-methods)
-    (declare (ignore next-methods))
-    (setf (slot-value (cadr arguments) slot-name) (car arguments))))
 
 ;;; Add a writer method to a generic function.  CLASS is a class
 ;;; metaobject that plays the role of specialize for the argument of
