@@ -84,6 +84,7 @@
    (:file "slot-definition-class-defuns")
    (:file "classp")
    (:file "functionp")
+   (:file "direct-slot-definition-p")
    (:file "standard-object-classes")
    (:file "validate-superclass")
    (:file "class-initialization-support")
