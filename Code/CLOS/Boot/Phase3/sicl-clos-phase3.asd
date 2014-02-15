@@ -189,4 +189,5 @@
    ;; generic functions) by a new version that creates methods on
    ;; target generic functions.
    (:file "ensure-method")
+   (:file "ensure-generic-function")
    ))
