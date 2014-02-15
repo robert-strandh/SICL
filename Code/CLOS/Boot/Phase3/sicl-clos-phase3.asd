@@ -145,6 +145,10 @@
    ;; make instances of bridge classes, we first make it funbound so
    ;; as to avoid a compiler warning.
    (:file "fmakunbound-make-instance")
+   ;; Create MAKE-INSTANCE as an ordinary function that can accept a
+   ;; symbol or a bridge class.  It calls the function
+   ;; MAKE-INSTANCE-DEFAULT with the class and the remaining arguments.
+   (:file "make-instance")
    ;; When we define generic functions in this phase, they are target
    ;; generic functions, so we need a new database for them.  We use
    ;; an association list which is the value of
