@@ -181,4 +181,10 @@
    ;; ENSURE-CLASS used in phase 2 (for creating bridge classes) by a
    ;; new version that creates target classes.
    (:file "ensure-class")
+   ;; In preparation for executing a bunch of DEFMETHOD forms for
+   ;; creating target methods, we must replace the version of
+   ;; ENSURE-METHOD used in phase 2 (for creating methods on bridge
+   ;; generic functions) by a new version that creates methods on
+   ;; target generic functions.
+   (:file "ensure-method")
    ))
