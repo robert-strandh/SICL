@@ -203,7 +203,7 @@
 (defclass class (specializer)
   ((%unique-number 
     :initform (prog1 *class-unique-number* (incf *class-unique-number*))
-    :accessor unique-number)
+    :reader unique-number)
    (%name 
     :initform nil
     :initarg :name 

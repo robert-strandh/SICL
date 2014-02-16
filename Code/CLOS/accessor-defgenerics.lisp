@@ -298,8 +298,6 @@
 ;;; when the class is initialized or reinitialized.
 (defgeneric unique-number (class))
 
-(defgeneric (setf unique-number) (new-unique-number class))
-
 ;;; This function sets the name of the class. 
 ;;;
 ;;; FIXME: this function is probably unnecessary because the way the
