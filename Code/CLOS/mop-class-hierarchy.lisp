@@ -150,8 +150,7 @@
     :reader method-lambda-list)
    (%specializers 
     :initarg :specializers 
-    :reader method-specializers
-    :reader m-specializers)
+    :reader method-specializers)
    (%qualifiers 
     :initarg :qualifiers 
     :reader method-qualifiers)
@@ -446,7 +445,7 @@
 
 (defclass slot-definition (metaobject)
   ((%name 
-    :initarg :name 
+    :initarg :name
     :reader slot-definition-name)
    (%allocation 
     :initarg :allocation
