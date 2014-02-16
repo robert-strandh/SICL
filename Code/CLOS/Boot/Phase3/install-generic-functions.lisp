@@ -26,7 +26,6 @@
     (setf gf-lambda-list)
     (setf gf-argument-precedence-order)
     (setf discriminating-function)
-    (setf gf-name)
     ;; These are used by ADD-DIRECT-METHOD which is called by
     ;; ADD-METHOD, which is called indirectly by the :AFTER method on
     ;; INITIALIZE-INSTANCE, specialized to STANDARD-CLASS in order to
