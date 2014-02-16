@@ -34,8 +34,8 @@
 		     (and (null (set-exclusive-or
 				 (method-qualifiers method)
 				 (method-qualifiers existing-method)))
-			  (equal (m-specializers method)
-				 (m-specializers existing-method))))
+			  (equal (method-specializers method)
+				 (method-specializers existing-method))))
 		   (gf-methods generic-function))))
     (unless (null method-to-remove)
       (remove-method generic-function method-to-remove)))
@@ -45,7 +45,7 @@
   ;; Associate GENERIC-FUNCTION with METHOD.
   (setf (m-generic-function method) generic-function)
   ;; Call ADD-DIRECT-METHOD for each of the specializers of METHOD.
-  (loop for specializer in (m-specializers method)
+  (loop for specializer in (method-specializers method)
 	do (add-direct-method specializer method))
   ;; Call COMPUTE-DISCRIMINATING-FUNCTION and install its result
   ;; with SET-FUNCALLABLE-INSTANCE-FUNCTION. 
@@ -76,7 +76,7 @@
   (setf (gf-methods generic-function)
 	(remove method (gf-methods generic-function)))
   ;; Call REMOVE-DIRECT-METHOD for each of the specializers of METHOD.
-  (loop for specializer in (m-specializers method)
+  (loop for specializer in (method-specializers method)
 	do (remove-direct-method specializer method))
   ;; Disassociate GENERIC-FUNCTION from METHOD.
   (setf (m-generic-function method) nil)
