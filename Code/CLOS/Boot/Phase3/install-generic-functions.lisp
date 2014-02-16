@@ -11,6 +11,12 @@
     (setf c-direct-slots)
     class-direct-default-initargs
     (setf c-direct-default-initargs)
+    (setf c-precedence-list)
+    direct-slots
+    (setf c-slots)
+    direct-default-initargs
+    (setf c-default-initargs)
+    (setf c-finalized-p)
     ;; These are used by the :AFTER method on INITIALIZE-INSTANCE,
     ;; specialized for STANDARD-GENERIC-FUNCTION.
     (setf gf-documentation)
@@ -47,6 +53,13 @@
     reinitialize-instance
     shared-initialize
     initialize-built-in-instance
+    add-direct-method
+    ;;
+    slot-definition-type
+    slot-definition-initform
+    (setf s-location)
+    slot-definition-readers
+    slot-definition-writers
     ))
 
 (loop for name in *installable-generic-functions*
