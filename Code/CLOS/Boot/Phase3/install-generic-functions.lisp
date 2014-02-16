@@ -37,9 +37,6 @@
     ;; to the methods of a generic function.
     gf-methods
     (setf gf-methods)
-    ;; This one is used by ADD-METHOD to call ADD-DIRECT-METHOD passing
-    ;; it the specializer.
-    m-specializers
     ;; These are used directly by ADD-METHOD in order to store a back
     ;; pointer from the method to its generic function and to check
     ;; that the method is not currently on a generic function.
