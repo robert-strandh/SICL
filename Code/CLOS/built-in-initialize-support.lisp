@@ -70,9 +70,5 @@
 			 ;; initfunction.
 			 (setf (slot-contents (heap-instance-slots instance)
 					      location)
-			       (funcall (slot-definition-initfunction slot))))))))
-    ;; Store the unique number of the class in the instance, even
-    ;; though instances of built-in classes can not become obsolete.
-    (setf (standard-instance-access instance +class-unique-number-offset+)
-	  (unique-number class)))
+			       (funcall (slot-definition-initfunction slot)))))))))
   instance)

@@ -18,5 +18,9 @@
 	 (slot-count (count :instance slots
 			    :test #'eq :key #'slot-definition-allocation))
 	 (size (+ slot-count 2))
-	 (slots (allocate-slot-storage size)))
-    (allocate-heap-instance class slots)))
+	 (slots (allocate-slot-storage size))
+	 (instance (allocate-heap-instance class slots)))
+    ;; Store the unique number of the class in the instance.
+    (setf (standard-instance-access instance +class-unique-number-offset+)
+	  (unique-number class))
+    instance))

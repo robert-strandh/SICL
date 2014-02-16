@@ -50,11 +50,7 @@
     ;; Store the class slots in the instance so that we can update the instance
     ;; when the class changes.
     (setf (standard-instance-access instance +instance-slots-offset+)
-	  class-slots)
-    ;; Store the unique number of the class in the instance so that we can
-    ;; recognize when the instance is obsolete.
-    (setf (standard-instance-access instance +class-unique-number-offset+)
-	  (unique-number class)))
+	  class-slots))
   instance)
 
 ;;; The method on initialize-instance specialized for standard-object

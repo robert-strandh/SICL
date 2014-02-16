@@ -26,5 +26,10 @@
 	 (slot-count (count :instance slots
 			    :test #'eq :key #'slot-definition-allocation))
 	 (size (+ slot-count 1 additional-storage))
-	 (slots (allocate-slot-storage size)))
-    (allocate-heap-instance class slots)))
+	 (slots (allocate-slot-storage size))
+	 (instance (allocate-heap-instance class slots)))
+    ;; Store the unique number of the class in the instance so that
+    ;; it can be used immediately for generic function dispatch.
+    (setf (standard-instance-access instance +class-unique-number-offset+)
+	  (unique-number class))
+    instance))
