@@ -80,7 +80,7 @@
    (%name 
     :initform nil
     :initarg :name
-    :reader generic-function-name
+    :reader generic-function-name)
    (%lambda-list 
     :reader generic-function-lambda-list
     :writer (setf gf-lambda-list))
