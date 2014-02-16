@@ -83,5 +83,5 @@
   (declare (ignore method))
   (unless slot-definition-p
     (error "the slot-definition argument must be supplied"))
-  (unless (typep slot-definition 'direct-slot-definition)
+  (unless (direct-slot-definition-p slot-definition)
     (error "the slot-definition argument must be a direct-slot-definition")))
