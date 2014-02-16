@@ -32,21 +32,15 @@
 	   (error "method class must be a class or a name"))))
   (let ((remaining-keys (copy-list all-keyword-arguments)))
     (loop while (remf remaining-keys :generic-function-class))
-    (let ((result (if method-class-p
-		      (apply #'make-instance generic-function-class
-			     ;; The AMOP does
-			     :name function-name
-			     :method-class method-class
-			     remaining-keys)
-		      (apply #'make-instance generic-function-class
-			     :name function-name
-			     remaining-keys))))
-      ;; According to the AMOP, the name of the generic function is
-      ;; set here, rather than by INITIALIZE-INSTANCE, but in all the
-      ;; examples (chapter 1 and Closette), the :name keyword argument
-      ;; is also passed to MAKE-INSTANCE.
-      (setf (gf-name result) function-name)
-      result)))
+    (if method-class-p
+	(apply #'make-instance generic-function-class
+	       ;; The AMOP does
+	       :name function-name
+	       :method-class method-class
+	       remaining-keys)
+	(apply #'make-instance generic-function-class
+	       :name function-name
+	       remaining-keys))))
 
 (defun ensure-generic-function-using-class-generic-function
     (generic-function

@@ -79,8 +79,8 @@
    ;; REINITIALIZE-INSTANCE.
    (%name 
     :initform nil
+    :initarg :name
     :reader generic-function-name
-    :writer (setf gf-name))
    (%lambda-list 
     :reader generic-function-lambda-list
     :writer (setf gf-lambda-list))

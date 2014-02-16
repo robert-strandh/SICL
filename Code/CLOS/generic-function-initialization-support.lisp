@@ -73,7 +73,6 @@
    argument-precedence-order-p)
   (let ((fun (compute-discriminating-function generic-function)))
     (setf (discriminating-function generic-function) fun)
-    (setf (gf-name generic-function) name)
     (unless (null name)
       (set-funcallable-instance-function generic-function fun))))
 
@@ -87,7 +86,6 @@
        (declarations nil declarations-p)
        method-combination
        (method-class nil method-class-p)
-       (name nil name-p)  ; FIXME: check if this belongs here.
      &allow-other-keys)
   ;; FIXME: handle different method combinations.
   (declare (ignore method-combination))
@@ -97,8 +95,6 @@
     (set-declarations generic-function declarations))
   (when method-class-p
     (set-method-class generic-function method-class))
-  (when name-p
-    (setf (gf-name generic-function) name))
   (set-lambda-list-and-argument-precedence-order
    generic-function
    lambda-list

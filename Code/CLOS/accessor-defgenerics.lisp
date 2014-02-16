@@ -194,13 +194,6 @@
 ;;; function.
 (defgeneric (setf c-direct-subclasses) (new-value class))
 
-;;; This function sets the name of the generic function.
-;;;
-;;; FIXME: this function is probably unnecessary because the way the
-;;; name of a class is modified is by (SETF GENERIC-FUNCTION-NAME)
-;;; calling REINITIALIZE-INSTANCE.
-(defgeneric (setf gf-name) (new-name generic-function))
-
 ;;; This function sets the lambda list of the generic function.
 (defgeneric (setf gf-lambda-list) (new-lambda-list generic-function))
 
