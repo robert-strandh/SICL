@@ -90,7 +90,9 @@
    ;; created as bridge generic functions and added to the list in
    ;; *BRIDGE-GENERIC-FUNCTIONS*, because DEFGENERIC still works that
    ;; way.
-   (:file "initialize-defgenerics")
+   (:file "initialize-instance-defgenerics")
+   (:file "reinitialize-instance-defgenerics")
+   (:file "shared-initialize-defgenerics")
    ;; Define default primary methods on the generic functions
    ;; INITIALIZE-INSTANCE, REINITIALIZE-INSTANCE, and
    ;; SHARED-INITIALIZE.  These methods are specialized to
