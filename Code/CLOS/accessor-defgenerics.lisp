@@ -367,3 +367,7 @@
 (defgeneric (setf slot-definition) (slot-definition accessor-method))
 
 (defgeneric (setf s-location) (location slot-definition))
+
+(defgeneric symbol-name (symbol))
+
+(defgeneric symbol-package (symbol))
