@@ -196,7 +196,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CLASS.
+;;; Class CLASS.
 
 (defparameter *class-unique-number* 0)
 
@@ -219,6 +219,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class REAL-CLASS.
+
+(defclass real-class (class)
+  ((%documentation 
+    :initform nil
+    :accessor c-documentation)
+   (%finalized-p 
+    :initform nil 
+    :reader class-finalized-p
+    :writer (setf c-finalized-p))
+   (%precedence-list 
+    :initform '() 
+    :reader class-precedence-list
+    :writer (setf c-precedence-list))))
+   
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; BUILT-IN-CLASS.
 ;;;
 ;;; The AMOP says that the readers CLASS-DIRECT-DEFAULT-INITARGS,
@@ -229,7 +246,7 @@
 ;;; different readers: DIRECT-DEFAULT-INITARGS, DIRECT-SLOTS,
 ;;; DEFAULT-INITARGS, and EFFECTIVE-SLOTS. 
 
-(defclass built-in-class (class)
+(defclass built-in-class (real-class)
   ((%direct-default-initargs
     :initarg :direct-default-initargs
     :reader direct-default-initargs)
@@ -241,17 +258,6 @@
     :initarg :direct-slots
     :reader direct-slots
     :writer (setf c-direct-slots))
-   (%documentation 
-    :initform nil
-    :accessor c-documentation)
-   (%finalized-p 
-    :initform nil 
-    :reader class-finalized-p
-    :writer (setf c-finalized-p))
-   (%precedence-list 
-    :initarg :precedence-list 
-    :reader class-precedence-list
-    :writer (setf c-precedence-list))
    (%default-initargs 
     :initarg :default-initargs
     :reader default-initargs
@@ -278,6 +284,67 @@
 (defmethod class-default-initargs ((class built-in-class))
   (declare (ignore class))
   '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class REGULAR-CLASS.
+;;;
+;;; A common superclass of STANDARD-CLASS and
+;;; FUNCALLABLE-STANDARD-CLASS.
+;;;
+;;; This class is not specified by the AMOP, but we are allowed to
+;;; define it.  See:
+;;; http://metamodular.com/CLOS-MOP/restrictions-on-implementations.html
+
+(defclass regular-class (real-class)
+  ((%direct-default-initargs 
+    ;; FIXME: Remove this :INITARG when possible
+    :initarg :direct-default-initargs
+    :initform '()
+    :reader class-direct-default-initargs
+    ;; Additional reader
+    :reader direct-default-initargs)
+   (%direct-slots 
+    :reader direct-slots
+    :reader class-direct-slots
+    :writer (setf c-direct-slots))
+   (%direct-superclasses 
+    ;; This slot has no initform and no initarg, because it is set by
+    ;; the :after method on INITIALIZE-INSTANCE using the
+    ;; :direct-superclasses initarg.
+    :reader class-direct-superclasses
+    :writer (setf c-direct-superclasses))
+   (%default-initargs 
+    :reader class-default-initargs
+    ;; Additional reader
+    :reader default-initargs
+    :writer (setf c-default-initargs))
+   (%effective-slots 
+    :initform '() 
+    :reader class-slots
+    ;; Additional reader
+    :reader effective-slots
+    :writer (setf c-slots))
+   (%prototype
+    :reader class-prototype
+    :writer (setf c-prototype))
+   (%dependents
+    :initform '()
+    :accessor dependents)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; STANDARD-CLASS.
+
+(defclass standard-class (regular-class)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; FUNCALLABLE-STANDARD-CLASS.
+
+(defclass funcallable-standard-class (regular-class)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -321,78 +388,6 @@
 (defmethod class-slots ((class forward-referenced-class))
   (declare (ignore class))
   (error "A forward referenced class does not have any slots"))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class REGULAR-CLASS.
-;;;
-;;; A common superclass of STANDARD-CLASS and
-;;; FUNCALLABLE-STANDARD-CLASS.
-;;;
-;;; This class is not specified by the AMOP, but we are allowed to
-;;; define it.  See:
-;;; http://metamodular.com/CLOS-MOP/restrictions-on-implementations.html
-
-(defclass regular-class (class)
-  ((%direct-default-initargs 
-    ;; FIXME: Remove this :INITARG when possible
-    :initarg :direct-default-initargs
-    :initform '()
-    :reader class-direct-default-initargs
-    ;; Additional reader
-    :reader direct-default-initargs)
-   (%direct-slots 
-    :reader direct-slots
-    :reader class-direct-slots
-    :writer (setf c-direct-slots))
-   (%direct-superclasses 
-    ;; This slot has no initform and no initarg, because it is set by
-    ;; the :after method on INITIALIZE-INSTANCE using the
-    ;; :direct-superclasses initarg.
-    :reader class-direct-superclasses
-    :writer (setf c-direct-superclasses))
-   (%documentation 
-    :initform nil
-    :accessor c-documentation)
-   (%finalized-p 
-    :initform nil 
-    :reader class-finalized-p
-    :writer (setf c-finalized-p))
-   (%precedence-list 
-    :initform '() 
-    :reader class-precedence-list
-    :writer (setf c-precedence-list))
-   (%default-initargs 
-    :reader class-default-initargs
-    ;; Additional reader
-    :reader default-initargs
-    :writer (setf c-default-initargs))
-   (%effective-slots 
-    :initform '() 
-    :reader class-slots
-    ;; Additional reader
-    :reader effective-slots
-    :writer (setf c-slots))
-   (%prototype
-    :reader class-prototype
-    :writer (setf c-prototype))
-   (%dependents
-    :initform '()
-    :accessor dependents)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; STANDARD-CLASS.
-
-(defclass standard-class (regular-class)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; FUNCALLABLE-STANDARD-CLASS.
-
-(defclass funcallable-standard-class (regular-class)
-  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
