@@ -30,10 +30,7 @@
      &key
        direct-default-initargs
      &allow-other-keys)
-  (unless (proper-list-p direct-default-initargs)
-    (error "direct default initargs must be a proper list"))
-  ;; FIXME: check that the elements of the list are
-  ;; canonicalized default initargs.
+  (check-direct-default-initargs direct-default-initargs)
   (apply #'call-next-method
 	 class
 	 :direct-default-initargs direct-default-initargs

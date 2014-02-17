@@ -50,6 +50,12 @@
 ;;; classes, so we are safe if we define an :after method in
 ;;; INITIALIZE-INSTANCE here. 
 
+(defun check-direct-default-initargs (direct-default-initargs)
+  ;; FIXME: check that the elements of the list are canonicalized
+  ;; default initargs.
+  (unless (proper-list-p direct-default-initargs)
+    (error "direct default initargs must be a proper list")))
+
 (defun add-as-subclass-to-superclasses (class)
   (loop for superclass in (class-direct-superclasses class)
 	do (setf (c-direct-subclasses superclass)
