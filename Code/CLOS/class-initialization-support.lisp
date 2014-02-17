@@ -56,6 +56,15 @@
   (unless (proper-list-p direct-default-initargs)
     (error "direct default initargs must be a proper list")))
 
+(defun check-direct-superclasses (class direct-superclasses)
+  (unless (proper-list-p direct-superclasses)
+    (error "direct superclasses must be proper list"))
+  (loop for direct-superclass in direct-superclasses
+	do (unless (classp direct-superclass)
+	     (error "superclass must be a class metaobject"))
+	   (unless (validate-superclass class direct-superclass)
+	     (error "superclass not valid for class"))))
+
 (defun add-as-subclass-to-superclasses (class)
   (loop for superclass in (class-direct-superclasses class)
 	do (setf (c-direct-subclasses superclass)
@@ -68,33 +77,6 @@
 	   (loop for writer in (slot-definition-writers direct-slot)
 		 do (add-writer-method class writer direct-slot))))
 
-(defun set-superclasses (class direct-superclasses default-superclass)
-  (unless (proper-list-p direct-superclasses)
-    (error "direct superclasses must be proper list"))
-  (let ((defaulted-direct-superclasses
-	  (if (null direct-superclasses)
-	      (list default-superclass)
-	      direct-superclasses)))
-    (loop for direct-superclass in defaulted-direct-superclasses
-	  do (unless (classp direct-superclass)
-	       (error "superclass must be a class metaobject"))
-	     (unless (validate-superclass class direct-superclass)
-	       (error "superclass not valid for class")))
-    (setf (c-direct-superclasses class)
-	  defaulted-direct-superclasses)))
-
-(defun set-superclasses-no-default (class direct-superclasses)
-  (unless (proper-list-p direct-superclasses)
-    (error "direct superclasses must be proper list"))
-  (let ((defaulted-direct-superclasses  direct-superclasses))
-    (loop for direct-superclass in defaulted-direct-superclasses
-	  do (unless (classp direct-superclass)
-	       (error "superclass must be a class metaobject"))
-	     (unless (validate-superclass class direct-superclass)
-	       (error "superclass not valid for class")))
-    (setf (c-direct-superclasses class)
-	  defaulted-direct-superclasses)))
-
 (defun set-direct-slots (class direct-slots)
   (unless (proper-list-p direct-slots)
     (error "direct slots must be proper list"))
@@ -106,33 +88,18 @@
 				    class canonicalized-slot-specification)
 			     canonicalized-slot-specification))))
 
-(defun initialize-instance-after-common
-    (class
-     direct-superclasses
-     direct-slots
-     default-superclass)
-  (set-superclasses class direct-superclasses default-superclass)
+(defun initialize-instance-after-common (class direct-slots)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
   (create-readers-and-writers class))
 
 (defun initialize-instance-after-standard-class-default
-    (class
-     &key direct-superclasses direct-slots
-     &allow-other-keys)
-  (initialize-instance-after-common class
-				    direct-superclasses
-				    direct-slots
-				    *standard-object*))
+    (class &key direct-slots &allow-other-keys)
+  (initialize-instance-after-common class direct-slots))
 
 (defun initialize-instance-after-funcallable-standard-class-default
-    (class
-     &key direct-superclasses direct-slots
-     &allow-other-keys)
-  (initialize-instance-after-common class
-				    direct-superclasses
-				    direct-slots
-				    *funcallable-standard-object*))
+    (class &key direct-slots &allow-other-keys)
+  (initialize-instance-after-common class direct-slots))
 
 ;;; According to the AMOP, calling initialize-instance on a built-in
 ;;; class (i.e., on an instance of a subclass of the class
@@ -145,9 +112,6 @@
 ;;; ENSURE-BUILT-IN-CLASS after we have finalized inheritance.  The
 ;;; reason for that is that we then know the slot location.
 (defun initialize-instance-after-built-in-class-default
-    (class
-     &key direct-superclasses direct-slots
-     &allow-other-keys)
-  (set-superclasses-no-default class direct-superclasses)
+    (class &key direct-slots &allow-other-keys)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots))

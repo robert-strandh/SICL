@@ -298,7 +298,6 @@
 
 (defclass regular-class (real-class)
   ((%direct-default-initargs 
-    ;; FIXME: Remove this :INITARG when possible
     :initarg :direct-default-initargs
     :initform '()
     :reader class-direct-default-initargs
@@ -309,9 +308,7 @@
     :reader class-direct-slots
     :writer (setf c-direct-slots))
    (%direct-superclasses 
-    ;; This slot has no initform and no initarg, because it is set by
-    ;; the :after method on INITIALIZE-INSTANCE using the
-    ;; :direct-superclasses initarg.
+    :initarg :direct-superclasses
     :reader class-direct-superclasses
     :writer (setf c-direct-superclasses))
    (%default-initargs 
