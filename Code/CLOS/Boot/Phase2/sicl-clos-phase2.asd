@@ -30,7 +30,7 @@
    ;; "initialize-instance")
    (:file "initialize-instance-defgenerics")
    (:file "reinitialize-instance-defgenerics")
-   (:file "share-initialize-defgenerics")
+   (:file "shared-initialize-defgenerics")
    (:file "initialize-instance")
    ;; Although we do not use the dependent maintenance facility, we
    ;; define the specified functions as ordinary functions that do
