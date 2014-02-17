@@ -110,32 +110,28 @@
 
 (defun initialize-instance-after-common
     (class
-     direct-default-initargs
      direct-superclasses
      direct-slots
      default-superclass)
   (set-superclasses class direct-superclasses default-superclass)
-  (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots)
   (create-readers-and-writers class))
 
 (defun initialize-instance-after-standard-class-default
     (class
-     &key direct-default-initargs direct-superclasses direct-slots
+     &key direct-superclasses direct-slots
      &allow-other-keys)
   (initialize-instance-after-common class
-				    direct-default-initargs
 				    direct-superclasses
 				    direct-slots
 				    *standard-object*))
 
 (defun initialize-instance-after-funcallable-standard-class-default
     (class
-     &key direct-default-initargs direct-superclasses direct-slots
+     &key direct-superclasses direct-slots
      &allow-other-keys)
   (initialize-instance-after-common class
-				    direct-default-initargs
 				    direct-superclasses
 				    direct-slots
 				    *funcallable-standard-object*))
@@ -152,9 +148,8 @@
 ;;; reason for that is that we then know the slot location.
 (defun initialize-instance-after-built-in-class-default
     (class
-     &key direct-default-initargs direct-superclasses direct-slots
+     &key direct-superclasses direct-slots
      &allow-other-keys)
   (set-superclasses-no-default class direct-superclasses)
-  (set-direct-default-initargs class direct-default-initargs)
   (add-as-subclass-to-superclasses class)
   (set-direct-slots class direct-slots))

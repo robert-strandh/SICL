@@ -4,12 +4,10 @@
     ((class standard-class)
      &rest initargs
      &key
-       direct-default-initargs
        direct-superclasses
        direct-slots
      &allow-other-keys)
-  (declare (ignore direct-default-initargs
-		   direct-superclasses
+  (declare (ignore direct-superclasses
 		   direct-slots))
   (apply #'initialize-instance-after-standard-class-default
 	 class initargs))
@@ -18,26 +16,37 @@
     ((class funcallable-standard-class)
      &rest initargs
      &key
-       direct-default-initargs
        direct-superclasses
        direct-slots
      &allow-other-keys)
-  (declare (ignore direct-default-initargs
-		   direct-superclasses
+  (declare (ignore direct-superclasses
 		   direct-slots))
   (apply #'initialize-instance-after-funcallable-standard-class-default
 	 class initargs))
+
+(defmethod initialize-instance :around
+    ((class real-class)
+     &rest initargs
+     &key
+       direct-default-initargs
+     &allow-other-keys)
+  (unless (proper-list-p direct-default-initargs)
+    (error "direct default initargs must be a proper list"))
+  ;; FIXME: check that the elements of the list are
+  ;; canonicalized default initargs.
+  (apply #'call-next-method
+	 class
+	 :direct-default-initargs direct-default-initargs
+	 initargs))
 
 (defmethod initialize-instance :after
     ((class built-in-class)
      &rest initargs
      &key
-       direct-default-initargs
        direct-superclasses
        direct-slots
      &allow-other-keys)
-  (declare (ignore direct-default-initargs
-		   direct-superclasses
+  (declare (ignore direct-superclasses
 		   direct-slots))
   (apply #'initialize-instance-after-built-in-class-default
 	 class initargs))
