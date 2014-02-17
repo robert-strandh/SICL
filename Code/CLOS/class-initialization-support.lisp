@@ -51,12 +51,12 @@
 ;;; INITIALIZE-INSTANCE here. 
 
 (defun set-direct-default-initargs (class direct-default-initargs)
+  (declare (ignore class))
   (unless (proper-list-p direct-default-initargs)
     (error "direct default initargs must be a proper list"))
   ;; FIXME: check that the elements of the list are
   ;; canonicalized default initargs.
-  (setf (c-direct-default-initargs class)
-	direct-default-initargs))
+  nil)
 
 (defun add-as-subclass-to-superclasses (class)
   (loop for superclass in (class-direct-superclasses class)

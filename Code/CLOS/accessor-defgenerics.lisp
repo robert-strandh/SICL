@@ -310,9 +310,6 @@
 ;;; This function sets the direct methods of the class.
 (defgeneric (setf c-direct-methods) (direct-methods class))
 
-;;; This function sets the direct default initargs of the class.
-(defgeneric (setf c-direct-default-initargs) (new-value class))
-
 (defgeneric default-initargs (class))
 
 ;;; For STANDARD-CLASS and FUNCALLABLE-STANDARD-CLASS, this function

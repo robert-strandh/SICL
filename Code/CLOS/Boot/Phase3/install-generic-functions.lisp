@@ -10,7 +10,6 @@
     class-direct-slots
     (setf c-direct-slots)
     class-direct-default-initargs
-    (setf c-direct-default-initargs)
     (setf c-precedence-list)
     direct-slots
     (setf c-slots)

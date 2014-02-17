@@ -232,7 +232,6 @@
 (defclass built-in-class (class)
   ((%direct-default-initargs
     :initarg :direct-default-initargs
-    :writer (setf c-direct-default-initargs)
     :reader direct-default-initargs)
    (%direct-superclasses 
     :initarg :direct-superclasses
@@ -340,11 +339,11 @@
 ;;; FIXME: it looks like some code factoring would be useful here.
 (defclass standard-class (class)
   ((%direct-default-initargs 
+    :initarg :direct-default-initargs
     :initform '()
     :reader class-direct-default-initargs
     ;; Additional reader; see remark above.
-    :reader direct-default-initargs 
-    :writer (setf c-direct-default-initargs))
+    :reader direct-default-initargs)
    (%direct-slots 
     :reader direct-slots
     :reader class-direct-slots
@@ -395,7 +394,6 @@
     :initform '()
     :initarg :direct-default-initargs
     :reader class-direct-default-initargs
-    :writer (setf c-direct-default-initargs)
     ;; Additional reader; see remark above.
     :reader direct-default-initargs)
    (%direct-slots 
