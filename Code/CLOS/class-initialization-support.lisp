@@ -65,6 +65,16 @@
 	   (unless (validate-superclass class direct-superclass)
 	     (error "superclass not valid for class"))))
 
+(defun check-and-instantiate-direct-slots (class direct-slots)
+  (unless (proper-list-p direct-slots)
+    (error "direct slots must be proper list"))
+  ;; FIXME: check that the elements are canonicalized slot specifications
+  (loop for canonicalized-slot-specification in direct-slots
+	collect (apply #'make-instance
+		       (apply #'direct-slot-definition-class
+			      class canonicalized-slot-specification)
+		       canonicalized-slot-specification)))
+
 (defun add-as-subclass-to-superclasses (class)
   (loop for superclass in (class-direct-superclasses class)
 	do (setf (c-direct-subclasses superclass)
@@ -77,20 +87,8 @@
 	   (loop for writer in (slot-definition-writers direct-slot)
 		 do (add-writer-method class writer direct-slot))))
 
-(defun set-direct-slots (class direct-slots)
-  (unless (proper-list-p direct-slots)
-    (error "direct slots must be proper list"))
-  ;; FIXME: check that the elements are canonicalized slot specifications
-  (setf (c-direct-slots class)
-	(loop for canonicalized-slot-specification in direct-slots
-	      collect (apply #'make-instance
-			     (apply #'direct-slot-definition-class
-				    class canonicalized-slot-specification)
-			     canonicalized-slot-specification))))
-
 (defun initialize-instance-after-common (class direct-slots)
   (add-as-subclass-to-superclasses class)
-  (set-direct-slots class direct-slots)
   (create-readers-and-writers class))
 
 (defun initialize-instance-after-standard-class-default
@@ -113,5 +111,4 @@
 ;;; reason for that is that we then know the slot location.
 (defun initialize-instance-after-built-in-class-default
     (class &key direct-slots &allow-other-keys)
-  (add-as-subclass-to-superclasses class)
-  (set-direct-slots class direct-slots))
+  (add-as-subclass-to-superclasses class))

@@ -1,42 +1,34 @@
 (cl:in-package #:sicl-clos)
 
 (defmethod initialize-instance :after
-    ((class standard-class)
-     &rest initargs
-     &key direct-slots
-     &allow-other-keys)
-  (declare (ignore direct-slots))
+    ((class standard-class) &rest initargs &key &allow-other-keys)
   (apply #'initialize-instance-after-standard-class-default
 	 class initargs))
 
 (defmethod initialize-instance :after
-    ((class funcallable-standard-class)
-     &rest initargs
-     &key direct-slots
-     &allow-other-keys)
-  (declare (ignore direct-slots))
+    ((class funcallable-standard-class) &rest initargs &key &allow-other-keys)
   (apply #'initialize-instance-after-funcallable-standard-class-default
 	 class initargs))
 
-(defmethod initialize-instance :around
-    ((class real-class)
-     &rest initargs
-     &key
-       direct-default-initargs
-       direct-superclasses
-     &allow-other-keys)
+(defmethod initialize-instance :around ((class real-class)
+					&rest initargs
+					&key
+					  direct-default-initargs
+					  direct-superclasses
+					  direct-slots
+					&allow-other-keys)
   (check-direct-default-initargs direct-default-initargs)
   (check-direct-superclasses class direct-superclasses)
   (apply #'call-next-method
 	 class
 	 :direct-default-initargs direct-default-initargs
+	 :direct-slots (check-and-instantiate-direct-slots class direct-slots)
 	 initargs))
 
-(defmethod initialize-instance :around
-    ((class standard-class)
-     &rest initargs
-     &key direct-superclasses
-     &allow-other-keys)
+(defmethod initialize-instance :around ((class standard-class)
+					&rest initargs
+					&key direct-superclasses
+					&allow-other-keys)
   (if (null direct-superclasses)
       (apply #'call-next-method
 	     class
@@ -44,11 +36,10 @@
 	     initargs)
       (call-next-method)))
 
-(defmethod initialize-instance :around
-    ((class funcallable-standard-class)
-     &rest initargs
-     &key direct-superclasses
-     &allow-other-keys)
+(defmethod initialize-instance :around ((class funcallable-standard-class)
+					&rest initargs
+					&key direct-superclasses
+					&allow-other-keys)
   (if (null direct-superclasses)
       (apply #'call-next-method
 	     class
@@ -57,10 +48,7 @@
       (call-next-method)))
 
 (defmethod initialize-instance :after
-    ((class built-in-class)
-     &rest initargs
-     &key direct-slots &allow-other-keys)
-  (declare (ignore direct-slots))
+    ((class built-in-class) &rest initargs &key &allow-other-keys)
   (apply #'initialize-instance-after-built-in-class-default
 	 class initargs))
 

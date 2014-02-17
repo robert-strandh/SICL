@@ -303,6 +303,7 @@
     ;; Additional reader
     :reader direct-default-initargs)
    (%direct-slots 
+    :initarg :direct-slots
     :reader direct-slots
     :reader class-direct-slots
     :writer (setf c-direct-slots))
