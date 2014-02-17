@@ -75,8 +75,8 @@
 			      class canonicalized-slot-specification)
 		       canonicalized-slot-specification)))
 
-(defun add-as-subclass-to-superclasses (class)
-  (loop for superclass in (class-direct-superclasses class)
+(defun add-as-subclass-to-superclasses (class direct-superclasses)
+  (loop for superclass in direct-superclasses
 	do (setf (c-direct-subclasses superclass)
 		 (cons class (class-direct-subclasses superclass)))))
 
@@ -87,29 +87,12 @@
 	   (loop for writer in (slot-definition-writers direct-slot)
 		 do (add-writer-method class writer direct-slot))))
 
-(defun initialize-instance-after-common (class direct-slots)
-  (add-as-subclass-to-superclasses class)
+(defun initialize-instance-after-regular-class-default
+    (class &key direct-superclasses direct-slots &allow-other-keys)
+  (add-as-subclass-to-superclasses class direct-superclasses)
   (create-readers-and-writers class direct-slots))
 
-(defun initialize-instance-after-standard-class-default
-    (class &key direct-slots &allow-other-keys)
-  (initialize-instance-after-common class direct-slots))
-
-(defun initialize-instance-after-funcallable-standard-class-default
-    (class &key direct-slots &allow-other-keys)
-  (initialize-instance-after-common class direct-slots))
-
-;;; According to the AMOP, calling initialize-instance on a built-in
-;;; class (i.e., on an instance of a subclass of the class
-;;; BUILT-IN-CLASS) signals an error, because built-in classes can not
-;;; be created by the user.  But during the bootstrapping phase we
-;;; need to create built-in classes.  We solve this problem by
-;;; removing this method once the bootstrapping phase is finished.
-;;;
-;;; We do not add readers and writers here, because we do it in
-;;; ENSURE-BUILT-IN-CLASS after we have finalized inheritance.  The
-;;; reason for that is that we then know the slot location.
 (defun initialize-instance-after-built-in-class-default
-    (class &key direct-slots &allow-other-keys)
-  (add-as-subclass-to-superclasses class)
+    (class &key direct-superclasses direct-slots &allow-other-keys)
+  (add-as-subclass-to-superclasses class direct-superclasses)
   (create-readers-and-writers class direct-slots))
