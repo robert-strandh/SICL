@@ -80,8 +80,8 @@
 	do (setf (c-direct-subclasses superclass)
 		 (cons class (class-direct-subclasses superclass)))))
 
-(defun create-readers-and-writers (class)
-  (loop for direct-slot in (class-direct-slots class)
+(defun create-readers-and-writers (class direct-slots)
+  (loop for direct-slot in direct-slots
 	do (loop for reader in (slot-definition-readers direct-slot)
 		 do (add-reader-method class reader direct-slot))
 	   (loop for writer in (slot-definition-writers direct-slot)
@@ -89,7 +89,7 @@
 
 (defun initialize-instance-after-common (class direct-slots)
   (add-as-subclass-to-superclasses class)
-  (create-readers-and-writers class))
+  (create-readers-and-writers class direct-slots))
 
 (defun initialize-instance-after-standard-class-default
     (class &key direct-slots &allow-other-keys)
