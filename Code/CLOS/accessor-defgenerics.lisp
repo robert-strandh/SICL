@@ -301,9 +301,6 @@
 ;;; This function sets the direct subclasses of the class.
 (defgeneric (setf c-direct-subclasses) (direct-subclasses class))
 
-;;; This function sets the direct slots of the class.
-(defgeneric (setf c-direct-slots) (direct-slots class))
-
 ;;; This function sets the direct methods of the class.
 (defgeneric (setf c-direct-methods) (direct-methods class))
 
