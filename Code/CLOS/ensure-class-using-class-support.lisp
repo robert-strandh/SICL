@@ -54,7 +54,10 @@
     (name
      &rest keys
      &key
+       direct-default-initargs
+       direct-slots
        direct-superclasses
+       name
        (metaclass nil metaclass-p)
      &allow-other-keys)
   (setf metaclass
@@ -80,8 +83,10 @@
     (loop while (remf remaining-keys :direct-superclasses))
     (setf (find-class name)
 	  (apply #'make-instance metaclass
-		 :name name
+		 :direct-default-initargs direct-default-initargs
+		 :direct-slots direct-slots
 		 :direct-superclasses direct-superclasses
+		 :name name
 		 remaining-keys))))
 
 ;;; When the class is reinitialized, it is NOT safe to use a default
@@ -130,7 +135,10 @@
      name
      &rest keys
      &key
+       direct-default-initargs
+       direct-slots
        (direct-superclasses nil direct-superclasses-p)
+       name
        (metaclass nil metaclass-p)
        &allow-other-keys)
   (unless metaclass-p
@@ -150,10 +158,14 @@
     (loop while (remf remaining-keys :direct-superclasses))
     (if direct-superclasses-p
 	(apply #'reinitialize-instance class
+	       :direct-default-initargs direct-default-initargs
+	       :direct-slots direct-slots
 	       :name name
 	       :direct-superclasses direct-superclasses
 	       remaining-keys)
 	(apply #'reinitialize-instance class
+	       :direct-default-initargs direct-default-initargs
+	       :direct-slots direct-slots
 	       :name name
 	       remaining-keys)))
   class)

@@ -23,6 +23,7 @@
 (defun ensure-built-in-class (name
 			      &rest arguments
 			      &key
+				direct-default-initargs
 				direct-superclasses
 			      &allow-other-keys)
   (let ((superclasses (loop for name in direct-superclasses
@@ -41,6 +42,7 @@
     ;; that MAKE-INSTANCE can no longer be used to create built-in
     ;; classes.
     (let ((result (apply #'make-instance 'built-in-class
+			 :direct-default-initargs direct-default-initargs
 			 :name name
 			 :direct-superclasses superclasses
 			 remaining-keys)))

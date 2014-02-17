@@ -11,6 +11,7 @@
 (defun ensure-built-in-class (name
 			      &rest arguments
 			      &key
+				direct-default-initargs
 				direct-superclass-names
 			      &allow-other-keys)
   ;; If the class already exists, then do nothing.
@@ -29,6 +30,7 @@
       ;; that MAKE-INSTANCE can no longer be used to create built-in
       ;; classes.
       (let ((result (apply #'make-instance 'built-in-class
+			   :direct-default-initargs direct-default-initargs
 			   :name name
 			   :direct-superclasses superclasses
 			   remaining-keys)))

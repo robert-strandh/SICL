@@ -26,6 +26,8 @@
 (defun ensure-class (name
 		     &rest arguments
 		     &key
+		       direct-default-initargs
+		       direct-slots
 		       direct-superclasses
 		       (metaclass nil metaclass-p)
 		     &allow-other-keys)
@@ -41,8 +43,10 @@
     (loop while (remf remaining-keys :direct-superclasses))
     (let* ((class (if metaclass-p metaclass 'standard-class))
 	   (result (apply #'make-instance class
-			 :name name
-			 :direct-superclasses superclasses
-			 remaining-keys)))
+			  :direct-default-initargs direct-default-initargs
+			  :direct-slots direct-slots
+			  :name name
+			  :direct-superclasses superclasses
+			  remaining-keys)))
       (add-bridge-class name result)
       result)))
