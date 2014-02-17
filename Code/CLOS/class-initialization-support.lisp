@@ -111,4 +111,5 @@
 ;;; reason for that is that we then know the slot location.
 (defun initialize-instance-after-built-in-class-default
     (class &key direct-slots &allow-other-keys)
-  (add-as-subclass-to-superclasses class))
+  (add-as-subclass-to-superclasses class)
+  (create-readers-and-writers class direct-slots))
