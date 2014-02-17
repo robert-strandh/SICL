@@ -6,7 +6,6 @@
     class-direct-subclasses
     (setf c-direct-subclasses)
     class-direct-superclasses
-    (setf c-direct-superclasses)
     class-direct-slots
     (setf c-direct-slots)
     class-direct-default-initargs

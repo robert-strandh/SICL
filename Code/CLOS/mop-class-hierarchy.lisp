@@ -252,8 +252,7 @@
     :reader direct-default-initargs)
    (%direct-superclasses 
     :initarg :direct-superclasses
-    :reader class-direct-superclasses
-    :writer (setf c-direct-superclasses))
+    :reader class-direct-superclasses)
    (%direct-slots
     :initarg :direct-slots
     :reader direct-slots
@@ -309,8 +308,7 @@
     :writer (setf c-direct-slots))
    (%direct-superclasses 
     :initarg :direct-superclasses
-    :reader class-direct-superclasses
-    :writer (setf c-direct-superclasses))
+    :reader class-direct-superclasses)
    (%default-initargs 
     :reader class-default-initargs
     ;; Additional reader

@@ -298,9 +298,6 @@
 ;;; REINITIALIZE-INSTANCE.
 (defgeneric (setf c-name) (new-name class))
 
-;;; This function sets the direct superclasses of the class.
-(defgeneric (setf c-direct-superclasses) (direct-superclasses class))
-
 ;;; This function sets the direct subclasses of the class.
 (defgeneric (setf c-direct-subclasses) (direct-subclasses class))
 
