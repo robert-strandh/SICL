@@ -28,7 +28,9 @@
    ;; CL:INITIALIZE-INSTANCE specialized to SICL-CLOS:METAOBJECT that
    ;; calls SICL-CLOS:INITIALIZE-INSTANCE (this is done in
    ;; "initialize-instance")
-   (:file "initialize-defgenerics")
+   (:file "initialize-instance-defgenerics")
+   (:file "reinitialize-instance-defgenerics")
+   (:file "share-initialize-defgenerics")
    (:file "initialize-instance")
    ;; Although we do not use the dependent maintenance facility, we
    ;; define the specified functions as ordinary functions that do
