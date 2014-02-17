@@ -7,7 +7,7 @@
        direct-default-initargs
        direct-superclasses
        direct-slots
-       &allow-other-keys)
+     &allow-other-keys)
   (declare (ignore direct-default-initargs
 		   direct-superclasses
 		   direct-slots))
@@ -21,7 +21,7 @@
        direct-default-initargs
        direct-superclasses
        direct-slots
-       &allow-other-keys)
+     &allow-other-keys)
   (declare (ignore direct-default-initargs
 		   direct-superclasses
 		   direct-slots))
@@ -35,7 +35,7 @@
        direct-default-initargs
        direct-superclasses
        direct-slots
-       &allow-other-keys)
+     &allow-other-keys)
   (declare (ignore direct-default-initargs
 		   direct-superclasses
 		   direct-slots))
