@@ -17,21 +17,16 @@
    (:file "compile")
    ;; The symbols INITIALIZE-INSTANCE, REINITIALIZE-INSTANCE, and
    ;; SHARED-INITIALIZED are shadowed in the SICL-CLOS package.  But
-   ;; we still need for the :AFTER methods on INITIALIZE-INSTANCE
-   ;; defined here to be called as :AFTER method on
-   ;; CL:INITIALIZE-INSTANCE.  We solve this problem by 1: Defining
-   ;; SICL-CLOS:INITIALIZE-INSTANCE as a host generic function (this
-   ;; happens when we load "initialize-defgenerics"), 2: Defining a
-   ;; primary unspecialized method on SICL-CLOS:INITIALIZE-INSTANCE
-   ;; that does nothing (so that there is always a primary applicable
-   ;; method), and 3: Defining an :AFTER method on
-   ;; CL:INITIALIZE-INSTANCE specialized to SICL-CLOS:METAOBJECT that
-   ;; calls SICL-CLOS:INITIALIZE-INSTANCE (this is done in
-   ;; "initialize-instance")
-   (:file "initialize-instance-defgenerics")
+   ;; we still need for the methods on INITIALIZE-INSTANCE defined
+   ;; here to be called as methods on CL:INITIALIZE-INSTANCE.  We
+   ;; solve this problem by setting the fdefinition of the symbol
+   ;; SICL-CLOS:INITIALIZE-INSTANCE to the fdefinition of the function
+   ;; CL:INITIALIZE-INSTANCE.
+   (:file "initialize-instance")
+   ;; Define host generic functions for the other initialization
+   ;; functions.
    (:file "reinitialize-instance-defgenerics")
    (:file "shared-initialize-defgenerics")
-   (:file "initialize-instance")
    ;; Although we do not use the dependent maintenance facility, we
    ;; define the specified functions as ordinary functions that do
    ;; nothing, so that we can safely call them from other code.
