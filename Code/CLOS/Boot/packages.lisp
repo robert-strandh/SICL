@@ -14,7 +14,6 @@
    #:allocate-instance
    #:built-in-class
    #:call-method
-   #:call-next-method
    #:change-class
    #:class
    #:class-name
@@ -35,7 +34,6 @@
    #:method 
    #:method-combination
    #:method-qualifiers
-   #:next-method-p
    #:no-next-method
    #:no-applicable-method
    #:reinitialize-instance
