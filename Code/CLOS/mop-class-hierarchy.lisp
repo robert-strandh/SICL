@@ -113,7 +113,7 @@
     :initform '() 
     ;; This reader is the one that the AMOP specifies.
     :reader generic-function-methods
-    ;; Additional reader.  FIXME: explain why this one is needed.    
+    ;; Additional reader.
     :reader gf-methods
     :writer (setf gf-methods))
    ;; We maintain a CALL HISTORY of the generic function.  This call
@@ -324,25 +324,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; STANDARD-CLASS.
+;;; Class REGULAR-CLASS.
 ;;;
-;;; Some slots have an additional reader (in addition to the one
-;;; stipulated by the AMOP), because we want some functions of the
-;;; class-finalization protocol to work on built-in classes as well as
-;;; on standard classes.  And those functions need to access slots
-;;; both in standard classes and built-in classes.  But the AMOP
-;;; requires that the specified readers return the empty list for
-;;; built-in classes.  The solution is to use an additional set of
-;;; readers that do not appear in the specification, and that work
-;;; both for built-in and for standard classes.
+;;; A common superclass of STANDARD-CLASS and
+;;; FUNCALLABLE-STANDARD-CLASS.
+;;;
+;;; This class is not specified by the AMOP, but we are allowed to
+;;; define it.  See:
+;;; http://metamodular.com/CLOS-MOP/restrictions-on-implementations.html
 
-;;; FIXME: it looks like some code factoring would be useful here.
-(defclass standard-class (class)
+(defclass regular-class (class)
   ((%direct-default-initargs 
+    ;; FIXME: Remove this :INITARG when possible
     :initarg :direct-default-initargs
     :initform '()
     :reader class-direct-default-initargs
-    ;; Additional reader; see remark above.
+    ;; Additional reader
     :reader direct-default-initargs)
    (%direct-slots 
     :reader direct-slots
@@ -367,15 +364,13 @@
     :writer (setf c-precedence-list))
    (%default-initargs 
     :reader class-default-initargs
-    ;; Additional reader; see remark above.
+    ;; Additional reader
     :reader default-initargs
     :writer (setf c-default-initargs))
-   ;; For some reason, the specified reader for this slot is not
-   ;; called class-effective-slots, but class-slots. 
    (%effective-slots 
     :initform '() 
     :reader class-slots
-    ;; Additional reader; see remark above.
+    ;; Additional reader
     :reader effective-slots
     :writer (setf c-slots))
    (%prototype
@@ -387,55 +382,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; STANDARD-CLASS.
+
+(defclass standard-class (regular-class)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; FUNCALLABLE-STANDARD-CLASS.
 
-(defclass funcallable-standard-class (class)
-  ((%direct-default-initargs 
-    :initform '()
-    :initarg :direct-default-initargs
-    :reader class-direct-default-initargs
-    ;; Additional reader; see remark above.
-    :reader direct-default-initargs)
-   (%direct-slots 
-    :initarg :direct-slots
-    :reader direct-slots
-    :reader class-direct-slots
-    :writer (setf c-direct-slots))
-   (%direct-superclasses 
-    ;; This slot has no initform and no initarg, because it is set by
-    ;; the :after method on INITIALIZE-INSTANCE using the
-    ;; :direct-superclasses initarg.
-    :reader class-direct-superclasses
-    :writer (setf c-direct-superclasses))
-   (%documentation 
-    :accessor c-documentation)
-   (%finalized-p 
-    :initform nil 
-    :reader class-finalized-p
-    :writer (setf c-finalized-p))
-   (%precedence-list 
-    :initform '() 
-    :reader class-precedence-list
-    :writer (setf c-precedence-list))
-   (%default-initargs 
-    :reader class-default-initargs
-    ;; Additional reader; see remark above.
-    :reader default-initargs
-    :writer (setf c-default-initargs))
-   ;; For some reason, this accessor is not called
-   ;; class-effective-slots.
-   (%effective-slots 
-    :initform '() 
-    :reader class-slots
-    ;; Additional reader; see remark above.
-    :reader effective-slots
-    :writer (setf c-slots))
-   (%prototype
-    :reader class-prototype
-    :writer (setf c-prototype))
-   (%dependents
-    :initform '()
-    :accessor dependents)))
+(defclass funcallable-standard-class (regular-class)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
