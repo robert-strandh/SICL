@@ -168,6 +168,8 @@
    ;; discriminating function of newly-created target generic
    ;; functions becomes a target function.
    (:file "compile")
+   ;; Redefine set-funcallable-instance-function
+   (:file "set-funcallable-instance-function")
    ;; Define all the standard accessors as target generic
    ;; functions.
    (:file "accessor-defgenerics")
