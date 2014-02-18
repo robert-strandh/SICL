@@ -82,6 +82,7 @@
     :initarg :name
     :reader generic-function-name)
    (%lambda-list 
+    :initarg :lambda-list
     :reader generic-function-lambda-list
     :writer (setf gf-lambda-list))
    (%documentation 
@@ -97,6 +98,7 @@
 
 (defclass standard-generic-function (generic-function)
   ((%argument-precedence-order
+    :initarg :argument-precedence-order
     :reader generic-function-argument-precedence-order
     :writer (setf gf-argument-precedence-order))
    (%declarations 
@@ -132,6 +134,7 @@
    ;; is specialized for, and T in each position where some
    ;; method specialized for something other than the class T.
    (%specializer-profile
+    :initarg :specializer-profile
     :accessor specializer-profile)
    (%set-cache
     :accessor set-cache))
