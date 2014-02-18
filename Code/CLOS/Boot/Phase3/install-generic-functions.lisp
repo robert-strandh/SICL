@@ -16,7 +16,6 @@
     (setf c-finalized-p)
     ;; These are used by the :AFTER method on INITIALIZE-INSTANCE,
     ;; specialized for STANDARD-GENERIC-FUNCTION.
-    (setf gf-declarations)
     (setf gf-method-class)
     (setf specializer-profile)
     (setf gf-lambda-list)

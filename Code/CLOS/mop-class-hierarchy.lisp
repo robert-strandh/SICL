@@ -101,8 +101,7 @@
     :writer (setf gf-argument-precedence-order))
    (%declarations 
     :initarg :declarations
-    :reader generic-function-declarations
-    :writer (setf gf-declarations))
+    :reader generic-function-declarations)
    (%method-class 
     :reader generic-function-method-class
     :writer (setf gf-method-class))

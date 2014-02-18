@@ -221,9 +221,6 @@
 (defgeneric (setf gf-argument-precedence-order)
     (new-argument-precedence-order generic-function))
 
-;;; This function sets the declarations of the generic function.
-(defgeneric (setf gf-declarations) (new-declarations generic-function))
-
 ;;; This function sets the method class of the generic function.
 (defgeneric (setf gf-method-class) (new-method-class generic-function))
 
