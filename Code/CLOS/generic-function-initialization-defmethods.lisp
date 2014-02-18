@@ -25,6 +25,18 @@
   (apply #'initialize-instance-after-standard-generic-function-default
 	 generic-function initargs))
 
+(defmethod initialize-instance :around
+    ((generic-function generic-function)
+     &rest initargs
+     &key
+       documentation
+     &allow-other-keys)
+  (check-documentation documentation)
+  (apply #'call-next-method
+	 generic-function
+	 :documentation documentation
+	 initargs))
+
 (defmethod reinitialize-instance :after
     ((generic-function standard-generic-function)
      &rest initargs
@@ -46,3 +58,13 @@
 		   name))
   (apply #'reinitialize-instance-after-standard-generic-function-default
 	 generic-function initargs))
+
+(defmethod reinitialize-instance :around
+    ((generic-function generic-function)
+     &rest initargs
+     &key
+       documentation
+     &allow-other-keys)
+  (declare (ignore generic-function initargs))
+  (check-documentation documentation)
+  (call-next-method))

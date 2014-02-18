@@ -25,12 +25,9 @@
       (setf (gf-argument-precedence-order generic-function)
 	    argument-precedence-order))))
 
-(defun set-documentation (generic-function documentation)
+(defun check-documentation (documentation)
   (unless (or (null documentation) (stringp documentation))
-    (error "documentation must be NIL or a string"))
-  (setf (gf-documentation generic-function)
-	documentation))
-  
+    (error "documentation must be NIL or a string")))
 
 (defun set-declarations (generic-function declarations)
   (unless (proper-list-p declarations)
@@ -54,7 +51,6 @@
      &key
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
-       documentation
        declarations
        method-combination
        (method-class (find-class 'standard-method))
@@ -62,7 +58,6 @@
      &allow-other-keys)
   ;; FIXME: handle different method combinations.
   (declare (ignore method-combination))
-  (set-documentation generic-function documentation)
   (set-declarations generic-function declarations)
   (set-method-class generic-function method-class)
   (set-lambda-list-and-argument-precedence-order
@@ -82,15 +77,12 @@
      &key
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
-       (documentation nil documentation-p)
        (declarations nil declarations-p)
        method-combination
        (method-class nil method-class-p)
      &allow-other-keys)
   ;; FIXME: handle different method combinations.
   (declare (ignore method-combination))
-  (when documentation-p
-    (set-documentation generic-function documentation))
   (when declarations-p
     (set-declarations generic-function declarations))
   (when method-class-p
