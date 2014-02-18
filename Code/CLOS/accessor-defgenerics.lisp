@@ -201,10 +201,6 @@
 ;;; the function CL:DOCUMENTATION. 
 (defgeneric gf-documentation (generic-function))
 
-;;; This function will be removed later.  For now it plays the role of
-;;; the function (SETF CL:DOCUMENTATION). 
-(defgeneric (setf gf-documentation) (documentation generic-function))
-
 ;;; This function returns the current discriminating function of the
 ;;; generic function.
 (defgeneric discriminating-function (generic-function))

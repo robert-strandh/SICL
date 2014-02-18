@@ -87,7 +87,7 @@
    (%documentation 
     :initarg :documentation
     :initform nil
-    :accessor gf-documentation)
+    :reader gf-documentation)
    (%discriminating-function 
     :accessor discriminating-function)
    (%dependents
