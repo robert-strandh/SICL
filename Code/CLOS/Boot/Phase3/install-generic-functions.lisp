@@ -18,7 +18,6 @@
     ;; specialized for STANDARD-GENERIC-FUNCTION.
     (setf gf-method-class)
     (setf specializer-profile)
-    (setf discriminating-function)
     ;; These are used by ADD-DIRECT-METHOD which is called by
     ;; ADD-METHOD, which is called indirectly by the :AFTER method on
     ;; INITIALIZE-INSTANCE, specialized to STANDARD-CLASS in order to

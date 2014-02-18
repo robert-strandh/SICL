@@ -198,15 +198,6 @@
 ;;; the function CL:DOCUMENTATION. 
 (defgeneric gf-documentation (generic-function))
 
-;;; This function returns the current discriminating function of the
-;;; generic function.
-(defgeneric discriminating-function (generic-function))
-
-;;; This functions sets the discriminating function of the generic
-;;; function.
-(defgeneric (setf discriminating-function)
-    (new-discriminating-function generic-function))
-
 ;;; This function returns a list of the dependents of the metaobject.
 (defgeneric dependents (metaobject))
 

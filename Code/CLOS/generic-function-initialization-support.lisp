@@ -44,7 +44,7 @@
   (declare (ignore method-combination))
   (set-method-class generic-function method-class)
   (let ((fun (compute-discriminating-function generic-function)))
-    (setf (discriminating-function generic-function) fun)
+    ;; FIXME: The name test should not be necessary.
     (unless (null name)
       (set-funcallable-instance-function generic-function fun))))
 

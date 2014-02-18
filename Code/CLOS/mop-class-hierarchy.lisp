@@ -88,8 +88,6 @@
     :initarg :documentation
     :initform nil
     :reader gf-documentation)
-   (%discriminating-function 
-    :accessor discriminating-function)
    (%dependents
     :initform '()
     :accessor dependents))
