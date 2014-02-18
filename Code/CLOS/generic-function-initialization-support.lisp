@@ -29,12 +29,10 @@
   (unless (or (null documentation) (stringp documentation))
     (error "documentation must be NIL or a string")))
 
-(defun set-declarations (generic-function declarations)
+;;; FIXME: check the syntax of each declaration. 
+(defun check-declarations (declarations)
   (unless (proper-list-p declarations)
-    (error "declarations must be a proper list"))
-  ;; FIXME: check the syntax of each declaration
-  (setf (gf-declarations generic-function)
-	declarations))
+    (error "declarations must be a proper list")))
 
 (defun set-method-combination (generic-function method-combination)
   ;; FIXME: check that method-combination is a method-combination metaobject
@@ -51,14 +49,12 @@
      &key
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
-       declarations
        method-combination
        (method-class (find-class 'standard-method))
        (name nil)
      &allow-other-keys)
   ;; FIXME: handle different method combinations.
   (declare (ignore method-combination))
-  (set-declarations generic-function declarations)
   (set-method-class generic-function method-class)
   (set-lambda-list-and-argument-precedence-order
    generic-function
@@ -77,14 +73,11 @@
      &key
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
-       (declarations nil declarations-p)
        method-combination
        (method-class nil method-class-p)
      &allow-other-keys)
   ;; FIXME: handle different method combinations.
   (declare (ignore method-combination))
-  (when declarations-p
-    (set-declarations generic-function declarations))
   (when method-class-p
     (set-method-class generic-function method-class))
   (set-lambda-list-and-argument-precedence-order

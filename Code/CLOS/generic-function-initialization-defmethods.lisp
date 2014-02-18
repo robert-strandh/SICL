@@ -30,11 +30,14 @@
      &rest initargs
      &key
        documentation
+       declarations
      &allow-other-keys)
   (check-documentation documentation)
+  (check-declarations declarations)
   (apply #'call-next-method
 	 generic-function
 	 :documentation documentation
+	 :declarations declarations
 	 initargs))
 
 (defmethod reinitialize-instance :after
@@ -64,7 +67,9 @@
      &rest initargs
      &key
        documentation
+       declarations
      &allow-other-keys)
   (declare (ignore generic-function initargs))
   (check-documentation documentation)
+  (check-declarations declarations)
   (call-next-method))
