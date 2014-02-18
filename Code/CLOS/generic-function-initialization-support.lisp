@@ -1,29 +1,17 @@
 (in-package #:sicl-clos)
 
-(defun set-lambda-list-and-argument-precedence-order
-    (generic-function
-     lambda-list
-     lambda-list-p
-     argument-precedence-order
-     argument-precedence-order-p)
-  (when (and argument-precedence-order-p
-	     (not lambda-list-p))
-    (error "when argument precedence order appears, so must lambda list"))
+(defun check-argument-precedence-order
+    (argument-precedence-order required-parameters)
   (unless (proper-list-p argument-precedence-order)
     (error "argument-precedence-order must be a proper list"))
-  (when lambda-list-p
-    (let ((parsed-lambda-list
-	    (parse-generic-function-lambda-list lambda-list)))
-      (unless argument-precedence-order-p
-	(setf argument-precedence-order
-	      (required parsed-lambda-list)))
-      (setf (specializer-profile generic-function)
-	    (make-list (length (required parsed-lambda-list))
-		       :initial-element nil))
-      (setf (gf-lambda-list generic-function)
-	    lambda-list)
-      (setf (gf-argument-precedence-order generic-function)
-	    argument-precedence-order))))
+  (unless (and (= (length argument-precedence-order)
+		  (length required-parameters))
+	       (null (set-difference argument-precedence-order
+				     required-parameters))
+	       (null (set-difference required-parameters
+				     argument-precedence-order)))
+    (error "argument precedence order must be a permutation~@
+            of the required parameters")))
 
 (defun check-documentation (documentation)
   (unless (or (null documentation) (stringp documentation))
@@ -47,8 +35,6 @@
 (defun initialize-instance-after-standard-generic-function-default
     (generic-function
      &key
-       (lambda-list nil lambda-list-p)
-       (argument-precedence-order nil argument-precedence-order-p)
        method-combination
        (method-class (find-class 'standard-method))
        (name nil)
@@ -56,12 +42,6 @@
   ;; FIXME: handle different method combinations.
   (declare (ignore method-combination))
   (set-method-class generic-function method-class)
-  (set-lambda-list-and-argument-precedence-order
-   generic-function
-   lambda-list
-   lambda-list-p
-   argument-precedence-order
-   argument-precedence-order-p)
   (let ((fun (compute-discriminating-function generic-function)))
     (setf (discriminating-function generic-function) fun)
     (unless (null name)
@@ -71,8 +51,6 @@
     (generic-function
      &rest initargs
      &key
-       (lambda-list nil lambda-list-p)
-       (argument-precedence-order nil argument-precedence-order-p)
        method-combination
        (method-class nil method-class-p)
      &allow-other-keys)
@@ -80,12 +58,6 @@
   (declare (ignore method-combination))
   (when method-class-p
     (set-method-class generic-function method-class))
-  (set-lambda-list-and-argument-precedence-order
-   generic-function
-   lambda-list
-   lambda-list-p
-   argument-precedence-order
-   argument-precedence-order-p)
   (map-dependents
    generic-function
    (lambda (dependent)
