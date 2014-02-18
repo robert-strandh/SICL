@@ -36,12 +36,10 @@
 (defun initialize-instance-after-standard-generic-function-default
     (generic-function
      &key
-       method-combination
        (method-class (find-class 'standard-method))
        (name nil)
      &allow-other-keys)
   ;; FIXME: handle different method combinations.
-  (declare (ignore method-combination))
   (set-method-class generic-function method-class)
   (let ((fun (compute-discriminating-function generic-function)))
     ;; FIXME: The name test should not be necessary.

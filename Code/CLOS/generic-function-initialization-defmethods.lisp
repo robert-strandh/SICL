@@ -7,21 +7,10 @@
     ((generic-function standard-generic-function)
      &rest initargs
      &key
-       lambda-list
-       argument-precedence-order
-       documentation
-       declarations
-       method-combination
        method-class
        name
      &allow-other-keys)
-  (declare (ignore lambda-list
-		   argument-precedence-order
-		   documentation
-		   declarations
-		   method-combination
-		   method-class
-		   name))
+  (declare (ignore method-class name))
   (apply #'initialize-instance-after-standard-generic-function-default
 	 generic-function initargs))
 
@@ -66,21 +55,10 @@
     ((generic-function standard-generic-function)
      &rest initargs
      &key
-       lambda-list
-       argument-precedence-order
-       documentation
-       declarations
-       method-combination
        method-class
        name ; FIXME: check if this belongs here.
      &allow-other-keys)
-  (declare (ignore lambda-list
-		   argument-precedence-order
-		   documentation
-		   declarations
-		   method-combination
-		   method-class
-		   name))
+  (declare (ignore method-class name))
   (apply #'reinitialize-instance-after-standard-generic-function-default
 	 generic-function initargs))
 
