@@ -33,9 +33,11 @@
        declarations
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
+       method-combination
      &allow-other-keys)
   (check-documentation documentation)
   (check-declarations declarations)
+  (check-method-combination method-combination)
   (if lambda-list-p
       (let* ((parsed-lambda-list
 	       (parse-generic-function-lambda-list lambda-list))
@@ -90,9 +92,11 @@
        declarations
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
+       method-combination
      &allow-other-keys)
   (check-documentation documentation)
   (check-declarations declarations)
+  (check-method-combination method-combination)
   (if lambda-list-p
       (let* ((parsed-lambda-list
 	       (parse-generic-function-lambda-list lambda-list))

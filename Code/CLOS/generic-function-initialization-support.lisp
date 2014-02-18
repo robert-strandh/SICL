@@ -22,10 +22,11 @@
   (unless (proper-list-p declarations)
     (error "declarations must be a proper list")))
 
-(defun set-method-combination (generic-function method-combination)
-  ;; FIXME: check that method-combination is a method-combination metaobject
-  (setf (gf-method-combination generic-function)
-	method-combination))
+(defun check-method-combination (method-combination)
+  ;; FIXME: check that method-combination is a method-combination
+  ;; metaobject.
+  (declare (ignore method-combination))
+  nil)
 
 (defun set-method-class (generic-function method-class)
   ;; FIXME: check that the method-class is a subclss of METHOD.
