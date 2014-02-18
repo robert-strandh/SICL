@@ -194,9 +194,6 @@
 ;;; function.
 (defgeneric (setf c-direct-subclasses) (new-value class))
 
-;;; This function sets the lambda list of the generic function.
-(defgeneric (setf gf-lambda-list) (new-lambda-list generic-function))
-
 ;;; This function will be removed later.  For now it plays the role of
 ;;; the function CL:DOCUMENTATION. 
 (defgeneric gf-documentation (generic-function))
@@ -215,11 +212,6 @@
 
 ;;; This function sets the list dependents of the metaobject.
 (defgeneric (setf dependents) (new-dependents metaobject))
-
-;;; This function sets the argument precedence order of the generic
-;;; function.
-(defgeneric (setf gf-argument-precedence-order)
-    (new-argument-precedence-order generic-function))
 
 ;;; This function sets the method class of the generic function.
 (defgeneric (setf gf-method-class) (new-method-class generic-function))

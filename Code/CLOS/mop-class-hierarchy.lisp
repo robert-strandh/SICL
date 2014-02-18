@@ -83,8 +83,7 @@
     :reader generic-function-name)
    (%lambda-list 
     :initarg :lambda-list
-    :reader generic-function-lambda-list
-    :writer (setf gf-lambda-list))
+    :reader generic-function-lambda-list)
    (%documentation 
     :initarg :documentation
     :initform nil
@@ -99,8 +98,7 @@
 (defclass standard-generic-function (generic-function)
   ((%argument-precedence-order
     :initarg :argument-precedence-order
-    :reader generic-function-argument-precedence-order
-    :writer (setf gf-argument-precedence-order))
+    :reader generic-function-argument-precedence-order)
    (%declarations 
     :initarg :declarations
     :reader generic-function-declarations)
