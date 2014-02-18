@@ -106,7 +106,8 @@
     :reader generic-function-method-class
     :writer (setf gf-method-class))
    (%method-combination 
-    ;; FIXME: make this initform something better.
+    :initarg :method-combination
+    ;; FIXME: remove this later.
     :initform nil
     :reader generic-function-method-combination
     :writer (setf gf-method-combination))
