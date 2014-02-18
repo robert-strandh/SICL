@@ -109,8 +109,7 @@
     :initarg :method-combination
     ;; FIXME: remove this later.
     :initform nil
-    :reader generic-function-method-combination
-    :writer (setf gf-method-combination))
+    :reader generic-function-method-combination)
    (%methods 
     :initform '() 
     ;; This reader is the one that the AMOP specifies.

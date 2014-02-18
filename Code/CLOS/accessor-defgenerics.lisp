@@ -216,9 +216,6 @@
 ;;; This function sets the method class of the generic function.
 (defgeneric (setf gf-method-class) (new-method-class generic-function))
 
-;;; This function sets the method combination of the generic function.
-(defgeneric (setf gf-method-combination) (new-method-combination generic-function))
-
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf gf-methods) (new-methods generic-function))
 
