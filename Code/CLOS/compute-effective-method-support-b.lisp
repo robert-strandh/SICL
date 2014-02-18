@@ -53,8 +53,10 @@
 		       (funcall primary-chain args)
 		     (funcall after-chain args)))
 	    (funcall (method-function (car around-methods))
+		     args
 		     (append (cdr around-methods)
-			     (list (lambda (args)
+			     (list (lambda (args next-methods)
+				     (declare (ignore next-methods))
 				     (funcall before-chain args)
 				     (multiple-value-prog1
 					 (funcall primary-chain args)
