@@ -85,6 +85,7 @@
     :reader generic-function-lambda-list
     :writer (setf gf-lambda-list))
    (%documentation 
+    :initarg :documentation
     :initform nil
     :accessor gf-documentation)
    (%discriminating-function 
