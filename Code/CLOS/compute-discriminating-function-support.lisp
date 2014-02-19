@@ -116,3 +116,52 @@
 					    method-combination
 					    applicable-methods)))
 	    (apply effective-method arguments)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Load the call history of a generic function.
+;;;
+;;; We assume we have a standard generic function.  We also assume
+;;; that the specializers of each method are classes as opposed to EQL
+;;; specializers.  Finally, we assume that the generic function uses
+;;; the standard method combination.
+;;;
+;;; FIXME: Explain what we are doing.
+
+;;; Return all descendents of a class, including the class itself.
+(defun all-descendents (class)
+  (let ((subclasses (class-direct-subclasses class)))
+    (remove-duplicates (cons class
+			     (reduce #'append
+				     (mapcar #'all-descendents subclasses))))))
+
+(defun cartesian-product (sets)
+  (if (null (cdr sets))
+      (mapcar #'list (car sets))
+      (loop for element in (car sets)
+	    append (mapcar (lambda (set)
+			     (cons element set))
+			   (cartesian-product (cdr sets))))))
+
+;;; CLASSES-OF-METHOD is a list of specializers (which much be classes)
+;;; of a single method of the generic function.
+(defun add-to-call-history (generic-function classes-of-method)
+  (let* ((sets (loop for class in classes-of-method
+		     collect (if (eq class *t*)
+				 (list class)
+				 (all-descendents class))))
+	 (all-combinations (cartesian-product sets))
+	 (mc (generic-function-method-combination generic-function)))
+    (loop for combination in all-combinations
+	  for methods = (compute-applicable-methods-using-classes
+			 generic-function combination)
+	  for em = (compute-effective-method generic-function mc methods)
+	  for no-t = (remove *t* combination)
+	  for numbers = (mapcar #'unique-number no-t)
+	  do (push (list* numbers methods em)
+		   (call-history generic-function)))))
+
+(defun load-call-history (generic-function)
+  (loop for method in (generic-function-methods generic-function)
+	for specializers = (method-specializers method)
+	do (add-to-call-history generic-function specializers)))
