@@ -6,7 +6,8 @@
 ;;; so it contains three items:
 ;;;
 ;;;   1. A list of unique number of the classes of the required
-;;;      arguments.  The classes are the those that were passed to
+;;;      arguments for which the specializer profile contains T.  The
+;;;      classes are the those that were passed to
 ;;;      COMPUTE-APPLICABLE-METHODS-USING-CLASSES.  This item is
 ;;;      located in the CAR of the dotted list representing the call
 ;;;      history entry.
@@ -23,7 +24,8 @@
 ;;; The discriminating function does the following:
 ;;;
 ;;;   1. Compute the list of instance class numbers of the required
-;;;      arguments that it was passed.
+;;;      arguments that it was passed and for which the specializer
+;;;      profile contains T.
 ;;;
 ;;;   2. Check the call history to see whether there is an entry
 ;;;      containing that list of class numbers in the CAR of the
@@ -32,16 +34,18 @@
 ;;;
 ;;;   3. If there is no entry in the call history corresponding to the
 ;;;      list of class numbers of the current required arguments, then
-;;;      call CLASS-OF for each required argument, and then call the
+;;;      call CLASS-OF for each required argument, indpendently of the
+;;;      contents of the specializer profile, and then call the
 ;;;      generic function COMPUTE-APPLICABLE-METHODS-USING-CLASSES
 ;;;      with the resulting list of classes.  If the generic function
 ;;;      COMPUTE-APPLICABLE-METHODS-USING-CLASSES returns TRUE as a
 ;;;      second return value, then call the generic function
 ;;;      COMPUTE-EFFECTIVE-METHOD with the list of methods returned as
 ;;;      the first value.  Create a call history entry from the list
-;;;      of class number of the classes, the list of applicable
-;;;      methods, and the effective method.  Finally, call the
-;;;      effective method and return the result.
+;;;      of class number of the classes for which the specializer
+;;;      profile contains T, the list of applicable methods, and the
+;;;      effective method.  Finally, call the effective method and
+;;;      return the result.
 ;;;
 ;;;   4. If COMPUTE-APPLICABLE-METHODS-USING-CLASSES returns FALSE as
 ;;;      a second return value, then instead call the generic function
@@ -74,7 +78,10 @@
   (let* ((profile (specializer-profile generic-function))
 	 (required-argument-count (length profile))
 	 (required-arguments (subseq arguments 0 required-argument-count))
-	 (class-numbers (mapcar #'instance-class-number required-arguments))
+	 (class-numbers (loop for argument in required-arguments
+			      for p in profile
+			      when p
+				collect (instance-class-number argument)))
 	 (entry (car (member class-numbers (call-history generic-function)
 			     :key #'car :test #'equal))))
     (unless (null entry)
