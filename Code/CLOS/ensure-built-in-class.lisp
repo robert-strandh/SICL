@@ -35,10 +35,6 @@
 			   :direct-superclasses superclasses
 			   remaining-keys)))
 	(setf (find-class name) result)
-	;; Since we require for superclasses to exist, and since we
-	;; don't allow for built-in classes to be redefined, we can
-	;; finalize the inheritance immediately. 
-	(finalize-built-in-inheritance result)
 	;; FIXME: this is where we add create the accessors.
 	result))))
 

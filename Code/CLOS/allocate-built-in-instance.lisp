@@ -22,6 +22,8 @@
 (defun allocate-built-in-instance
     (class &rest initargs &key (additional-storage 0))
   (declare (ignore initargs))
+  (unless (class-finalized-p class)
+    (finalize-built-in-inheritance class))
   (let* ((slots (effective-slots class))
 	 (slot-count (count :instance slots
 			    :test #'eq :key #'slot-definition-allocation))
