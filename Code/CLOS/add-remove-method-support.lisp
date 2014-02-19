@@ -6,7 +6,31 @@
 ;;;; In this file, there are no definitions of generic functions, nor
 ;;;; of any methods.  
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Utilities
+
+;;; Update the specializer profile of a generic function according to
+;;; a list of specializers of a method.
+(defun update-specializer-profile (generic-function specializers)
+  (setf (specializer-profile generic-function)
+	(loop for specializer in specializers
+	      for p in (specializer-profile generic-function)
+	      collect (if (and (classp specializer)
+			       (= (unique-number specializer) 0))
+			  p
+			  t))))
+
+;;; Compute a completely new specializer profile for a generic
+;;; function.
+(defun compute-and-set-specializer-profile (generic-function)
+  ;; Keep the length of the profile, but with all elements NIL.
+  (setf (specializer-profile generic-function)
+	(make-list (length (specializer-profile generic-function))))
+  (loop for method in (generic-function-methods generic-function)
+	do (update-specializer-profile generic-function method)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function ADD-METHOD.
 ;;;
@@ -42,6 +66,9 @@
   ;; Add this method to the set of methods of this generic function.
   (setf (gf-methods generic-function)
 	(cons method (gf-methods generic-function)))
+  ;; Update the specializer-profile of the generic-function according
+  ;; to the specializers of the method.
+  (update-specializer-profile generic-function (method-specializers method))
   ;; Associate GENERIC-FUNCTION with METHOD.
   (setf (m-generic-function method) generic-function)
   ;; Call ADD-DIRECT-METHOD for each of the specializers of METHOD.
@@ -59,7 +86,7 @@
 				      'add-method
 				      method))))
   
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Generic function REMOVE-METHOD.
 ;;;
@@ -75,6 +102,8 @@
   ;; Remove METHOD from the methods of GENERIC-FUNCTION.
   (setf (gf-methods generic-function)
 	(remove method (gf-methods generic-function)))
+  ;; Compute a new specializer profile for the generic function.
+  (compute-and-set-specializer-profile generic-function)
   ;; Call REMOVE-DIRECT-METHOD for each of the specializers of METHOD.
   (loop for specializer in (method-specializers method)
 	do (remove-direct-method specializer method))
