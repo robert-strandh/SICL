@@ -204,9 +204,6 @@
 ;;; This function sets the list dependents of the metaobject.
 (defgeneric (setf dependents) (new-dependents metaobject))
 
-;;; This function sets the method class of the generic function.
-(defgeneric (setf gf-method-class) (new-method-class generic-function))
-
 ;;; This function sets the methods of the generic function.
 (defgeneric (setf gf-methods) (new-methods generic-function))
 

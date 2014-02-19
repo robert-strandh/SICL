@@ -16,7 +16,6 @@
     (setf c-finalized-p)
     ;; These are used by the :AFTER method on INITIALIZE-INSTANCE,
     ;; specialized for STANDARD-GENERIC-FUNCTION.
-    (setf gf-method-class)
     (setf specializer-profile)
     ;; These are used by ADD-DIRECT-METHOD which is called by
     ;; ADD-METHOD, which is called indirectly by the :AFTER method on
