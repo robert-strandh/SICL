@@ -7,10 +7,7 @@
     ((generic-function standard-generic-function)
      &rest initargs
      &key
-       method-class
-       name
      &allow-other-keys)
-  (declare (ignore method-class name))
   (apply #'initialize-instance-after-standard-generic-function-default
 	 generic-function initargs))
 
@@ -24,6 +21,7 @@
        (argument-precedence-order nil argument-precedence-order-p)
        method-combination
        (method-class (find-class 'standard-method))
+       name
      &allow-other-keys)
   (check-documentation documentation)
   (check-declarations declarations)
@@ -44,6 +42,7 @@
 	       :specializer-profile (make-list (length required)
 					       :initial-element nil)
 	       :method-class method-class
+	       :name name
 	       initargs))
       (if argument-precedence-order-p
 	  (error "when argument precedence order appears,~@
@@ -53,16 +52,14 @@
 	       :documentation documentation
 	       :declarations declarations
 	       :method-class method-class
+	       :name name
 	       initargs))))
 
 (defmethod reinitialize-instance :after
     ((generic-function standard-generic-function)
      &rest initargs
      &key
-       method-class
-       name ; FIXME: check if this belongs here.
      &allow-other-keys)
-  (declare (ignore method-class name))
   (apply #'reinitialize-instance-after-standard-generic-function-default
 	 generic-function initargs))
 
