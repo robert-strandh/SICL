@@ -23,10 +23,12 @@
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
        method-combination
+       (method-class (find-class 'standard-method))
      &allow-other-keys)
   (check-documentation documentation)
   (check-declarations declarations)
   (check-method-combination method-combination)
+  (check-method-class method-class)
   (if lambda-list-p
       (let* ((parsed-lambda-list
 	       (parse-generic-function-lambda-list lambda-list))
@@ -41,6 +43,7 @@
 	       :argument-precedence-order argument-precedence-order
 	       :specializer-profile (make-list (length required)
 					       :initial-element nil)
+	       :method-class method-class
 	       initargs))
       (if argument-precedence-order-p
 	  (error "when argument precedence order appears,~@
@@ -49,6 +52,7 @@
 	       generic-function
 	       :documentation documentation
 	       :declarations declarations
+	       :method-class method-class
 	       initargs))))
 
 (defmethod reinitialize-instance :after
@@ -71,10 +75,13 @@
        (lambda-list nil lambda-list-p)
        (argument-precedence-order nil argument-precedence-order-p)
        method-combination
+       (method-class nil method-class-p)
      &allow-other-keys)
   (check-documentation documentation)
   (check-declarations declarations)
   (check-method-combination method-combination)
+  (when method-class-p
+    (check-method-class method-class))
   (if lambda-list-p
       (let* ((parsed-lambda-list
 	       (parse-generic-function-lambda-list lambda-list))

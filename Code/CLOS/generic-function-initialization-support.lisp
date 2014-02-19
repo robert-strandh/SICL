@@ -28,19 +28,16 @@
   (declare (ignore method-combination))
   nil)
 
-(defun set-method-class (generic-function method-class)
+(defun check-method-class (method-class)
   ;; FIXME: check that the method-class is a subclss of METHOD.
-  (setf (gf-method-class generic-function)
-	method-class))
+  (declare (ignore method-class))
+  nil)
 
 (defun initialize-instance-after-standard-generic-function-default
     (generic-function
      &key
-       (method-class (find-class 'standard-method))
        (name nil)
      &allow-other-keys)
-  ;; FIXME: handle different method combinations.
-  (set-method-class generic-function method-class)
   (let ((fun (compute-discriminating-function generic-function)))
     ;; FIXME: The name test should not be necessary.
     (unless (null name)
@@ -50,13 +47,7 @@
     (generic-function
      &rest initargs
      &key
-       method-combination
-       (method-class nil method-class-p)
      &allow-other-keys)
-  ;; FIXME: handle different method combinations.
-  (declare (ignore method-combination))
-  (when method-class-p
-    (set-method-class generic-function method-class))
   (map-dependents
    generic-function
    (lambda (dependent)
