@@ -36,12 +36,9 @@
 (defun initialize-instance-after-standard-generic-function-default
     (generic-function
      &key
-       (name nil)
      &allow-other-keys)
   (let ((fun (compute-discriminating-function generic-function)))
-    ;; FIXME: The name test should not be necessary.
-    (unless (null name)
-      (set-funcallable-instance-function generic-function fun))))
+    (set-funcallable-instance-function generic-function fun)))
 
 (defun reinitialize-instance-after-standard-generic-function-default
     (generic-function
