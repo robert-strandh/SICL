@@ -37,7 +37,7 @@
 	    (lambda (args)
 	      (funcall (method-function (car primary-methods))
 		       args
-		       (cdr primary-methods))))
+		       (mapcar #'method-function (cdr primary-methods)))))
 	  (before-chain
 	    (lambda (args)
 	      (loop for method in before-methods
@@ -54,7 +54,7 @@
 		     (funcall after-chain args)))
 	    (funcall (method-function (car around-methods))
 		     args
-		     (append (cdr around-methods)
+		     (append (mapcar #'method-function (cdr around-methods))
 			     (list (lambda (args next-methods)
 				     (declare (ignore next-methods))
 				     (funcall before-chain args)
