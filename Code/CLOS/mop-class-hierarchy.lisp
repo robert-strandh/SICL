@@ -101,6 +101,7 @@
     :initarg :declarations
     :reader generic-function-declarations)
    (%method-class 
+    :initarg :method-class
     :reader generic-function-method-class
     :writer (setf gf-method-class))
    (%method-combination 
