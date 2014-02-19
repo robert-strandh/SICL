@@ -1,28 +1,29 @@
 (cl:in-package #:sicl-clos)
 
+(defun check-qualifiers (qualifiers)
+  ;; The AMOP says it the qualifiers be a proper list, so check that
+  ;; first.
+  (unless (proper-list-p qualifiers)
+    (error "qualifiers must be a proper list"))
+  ;; The AMOP says that the elements of the list of qualifiers should
+  ;; be "non-null atoms".  In the section "Readers for Method
+  ;; Metaobjects", they say that the list is a "list of non-nil
+  ;; atoms".  The CLHS page on DEFMETHOD confirms that a qualifier is
+  ;; not restricted to a symbol, but can be any atom.
+  (unless (every (lambda (qualifier)
+		   (and (atom qualifier) (not (null qualifier))))
+		 qualifiers)
+    (error "a qualifier must be a non-nil atom")))
+
 (defun initialize-instance-after-method
     (method
      &key
-       qualifiers
        (lambda-list nil lambda-list-p)
        (specializers nil specializers-p)
        (function nil function-p)
        documentation
      &allow-other-keys)
-  ;; Start by checking the QUALIFIERS.  The AMOP says it should be a
-  ;; proper list, so check that first.
-  (unless (proper-list-p qualifiers)
-    (error "qualifiers must be a proper list"))
-  ;; FIXME: the AMOP says that the elements of the list of qualifiers
-  ;; should be "non-null atoms".  I wonder if they really mean
-  ;; "non-null SYMBOLS"?  In the section "Readeres for Method
-  ;; Metaobjects", they say that the list is a "list of non-nil
-  ;; atoms". 
-  (unless (every (lambda (qualifier)
-		   (and (atom qualifier) (not (null qualifier))))
-		 qualifiers)
-    (error "a qualifier must be a non-nil atom"))
-  ;; Next do the LAMBDA-LIST.  The AMOP also says that an error is
+  ;; Do the LAMBDA-LIST.  The AMOP also says that an error is
   ;; signaled if this value is not supplied, so we start by checking
   ;; that.
   (unless lambda-list-p

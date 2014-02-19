@@ -18,6 +18,17 @@
   (declare (ignore qualifiers lambda-list specializers function documentation))
   (apply #'initialize-instance-after-method method keys))
 				       
+(defmethod initialize-instance :around
+    ((method method)
+     &rest keys
+     &key qualifiers
+     &allow-other-keys)
+  (check-qualifiers qualifiers)
+  (apply #'call-next-method
+	 method
+	 :qualifiers qualifiers
+	 keys))
+
 (defmethod initialize-instance :after ((method standard-accessor-method)
 				       &rest keys
 				       &key
