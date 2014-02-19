@@ -210,8 +210,7 @@
     ;; There is a specified function named (SETF CLASS-NAME), but it
     ;; is not an accessor.  Instead it works by calling
     ;; REINITIALIZE-INSTANCE with the new name.
-    :reader class-name
-    :writer (setf c-name))
+    :reader class-name)
    (%direct-subclasses 
     :initform '() 
     :reader class-direct-subclasses

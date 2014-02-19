@@ -261,13 +261,6 @@
 ;;; when the class is initialized or reinitialized.
 (defgeneric unique-number (class))
 
-;;; This function sets the name of the class. 
-;;;
-;;; FIXME: this function is probably unnecessary because the way the
-;;; name of a class is modified is by having (SETF CLASS-NAME) call
-;;; REINITIALIZE-INSTANCE.
-(defgeneric (setf c-name) (new-name class))
-
 ;;; This function sets the direct subclasses of the class.
 (defgeneric (setf c-direct-subclasses) (direct-subclasses class))
 
