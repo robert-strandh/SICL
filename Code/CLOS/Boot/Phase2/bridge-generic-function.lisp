@@ -6,4 +6,6 @@
   ()
   (:metaclass #+sbcl sb-pcl:funcallable-standard-class))
 
-  
+(cl:defmethod cl:print-object ((object bridge-generic-function) stream)
+  (print-unreadable-object (object stream :type t)
+    (format stream "~s" (cl:slot-value object '%name))))
