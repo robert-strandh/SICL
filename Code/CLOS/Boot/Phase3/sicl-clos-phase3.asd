@@ -115,6 +115,7 @@
    (:file "built-in-initialize-defmethods")
    (:file "add-remove-direct-method-defgenerics")
    (:file "add-remove-direct-method-defmethods")
+   (:file "class-of-1")
    (:file "load-call-histories")
    ;; Define a version of CLASS-OF that, if given a heap instance as
    ;; defined previously, returns the contents of the class slot.  If
