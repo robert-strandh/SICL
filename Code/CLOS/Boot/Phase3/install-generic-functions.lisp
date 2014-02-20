@@ -3,7 +3,6 @@
 (defparameter *installable-generic-functions*
   '(;; These are used by the :AFTER method on INITIALIZE-INSTANCE
     ;; specialized for STANDARD-CLASS.
-    class-default-initargs
     class-direct-subclasses
     (setf c-direct-subclasses)
     class-direct-superclasses
@@ -33,6 +32,7 @@
     ;; that the method is not currently on a generic function.
     method-generic-function
     (setf m-generic-function)
+    method-specializers
     ;; These are used by the :AFTER method on INITIALIZE-INSTANCE,
     ;; specialized for STANDARD-METHOD
     (setf method-documentation)
