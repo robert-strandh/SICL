@@ -14,8 +14,10 @@
     direct-default-initargs
     (setf c-default-initargs)
     (setf c-finalized-p)
+    unique-number
     ;; These are used by the :AFTER method on INITIALIZE-INSTANCE,
     ;; specialized for STANDARD-GENERIC-FUNCTION.
+    specializer-profile
     (setf specializer-profile)
     ;; These are used by ADD-DIRECT-METHOD which is called by
     ;; ADD-METHOD, which is called indirectly by the :AFTER method on
