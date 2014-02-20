@@ -67,6 +67,61 @@
       ;; class T, and we know that T has unique number 0.
       0))
 
+;;; This function takes a method and, if it is a standard reader
+;;; method or a standard writer method, it replaces it with a method
+;;; that does a direct instance access according to the relevant class
+;;; in CLASSES.  Otherwise, it returns the METHOD argument unchanged.
+(defun maybe-replace-method (method classes)
+  (let ((method-class (class-of method)))
+    (flet ((slot-location (direct-slot class)
+	     (let* ((name (slot-definition-name direct-slot))
+		    (effective-slots (class-slots class))
+		    (effective-slot (find name effective-slots
+					  :key #'slot-definition-name
+					  :test #'eq)))
+	       (slot-definition-location effective-slot))))
+      (cond ((eq method-class *standard-reader-method*)
+	     (let* ((direct-slot (accessor-method-slot-definition method))
+		    (location (slot-location direct-slot (car classes)))
+		    (lambda-expression
+		      `(lambda (arguments next-methods)
+			 (declare (ignore next-methods))
+			 ,(if (consp location)
+			      `(car ',location)
+			      `(standard-instance-access
+				(car arguments) ,location)))))
+	       (make-instance *standard-reader-method*
+		 :qualifiers '()
+		 :specializers (method-specializers method)
+		 :lambda-list (method-lambda-list method)
+		 :slot-definition direct-slot
+		 :documentation nil
+		 :function (compile nil lambda-expression))))
+	    ((eq method-class *standard-writer-method*)
+	     (let* ((direct-slot (accessor-method-slot-definition method))
+		    (location (slot-location direct-slot (cadr classes)))
+		    (lambda-expression
+		      `(lambda (arguments next-methods)
+			 ,(if (consp location)
+			      `(setf (car ',location)
+				     (car arguments))
+			      `(setf (standard-instance-access
+				      (cadr arguments) ,location)
+				     (car arguments))))))
+	       (make-instance *standard-writer-method*
+		 :qualifiers '()
+		 :specializers (method-specializers method)
+		 :lambda-list (method-lambda-list method)
+		 :slot-definition direct-slot
+		 :documentation nil
+		 :function (compile nil lambda-expression))))
+	    (t
+	     method)))))
+
+(defun final-methods (methods classes)
+  (loop for method in methods
+	collect (maybe-replace-method method classes)))
+
 ;;; This function can not itself be the discriminating function of a
 ;;; generic function, because it also takes the generic function
 ;;; itself as an argument.  However it can be called by the
@@ -98,9 +153,10 @@
 	  (compute-applicable-methods-using-classes generic-function classes)
 	(when ok
 	  (let ((effective-method
-		  (compute-effective-method generic-function
-					    method-combination
-					    applicable-methods)))
+		  (compute-effective-method
+		   generic-function
+		   method-combination
+		   (final-methods applicable-methods classes))))
 	    (push (list* class-numbers applicable-methods effective-method)
 		  (call-history generic-function))
 	    (return-from default-discriminating-function
