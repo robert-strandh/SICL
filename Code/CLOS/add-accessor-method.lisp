@@ -19,12 +19,14 @@
 ;;; reader method.  SLOT-DEFINITION is also stored in the new reader
 ;;; method for optimization purposes. 
 (defun add-reader-method (class function-name slot-definition)
-  (let* ((slot-name (slot-definition-name slot-definition))
-	 (lambda-list '(object))
+  (let* ((lambda-list '(object))
 	 (generic-function (ensure-generic-function
 			    function-name :lambda-list lambda-list))
 	 (specializers (list class))
-	 (method-function (make-reader-method-function slot-name))
+	 (method-function
+	   (compile nil `(lambda (arguments next-methods)
+			   (declare (ignore arguments next-methods))
+			   (error "this should not happen"))))
 	 (method-class (reader-method-class
 			class slot-definition
 			:lambda-list lambda-list
@@ -50,12 +52,14 @@
 ;;; writer method.  SLOT-DEFINITION is also stored in the new writer
 ;;; method for optimization purposes.
 (defun add-writer-method (class function-name slot-definition)
-  (let* ((slot-name (slot-definition-name slot-definition))
-	 (lambda-list '(new-value object))
+  (let* ((lambda-list '(new-value object))
 	 (generic-function (ensure-generic-function
 			    function-name :lambda-list lambda-list))
 	 (specializers (list *t* class))
-	 (method-function (make-writer-method-function slot-name))
+	 (method-function
+	   (compile nil `(lambda (arguments next-methods)
+			   (declare (ignore arguments next-methods))
+			   (error "this should not happen"))))
 	 (method-class (writer-method-class
 			class slot-definition
 			:lambda-list lambda-list
