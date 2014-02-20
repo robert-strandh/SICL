@@ -9,9 +9,12 @@
 ;;; as a constant, so that the discriminating function can pass the
 ;;; generic function to the default discriminating function.
 (defun make-default-discriminating-function (generic-function)
-  (compile nil
-	   `(lambda (&rest arguments)
-	      (default-discriminating-function ,generic-function arguments))))
+  (compile
+   nil
+   `(lambda (&rest arguments)
+      (default-discriminating-function ,generic-function
+				       arguments
+				       ',(specializer-profile generic-function)))))
 
 (defun compute-discriminating-function-default (generic-function)
   (make-default-discriminating-function generic-function))
