@@ -3,6 +3,7 @@
 (defparameter *installable-generic-functions*
   '(;; These are used by the :AFTER method on INITIALIZE-INSTANCE
     ;; specialized for STANDARD-CLASS.
+    class-default-initargs
     class-direct-subclasses
     (setf c-direct-subclasses)
     class-direct-superclasses
