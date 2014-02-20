@@ -119,6 +119,7 @@
    (:file "built-in-initialize-defmethods")
    (:file "add-remove-direct-method-defgenerics")
    (:file "add-remove-direct-method-defmethods")
+   (:file "load-call-histories")
    ;; Up until now, defining generic functions and methods (using
    ;; DEFGENERIC and DEFMETHOD) meant adding them to the contents of
    ;; the list *BRIDGE-GENERIC-FUNCTIONS*, but their names were either
