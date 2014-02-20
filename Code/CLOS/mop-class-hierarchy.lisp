@@ -43,6 +43,8 @@
 ;;;
 ;;; All other classes are instances of standard-class.
 
+(defparameter *class-unique-number* 0)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; The MOP class hierarchy. 
@@ -197,8 +199,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class CLASS.
-
-(defparameter *class-unique-number* 0)
 
 (defclass class (specializer)
   ((%unique-number 
