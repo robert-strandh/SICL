@@ -39,10 +39,6 @@
    ;; the contents vector.  During this phase, the class slot will
    ;; contain a bridge class.
    (:file "heap-instance")
-   ;; Define a version of CLASS-OF that, if given a heap instance as
-   ;; defined previously, returns the contents of the class slot.  If
-   ;; given something else, it returns the bridge class named T.
-   (:file "class-of")
    ;; Define an ordinary function that implements the default action
    ;; for ALLOCATE-INSTANCE when given a standard class or a
    ;; funcallable standard class.  The default action is to allocate a
@@ -120,6 +116,10 @@
    (:file "add-remove-direct-method-defgenerics")
    (:file "add-remove-direct-method-defmethods")
    (:file "load-call-histories")
+   ;; Define a version of CLASS-OF that, if given a heap instance as
+   ;; defined previously, returns the contents of the class slot.  If
+   ;; given something else, it returns the bridge class named T.
+   (:file "class-of")
    ;; Up until now, defining generic functions and methods (using
    ;; DEFGENERIC and DEFMETHOD) meant adding them to the contents of
    ;; the list *BRIDGE-GENERIC-FUNCTIONS*, but their names were either
@@ -196,5 +196,4 @@
    (:file "ensure-method")
    (:file "ensure-generic-function")
    (:file "slot-definition-classes")
-   (:file "reader-writer-method-classes")
    ))
