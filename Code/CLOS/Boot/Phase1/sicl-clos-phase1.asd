@@ -13,5 +13,6 @@
    (:file "define-built-in-class")
    (:file "defclass")
    (:file "defmethod")
-   (:file "mop-class-hierarchy")))
+   (:file "mop-class-hierarchy")
+   (:file "print-object")))
 
