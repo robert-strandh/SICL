@@ -168,9 +168,10 @@
 	  (when (null applicable-methods)
 	    (apply #'no-applicable-method generic-function arguments))
 	  (let ((effective-method
-		  (compute-effective-method generic-function
-					    method-combination
-					    applicable-methods)))
+		  (compute-effective-method
+		   generic-function
+		   method-combination
+		   (final-methods applicable-methods classes))))
 	    (apply effective-method arguments)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -211,7 +212,10 @@
     (loop for combination in all-combinations
 	  for methods = (compute-applicable-methods-using-classes
 			 generic-function combination)
-	  for em = (compute-effective-method generic-function mc methods)
+	  for em = (compute-effective-method
+		    generic-function
+		    mc
+		    (final-methods methods combination))
 	  for no-t = (remove *t* combination)
 	  for numbers = (mapcar #'unique-number no-t)
 	  do (push (list* numbers methods em)
