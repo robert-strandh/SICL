@@ -6,7 +6,7 @@
 ;;; structures and arrays.  In a real implementation, these functions
 ;;; might use lower-level mechanisms to allocate these entities.
 
-(defparameter *unbound-value* (list "unbound"))
+(defparameter *unbound-value* (list 999999))
 
 (defstruct heap-instance class slots)
 
