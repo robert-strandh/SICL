@@ -195,6 +195,7 @@
    ;; generic functions) by a new version that creates methods on
    ;; target generic functions.
    (:file "ensure-method")
+   (:file "defmethod-defmacro")
    (:file "ensure-generic-function")
    (:file "slot-definition-classes")
    (:file "reader-writer-method-classes")
