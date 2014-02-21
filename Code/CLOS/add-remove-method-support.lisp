@@ -16,8 +16,7 @@
   (setf (specializer-profile generic-function)
 	(loop for specializer in specializers
 	      for p in (specializer-profile generic-function)
-	      collect (if (and (classp specializer)
-			       (= (unique-number specializer) 0))
+	      collect (if (eq specializer *t*)
 			  p
 			  t))))
 
