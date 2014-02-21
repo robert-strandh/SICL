@@ -199,5 +199,6 @@
    (:file "slot-definition-classes")
    (:file "reader-writer-method-classes")
    (:file "find-class-named-t")
+   (:file "make-initfunction")
    (:file "mop-class-hierarchy")
    ))
