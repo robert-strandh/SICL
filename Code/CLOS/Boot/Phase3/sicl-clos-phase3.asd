@@ -198,4 +198,5 @@
    (:file "ensure-generic-function")
    (:file "slot-definition-classes")
    (:file "reader-writer-method-classes")
+   (:file "find-class-named-t")
    ))
