@@ -23,6 +23,11 @@
   `(list ,@(loop for name in direct-superclass-names
 		 collect (canonicalize-direct-superclass-name name))))
 
+(declaim (notinline make-initfunction))
+
+(defun make-initfunction (form)
+  `(lambda () ,form))
+
 (defun canonicalize-direct-slot-spec (direct-slot-spec)
   ;; A direct-slot-spec can be a symbol which is then the
   ;; name of the slot.
@@ -68,7 +73,7 @@
 		    (error 'multiple-initform-options-not-permitted
 			   :datum direct-slot-spec))
 		  (add :initform `',(car value))
-		  (add :initfunction `(lambda () ,(car value)))
+		  (add :initfunction (make-initfunction (car value)))
 		  (remhash :initform ht)))
 	      ;; Process :initarg option.
 	      (multiple-value-bind (value flag)
