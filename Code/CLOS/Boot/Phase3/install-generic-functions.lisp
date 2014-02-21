@@ -34,6 +34,7 @@
     method-generic-function
     (setf m-generic-function)
     method-specializers
+    method-qualifiers
     ;; These are used by the :AFTER method on INITIALIZE-INSTANCE,
     ;; specialized for STANDARD-METHOD
     (setf method-documentation)
