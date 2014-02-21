@@ -85,7 +85,7 @@
 		    (location (slot-location direct-slot (car classes)))
 		    (lambda-expression
 		      `(lambda (arguments next-methods)
-			 (declare (ignore next-methods))
+			 (declare (ignorable arguments next-methods))
 			 ,(if (consp location)
 			      `(car ',location)
 			      `(standard-instance-access
@@ -102,6 +102,7 @@
 		    (location (slot-location direct-slot (cadr classes)))
 		    (lambda-expression
 		      `(lambda (arguments next-methods)
+			 (declare (ignorable arguments next-methods))
 			 ,(if (consp location)
 			      `(setf (car ',location)
 				     (car arguments))
