@@ -241,12 +241,12 @@
 			      when p
 				collect (instance-class-number argument)))
 	 (entry (car (member class-numbers (call-history generic-function)
-			     :key #'car :test #'equal))))
+			     :key #'class-number-cache :test #'equal))))
     (unless (null entry)
       ;; Found an entry, call the effective method of the entry,
       ;; passing it the arguments we received.
       (return-from default-discriminating-function
-	(apply (cddr entry) arguments)))
+	(apply (effective-method-cache entry) arguments)))
     ;; Come here if the call history did not contain an entry for the
     ;; current arguments.
     (let ((classes (mapcar #'class-of required-arguments))
@@ -260,7 +260,9 @@
 		   generic-function
 		   method-combination
 		   (final-methods applicable-methods classes))))
-	    (push (list* class-numbers applicable-methods effective-method)
+	    (push (make-call-cache class-numbers
+				   applicable-methods
+				   effective-method)
 		  (call-history generic-function))
 	    (return-from default-discriminating-function
 	      (apply effective-method arguments))))
@@ -321,7 +323,7 @@
 		    (final-methods methods combination))
 	  for no-t = (remove *t* combination)
 	  for numbers = (mapcar #'unique-number no-t)
-	  do (push (list* numbers methods em)
+	  do (push (make-call-cache numbers methods em)
 		   (call-history generic-function)))))
 
 (defun load-call-history (generic-function)
