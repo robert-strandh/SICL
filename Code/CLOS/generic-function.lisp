@@ -371,28 +371,6 @@
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; From a list of methods, all from the same generic function,
-;;; extract a SPECILIZER PROFILE, which is a list with the same number
-;;; of elements as the number of required parameters to the generic
-;;; function, and which contains NIL in every position where every
-;;; method is specialized only for the class T, and T in a position
-;;; where some method has a specializer form something other than the
-;;; class T.
-
-(defun compute-specializer-profile (methods)
-  (reduce (lambda (specializers1 specializers2)
-	    (mapcar (lambda (specializer1 specializer2)
-		      (or specializer1 specializer2))
-		    specializers1
-		    specializers2))
-	  (mapcar (lambda (method)
-		    (mapcar (lambda (specializer)
-			      (not (eq specializer *t*)))
-			    (method-specializers method)))
-		  methods)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; COMPUTE-DISCRIMINATING-FUNCTION.
 
 ;;; The DISCRIMINATING FUNCTION of a generic function is the function
