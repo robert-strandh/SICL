@@ -120,6 +120,15 @@
 ;;;
 ;;; We maintain a CALL HISTORY for each generic function.  The call
 ;;; history is a proper list, each element of which is a CALL CACHE.
+;;;
+;;; Different call caches in one call history may share the same
+;;; applicable method cache and the same effective method cache.  When
+;;; a new call cache C is about to be added to the call history, the
+;;; existing call history is traversed to see whether there is an
+;;; existing call cache D with the same (EQUAL) applicable method
+;;; cache.  In this case, C is modified before it is added so that its
+;;; applicable method cache and effective method cache are set to
+;;; those of D.
 
 ;;; The discriminating function does the following:
 ;;;
