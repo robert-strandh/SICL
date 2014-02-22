@@ -447,46 +447,6 @@
 		   do (pushnew super result :test #'eq)))
     result))
 
-;; (defclass call-history-entry-remover ()
-;;   (;; The call history entry to be removed.
-;;    (%call-history-entry
-;;     :initarg :call-history-entry :reader call-history-entry)
-;;    ;; The generic function containing this call history entry. 
-;;    (%function-of-entry
-;;     :initarg :function-of-entry
-;;     :reader function-of-entry)
-;;    ;; All the classes that have this dependent in its
-;;    ;; set of dependents
-;;    (%classes-containing-dependent
-;;     :initarg :classes-containing-dependent
-;;     :reader classes-containing-dependent)))
-
-;; (defmethod update-dependent (class (dependent call-history-entry-remover))
-;;   ;; This dependent is a dependent of several classes, but now that we
-;;   ;; remove the call-history entry, we do not need this dependent
-;;   ;; anymore in any classes, so we remove it.
-;;   (let ((gf (function-of-entry dependent)))
-;;     (loop for class in (classes-containing-dependent dependent)
-;; 	  do (remove-dependent class dependent))
-;;     ;; Remove the call history entry from the call history of the
-;;     ;; generic function.
-;;     (setf (call-history gf)
-;; 	  (remove (call-history-entry dependent)
-;; 		  (call-history gf)
-;; 		  :test #'eq))
-;;     ;; Create and set a new cache using the updated call history.
-;;     (compute-and-set-cache-from-call-history gf)))
-
-;; (defun make-call-history-entry-remover (generic-function entry arg-classes)
-;;   (let* ((all-classes (all-unique-superclasses arg-classes))
-;; 	 (remover (make-instance
-;; 		   'call-history-entry-remover
-;; 		   :call-history-entry entry
-;; 		   :function generic-function
-;; 		   :classes-containing-dependent all-classes)))
-;;     (loop for class in all-classes
-;; 	  do (add-dependent class remover))))
-
 (defun handle-cache-miss (args generic-function)
   (let* ((specializer-profile (specializer-profile generic-function))
 	 (number-of-required-args (length specializer-profile))
