@@ -170,6 +170,39 @@
       ;; class T, and we know that T has unique number 0.
       0))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; How we make slot accessors fast.
+;;;
+;;; A slot accessor (reader or writer) generic function has methods on
+;;; it that are instances of STANDARD-READER-METHOD and
+;;; STANDARD-WRITER-METHOD.  Such methods have the moral meaning of
+;;; (SLOT-VALUE <object> '<slot-name>) and 
+;;; (SETF (SLOT-VALUE <object> '<slot-name>) <new-value>)
+;;; where <object> and <new-value> are arguments of the generic function
+;;; and <slot-name> is the name of the slot given by applying
+;;; ACCESSOR-METHOD-SLOT-DEFINITION to the method metaobject.
+;;;
+;;; But SLOT-VALUE and (SETF SLOT-VALUE) must do a lot of work (though
+;;; it is possible to speed it up), and we want the accessor to go
+;;; directly to the slot location to make it fast.  The problem with
+;;; that idea is that the slot location can be different in different
+;;; subclasses of the class being specialized to, as given by applying
+;;; METHOD-SPECIALIZERS to the methods.  It can even be an instance
+;;; slot in some subclasses and shared slot in others.  
+;;;
+;;; We handle this situation by "cheating" in the discriminating
+;;; function.  Once we have determined a list of applicable methods by
+;;; calling COMPUTE-APPLICABLE-METHODS-USING-CLASSES, we make a pass
+;;; over them and replace any accessor method by a newly created
+;;; method that does the equivalent of (STANDARD-INSTANCE-ACCESS
+;;; <object> <slot-location>), where <slot-position> is calculated by
+;;; getting the name of the slot from the DIRECT-SLOT-DEFINITION
+;;; stored in the accessor method, using CLASS-SLOTS on the class of
+;;; <object> to find the EFFECTIVE slots of the class, then finding
+;;; the slot with the right name, and finally getting its location by
+;;; using SLOT-DEFINITION-LOCATION.
+
 ;;; This function takes a method and, if it is a standard reader
 ;;; method or a standard writer method, it replaces it with a method
 ;;; that does a direct instance access according to the relevant class

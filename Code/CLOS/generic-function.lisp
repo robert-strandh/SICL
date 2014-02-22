@@ -2,67 +2,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; How we make slot accessors fast.
-;;;
-;;; A slot accessor (reader or writer) generic function has methods on
-;;; it that are instances of STANDARD-READER-METHOD and
-;;; STANDARD-WRITER-METHOD.  Such methods have the moral meaning of
-;;; (SLOT-VALUE <object> '<slot-name>) and 
-;;; (SETF (SLOT-VALUE <object> '<slot-name>) <new-value>)
-;;; where <object> and <new-value> are arguments of the generic function
-;;; and <slot-name> is the name of the slot given by applying
-;;; ACCESSOR-METHOD-SLOT-DEFINITION to the method metaobject.
-;;;
-;;; But SLOT-VALUE and (SETF SLOT-VALUE) must do a lot of work (though
-;;; it is possible to speed it up), and we want the accessor to go
-;;; directly to the slot location to make it fast.  The problem with
-;;; that idea is that the slot location can be different in different
-;;; subclasses of the class being specialized on, as given by applying
-;;; METHOD-SPECIALIZERS to the methods.  It can even be an instance
-;;; slot in some subclasses and shared slot in others.  
-;;;
-;;; We handle this situation by "cheating" in
-;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES.  Once the methods have
-;;; been computed and sorted, we make a pass over them and replace any
-;;; accessor method that does (SLOT-VALUE <object> '<slot-name>) by a
-;;; newly created method that does the equivalent of
-;;; (STANDARD-INSTANCE-ACCESS <object> <slot-location>) (we consider
-;;; only slots with :instance allocation at the moment), where
-;;; <slot-position> is calculated by using CLASS-SLOTS on the class of
-;;; <object>, finding the slot with the name <slot-name> and getting
-;;; its location by using SLOT-DEFINITION-LOCATION. 
-;;;
-;;; This solution introduces two metastability problems, because
-;;; CLASS-SLOTS and SLOT-DEFINITION-LOCATION are both reader generic
-;;; functions. 
-;;;
-;;; The solution for CLASS-SLOTS is as follows: In
-;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES, we check the special
-;;; case where the generic function is CLASS-SLOTS, and the the (only)
-;;; class metaobject passed is STANDARD-CLASS.  This special case
-;;; means that CLASS-SLOTS was handed a class metaobject that is an
-;;; instance of STANDARD-CLASS (and not of any of its subclasses).
-;;; For this special case, we replace the applicable method
-;;; specialized for STANDARD-CLASS, by a newly created one that does
-;;; (STANDARD-INSTANCE-ACCESS <object> <slot-location>) where we have
-;;; saved the location of the slot %effective-slots when we did the
-;;; class finalization of STANDARD-CLASS in a global variable. 
-;;;
-;;; Let us examine what happens when CLASS-SLOTS is called with a
-;;; class metaobject C that is not a direct instance of
-;;; STANDARD-CLASS.  There are two possibilities: Either C is an
-;;; instance of some subclass of some other metaclass like
-;;; FUNCALLABLE-STANDARD-CLASS or C is an instance of a strict
-;;; subclass of STANDARD-CLASS.  In the first case,
-;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES is not called with
-;;; STANDARD-CLASS but with some other class metaobject (say D), so
-;;; the special case does not apply.  So we want to replace the
-;;; accessor method applicable to instances of D by a faster one.  To
-;;; do that, we call CLASS-SLOTS recursively on D. 
-;;; FIXME: say more....
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Effective method automaton.
 
 ;;; To determine the effective method to run from the classes of the
