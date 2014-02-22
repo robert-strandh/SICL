@@ -1,62 +1,165 @@
 (cl:in-package #:sicl-clos)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Call profile.
+;;;
+;;; A CALL PROFILE of a particular call to a generic function is a
+;;; list of classes of the required arguments passed to the generic
+;;; function in that call.  The call profile has the same order as the
+;;; required parameters of the generic function, independently of the
+;;; argument precedence order of the function.  The call profile is
+;;; what is passed to COMPUTE-APPLICABLE-METHODS-USING-CLASSES in
+;;; order to determine whether a list of applicable methods can be
+;;; computed, using only the classes of the required arguments.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Specializer profile.
+;;;
+;;; The SPECIALIZER PROFILE of a generic function is a proper list,
+;;; the length of which is the number of required parameters of the
+;;; generic function.  The specializer profile represents a condensed
+;;; version of the information concerning the specializers of the
+;;; methods of the generic function.  Each element of the specializer
+;;; profile is either T or NIL.  The element is T when there exists a
+;;; method on the generic function with a specializer other than the
+;;; class T in the corresponding parameter position.  The element is
+;;; NIL when every method on the generic function has the class T as a
+;;; specializer in the corresponding parameter position.  Arguments to
+;;; the generic function corresponding to a specializer profile
+;;; element of NIL make no difference in determining the applicable
+;;; methods for a particular call.
+;;;
+;;; The specializer profile must be updated when methods are added or
+;;; removed from the generic function.  When a method is added, each
+;;; specializer of that method which is not the class named T causes
+;;; the corresponding element of the specializer profile to be set to
+;;; T.  When a method is removed, the specializer profile is initially
+;;; set to a list of a NIL elements.  Then the list of methods of the
+;;; generic function is traversed and the specializer profile is
+;;; updated as if each method were just added to the generic function.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class number cache.
+;;;
+;;; A CLASS NUMBER CACHE of a particular call to a generic function is
+;;; a list of unique numbers of classes of specialized required
+;;; arguments passed in that call.  These classes (together with the
+;;; classes of the other required arguments) were passed to
+;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES, at some point, and that
+;;; function was able to compute an applicable method using only those
+;;; classed, which is why we have a corresponding class number cache
+;;; available.  The length of a class number cache is that of the
+;;; number of required arguments that are specialized, or
+;;; equivalently, the number of entries equal to T in the specializer
+;;; profile of the generic function.  The list is ordered from left to
+;;; right, i.e., the first element of the list corresponds to the
+;;; leftmost specialized required argument, etc.  In other words, the
+;;; order of the elements in the class number cache is independent of
+;;; the argument precedence order of the generic function.
+;;;
+;;; For a particular call to a generic function, if the unique numbers
+;;; of the classes of the specialized required arguments correspond to
+;;; the unique numbers of the classes in a class number cache, then we
+;;; have already at some point determined a list of applicable methods
+;;; for that call, so we do not have to compute it again. 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Applicable method cache.
+;;;
+;;; An APPLICABLE METHOD CACHE of a particular call to a generic
+;;; function is list of applicable methods, as returned by the generic
+;;; function COMPUTE-APPLICABLE-METHODS-USING-CLASSES when called with
+;;; the classes in the call profile.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Effective method cache.
+;;;
+;;; An EFFECTIVE METHOD CACHE for a particular applicable method cache
+;;; is the result of calling the generic function
+;;; COMPUTE-EFFECTIVE-METHOD, passing it the list of methods of that
+;;; applicable method cache.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Call cache.
+;;;
+;;; A CALL CACHE represents information about a particular call to a
+;;; generic function.  It is represented as a proper list with at
+;;; least 2 CONS cells in it, and it conceptually contains 3 items:
+;;;
+;;;   1. A class number cache.  This item is located in the CAR of the
+;;;      list representing the call cache.
+;;;
+;;;   2. An applicable method cache.  This item is located in the CDDR
+;;;      of the list representing the call cache.
+;;;
+;;;   3. An effective method cache.  This item is located in the CADR
+;;;      of the list representing the call history entry.
+
+(defun make-call-cache
+    (class-number-cache applicable-method-cache effective-method-cache)
+  (list* class-number-cache effective-method-cache applicable-method-cache))
+
+(defun class-number-cache (call-cache)
+  (car call-cache))
+
+(defun applicable-method-cache (call-cache)
+  (cddr call-cache))
+
+(defun effective-method-cache (call-cache)
+  (cadr call-cache))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Call history.
+;;;
 ;;; We maintain a CALL HISTORY for each generic function.  The call
-;;; history is a proper list, each element of which is a CALL HISTORY
-;;; ENTRY.  A call history entry is a dotted list with 2 CONS cells,
-;;; so it contains three items:
-;;;
-;;;   1. A list of unique number of the classes of the required
-;;;      arguments for which the specializer profile contains T.  The
-;;;      classes are the those that were passed to
-;;;      COMPUTE-APPLICABLE-METHODS-USING-CLASSES.  This item is
-;;;      located in the CAR of the dotted list representing the call
-;;;      history entry.
-;;;
-;;;   2. A list of applicable methods, as returned by the generic
-;;;      function COMPUTE-APPLICABLE-METHODS-USING-CLASSES when called
-;;;      with the classes in item 1.  This item is located in the CADR
-;;;      of the dotted list representing the call history entry.
-;;;
-;;;   3. The result of calling COMPUTE-EFFECTIVE-METHOD on the list of
-;;;      methods in item 2.  This item is located in the CDDR of the
-;;;      dotted list representing the call history entry.
-;;;
+;;; history is a proper list, each element of which is a CALL CACHE.
+
 ;;; The discriminating function does the following:
 ;;;
 ;;;   1. Compute the list of instance class numbers of the required
 ;;;      arguments that it was passed and for which the specializer
 ;;;      profile contains T.
 ;;;
-;;;   2. Check the call history to see whether there is an entry
-;;;      containing that list of class numbers in the CAR of the
-;;;      entry.  If so, call the effective method in the CDDR of the
-;;;      entry and return the result.
+;;;   2. Check the call history to see whether it contains a call
+;;;      cache with a class number cache equal to the list computed in
+;;;      step 1.  If so, call the effective method cache of that call
+;;;      cache and return the result.
 ;;;
-;;;   3. If there is no entry in the call history corresponding to the
-;;;      list of class numbers of the current required arguments, then
-;;;      call CLASS-OF for each required argument, indpendently of the
-;;;      contents of the specializer profile, and then call the
-;;;      generic function COMPUTE-APPLICABLE-METHODS-USING-CLASSES
-;;;      with the resulting list of classes.  If the generic function
-;;;      COMPUTE-APPLICABLE-METHODS-USING-CLASSES returns TRUE as a
-;;;      second return value, then call the generic function
-;;;      COMPUTE-EFFECTIVE-METHOD with the list of methods returned as
-;;;      the first value.  Create a call history entry from the list
-;;;      of class number of the classes for which the specializer
-;;;      profile contains T, the list of applicable methods, and the
-;;;      effective method.  Finally, call the effective method and
-;;;      return the result.
+;;;   3. If there is no call cache in the call history with a class
+;;;      number cache equal to the list computed in step 1, then
+;;;      compute a call profile for the call by calling CLASS-OF for
+;;;      each required argument and then call the generic function
+;;;      COMPUTE-APPLICABLE-METHODS-USING-CLASSES with the resulting
+;;;      call profile.  
+;;;   
+;;;   4. If the call in step 3 returns TRUE as a second return value,
+;;;      then the first value returned represents an applicable method
+;;;      cache to be stored.  If so, call the generic function
+;;;      COMPUTE-EFFECTIVE-METHOD with applicable method cache, thus
+;;;      computing an effective method cache.  Create a call cache
+;;;      from the list computed in step 1, the applicable method
+;;;      cache, and the effective method cache.  Add the computed call
+;;;      cache to the call history.  Finally, call the effective
+;;;      method and return the result.
 ;;;
-;;;   4. If COMPUTE-APPLICABLE-METHODS-USING-CLASSES returns FALSE as
-;;;      a second return value, then instead call the generic function
+;;;   5. If the call in step 3 returns FALSE as a second return value,
+;;;      then instead call the generic function
 ;;;      COMPUTE-APPLICABLE-METHODS, passing it all the current
-;;;      arguments.  If COMPUTE-APPLICABLE-METHODS returns a non-empty
-;;;      list of methods, then call COMPUTE-EFFECTIVE-METHOD with that
-;;;      list.  Call the resulting effective method and return the
-;;;      result.
+;;;      arguments.  
 ;;;
-;;;   5. If COMPUTE-APPLICABLE-METHODS returns an empty list, then
-;;;      call NO-APPLICABLE-METHOD.
+;;;   6. If the call in step 5 returns a non-empty list of methods,
+;;;      then call COMPUTE-EFFECTIVE-METHOD with that list.  Call the
+;;;      resulting effective method and return the result.
+;;;
+;;;   7. If the call in step 5 returns an empty list, then call
+;;;      NO-APPLICABLE-METHOD.
 
 ;;; The implementation of this function is not complete.  Furthermore,
 ;;; this is probably not a good location for it.
