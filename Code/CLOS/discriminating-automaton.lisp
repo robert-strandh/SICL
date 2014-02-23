@@ -106,6 +106,9 @@
 (defun state-name (state)
   (car state))
 
+(defun (setf state-name) (new-name state)
+  (setf (car state) new-name))
+
 ;;; A transition of the automaton is represented as a CONS cell.  The
 ;;; CAR of the CONS cell is the label (the unique number of a class),
 ;;; and the CDR of the CONS cell is the target state.
@@ -278,5 +281,3 @@
 (defun minimize-automaton (automaton)
   (loop for dico = '() then (minimize-layer layer dico)
 	for layer in (cdr (reverse automaton))))
-	
-  
