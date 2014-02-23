@@ -301,6 +301,7 @@
 		  collect (cons label name)))))
 
 (defun extract-transition-information (automaton)
+  (name-states automaton)
   (loop for layer in automaton
 	for states = (layer-states layer)
 	collect (loop for state in states
