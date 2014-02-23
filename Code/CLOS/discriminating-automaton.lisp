@@ -154,7 +154,7 @@
 ;;; state to a final state with the labels given, not even to a final
 ;;; state with the same tag as the one given. 
 (defun add-path (automaton labels tag)
-  (let ((state (car (states (car automaton)))))
+  (let ((state (car (layer-states (car automaton)))))
     (pop automaton)
     ;; Follow transitions in the automaton until we find a state where
     ;; there is no transition for the corresponding label.  Should we
@@ -188,7 +188,8 @@
     ;;  final state.
     (assert (and (consp automaton) (null (cdr automaton))))
     (assert (and (consp labels) (null (cdr labels))))
-    (let ((final (car (member tag (layer-states (car automaton))))))
+    (let ((final (car (member tag (layer-states (car automaton))
+			      :key #'state-tag))))
       (when (null final)
 	;; There is no existing state with the tag TAG.  Create one
 	;; and add it to the final layer of the automaton.
