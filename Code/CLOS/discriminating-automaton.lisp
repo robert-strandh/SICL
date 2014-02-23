@@ -222,25 +222,6 @@
 	 (state-transitions state1)
 	 (state-transitions state2)))
 
-;;; Minimize a layer, which is a list of states.  The next layer has
-;;; already been minimized, so that if there are two equivalent target
-;;; states of any transition from a state in this layer, then the
-;;; target states are also EQ.  This function returns an ALIST in
-;;; which the CDR of each association does not occur as the CAR of any
-;;; association, and is to be considered the state to be retained.
-;;; Transitions to a state which is the CAR of some association in
-;;; this alist should be modified to refer to the equivalent state in
-;;; the CDR of that association instead.
-(defun minimize-layer (layer)
-  (let ((equivalences '()))
-    (loop for rest on layer
-	  for state1 = (car rest)
-	  do (when (null (assoc state1 equivalences))
-	       (loop for state2 in (cdr rest)
-		     do (when (states-equivalent-p state1 state2)
-			  (push (cons state2 state1) equivalences)))))
-    equivalences))
-
 ;;; If the target state of the transition is equivalent to some other
 ;;; state indicated by the alist, then change the transition to point
 ;;; to the equivalent state instead.
@@ -257,9 +238,42 @@
   (loop for transition in (state-transitions state)
 	do (adjust-transition transition alist)))
 
-(defun adjust-layer (layer alist)
-  (loop for state in layer
-	do (adjust-state state alist)))
+;;; Minimize a layer.  The next layer has already been minimized, and
+;;; the result of that operation was a dictionary (represented as an
+;;; alist) where each key is a state that was removed and the
+;;; corresponding value is a state that was retained and which is
+;;; equivalent to the key.  The result of the minimization of the next
+;;; layer is passed as an argument to this function.
+;;;
+;;; This function starts by updating the transitions of the current
+;;; layer according to the dictionary of equivalent states in the next
+;;; layer.  It then finds equivalent states in the current layer, adds
+;;; them to a resulting dictionary and removes one of the states.
+(defun minimize-layer (layer dico)
+  ;; Start by traversing the layer and updating the transitions
+  ;; according to DICO.
+  (loop for state in (layer-states layer)
+	do (adjust-state state dico))
+  (let ((equivalences '()))
+    ;; Now, for each state in the layer: First collect any equivalent
+    ;; states that occur after the first one in the later.  Then
+    ;; remove those equivalent states from the layer, using a
+    ;; destructive operation. Finally add equivalences to the
+    ;; resulting dictionary.  Since we are destructively modifying the
+    ;; list of states of the layer, we are not allowed to use a list
+    ;; traversal operation because then the result would be undefined,
+    ;; so we use explicit list operations instead.
+    (loop with remaining-states = (layer-states layer)
+	  for state = (car remaining-states)
+	  until (null (cdr remaining-states))
+	  do (setf (cdr remaining-states)
+		   (loop for s in (cdr remaining-states)
+			 if (states-equivalent-p state s)
+			   do (push (cons s state) equivalences)
+			 else
+			   collect s))
+	     (pop remaining-states))
+    equivalences))
 
 (defun minimize-automaton (start-state)
   (let ((layers (compute-layers start-state)))
