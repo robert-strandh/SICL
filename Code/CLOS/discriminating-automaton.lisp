@@ -27,51 +27,84 @@
 ;;; corresponding to a particular effective method.
 ;;; 
 ;;; For any particular sequence of N unique class numbers, the
-;;; automaton will make at most N transitions.  The automaton may make
-;;; fewer than N transitions in some cases.  As an example, consider a
-;;; generic function with the following method specializers (all
-;;; classes): (A T B) (A T C) (D E F).  If the first test determines
-;;; that the class of the first required argument is A, then only the
-;;; first two methods are potentially applicable.  Neither of the
-;;; first two methods specialize on the second required parameter, so
-;;; in this case, the class of the second required argument does not
-;;; need to be consulted in order to determine which of the first two
-;;; methods is applicable.  As a consequence, if the class of the
-;;; first required argument is A in this case, then the automaton will
-;;; make only 2 transitions.
+;;; automaton will make exactly N transitions.  It might be possible
+;;; in some cases for an automaton to make fewer transitions.  As an
+;;; example, consider a generic function with the following method
+;;; specializers (all classes): (A T B) (A T C) (D E F).  If the first
+;;; test determines that the class of the first required argument is
+;;; A, then only the first two methods are potentially applicable.
+;;; Neither of the first two methods specialize on the second required
+;;; parameter, so in this case, the class of the second required
+;;; argument does not need to be consulted in order to determine which
+;;; of the first two methods is applicable.  As a consequence, if the
+;;; class of the first required argument is A in this case, then it
+;;; would be possible for the automaton to make only 2 transitions.
+;;; However, this kind of optimization would require detailed
+;;; knowledge about the particular subclasses of generic functions and
+;;; methods in question, as well as of the way the methods on
+;;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES work for those
+;;; subclasses.  For now, then, we require no such detailed knowledge.
+;;; The only information we use is that a particular sequence of
+;;; unique numbers of classes should trigger the execution of a
+;;; particular effective method.
 ;;;
 ;;; The discriminating automaton is computed from the call history of
-;;; the generic function.  We represent the automaton as nested lists.
-;;; We deliberately avoid using classes so as to avoid circular
-;;; dependencies.
+;;; the generic function.  Recall that the call history of the generic
+;;; function consists of a set (represented as a list) of call caches.
+;;; For the purpose of building the discriminating automaton, each
+;;; call cache contains a class number cache and an effective method
+;;; cache.  Several different call caches may share the same (EQ)
+;;; effective method cache.  
+;;;
+;;; We represent the automaton as nested lists.  We deliberately avoid
+;;; using classes so as to avoid circular dependencies.
 
-;;; A state of the automaton is represented as a list of at least two
-;;; elements, the NAME which is a gensym, and INFO which is typically
-;;; NIL but can contain any information associated with the state.
-;;; The remaining elements of the list represent transitions from this
-;;; state to other states (see below for the representation of a
-;;; transition).
+;;; A STATE of the automaton is either a FINAL STATE or an INTERNAL
+;;; state.  A final state has no transitions associated with it, and
+;;; instead it has a TAG which is a non-NIL atom.  Final states with
+;;; identical (EQ) tags are considered equivalent.  An internal state
+;;; has a list of transitions associated with it.  During construction
+;;; of the automaton, some internal states may have an empty list of
+;;; transitions, but in the final automaton, every internal state has
+;;; a non-empty list of transitions associated with it.  There can
+;;; never be two transitions in a state with the same label (see
+;;; below).  Two internal states with the same set of transitions
+;;; (same number of transitions, same labels, leading to equivalent
+;;; states) are considered equivalent.  A state is represented as a
+;;; CONS cell.  The CAR of the cell is initially NIL and will later be
+;;; used to hold a GENSYMed NAME of the state.  If the state is a
+;;; final state, then the CDR of the CONS cell contains the tag.  If
+;;; the state is an internal state, the CDR of the CONS cell contains
+;;; the list of transitions.
 
-(defun make-state (&optional info)
-  (list (gensym) info))
+(defun make-internal-state (&optional transitions)
+  (assert (listp transitions))
+  (cons nil transitions))
+
+(defun internal-state-p (state)
+  (listp (cdr state)))
+
+(defun state-transitions (state)
+  (assert (internal-state-p state))
+  (cdr state))
+
+(defun (setf state-transitions) (new-transitions state)
+  (assert (internal-state-p state))
+  (setf (cdr state) new-transitions))
+
+(defun make-final-state (tag)
+  (assert (not (listp tag)))
+  (cons nil tag))
+
+(defun final-state-p (state)
+  (not (listp (cdr state))))
+
+(defun state-tag (state)
+  (assert (final-state-p state))
+  (cdr state))
 
 (defun state-name (state)
   (car state))
-
-(defun (setf state-name) (name state)
-  (setf (car state) name))
-
-(defun state-info (state)
-  (cadr state))
-
-(defun (setf state-info) (info state)
-  (setf (cadr state) info))
-
-(defun state-transitions (state)
-  (cddr state))
-
-(defun (setf state-transitions) (transitions state)
-  (setf (cddr state) transitions))
 
 ;;; A transition of the automaton is represented as a CONS cell.  The
 ;;; CAR of the CONS cell is the label (the unique number of a class),
@@ -89,35 +122,81 @@
 (defun (setf transition-target) (target transition)
   (setf (cdr transition) target))
 
-;;; Add a path from the state STATE to the final state.  The path is a
-;;; list of labels (unique numbers of classes).
-(defun add-path (state path final-state)
-  (if (null (cdr path))
-      ;; By construction, we do not yet have a transition to the final
-      ;; state, so no need to check for one.
-      (push (make-transition (car path) final-state)
-	    (state-transitions state))
-      (let ((transition (find (car path)
-			      (state-transitions state)
-			      :key #'transition-label)))
-	(if (null transition)
-	    ;; If transition is NULL we have no transition from the
-	    ;; state with the first label of the path.  We need to
-	    ;; create a target state.
-	    (let ((new-state (make-state)))
-	      ;; Add a the transition from the current state to the
-	      ;; new state.
-	      (push (make-transition (car path) new-state)
-		    (state-transitions state))
-	      ;; And add the remaining path from the new state to the
-	      ;; final state.
-	      (add-path new-state (cdr path) final-state))
-	    ;; We already have a transiton with that label.  Find the
-	    ;; target state of that transition, and add the remaining
-	    ;; path from there.
-	    (add-path (transition-target transition)
-		      (cdr path)
-		      final-state)))))
+;;; A layer is a set of states.  We represent a layer as a non-empty
+;;; list.  The first cell of the list is a sentinel and it always
+;;; contains NIL in its CAR.
+
+(defun make-layer ()
+  (list nil))
+
+(defun layer-states (layer)
+  (cdr layer))
+
+(defun (setf layer-states) (new-states layer)
+  (setf (cdr layer) new-states))
+
+;;; An automaton is represented as a list of N+1 layers.  When a new
+;;; automaton is created, the initial state (with no transitions) is
+;;; automatically created in layer 0.
+
+(defun make-automaton (n+1)
+  (let ((result (loop repeat n+1
+		      collect (make-layer))))
+    (push (make-internal-state) (layer-states (car result)))
+    result))
+
+;;; Given an automaton, a list of transition labels (of length N) and
+;;; a tag of a final state, add states and transitions to the
+;;; automaton, so that there exists a path from the initial state to a
+;;; final state with the given tag.
+;;;
+;;; The automaton must not already contain a path from the initial
+;;; state to a final state with the labels given, not even to a final
+;;; state with the same tag as the one given. 
+(defun add-path (automaton labels tag)
+  (let ((state (car (states (car automaton)))))
+    (pop automaton)
+    ;; Follow transitions in the automaton until we find a state where
+    ;; there is no transition for the corresponding label.  Should we
+    ;; end up in a final state (which should not happen), then the
+    ;; call (state-transitions state) will fail because a final
+    ;; state does not have any transitions. 
+    (loop for label = (car labels)
+	  for transitions = (state-transitions state)
+	  for transition = (assoc label transition)
+	  until (null transition)
+	  do (pop labels)
+	     (pop automaton)
+	     (setf state (transition-target transition)))
+    ;; At this point, STATE is an internal state with no transition
+    ;; with the first label in LABELS.  Now, we create new states
+    ;; until right before we reach a final state.
+    (loop until (null (cdr labels))
+	  for label = (car labels)
+	  for target = (make-internal-state)
+	  for transition = (make-transition label target)
+	  do (push transition (state-transitions state))
+	     (push target (layer-states (car automaton)))
+	     (pop labels)
+	     (pop automaton)
+	     (setf state target))
+    ;; At this point, there is a single element left in LABELS,
+    ;;  corresponding to a transition to a final state.  There is also
+    ;;  a single element in AUTOMATON, namely the layer containing
+    ;;  final states. A final state with the tag TAG may already
+    ;;  exist, in which case we reuse it.  If not, we create a new
+    ;;  final state.
+    (assert (and (consp automaton) (null (cdr automaton))))
+    (assert (and (consp labels) (null (cdr labels))))
+    (let ((final (car (member tag (layer-states (car automaton))))))
+      (when (null final)
+	;; There is no existing state with the tag TAG.  Create one
+	;; and add it to the final layer of the automaton.
+	(setf final (make-final-state tag))
+	(push final (layer-states (car automaton))))
+      ;; Add a transition from STATE to FINAL.
+      (push (make-transition (car labels) final)
+	    (state-transitions state)))))
 
 ;;; Compare two transitions for equality.  Two transitions are
 ;;; considered equal if they have the same label and if the target
@@ -144,24 +223,6 @@
 	 (every #'transitions-equal
 		(state-transitions state1)
 		(state-transitions state2)))))
-
-;;; Our automata have a particular shape.  There are no loops and
-;;; Every final state is reached by the same number of transitions
-;;; from the initial state.  Thus, we can talk about LAYERS of states.
-;;; A layer is defined by all states having the same number of
-;;; transitions from the initial state.
-
-;;; For a particular automaton, return a list of its layers.  Each
-;;; layer is a list of states.
-(defun compute-layers (start-state)
-  (let ((result (list (list start-state))))
-    (loop until (null (state-transitions (caar result)))
-	  do (push (remove-duplicates
-		    (loop for state in (car result)
-			  append (mapcar #'transition-target
-					 (state-transitions state))))
-		   result))
-    (reverse result)))
 
 ;;; Minimize a layer, which is a list of states.  The next layer has
 ;;; already been minimized, so that if there are two equivalent target
