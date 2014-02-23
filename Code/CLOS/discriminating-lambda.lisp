@@ -11,9 +11,11 @@
 (defun transfer-target (transfer)
   (cdr transfer))
 
-;; An INTERVAL is a sequence of consecutive integers.  The START of an
-;; interval is equal to the first integer of the sequence, and the END
-;; of the interval is 1+ of the last integer of the sequence. 
+;; An INTERVAL is a sequence of consecutive integers represented as a
+;; CONS of two numbers.  The START of an interval is equal to the
+;; first integer of the sequence and is represented as the CAR of the
+;; CONS cell, and the END of the interval is 1+ of the last integer of
+;; the sequence, and is reprented as the CDR of the CONS cell.
 
 (defun make-interval (start end)
   (cons start end))
@@ -113,14 +115,8 @@
 	       ,(compute-test-tree var default left open-inf-p open-p)
 	       ,(compute-test-tree var default right nil open-sup-p))))))
 
-(defun test-tree-from-state (var default state)
-  (let* ((transfers 
-	   (mapcar
-	    (lambda (transition)
-	      (make-transfer (transition-label transition)
-			     (state-name (transition-target transition))))
-	    (state-transitions state)))
-	 (transfer-groups (make-transfer-groups transfers)))
+(defun test-tree-from-transfers (var default transfers)
+  (let ((transfer-groups (make-transfer-groups transfers)))
     ;; T and T might not be optimal for the last two arguments. 
     (compute-test-tree var default transfer-groups t t))) 
 
