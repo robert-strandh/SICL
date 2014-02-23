@@ -137,3 +137,8 @@
   (list (car state-info)
 	`(return-from ,block-name
 	   (apply ,(cdr state-info) ,arguments-var))))
+
+(defun actions-from-final-layer-info (block-name arguments-var layer-info)
+  (loop for state-info in layer-info
+	append (action-from-final-state-info
+		block-name arguments-var state-info)))
