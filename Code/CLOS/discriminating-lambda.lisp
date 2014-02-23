@@ -143,6 +143,16 @@
 	append (action-from-final-state-info
 		block-name arguments-var state-info)))
 
+;;; Create a TAGBODY form that implements the initial part of a
+;;; discriminating function.  TRANSITION-INFO is the transition
+;;; information extracted from a discriminating automaton.  BLOCK-NAME
+;;; is the name of a block to be used in RETURN-FROM forms when the
+;;; effective method is applied to the arguments. ARGUMENTS-VAR is the
+;;; name of the parameter that contains a list of all the arguments to
+;;; a generic function, and it is used when the effective method is
+;;; applied.  CLASS-NUMBER-VARS is a list of variables containing the
+;;; class numbers of the specialized required arguments to the generic
+;;; function.
 (defun compute-discriminating-tagbody
   (transition-info block-name arguments-var class-number-vars)
   (let ((default (gensym)))
