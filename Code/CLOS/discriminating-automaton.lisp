@@ -208,22 +208,19 @@
        (eq (transition-target transition1)
 	   (transition-target transition2))))
 
-;;; Two states are equivalent if they have the same INFO as determined
-;;; by EQUAL, and the same outgoing transitions, as determined by
-;;; TRANSITION-EQUAL.
+;;; Two states are equivalent if they have the same outgoing
+;;; transitions, as determined by TRANSITION-EQUAL.
 (defun states-equivalent-p (state1 state2)
   (unless (= (length (state-transitions state1))
 	     (length (state-transitions state2)))
     (return-from states-equivalent-p nil))
-  (and (equal (state-info state1) (state-info state2))
-       (progn 
-	 (setf (state-transitions state1)
-	       (sort (state-transitions state1) #'< :key #'transition-label))
-	 (setf (state-transitions state2)
-	       (sort (state-transitions state2) #'< :key #'transition-label))
-	 (every #'transitions-equal
-		(state-transitions state1)
-		(state-transitions state2)))))
+  (setf (state-transitions state1)
+	(sort (state-transitions state1) #'< :key #'transition-label))
+  (setf (state-transitions state2)
+	(sort (state-transitions state2) #'< :key #'transition-label))
+  (every #'transitions-equal
+	 (state-transitions state1)
+	 (state-transitions state2)))
 
 ;;; Minimize a layer, which is a list of states.  The next layer has
 ;;; already been minimized, so that if there are two equivalent target
