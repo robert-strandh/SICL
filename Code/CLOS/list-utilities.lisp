@@ -18,3 +18,43 @@
 	for element in list
 	do (push element result)
 	finally (return result)))
+
+;;; Destructive list merging.
+(defun list-merge (list1 list2 predicate &key key)
+  (when (null key)
+    (setf key #'identity))
+  (cond ((null list1)
+	 list2)
+	((null list2)
+	 list1)
+	(t
+	 (let ((result '()))
+	   ;; Figure out a first element to put on the resulting list.
+	   (if (funcall predicate
+			(funcall key (car list2))
+			(funcall key (car list1)))
+	       (let ((temp (cdr list2)))
+		 (setf result list2)
+		 (setf list2 temp))
+	       (let ((temp (cdr list1)))
+		 (setf result list1)
+		 (setf list1 temp)))
+	   ;; Do the remaining elements
+	   (let ((rest result))
+	     (loop until (or (null list1) (null list2))
+		   do (if (funcall predicate
+				   (funcall key (car list2))
+				   (funcall key (car list1)))
+			  (let ((temp (cdr list2)))
+			    (setf (cdr rest) list2)
+			    (setf list2 temp))
+			  (let ((temp (cdr list1)))
+			    (setf (cdr rest) list1)
+			    (setf list1 temp)))
+		      (setf rest (cdr rest)))
+	     (setf (cdr rest)
+		   (if (null list1) list2 list1)))
+	   result))))
+		      
+		 
+  
