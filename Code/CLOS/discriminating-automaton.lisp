@@ -275,9 +275,8 @@
 	     (pop remaining-states))
     equivalences))
 
-(defun minimize-automaton (start-state)
-  (let ((layers (compute-layers start-state)))
-    (loop for rest = (reverse layers) then (cdr rest)
-	  until (null (cdr rest))
-	  do (adjust-layer (cadr rest) (minimize-layer (car rest)))))
-  start-state)
+(defun minimize-automaton (automaton)
+  (loop for dico = '() then (minimize-layer layer dico)
+	for layer in (cdr (reverse automaton))))
+	
+  
