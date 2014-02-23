@@ -56,5 +56,13 @@
 		   (if (null list1) list2 list1)))
 	   result))))
 		      
-		 
-  
+;;; Destructive list sorting.
+(defun list-sort (list predicate &key key)
+  (if (or (null list) (null (cdr list)))
+      list
+      (let* ((temp (nthcdr (1- (floor (length list) 2)) list))
+	     (suffix (cdr temp)))
+	(setf (cdr temp) nil)
+	(list-merge (list-sort list predicate :key key)
+		    (list-sort suffix predicate :key key)
+		    predicate :key key))))
