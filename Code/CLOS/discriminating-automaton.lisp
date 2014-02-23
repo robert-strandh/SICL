@@ -290,6 +290,28 @@
 		 do (when (null (state-name state))
 		      (setf (state-name state) (gensym))))))
 
+;;; Once the automaton has been constructed and minimized, we are no
+;;; longer interested in how states and transitions are represented,
+;;; so we extract the essence of the contents as follows:
+;;;
+;;;   * The essence of the contents of the automaton is represented as a
+;;;     list containing information for each layer.
+;;;
+;;;   * The information of a layer is represented as a list of
+;;;     information for each state of the layer.
+;;;
+;;;   * If the state is a final state, then the information of the
+;;;     state is represented as a CONS of the NAME and the TAG of the
+;;;     state.
+;;;
+;;;   * If the state is an internal state, then the information of the
+;;;     state is represented as a CONS of the NAME of the state and a
+;;;     list of information for each transition of the state.
+;;;
+;;;  * The information of a transition is represented as a CONS of the
+;;;    LABEL of the transition and the NAME of the TARGET STATE of the
+;;;    transition.
+
 (defun state-information (state)
   (cons (state-name state)
 	(if (final-state-p state)
