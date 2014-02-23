@@ -282,8 +282,11 @@
   (loop for dico = '() then (minimize-layer layer dico)
 	for layer in (cdr (reverse automaton))))
 	
-;;; Assign a GENSYMed name to each state of the automaton
+;;; Assign a GENSYMed name to each state of the automaton that does
+;;; not already have a name.
 (defun name-states (automaton)
   (loop for layer in automaton
 	do (loop for state in (layer-states layer)
-		 do (setf (state-name state) (gensym)))))
+		 do (when (null (state-name state))
+		      (setf (state-name state) (gensym))))))
+
