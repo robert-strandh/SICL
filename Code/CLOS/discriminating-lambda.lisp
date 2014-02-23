@@ -142,3 +142,17 @@
   (loop for state-info in layer-info
 	append (action-from-final-state-info
 		block-name arguments-var state-info)))
+
+(defun compute-discriminating-tagbody
+  (transition-info block-name arguments-var class-number-vars)
+  (let ((default (gensym)))
+    `(tagbody
+	,(append
+	  (loop for layer-info in (butlast transition-info)
+		for var in class-number-vars
+		append (test-trees-from-internal-layer-info
+			var default layer-info))
+	  (actions-from-final-layer-info
+	   block-name arguments-var (car (last transition-info))))
+	,default)))
+
