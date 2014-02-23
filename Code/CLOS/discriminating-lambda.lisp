@@ -132,3 +132,8 @@
   (loop for state-info in layer-info
 	collect (car state-info)
 	collect (test-tree-from-transfers var default (cdr state-info))))
+
+(defun action-from-final-state-info (block-name arguments-var state-info)
+  (list (car state-info)
+	`(return-from ,block-name
+	   (apply ,(cdr state-info) ,arguments-var))))
