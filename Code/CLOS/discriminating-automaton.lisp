@@ -290,3 +290,18 @@
 		 do (when (null (state-name state))
 		      (setf (state-name state) (gensym))))))
 
+(defun state-information (state)
+  (cons (state-name state)
+	(if (final-state-p state)
+	    (state-tag state)
+	    (loop for transition in (state-transitions state)
+		  for label = (transition-label transition)
+		  for target = (transition-target transition)
+		  for name = (state-name target)
+		  collect (cons label name)))))
+
+(defun extract-transition-information (automaton)
+  (loop for layer in automaton
+	for states = (layer-states layer)
+	collect (loop for state in states
+		      collect (state-information state))))
