@@ -128,3 +128,7 @@
     ;; T and T might not be optimal for the last two arguments. 
     (compute-test-tree var default transfer-groups t t))) 
 
+(defun test-trees-from-internal-layer-info (var default layer-info)
+  (loop for state-info in layer-info
+	collect (car state-info)
+	collect (test-tree-from-transfers var default (cdr state-info))))
