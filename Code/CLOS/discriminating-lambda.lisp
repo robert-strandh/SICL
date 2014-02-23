@@ -115,6 +115,14 @@
 	       ,(compute-test-tree var default left open-inf-p open-p)
 	       ,(compute-test-tree var default right nil open-sup-p))))))
 
+;;; VAR is the name of a variable containing the unique number of a
+;;; class.  TRANSFERS is a list of transfers (recall that a transfer
+;;; is a CONS cell of a label (i.e. the unique name of a class) and
+;;; the name of a TAGBODY tag).  We generate a tree of nested IF
+;;; forms, testing VAR against the labels and generating a GO to the
+;;; corresponding TAGBODY tag DEFAULT is a symbol indicating a default
+;;; TAGBODY tag to transfer control to if the value of VAR is not any
+;;; of the labels in TRANSFERS.
 (defun test-tree-from-transfers (var default transfers)
   (let ((transfer-groups (make-transfer-groups transfers)))
     ;; T and T might not be optimal for the last two arguments. 
