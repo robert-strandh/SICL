@@ -163,7 +163,7 @@
     ;; state does not have any transitions. 
     (loop for label = (car labels)
 	  for transitions = (state-transitions state)
-	  for transition = (assoc label transition)
+	  for transition = (assoc label transitions)
 	  until (null transition)
 	  do (pop labels)
 	     (pop automaton)
