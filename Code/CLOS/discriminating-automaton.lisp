@@ -77,6 +77,16 @@
 ;;; the state is an internal state, the CDR of the CONS cell contains
 ;;; the list of transitions.
 
+;;; FIXME: We are using the following standard Common Lisp functions
+;;; that are defined to work on sequences, rather than just lists:
+;;;
+;;;   SORT, REVERSE
+;;;
+;;; However, in SICL, we might turn those functions into generic
+;;; functions.  It would therefore be best to define simplified
+;;; versions of them that only work on lists, and to use those
+;;; versions here.
+
 (defun make-internal-state (&optional transitions)
   (assert (listp transitions))
   (cons nil transitions))

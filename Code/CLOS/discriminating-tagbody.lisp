@@ -1,5 +1,15 @@
 (cl:in-package #:sicl-clos)
 
+;;; FIXME: We are using the following standard Common Lisp functions
+;;; that are defined to work on sequences, rather than just lists:
+;;;
+;;;   SORT, REVERSE
+;;;
+;;; However, in SICL, we might turn those functions into generic
+;;; functions.  It would therefore be best to define simplified
+;;; versions of them that only work on lists, and to use those
+;;; versions here.
+
 ;;; A TRANSFER is similar to a transition.  It has a label and a
 ;;; target, but the target is a symbol.
 (defun make-transfer (label target)
