@@ -372,3 +372,8 @@
   (loop for method in (generic-function-methods generic-function)
 	for specializers = (method-specializers method)
 	do (add-to-call-history generic-function specializers)))
+
+(defun satiate-generic-function (generic-function)
+  (load-call-history generic-function)
+  (let ((df (compute-discriminating-function generic-function)))
+    (set-funcallable-instance-function generic-function df)))
