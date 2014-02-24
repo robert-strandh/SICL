@@ -55,11 +55,14 @@
 	       (tagbody (compute-discriminating-tagbody info class-number-vars)))
 	  `(lambda (&rest arguments)
 	     (block b
-	       (let ,(loop for x in specializer-profile
-			   for i from 0
-			   when x collect `(,(nth i class-number-vars)
-					    (instance-class-number
-					     (nth ,i arguments))))
+	       (let ,(loop with i = 0
+			   for x in specializer-profile
+			   for j from 0
+			   when x
+			     collect `(,(nth i class-number-vars)
+				       (instance-class-number
+					(nth ,j arguments)))
+			     and do (incf i))
 		 ,tagbody
 		 (default-discriminating-function ,generic-function
 						  arguments
