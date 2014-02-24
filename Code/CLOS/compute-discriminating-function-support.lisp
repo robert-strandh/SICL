@@ -365,8 +365,10 @@
 		    (final-methods methods combination))
 	  for no-t = (remove *t* combination)
 	  for numbers = (mapcar #'unique-number no-t)
-	  do (push (make-call-cache numbers methods em)
-		   (call-history generic-function)))))
+	  do (unless (member numbers (call-history generic-function)
+			     :key #'class-number-cache :test #'equal)
+	       (push (make-call-cache numbers methods em)
+		     (call-history generic-function))))))
 
 (defun load-call-history (generic-function)
   (loop for method in (generic-function-methods generic-function)
