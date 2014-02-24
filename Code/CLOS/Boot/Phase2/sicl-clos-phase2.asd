@@ -6,7 +6,17 @@
   ;; dependencies, and to make the order completely predictable.
   :serial t
   :components
-  (;; The symbol MAKE-INSTANCE is shadowed in the SICL-CLOS package,
+  (;; In the machinery for making it possible to execute generic
+   ;; functions, there are some non-trivial computations needed, such
+   ;; as sorting and operations on lists.  However, some of the
+   ;; standard Common Lisp functions that are needed in those
+   ;; computations might be defined as generic functions in some
+   ;; implementations, in particular in SICL.  In order to avoid
+   ;; invoking generic functions in order to invoke generic functions,
+   ;; we define special, non-generic versions of these functions and
+   ;; we make them less general so that they work only on lists. 
+   (:file "list-utilities")
+   ;; The symbol MAKE-INSTANCE is shadowed in the SICL-CLOS package,
    ;; but now, we need for MAKE-INSTANCE to do the same thing as
    ;; CL:MAKE-INSTANCE, so we define SICL-CLOS as a function that just
    ;; calls CL:MAKE-INSTANCE.
