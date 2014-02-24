@@ -156,11 +156,11 @@
 (defun compute-discriminating-tagbody (transition-info class-number-vars)
   (let ((default (gensym)))
     `(tagbody
-	,(append
-	  (loop for layer-info in (butlast transition-info)
-		for var in class-number-vars
-		append (test-trees-from-internal-layer-info
-			var default layer-info))
-	  (actions-from-final-layer-info (car (last transition-info))))
+	,@(append
+	   (loop for layer-info in (butlast transition-info)
+		 for var in class-number-vars
+		 append (test-trees-from-internal-layer-info
+			 var default layer-info))
+	   (actions-from-final-layer-info (car (last transition-info))))
 	,default)))
 
