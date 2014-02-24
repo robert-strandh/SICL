@@ -71,7 +71,7 @@
    (:file "compute-applicable-methods-defuns")
    (:file "reader-writer-method-classes")
    (:file "compute-effective-method-support")
-   (:file "compute-effective-method-support-b")
+   (:file "compute-effective-method-support-a")
    (:file "compute-effective-method-defuns")
    (:file "find-class-named-t")
    (:file "no-applicable-method-defuns")
