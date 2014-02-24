@@ -54,7 +54,6 @@
 	(let* ((info (extract-transition-information automaton))
 	       (tagbody (compute-discriminating-tagbody info class-number-vars)))
 	  `(lambda (&rest arguments)
-	     (format t "~%Arguments: ~s~%" arguments)
 	     (block b
 	       (let ,(loop for x in specializer-profile
 			   for i from 0
