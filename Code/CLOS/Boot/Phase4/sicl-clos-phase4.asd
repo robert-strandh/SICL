@@ -7,4 +7,5 @@
   :serial t
   :components
   ((:file "patch-instance-classes")
-   (:file "install-remaining-bridge-functions")))
+   (:file "install-remaining-bridge-functions")
+   (:file "slot-definition-classes")))
