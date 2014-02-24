@@ -59,23 +59,25 @@
 ;;; We represent the automaton as nested lists.  We deliberately avoid
 ;;; using classes so as to avoid circular dependencies.
 
-;;; A STATE of the automaton is either a FINAL STATE or an INTERNAL
+;;; A STATE of the automaton is either a FINAL state or an INTERNAL
 ;;; state.  A final state has no transitions associated with it, and
-;;; instead it has a TAG which is a non-NIL atom.  Final states with
-;;; identical (EQ) tags are considered equivalent.  An internal state
-;;; has a list of transitions associated with it.  During construction
-;;; of the automaton, some internal states may have an empty list of
+;;; instead it has a ACTION.  Final states with identical (EQ) actions
+;;; are considered equivalent.  An internal state has a list of
+;;; transitions associated with it.  During construction of the
+;;; automaton, some internal states may have an empty list of
 ;;; transitions, but in the final automaton, every internal state has
 ;;; a non-empty list of transitions associated with it.  There can
 ;;; never be two transitions in a state with the same label (see
 ;;; below).  Two internal states with the same set of transitions
 ;;; (same number of transitions, same labels, leading to equivalent
-;;; states) are considered equivalent.  A state is represented as a
-;;; CONS cell.  The CAR of the cell is initially NIL and will later be
-;;; used to hold a GENSYMed NAME of the state.  If the state is a
-;;; final state, then the CDR of the CONS cell contains the tag.  If
-;;; the state is an internal state, the CDR of the CONS cell contains
-;;; the list of transitions.
+;;; states) are considered equivalent.  A state is represented as two
+;;; CONS cells.  The CAR of the first cell contains either :INTERNAL
+;;; or :FINAL according to whether the state is an internal or a final
+;;; state.  The CAR of the second cell is initially NIL and will later
+;;; be used to hold a GENSYMed NAME of the state.  If the state is a
+;;; final state, then the CDR of the second CONS cell contains the
+;;; action.  If the state is an internal state, the CDR of the second
+;;; CONS cell contains the list of transitions.
 
 ;;; FIXME: We are using the following standard Common Lisp functions
 ;;; that are defined to work on sequences, rather than just lists:
@@ -102,13 +104,13 @@
   (assert (internal-state-p state))
   (setf (cddr state) new-transitions))
 
-(defun make-final-state (tag)
-  (list* :final nil tag))
+(defun make-final-state (action)
+  (list* :final nil action))
 
 (defun final-state-p (state)
   (eq (car state) :final))
 
-(defun state-tag (state)
+(defun state-action (state)
   (assert (final-state-p state))
   (cddr state))
 
@@ -158,14 +160,14 @@
     result))
 
 ;;; Given an automaton, a list of transition labels (of length N) and
-;;; a tag of a final state, add states and transitions to the
+;;; a action of a final state, add states and transitions to the
 ;;; automaton, so that there exists a path from the initial state to a
-;;; final state with the given tag.
+;;; final state with the given action.
 ;;;
 ;;; The automaton must not already contain a path from the initial
 ;;; state to a final state with the labels given, not even to a final
-;;; state with the same tag as the one given. 
-(defun add-path (automaton labels tag)
+;;; state with the same action as the one given.
+(defun add-path (automaton labels action)
   (let ((state (car (layer-states (car automaton)))))
     (pop automaton)
     ;; Follow transitions in the automaton until we find a state where
@@ -195,17 +197,17 @@
     ;; At this point, there is a single element left in LABELS,
     ;;  corresponding to a transition to a final state.  There is also
     ;;  a single element in AUTOMATON, namely the layer containing
-    ;;  final states. A final state with the tag TAG may already
+    ;;  final states. A final state with the action ACTION may already
     ;;  exist, in which case we reuse it.  If not, we create a new
     ;;  final state.
     (assert (and (consp automaton) (null (cdr automaton))))
     (assert (and (consp labels) (null (cdr labels))))
-    (let ((final (car (member tag (layer-states (car automaton))
-			      :key #'state-tag))))
+    (let ((final (car (member action (layer-states (car automaton))
+			      :key #'state-action))))
       (when (null final)
-	;; There is no existing state with the tag TAG.  Create one
-	;; and add it to the final layer of the automaton.
-	(setf final (make-final-state tag))
+	;; There is no existing state with the action ACTION.  Create
+	;; one and add it to the final layer of the automaton.
+	(setf final (make-final-state action))
 	(push final (layer-states (car automaton))))
       ;; Add a transition from STATE to FINAL.
       (push (make-transition (car labels) final)
@@ -310,8 +312,8 @@
 ;;;     information for each state of the layer.
 ;;;
 ;;;   * If the state is a final state, then the information of the
-;;;     state is represented as a CONS of the NAME and the TAG of the
-;;;     state.
+;;;     state is represented as a CONS of the NAME and the ACTION of
+;;;     the state.
 ;;;
 ;;;   * If the state is an internal state, then the information of the
 ;;;     state is represented as a CONS of the NAME of the state and a
@@ -324,7 +326,7 @@
 (defun state-information (state)
   (cons (state-name state)
 	(if (final-state-p state)
-	    (state-tag state)
+	    (state-action state)
 	    (loop for transition in (state-transitions state)
 		  for label = (transition-label transition)
 		  for target = (transition-target transition)
