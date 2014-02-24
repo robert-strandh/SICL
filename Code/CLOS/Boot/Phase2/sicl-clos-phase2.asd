@@ -75,6 +75,8 @@
    (:file "compute-effective-method-defuns")
    (:file "find-class-named-t")
    (:file "no-applicable-method-defuns")
+   (:file "discriminating-automaton")
+   (:file "discriminating-tagbody")
    (:file "compute-discriminating-function-support")
    (:file "compute-discriminating-function-support-a")
    (:file "compute-discriminating-function-defuns")
