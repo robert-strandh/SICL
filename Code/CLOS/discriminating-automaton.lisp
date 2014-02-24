@@ -89,35 +89,34 @@
 
 (defun make-internal-state (&optional transitions)
   (assert (listp transitions))
-  (cons nil transitions))
+  (list* :internal nil transitions))
 
 (defun internal-state-p (state)
-  (listp (cdr state)))
+  (eq (car state) :internal))
 
 (defun state-transitions (state)
   (assert (internal-state-p state))
-  (cdr state))
+  (cddr state))
 
 (defun (setf state-transitions) (new-transitions state)
   (assert (internal-state-p state))
-  (setf (cdr state) new-transitions))
+  (setf (cddr state) new-transitions))
 
 (defun make-final-state (tag)
-  (assert (not (listp tag)))
-  (cons nil tag))
+  (list* :final nil tag))
 
 (defun final-state-p (state)
-  (not (listp (cdr state))))
+  (eq (car state) :final))
 
 (defun state-tag (state)
   (assert (final-state-p state))
-  (cdr state))
+  (cddr state))
 
 (defun state-name (state)
-  (car state))
+  (cadr state))
 
 (defun (setf state-name) (new-name state)
-  (setf (car state) new-name))
+  (setf (cadr state) new-name))
 
 ;;; A transition of the automaton is represented as a CONS cell.  The
 ;;; CAR of the CONS cell is the label (the unique number of a class),
