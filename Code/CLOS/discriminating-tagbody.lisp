@@ -143,28 +143,17 @@
 	collect (car state-info)
 	collect (test-tree-from-transfers var default (cdr state-info))))
 
-(defun action-from-final-state-info (block-name arguments-var state-info)
-  (list (car state-info)
-	`(return-from ,block-name
-	   (apply ,(cdr state-info) ,arguments-var))))
-
-(defun actions-from-final-layer-info (block-name arguments-var layer-info)
+(defun actions-from-final-layer-info (layer-info)
   (loop for state-info in layer-info
-	append (action-from-final-state-info
-		block-name arguments-var state-info)))
+	append (list (car state-info) (cdr state-info))))
 
 ;;; Create a TAGBODY form that implements the initial part of a
 ;;; discriminating function.  TRANSITION-INFO is the transition
-;;; information extracted from a discriminating automaton.  BLOCK-NAME
-;;; is the name of a block to be used in RETURN-FROM forms when the
-;;; effective method is applied to the arguments. ARGUMENTS-VAR is the
-;;; name of the parameter that contains a list of all the arguments to
-;;; a generic function, and it is used when the effective method is
-;;; applied.  CLASS-NUMBER-VARS is a list of variables containing the
-;;; class numbers of the specialized required arguments to the generic
+;;; information extracted from a discriminating automaton.
+;;; CLASS-NUMBER-VARS is a list of variables containing the class
+;;; numbers of the specialized required arguments to the generic
 ;;; function.
-(defun compute-discriminating-tagbody
-  (transition-info block-name arguments-var class-number-vars)
+(defun compute-discriminating-tagbody (transition-info class-number-vars)
   (let ((default (gensym)))
     `(tagbody
 	,(append
@@ -172,7 +161,6 @@
 		for var in class-number-vars
 		append (test-trees-from-internal-layer-info
 			var default layer-info))
-	  (actions-from-final-layer-info
-	   block-name arguments-var (car (last transition-info))))
+	  (actions-from-final-layer-info (car (last transition-info))))
 	,default)))
 
