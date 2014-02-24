@@ -168,49 +168,51 @@
 ;;; state to a final state with the labels given, not even to a final
 ;;; state with the same action as the one given.
 (defun add-path (automaton labels action)
-  (let ((state (car (layer-states (car automaton)))))
-    (pop automaton)
+  (let ((state (car (layer-states (car automaton))))
+	(layers automaton)
+	(remaining-labels labels))
+    (pop layers)
     ;; Follow transitions in the automaton until we find a state where
     ;; there is no transition for the corresponding label.  Should we
     ;; end up in a final state (which should not happen), then the
     ;; call (state-transitions state) will fail because a final
     ;; state does not have any transitions. 
-    (loop for label = (car labels)
+    (loop for label = (car remaining-labels)
 	  for transitions = (state-transitions state)
 	  for transition = (assoc label transitions)
 	  until (null transition)
-	  do (pop labels)
-	     (pop automaton)
+	  do (pop remaining-labels)
+	     (pop layers)
 	     (setf state (transition-target transition)))
     ;; At this point, STATE is an internal state with no transition
     ;; with the first label in LABELS.  Now, we create new states
     ;; until right before we reach a final state.
-    (loop until (null (cdr labels))
-	  for label = (car labels)
+    (loop until (null (cdr remaining-labels))
+	  for label = (car remaining-labels)
 	  for target = (make-internal-state)
 	  for transition = (make-transition label target)
 	  do (push transition (state-transitions state))
-	     (push target (layer-states (car automaton)))
-	     (pop labels)
-	     (pop automaton)
+	     (push target (layer-states (car layers)))
+	     (pop remaining-labels)
+	     (pop layers)
 	     (setf state target))
-    ;; At this point, there is a single element left in LABELS,
+    ;; At this point, there is a single element left in REMAINING-LABELS,
     ;;  corresponding to a transition to a final state.  There is also
-    ;;  a single element in AUTOMATON, namely the layer containing
+    ;;  a single element in LAYERS, namely the layer containing
     ;;  final states. A final state with the action ACTION may already
     ;;  exist, in which case we reuse it.  If not, we create a new
     ;;  final state.
-    (assert (and (consp automaton) (null (cdr automaton))))
-    (assert (and (consp labels) (null (cdr labels))))
-    (let ((final (car (member action (layer-states (car automaton))
+    (assert (and (consp layers) (null (cdr layers))))
+    (assert (and (consp remaining-labels) (null (cdr remaining-labels))))
+    (let ((final (car (member action (layer-states (car layers))
 			      :key #'state-action))))
       (when (null final)
 	;; There is no existing state with the action ACTION.  Create
 	;; one and add it to the final layer of the automaton.
 	(setf final (make-final-state action))
-	(push final (layer-states (car automaton))))
+	(push final (layer-states (car layers))))
       ;; Add a transition from STATE to FINAL.
-      (push (make-transition (car labels) final)
+      (push (make-transition (car remaining-labels) final)
 	    (state-transitions state)))))
 
 ;;; Compare two transitions for equality.  Two transitions are
