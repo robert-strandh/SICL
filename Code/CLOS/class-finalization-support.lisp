@@ -119,8 +119,38 @@
 	  :initfunction initfunction
 	  :type type))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Default action for the primary method on COMPUTE-SLOTS.
+;;;
+;;; The AMOP says that this function returns the resulting list of
+;;; slots in an "unspecified order".  Analyzing the text of the AMOP a
+;;; bit more, we understand that the order can be specified by the
+;;; implementation, that this order determines the LOCATION of each
+;;; directly accessible slot in that the default :AROUND method on
+;;; COMPUTE-SLOTS allocates locations with increasing locations
+;;; according to this order.
+;;;
+;;; Here, we want the slots to appear in an instance with slots
+;;; defined in more general classes first, so that is what this
+;;; function does.
+;;;
+;;; The AMOP says that lists of direct slot definitions are grouped by
+;;; name into separate lists, and that each list is then sorted
+;;; according to the class precedence list.  However, we can not use
+;;; CLASS-PRECEDENCE-LIST to access the precedence list, because the
+;;; AMOP also stipulates that this function signals an error if the
+;;; class is not finalized, and computing the effective slots is part
+;;; of the class finalization protocol. 
+;;;
+;;; The AMOP does not say what is supposed to happen if this generic
+;;; function is called if the class precedence list has not first been
+;;; computed and made available 
+
 (defun compute-slots-default (class)
-  (let* ((superclasses (class-precedence-list class))
+  (let* (;; FIXME: do not call CLASS-PRECEDENCE-LIST.
+	 ;; See comment above.
+	 (superclasses (class-precedence-list class))
 	 ;; We can't use CLASS-DIRECT-SLOTS here, because according to
 	 ;; the AMOP it must return the empty list for built-in
 	 ;; classes, and we need to inherit slots from built-in
@@ -141,6 +171,21 @@
 		   (remove name concatenated
 			   :key #'slot-definition-name
 			   :test-not #'eql)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Default action for :AROUND method on COMPUTE-SLOTS.
+;;;
+;;; The AMOP specifies that:
+;;;
+;;;    "For a given class, the locations increase consecutively, in
+;;;     the order that the directly accessible slots appear in the
+;;;     list of effective slots."
+;;; 
+;;; It is not entirely clear what list of effective slots is meant,
+;;; but we take this to mean that it is the list of effective slots
+;;; that is both returned by the primary method and associated with
+;;; the class.
 
 (defun compute-slots-around-default (slots)
   (let ((next-location 2))
@@ -170,6 +215,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; FINALIZE-INHERITANCE.
+;;;
+;;; The AMOP says that class finalization is done in three steps:
+;;;
+;;;   1. Compute the class precedence list and associate it with the
+;;;      class so that it is returned by CLASS-PRECEDENCE-LIST.
+;;;
+;;;   2. Compute the effective slots and associate them with the
+;;;      class, so that they are returned by CLASS-SLOTS.
+;;;
+;;;   3. Compute the default initargs and associate them with the
+;;;      class, so that they are returned by CLASS-DEFAULT-INIARGS.
+;;;
+;;; The problem with this scenario is that steps 2 and 3 would call
+;;; CLASS-PRECEDENCE-LIST to access the class precedence list computed
+;;; in step 1.  However, the AMOP also specifies that the generic
+;;; function CLASS-PRECEDENCE-LIST signals an error if the class is
+;;; not finalized, which it will not be until step 3 is completed!
+;;;
+;;; The only solution we can see is for steps 2 and 3 to access the
+;;; class precedence list using way other than calling the function
+;;; CLASS-PRECEDENCE-LIST; either with a different reader, or by using
+;;; SLOT-VALUE.  SLOT-VALUE is unappealing because it might be slow,
+;;; so we choose the first solution.
 
 (defun finalize-inheritance-default (class)
   (setf (c-precedence-list class) (compute-class-precedence-list class))
