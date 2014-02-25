@@ -120,7 +120,9 @@ The first entry of the contents vector of every heap object is a small
 fixnum that indicates the \emph{object class unique number}.%
 \footnote{We need to find a better name for this concept.}
 This number indicates the \emph{unique class number} of the class of
-the heap object as it was when the heap object was created.  It is
+the heap object as it was when the heap object was created.  The main
+purpose of this information is to be used in \emph{generic function
+  dispatch}.  It is also
 used to determine whether a heap object is an obsolete instance (in
 this case the \emph{object class unique number} of the heap object
 will not be the same as the \emph{current} unique class number of the
@@ -209,14 +211,15 @@ it amounts to transferring control to the \emph{discriminating
   function}.  However, the discriminating function can not \emph{be}
 the generic function, because the \clos{} specification requires that
 the discriminating function of a generic function can be replaced,
-without changing the identity of the generic function itself.  The
-discriminating function must therefore be stored in a slot of the
-generic function.  In order for the generic function itself to behave
-in exactly the same way as its discriminating function, whenever a new
-discriminating function is \emph{installed}, the \emph{entry point},
-the \emph{linkage vector}, and the \emph{static environment} are
-copied from the discriminating function to the corresponding slots of
-the generic function itself. 
+without changing the identity of the generic function itself.
+Furthermore, the discriminating function does not have to be stored in
+a slot of the generic function, because once it is computed and
+installed, it is no longer needed.  In order for the generic function
+itself to behave in exactly the same way as its discriminating
+function, whenever a new discriminating function is \emph{installed},
+the \emph{entry point}, the \emph{linkage vector}, and the
+\emph{static environment} are copied from the discriminating function
+to the corresponding slots of the generic function itself.
 
 \section{Instance of built-in classes}
 
