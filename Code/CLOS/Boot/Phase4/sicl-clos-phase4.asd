@@ -6,6 +6,8 @@
   ;; dependencies, and to make the order completely predictable.
   :serial t
   :components
-  ((:file "patch-instance-classes")
+  ((:file "install-generic-functions")
+   (:file "patch-instance-classes")
    (:file "install-remaining-bridge-functions")
-   (:file "slot-definition-classes")))
+   (:file "slot-definition-classes")
+   ))
