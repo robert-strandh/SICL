@@ -129,6 +129,34 @@ will not be the same as the \emph{current} unique class number of the
 class of the heap object).  Only standard objects can become
 obsolete. \seesec{sec-data-representation-standard-objects}
 
+One advantage of representing heap objects this way is that the
+contents vector is \emph{internally consistent}.  To explain what we
+mean by this concept, let us take an \emph{adjustable array} as an
+example.  The implementation of \texttt{aref} must check that the
+indices are valid, compute the offset of the element and then access
+the element.  But in the presence of threads, between the index check
+and the access, some other thread might have adjusted the array so
+that the indices are no longer valid.  In most implementations, to
+ensure that \texttt{aref} is \emph{thread safe}, it is necessary to
+prevent other threads from intervening between the index check and the
+access, for instance by using a \emph{lock}.  In \sysname{}, adjusting
+the array involves creating a new contents vector with new dimensions,
+and then with a single store instruction associate the new contents
+vector with the array.  The implementation of \texttt{aref} would then
+initially obtain a pointer to the contents vector and then do the
+index check, the computation of the offset, and the access without
+risking any interference.  No locking is therefore required.  Another
+example is a \emph{generic function}.  When a method is added or
+deleted, or when a new sequence of argument classes is seen, the
+generic function must be destructively updated.  Normally, this
+operation would require some locking primitive in order to prevent
+other threads from invoking a partially updated generic function.  In
+\sysname{}, to update a generic function this way, a new contents
+vector would be allocated and the modifications would be made there,
+leaving the original generic function intact until the final
+instruction to store a reference to the the new contents vector in the
+header object. 
+
 In the following sections we give the details of the representation
 for all possible heap objects.
 
