@@ -5,7 +5,7 @@
 ;;; Computing the effective slots of a built-in class.
 
 (defun compute-built-in-slots (class)
-  (let* ((superclasses (class-precedence-list class))
+  (let* ((superclasses (precedence-list class))
 	 (direct-slots (mapcar #'direct-slots superclasses))
 	 (concatenated (reduce #'append direct-slots))
 	 (reverse-slots (reverse direct-slots))
@@ -32,7 +32,7 @@
 ;;; FINALIZE-BUILT-IN-INHERITANCE.
 
 (defun finalize-built-in-inheritance (class)
-  (setf (c-precedence-list class) (compute-class-precedence-list class))
+  (setf (precedence-list class) (compute-class-precedence-list class))
   (setf (c-slots class) (compute-built-in-slots class))
   (setf (c-default-initargs class) (compute-default-initargs-default class))
   (setf (c-finalized-p class) t))

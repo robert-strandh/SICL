@@ -141,16 +141,19 @@
 ;;; CLASS-PRECEDENCE-LIST to access the precedence list, because the
 ;;; AMOP also stipulates that this function signals an error if the
 ;;; class is not finalized, and computing the effective slots is part
-;;; of the class finalization protocol. 
+;;; of the class finalization protocol.  For that reason, we use the
+;;; alternative reader PRECEDENCE-LIST that works just like the normal
+;;; CLASS-PRECEDENCE-LIST, except that it just accesses the slot, and
+;;; does not signal an error if the class has not been finalized. 
 ;;;
 ;;; The AMOP does not say what is supposed to happen if this generic
 ;;; function is called if the class precedence list has not first been
 ;;; computed and made available 
 
 (defun compute-slots-default (class)
-  (let* (;; FIXME: do not call CLASS-PRECEDENCE-LIST.
-	 ;; See comment above.
-	 (superclasses (class-precedence-list class))
+  (let* (;; Do NOT call CLASS-PRECEDENCE-LIST here (see comment
+	 ;; above).  Instead use alternative reader PRECEDENCE-LIST.
+	 (superclasses (precedence-list class))
 	 ;; We can't use CLASS-DIRECT-SLOTS here, because according to
 	 ;; the AMOP it must return the empty list for built-in
 	 ;; classes, and we need to inherit slots from built-in
@@ -206,8 +209,13 @@
 	   ;; We use the reader DIRECT-DEFAULT-INITARGS rather than
 	   ;; CLASS-DIRECT-DEFAULT-INITARGS so that this function
 	   ;; works for built-in classes as well as standard classes.
+	   ;;
+	   ;; Furthermore, we use the alternative reader named
+	   ;; PRECEDENCE-LIST rather than CLASS-PRECEDENCE-LIST,
+	   ;; because the latter signals an error if the class is not
+	   ;; finalized.
 	   (mapcar #'direct-default-initargs
-		   (class-precedence-list class)))
+		   (precedence-list class)))
    :test #'eq
    :key #'car
    :from-end t))
@@ -240,7 +248,7 @@
 ;;; so we choose the first solution.
 
 (defun finalize-inheritance-default (class)
-  (setf (c-precedence-list class) (compute-class-precedence-list class))
+  (setf (precedence-list class) (compute-class-precedence-list class))
   (setf (c-slots class) (compute-slots class))
   (setf (c-default-initargs class) (compute-default-initargs class))
   ;; We set FINALIZED-P to TRUE before allocating the prototype

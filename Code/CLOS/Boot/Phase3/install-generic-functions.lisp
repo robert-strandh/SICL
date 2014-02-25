@@ -8,7 +8,8 @@
     class-direct-superclasses
     class-direct-slots
     class-direct-default-initargs
-    (setf c-precedence-list)
+    precedence-list
+    (setf precedence-list)
     direct-slots
     (setf c-slots)
     direct-default-initargs
