@@ -148,8 +148,15 @@
 ;;;
 ;;; The AMOP does not say what is supposed to happen if this generic
 ;;; function is called if the class precedence list has not first been
-;;; computed and made available 
+;;; computed and made available.  Here (at least for now), we make the
+;;; assumption that the application programmer is not supposed to call
+;;; this function directly, so that it is only called from
+;;; FINALIZE-INHERITANCE, and that the application programmer is only
+;;; allowed to write methods on it.
 
+;;; FIXME: We are probably not doing this quite right.  We should
+;;; probably use the class precedence list directly to sort the direct
+;;; slot definitions within a list with the same slot name.
 (defun compute-slots-default (class)
   (let* (;; Do NOT call CLASS-PRECEDENCE-LIST here (see comment
 	 ;; above).  Instead use alternative reader PRECEDENCE-LIST.
@@ -202,6 +209,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; COMPUTE-DEFAULT-INITARGS.
+;;;
+;;; The AMOP does not say what is supposed to happen if this generic
+;;; function is called if the class precedence list has not first been
+;;; computed and made available.  Here (at least for now), we make the
+;;; assumption that the application programmer is not supposed to call
+;;; this function directly, so that it is only called from
+;;; FINALIZE-INHERITANCE, and that the application programmer is only
+;;; allowed to write methods on it.
 
 (defun compute-default-initargs-default (class)
   (remove-duplicates
