@@ -624,9 +624,9 @@ as \texttt{target:class-unique-number} must be defined in that context to
 work on the specializers. 
 \end{definition}
 
-\subsection{Bootstrapping stages}
+\subsection{Bootstrapping phases}
 
-\subsubsection{Stage 1}
+\subsubsection{Phase 1}
 
 We use \texttt{host:defclass} to create a hierarchy of host classes
 corresponding to the hierarchy of MOP classes.  The names of those host
@@ -646,29 +646,29 @@ these host classes have the effective slots determined by class
 inheritance.  In other words, each of the classes define slots with
 the right names, the right initargs, etc.
 
-\subsubsection{Stage 2}
+\subsubsection{Phase 2}
 
-The purpose of this stage is to make it possible to create bridge
-generic functions.  In order to create a generic function, we need the
+The purpose of this phase is to make it possible to create bridge
+generic functions and bridge classes.
+
+In order to create a generic function, we need the
 existence of other generic functions.  We break this cycle by using
 host generic functions to create bridge generic functions.  Examples 
-of host generic functions that are defined in this stage are
+of host generic functions that are defined in this phase are
 \texttt{ensure-generic-function-using-class},
 \texttt{compute-applicable-methods-using-classes},
 \texttt{compute-discriminating-function}, etc.  Furthermore, in this
-stage, we define \texttt{:after} method on
+phase, we define \texttt{:after} method on
 \texttt{host:initialize-instance} specialized for the host classes
 \texttt{target:generic-function} and \texttt{target:method}.  
 
-\subsubsection{Stage 3}
-
-The purpose of this stage is to create bridge classes corresponding to
-the classes of the MOP hierarchy.  We do this by redefining
-\texttt{defclass} to call \texttt{target:ensure-class} which calls
-\texttt{host:make-instance} of the appropriate host class.  When a
-bridge class is created, it will automatically create generic
-functions corresponding to slot readers and writers.  This is done by
-calling \texttt{host:make-instance} directly or indirectly through
+Next, we create bridge classes corresponding to the classes of the MOP
+hierarchy.  We do this by redefining \texttt{defclass} to call
+\texttt{target:ensure-class} which calls \texttt{host:make-instance}
+of the appropriate host class.  When a bridge class is created, it
+will automatically create generic functions corresponding to slot
+readers and writers.  This is done by calling
+\texttt{host:make-instance} directly or indirectly through
 \texttt{ensure-generic-function}.  Thus the generic functions created
 this way are bridge generic functions, and the methods are bridge
 methods.
@@ -682,5 +682,79 @@ methods on \texttt{host:initialize-instance} specialized for the host
 classes \texttt{target:standard-class} and
 \texttt{target:funcallable-standard-class}.  
 
-\subsubsection{Stage 4}
+\subsubsection{Phase 3}
 
+The purpose of this phase is to create target generic functions and
+target classes, by instantiating bridge classes.  
+
+At the end of this phase, we have a set of target instances, some of
+which are target classes, except that the \texttt{class} slot of the
+header object of every such instance is a bridge class.  We also have
+a set of target generic functions (mainly accessors) that are target
+instances like all the others. 
+
+\subsubsection{Phase 4}
+
+The first step of this phase is to finalize all the target classes
+that were created in phase 3.  Finalization will create target
+instances of bridge classes corresponding to effective slot
+definitions. 
+
+The second step is to \emph{patch} all the target instances allocated
+so far.  There are two different ways in which target instances must
+be patched.  First of all, all target instances have a bridge class in
+the \texttt{class} slot of the header object.  We patch this
+information by accessing the \emph{name} of the bridge class and
+replacing the slot contents by the target class with the same name.
+Second, target instances of the class \texttt{standard-object} contain
+a list of effective slot definition objects in the second word of the
+contents vector, except that those effective slot definition objects
+are bridge instances, because they were copied form the
+\texttt{class-slots} slot of the bridge class when the bridge class
+was instantiated to obtain the target instance.  Since all target
+classes were finalized during the first step of this phase, they now
+all have a list of effective slot definition objects, and those
+objects are target instances.  Patching consists of replacing the
+second word of the contents vector of all instances of
+\texttt{standard-object} by the contents of the \texttt{class-slots}
+slot of the class object of the instance, which is now a target
+class. 
+
+The final step in this phase is to \emph{install} all remaining bridge
+generic functions so that they are the \texttt{fdefinition}s of their
+respective names. 
+
+At the end of this phase, we have a complete set of bridge generic
+functions that operate on target instances (including on target
+classes). 
+
+\subsubsection{Phase 5}
+
+The purpose of this phase is to create target instances for all
+objects that are needed in order to obtain a viable image, including: 
+
+\begin{itemize}
+\item target built-in classes such as \texttt{package}, \texttt{symbol},
+  \texttt{string}, etc., 
+\item target instances of those classes, such as the required
+  packages, the symbols contained in those packages, the names of
+  those symbols, etc.
+\item target standard classes for representing the global environment
+  and its contents.
+\item target instances of those classes.
+\end{itemize}
+
+\subsubsection{Phase 6}
+
+The purpose of this phase is to replace all the host instances that
+have been used so far as part of the entire target structure, such as
+symbols, lists, and integers by their target counterparts.
+
+\subsubsection{Phase 7}
+
+The purpose of this phase is to take the simulated graph of objects
+used so far and transfer it to a \emph{memory image}.  
+
+\subsubsection{Phase 8}
+
+Finally, the memory image is written to a binary file. 
