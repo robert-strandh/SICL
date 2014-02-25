@@ -329,6 +329,16 @@
 ;;; This function sets the class prototype of the class.
 (defgeneric (setf c-prototype) (prototype class))
 
+;;; This function is used by ALLOCATE-INSTANCE and
+;;; ALLOCATE-BUILT-IN-INSTANCE to determine the size of the instance
+;;; to allocate.
+(defgeneric instance-size (class))
+
+;;; This function is used during class finalization, when the
+;;; effective slots are known, and it is therefore also known what
+;;; size the instances of this class should have.
+(defgeneric (setf instance-size) (new-size class))
+
 ;;; This function returns the dependents of the class.
 (defgeneric dependents (class))
 
