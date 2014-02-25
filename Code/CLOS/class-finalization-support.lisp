@@ -15,12 +15,7 @@
         for super in (class-direct-superclasses class)
         collect (cons prev super)))
 
-(defun compute-class-precedence-list-default (class)
-  ;; Make sure all the direct superclasses are already finalized so
-  ;; that we can use their precedence lists.
-  (loop for super in (class-direct-superclasses class)
-	do (unless (class-finalized-p super)
-	    (finalize-inheritance super)))
+(defun compute-class-precedence-list-assuming-superclasses-finalized (class)
   (let* ((all-supers (cons class
 			   (remove-duplicates
 			    (reduce #'append
@@ -66,7 +61,15 @@
 		 (push candidate reverse-result)
 		 (setf all-supers (remove candidate all-supers))
 		 (setf relation (remove candidate relation :key #'car)))))
-    (reverse reverse-result)))
+    (reverse reverse-result)))  
+
+(defun compute-class-precedence-list-default (class)
+  ;; Make sure all the direct superclasses are already finalized so
+  ;; that we can use their precedence lists.
+  (loop for super in (class-direct-superclasses class)
+	do (unless (class-finalized-p super)
+	     (finalize-inheritance super)))
+  (compute-class-precedence-list-assuming-superclasses-finalized class))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
