@@ -43,8 +43,8 @@ metaclass is not specified.
 
 In \sysname{}, every class (i.e., ever instance of a class metaclass)
 contains a \emph{unique number} which is an integer assigned
-sequentially from $0$ as a class is initialized or reinitialized.
-When a class is reinitialized, its old unique number is never reused,
+sequentially from $0$ as a class is finalized.  When a class is
+finalized a second time, its old unique number is never reused,
 leaving \emph{holes} in the sequence corresponding to numbers that no
 longer correspond to any classes.%
 \footnote{It might be possible for the garbage collector to change the
@@ -334,10 +334,19 @@ becomes a very simple \emph{automaton} where each transition is
 determined by a comparison between two small integers.  The class
 numbers become constants inside the compiled code of the
 discriminating function, making comparison fast.  Each argument class
-is tested in the order determined by the \emph{argument precedence
-  order} of the generic function.  For each argument, the set of
-possible effective methods is filtered by a binary search, eliminating
-around half of the possibilities in each comparison.
+is tested from left to right, without taking the \emph{argument
+  precedence order} of the generic function into account.  For each
+argument, the set of possible effective methods is filtered by a
+binary search.  The search is based on \emph{intervals of class
+  numbers} as opposed to individual class numbers.  This optimization
+can speed up the dispatch considerably when an interval of class
+numbers yield the same effective method.  Since classes are finalized
+in a \emph{depth-first} order, class numbers for a subtree of classes
+frequently obtain consecutive class numbers.  A method specialized to
+the root of such a subtree is applicable to all the classes in the
+subtree, and in this case, only two tests (for the upper and the lower
+bound of the interval of class numbers) are required to determine
+whether that method is applicable. 
 
 The automaton of the discriminating function can not contain class
 numbers that were discarded as a result of classes being
