@@ -231,9 +231,9 @@
 	     (length (state-transitions state2)))
     (return-from states-equivalent-p nil))
   (setf (state-transitions state1)
-	(sort (state-transitions state1) #'< :key #'transition-label))
+	(sort-list (state-transitions state1) #'< :key #'transition-label))
   (setf (state-transitions state2)
-	(sort (state-transitions state2) #'< :key #'transition-label))
+	(sort-list (state-transitions state2) #'< :key #'transition-label))
   (every #'transitions-equal
 	 (state-transitions state1)
 	 (state-transitions state2)))
