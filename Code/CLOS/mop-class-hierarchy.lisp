@@ -443,7 +443,9 @@
    (%initfunction 
     :initform nil
     :initarg :initfunction
-    :reader slot-definition-initfunction)))
+    :reader slot-definition-initfunction
+    ;; Alternative reader.  see comment above.
+    :reader initfunction)))
 
 ;;; The READERS and WRITERS slots only exist in direct slot
 ;;; definitions, because they are not combined the way other slot
