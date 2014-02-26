@@ -34,8 +34,9 @@
 (defun finalize-built-in-inheritance (class)
   (setf (precedence-list class) (compute-class-precedence-list class))
   (let* ((effective-slots (compute-built-in-slots class))
-	 (slot-count (count :instance effective-slots
-			    :test #'eq :key #'slot-definition-allocation)))
+	 (slot-count
+	   (count-list :instance effective-slots
+		       :test #'eq :key #'slot-definition-allocation)))
     (setf (instance-size class) (+ slot-count 1))
     (setf (c-slots class) effective-slots))
   (setf (c-default-initargs class) (compute-default-initargs-default class))
