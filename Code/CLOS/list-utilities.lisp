@@ -66,3 +66,9 @@
 	(list-merge (list-sort list predicate :key key)
 		    (list-sort suffix predicate :key key)
 		    predicate :key key))))
+
+;;; List version of COUNT
+(defun count-list (item list &key key test)
+  (loop for element in list
+	count (funcall test item (funcall key element))))
+
