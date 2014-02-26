@@ -14,11 +14,7 @@
   (declare (ignore initargs))
   (unless (class-finalized-p class)
     (finalize-inheritance class))
-  (let* ((slots (class-slots class))
-	 (slot-count (count :instance slots
-			    :test #'eq :key #'slot-definition-allocation))
-	 (size (+ slot-count 2))
-	 (slots (allocate-slot-storage size))
+  (let* ((slots (allocate-slot-storage (instance-size class)))
 	 (instance (allocate-heap-instance class slots)))
     ;; Store the unique number of the class in the instance.
     (setf (standard-instance-access instance +class-unique-number-offset+)

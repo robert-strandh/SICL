@@ -293,7 +293,11 @@
   ;; because COMPUTE-CLASS-PRECEDENCE-LIST may have overriding methods
   ;; on it that we are not aware of here.
   (setf (precedence-list class) (compute-class-precedence-list class))
-  (setf (c-slots class) (compute-slots class))
+  (let* ((effective-slots (compute-slots class))
+	 (slot-count (count :instance effective-slots
+			    :test #'eq :key #'slot-definition-allocation)))
+    (setf (instance-size class) (+ slot-count 2))
+    (setf (c-slots class) effective-slots))
   (setf (c-default-initargs class) (compute-default-initargs class))
   ;; We set FINALIZED-P to TRUE before allocating the prototype
   ;; instance, because ALLOCATE-INSTANCE checks that the class is

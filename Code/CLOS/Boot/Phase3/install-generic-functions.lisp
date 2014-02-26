@@ -15,6 +15,7 @@
     direct-default-initargs
     (setf c-default-initargs)
     (setf c-finalized-p)
+    (setf instance-size)
     ;; These are used by the :AFTER method on INITIALIZE-INSTANCE,
     ;; specialized for STANDARD-GENERIC-FUNCTION.
     specializer-profile

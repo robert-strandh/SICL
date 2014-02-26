@@ -24,10 +24,7 @@
   (declare (ignore initargs))
   (unless (class-finalized-p class)
     (finalize-built-in-inheritance class))
-  (let* ((slots (effective-slots class))
-	 (slot-count (count :instance slots
-			    :test #'eq :key #'slot-definition-allocation))
-	 (size (+ slot-count 1 additional-storage))
+  (let* ((size (+ (instance-size class) additional-storage))
 	 (slots (allocate-slot-storage size))
 	 (instance (allocate-heap-instance class slots)))
     ;; Store the unique number of the class in the instance so that
