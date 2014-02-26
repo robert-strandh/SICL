@@ -330,6 +330,10 @@
 
 (defgeneric (setf slot-definition) (slot-definition accessor-method))
 
+;;; Alternative reader.  Does the same thing as the generic function
+;;; SLOT-DEFINITION-INITARGS.
+(defgeneric initargs (slot-definition))
+
 (defgeneric (setf s-location) (location slot-definition))
 
 (defgeneric symbol-name (symbol))

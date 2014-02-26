@@ -5,7 +5,7 @@
     slot-definition-name
     slot-definition-allocation
     slot-definition-storage
-    slot-definition-initargs
+    initargs
     slot-definition-initfunction
     ))
 

@@ -402,6 +402,22 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Slot definition classes.
+;;;
+;;; Unfortunately, the accessors for direct and effective slot
+;;; definitions are the same.  This is unfortunate because of problems
+;;; during bootstrapping.  Direct slot definitions are accessed during
+;;; class finalization in order to create effective slot definitions
+;;; and effective slot definitions are needed for initializing
+;;; instances, so they are needed at the same time.  In Phase 4 of
+;;; bootstrapping, the direct slot definitions that are used in class
+;;; finalization are target instances, but the effective slot
+;;; definitions needed for initializing instances are bridge
+;;; instances.
+;;;
+;;; The solution (which is not pretty) is to define a set of
+;;; alternative readers for slot-definition objects and make sure that
+;;; during phase 4, the alternative readers are used in class
+;;; finalization.
 
 (defclass slot-definition (metaobject)
   ((%name 
@@ -418,7 +434,9 @@
    (%initargs 
     :initform '()
     :initarg :initargs 
-    :reader slot-definition-initargs)
+    :reader slot-definition-initargs
+    ;; Alternative reader.  See comment above.
+    :reader initargs)
    (%initform 
     :initarg :initform 
     :reader slot-definition-initform)

@@ -95,7 +95,9 @@
 	      nil))
     (setf initargs
 	  (reduce #'union
-		  (mapcar #'slot-definition-initargs direct-slot-definitions)))
+		  ;; We use the reader INITARGS rather than 
+		  ;; SLOT-DEFINITION-INITARGS.
+		  (mapcar #'initargs direct-slot-definitions)))
     (let ((first-init (find-if-not #'null direct-slot-definitions
 				   :key #'slot-definition-initfunction)))
       (unless (null first-init)
