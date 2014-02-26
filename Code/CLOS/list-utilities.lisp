@@ -68,7 +68,7 @@
 		    predicate :key key))))
 
 ;;; List version of COUNT
-(defun count-list (item list &key key test)
+(defun count-list (item list &key (key #'identity) (test #'eql))
   (loop for element in list
 	count (funcall test item (funcall key element))))
 
