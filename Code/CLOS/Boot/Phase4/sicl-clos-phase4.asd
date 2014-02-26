@@ -12,4 +12,5 @@
    (:file "install-remaining-bridge-functions")
    (:file "patch-standard-object-slots")
    (:file "slot-definition-classes")
+   (:file "reader-writer-method-classes")
    ))
