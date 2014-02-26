@@ -6,7 +6,7 @@
     slot-definition-allocation
     slot-definition-storage
     initargs
-    slot-definition-initfunction
+    initfunction
     ))
 
 (loop for name in *installable-generic-functions-2*

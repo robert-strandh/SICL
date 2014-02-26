@@ -79,6 +79,11 @@
 ;;; standard-class and funcallable-standard-class.  By passing
 ;;; slot-definition-class as an argument rather than looking it up in
 ;;; this function, we can use this function for built-in classes as well. 
+;;;
+;;; In this function, we use alternative readers for slot-definition
+;;; slots.  Thus, we use INITARGS rather than
+;;; SLOT-DEFINITION-INITARGS, INITFUNCTION rather than
+;;; SLOT-DEFINITION-INITFUNCTION. 
 (defun compute-effective-slot-definition-default
     (name direct-slot-definitions slot-definition-class)
   (let (allocation initargs initform initfunction type location)
@@ -95,14 +100,13 @@
 	      nil))
     (setf initargs
 	  (reduce #'union
-		  ;; We use the reader INITARGS rather than 
-		  ;; SLOT-DEFINITION-INITARGS.
+		  ;; We use the reader 
 		  (mapcar #'initargs direct-slot-definitions)))
     (let ((first-init (find-if-not #'null direct-slot-definitions
-				   :key #'slot-definition-initfunction)))
+				   :key #'initfunction)))
       (unless (null first-init)
 	(setf initform (slot-definition-initform first-init)
-	      initfunction (slot-definition-initfunction first-init))))
+	      initfunction (initfunction first-init))))
     (setf type
 	  `(and ,@(mapcar #'slot-definition-type direct-slot-definitions)))
     (if (null initfunction)
