@@ -72,3 +72,8 @@
   (loop for element in list
 	count (funcall test item (funcall key element))))
 
+;;; List version of LENGTH
+(defun length-list (list)
+  (loop for element in list
+	count t))
+
