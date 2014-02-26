@@ -133,9 +133,7 @@
    ;; method specialized for something other than the class T.
    (%specializer-profile
     :initarg :specializer-profile
-    :accessor specializer-profile)
-   (%set-cache
-    :accessor set-cache))
+    :accessor specializer-profile))
   (:metaclass funcallable-standard-class))
 
 (defclass method (metaobject)

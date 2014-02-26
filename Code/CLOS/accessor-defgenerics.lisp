@@ -223,14 +223,6 @@
 ;;; FIXME: say more.
 (defgeneric (setf specializer-profile) (new-specializer-profile generic-function))
 
-;;; This function returns the cache of the generic function.
-;;; FIXME: say more.
-(defgeneric set-cache (generic-function))
-
-;;; This function sets the cache of the generic function.
-;;; FIXME: say more.
-(defgeneric (setf set-cache) (new-set-cache generic-function))
-
 ;;; This function is called by ADD-METHOD and REMOVE-METHOD to assign
 ;;; the generic function to which the method is associated.
 (defgeneric (setf m-generic-function) (generic-function method))
