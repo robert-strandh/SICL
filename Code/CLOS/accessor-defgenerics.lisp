@@ -176,19 +176,6 @@
 ;;;
 ;;; SICL-specific accessors.
 
-;;; During phase 3 of bootstrapping, the generic function
-;;; GENERIC-FUNCTION-METHODS is used to compute wich methods are
-;;; applicable on a bridge generic function, so that the entire
-;;; mechanism for executing generic functions can work.  However, at
-;;; the same time, methods are added to target generic functions, so
-;;; there must be a way to access the methods of a target generic
-;;; function as well.  It might have been possible to convince the
-;;; bridge generic function to do both, but we didn't do that.
-;;; Instead, we have a second reader for the slot containing the
-;;; methods of a generic function which is used for target generic
-;;; functions.
-(defgeneric gf-methods (generic-function))
-
 ;;; The functions ADD-DIRECT-SUBCLASS and REMOVE-DIRECT-SUBCLASS are
 ;;; used to update the direct subclasses of a class, so they call this
 ;;; function.

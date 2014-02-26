@@ -28,7 +28,7 @@
     (setf s-direct-methods)
     ;; These are used directly by ADD-METHOD in order to add a method
     ;; to the methods of a generic function.
-    gf-methods
+    generic-function-methods
     (setf gf-methods)
     call-history
     ;; These are used directly by ADD-METHOD in order to store a back
