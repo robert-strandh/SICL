@@ -136,38 +136,52 @@
 ;;;      arguments that it was passed and for which the specializer
 ;;;      profile contains T.
 ;;;
-;;;   2. Check the call history to see whether it contains a call
-;;;      cache with a class number cache equal to the list computed in
-;;;      step 1.  If so, call the effective method cache of that call
-;;;      cache and return the result.
+;;;   2. Compare each one of those to pre-computed constants using a
+;;;      TAGBODY form.  If there is a hit, then the corresponding
+;;;      effective method is invoked and the discriminating function
+;;;      returns.
 ;;;
-;;;   3. If there is no call cache in the call history with a class
-;;;      number cache equal to the list computed in step 1, then
-;;;      compute a call profile for the call by calling CLASS-OF for
-;;;      each required argument and then call the generic function
+;;;   3. If there is not a hit, then control is transferred to the end
+;;;      of the TAGBODY form.  There, DEFAULT-DISCRIMINATING-FUNCTION
+;;;      is invoked.  
+;;;
+;;; The default discriminating function does the following:
+;;;
+;;;   1. Check that the instance class number of each specialized
+;;;      required argument is the same as the unique number of its
+;;;      class.  If it is not the case, call the generic function
+;;;      UPDATE-INSTANCE-FOR-REDEFINED-CLASS on those arguments and
+;;;      invoke the discriminating function again. 
+;;;
+;;;   2. If the instances are all up-to-date, then compute a call
+;;;      profile for the call by calling CLASS-OF for each required
+;;;      argument and then call the generic function
 ;;;      COMPUTE-APPLICABLE-METHODS-USING-CLASSES with the resulting
-;;;      call profile.  
+;;;      call profile.
 ;;;   
-;;;   4. If the call in step 3 returns TRUE as a second return value,
+;;;   3. If the call in step 2 returns TRUE as a second return value,
 ;;;      then the first value returned represents an applicable method
 ;;;      cache to be stored.  If so, call the generic function
 ;;;      COMPUTE-EFFECTIVE-METHOD with applicable method cache, thus
 ;;;      computing an effective method cache.  Create a call cache
 ;;;      from the list computed in step 1, the applicable method
 ;;;      cache, and the effective method cache.  Add the computed call
-;;;      cache to the call history.  Finally, call the effective
+;;;      cache to the call history.  Call the generic function
+;;;      COMPUTE-DISCRIMINATING-FUNCTION in order to compute a new
+;;;      discriminating function that takes into account the new
+;;;      argument classes.  Finally, call the effective just computed
 ;;;      method and return the result.
 ;;;
-;;;   5. If the call in step 3 returns FALSE as a second return value,
+;;;   4. If the call in step 2 returns FALSE as a second return value,
 ;;;      then instead call the generic function
 ;;;      COMPUTE-APPLICABLE-METHODS, passing it all the current
 ;;;      arguments.  
 ;;;
-;;;   6. If the call in step 5 returns a non-empty list of methods,
+;;;   5. If the call in step 4 returns a non-empty list of methods,
 ;;;      then call COMPUTE-EFFECTIVE-METHOD with that list.  Call the
 ;;;      resulting effective method and return the result.
 ;;;
-;;;   7. If the call in step 5 returns an empty list, then call
+;;;   6. If the call in step 4 returns an empty list, then call
 ;;;      NO-APPLICABLE-METHOD.
 
 ;;; The implementation of this function is not complete.  Furthermore,
