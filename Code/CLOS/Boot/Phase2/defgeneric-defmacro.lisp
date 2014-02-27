@@ -4,7 +4,4 @@
   (fmakunbound 'defgeneric))
 
 (defmacro defgeneric (name parameters)
-  `(progn
-     (let ((fun (cl:make-instance 'bridge-generic-function
-		  :name ',name :lambda-list ',parameters)))
-       (add-bridge-generic-function ',name fun))))
+  `(ensure-generic-function ',name :lambda-list ',parameters))
