@@ -6,6 +6,9 @@
   (pushnew (cons name function) *bridge-generic-functions*
 	   :key #'car :test #'equal))
 
+(defun bridge-generic-function-exists-p (name)
+  (not (null (assoc name *bridge-generic-functions* :test #'equal))))
+
 (defun find-bridge-generic-function (name)
   (let ((entry (assoc name *bridge-generic-functions* :test #'equal)))
     (when (null entry)
