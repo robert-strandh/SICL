@@ -57,7 +57,6 @@
    (:file "generic-function-initialization-defmethods")
    (:file "bridge-generic-function")
    (:file "generic-function-database")
-   (:file "fmakunbound-defgeneric")
    (:file "defgeneric-defmacro")
    (:file "specializerp")
    (:file "method-initialization-support")
