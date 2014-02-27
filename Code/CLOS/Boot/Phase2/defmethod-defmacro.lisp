@@ -4,7 +4,8 @@
   (multiple-value-bind (name qualifiers lambda-list specializers body)
       (parse-defmethod arguments)
     (let ((generic-function-var (gensym)))
-      `(let ((,generic-function-var (ensure-generic-function ',name)))
+      `(let ((,generic-function-var (ensure-generic-function
+				     ',name :lambda-list ',lambda-list)))
 	 (ensure-method
 	  ,generic-function-var
 	  :lambda-list ',lambda-list
