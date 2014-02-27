@@ -290,6 +290,7 @@
 ;;; closed-over variable, from a compiled-in constant, or perhaps by
 ;;; some other mechanism.
 (defun default-discriminating-function (generic-function arguments profile)
+  (break)
   (let* ((required-argument-count (length profile))
 	 (required-arguments (subseq arguments 0 required-argument-count))
 	 (class-numbers (loop for argument in required-arguments
@@ -337,14 +338,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Load the call history of a generic function.
+;;; Satiate a generic function.
 ;;;
 ;;; We assume we have a standard generic function.  We also assume
 ;;; that the specializers of each method are classes as opposed to EQL
 ;;; specializers.  Finally, we assume that the generic function uses
 ;;; the standard method combination.
 ;;;
-;;; FIXME: Explain what we are doing.
+;;; For each primary method of the generic function, compute all the
+;;; combinations of argument classes that would make it applicable.
+;;; Compute a unique list of such combinations of classes.  For each
+;;; combination, do the same thing as is done of the generic function
+;;; is actually called with those classes, i.e., compute the
+;;; applicable methods and the effective method and load up the call
+;;; history.  Finally, compute and set the discriminating function.
 
 ;;; Return all descendents of a class, including the class itself.
 (defun all-descendents (class)
