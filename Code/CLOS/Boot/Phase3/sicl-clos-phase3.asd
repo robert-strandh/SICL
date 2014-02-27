@@ -162,6 +162,7 @@
    (:file "make-built-in-instance-support")
    (:file "make-built-in-instance")
    (:file "generic-function-database")
+   (:file "ensure-generic-function")
    ;; Define a version of the DEFGENERIC macro that instantiates the
    ;; bridge class STANDARD-GENERIC-FUNCTION and adds the result to
    ;; the database of target generic functions.
@@ -196,7 +197,6 @@
    ;; target generic functions.
    (:file "ensure-method")
    (:file "defmethod-defmacro")
-   (:file "ensure-generic-function")
    (:file "slot-definition-classes")
    (:file "reader-writer-method-classes")
    (:file "find-class-named-t")
