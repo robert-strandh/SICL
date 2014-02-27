@@ -6,14 +6,13 @@
   (pushnew (cons name function) *bridge-generic-functions*
 	   :key #'car :test #'equal))
 
-(defun bridge-generic-function-exists-p (name)
-  (not (null (assoc name *bridge-generic-functions* :test #'equal))))
-
-(defun find-bridge-generic-function (name)
+(defun find-bridge-generic-function (name &optional (error-p t))
   (let ((entry (assoc name *bridge-generic-functions* :test #'equal)))
-    (when (null entry)
-      (error "There is no bridge generic function named ~s." name))
-    (cdr entry)))
+    (if (null entry)
+	(if error-p
+	    (error "There is no bridge generic function named ~s." name)
+	    nil)
+	(cdr entry))))
 
 (defun delete-bridge-generic-function (name)
   (setf *bridge-generic-functions*
