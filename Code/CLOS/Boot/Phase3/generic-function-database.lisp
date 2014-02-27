@@ -6,11 +6,13 @@
   (pushnew (cons name function) *target-generic-functions*
 	   :key #'car :test #'equal))
 
-(defun find-target-generic-function (name)
+(defun find-target-generic-function (name &optional (error-p t))
   (let ((entry (assoc name *target-generic-functions* :test #'equal)))
-    (when (null entry)
-      (error "There is no target generic function named ~s." name))
-    (cdr entry)))
+    (if (null entry)
+	(if error-p
+	    (error "There is no target generic function named ~s." name)
+	    nil)
+	(cdr entry))))
 
 (defun delete-target-generic-function (name)
   (setf *target-generic-functions*
