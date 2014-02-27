@@ -138,22 +138,3 @@
 ;;; STANDARD-READER-METHOD, or even of METHOD, as long as methods on
 ;;; those subclasses for the method reader functions are themselves
 ;;; instances of STANDARD-METHOD or STANDARD-READER-METHOD. 
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Meters.
-;;;
-;;; Generic function invocation is an excellent opportunity for
-;;; Multics-style meters.
-;;;
-;;; For instance, we could record:
-;;;
-;;;  * Total number of calls.
-;;;  * Number of calls resulting in a cache miss.
-;;;  * Total time computing a new cache.
-;;;  * Number of times the call record was destroyed.
-;;;
-;;; With this information, we can compute some very interesting
-;;; statistics, such as the average overhead per call as a result of
-;;; computing the cache. Etc.

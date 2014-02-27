@@ -400,3 +400,23 @@
   (load-call-history generic-function)
   (let ((df (compute-discriminating-function generic-function)))
     (set-funcallable-instance-function generic-function df)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; To do: Meters.
+;;;
+;;; Generic function invocation is an excellent opportunity for
+;;; Multics-style meters.
+;;;
+;;; For instance, we could record:
+;;;
+;;;  * Total number of calls.
+;;;
+;;;  * Number of calls resulting in a cache miss, so that a new
+;;;    discriminating function must be computed.
+;;;
+;;;  * Total time computing a new discriminating function.
+;;;
+;;; With this information, we can compute some very interesting
+;;; statistics, such as the average overhead per call as a result of
+;;; computing a new discriminating function, etc.
