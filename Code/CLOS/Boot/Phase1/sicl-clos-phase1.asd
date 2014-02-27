@@ -9,7 +9,6 @@
   :components
   ((:file "packages")
    (:file "defgeneric")
-   (:file "accessor-defgenerics")
    (:file "define-built-in-class")
    (:file "defclass")
    (:file "defmethod")
