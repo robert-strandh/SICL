@@ -156,8 +156,11 @@
 ;;; All our vectors have fill pointers. 
 ;;; [Should that be the case also for displaced vectors?]
 
+(defgeneric fill-pointer (vector))
+(defgeneric (setf fill-pointer) (new-fill-pointer vector))
+
 (define-built-in-class vector (array sequence)
-  ((%fill-pointer :initarg :fill-pointer)))
+  ((%fill-pointer :initarg :fill-pointer :accessor fill-pointer)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

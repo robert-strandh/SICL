@@ -12,6 +12,7 @@
   (:shadow
    #:add-method
    #:array-dimensions
+   #:fill-pointer
    #:allocate-instance
    #:built-in-class
    #:call-method
