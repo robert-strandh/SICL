@@ -2,6 +2,6 @@
 
 (defun make-built-in-instance (class &rest initargs)
   (when (symbolp class)
-    (setf class (cdr (assoc class *bridge-classes*))))
+    (setf class (find-bridge-class class)))
   (apply #'make-built-in-instance-default class initargs))
 
