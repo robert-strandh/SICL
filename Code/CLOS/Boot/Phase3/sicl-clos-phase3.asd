@@ -202,4 +202,5 @@
    (:file "find-class-named-t")
    (:file "make-initfunction")
    (:file "mop-class-hierarchy")
+   (:file "additional-classes")
    ))
