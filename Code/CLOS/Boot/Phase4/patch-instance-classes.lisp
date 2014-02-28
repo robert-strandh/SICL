@@ -1,21 +1,26 @@
 (cl:in-package #:sicl-clos)
 
+(defun patch-standard-object (object)
+  (let ((bridge-class (heap-instance-class object)))
+    (if (heap-instance-p bridge-class)
+	(error "this should not happen")
+	(let* ((name (class-name bridge-class))
+	       (target-class (find-target-class name))
+	       (gf (find-bridge-generic-function 'class-slots)))
+	  (setf (heap-instance-class object)
+		target-class)
+	  (setf (standard-instance-access object 1)
+		(funcall gf target-class))))))
+
 (let ((seen '()))
   (labels ((traverse (object)
 	     (unless (member object seen)
 	       (push object seen)
 	       (typecase object
 		 (heap-instance
-		  (let ((class (heap-instance-class object)))
-		    (unless (heap-instance-p class)
-		      (let ((target-class-entry
-			      (find (class-name class) *target-classes*
-				    :key #'car)))
-			(assert (not (null target-class-entry)))
-			(setf (heap-instance-class object)
-			      (cdr target-class-entry))))
-		    (traverse class)
-		    (traverse (heap-instance-slots object))))
+		  (patch-standard-object object)
+		  (traverse (heap-instance-class object))
+		  (traverse (heap-instance-slots object)))
 		 (cons
 		  (traverse (car object))
 		  (traverse (cdr object)))
