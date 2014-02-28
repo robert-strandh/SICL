@@ -225,3 +225,19 @@
    ;; or perhaps something else for backends where each instruction is
    ;; an entire word.
    (%code-vector :initarg :code-vector)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class GLOBAL-ENVIRONMENT.
+;;;
+;;; FIXME: take this definition the file environment.lisp in the
+;;; subirectory Environment.
+
+(defgeneric functions (global-environment))
+(defgeneric (setf functions) (functions global-environment))
+(defgeneric classes (global-environment))
+(defgeneric (setf classes) (classes global-environment))
+
+(defclass global-environment (standard-object)
+  ((%classes :initform '() :accessor classes)
+   (%functions :initform '() :accessor functions)))
