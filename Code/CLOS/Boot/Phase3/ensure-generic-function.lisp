@@ -12,5 +12,6 @@
 			       :name function-name
 			       :method-class method-class
 			       args)))
-	  (add-target-generic-function function-name new-fun))
+	  (add-target-generic-function function-name new-fun)
+	  new-fun)
 	fun)))
