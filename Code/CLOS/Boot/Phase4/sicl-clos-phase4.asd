@@ -14,4 +14,5 @@
    (:file "make-instance")
    (:file "make-built-in-instance")
    (:file "create-global-environment")
+   (:file "fill-global-environment")
    ))
