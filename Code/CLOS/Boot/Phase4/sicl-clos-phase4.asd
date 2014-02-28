@@ -10,7 +10,5 @@
    (:file "finalize-inheritance")
    (:file "patch-instance-classes")
    (:file "install-remaining-bridge-functions")
-   (:file "slot-definition-classes")
-   (:file "reader-writer-method-classes")
    (:file "make-instance")
    ))
