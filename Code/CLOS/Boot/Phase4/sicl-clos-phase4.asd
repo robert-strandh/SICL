@@ -8,6 +8,6 @@
   :components
   ((:file "install-generic-functions")
    (:file "finalize-inheritance")
-   (:file "patch-instance-classes")
+   (:file "patch-target-instances")
    (:file "install-more-bridge-generic-functions")
    ))
