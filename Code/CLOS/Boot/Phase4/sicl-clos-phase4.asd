@@ -9,5 +9,5 @@
   ((:file "install-generic-functions")
    (:file "finalize-inheritance")
    (:file "patch-instance-classes")
-   (:file "install-remaining-bridge-functions")
+   (:file "install-more-bridge-generic-functions")
    ))
