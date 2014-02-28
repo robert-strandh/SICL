@@ -13,4 +13,5 @@
    (:file "print-object")
    (:file "make-instance")
    (:file "make-built-in-instance")
+   (:file "create-global-environment")
    ))
