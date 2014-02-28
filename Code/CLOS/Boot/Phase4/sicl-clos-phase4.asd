@@ -10,5 +10,6 @@
    (:file "finalize-inheritance")
    (:file "patch-target-instances")
    (:file "install-more-bridge-generic-functions")
+   (:file "print-object")
    (:file "make-instance")
    ))
