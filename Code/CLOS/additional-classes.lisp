@@ -71,6 +71,9 @@
 ;;; The only intrinsic properties left for a symbol, then, is the name
 ;;; and the package.
 
+(defgeneric symbol-name (symbol))
+(defgeneric symbol-package (symbol))
+
 (define-built-in-class symbol (t)
   ((%name :initarg :name :reader symbol-name)
    (%package :initarg :package :reader symbol-package)))
