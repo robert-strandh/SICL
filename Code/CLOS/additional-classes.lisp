@@ -95,6 +95,8 @@
 ;;;
 ;;; Tentatively, all specialized arrays are simple.
 
+(defgeneric array-dimensions (array))
+
 (define-built-in-class array (t)
   ((%dimensions :initarg :dimensions)))
 

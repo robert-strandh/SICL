@@ -11,6 +11,7 @@
   (:import-from #:sicl-additional-conditions #:no-such-class-name)
   (:shadow
    #:add-method
+   #:array-dimensions
    #:allocate-instance
    #:built-in-class
    #:call-method
