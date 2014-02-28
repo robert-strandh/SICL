@@ -12,4 +12,5 @@
    (:file "install-more-bridge-generic-functions")
    (:file "print-object")
    (:file "make-instance")
+   (:file "make-built-in-instance")
    ))
