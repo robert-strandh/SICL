@@ -17,18 +17,6 @@
 ;;;
 ;;; The macro DEFINE-METHOD-COMBINATION will use some unspecified
 ;;; mechanism to add methods to this generic function. 
-;;;
-;;; Furthermore, there is a potential metastability problem in
-;;; COMPUTE-EFFECTIVE-METHOD, namely when the first argument is the
-;;; generic function named COMPUTE-EFFECTIVE-METHOD, which is a
-;;; standard generic function using the standard method combination.
-;;; We avoid the metastability problem by making the discriminating
-;;; function of COMPUTE-EFFECTIVE-METHOD recognize the special case
-;;; when the class of the first argument is STANDARD-GENERIC-FUNCTION
-;;; and the class of the second argument is
-;;; METHOD-COMBINATION-STANDARD and by having it call a default
-;;; function in that case.  Thus, this generic function will never be
-;;; called in that case.
 
 (defgeneric method-combination-compute-effective-method
     (method-combination methods))
