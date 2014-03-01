@@ -640,7 +640,7 @@ that matters is that these classes have the right slots, and
 the analogous superclasses compared their corresponding target MOP
 classes, and they define the analogous slots.  Their metaclasses are
 all wrong of course, because each one of them has
-\texttt{host:standard-class} as metaclass.  The inheritance
+\texttt{host:standard-class} as metaclass.  The class
 finalization protocol of the host will make sure that instances of
 these host classes have the effective slots determined by class
 inheritance.  In other words, each of the classes define slots with
@@ -720,13 +720,18 @@ second word of the contents vector of all instances of
 slot of the class object of the instance, which is now a target
 class. 
 
-The final step in this phase is to \emph{install} all remaining bridge
-generic functions so that they are the \texttt{fdefinition}s of their
-respective names. 
+The final step in this phase is to \emph{install} some of the
+remaining bridge generic functions so that they are the
+\texttt{fdefinition}s of their respective names.  We do not install
+all remaining bridge generic functions, because some of them would
+clobber host generic functions with the same name that are still
+needed.  
 
 At the end of this phase, we have a complete set of bridge generic
-functions that operate on target instances (including on target
-classes). 
+functions that operate on target instances.  We still need bridge
+classes to create target instances, because the \emph{initfunction}
+needs to be executed for slots that require it, and only host
+functions are executable at this point.
 
 \subsubsection{Phase 5}
 
