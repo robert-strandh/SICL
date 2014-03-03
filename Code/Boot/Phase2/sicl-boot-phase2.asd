@@ -24,4 +24,5 @@
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defuns")
    (:file "classp")
+   (:file "compute-applicable-methods-support")
    (:file "rename-package-2")))
