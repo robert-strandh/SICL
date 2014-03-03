@@ -19,5 +19,8 @@
 	   #:method
 	   #:standard-method
 	   #:method-combination
-	   #:defclass))
-
+	   #:defclass)
+  (:export #:standard-class
+	   #:built-in-class
+	   #:standard-generic-function
+	   #:standard-method))
