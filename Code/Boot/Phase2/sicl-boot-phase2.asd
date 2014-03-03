@@ -46,4 +46,5 @@
    (:file "add-remove-method-support")
    (:file "add-remove-method-defuns")
    (:file "ensure-method")
+   (:file "defmethod-support")
    (:file "rename-package-2")))
