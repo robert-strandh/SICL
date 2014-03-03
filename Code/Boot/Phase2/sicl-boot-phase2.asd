@@ -29,4 +29,5 @@
    (:file "compute-effective-method-support")
    (:file "compute-effective-method-support-a")
    (:file "method-combination-compute-effective-method-support")
+   (:file "method-combination-compute-effective-method-defuns")
    (:file "rename-package-2")))
