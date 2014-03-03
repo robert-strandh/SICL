@@ -47,6 +47,7 @@
    #:heap-instance-p
    #:standard-instance-access
    #:ensure-class
+   #:ensure-built-in-class
    #:ensure-method)
   (:shadow #:defclass
 	   #:defgeneric
