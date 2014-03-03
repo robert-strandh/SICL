@@ -7,11 +7,13 @@
     (error "Attempt to define bridge class ~s twice." name))
   (push (cons name function) *bridge-classes*))
 
-(defun find-bridge-class (name)
+(defun find-bridge-class (name &optional (error-p t))
   (let ((entry (assoc name *bridge-classes* :test #'equal)))
-    (when (null entry)
-      (error "There is no bridge class named ~s." name))
-    (cdr entry)))
+    (if (null entry)
+	(if error-p
+	    (error "There is no bridge class named ~s." name)
+	    nil)
+	(cdr entry))))
 
 (defun delete-bridge-class (name)
   (setf *bridge-classes*
