@@ -13,8 +13,6 @@
    (:file "defclass-support")
    (:file "defclass-defmacro")
    (:file "define-built-in-class-defmacro")
-   (:file "generic-function-database")
-   (:file "ensure-generic-function")
    (:file "defgeneric-defmacro")
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")

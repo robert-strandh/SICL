@@ -17,6 +17,8 @@
    (:file "ensure-built-in-class")
    (:file "classp")
    (:file "specializerp")
+   (:file "generic-function-database")
+   (:file "ensure-generic-function")
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defgenerics")
    (:file "reader-writer-method-class-defmethods")
