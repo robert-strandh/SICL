@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase2)
+(cl:in-package #:sicl-boot-phase1)
 
 (defun ensure-generic-function (function-name &rest args)
   (let ((fun (find-bridge-generic-function function-name nil)))

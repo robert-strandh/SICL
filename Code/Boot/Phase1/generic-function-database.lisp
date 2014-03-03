@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase2)
+(cl:in-package #:sicl-boot-phase1)
 
 (defparameter *bridge-generic-functions* '())
 
