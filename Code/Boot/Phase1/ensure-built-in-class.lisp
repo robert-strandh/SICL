@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-clos)
+(cl:in-package #:sicl-boot-phase1)
 
 ;;; The macro DEFINE-BUILT-IN-CLASS expands to a call to this
 ;;; function, and this function is used only in that situation.  For

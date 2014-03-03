@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase2)
+(cl:in-package #:sicl-boot-phase1)
 
 ;;; The macro DEFCLASS expands to a call to this function, and, during
 ;;; bootstrapping, this function is used only in that situation.  For
@@ -10,19 +10,11 @@
 ;;; bootstrapping is done) we do not allow for class metaobject
 ;;; superclasses.
 ;;;
-;;; Similarly, the METACLASS argument is a SYMBOL.  During phase 2 of
+;;; Similarly, the METACLASS argument is a SYMBOL.  During phase 1 of
 ;;; the bootstrapping process, the metaclass must be a host class, and
-;;; to make an instance, we must call CL:MAKE-INSTANCE is that of the
-;;; host, so we can just call MAKE-INSTANCE with the name of the
-;;; metaclass.
+;;; to make an instance, we must call CL:MAKE-INSTANCE.
 ;;; 
-;;; Since this function is used only during bootstrapping, and
-;;; bootstrapping is organized so that the this function will be
-;;; called only when the class does not already exist, we do not have
-;;; to check whether the class already exists, because we know that
-;;; this is not the case.  
-;;; 
-;;; During phase 2 of the bootstrapping process, the superclasses (if
+;;; During phase 1 of the bootstrapping process, the superclasses (if
 ;;; any) can be found by using FIND-BRIDGE-CLASS.
 (defun ensure-class (name
 		     &rest arguments
@@ -42,8 +34,8 @@
       (loop while (remf remaining-keys :direct-superclasses))
       (let* ((class (if metaclass-p
 			metaclass
-			'sicl-boot-phase1:standard-class))
-	     (result (apply #'cl:make-instance class
+			'standard-class))
+	     (result (apply #'make-instance class
 			    :direct-default-initargs direct-default-initargs
 			    :direct-slots direct-slots
 			    :name name
