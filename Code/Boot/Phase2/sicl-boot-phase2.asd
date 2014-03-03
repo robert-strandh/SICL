@@ -26,4 +26,6 @@
    (:file "classp")
    (:file "compute-applicable-methods-support")
    (:file "compute-applicable-methods-defuns")
+   (:file "compute-effective-method-support")
+   (:file "compute-effective-method-support-a")
    (:file "rename-package-2")))
