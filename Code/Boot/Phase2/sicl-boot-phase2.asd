@@ -18,6 +18,7 @@
    (:file "defmethod-defmacro")
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
+   (:file "mop-class-hierarchy")
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defuns")
    (:file "classp")
