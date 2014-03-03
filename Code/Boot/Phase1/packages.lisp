@@ -23,6 +23,7 @@
   (:export
    ;; Names of classes
    #:standard-class
+   #:funcallable-standard-class
    #:built-in-class
    #:standard-generic-function
    #:standard-method
