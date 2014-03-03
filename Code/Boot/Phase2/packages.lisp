@@ -46,7 +46,8 @@
    ;; Miscellaneous functions.
    #:heap-instance-p
    #:standard-instance-access
-   #:ensure-class)
+   #:ensure-class
+   #:ensure-method)
   (:shadow #:defclass
 	   #:defgeneric
 	   #:defmethod

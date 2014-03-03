@@ -61,4 +61,5 @@
    #:heap-instance-p
    #:standard-instance-access
    #:ensure-class
-   #:ensure-generic-function))
+   #:ensure-generic-function
+   #:ensure-method))
