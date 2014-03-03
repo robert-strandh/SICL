@@ -36,9 +36,12 @@
    #:method-specializers
    #:method-function
    #:accessor-method-slot-definition
-   ;; Accessors for slot definition metaobjects
+   ;; Accessors for slot definition metaobjects.
    #:slot-definition-name
-   #:slot-definition-location)
+   #:slot-definition-location
+   ;; Miscellaneous functions.
+   #:heap-instance-p
+   #:standard-instance-access)
   (:shadow #:defclass
 	   #:ensure-generic-function
 	   #:defgeneric
