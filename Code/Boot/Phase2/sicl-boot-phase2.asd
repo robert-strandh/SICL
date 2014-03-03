@@ -8,4 +8,6 @@
   :components
   ((:file "packages")
    (:file "rename-package-1")
+   (:file "class-database")
+   (:file "generic-function-database")
    (:file "rename-package-2")))
