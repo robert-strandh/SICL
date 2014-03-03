@@ -38,12 +38,14 @@
    #:s-direct-methods
    #:class-direct-subclasses
    #:class-precedence-list
+   #:class-prototype
    #:effective-slots
    #:unique-number
    #:eql-specializer-object
    ;; Accessors for generic function metaobjects.
    #:generic-function-methods
    #:gf-methods
+   #:generic-function-method-class
    #:generic-function-method-combination
    #:specializer-profile
    #:call-history
