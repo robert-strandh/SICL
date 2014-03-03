@@ -35,4 +35,5 @@
    (:file "discriminating-tagbody")
    (:file "compute-discriminating-function-support")
    (:file "compute-discriminating-function-support-a")
+   (:file "compute-discriminating-function-defuns")
    (:file "rename-package-2")))
