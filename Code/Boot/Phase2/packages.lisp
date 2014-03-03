@@ -9,6 +9,9 @@
 		#:parse-specialized-lambda-list
 		#:required)
   (:import-from #:sicl-additional-conditions #:no-such-class-name)
+  (:shadowing-import-from
+   #:sicl-boot-phase1
+   #:ensure-generic-function)
   (:import-from
    #:sicl-boot-phase1
    ;; Names of classes
@@ -42,9 +45,9 @@
    #:slot-definition-location
    ;; Miscellaneous functions.
    #:heap-instance-p
-   #:standard-instance-access)
+   #:standard-instance-access
+   #:ensure-class)
   (:shadow #:defclass
-	   #:ensure-generic-function
 	   #:defgeneric
 	   #:defmethod
 	   #:add-method
