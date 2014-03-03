@@ -25,4 +25,10 @@
 	   #:standard-generic-function
 	   #:standard-method
 	   #:specializer-direct-methods
-	   #:s-direct-methods))
+	   #:s-direct-methods
+	   #:generic-function-methods
+	   #:gf-methods
+	   #:method-generic-function
+	   #:m-generic-function
+	   #:method-specializers
+	   #:specializer-profile))

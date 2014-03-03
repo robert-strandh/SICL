@@ -11,7 +11,13 @@
   (:import-from #:sicl-additional-conditions #:no-such-class-name)
   (:import-from #:sicl-boot-phase1
 		#:specializer-direct-methods
-		#:s-direct-methods)
+		#:s-direct-methods
+		#:generic-function-methods
+		#:gf-methods
+		#:method-generic-function
+		#:m-generic-function
+		#:method-specializers
+		#:specializer-profile)
   (:shadow #:defclass
 	   #:ensure-generic-function
 	   #:defgeneric
