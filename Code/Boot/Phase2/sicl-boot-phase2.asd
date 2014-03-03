@@ -11,6 +11,7 @@
    (:file "define-variables")
    (:file "class-database")
    (:file "ensure-class")
+   (:file "ensure-built-in-class")
    (:file "list-utilities")
    (:file "defclass-support")
    (:file "defclass-defmacro")
