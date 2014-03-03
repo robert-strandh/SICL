@@ -4,7 +4,8 @@
 
 (defun add-bridge-generic-function (name function)
   (pushnew (cons name function) *bridge-generic-functions*
-	   :key #'car :test #'equal))
+	   :key #'car :test #'equal)
+  (setf (fdefinition name) function))
 
 (defun find-bridge-generic-function (name &optional (error-p t))
   (let ((entry (assoc name *bridge-generic-functions* :test #'equal)))
