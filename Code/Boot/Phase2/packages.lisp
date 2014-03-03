@@ -30,4 +30,6 @@
 	   #:defmethod
 	   #:add-method
 	   #:remove-method
-	   #:compute-applicable-methods))
+	   #:compute-applicable-methods
+	   #:method-qualifiers
+	   #:class-name))
