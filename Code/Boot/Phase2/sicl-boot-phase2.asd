@@ -13,6 +13,7 @@
    (:file "list-utilities")
    (:file "defclass-support")
    (:file "defclass-defmacro")
+   (:file "define-built-in-class-defmacro")
    (:file "bridge-generic-function")
    (:file "generic-function-database")
    (:file "ensure-generic-function")
