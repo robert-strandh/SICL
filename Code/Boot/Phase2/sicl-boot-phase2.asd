@@ -44,4 +44,5 @@
    (:file "set-funcallable-instance-function")
    (:file "add-remove-method-support")
    (:file "add-remove-method-defuns")
+   (:file "ensure-method")
    (:file "rename-package-2")))
