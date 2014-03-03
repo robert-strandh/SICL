@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-clos)
+(cl:in-package #:sicl-boot-phase2)
 
 (cl:defclass bridge-generic-function
     (#+sbcl sb-pcl:funcallable-standard-object
