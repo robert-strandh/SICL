@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-phase1)
 
-(defvar *t*
-  (find-class 't))
+(define-symbol-macro *t*
+    (find-bridge-class t))
 
 (defvar *standard-object*)
 
