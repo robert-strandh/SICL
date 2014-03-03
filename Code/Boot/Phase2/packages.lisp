@@ -14,12 +14,15 @@
    ;; Names of classes
    #:standard-reader-method
    #:standard-writer-method
+   #:eql-specializer
    ;; Accessors for specializer metaobjects.
    #:specializer-direct-methods
    #:s-direct-methods
    #:class-direct-subclasses
+   #:class-precedence-list
    #:effective-slots
    #:unique-number
+   #:eql-specializer-object
    ;; Accessors for generic function metaobjects.
    #:generic-function-methods
    #:gf-methods
@@ -31,6 +34,7 @@
    #:m-generic-function
    #:method-lambda-list
    #:method-specializers
+   #:method-function
    #:accessor-method-slot-definition
    ;; Accessors for slot definition metaobjects
    #:slot-definition-name
