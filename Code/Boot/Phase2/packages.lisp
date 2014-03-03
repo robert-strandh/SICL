@@ -19,32 +19,6 @@
    #:standard-reader-method
    #:standard-writer-method
    #:eql-specializer
-   ;; Accessors for specializer metaobjects.
-   #:specializer-direct-methods
-   #:s-direct-methods
-   #:class-direct-subclasses
-   #:class-precedence-list
-   #:class-prototype
-   #:effective-slots
-   #:unique-number
-   #:eql-specializer-object
-   ;; Accessors for generic function metaobjects.
-   #:generic-function-methods
-   #:gf-methods
-   #:generic-function-method-class
-   #:generic-function-method-combination
-   #:specializer-profile
-   #:call-history
-   ;; Accessors for method metaobjects.
-   #:method-generic-function
-   #:m-generic-function
-   #:method-lambda-list
-   #:method-specializers
-   #:method-function
-   #:accessor-method-slot-definition
-   ;; Accessors for slot definition metaobjects.
-   #:slot-definition-name
-   #:slot-definition-location
    ;; Miscellaneous functions.
    #:heap-instance-p
    #:standard-instance-access
