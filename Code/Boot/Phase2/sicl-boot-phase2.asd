@@ -18,4 +18,6 @@
    (:file "generic-function-database")
    (:file "ensure-generic-function")
    (:file "defgeneric-defmacro")
+   (:file "make-method-lambda-support")
+   (:file "make-method-lambda-defuns")
    (:file "rename-package-2")))
