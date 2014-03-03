@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "rename-package-1")
+   (:file "define-variables")
    (:file "class-database")
    (:file "ensure-class")
    (:file "list-utilities")
