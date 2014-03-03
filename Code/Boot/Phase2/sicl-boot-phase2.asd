@@ -39,7 +39,6 @@
    (:file "set-funcallable-instance-function")
    (:file "add-remove-method-support")
    (:file "add-remove-method-defuns")
-   (:file "ensure-method")
    (:file "defmethod-support")
    (:file "defmethod-defmacro")
    (:file "rename-package-2")))
