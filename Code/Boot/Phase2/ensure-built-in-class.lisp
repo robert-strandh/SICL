@@ -12,11 +12,11 @@
 			      &rest arguments
 			      &key
 				direct-default-initargs
-				direct-superclass-names
+				direct-superclasses
 			      &allow-other-keys)
   ;; If the class already exists, then do nothing.
-  (when (null (find-class name nil))
-    (let ((superclasses (loop for name in direct-superclass-names
+  (when (null (find-bridge-class name nil))
+    (let ((superclasses (loop for name in direct-superclasses
 			      for class = (find-bridge-class name)
 			      collect class))
 	  (remaining-keys (copy-list arguments)))
