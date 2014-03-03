@@ -31,4 +31,8 @@
    (:file "method-combination-compute-effective-method-support")
    (:file "method-combination-compute-effective-method-defuns")
    (:file "compute-effective-method-defuns")
+   (:file "discriminating-automaton")
+   (:file "discriminating-tagbody")
+   (:file "compute-discriminating-function-support")
+   (:file "compute-discriminating-function-support-a")
    (:file "rename-package-2")))
