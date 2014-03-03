@@ -10,4 +10,5 @@
    (:file "rename-package-1")
    (:file "class-database")
    (:file "generic-function-database")
+   (:file "ensure-class")
    (:file "rename-package-2")))
