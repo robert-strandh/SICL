@@ -21,7 +21,8 @@
 	   #:method-combination
 	   #:defclass
 	   #:add-method
-	   #:remove-method)
+	   #:remove-method
+	   #:ensure-generic-function)
   (:export
    ;; Names of classes
    #:standard-class
