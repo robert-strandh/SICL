@@ -59,4 +59,6 @@
    #:slot-definition-location
    ;; Miscellaneous functions.
    #:heap-instance-p
-   #:standard-instance-access))
+   #:standard-instance-access
+   #:ensure-class
+   #:ensure-generic-function))
