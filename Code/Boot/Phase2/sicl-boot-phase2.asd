@@ -42,4 +42,5 @@
    (:file "dependent-maintenance-support")
    (:file "dependent-maintenance-defuns")
    (:file "set-funcallable-instance-function")
+   (:file "add-remove-method-support")
    (:file "rename-package-2")))
