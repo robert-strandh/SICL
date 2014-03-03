@@ -19,7 +19,9 @@
 	   #:method
 	   #:standard-method
 	   #:method-combination
-	   #:defclass)
+	   #:defclass
+	   #:add-method
+	   #:remove-method)
   (:export
    ;; Names of classes
    #:standard-class
