@@ -23,4 +23,5 @@
    (:file "make-method-lambda-defuns")
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defuns")
+   (:file "classp")
    (:file "rename-package-2")))
