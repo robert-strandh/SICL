@@ -18,6 +18,8 @@
    (:file "reader-writer-method-class-defmethods")
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defuns")
+   (:file "add-remove-method-support")
+   (:file "add-remove-method-defuns")
    (:file "add-accessor-method")
    (:file "slot-definition-class-support")
    (:file "slot-definition-class-defuns")
