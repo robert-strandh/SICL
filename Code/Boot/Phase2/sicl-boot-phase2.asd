@@ -12,6 +12,7 @@
    (:file "ensure-class")
    (:file "defclass-support")
    (:file "defclass-defmacro")
+   (:file "bridge-generic-function")
    (:file "generic-function-database")
    (:file "ensure-generic-function")
    (:file "defgeneric-defmacro")
