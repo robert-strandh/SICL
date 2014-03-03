@@ -40,4 +40,5 @@
 	   #:defgeneric
 	   #:defmethod
 	   #:add-method
-	   #:remove-method))
+	   #:remove-method
+	   #:compute-applicable-methods))
