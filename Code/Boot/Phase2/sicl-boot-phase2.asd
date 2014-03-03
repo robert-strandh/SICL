@@ -41,4 +41,5 @@
    ;; nothing, so that we can safely call them from other code.
    (:file "dependent-maintenance-support")
    (:file "dependent-maintenance-defuns")
+   (:file "set-funcallable-instance-function")
    (:file "rename-package-2")))
