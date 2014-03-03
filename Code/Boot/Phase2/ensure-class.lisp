@@ -11,9 +11,10 @@
 ;;; superclasses.
 ;;;
 ;;; Similarly, the METACLASS argument is a SYMBOL.  During phase 2 of
-;;; the bootstrapping process, the metaclass is a host class, and
-;;; MAKE-INSTANCE is that of the host, so we can just call
-;;; MAKE-INSTANCE with the name of the metaclass.
+;;; the bootstrapping process, the metaclass must be a host class, and
+;;; to make an instance, we must call CL:MAKE-INSTANCE is that of the
+;;; host, so we can just call MAKE-INSTANCE with the name of the
+;;; metaclass.
 ;;; 
 ;;; Since this function is used only during bootstrapping, and
 ;;; bootstrapping is organized so that the this function will be
@@ -41,8 +42,10 @@
 	(remaining-keys (copy-list arguments)))
     (loop while (remf remaining-keys :metaclass))
     (loop while (remf remaining-keys :direct-superclasses))
-    (let* ((class (if metaclass-p metaclass 'standard-class))
-	   (result (apply #'make-instance class
+    (let* ((class (if metaclass-p
+		      metaclass
+		      'sicl-boot-phase1:standard-class))
+	   (result (apply #'cl:make-instance class
 			  :direct-default-initargs direct-default-initargs
 			  :direct-slots direct-slots
 			  :name name
