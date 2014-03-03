@@ -9,15 +9,32 @@
 		#:parse-specialized-lambda-list
 		#:required)
   (:import-from #:sicl-additional-conditions #:no-such-class-name)
-  (:import-from #:sicl-boot-phase1
-		#:specializer-direct-methods
-		#:s-direct-methods
-		#:generic-function-methods
-		#:gf-methods
-		#:method-generic-function
-		#:m-generic-function
-		#:method-specializers
-		#:specializer-profile)
+  (:import-from
+   #:sicl-boot-phase1
+   ;; Names of classes
+   #:standard-reader-method
+   #:standard-writer-method
+   ;; Accessors for specializer metaobjects.
+   #:specializer-direct-methods
+   #:s-direct-methods
+   #:class-direct-subclasses
+   #:effective-slots
+   #:unique-number
+   ;; Accessors for generic function metaobjects.
+   #:generic-function-methods
+   #:gf-methods
+   #:generic-function-method-combination
+   #:specializer-profile
+   #:call-history
+   ;; Accessors for method metaobjects.
+   #:method-generic-function
+   #:m-generic-function
+   #:method-lambda-list
+   #:method-specializers
+   #:accessor-method-slot-definition
+   ;; Accessors for slot definition metaobjects
+   #:slot-definition-name
+   #:slot-definition-location)
   (:shadow #:defclass
 	   #:ensure-generic-function
 	   #:defgeneric

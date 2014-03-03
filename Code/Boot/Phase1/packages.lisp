@@ -20,15 +20,32 @@
 	   #:standard-method
 	   #:method-combination
 	   #:defclass)
-  (:export #:standard-class
-	   #:built-in-class
-	   #:standard-generic-function
-	   #:standard-method
-	   #:specializer-direct-methods
-	   #:s-direct-methods
-	   #:generic-function-methods
-	   #:gf-methods
-	   #:method-generic-function
-	   #:m-generic-function
-	   #:method-specializers
-	   #:specializer-profile))
+  (:export
+   ;; Names of classes
+   #:standard-class
+   #:built-in-class
+   #:standard-generic-function
+   #:standard-method
+   #:standard-reader-method
+   #:standard-writer-method
+   ;; Accessors for specializer metaobjects.
+   #:specializer-direct-methods
+   #:s-direct-methods
+   #:class-direct-subclasses
+   #:effective-slots
+   #:unique-number
+   ;; Accessors for generic function metaobjects.
+   #:generic-function-methods
+   #:gf-methods
+   #:generic-function-method-combination
+   #:specializer-profile
+   #:call-history
+   ;; Accessors for method metaobjects.
+   #:method-generic-function
+   #:m-generic-function
+   #:method-lambda-list
+   #:method-specializers
+   #:accessor-method-slot-definition
+   ;; Accessors for slot definition metaobjects
+   #:slot-definition-name
+   #:slot-definition-location))
