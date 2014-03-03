@@ -20,6 +20,7 @@
 	   #:standard-method
 	   #:method-combination
 	   #:defclass
+	   #:ensure-generic-function
 	   #:defgeneric
 	   #:defmethod))
 
