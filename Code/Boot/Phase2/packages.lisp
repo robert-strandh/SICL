@@ -9,17 +9,7 @@
 		#:parse-specialized-lambda-list
 		#:required)
   (:import-from #:sicl-additional-conditions #:no-such-class-name)
-  (:shadow #:function
-	   #:class
-	   #:standard-class
-	   #:built-in-class
-	   #:standard-object
-	   #:generic-function
-	   #:standard-generic-function
-	   #:method
-	   #:standard-method
-	   #:method-combination
-	   #:defclass
+  (:shadow #:defclass
 	   #:ensure-generic-function
 	   #:defgeneric
 	   #:defmethod))
