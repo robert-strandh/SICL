@@ -15,18 +15,20 @@
 				direct-superclasses
 			      &allow-other-keys)
   ;; If the class already exists, then do nothing.
-  (when (null (find-bridge-class name nil))
-    (let ((superclasses (loop for name in direct-superclasses
-			      for class = (find-bridge-class name)
-			      collect class))
-	  (remaining-keys (copy-list arguments)))
-      (loop while (remf remaining-keys :direct-superclasses))
-      (let ((result (apply #'cl:make-instance
-			   'sicl-boot-phase1:built-in-class
-			   :direct-default-initargs direct-default-initargs
-			   :name name
-			   :direct-superclasses superclasses
-			   remaining-keys)))
-	(add-bridge-class name result)
-	;; FIXME: this is where we add create the accessors.
-	result))))
+  (let ((class (find-bridge-class name nil)))
+    (if (null class)
+	(let ((superclasses (loop for name in direct-superclasses
+				  for class = (find-bridge-class name)
+				  collect class))
+	      (remaining-keys (copy-list arguments)))
+	  (loop while (remf remaining-keys :direct-superclasses))
+	  (let ((result (apply #'cl:make-instance
+			       'sicl-boot-phase1:built-in-class
+			       :direct-default-initargs direct-default-initargs
+			       :name name
+			       :direct-superclasses superclasses
+			       remaining-keys)))
+	    (add-bridge-class name result)
+	    ;; FIXME: this is where we add create the accessors.
+	    result))
+	class)))
