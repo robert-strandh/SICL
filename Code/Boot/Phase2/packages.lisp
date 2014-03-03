@@ -9,6 +9,9 @@
 		#:parse-specialized-lambda-list
 		#:required)
   (:import-from #:sicl-additional-conditions #:no-such-class-name)
+  (:import-from #:sicl-boot-phase1
+		#:specializer-direct-methods
+		#:s-direct-methods)
   (:shadow #:defclass
 	   #:ensure-generic-function
 	   #:defgeneric
