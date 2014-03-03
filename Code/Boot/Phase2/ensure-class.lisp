@@ -34,10 +34,6 @@
 		     &allow-other-keys)
   (let ((superclasses (loop for name in direct-superclasses
 			    for class = (find-bridge-class name)
-			    do (when (null class)
-				 ;; This should not happen during
-				 ;; bootstrapping.
-				 (error "unknown class ~s" name))
 			    collect class))
 	(remaining-keys (copy-list arguments)))
     (loop while (remf remaining-keys :metaclass))
