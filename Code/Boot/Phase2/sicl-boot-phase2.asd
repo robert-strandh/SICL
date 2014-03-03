@@ -20,4 +20,6 @@
    (:file "defgeneric-defmacro")
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
+   (:file "add-remove-direct-method-support")
+   (:file "add-remove-direct-method-defuns")
    (:file "rename-package-2")))
