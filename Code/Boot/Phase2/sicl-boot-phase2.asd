@@ -10,6 +10,7 @@
    (:file "rename-package-1")
    (:file "class-database")
    (:file "ensure-class")
+   (:file "defclass-support")
    (:file "defclass-defmacro")
    (:file "generic-function-database")
    (:file "ensure-generic-function")
