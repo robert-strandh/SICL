@@ -32,20 +32,22 @@
 		       direct-superclasses
 		       (metaclass nil metaclass-p)
 		     &allow-other-keys)
-  (let ((superclasses (loop for name in direct-superclasses
-			    for class = (find-bridge-class name)
-			    collect class))
-	(remaining-keys (copy-list arguments)))
-    (loop while (remf remaining-keys :metaclass))
-    (loop while (remf remaining-keys :direct-superclasses))
-    (let* ((class (if metaclass-p
-		      metaclass
-		      'sicl-boot-phase1:standard-class))
-	   (result (apply #'cl:make-instance class
-			  :direct-default-initargs direct-default-initargs
-			  :direct-slots direct-slots
-			  :name name
-			  :direct-superclasses superclasses
-			  remaining-keys)))
-      (add-bridge-class name result)
-      result)))
+  ;; If the class already exists, then do nothing.
+  (when (null (find-bridge-class name nil))
+    (let ((superclasses (loop for name in direct-superclasses
+			      for class = (find-bridge-class name)
+			      collect class))
+	  (remaining-keys (copy-list arguments)))
+      (loop while (remf remaining-keys :metaclass))
+      (loop while (remf remaining-keys :direct-superclasses))
+      (let* ((class (if metaclass-p
+			metaclass
+			'sicl-boot-phase1:standard-class))
+	     (result (apply #'cl:make-instance class
+			    :direct-default-initargs direct-default-initargs
+			    :direct-slots direct-slots
+			    :name name
+			    :direct-superclasses superclasses
+			    remaining-keys)))
+	(add-bridge-class name result)
+	result))))
