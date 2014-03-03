@@ -12,5 +12,6 @@
   (:shadow #:defclass
 	   #:ensure-generic-function
 	   #:defgeneric
-	   #:defmethod))
-
+	   #:defmethod
+	   #:add-method
+	   #:remove-method))
