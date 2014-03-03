@@ -36,4 +36,8 @@
    (:file "compute-discriminating-function-support")
    (:file "compute-discriminating-function-support-a")
    (:file "compute-discriminating-function-defuns")
+   ;; Although we do not use the dependent maintenance facility, we
+   ;; define the specified functions as ordinary functions that do
+   ;; nothing, so that we can safely call them from other code.
+   (:file "dependent-maintenance-support")
    (:file "rename-package-2")))
