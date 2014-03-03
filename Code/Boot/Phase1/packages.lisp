@@ -23,4 +23,6 @@
   (:export #:standard-class
 	   #:built-in-class
 	   #:standard-generic-function
-	   #:standard-method))
+	   #:standard-method
+	   #:specializer-direct-methods
+	   #:s-direct-methods))
