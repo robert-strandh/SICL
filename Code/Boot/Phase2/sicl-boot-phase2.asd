@@ -52,4 +52,5 @@
    (:file "shared-initialize-defgenerics")
    (:file "initialize-support")
    (:file "initialize-defmethods")
+   (:file "specializerp")
    (:file "rename-package-2")))
