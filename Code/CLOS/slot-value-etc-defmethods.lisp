@@ -33,7 +33,7 @@
 (defmethod slot-value-using-class ((class built-in-class)
 				   object
 				   slot)
-  (declare (ignore object))
+  (declare (ignorable class) (ignore object slot))
   (error "no slots in an instance of a builtin class"))
 
 (defmethod (setf slot-value-using-class)
@@ -55,7 +55,7 @@
    (class built-in-class)
    object
    slot)
-  (declare (ignore object slot))
+  (declare (ignorable class) (ignore new-value object slot))
   (error "no slots in an instance of a builtin class"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -75,7 +75,7 @@
 (defmethod slot-boundp-using-class ((class built-in-class)
 				    object
 				    slot)
-  (declare (ignore object slot))
+  (declare (ignorable class) (ignore object slot))
   (error "no slots in an instance of a builtin class"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -92,10 +92,11 @@
   ((class funcallable-standard-class)
    object
    (slot standard-effective-slot-definition))
-  (slot-makunbound-using-class-default clas object slot))
+  (slot-makunbound-using-class-default class object slot))
 
 (defmethod slot-makunbound-using-class
   ((class built-in-class)
    object
    slot)
+  (declare (ignorable class) (ignore object slot))
   (error "no slots in an instance of a builtin class"))
