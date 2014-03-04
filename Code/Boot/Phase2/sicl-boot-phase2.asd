@@ -68,4 +68,5 @@
    (:file "direct-slot-definition-p")
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
+   (:file "satiate-all-generic-functions")
    (:file "rename-package-2")))
