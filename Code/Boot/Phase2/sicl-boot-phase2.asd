@@ -56,4 +56,5 @@
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defgenerics")
    (:file "reader-writer-method-class-defmethods")
+   (:file "add-accessor-method")
    (:file "rename-package-2")))
