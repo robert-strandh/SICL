@@ -57,4 +57,7 @@
    (:file "reader-writer-method-class-defgenerics")
    (:file "reader-writer-method-class-defmethods")
    (:file "add-accessor-method")
+   (:file "slot-definition-class-support")
+   (:file "slot-definition-class-defgenerics")
+   (:file "slot-definition-class-defmethods")
    (:file "rename-package-2")))
