@@ -60,4 +60,5 @@
    (:file "slot-definition-class-support")
    (:file "slot-definition-class-defgenerics")
    (:file "slot-definition-class-defmethods")
+   (:file "validate-superclass")
    (:file "rename-package-2")))
