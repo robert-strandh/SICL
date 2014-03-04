@@ -21,10 +21,16 @@
    #:eql-specializer
    ;; Miscellaneous functions.
    #:heap-instance-p
+   #:heap-instance-class
+   #:heap-instance-slots
+   #:slot-contents
    #:standard-instance-access
    #:ensure-class
    #:ensure-built-in-class
-   #:ensure-method)
+   #:ensure-method
+   #:find-bridge-class
+   ;; Variables
+   *unbound-value*)
   (:shadow #:defclass
 	   #:defgeneric
 	   #:defmethod
@@ -32,4 +38,13 @@
 	   #:remove-method
 	   #:compute-applicable-methods
 	   #:method-qualifiers
-	   #:class-name))
+	   #:class-name
+	   #:initialize-instance
+	   #:reinitialize-instance
+	   #:shared-initialize
+	   #:slot-exists-p
+	   #:slot-value
+	   #:slot-boundp
+	   #:slot-unbound
+	   #:slot-makunbound
+	   #:slot-missing))
