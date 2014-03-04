@@ -66,4 +66,6 @@
    (:file "generic-function-initialization-support")
    (:file "generic-function-initialization-defmethods")
    (:file "direct-slot-definition-p")
+   (:file "method-initialization-support")
+   (:file "method-initialization-defmethods")
    (:file "rename-package-2")))
