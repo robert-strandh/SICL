@@ -8,7 +8,6 @@
   :components
   ((:file "packages")
    (:file "rename-package-1")
-   (:file "define-variables")
    (:file "list-utilities")
    (:file "defclass-support")
    (:file "defclass-defmacro")
@@ -19,6 +18,7 @@
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
    (:file "mop-class-hierarchy")
+   (:file "define-variables")
    (:file "finalize-all-bridge-classes")
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defuns")
