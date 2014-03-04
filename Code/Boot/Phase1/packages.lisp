@@ -61,9 +61,16 @@
    #:slot-definition-location
    ;; Miscellaneous functions.
    #:heap-instance-p
+   #:heap-instance-class
+   #:heap-instance-slots
+   #:slot-contents
    #:standard-instance-access
    #:ensure-class
    #:ensure-built-in-class
    #:ensure-generic-function
    #:ensure-method
-   #:finalize-bridge-classes))
+   #:finalize-bridge-classes
+   #:find-bridge-class
+   #:satiate-bridge-generic-functions
+   ;; Variables
+   *unbound-value*))
