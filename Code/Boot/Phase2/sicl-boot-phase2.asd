@@ -43,4 +43,8 @@
    (:file "set-funcallable-instance-function")
    (:file "add-remove-method-support")
    (:file "add-remove-method-defuns")
+   (:file "slot-value-etc-defgenerics")
+   (:file "slot-value-etc-support")
+   (:file "slot-value-etc-defmethods")
+   (:file "slot-value-etc-specified-defuns")
    (:file "rename-package-2")))
