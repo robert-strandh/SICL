@@ -63,4 +63,6 @@
    (:file "validate-superclass")
    (:file "class-initialization-support")
    (:file "class-initialization-defmethods")
+   (:file "generic-function-initialization-support")
+   (:file "generic-function-initialization-defmethods")
    (:file "rename-package-2")))
