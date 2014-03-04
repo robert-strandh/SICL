@@ -53,4 +53,7 @@
    (:file "initialize-support")
    (:file "initialize-defmethods")
    (:file "specializerp")
+   (:file "reader-writer-method-class-support")
+   (:file "reader-writer-method-class-defgenerics")
+   (:file "reader-writer-method-class-defmethods")
    (:file "rename-package-2")))
