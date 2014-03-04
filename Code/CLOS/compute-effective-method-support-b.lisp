@@ -26,38 +26,63 @@
 ;;;
 ;;; For a version that DOES use the compiler, see the file
 ;;; compute-effective-method-support-a.lisp
+
+;;; Notice that when the list of primary methods is empty, we do not
+;;; signal an error.  Instead, we generate an effective method that
+;;; signals an error.  The reason for doing it this way is that we
+;;; might call COMPUTE-EFFECTIVE-METHOD in a situation other than when
+;;; the generic function was invoked.  When COMPUTE-EFFECTIVE-METHOD
+;;; is called as a result of an invocation of a generic function, it
+;;; does not matter much whether we signal an error immediately, or
+;;; generate an effective method that signals an error; the error will
+;;; be signaled either way.  However, we sometimes employ a trick that
+;;; we call SATIATING a generic function.  Satiating a generic
+;;; function means simulating calls to it in order to fill up the
+;;; cache and to create a discriminating function that does not have
+;;; to call the full dispatch machinery very often.  For some
+;;; simulated calls, it might be the case that there are only
+;;; non-primary methods applicable.  But whether that is the case
+;;; depends on the method combination of the generic function, so we
+;;; can not make any assumptions about it; we can only call
+;;; COMPUTE-EFFECTIVE-METHOD and use what it returns.  We certainly do
+;;; not want to have an error signaled whenever there is a
+;;; hypothetical future invocation of a generic function that might
+;;; not have a primary method, so we delay the error signaling until
+;;; this invocation actually happens.
+
 (defun compute-effective-method-default (methods)
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
 	(before-methods (remove-if-not #'before-method-p methods))
 	(after-methods (reverse (remove-if-not  #'after-method-p methods)))
 	(around-methods (remove-if-not  #'around-method-p methods)))
-    (when (null primary-methods)
-      (error "no primary method"))
-    (let ((primary-chain
-	    (lambda (args)
-	      (funcall (method-function (car primary-methods))
-		       args
-		       (mapcar #'method-function (cdr primary-methods)))))
-	  (before-chain
-	    (lambda (args)
-	      (loop for method in before-methods
-		    do (funcall (method-function method) args '()))))
-	  (after-chain
-	    (lambda (args)
-	      (loop for method in after-methods
-		    do (funcall (method-function method) args '())))))
-      (lambda (&rest args)
-	(if (null around-methods)
-	    (progn (funcall before-chain args)
-		   (multiple-value-prog1
-		       (funcall primary-chain args)
-		     (funcall after-chain args)))
-	    (funcall (method-function (car around-methods))
-		     args
-		     (append (mapcar #'method-function (cdr around-methods))
-			     (list (lambda (args next-methods)
-				     (declare (ignore next-methods))
-				     (funcall before-chain args)
-				     (multiple-value-prog1
-					 (funcall primary-chain args)
-				       (funcall after-chain args)))))))))))
+    (if (null primary-methods)
+	(lambda (&rest args)
+	  (error "no primary method"))
+	(let ((primary-chain
+		(lambda (args)
+		  (funcall (method-function (car primary-methods))
+			   args
+			   (mapcar #'method-function (cdr primary-methods)))))
+	      (before-chain
+		(lambda (args)
+		  (loop for method in before-methods
+			do (funcall (method-function method) args '()))))
+	      (after-chain
+		(lambda (args)
+		  (loop for method in after-methods
+			do (funcall (method-function method) args '())))))
+	  (lambda (&rest args)
+	    (if (null around-methods)
+		(progn (funcall before-chain args)
+		       (multiple-value-prog1
+			   (funcall primary-chain args)
+			 (funcall after-chain args)))
+		(funcall (method-function (car around-methods))
+			 args
+			 (append (mapcar #'method-function (cdr around-methods))
+				 (list (lambda (args next-methods)
+					 (declare (ignore next-methods))
+					 (funcall before-chain args)
+					 (multiple-value-prog1
+					     (funcall primary-chain args)
+					   (funcall after-chain args))))))))))))

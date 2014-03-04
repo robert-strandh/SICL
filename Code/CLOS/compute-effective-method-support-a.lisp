@@ -25,44 +25,70 @@
 ;;;
 ;;; For a version that does not use the compiler, see the file
 ;;; compute-effective-method-support-b.lisp
+
+;;; Notice that when the list of primary methods is empty, we do not
+;;; signal an error.  Instead, we generate an effective method that
+;;; signals an error.  The reason for doing it this way is that we
+;;; might call COMPUTE-EFFECTIVE-METHOD in a situation other than when
+;;; the generic function was invoked.  When COMPUTE-EFFECTIVE-METHOD
+;;; is called as a result of an invocation of a generic function, it
+;;; does not matter much whether we signal an error immediately, or
+;;; generate an effective method that signals an error; the error will
+;;; be signaled either way.  However, we sometimes employ a trick that
+;;; we call SATIATING a generic function.  Satiating a generic
+;;; function means simulating calls to it in order to fill up the
+;;; cache and to create a discriminating function that does not have
+;;; to call the full dispatch machinery very often.  For some
+;;; simulated calls, it might be the case that there are only
+;;; non-primary methods applicable.  But whether that is the case
+;;; depends on the method combination of the generic function, so we
+;;; can not make any assumptions about it; we can only call
+;;; COMPUTE-EFFECTIVE-METHOD and use what it returns.  We certainly do
+;;; not want to have an error signaled whenever there is a
+;;; hypothetical future invocation of a generic function that might
+;;; not have a primary method, so we delay the error signaling until
+;;; this invocation actually happens.
+
 (defun compute-effective-method-default (methods)
   (let ((primary-methods (remove-if-not #'primary-method-p methods))
 	(before-methods (remove-if-not #'before-method-p methods))
 	(after-methods (remove-if-not  #'after-method-p methods))
 	(around-methods (remove-if-not  #'around-method-p methods)))
-    (when (null primary-methods)
-      (error "no primary method"))
-    (let ((primary-chain
-	    `(funcall ,(method-function (car primary-methods))
-		      args
-		      '(,@(loop for method in (cdr primary-methods)
-				collect (method-function method)))))
-	  (before-chain
-	    (loop for method in before-methods
-		  collect `(funcall ,(method-function method)
-				    args
-				    '())))
-	  (after-chain
-	    (loop for method in (reverse after-methods)
-		  collect `(funcall ,(method-function method)
-				    args
-				    '()))))
-      (compile
-       nil
-       (if (null around-methods)
-	   `(lambda (&rest args)
-	      ,@before-chain
-	      (multiple-value-prog1
-		  ,primary-chain
-		,@after-chain))
-	   `(lambda (&rest args)
-	      (funcall ,(method-function (car around-methods))
-		       args
-		       (list ,@(loop for method in (cdr around-methods)
-				     collect (method-function method))
-			     (lambda (args next-methods)
-			       (declare (ignore next-methods))
-			       ,@before-chain
-			       (multiple-value-prog1
-				   ,primary-chain
-				 ,@after-chain))))))))))
+    (if (null primary-methods)
+	(compile nil '(lambda (&rest args)
+		       (declare (ignore args))
+		       (error "no primary method")))
+	(let ((primary-chain
+		`(funcall ,(method-function (car primary-methods))
+			  args
+			  '(,@(loop for method in (cdr primary-methods)
+				    collect (method-function method)))))
+	      (before-chain
+		(loop for method in before-methods
+		      collect `(funcall ,(method-function method)
+					args
+					'())))
+	      (after-chain
+		(loop for method in (reverse after-methods)
+		      collect `(funcall ,(method-function method)
+					args
+					'()))))
+	  (compile
+	   nil
+	   (if (null around-methods)
+	       `(lambda (&rest args)
+		  ,@before-chain
+		  (multiple-value-prog1
+		      ,primary-chain
+		    ,@after-chain))
+	       `(lambda (&rest args)
+		  (funcall ,(method-function (car around-methods))
+			   args
+			   (list ,@(loop for method in (cdr around-methods)
+					 collect (method-function method))
+				 (lambda (args next-methods)
+				   (declare (ignore next-methods))
+				   ,@before-chain
+				   (multiple-value-prog1
+				       ,primary-chain
+				     ,@after-chain)))))))))))
