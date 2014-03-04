@@ -68,4 +68,5 @@
    (:file "class-finalization-support")
    (:file "class-finalization-defmethods")
    (:file "built-in-class-finalization")
+   (:file "finalize-bridge-classes")
    (:file "rename-package-2")))

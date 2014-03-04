@@ -65,4 +65,5 @@
    #:ensure-class
    #:ensure-built-in-class
    #:ensure-generic-function
-   #:ensure-method))
+   #:ensure-method
+   #:finalize-bridge-classes))
