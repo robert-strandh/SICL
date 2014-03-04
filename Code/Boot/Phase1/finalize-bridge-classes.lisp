@@ -3,4 +3,3 @@
 (defun finalize-bridge-classes ()
   (loop for entry in *bridge-classes*
 	do (finalize-inheritance (cdr entry))))
-
