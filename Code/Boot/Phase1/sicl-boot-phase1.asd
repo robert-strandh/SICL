@@ -64,4 +64,8 @@
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
    (:file "print-object")
+   (:file "class-finalization-defgenerics")
+   (:file "class-finalization-support")
+   (:file "class-finalization-defmethods")
+   (:file "built-in-class-finalization")
    (:file "rename-package-2")))
