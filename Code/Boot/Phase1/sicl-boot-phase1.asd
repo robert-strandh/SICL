@@ -77,5 +77,8 @@
    ;; have to be a bridge generic function.
    (:file "allocate-instance-defuns")
    (:file "allocate-built-in-instance")
+   (:file "slot-value-etc-support")
+   (:file "slot-value-etc-defgenerics")
+   (:file "slot-value-etc-defmethods")
    (:file "satiate-generic-functions")
    (:file "rename-package-2")))
