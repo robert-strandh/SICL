@@ -22,6 +22,7 @@
 	   #:defclass
 	   #:add-method
 	   #:remove-method
+	   #:compute-applicable-methods
 	   #:ensure-generic-function)
   (:export
    ;; Names of classes
