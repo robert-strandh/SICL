@@ -282,6 +282,61 @@
   (loop for method in methods
 	collect (maybe-replace-method method classes)))
 
+;;; This function computes a discriminating for a generic function,
+;;; given the existing call history, and then it call
+;;; SET-FUNCALLABLE-INSTANCE-FUNCTION in order to install that
+;;; discriminating function.
+(defun compute-and-install-discriminating-function (generic-function)
+  (let ((df (compute-discriminating-function generic-function)))
+    (set-funcallable-instance-function generic-function df)))
+
+;;; This function takes a generic function, a list of class numbers, a
+;;; list of classes, and a list of applicable methods and adds an new
+;;; call cache to the call history of the generic function.  If the
+;;; same (EQUAL) applicable method cache A already exists in some call
+;;; cache C in the call history, then the new call cache is
+;;; constructed from the list of class numbers passed as an argument,
+;;; A, and the effective-method cache of C.  Otherwise the new call
+;;; cache is constructed from the list of class numbers passed as an
+;;; argument, the list of applicable methods passed as an argument,
+;;; and a new effective method obtained by calling
+;;; COMPUTE-EFFECTIVE-METHOD.  Either way, we return the effective
+;;; method of the new call cache.
+(defun add-call-cache
+    (generic-function class-numbers classes applicable-methods)
+  (let* ((call-history (call-history generic-function))
+	 (call-cache (car (member applicable-methods call-history
+				  :key #'applicable-method-cache
+				  :test #'equal)))
+	 (method-combination
+	   (generic-function-method-combination generic-function)))
+    (if (null call-cache)
+	;; No call cache exists with the same applicable method cache.
+	;; We must create a new effective method.
+	(let ((effective-method
+		(compute-effective-method
+		 generic-function
+		 method-combination
+		 (final-methods applicable-methods classes))))
+	  ;; Add a new call cache to the call history.
+	  (setf (call-history generic-function)
+		(cons (make-call-cache class-numbers
+				       applicable-methods
+				       effective-method)
+		      call-history))
+	  effective-method)
+	;; We already have a call cache with the same applicable
+	;; method cache.  Create an entry that reuses the existing
+	;; applicable method cache and the existing effective method.
+	(let ((applicable-methods (applicable-method-cache call-cache))
+	      (effective-method (effective-method-cache call-cache)))
+	  (setf (call-history generic-function)
+		(cons (make-call-cache class-numbers
+				       applicable-methods
+				       effective-method)
+		      call-history))
+	  effective-method))))
+    
 ;;; This function can not itself be the discriminating function of a
 ;;; generic function, because it also takes the generic function
 ;;; itself as an argument.  However it can be called by the
@@ -312,15 +367,10 @@
       (multiple-value-bind (applicable-methods ok)
 	  (compute-applicable-methods-using-classes generic-function classes)
 	(when ok
-	  (let ((effective-method
-		  (compute-effective-method
-		   generic-function
-		   method-combination
-		   (final-methods applicable-methods classes))))
-	    (push (make-call-cache class-numbers
-				   applicable-methods
-				   effective-method)
-		  (call-history generic-function))
+	  (let ((effective-method (add-call-cache generic-function
+						  class-numbers
+						  classes
+						  applicable-methods)))
 	    (return-from default-discriminating-function
 	      (apply effective-method arguments))))
 	;; Come here if we can't compute the applicable methods using
@@ -370,36 +420,36 @@
 
 ;;; CLASSES-OF-METHOD is a list of specializers (which much be classes)
 ;;; of a single method of the generic function.
-(defun add-to-call-history (generic-function classes-of-method)
+(defun add-to-call-history (generic-function classes-of-method profile)
   (let* ((sets (loop for class in classes-of-method
-		     collect (if (eq class *t*)
+		     for flag in profile
+		     collect (if (null flag)
 				 (list class)
 				 (all-descendents class))))
-	 (all-combinations (cartesian-product sets))
-	 (mc (generic-function-method-combination generic-function)))
+	 (all-combinations (cartesian-product sets)))
     (loop for combination in all-combinations
 	  for methods = (compute-applicable-methods-using-classes
 			 generic-function combination)
-	  for em = (compute-effective-method
-		    generic-function
-		    mc
-		    (final-methods methods combination))
-	  for no-t = (remove *t* combination)
-	  for numbers = (mapcar #'unique-number no-t)
+	  for relevant-classes = (loop for class in combination
+				       for flag in profile
+				       when flag collect class)
+	  for numbers = (mapcar #'unique-number relevant-classes)
 	  do (unless (member numbers (call-history generic-function)
 			     :key #'class-number-cache :test #'equal)
-	       (push (make-call-cache numbers methods em)
-		     (call-history generic-function))))))
+	       (add-call-cache generic-function
+			       numbers
+			       combination
+			       methods)))))
 
 (defun load-call-history (generic-function)
-  (loop for method in (generic-function-methods generic-function)
+  (loop with profile = (specializer-profile generic-function)
+	for method in (generic-function-methods generic-function)
 	for specializers = (method-specializers method)
-	do (add-to-call-history generic-function specializers)))
+	do (add-to-call-history generic-function specializers profile)))
 
 (defun satiate-generic-function (generic-function)
   (load-call-history generic-function)
-  (let ((df (compute-discriminating-function generic-function)))
-    (set-funcallable-instance-function generic-function df)))
+  (compute-and-install-discriminating-function generic-function))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
