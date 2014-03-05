@@ -23,7 +23,8 @@
 	   #:add-method
 	   #:remove-method
 	   #:compute-applicable-methods
-	   #:ensure-generic-function)
+	   #:ensure-generic-function
+	   #:allocate-instance)
   (:export
    ;; Names of classes
    #:standard-class
