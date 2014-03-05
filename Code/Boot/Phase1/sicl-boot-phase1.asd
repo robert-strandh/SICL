@@ -82,5 +82,6 @@
    (:file "slot-value-etc-defmethods")
    (:file "shared-initialize-support")
    (:file "make-instance-support")
+   (:file "make-built-in-instance-support")
    (:file "satiate-generic-functions")
    (:file "rename-package-2")))

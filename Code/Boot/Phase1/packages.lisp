@@ -78,6 +78,7 @@
    #:find-bridge-class
    #:satiate-bridge-generic-functions
    #:make-instance-default
+   #:make-built-in-instance-default
    #:shared-initialize-default
    ;; Variables
    *unbound-value*))
