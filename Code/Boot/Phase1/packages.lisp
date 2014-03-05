@@ -30,13 +30,7 @@
 	   #:class-of)
   (:export
    ;; Names of classes
-   #:standard-class
    #:funcallable-standard-class
-   #:built-in-class
-   #:standard-generic-function
-   #:standard-method
-   #:standard-reader-method
-   #:standard-writer-method
    #:eql-specializer
    ;; Accessors for specializer metaobjects.
    #:specializer-direct-methods

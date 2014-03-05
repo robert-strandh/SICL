@@ -16,8 +16,6 @@
    #:sicl-boot-phase1
    ;; Names of classes
    #:funcallable-standard-class
-   #:standard-reader-method
-   #:standard-writer-method
    #:eql-specializer
    ;; Miscellaneous functions.
    #:heap-instance-p
