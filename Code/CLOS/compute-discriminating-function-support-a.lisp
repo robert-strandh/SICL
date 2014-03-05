@@ -13,6 +13,31 @@
 	 (class-number-vars (loop for x in specializer-profile
 				  when x collect (gensym)))
 	 (call-history (call-history generic-function)))
+    ;; Check for the special case when the active-arg-count is 0,
+    ;; meaning that every method is unspecialized, including when
+    ;; there are no methods at all.  Either way, each method is always
+    ;; applicable.
+    (when (zerop active-arg-count)
+      ;; When every method is unspecialized, all methods are equally
+      ;; specific, so they are already sorted by specificity.
+      ;; Therefore, they are already in the order that would be
+      ;; returned by COMPUTE-APPLICABLE-METHODS, so there is no need
+      ;; to call that function.
+      (let* ((methods (generic-function-methods generic-function))
+	     ;; We need the method combination of the generic
+	     ;; function, so that we can compute the effective method.
+	     (mc (generic-function-method-combination generic-function))
+	     ;; Submit that list to compute-effective-method, giving
+	     ;; us an effective method that should always be invoked.
+	     ;; Notice that we designed COMPUTE-EFFECTIVE-METHOD so
+	     ;; that it will not signal an error if there is no
+	     ;; primary method, but instead it will return an
+	     ;; effective method that signals an error when invoked.
+	     (effective-method
+	       (compute-effective-method generic-function mc methods)))
+      (return-from make-discriminating-function-lambda
+	`(lambda (&rest arguments)
+	   (apply ,effective-method arguments)))))
     ;; Check for the special case when the call history is empty.  In
     ;; that case, we just generate a call to the default
     ;; discriminating function.
@@ -22,18 +47,10 @@
 	   (default-discriminating-function ,generic-function
 					    arguments
 					    ',specializer-profile))))
-    ;; Check for the special case when the active-arg-count is 0,
-    ;; meaning that no method specialized on anything other than T,
-    ;; but there is still some stuff in the call history, which is the
-    ;; only possible effective method.  So we generate a call to that
-    ;; effective method.
-    (when (zerop active-arg-count)
-      (return-from make-discriminating-function-lambda
-	`(lambda (&rest arguments)
-	   (apply ,(effective-method-cache (car call-history))
-		  arguments))))
-    ;; Create a dictionary, mapping effective methods to
-    ;; forms containing APPLY that call those methods.
+    ;; Come here when there is at least one active argument, i.e. at
+    ;; least one element T in the specializer profile, AND the call
+    ;; history is not empty.  Create a dictionary, mapping effective
+    ;; methods to forms containing APPLY that call those methods.
     (let ((dico '()))
       (loop for call-cache in call-history
 	    for class-number-cache = (class-number-cache call-cache)
