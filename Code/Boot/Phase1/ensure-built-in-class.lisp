@@ -23,7 +23,7 @@
 	      (remaining-keys (copy-list arguments)))
 	  (loop while (remf remaining-keys :direct-superclasses))
 	  (let ((result (apply #'cl:make-instance
-			       'sicl-boot-phase1:built-in-class
+			       'built-in-class
 			       :direct-default-initargs direct-default-initargs
 			       :name name
 			       :direct-superclasses superclasses

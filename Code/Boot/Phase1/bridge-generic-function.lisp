@@ -2,7 +2,7 @@
 
 (cl:defclass bridge-generic-function
     (#+sbcl sb-pcl:funcallable-standard-object
-     sicl-boot-phase1:standard-generic-function)
+     standard-generic-function)
   ()
   (:metaclass #+sbcl sb-pcl:funcallable-standard-class))
 
