@@ -29,6 +29,7 @@
    #:ensure-built-in-class
    #:ensure-method
    #:find-bridge-class
+   #:shared-initialize-default
    ;; Variables
    *unbound-value*)
   (:shadow #:defclass
