@@ -49,4 +49,5 @@
 	   #:slot-unbound
 	   #:slot-makunbound
 	   #:slot-missing
-	   #:make-instance))
+	   #:make-instance
+	   #:compile))

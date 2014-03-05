@@ -32,6 +32,7 @@
    (:file "compute-effective-method-defuns")
    (:file "discriminating-automaton")
    (:file "discriminating-tagbody")
+   (:file "compile")
    (:file "compute-discriminating-function-support")
    (:file "compute-discriminating-function-support-a")
    (:file "compute-discriminating-function-defuns")
