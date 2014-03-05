@@ -47,6 +47,7 @@
    (:file "discriminating-automaton")
    (:file "discriminating-tagbody")
    (:file "heap-instance")
+   (:file "class-of")
    (:file "standard-instance-access")
    (:file "compute-discriminating-function-support")
    (:file "compute-discriminating-function-support-a")
