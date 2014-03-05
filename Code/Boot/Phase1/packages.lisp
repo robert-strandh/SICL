@@ -80,5 +80,6 @@
    #:make-instance-default
    #:make-built-in-instance-default
    #:shared-initialize-default
+   #:built-in-initialize-default
    ;; Variables
    *unbound-value*))
