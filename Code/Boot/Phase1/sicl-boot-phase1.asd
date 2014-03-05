@@ -69,5 +69,12 @@
    (:file "class-finalization-defmethods")
    (:file "built-in-class-finalization")
    (:file "finalize-bridge-classes")
+   (:file "allocate-instance-support")
+   ;; We can not use the generic version of allocate instance, because
+   ;; if we define a generic function here, it will be a host generic
+   ;; function, and the generic version of allocate instance would
+   ;; have to be a bridge generic function.
+   (:file "allocate-instance-defuns")
+   (:file "allocate-built-in-instance")
    (:file "satiate-generic-functions")
    (:file "rename-package-2")))
