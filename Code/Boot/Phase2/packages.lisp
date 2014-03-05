@@ -47,4 +47,5 @@
 	   #:slot-boundp
 	   #:slot-unbound
 	   #:slot-makunbound
-	   #:slot-missing))
+	   #:slot-missing
+	   #:make-instance))
