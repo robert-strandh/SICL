@@ -7,7 +7,7 @@
 	when (eq initarg indicator)
 	  return t))
 
-(defun make-instance-default (class &rest initargs)
+(defun make-instance-default (class initialize-instance &rest initargs)
   ;; FIXME: check shape of initargs (proper, length is even, etc.).
   (let ((defaulted-initargs initargs))
     (loop for default-initarg in (class-default-initargs class)
@@ -17,5 +17,5 @@
 			     (list (first default-initarg)
 				   (funcall (third default-initarg)))))))
     (let ((instance (apply #'allocate-instance class defaulted-initargs)))
-      (apply #'initialize-instance instance defaulted-initargs)
+      (apply initialize-instance instance defaulted-initargs)
       instance)))
