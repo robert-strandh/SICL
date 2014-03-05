@@ -77,5 +77,7 @@
    #:finalize-bridge-classes
    #:find-bridge-class
    #:satiate-bridge-generic-functions
+   #:make-instance-default
+   #:shared-initialize-default
    ;; Variables
    *unbound-value*))
