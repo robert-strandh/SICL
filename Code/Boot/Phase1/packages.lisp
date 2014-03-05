@@ -24,7 +24,10 @@
 	   #:remove-method
 	   #:compute-applicable-methods
 	   #:ensure-generic-function
-	   #:allocate-instance)
+	   #:allocate-instance
+	   #:slot-missing
+	   #:slot-unbound
+	   #:class-of)
   (:export
    ;; Names of classes
    #:standard-class
