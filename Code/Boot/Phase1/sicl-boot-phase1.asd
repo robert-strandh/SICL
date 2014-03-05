@@ -81,5 +81,6 @@
    (:file "slot-value-etc-defgenerics")
    (:file "slot-value-etc-defmethods")
    (:file "shared-initialize-support")
+   (:file "make-instance-support")
    (:file "satiate-generic-functions")
    (:file "rename-package-2")))
