@@ -81,5 +81,6 @@
    #:make-built-in-instance-default
    #:shared-initialize-default
    #:built-in-initialize-default
+   #:allocate-built-in-instance
    ;; Variables
    *unbound-value*))
