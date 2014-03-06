@@ -7,11 +7,13 @@
     (error "Attempt to define target class ~s twice." name))
   (push (cons name function) *target-classes*))
 
-(defun find-target-class (name)
+(defun find-target-class (name &optional (error-p t))
   (let ((entry (assoc name *target-classes* :test #'equal)))
-    (when (null entry)
-      (error "There is no target class named ~s." name))
-    (cdr entry)))
+    (if (null entry)
+	(if error-p
+	    (error "There is no target class named ~s." name)
+	    nil)
+	(cdr entry))))
 
 (defun delete-target-class (name)
   (setf *target-classes*
