@@ -81,7 +81,7 @@
    (:file "slot-value-etc-defgenerics")
    (:file "slot-value-etc-defmethods")
    (:file "shared-initialize-support")
-   (:file "built-in-initialize-support")
+   (:file "initialize-built-in-instance-support")
    (:file "make-instance-support")
    (:file "make-built-in-instance-support")
    (:file "satiate-generic-functions")
