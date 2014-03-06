@@ -12,7 +12,8 @@
 ;;; DEFAULT-INITARGS.  This reader works for standard classes and
 ;;; funcallable standard classes as well.
 
-(defun make-built-in-instance-default (class &rest initargs)
+(defun make-built-in-instance-default
+    (class initialize-built-in-instance &rest initargs)
   (let ((defaulted-initargs initargs))
     (loop for default-initarg in (default-initargs class)
 	  do (unless (initarg-in-list-p (car default-initarg) initargs)
@@ -21,5 +22,5 @@
 			     (list (first default-initarg)
 				   (funcall (third default-initarg)))))))
     (let ((instance (apply #'allocate-built-in-instance class defaulted-initargs)))
-      (apply #'initialize-built-in-instance instance defaulted-initargs)
+      (apply initialize-built-in-instance instance defaulted-initargs)
       instance)))
