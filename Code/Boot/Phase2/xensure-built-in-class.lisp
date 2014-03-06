@@ -22,7 +22,7 @@
 				  collect class))
 	      (remaining-keys (copy-list arguments)))
 	  (loop while (remf remaining-keys :direct-superclasses))
-	  (let ((result (apply #'cl:make-instance
+	  (let ((result (apply #'make-instance
 			       'built-in-class
 			       :direct-default-initargs direct-default-initargs
 			       :name name
