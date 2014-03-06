@@ -49,4 +49,9 @@
 	   #:slot-makunbound
 	   #:slot-missing
 	   #:make-instance
-	   #:compile))
+	   #:compile)
+  (:export
+   #:*ensure-class
+   #:*ensure-built-in-class
+   #:*ensure-generic-function
+   #:*ensure-method))
