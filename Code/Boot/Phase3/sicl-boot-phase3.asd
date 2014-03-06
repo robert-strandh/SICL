@@ -15,4 +15,5 @@
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
    (:file "defmethod-support")
-   (:file "defmethod-defmacro")))
+   (:file "defmethod-defmacro")
+   (:file "mop-class-hierarchy")))
