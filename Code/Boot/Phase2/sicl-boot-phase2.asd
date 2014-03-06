@@ -56,7 +56,6 @@
    (:file "initialize-instance-defmethods")
    (:file "reinitialize-instance-defmethods")   
    (:file "shared-initialize-defmethods")
-   (:file "initialize-built-in-instance-support")
    (:file "initialize-built-in-instance-defgenerics")
    (:file "initialize-built-in-instance-defmethods")
    (:file "specializerp")

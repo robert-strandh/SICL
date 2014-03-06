@@ -76,5 +76,6 @@
    #:shared-initialize-default
    #:built-in-initialize-default
    #:allocate-built-in-instance
+   #:initialize-built-in-instance-default
    ;; Variables
    *unbound-value*))
