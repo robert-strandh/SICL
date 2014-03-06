@@ -2,5 +2,7 @@
 
 (asdf:defsystem :sicl-boot-phase3
   :depends-on (:sicl-boot-phase2)
+  :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "ensure")))
