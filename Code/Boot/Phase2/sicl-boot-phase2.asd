@@ -79,4 +79,8 @@
    (:file "satiate-all-generic-functions")
    (:file "class-database")
    (:file "generic-function-database")
+   (:file "xensure-class")
+   (:file "xensure-built-in-class")
+   (:file "xensure-generic-function")
+   (:file "xensure-method")
    (:file "rename-package-2")))
