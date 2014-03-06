@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-boot-phase3)
+(cl:in-package #:sicl-clos)
 
 (defun ensure-class (&rest arguments)
   (apply #'sicl-boot-phase2:*ensure-class arguments))
