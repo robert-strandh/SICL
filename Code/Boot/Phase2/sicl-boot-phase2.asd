@@ -77,4 +77,6 @@
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
    (:file "satiate-all-generic-functions")
+   (:file "class-database")
+   (:file "generic-function-database")
    (:file "rename-package-2")))
