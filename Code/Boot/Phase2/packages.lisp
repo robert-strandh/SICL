@@ -56,4 +56,5 @@
    #:*ensure-built-in-class
    #:*ensure-generic-function
    #:*ensure-method
-   #:finalize-target-classes))
+   #:finalize-target-classes
+   #:patch-target-objects))

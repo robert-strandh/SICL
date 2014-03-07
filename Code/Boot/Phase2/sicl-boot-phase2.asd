@@ -85,6 +85,7 @@
    (:file "class-finalization-defmethods")
    (:file "built-in-class-finalization")
    (:file "finalize-target-classes")
+   (:file "patch-target-objects")
    (:file "print-object")
    (:file "satiate-all-generic-functions")
    (:file "xensure-class")
