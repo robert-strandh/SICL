@@ -434,9 +434,7 @@
    (%initargs 
     :initform '()
     :initarg :initargs 
-    :reader slot-definition-initargs
-    ;; Alternative reader.  See comment above.
-    :reader initargs)
+    :reader slot-definition-initargs)
    (%initform 
     :initarg :initform 
     :reader slot-definition-initform)
