@@ -4,7 +4,7 @@
   (let ((fun (find-target-generic-function function-name nil)))
     (if (null fun)
 	(let ((new-fun (apply #'make-instance
-			      'generic-function
+			      'standard-generic-function
 			      :name function-name
 			      args)))
 	  (add-target-generic-function function-name new-fun)
