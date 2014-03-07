@@ -31,7 +31,9 @@
 
 (defmethod print-object ((object standard-generic-function) stream)
   (print-unreadable-object (object stream)
-    (format stream "*a standard generic function")))
+    (format stream "*~s ~s"
+	    (class-name (heap-instance-class object))
+	    (generic-function-name object))))
 
 (defmethod print-object ((object method) stream)
   (print-unreadable-object (object stream)
@@ -89,26 +91,8 @@
   (print-unreadable-object (object stream)
     (format stream "*an eql specializer")))
 
-(defmethod print-object ((object forward-referenced-class) stream)
+(defmethod print-object ((object class) stream)
   (print-unreadable-object (object stream)
-    (format stream "*a forward referenced class")))
-
-(defmethod print-object ((object real-class) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a real class")))
-
-(defmethod print-object ((object built-in-class) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a built-in class")))
-
-(defmethod print-object ((object regular-class) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a regular class")))
-
-(defmethod print-object ((object standard-class) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a standard class")))
-
-(defmethod print-object ((object funcallable-standard-class) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a funcallable standard class")))
+    (format stream "*~s ~s"
+	    (class-name (heap-instance-class object))
+	    (class-name object))))
