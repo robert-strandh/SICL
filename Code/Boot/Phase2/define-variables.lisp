@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-phase2)
 
-(defvar *t*
-  (find-bridge-class 't))
+(define-symbol-macro *t*
+  (find-target-class 't))
 
 (defvar *standard-reader-method*
   (find-bridge-class 'standard-reader-method))
