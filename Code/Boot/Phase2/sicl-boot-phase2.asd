@@ -92,4 +92,6 @@
    (:file "xensure-built-in-class")
    (:file "xensure-generic-function")
    (:file "xensure-method")
+   (:file "allocate-instance-support")
+   (:file "allocate-instance-defuns")
    (:file "rename-package-2")))
