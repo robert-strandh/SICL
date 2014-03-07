@@ -27,7 +27,8 @@
   (setf (specializer-profile generic-function)
 	(make-list (length (specializer-profile generic-function))))
   (loop for method in (generic-function-methods generic-function)
-	do (update-specializer-profile generic-function method)))
+	for specializers = (method-specializers method)
+	do (update-specializer-profile generic-function specializers)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
