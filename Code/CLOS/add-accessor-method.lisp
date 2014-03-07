@@ -20,8 +20,7 @@
 ;;; method for optimization purposes. 
 (defun add-reader-method (class function-name slot-definition)
   (let* ((lambda-list '(object))
-	 (generic-function (ensure-generic-function
-			    function-name :lambda-list lambda-list))
+	 (generic-function (ensure-accessor-function function-name lambda-list))
 	 (specializers (list class))
 	 (method-function
 	   (compile nil `(lambda (arguments next-methods)
@@ -53,8 +52,7 @@
 ;;; method for optimization purposes.
 (defun add-writer-method (class function-name slot-definition)
   (let* ((lambda-list '(new-value object))
-	 (generic-function (ensure-generic-function
-			    function-name :lambda-list lambda-list))
+	 (generic-function (ensure-accessor-function function-name lambda-list))
 	 (specializers (list *t* class))
 	 (method-function
 	   (compile nil `(lambda (arguments next-methods)

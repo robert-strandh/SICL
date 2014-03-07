@@ -65,6 +65,7 @@
    (:file "reader-writer-method-class-defmethods")
    (:file "make-instance")
    (:file "make-built-in-instance")
+   (:file "ensure-accessor-function")
    (:file "add-accessor-method")
    (:file "slot-definition-class-support")
    (:file "slot-definition-class-defgenerics")
