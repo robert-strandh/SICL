@@ -12,6 +12,7 @@
   (compute-default-initargs-default class))
 
 (defmethod compute-slots :around ((class regular-class))
+  (declare (ignorable class))
   (let ((slots (call-next-method)))
     (compute-slots-around-default slots)))
 
