@@ -78,6 +78,8 @@
    ;; Accessors for slot definition metaobjects.
    #:slot-definition-name
    #:slot-definition-location
+   ;; Types
+   #:heap-instance
    ;; Miscellaneous functions.
    #:heap-instance-p
    #:heap-instance-class
