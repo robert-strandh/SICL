@@ -27,6 +27,7 @@
    (:file "add-remove-direct-method-defuns")
    (:file "add-remove-method-support")
    (:file "add-remove-method-defuns")
+   (:file "ensure-accessor-function")
    (:file "add-accessor-method")
    (:file "slot-definition-class-support")
    (:file "slot-definition-class-defuns")
