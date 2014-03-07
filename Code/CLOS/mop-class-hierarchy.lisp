@@ -89,6 +89,38 @@
 ;;; the slots here, and instead calling explicit writers in :AFTER
 ;;; methods on INITIALIZE-INSTANCE and REINITIALIZE-INSTANCE.
 
+;;; For a list of specified readers of these metaobjects, see
+;;; see
+;;; http://metamodular.com/CLOS-MOP/readers-for-generic-function-metaobjects.html
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-name.html
+(defgeneric generic-function-name (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-lambda-list.html
+(defgeneric generic-function-lambda-list (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-argument-precedence-order.html
+(defgeneric generic-function-argument-precedence-order (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-declarations.html
+(defgeneric generic-function-declarations (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-method-class.html
+(defgeneric generic-function-method-class (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-method-combination.html
+(defgeneric generic-function-method-combination (generic-function))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/generic-function-methods.html
+(defgeneric generic-function-methods (generic-function))
+
 (defclass generic-function (metaobject funcallable-standard-object)
   (;; While there is a function named (SETF GENERIC-FUNCTION-NAME), it
    ;; is not a writer function in that it works by calling
@@ -148,6 +180,36 @@
     :accessor specializer-profile))
   (:metaclass funcallable-standard-class))
 
+;;; Readers for method metaobjects.
+;;;
+;;; For a list of specified readers of these metaobjects, see
+;;; http://metamodular.com/CLOS-MOP/readers-for-method-metaobjects.html
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-function.html
+(defgeneric method-function (method))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-generic-function.html
+(defgeneric method-generic-function (method))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-lambda-list.html
+(defgeneric method-lambda-list (method))
+
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-specializers.html
+(defgeneric method-specializers (method))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/method-qualifiers.html
+(defgeneric method-qualifiers (method))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/accessor-method-slot-definition.html
+(defgeneric accessor-method-slot-definition (accessor-method))
+
 (defclass method (metaobject)
   ((%function 
     :initarg :function 
@@ -191,6 +253,12 @@
 (defclass method-combination (metaobject)
   ())
 
+(defgeneric specializer-direct-generic-functions (specializer))
+
+(defgeneric specializer-direct-methods (specializer))
+
+(defgeneric eql-specializer-object (eql-specializer))
+
 (defclass specializer (metaobject)
   ((%direct-generic-functions
     :initform '()
@@ -209,6 +277,49 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class CLASS.
+;;;
+;;; For a list of specified readers of these metaobjects, see
+;;; http://metamodular.com/CLOS-MOP/readers-for-class-metaobjects.html
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-default-initargs.html
+(defgeneric class-default-initargs (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-default-initargs.html
+(defgeneric class-direct-default-initargs (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-name.html
+(defgeneric class-name (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-superclasses.html
+(defgeneric class-direct-superclasses (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-slots.html
+(defgeneric class-direct-slots (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-direct-subclasses.html
+(defgeneric class-direct-subclasses (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-slots.html
+(defgeneric class-slots (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-precedence-list.html
+(defgeneric class-precedence-list (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-finalized-p.html
+(defgeneric class-finalized-p (class))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/class-prototype.html
+(defgeneric class-prototype (class))
 
 (defclass class (specializer)
   ((%unique-number 
@@ -418,6 +529,47 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Slot definition classes.
+
+;;; Readers for slot definition metaobjects.
+;;;
+;;; For a list of specified readers of these metaobjects, see
+;;; http://metamodular.com/CLOS-MOP/readers-for-slot-definition-metaobjects.html
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-allocation.html
+(defgeneric slot-definition-allocation (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-initargs.html
+(defgeneric slot-definition-initargs (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-initform.html
+(defgeneric slot-definition-initform (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-initfunction.html
+(defgeneric slot-definition-initfunction (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-name.html
+(defgeneric slot-definition-name (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-type.html
+(defgeneric slot-definition-type (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-readers.html
+(defgeneric slot-definition-readers (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-writers.html
+(defgeneric slot-definition-writers (slot-definition))
+
+;;; For the specification of this generic function, see
+;;; http://metamodular.com/CLOS-MOP/slot-definition-location.html
+(defgeneric slot-definition-location (slot-definition))
 
 (defclass slot-definition (metaobject)
   ((%name 
