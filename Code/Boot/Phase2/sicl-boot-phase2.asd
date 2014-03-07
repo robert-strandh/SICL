@@ -9,6 +9,7 @@
   ((:file "packages")
    (:file "rename-package-1")
    (:file "list-utilities")
+   (:file "functionp")
    (:file "defclass-support")
    (:file "defclass-defmacro")
    (:file "define-built-in-class-defmacro")
