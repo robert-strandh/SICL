@@ -1,31 +1,32 @@
 (cl:in-package #:sicl-boot-phase2)
 
+(defgeneric patch-instance (object))
+
+(defun analogous-target-class (bridge-class)
+  (find-target-class (sicl-boot-phase1::class-name bridge-class)))
+
+(defmethod patch-instance (object)
+  (let ((bridge-class (heap-instance-class object)))
+    (setf (heap-instance-class object)
+	  (analogous-target-class bridge-class))))
+
+(defmethod patch-instance ((object standard-object))
+  (let* ((bridge-class (heap-instance-class object))
+	 (target-class (analogous-target-class bridge-class)))
+    (setf (standard-instance-access object 1)
+	  (class-slots target-class))
+    (call-next-method)))
+
+(defmethod patch-instance ((object standard-generic-function))
+  (let ((mc (generic-function-method-class object)))
+    (reinitialize-instance
+     object
+     :method-class (analogous-target-class mc)))
+  (call-next-method))
+
 (defun already-patched-p (heap-instance)
   (heap-instance-p
    (heap-instance-class heap-instance)))
-
-(defun unpatched-built-in-instance-p (heap-instance)
-  (and (not (already-patched-p heap-instance))
-       (eq (cl:class-of (heap-instance-class heap-instance))
-	   (cl:find-class 'built-in-class))))
-
-(defun patch-standard-object (object)
-  (unless (already-patched-p object)
-    (let ((bridge-class (heap-instance-class object)))
-      (let* ((name (sicl-boot-phase1::class-name bridge-class))
-	     (target-class (find-target-class name)))
-	(setf (heap-instance-class object)
-	      target-class)
-	(setf (standard-instance-access object 1)
-	      (class-slots target-class))))))
-
-(defun patch-built-in-instance (object)
-  (unless (already-patched-p object)
-    (let ((bridge-class (heap-instance-class object)))
-      (let* ((name (sicl-boot-phase1::class-name bridge-class))
-	     (target-class (find-target-class name)))
-	(setf (heap-instance-class object)
-	      target-class)))))
 
 (defun patch-target-objects ()
   (let ((seen '()))
@@ -35,9 +36,7 @@
 		 (typecase object
 		   (heap-instance
 		    (unless (already-patched-p object)
-		      (if (unpatched-built-in-instance-p object)
-			  (patch-built-in-instance object)
-			  (patch-standard-object object)))
+		      (patch-instance object))
 		    (traverse (heap-instance-class object))
 		    (traverse (heap-instance-slots object)))
 		   (cons
