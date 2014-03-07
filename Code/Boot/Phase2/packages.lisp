@@ -14,6 +14,8 @@
    #:ensure-generic-function)
   (:import-from
    #:sicl-boot-phase1
+   ;; Types
+   #:heap-instance
    ;; Miscellaneous functions.
    #:heap-instance-p
    #:heap-instance-class
