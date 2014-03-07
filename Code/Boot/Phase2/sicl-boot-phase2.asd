@@ -95,4 +95,5 @@
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
    (:file "allocate-built-in-instance")
+   (:file "make-instance-support")
    (:file "rename-package-2")))
