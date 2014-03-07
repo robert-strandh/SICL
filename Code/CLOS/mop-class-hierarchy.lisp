@@ -66,24 +66,44 @@
 (defconstant +class-unique-number-offset+ 0)
 (defconstant +instance-slots-offset+ 1)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class T.
+
 (define-built-in-class t () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FUNCTION.
 
 (define-built-in-class function (t)
   ((%entry-point :initarg :entry-point)
    (%linkage-vector :initarg :linkage-vector)
    (%environment :initform nil :initarg :environment)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class STANDARD-OBJECT.
+
 (defclass standard-object (t) ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FUNCALLABLE-STANDARD-OBJECT.
 
 (defclass funcallable-standard-object (standard-object function)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class METAOBJECT.
 
 (defclass metaobject (standard-object)
   ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; GENERIC-FUNCTION and STANDARD-GENERIC-FUNCTION.
+;;; Classes GENERIC-FUNCTION and STANDARD-GENERIC-FUNCTION.
 ;;;
 ;;; FIXME: I can not remember why I decided not to use initargs for
 ;;; the slots here, and instead calling explicit writers in :AFTER
@@ -180,6 +200,10 @@
     :accessor specializer-profile))
   (:metaclass funcallable-standard-class))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class METHOD
+
 ;;; Readers for method metaobjects.
 ;;;
 ;;; For a list of specified readers of these metaobjects, see
@@ -236,22 +260,46 @@
     :initform nil
     :accessor method-documentation)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class STANDARD-METHOD.
+
 (defclass standard-method (method)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class STANDARD-ACCESSOR-METHOD.
 
 (defclass standard-accessor-method (standard-method)
   ((%slot-definition 
     :initarg :slot-definition
     :reader accessor-method-slot-definition)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class STANDARD-READER-METHOD.
+
 (defclass standard-reader-method (standard-accessor-method)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class STANDARD-WRITER-METHOD.
 
 (defclass standard-writer-method (standard-accessor-method)
   ())
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class METHOD-COMBINATION.
+
 (defclass method-combination (metaobject)
   ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SPECIALIZER.
 
 (defgeneric specializer-direct-generic-functions (specializer))
 
@@ -268,6 +316,10 @@
     :initform '()
     :reader specializer-direct-methods
     :writer (setf s-direct-methods))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class EQL-SPECIALIZER.
 
 (defclass eql-specializer (specializer)
   ((%object 
@@ -436,7 +488,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; BUILT-IN-CLASS.
+;;; Class BUILT-IN-CLASS.
 ;;;
 ;;; The AMOP says that the readers CLASS-DIRECT-DEFAULT-INITARGS,
 ;;; CLASS-DIRECT-SLOTS, CLASS-DEFAULT-INITARGS, and CLASS-SLOTS should
@@ -485,7 +537,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; FORWARD-REFERENCED-CLASS.
+;;; Class FORWARD-REFERENCED-CLASS.
 
 (defclass forward-referenced-class (class)
   ((%direct-default-initargs
