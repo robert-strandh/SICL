@@ -18,4 +18,5 @@
    (:file "defmethod-defmacro")
    (:file "mop-class-hierarchy")
    (:file "finalize-all-target-classes")
+   (:file "patch-all-target-objects")
    (:file "rename-package-2")))
