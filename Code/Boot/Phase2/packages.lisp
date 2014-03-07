@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:sicl-boot-phase2
-  (:use #:common-lisp)
+  (:use #:common-lisp #:aspiring-sicl-clos)
   (:import-from #:sicl-code-utilities
 		#:proper-list-p
 		#:parse-generic-function-lambda-list
@@ -14,9 +14,6 @@
    #:ensure-generic-function)
   (:import-from
    #:sicl-boot-phase1
-   ;; Names of classes
-   #:funcallable-standard-class
-   #:eql-specializer
    ;; Miscellaneous functions.
    #:heap-instance-p
    #:heap-instance-class
