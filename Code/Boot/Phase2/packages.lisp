@@ -17,6 +17,8 @@
    ;; Types
    #:heap-instance
    ;; Miscellaneous functions.
+   #:allocate-heap-instance
+   #:allocate-slot-storage
    #:heap-instance-p
    #:heap-instance-class
    #:heap-instance-slots
