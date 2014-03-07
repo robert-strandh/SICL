@@ -103,10 +103,10 @@
 		  ;; We use the reader 
 		  (mapcar #'initargs direct-slot-definitions)))
     (let ((first-init (find-if-not #'null direct-slot-definitions
-				   :key #'initfunction)))
+				   :key #'slot-definition-initfunction)))
       (unless (null first-init)
 	(setf initform (slot-definition-initform first-init)
-	      initfunction (initfunction first-init))))
+	      initfunction (slot-definition-initfunction first-init))))
     (setf type
 	  `(and ,@(mapcar #'slot-definition-type direct-slot-definitions)))
     (if (null initfunction)
