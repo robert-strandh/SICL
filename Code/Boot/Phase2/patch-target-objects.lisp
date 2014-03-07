@@ -24,14 +24,20 @@
      :method-class (analogous-target-class mc)))
   (call-next-method))
 
-(defmethod patch-instance ((object slot-definition))
-  (unless (null (slot-definition-initfunction object))
-    (let* ((initform (slot-definition-initform object))
-	   (new-function (compile nil `(lambda () ,initform))))
-      (reinitialize-instance
-       object
-       :initfunction new-function)))
-  (call-next-method))
+
+;;; For now, do not patch the initfunction.  The plan is to leave the
+;;; initfunction intact until the last moment, so that we can execute
+;;; it when allocating class instances from target classes.  If the
+;;; plan works, then this function will migrate to a later phase.
+
+;;; (defmethod patch-instance ((object slot-definition))
+;;;   (unless (null (slot-definition-initfunction object))
+;;;     (let* ((initform (slot-definition-initform object))
+;;; 	   (new-function (compile nil `(lambda () ,initform))))
+;;;       (reinitialize-instance
+;;;        object
+;;;        :initfunction new-function)))
+;;;   (call-next-method))
 
 (defun already-patched-p (heap-instance)
   (heap-instance-p
