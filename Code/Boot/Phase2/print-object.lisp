@@ -56,28 +56,9 @@
     (format stream "*a standard writer method")))
 
 (defmethod print-object ((object slot-definition) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a slot definition")))
-
-(defmethod print-object ((object direct-slot-definition) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a direct slot definition")))
-
-(defmethod print-object ((object effective-slot-definition) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*an effective slot definition")))
-
-(defmethod print-object ((object standard-slot-definition) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a standard slot definition")))
-
-(defmethod print-object ((object standard-direct-slot-definition) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a standard direct slot definition")))
-
-(defmethod print-object ((object standard-effective-slot-definition) stream)
-  (print-unreadable-object (object stream)
-    (format stream "*a standard effective slot definition")))
+  (format stream "*~s ~s"
+	  (class-name (heap-instance-class object))
+	  (slot-definition-name object)))
 
 (defmethod print-object ((object method-combination) stream)
   (print-unreadable-object (object stream)
