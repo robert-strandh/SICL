@@ -52,7 +52,8 @@
 	   #:make-instance
 	   #:compile
 	   #:functionp
-	   #:print-object)
+	   #:print-object
+	   #:allocate-instance)
   (:export
    #:*ensure-class
    #:*ensure-built-in-class
