@@ -94,4 +94,5 @@
    (:file "xensure-method")
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
+   (:file "allocate-built-in-instance")
    (:file "rename-package-2")))
