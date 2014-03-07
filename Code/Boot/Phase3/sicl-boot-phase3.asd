@@ -17,4 +17,5 @@
    (:file "defmethod-support")
    (:file "defmethod-defmacro")
    (:file "mop-class-hierarchy")
+   (:file "finalize-all-target-classes")
    (:file "rename-package-2")))
