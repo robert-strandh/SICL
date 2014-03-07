@@ -47,7 +47,8 @@
 	   #:slot-missing
 	   #:make-instance
 	   #:compile
-	   #:functionp)
+	   #:functionp
+	   #:print-object)
   (:export
    #:*ensure-class
    #:*ensure-built-in-class

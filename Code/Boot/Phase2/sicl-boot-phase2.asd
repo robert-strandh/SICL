@@ -78,6 +78,7 @@
    (:file "direct-slot-definition-p")
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
+   (:file "print-object")
    (:file "satiate-all-generic-functions")
    (:file "class-database")
    (:file "generic-function-database")
