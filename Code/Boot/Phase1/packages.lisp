@@ -102,4 +102,8 @@
    #:allocate-built-in-instance
    #:initialize-built-in-instance-default
    ;; Variables
-   #:*unbound-value*))
+   #:*unbound-value*
+   #:*more-names*))
+
+(defparameter sicl-boot-phase1:*more-names*
+  '(#:class-slots))
