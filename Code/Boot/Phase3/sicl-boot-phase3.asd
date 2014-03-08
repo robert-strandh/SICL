@@ -22,4 +22,8 @@
    (:file "patch-all-target-objects")
    (:file "shared-initialize-support")
    (:file "update-functions")
+   (:file "xensure-class")
+   (:file "xensure-built-in-class")
+   (:file "xensure-generic-function")
+   (:file "xensure-method")
    (:file "rename-package-2")))
