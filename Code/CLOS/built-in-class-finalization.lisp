@@ -22,7 +22,7 @@
 	 (next-location 1))
     (loop for slot in slots
 	  do (when (eq (slot-definition-allocation slot) :instance)
-	       (setf (s-location slot)
+	       (setf (location slot)
 		     next-location)
 	       (incf next-location)))
     slots))
