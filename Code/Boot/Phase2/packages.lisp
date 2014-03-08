@@ -66,6 +66,9 @@
    #:allocate-instance-default
    #:allocate-built-in-instance
    #:find-target-class
+   #:add-target-class
+   #:find-target-generic-function
+   #:add-target-generic-function
    #:make-instance
    #:*make-instance-default*
    #:*shared-initialize-default*))
