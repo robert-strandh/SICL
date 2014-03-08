@@ -105,5 +105,42 @@
    #:*unbound-value*
    #:*more-names*))
 
+;;; Names of symbols that should ultimately be exported from the
+;;; SICL-CLOS package, exclusing names of symbols that are already
+;;; exported from teh COMMON-LISP package.
 (defparameter sicl-boot-phase1:*more-names*
-  '(#:class-slots))
+  (mapcar
+   #'cl:symbol-name
+   '(;; Accessors for class metaobjects. 
+     #:class-direct-superclasses
+     #:class-direct-slots
+     #:class-direct-default-initargs
+     #:class-precedence-list
+     #:class-slots
+     #:class-default-initargs
+     #:class-finalized-p
+     #:class-prototype
+     ;; Accessors for generic function metaobjects.
+     #:generic-function-name
+     #:generic-function-argument-precedence-order
+     #:generic-function-lambda-list
+     #:generic-function-declarations
+     #:generic-function-method-class
+     #:generic-function-method-combination
+     #:generic-function-methods
+     ;; Accessors for method metaobjects.
+     #:method-function
+     #:method-generic-function
+     #:method-lambda-list
+     #:method-specializers
+     #:accessor-method-slot-definition
+     ;; Accessors for slot definition metaobjects.
+     #:slot-definition-name
+     #:slot-definition-allocation
+     #:slot-definition-type
+     #:slot-definition-initargs
+     #:slot-definition-initform
+     #:slot-definition-initfunction
+     #:slot-definition-readers
+     #:slot-definition-writers
+     #:slot-definition-location)))
