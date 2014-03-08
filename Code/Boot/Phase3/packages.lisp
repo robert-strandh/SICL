@@ -18,12 +18,13 @@
   (:import-from #:sicl-boot-phase2
 		#:slot-value-using-class
 		#:slot-boundp-using-class)
+  (:shadowing-import-from #:sicl-boot-phase2
+			  #:make-instance)
   (:shadow
    #:defclass
    #:defgeneric
    #:defmethod
-   #:ensure-generic-function
-   #:make-instance)
+   #:ensure-generic-function)
   (:export
    ))
 
