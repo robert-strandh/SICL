@@ -15,6 +15,9 @@
 		#:standard-instance-access)
   (:shadowing-import-from #:sicl-boot-phase1
 			  #:class-of)
+  (:import-from #:sicl-boot-phase2
+		#:slot-value-using-class
+		#:slot-boundp-using-class)
   (:shadow
    #:defclass
    #:defgeneric
