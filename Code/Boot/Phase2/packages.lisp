@@ -28,7 +28,6 @@
    #:ensure-built-in-class
    #:ensure-method
    #:find-bridge-class
-   #:shared-initialize-default
    #:initialize-built-in-instance-default
    ;; Variables
    *unbound-value*)
@@ -60,4 +59,6 @@
    #:*ensure-generic-function
    #:*ensure-method
    #:finalize-target-classes
-   #:patch-target-objects))
+   #:patch-target-objects
+   #:*make-instance-default*
+   #:*shared-initialize-default*))
