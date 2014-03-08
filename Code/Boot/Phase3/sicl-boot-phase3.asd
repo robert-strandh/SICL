@@ -21,4 +21,5 @@
    (:file "finalize-all-target-classes")
    (:file "patch-all-target-objects")
    (:file "shared-initialize-support")
+   (:file "make-instance")
    (:file "rename-package-2")))
