@@ -30,5 +30,8 @@
    #:defmethod
    #:ensure-generic-function)
   (:export
+   #:*ensure-class
+   #:*ensure-built-in-class
+   #:*ensure-generic-function
+   #:*ensure-method
    ))
-
