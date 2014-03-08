@@ -101,6 +101,7 @@
    #:built-in-initialize-default
    #:allocate-built-in-instance
    #:initialize-built-in-instance-default
+   #:class-of
    ;; Variables
    #:*unbound-value*
    #:*more-names*))
