@@ -8,7 +8,13 @@
 		#:parse-ordinary-lambda-list
 		#:parse-specialized-lambda-list
 		#:required)
-  (:import-from #:sicl-additional-conditions #:no-such-class-name)
+  (:import-from #:sicl-additional-conditions
+		#:no-such-class-name)
+  (:import-from #:sicl-boot-phase1
+		;; Miscellaneous functions.
+		#:standard-instance-access)
+  (:shadowing-import-from #:sicl-boot-phase1
+			  #:class-of)
   (:shadow
    #:defclass
    #:defgeneric
