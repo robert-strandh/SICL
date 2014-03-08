@@ -60,5 +60,12 @@
    #:*ensure-method
    #:finalize-target-classes
    #:patch-target-objects
+   #:make-instance-default
+   #:slot-value-using-class
+   #:slot-boundp-using-class
+   #:allocate-instance-default
+   #:allocate-built-in-instance
+   #:find-target-class
+   #:make-instance
    #:*make-instance-default*
    #:*shared-initialize-default*))
