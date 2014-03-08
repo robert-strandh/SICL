@@ -22,7 +22,8 @@
    #:defclass
    #:defgeneric
    #:defmethod
-   #:ensure-generic-function)
+   #:ensure-generic-function
+   #:make-instance)
   (:export
    ))
 
