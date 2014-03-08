@@ -20,4 +20,5 @@
    (:file "mop-class-hierarchy")
    (:file "finalize-all-target-classes")
    (:file "patch-all-target-objects")
+   (:file "shared-initialize-support")
    (:file "rename-package-2")))
