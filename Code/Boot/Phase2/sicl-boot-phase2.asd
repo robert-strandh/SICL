@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "rename-package-1")
+   (:file "import")
    (:file "list-utilities")
    (:file "functionp")
    (:file "defclass-support")

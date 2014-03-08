@@ -6,6 +6,7 @@
   :components
   ((:file "packages")
    (:file "rename-package-1")
+   (:file "import")
    (:file "list-utilities")
    (:file "ensure")
    (:file "defclass-support")
