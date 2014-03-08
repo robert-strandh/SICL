@@ -22,4 +22,5 @@
    (:file "patch-all-target-objects")
    (:file "shared-initialize-support")
    (:file "make-instance")
+   (:file "update-functions")
    (:file "rename-package-2")))
