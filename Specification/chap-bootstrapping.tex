@@ -32,8 +32,8 @@ are called, so they must exist and be executable:
   to initialize the slots of the instance.
 \item \texttt{shared-initialize}.  Called by
   \texttt{initialize-instance}.
-\item \texttt{slot-value}.  Called by \texttt{shared-initialize}.
-\item \texttt{(setf slot-value)}.  Called by
+\item \texttt{slot-boundp-using-class}.  Called by \texttt{shared-initialize}.
+\item \texttt{(setf slot-value-using-class)}.  Called by
   \texttt{shared-initialize}.
 \end{itemize}
 
@@ -56,7 +56,236 @@ including:
 
 \section{Bootstrapping stages}
 
-\subsection{Stage 1, compiling macro definitions}
+\subsection{Stage 1, bootstrapping CLOS}
+
+\subsubsection{Definitions}
+
+\begin{definition}
+A \emph{host class} is a class in the host system.  If it is an
+instance of the host class \texttt{host:standard-class}, then it is
+typically created by \texttt{host:defclass}.
+\end{definition}
+
+\begin{definition}
+A \emph{host instance} is an instance of a host class.  If it is an
+instance of the class \texttt{host:standard-object}, then it is
+typically created by a call to \texttt{host:make-instance} using a
+host class or the name of a host class.
+\end{definition}
+
+\begin{definition}
+A \emph{target class} is a class metaobject represented as a target
+instance of some target class. 
+\end{definition}
+
+\begin{definition}
+A \emph{target instance} is an instance of a target class.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge class} is a representation of a target class as a host
+instance.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge instance} is a target instance, except that the class of
+the instance is not a target class but a bridge class.
+\end{definition}
+
+Notice that according to this definition, a bridge instance is not an
+instance of a bridge class.
+
+\begin{definition}
+A \emph{host generic function} is a generic function created by
+\texttt{host:defgeneric}, so it is a host instance of the host class
+\texttt{host:generic-function}.  Arguments to the discriminating
+function of such a generic function are host instances.
+\texttt{host:class-of} is called on some required arguments in order
+to determine what methods to call.
+\end{definition}
+
+\begin{definition}
+A \emph{host method} is a method created by \texttt{host:defmethod},
+so it is a host instance of the host class \texttt{host:method}.  The
+class specializers of such a method are host classes.
+\end{definition}
+
+\begin{definition}
+A \emph{target generic function} is an instance of the target class
+\texttt{target:generic-function}.  Arguments to the discriminating
+function of such a generic function are target instances.
+\texttt{target:class-of} is called on some required arguments in order
+to determine what methods to call, and the function
+\texttt{target:class-unique-number} is called to determine the unique
+number of the class.
+\end{definition}
+
+\begin{definition}
+A \emph{target method} is an instance of the target class
+\texttt{target:method}.  The class specializers of such a method are
+target classes.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge generic function} is a generic function which is a host
+instance of the host class \texttt{target:generic-function}.  Arguments to
+the discriminating function of such a generic function are
+typically target instances (but not necessarily, because of our
+definition of "target instance").  \texttt{target:class-of} is called on
+some required arguments in order to determine what methods to
+call, and \texttt{target:class-unique-number} is called to determine the
+unique number of the class.
+\end{definition}
+
+\begin{definition}
+A \emph{bridge method} is a a method which is a host instance of the host
+class \texttt{target:method}.  The class specializers of such a method can
+be bridge classes or target classes depending on context, but the
+class accessors (\texttt{target:class-direct-superclasses}, etc.) as well
+as \texttt{target:class-unique-number} must be defined in that context to
+work on the specializers. 
+\end{definition}
+
+\subsubsection{Phase 1}
+
+We use \texttt{host:defclass} to create a hierarchy of host classes
+corresponding to the hierarchy of MOP classes.  The names of those host
+classes will be \texttt{target:standard-object},
+\texttt{target:metaobject}, etc., except that we do not create a class
+named \texttt{T} because that would require shadowing the symbol
+\texttt{T} which would create many other problems.  It is however not
+required to have \texttt{T} as a superclass for these classes.  All
+that matters is that these classes have the right slots, and
+\texttt{T} does not supply any slots anyway.  These host classes have
+the analogous superclasses compared their corresponding target MOP
+classes, and they define the analogous slots.  Their metaclasses are
+all wrong of course, because each one of them has
+\texttt{host:standard-class} as metaclass.  The class
+finalization protocol of the host will make sure that instances of
+these host classes have the effective slots determined by class
+inheritance.  In other words, each of the classes define slots with
+the right names, the right initargs, etc.
+
+\subsubsection{Phase 2}
+
+The purpose of this phase is to make it possible to create bridge
+generic functions and bridge classes.
+
+In order to create a generic function, we need the
+existence of other generic functions.  We break this cycle by using
+host generic functions to create bridge generic functions.  Examples 
+of host generic functions that are defined in this phase are
+\texttt{ensure-generic-function-using-class},
+\texttt{compute-applicable-methods-using-classes},
+\texttt{compute-discriminating-function}, etc.  Furthermore, in this
+phase, we define \texttt{:after} method on
+\texttt{host:initialize-instance} specialized for the host classes
+\texttt{target:generic-function} and \texttt{target:method}.  
+
+Next, we create bridge classes corresponding to the classes of the MOP
+hierarchy.  We do this by redefining \texttt{defclass} to call
+\texttt{target:ensure-class} which calls \texttt{host:make-instance}
+of the appropriate host class.  When a bridge class is created, it
+will automatically create generic functions corresponding to slot
+readers and writers.  This is done by calling
+\texttt{host:make-instance} directly or indirectly through
+\texttt{ensure-generic-function}.  Thus the generic functions created
+this way are bridge generic functions, and the methods are bridge
+methods.
+
+Creating bridge classes this way will also instantiate the host class
+\texttt{target:direct-slot-definition}, so that our bridge classes
+contain bridge instances in their slots. 
+
+Before creating the bridge classes, we must define \texttt{:after}
+methods on \texttt{host:initialize-instance} specialized for the host
+classes \texttt{target:standard-class} and
+\texttt{target:funcallable-standard-class}.  
+
+\subsubsection{Phase 3}
+
+The purpose of this phase is to create target generic functions and
+target classes, by instantiating bridge classes.  
+
+At the end of this phase, we have a set of target instances, some of
+which are target classes, except that the \texttt{class} slot of the
+header object of every such instance is a bridge class.  We also have
+a set of target generic functions (mainly accessors) that are target
+instances like all the others. 
+
+\subsubsection{Phase 4}
+
+The first step of this phase is to finalize all the target classes
+that were created in phase 3.  Finalization will create target
+instances of bridge classes corresponding to effective slot
+definitions. 
+
+The second step is to \emph{patch} all the target instances allocated
+so far.  There are two different ways in which target instances must
+be patched.  First of all, all target instances have a bridge class in
+the \texttt{class} slot of the header object.  We patch this
+information by accessing the \emph{name} of the bridge class and
+replacing the slot contents by the target class with the same name.
+Second, target instances of the class \texttt{standard-object} contain
+a list of effective slot definition objects in the second word of the
+contents vector, except that those effective slot definition objects
+are bridge instances, because they were copied form the
+\texttt{class-slots} slot of the bridge class when the bridge class
+was instantiated to obtain the target instance.  Since all target
+classes were finalized during the first step of this phase, they now
+all have a list of effective slot definition objects, and those
+objects are target instances.  Patching consists of replacing the
+second word of the contents vector of all instances of
+\texttt{standard-object} by the contents of the \texttt{class-slots}
+slot of the class object of the instance, which is now a target
+class. 
+
+The final step in this phase is to \emph{install} some of the
+remaining bridge generic functions so that they are the
+\texttt{fdefinition}s of their respective names.  We do not install
+all remaining bridge generic functions, because some of them would
+clobber host generic functions with the same name that are still
+needed.  
+
+At the end of this phase, we have a complete set of bridge generic
+functions that operate on target instances.  We still need bridge
+classes to create target instances, because the \emph{initfunction}
+needs to be executed for slots that require it, and only host
+functions are executable at this point.
+
+\subsubsection{Phase 5}
+
+The purpose of this phase is to create target instances for all
+objects that are needed in order to obtain a viable image, including: 
+
+\begin{itemize}
+\item target built-in classes such as \texttt{package}, \texttt{symbol},
+  \texttt{string}, etc., 
+\item target instances of those classes, such as the required
+  packages, the symbols contained in those packages, the names of
+  those symbols, etc.
+\item target standard classes for representing the global environment
+  and its contents.
+\item target instances of those classes.
+\end{itemize}
+
+\subsubsection{Phase 6}
+
+The purpose of this phase is to replace all the host instances that
+have been used so far as part of the entire target structure, such as
+symbols, lists, and integers by their target counterparts.
+
+\subsubsection{Phase 7}
+
+The purpose of this phase is to take the simulated graph of objects
+used so far and transfer it to a \emph{memory image}.  
+
+\subsubsection{Phase 8}
+
+Finally, the memory image is written to a binary file. 
+
+
+\subsection{Stage 2, compiling macro definitions}
 
 Stage 1 of the bootstrapping process consists of using the cross
 compiler to compile files containing definitions of standard macros
