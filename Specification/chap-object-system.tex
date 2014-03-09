@@ -280,7 +280,7 @@ effective method can be reused, and if so, it invokes it on the
 arguments received.
 
 If the call history does not contain an entry corresponding to the
-classes of the required arguments, as required by the AMP, the
+classes of the required arguments, as required by the AMOP, the
 discriminating function then first calls
 \texttt{compute-applicable-methods-using-classes}, passing it the
 classes of the required arguments.  If the second value returned by
@@ -328,33 +328,37 @@ The discriminating function of a generic function is computed from the
 call history.
 
 If the call history has relatively few entries, then the
-discriminating function accesses the \emph{unique number} of each of
-the classes of the required arguments.  It then uses numeric
-comparisons in a tree-shaped computation to determine which (if any)
-effective method to invoke.  In effect, the discriminating function
-becomes a very simple \emph{automaton} where each transition is
-determined by a comparison between two small integers.  The class
-numbers become constants inside the compiled code of the
-discriminating function, making comparison fast.  Each argument class
-is tested from left to right, without taking the \emph{argument
-  precedence order} of the generic function into account.  For each
-argument, the set of possible effective methods is filtered by a
-binary search.  The search is based on \emph{intervals of class
-  numbers} as opposed to individual class numbers.  This optimization
-can speed up the dispatch considerably when an interval of class
-numbers yield the same effective method.  Since classes are finalized
-in a \emph{depth-first} order, class numbers for a subtree of classes
-frequently obtain consecutive class numbers.  A method specialized to
-the root of such a subtree is applicable to all the classes in the
-subtree, and in this case, only two tests (for the upper and the lower
-bound of the interval of class numbers) are required to determine
-whether that method is applicable. 
+discriminating function computes the \emph{identification}%
+\footnote{Recall that the \emph{identification} of an object is either
+  the \emph{stamp} of the object if it is a general instance, or the
+  \emph{unique number} of the class of the object if it is a special
+  instance.}
+of each of the required arguments.  It then uses numeric comparisons
+in a tree-shaped computation to determine which (if any) effective
+method to invoke.  In effect, the discriminating function becomes a
+very simple \emph{automaton} where each transition is determined by a
+comparison between two small integers.  The class numbers become
+constants inside the compiled code of the discriminating function,
+making comparison fast.  Each argument identification is tested from
+left to right, without taking the \emph{argument precedence order} of
+the generic function into account.  For each argument, the set of
+possible effective methods is filtered by a binary search.  The search
+is based on \emph{intervals of class numbers} as opposed to individual
+class numbers.  This optimization can speed up the dispatch
+considerably when an interval of class numbers yield the same
+effective method.  Since it is common that the unique class numbers of
+the classes in an inheritance subtree cluster into contiguous
+intervals, this optimization is often pertinent, and in this
+case, only two tests (for the upper and the lower bound of the
+interval of class numbers) are required to determine whether that
+method is applicable.
 
 The automaton of the discriminating function can not contain class
 numbers that were discarded as a result of classes being
 reinitialized, simply because whenever a class is reinitialized, the
-call history of every generic function specializing on that class is
-updated and the discriminating function is recomputed.  
+call history of every generic function specializing on that class or
+any of its subclasses is updated and the discriminating function is
+recomputed.
 
 When a generic function is invoked on some arguments, the first step
 is to compute the \emph{identification} of each required argument.
@@ -363,7 +367,7 @@ The identification is computed as follows:
 \begin{itemize}
 \item If the object is a \emph{general instance}, then it is the
   \emph{stamp} of the instance, i.e. the unique number of the class of
-  the instance as it was when the instance was created.  The stamps is
+  the instance as it was when the instance was created.  The stamp is
   stored in the first element of the contents vector of the instance.
 \item Otherwise (i.e., if the object is a \emph{special instance}, it
   is the \emph{unique number} of the class of the object.
@@ -431,21 +435,25 @@ function.  A simple hashing scheme might be better in that case.
 
 Accessor methods are treated specially when an effective method is
 computed from a list of applicable methods.  Rather than applying the
-default scheme of generating a call to the method function, when
-\texttt{compute-applicable-methods-using-classes} sees an applicable
-accessor method, it determines the \emph{slot location} of the slot in
-instances of the class of the argument.  In the list of methods that
-it returns, it then replaces the original applicable accessor method
-by a method that makes direct access to the slot in the instance,
-given the location.
+default scheme of generating a call to the method function, when any
+of the methods returned by
+\texttt{compute-applicable-methods-using-classes} is an accessor
+method, \texttt{compute-discriminating-function}, replaces such a
+method by one that makes a direct access to the slot of the instance.
+It does this by determining the \emph{slot location} of the slot in
+instances of the class of the argument.  The substitution is
+\emph{not} done by \texttt{compute-applicable-methods-using-classes}
+itself, because the list of (sorted) methods returned by that function
+is used for the purpose of caching in order to avoid recomputing an
+effective method. 
 
 Since the location of a slot may change when the class is
 reinitialized, an effective method computed this way may become
 invalid as a result.  For that reason, whenever a class is
 reinitialized, any call history entries with methods specializing on
-that class are removed.  This way, a call to
+that class or any of its subclasses are removed.  This way, a call to
 \texttt{compute-applicable-methods-using-classes} will be forced, and
-a new location will be determined. 
+a new location will be determined.
 
 \section{Implementing \texttt{slot-value} and \texttt{(setf slot-value)}}
 
