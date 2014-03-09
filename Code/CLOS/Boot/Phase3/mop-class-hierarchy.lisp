@@ -1,1 +1,0 @@
-../../mop-class-hierarchy.lisp
