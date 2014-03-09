@@ -64,7 +64,7 @@
     (unless (null method-to-remove)
       (remove-method generic-function method-to-remove)))
   ;; Add this method to the set of methods of this generic function.
-  (setf (gf-methods generic-function)
+  (setf (methods generic-function)
 	(cons method (generic-function-methods generic-function)))
   ;; Update the specializer-profile of the generic-function according
   ;; to the specializers of the method.
@@ -100,7 +100,7 @@
 
 (defun remove-method-default (generic-function method)
   ;; Remove METHOD from the methods of GENERIC-FUNCTION.
-  (setf (gf-methods generic-function)
+  (setf (methods generic-function)
 	(remove method (generic-function-methods generic-function)))
   ;; Compute a new specializer profile for the generic function.
   (compute-and-set-specializer-profile generic-function)

@@ -29,7 +29,7 @@
     ;; These are used directly by ADD-METHOD in order to add a method
     ;; to the methods of a generic function.
     generic-function-methods
-    (setf gf-methods)
+    (setf methods)
     call-history
     ;; These are used directly by ADD-METHOD in order to store a back
     ;; pointer from the method to its generic function and to check

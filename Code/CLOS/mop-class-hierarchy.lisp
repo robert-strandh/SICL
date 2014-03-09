@@ -180,7 +180,7 @@
     :initform '() 
     ;; This reader is the one that the AMOP specifies.
     :reader generic-function-methods
-    :writer (setf gf-methods))
+    :writer (setf methods))
    ;; We maintain a CALL HISTORY of the generic function.  This call
    ;; history is a list of call records.  Whenever a call is made to
    ;; the generic function with some call profile that has not yet
