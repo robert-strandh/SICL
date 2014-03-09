@@ -455,6 +455,34 @@ that class or any of its subclasses are removed.  This way, a call to
 \texttt{compute-applicable-methods-using-classes} will be forced, and
 a new location will be determined.
 
+\section{Dealing with metastability issues}
+
+The AMOP gives a few examples of metastability issues that need to be
+dealt with.  It also suggests solutions to these problems, based on
+recognizing \emph{special cases} such as when \texttt{class-slots} is
+called with the class named \texttt{standard-class}.  
+
+In \sysname{} we use a different method, called \emph{satiation}. 
+Satiation, in effect, turns metastability problems into
+\emph{bootstrapping problems} which are much easier to deal with.
+
+\begin{definition}
+A generic function $F$ is said to be \emph{satiated} with respect to a
+set of classes $C$ if and only if for every combination of classes of
+required arguments of $F$ for which an effective method can be
+computed, if a call is made to $F$ with such a combination, then an
+effective method exists in the cache of $F$ so that no additional
+generic function needs to be invoked in order for the corresponding
+effective method to be called.
+\end{definition}
+
+As part of bootstrapping the object system, every specified%
+\footnote{By the AMOP.} generic function is satiated with respect to
+the set of specified classes.  Furthermore, since specified classes
+can not be redefined, we can make sure that every specified generic
+function always remains satiated with respect to the set of specified
+classes.
+
 \section{Implementing \texttt{slot-value} and \texttt{(setf slot-value)}}
 
 The functions \texttt{slot-value} and \texttt{(setf slot-value)} play
