@@ -116,7 +116,7 @@ A \emph{target generic function} is an instance of the target class
 function of such a generic function are target instances.
 \texttt{target:class-of} is called on some required arguments in order
 to determine what methods to call, and the function
-\texttt{target:class-unique-number} is called to determine the unique
+\texttt{target:unique-number} is called to determine the unique
 number of the class.
 \end{definition}
 
@@ -133,7 +133,7 @@ the discriminating function of such a generic function are
 typically target instances (but not necessarily, because of our
 definition of "target instance").  \texttt{target:class-of} is called on
 some required arguments in order to determine what methods to
-call, and \texttt{target:class-unique-number} is called to determine the
+call, and \texttt{target:unique-number} is called to determine the
 unique number of the class.
 \end{definition}
 
@@ -142,7 +142,7 @@ A \emph{bridge method} is a a method which is a host instance of the host
 class \texttt{target:method}.  The class specializers of such a method can
 be bridge classes or target classes depending on context, but the
 class accessors (\texttt{target:class-direct-superclasses}, etc.) as well
-as \texttt{target:class-unique-number} must be defined in that context to
+as \texttt{target:unique-number} must be defined in that context to
 work on the specializers. 
 \end{definition}
 

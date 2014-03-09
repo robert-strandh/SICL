@@ -43,22 +43,24 @@ metaclass is not specified.
 
 In \sysname{}, every class (i.e., ever instance of a class metaclass)
 contains a \emph{unique number} which is an integer assigned
-sequentially from $0$ as a class is finalized.  When a class is
-finalized a second time, its old unique number is never reused,
-leaving \emph{holes} in the sequence corresponding to numbers that no
-longer correspond to any classes.%
+sequentially from $0$ as a class is finalized.% 
+\fixme{It has to be
+assigned when the class is \emph{unfinalized}}
+When a class is finalized a second time, its old unique number is
+never reused, leaving \emph{holes} in the sequence corresponding to
+numbers that no longer correspond to any classes.%
 \footnote{It might be possible for the garbage collector to change the
   unique numbers of the classed, compacting the sequence, but that
   probably will not be necessary.}
 
 Every \emph{general instance}%
-\footnote{Recall that a \emph{general instance} is an instance allocated
-  on the heap, excluding \texttt{cons} cells.}
-contains the unique number of its class as it was when the instance
-was created.  This number is always the first element of the contents
-vector of the general instance.  Even though built-in classes can not be
-redefined, general instances of built-in classes contain this unique
-number. 
+\footnote{Recall that a \emph{general instance} is an instance
+  allocated on the heap, excluding \texttt{cons} cells.}  contains a
+\emph{stamp}, which is the unique number of its class as it was when
+the instance was created.  This number is always the first element of
+the contents vector of the general instance.  Even though built-in
+classes can not be redefined, general instances of built-in classes
+contain a stamp.
 
 \subsection{Standard classes}
 \label{object-system-standard-classes}
@@ -102,17 +104,17 @@ definition of the class.  Furthermore, the version information must
 contain enough information of the class as it was when the instance
 was created to determine whether slots have been added or removed.
 
-In \sysname{} the first location of the contents vector of each general
-instance contains the \emph{unique number} of the class as it was when
-the instance was created.  In addition, each instance of
-\texttt{standard-object} contains a reference to the \emph{list of
-  effective slots} of the class as it was when the instance was
-created.  This method makes the contents vector of the instance
-completely self contained.  It allows the garbage collector to trace
-the obsolete instance, or update it before tracing.  It allows for an
-inspector to inspect the obsolete instance if this should be required.
-The main purpose of the list of effective slots, however, is making it
-possible to update an obsolete instance.
+In \sysname{} the first location of the contents vector of each
+general instance contains a \emph{stamp}, which is the unique number
+of the class as it was when the instance was created.  In addition,
+if the instance is \emph{flexible}, it also contains a reference to the
+\emph{list of effective slots} of the class as it was when the
+instance was created.  This method makes the contents vector of the
+instance completely self contained.  It allows the garbage collector
+to trace the obsolete instance, or update it before tracing.  It
+allows for an inspector to inspect the obsolete instance if this
+should be required.  The main purpose of the list of effective slots,
+however, is making it possible to update an obsolete instance.
 
 Another very handy feature of standard classes, but a much simpler
 one, is that it allows for instances to \emph{change class}.  In other
@@ -355,30 +357,29 @@ call history of every generic function specializing on that class is
 updated and the discriminating function is recomputed.  
 
 When a generic function is invoked on some arguments, the first step
-is to compute the \emph{object class unique number}%
-\footnote{We clearly need to find a better (i.e., shorter) name for
-  this concept.} of each required argument.  The object class unique
-number is computed as follows:
+is to compute the \emph{identification} of each required argument.
+The identification is computed as follows:
 
 \begin{itemize}
-\item If the object is a \emph{general instance}, then it is the first
-  element of the contents vector, i.e. the unique number of the class
-  of the instance as it was when the instance was created.
-\item Otherwise, it is the \emph{unique number} of the class of the
-  object.
+\item If the object is a \emph{general instance}, then it is the
+  \emph{stamp} of the instance, i.e. the unique number of the class of
+  the instance as it was when the instance was created.  The stamps is
+  stored in the first element of the contents vector of the instance.
+\item Otherwise (i.e., if the object is a \emph{special instance}, it
+  is the \emph{unique number} of the class of the object.
 \end{itemize}
 
-The object class unique numbers are then used by the automaton to find
-an effective method to invoke.  If the automaton fails to find an
+The identifications are then used by the automaton to find an
+effective method to invoke.  If the automaton fails to find an
 effective method, the following steps are taken:
 
 \begin{enumerate}
-\item The object class unique number is checked against the unique
+\item The identification is checked against the unique
   number of the class of the object.  If they are not the same, then
   the object is a general instance, and it is \emph{obsolete}.  The
   machinery for updating the instance is invoked, and then a second
   attempt with the automaton is made. 
-\item If the object class unique number and the unique number of the
+\item If the object identification and the unique number of the
   class of the object are the same, then
   \texttt{compute-applicable-methods-using-classes} is called.  If the
   first return value is not the empty list and the second return value
@@ -398,7 +399,8 @@ whether an instance is obsolete.  Also notice that for up-to-date
 general instances, there is no need to access the class of the
 instance in order to determine an effective method to call.  For
 objects other than general instances, there is a small fixed number of
-possible classes, so the object class unique number can be open coded.
+possible classes, so determining the identification of an object can
+be open coded.
 
 Notice also that many interesting optimizations are possible here when
 the automaton is computed from the call history.
@@ -415,8 +417,8 @@ the automaton is computed from the call history.
   open coded in the automaton. 
 \item In the case above and when in addition the specializer of the
   accessor method is a class for a special instance (such as
-  \texttt{fixnum}, \texttt{character}, or \texttt{cons}), the test for
-  the object class unique number is not required.  Instead, the
+  \texttt{fixnum}, \texttt{character}, or \texttt{cons}), determining
+  the unique number of the class object is not required.  Instead, the
   discriminating function can be a simple test for tag bits.
 \end{itemize}
 

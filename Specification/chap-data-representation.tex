@@ -120,17 +120,16 @@ vector.%
   impossible to determine the class of the object.}
 
 The first entry of the contents vector of every general instance is a
-small fixnum that indicates the \emph{object class unique number}.%
-\footnote{We need to find a better name for this concept.}
-This number indicates the \emph{unique class number} of the class of
-the general instance as it was when the instance was created.  The main
-purpose of this information is to be used in \emph{generic function
-  dispatch}.  It is also
-used to determine whether a general instance is an obsolete instance (in
-this case the \emph{object class unique number} of the general instance
-will not be the same as the \emph{current} unique class number of the
-class of the general instance).  Only standard objects can become
-obsolete. \seesec{sec-data-representation-standard-objects}
+small fixnum called the \emph{stamp} of the general instance.  The
+stamp is the \emph{unique class number} of the class of the general
+instance as it was when the instance was created.  The main purpose of
+this information is to be used in \emph{generic function dispatch}.
+It is also used to determine whether a general instance is an obsolete
+instance (in this case the stamp of the general instance will not be
+the same as the \emph{current} unique class number of the class of the
+general instance).  Standard instances that can become obsolete are
+said to be \emph{flexible}.
+\seesec{sec-data-representation-standard-objects}
 
 One advantage of representing general instances this way is that the
 contents vector is \emph{internally consistent}.  To explain what we
@@ -202,22 +201,22 @@ both.  We simply store a reference to the \emph{list of effective
   slots} that the class of the instance defined when the instance was
 created.  This reference is stored as the \emph{second} word of the
 contents vector (recall that the first word is taken up by the
-\emph{object class unique
-  number}). \seesec{sec-data-representation-general-instances} 
+\emph{stamp}). \seesec{sec-data-representation-general-instances}
 
 This solution makes it possible to determine the layout of the
 contents vector of an obsolete instance, so that it can be traced by
 the garbage collector when necessary.  This solution also allows the
 system to determine which slots have been added and which slots have
 been removed since the instance was created.  As indicated in
-\refSec{sec-data-representation-general-instance}, in order to
-detect whether an object is obsolete, the contents of the first word
-of the contents vector is compared to the \emph{class unique number}
-of the class of the object.  However, this test is performed
-automatically in most cases, because when an obsolete object is passed
-as an argument to a generic function, the \emph{automation} of the
-discriminating function of the generic function will fail to find an
-effective method, triggering an update of the object. 
+\refSec{sec-data-representation-general-instance}, in order to detect
+whether an object is obsolete, the contents of the first word of the
+contents vector (i.e,, the \emph{stamp}) is compared to the
+\emph{class unique number} of the class of the object.  However, this
+test is performed automatically in most cases, because when an
+obsolete object is passed as an argument to a generic function, the
+\emph{automation} of the discriminating function of the generic
+function will fail to find an effective method, triggering an update
+of the object.
 \seesec{sec-generic-function-dispatch-the-discriminating-function}
 
 \section{Funcallable standard objects}
@@ -264,7 +263,7 @@ As a consequence, in instances of built-in classes that are
 represented as general instances, it is not necessary to keep a copy of the
 class slots in the contents vector of an instance of a built-in class.
 However, the first cell of the contents vector of such instances still
-contain the \emph{object class unique number}, so that every general
+contain the \emph{stamp}, so that every general
 instance can be treated the same by all generic functions, thus
 avoiding a test for a special case.
 
@@ -349,7 +348,7 @@ could be represented in a single byte.  Thus the contents vector of a
 \emph{simple} string is represented as follows:
 
 \begin{itemize}
-\item The obligatory \emph{object class unique number}.
+\item The obligatory \emph{stamp}.
 \item A list of a single element corresponding to the \emph{length} of
   the string. 
 \item A number of consecutive words, each holding a tagged immediate
@@ -362,7 +361,7 @@ A symbol is represented with a two-word header (as usual) and a
 contents vector of four consecutive words.  The four words contain:
 
 \begin{enumerate}
-\item The obligatory \emph{object class unique number}.
+\item The obligatory \emph{stamp}.
 \item The \emph{name} of the symbol.  The value of this slot is a
   string.
 \item The \emph{package} of the symbol.  The value of this slot is a
@@ -382,7 +381,7 @@ A package is represented with a two-word header (as usual) and a
 contents vector of 8 words:
 
 \begin{enumerate}
-\item The obligatory \emph{object class unique number}.
+\item The obligatory \emph{stamp}.
 \item The \emph{name} of the package.  The value of this slot is a
   string.
 \item The \emph{nicknames} of the package.  The value of this slot is
@@ -427,7 +426,7 @@ contents vector with at least four slots in addition to the inherited
 slots.
 
 \begin{enumerate}
-\item The obligatory \emph{object class unique number}.
+\item The obligatory \emph{stamp}.
 \item One ore more slots representing \emph{entry points}.  Each entry
   point is a \emph{raw address} of an aligned word in the byte vector
   containing the instructions of the function.  The garbage collector
