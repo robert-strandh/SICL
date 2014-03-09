@@ -270,7 +270,7 @@ The main reason for choosing this representation is that it has
 some advantages:
 
 \begin{itemize}
-\item Currently, every heap-allocated object has a header object and a
+\item Currently, every general instance has a header object and a
   contents vector.  If we were to use a different representation for
   environments, then they would have to be allocated in a dedicated
   part of the heap, and that would make the memory-management system
@@ -315,8 +315,8 @@ A location can have one of different types of values:
   \item Raw machine pointer
     \begin{itemize}
     \item Raw machine pointer to a cons cell.  
-    \item Raw machine pointer to the header object of a heap allocated
-      object other than a cons cell.
+    \item Raw machine pointer to the header object of a general
+      instance.
     \item Raw machine pointer that may point inside the contents
       vector of some other object. In this case, the location has to
       be indicated as \emph{tied} to another location that contains

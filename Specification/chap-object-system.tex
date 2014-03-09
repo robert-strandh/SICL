@@ -51,13 +51,13 @@ longer correspond to any classes.%
   unique numbers of the classed, compacting the sequence, but that
   probably will not be necessary.}
 
-Every \emph{heap instance}%
-\footnote{Recall that a \emph{heap instance} is an instance allocated
+Every \emph{general instance}%
+\footnote{Recall that a \emph{general instance} is an instance allocated
   on the heap, excluding \texttt{cons} cells.}
 contains the unique number of its class as it was when the instance
 was created.  This number is always the first element of the contents
-vector of the heap instance.  Even though built-in classes can not be
-redefined, heap instances of built-in classes contain this unique
+vector of the general instance.  Even though built-in classes can not be
+redefined, general instances of built-in classes contain this unique
 number. 
 
 \subsection{Standard classes}
@@ -102,7 +102,7 @@ definition of the class.  Furthermore, the version information must
 contain enough information of the class as it was when the instance
 was created to determine whether slots have been added or removed.
 
-In \sysname{} the first location of the contents vector of each heap
+In \sysname{} the first location of the contents vector of each general
 instance contains the \emph{unique number} of the class as it was when
 the instance was created.  In addition, each instance of
 \texttt{standard-object} contains a reference to the \emph{list of
@@ -361,7 +361,7 @@ is to compute the \emph{object class unique number}%
 number is computed as follows:
 
 \begin{itemize}
-\item If the object is a \emph{heap instance}, then it is the first
+\item If the object is a \emph{general instance}, then it is the first
   element of the contents vector, i.e. the unique number of the class
   of the instance as it was when the instance was created.
 \item Otherwise, it is the \emph{unique number} of the class of the
@@ -375,7 +375,7 @@ effective method, the following steps are taken:
 \begin{enumerate}
 \item The object class unique number is checked against the unique
   number of the class of the object.  If they are not the same, then
-  the object is a heap instance, and it is \emph{obsolete}.  The
+  the object is a general instance, and it is \emph{obsolete}.  The
   machinery for updating the instance is invoked, and then a second
   attempt with the automaton is made. 
 \item If the object class unique number and the unique number of the
@@ -394,11 +394,11 @@ effective method, the following steps are taken:
 \end{enumerate}
 
 Notice that in most cases, no explicit test is required to determine
-whether an instance is obsolete.  Also notice that for up-to-date heap
-instances, there is no need to access the class of the instance in
-order to determine an effective method to call.  For objects other
-than heap instances, there is a small fixed number of possible
-classes, so the object class unique number can be open coded. 
+whether an instance is obsolete.  Also notice that for up-to-date
+general instances, there is no need to access the class of the
+instance in order to determine an effective method to call.  For
+objects other than general instances, there is a small fixed number of
+possible classes, so the object class unique number can be open coded.
 
 Notice also that many interesting optimizations are possible here when
 the automaton is computed from the call history.
@@ -414,7 +414,7 @@ the automaton is computed from the call history.
   applicable accessor method for that entry, the slot access can be
   open coded in the automaton. 
 \item In the case above and when in addition the specializer of the
-  accessor method is a class for a non-heap instance (such as
+  accessor method is a class for a special instance (such as
   \texttt{fixnum}, \texttt{character}, or \texttt{cons}), the test for
   the object class unique number is not required.  Instead, the
   discriminating function can be a simple test for tag bits.

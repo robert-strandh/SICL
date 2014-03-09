@@ -15,11 +15,11 @@ perhaps in other papers as well.
 In \refChap{chap-data-representation} we suggest a data representation
 where every heap allocated object has a two-word header object.  If it
 is a \texttt{cons} cell, then that is the entire object.  For other
-heap-allocated objects, the first of the two words is a tagged pointer
-to the class object, and the second of the two words is a raw pointer
-to the \emph{contents vector}.  In this chapter, we describe the
-consequences of this suggested representation to the garbage
-collector. 
+heap-allocated objects (called \emph{genral instances}, the first of
+the two words is a tagged pointer to the class object, and the second
+of the two words is a raw pointer to the \emph{contents vector}.  In
+this chapter, we describe the consequences of this suggested
+representation to the garbage collector.
 
 \section{Global collector}
 No work has been done yet on the global collector.  

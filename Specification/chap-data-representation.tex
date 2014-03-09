@@ -24,7 +24,8 @@ four different \emph{tags} as follows:
   variables and slots.  On 64-bit platforms \emph{single-floats} are
   represented as immediate values. 
 \item \texttt{11}.  This tag is used for all heap-allocated objects
-  other than \texttt{cons} cells.
+  other than \texttt{cons} cells.  A heap allocated object like this
+  is called a \emph{general instance}.
 \end{itemize}
 
 \section{Immediate objects}
@@ -88,15 +89,17 @@ special function that signals an error is used instead.
 A \texttt{cons} cell is represented as two consecutive machine
 words aligned on a double-word boundary.
 
-\section{Representation of other heap objects}
-\label{sec-data-representation-other-heap-objects}
+\section{Representation of general instances}
+\label{sec-data-representation-general-instances}
 
-All heap objects other than \texttt{cons} cells are represented in (at
+Recall that a \emph{general instance} is a heap allocated object that
+is not a \texttt{cons} cell.  
+All general instances are represented in (at
 least) two parts, a \emph{header object} and a \emph{contents vector}.
 The header object always consists of two consecutive words aligned on
 a double-word boundary (just like \texttt{cons} cells).  The first
 word always contains a tagged pointer to a \emph{class} object (which
-is another heap object).  The second word contains a \emph{raw
+is another general instance).  The second word contains a \emph{raw
   pointer} to the first word of the contents vector.  In most cases,
 the only place that can contain a raw pointer to a contents vector is
 the second word of a header object.  However, in some cases (for
@@ -116,20 +119,20 @@ vector.%
   the disembodied pointer in X is still reachable.  Then it would be
   impossible to determine the class of the object.}
 
-The first entry of the contents vector of every heap object is a small
-fixnum that indicates the \emph{object class unique number}.%
+The first entry of the contents vector of every general instance is a
+small fixnum that indicates the \emph{object class unique number}.%
 \footnote{We need to find a better name for this concept.}
 This number indicates the \emph{unique class number} of the class of
-the heap object as it was when the heap object was created.  The main
+the general instance as it was when the instance was created.  The main
 purpose of this information is to be used in \emph{generic function
   dispatch}.  It is also
-used to determine whether a heap object is an obsolete instance (in
-this case the \emph{object class unique number} of the heap object
+used to determine whether a general instance is an obsolete instance (in
+this case the \emph{object class unique number} of the general instance
 will not be the same as the \emph{current} unique class number of the
-class of the heap object).  Only standard objects can become
+class of the general instance).  Only standard objects can become
 obsolete. \seesec{sec-data-representation-standard-objects}
 
-One advantage of representing heap objects this way is that the
+One advantage of representing general instances this way is that the
 contents vector is \emph{internally consistent}.  To explain what we
 mean by this concept, let us take an \emph{adjustable array} as an
 example.  The implementation of \texttt{aref} must check that the
@@ -158,7 +161,7 @@ instruction to store a reference to the the new contents vector in the
 header object. 
 
 In the following sections we give the details of the representation
-for all possible heap objects.
+for all possible general instances.
 
 \section{Standard objects}
 \label{sec-data-representation-standard-objects}
@@ -200,14 +203,14 @@ both.  We simply store a reference to the \emph{list of effective
 created.  This reference is stored as the \emph{second} word of the
 contents vector (recall that the first word is taken up by the
 \emph{object class unique
-  number}). \seesec{sec-data-representation-other-heap-objects} 
+  number}). \seesec{sec-data-representation-general-instances} 
 
 This solution makes it possible to determine the layout of the
 contents vector of an obsolete instance, so that it can be traced by
 the garbage collector when necessary.  This solution also allows the
 system to determine which slots have been added and which slots have
 been removed since the instance was created.  As indicated in
-\refSec{sec-data-representation-other-heap-objects}, in order to
+\refSec{sec-data-representation-general-instance}, in order to
 detect whether an object is obsolete, the contents of the first word
 of the contents vector is compared to the \emph{class unique number}
 of the class of the object.  However, this test is performed
@@ -258,10 +261,10 @@ no instances, but the consequences are undefined if a built-in class
 is changed after it has been instantiated.
 
 As a consequence, in instances of built-in classes that are
-represented as heap objects, it is not necessary to keep a copy of the
+represented as general instances, it is not necessary to keep a copy of the
 class slots in the contents vector of an instance of a built-in class.
 However, the first cell of the contents vector of such instances still
-contain the \emph{object class unique number}, so that every heap
+contain the \emph{object class unique number}, so that every general
 instance can be treated the same by all generic functions, thus
 avoiding a test for a special case.
 
@@ -284,10 +287,10 @@ The general consensus seems to be that other subtypes are allowed.
 \subsection{Arrays}
 \label{sec-data-representation-arrays}
 
-An array being a heap object, it is represented as a two-word header
-object and a contents vector.  The second word of the contents vector
-contains a proper list of dimensions.  The length of the list is the
-\emph{rank} of the array.
+An array being a general instance, it is represented as a two-word
+header object and a contents vector.  The second word of the contents
+vector contains a proper list of dimensions.  The length of the list
+is the \emph{rank} of the array.
 
 If the array is \emph{simple}, the second word is directly followed
 by the elements of the array.  If the array is \emph{not} simple, then
