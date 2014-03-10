@@ -33,7 +33,7 @@
   (unless (heap-instance-p object)
     (error "object must be a heap instance"))
   (let ((class (class-of object)))
-    ;; The first element of the contents vector is the list of
+    ;; The first element of the rack is the list of
     ;; effective slots of the class of the object.
     (let* ((slots (slot-contents (heap-instance-slots object) 0))
 	   (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))
@@ -45,7 +45,7 @@
   (unless (heap-instance-p object)
     (error "object must be a heap instance"))
   (let ((class (class-of object)))
-    ;; The first element of the contents vector is the list of
+    ;; The first element of the rack is the list of
     ;; effective slots of the class of the object.
     (let* ((slots (slot-contents (heap-instance-slots object) 0))
 	   (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))
@@ -68,7 +68,7 @@
   (let ((class (class-of object)))
     ;; FIXME: check that the object is up to date.  
     ;; 
-    ;; The first element of the contents vector is the list of
+    ;; The first element of the rack is the list of
     ;; effective slots of the class of the object.
     (let* ((slots (slot-contents (heap-instance-slots object) 0))
 	   (slot (find slot-name slots :test #'eq :key #'slot-definition-name)))

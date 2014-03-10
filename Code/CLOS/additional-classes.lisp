@@ -8,7 +8,7 @@
 ;;; be called the same way.  There is a slight difficulty in order for
 ;;; that to happen, though.  When a funcallable standard object is
 ;;; allocated, since it is a standard object, two additional cells are
-;;; allocated in the contents vector, namely for the object class
+;;; allocated in the rack, namely for the object class
 ;;; unique number and for the class slots of the class.  When a
 ;;; standard function is allocated, however, the cell containing the
 ;;; class slots of the class is not present because standard functions
