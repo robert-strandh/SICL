@@ -311,7 +311,7 @@
   ((%direct-generic-functions
     :initform '()
     :reader specializer-direct-generic-functions
-    :writer (setf s-direct-generic-functions))
+    :writer (setf direct-generic-functions))
    (%direct-methods
     :initform '()
     :reader specializer-direct-methods
