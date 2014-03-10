@@ -8,22 +8,24 @@
     :depends-on ("packages"))
    (:file "environment"
     :depends-on ("packages" "type-proclamations"))
+   (:file "environment-query"
+    :depends-on ("environment"))
    (:file "macroexpand"
-    :depends-on ("environment"))
+    :depends-on ("environment-query"))
    (:file "type-expand"
-    :depends-on ("environment"))
+    :depends-on ("environment-query"))
    (:file "fdefinition"
-    :depends-on ("environment"))
+    :depends-on ("environment-query"))
    (:file "special-operator-p"
-    :depends-on ("environment"))
+    :depends-on ("environment-query"))
    (:file "macro-function"
-    :depends-on ("environment"))
+    :depends-on ("environment-query"))
    (:file "fully-expand-form"
-    :depends-on ("environment" "macro-function"))
+    :depends-on ("environment-query" "macro-function"))
    (:file "symbol-value"
-    :depends-on ("environment"))
+    :depends-on ("environment-query"))
    (:file "constantp"
-    :depends-on ("environment"))
+    :depends-on ("environment-query"))
    (:file "proclaim"
-    :depends-on ("environment"))))
+    :depends-on ("environment-query"))))
 

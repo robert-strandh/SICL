@@ -1,0 +1,326 @@
+(cl:in-package #:sicl-global-environment)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Querying the environment.
+
+(defun find-in-namespace (name environment namespace)
+  (find-if (lambda (entry)
+	     (and (typep entry namespace)
+		  (equal (name entry) name)))
+	   environment))
+
+(defun find-variable (name environment)
+  (find-in-namespace name
+		     (append environment
+			     ;; The order here doesn't matter because,
+			     ;; there can only be one entry for a
+			     ;; particular name in the global
+			     ;; environment.
+			     (constant-variables *global-environment*)
+			     (symbol-macros *global-environment*)
+			     (special-variables *global-environment*))
+		     'variable-space))
+
+(defun find-function (name environment)
+  (find-in-namespace name
+		     (append environment
+			     ;; We want to search global macros first,
+			     ;; because if such an entry exists, it
+			     ;; takes precedence over other entries.
+			     (macros *global-environment*)
+			     (functions *global-environment*)
+			     (special-operators *global-environment*))
+		     'function-space))
+
+(defun find-type (entry env)
+  `(and ,@(loop for e in (append env (proclamations *global-environment*))
+		when (and (typep e 'type-declaration-entry)
+			  (eq (base-entry e) entry))
+		  collect (type e))))
+
+(defun find-inline-info (entry env)
+  (loop for e in (append env (proclamations *global-environment*))
+	do (when (and (typep e 'inline-or-notinline-declaration-entry)
+		      (eq (base-entry e) entry))
+	     (return (if (typep e 'inline-declaration-entry)
+			 :inline
+			 :notinline)))))
+
+(defun find-ignore-info (entry env)
+  (cond ((loop for e in (append env (proclamations *global-environment*))
+	       when (and (typep e 'ignore-declaration-entry)
+			 (eq (base-entry e) entry))
+		 return t)
+	 :ignore)
+	((loop for e in (append env (proclamations *global-environment*))
+	       when (and (typep e 'ignorable-declaration-entry)
+			 (eq (base-entry e) entry))
+		 return t)
+	 :ignorable)
+	(t nil)))
+
+(defun find-dynamic-extent-info (entry env)
+  (loop for e in (append env (proclamations *global-environment*))
+	when (and (typep e 'dynamic-extent-declaration-entry)
+		  (eq (base-entry e) entry))
+	  return t))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function VARIABLE-INFO.
+;;;
+;;; This function is called by the compiler whenever there is a symbol
+;;; in a normal value position (as opposed to in a function position).
+;;; It is similar to the function with the same name, defined in
+;;; CLtL2, except that we return a class instance containing all the
+;;; information, rather than multiple values.
+
+(defun variable-info (name env &optional create-if-does-not-exist)
+  (let ((entry (find-variable name env)))
+    (cond ((null entry)
+	   (if create-if-does-not-exist
+	       (progn (warn "Undefined variable: ~a" name)
+		      (setf entry (make-special-variable-entry name))
+		      (push entry (special-variables *global-environment*))
+		      (make-instance 'special-location-info
+			:location (location entry)
+			:type t
+			:ignore-info nil
+			:dynamic-extent-p nil))
+	       nil))
+	  ((typep entry 'constant-variable-entry)
+	   (make-instance 'constant-variable-info
+			  :name (name entry)
+			  :definition (definition entry)))
+	  ((typep entry 'symbol-macro-entry)
+	   (make-instance 'symbol-macro-info
+			  :name (name entry)
+			  :definition (definition entry)
+			  :type (find-type entry env)))
+	  (t
+	   (let ((type (find-type entry env))
+		 (ignore-info (find-ignore-info entry env))
+		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
+	     (make-instance (if (typep entry 'special-variable-entry)
+				'special-location-info
+				'lexical-location-info)
+			    :location (location entry)
+			    :type type
+			    :ignore-info ignore-info
+			    :dynamic-extent-p dynamic-extent-p))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FUNCTION-INFO.
+;;;
+;;; This function is called by the compiler whenever there is a symbol
+;;; in a function position of a compound expression.  It is similar to
+;;; the function with the same name, defined in CLtL2, except that we
+;;; return a class instance containing all the information, rather
+;;; than multiple values.  
+
+(defun function-info (name env &optional create-if-does-not-exist)
+  (let ((entry (find-function name env)))
+    (cond ((null entry)
+	   (if create-if-does-not-exist
+	       (progn (warn "Undefined function: ~a" name)
+		      (setf entry (make-global-function-entry name))
+		      (push entry (functions *global-environment*))
+		      (make-instance 'global-function-location-info
+			:location (location entry)
+			:type t
+			:inline-info nil
+			:ast nil
+			:parameters nil
+			:ignore-info nil
+			:dynamic-extent-p nil))
+	       nil))
+	  ((typep entry 'macro-entry)
+	   (make-instance 'macro-info
+			  :name (name entry)
+			  :definition (definition entry)))
+	  (t
+	   (let ((type (find-type entry env))
+		 (inline-info (find-inline-info entry env))
+		 (ignore-info (find-ignore-info entry env))
+		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
+	     (make-instance (if (typep entry 'global-function-entry)
+				'global-function-location-info
+				'lexical-function-location-info)
+			    :location (location entry)
+			    :type type
+			    :inline-info inline-info
+			    :lambda-list (lambda-list entry)
+			    :ast (ast entry)
+			    :parameters (parameters entry)
+			    :ignore-info ignore-info
+			    :dynamic-extent-p dynamic-extent-p))))))
+
+(defun block-info (name env)
+  (let ((entry (find-in-namespace name env 'block-space)))
+    (if (null entry)
+	nil
+	(make-instance 'block-info
+		       :name (name entry)
+		       :definition (definition entry)))))
+
+(defun tag-info (name env)
+  (let ((entry (find-in-namespace name env 'tag-space)))
+    (if (null entry)
+	nil
+	(make-instance 'tag-info
+		       :name (name entry)
+		       :definition (definition entry)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Create an environment entry from a canonicalized declaration
+;;; specifier.
+
+(defun make-entry-from-declaration
+    (canonicalized-declaration-specifier environment)
+  (destructuring-bind (head . rest) canonicalized-declaration-specifier
+    (case head
+      (declaration
+       (make-declaration-declaration-entry (car rest)))
+      (dynamic-extent
+       (let ((entry (if (consp (car rest))
+			(find-function (cadr (car rest)) environment)
+			(find-variable (car rest) environment))))
+	 (make-dynamic-extent-declaration-entry entry)))
+      (ftype
+       (let ((entry (find-function (cadr rest) environment)))
+	 (make-type-declaration-entry entry (car rest))))
+      (ignorable
+       (let ((entry (if (consp (car rest))
+			  (find-function (cadr (car rest)) environment)
+			  (find-variable (car rest) environment))))
+	 (make-ignorable-declaration-entry entry)))
+      (ignore
+       (let ((entry (if (consp (car rest))
+			(find-function (cadr (car rest)) environment)
+			(find-variable (car rest) environment))))
+	 (make-ignore-declaration-entry entry)))
+      (inline
+       (let ((entry (find-function (car rest) environment)))
+	 (make-inline-declaration-entry entry)))
+      (notinline
+       (let ((entry (find-function (car rest) environment)))
+	 (make-notinline-declaration-entry entry)))
+      (optimize
+       (make-optimize-declaration-entry
+	(car (car rest)) (cadr (car rest))))
+      (special
+       ;; FIXME: is this right?
+       (make-special-variable-entry (car rest)))
+      (type
+       (let ((entry (find-variable (cadr rest) environment)))
+	 (make-type-declaration-entry entry (car rest)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FIND-FUNCTION-CELL.
+;;;
+;;; This function is used when a a FASL file is loaded.  When the
+;;; source file was compiled, there was a reference to a named global
+;;; function in it.  As part of loading the FASL file, a CODE OBJECT
+;;; must be built, and that code object contains a LINKAGE VECTOR,
+;;; which contains all the external references of the file that was
+;;; compiled.  External references to named global functions result in
+;;; an entry in the linkage vector containg the CONS cell that is the
+;;; value of the STORAGE slot of the global function entry.  
+;;;
+;;; This function finds that CONS cell and returns it.  Normally, the
+;;; FASL file should be loaded into an environment that contains the
+;;; global function entry, because if it did not already exist, it was
+;;; created as part of the compilation.  However, we must put
+;;; SOMETHING in the linkage vector even if the file happens to be
+;;; loaded into an environment that does not have the global function
+;;; entry that we want.  Otherwise the system will crash when an
+;;; attempt is made to execute the code we loaded.  For that reason,
+;;; we create the global function entry if it so happens that it does
+;;; not exist.
+
+(defun find-function-cell (function-name)
+  (let ((function-entry
+	  (find function-name (functions *global-environment*)
+		:key #'name :test #'equal)))
+    (when (null function-entry)
+      ;; No function entry found.  Create one.
+      (setf function-entry (make-global-function-entry function-name))
+      (push function-entry (functions *global-environment*)))
+    (storage (location function-entry))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function FIND-VALUE-CELL.
+;;;
+;;; This function is used when a a FASL file is loaded.  This function
+;;; is used when the source file that was compiled contained a
+;;; reference to a special variable or to a free undefined variable
+;;; (which is taken to be a special variable that will ultimately be
+;;; defined).  As part of loading the FASL file, a CODE OBJECT must be
+;;; built, and that code object contains a LINKAGE VECTOR, which
+;;; contains all the external references of the file that was
+;;; compiled.  External references to special variables result in an
+;;; entry in the linkage vector containg the CONS cell that is the
+;;; value of the STORAGE slot of the special variable entry.  This
+;;; value cell contains the global value of the variable, or +unbound+
+;;; if the variable does not have a global value.
+;;;
+;;; This function finds that CONS cell and returns it.  Normally, the
+;;; FASL file should be loaded into an environment that contains the
+;;; special variable entry, because if it did not already exist, it
+;;; was created as part of the compilation.  However, we must put
+;;; SOMETHING in the linkage vector even if the file happens to be
+;;; loaded into an environment that does not have the special variable
+;;; entry that we want.  Otherwise the system will crash when an
+;;; attempt is made to execute the code we loaded.  For that reason,
+;;; we create the special variable entry if it so happens that it does
+;;; not exist.
+
+(defun find-value-cell (name)
+  (let ((special-variable-entry
+	  (find name (special-variables *global-environment*)
+		:key #'name :test #'eq)))
+    (when (null special-variable-entry)
+      ;; No function entry found.  Create one.
+      (setf special-variable-entry
+	    (make-special-variable-entry name))
+      (push special-variable-entry
+	    (special-variables *global-environment*)))
+    (storage (location special-variable-entry))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The expansion of the macro IN-PACKAGE results in a call to this
+;;; function.
+
+(defun in-package-function (string-designator)
+  (declare ((or character symbol string) string-designator))
+  (setq *package* (find-package string-designator)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The expansion of the macro DEFCONSTANT results in a call to this
+;;; function.
+
+(defun defconstant-function (name initial-value)
+  (unless (null (find name (special-variables *global-environment*)
+		      :key #'name :test #'eq))
+    (error "attempt to redefine a special variable as a constant variable."))
+  (unless (null (find name (symbol-macros *global-environment*)
+		      :key #'name :test #'eq))
+    (error "attempt to redefine a global symbol macro as a constant variable."))
+  (let ((existing-entry (find name (constant-variables *global-environment*)
+			      :key #'name :test #'eq)))
+    (cond ((null existing-entry)
+	   (push (make-constant-variable-entry name initial-value)
+		 (constant-variables *global-environment*)))
+	  ((not (eql initial-value (definition existing-entry)))
+	   (error "attempt to redefine a constant variable"))
+	  (t
+	   nil)))
+  ;; Return the name as the HyperSpec requires
+  name)
