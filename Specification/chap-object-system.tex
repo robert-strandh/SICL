@@ -58,7 +58,7 @@ Every \emph{general instance}%
   allocated on the heap, excluding \texttt{cons} cells.}  contains a
 \emph{stamp}, which is the unique number of its class as it was when
 the instance was created.  This number is always the first element of
-the contents vector of the general instance.  Even though built-in
+the rack of the general instance.  Even though built-in
 classes can not be redefined, general instances of built-in classes
 contain a stamp.
 
@@ -104,12 +104,12 @@ definition of the class.  Furthermore, the version information must
 contain enough information of the class as it was when the instance
 was created to determine whether slots have been added or removed.
 
-In \sysname{} the first location of the contents vector of each
+In \sysname{} the first location of the rack of each
 general instance contains a \emph{stamp}, which is the unique number
 of the class as it was when the instance was created.  In addition,
 if the instance is \emph{flexible}, it also contains a reference to the
 \emph{list of effective slots} of the class as it was when the
-instance was created.  This method makes the contents vector of the
+instance was created.  This method makes the rack of the
 instance completely self contained.  It allows the garbage collector
 to trace the obsolete instance, or update it before tracing.  It
 allows for an inspector to inspect the obsolete instance if this
@@ -240,7 +240,7 @@ an implementation to represent instances as a pointer directly to the
 vector of slots and avoid any indirection, which saves a memory
 access.  However, in \sysname{} \emph{all} heap-allocated objects
 (other than \texttt{cons} cells) are represented as a two-word
-\emph{header object} and a \emph{contents vector} for reasons of
+\emph{header object} and a \emph{rack} for reasons of
 simplicity and in order to allow our memory-management strategy to
 work.
 
@@ -368,7 +368,7 @@ The identification is computed as follows:
 \item If the object is a \emph{general instance}, then it is the
   \emph{stamp} of the instance, i.e. the unique number of the class of
   the instance as it was when the instance was created.  The stamp is
-  stored in the first element of the contents vector of the instance.
+  stored in the first element of the rack of the instance.
 \item Otherwise (i.e., if the object is a \emph{special instance}, it
   is the \emph{unique number} of the class of the object.
 \end{itemize}

@@ -228,14 +228,14 @@ information by accessing the \emph{name} of the bridge class and
 replacing the slot contents by the target class with the same name.
 Second, target instances of the class \texttt{standard-object} contain
 a list of effective slot definition objects in the second word of the
-contents vector, except that those effective slot definition objects
+rack, except that those effective slot definition objects
 are bridge instances, because they were copied form the
 \texttt{class-slots} slot of the bridge class when the bridge class
 was instantiated to obtain the target instance.  Since all target
 classes were finalized during the first step of this phase, they now
 all have a list of effective slot definition objects, and those
 objects are target instances.  Patching consists of replacing the
-second word of the contents vector of all instances of
+second word of the rack of all instances of
 \texttt{standard-object} by the contents of the \texttt{class-slots}
 slot of the class object of the instance, which is now a target
 class. 

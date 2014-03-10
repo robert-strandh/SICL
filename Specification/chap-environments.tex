@@ -245,7 +245,7 @@ heap-allocated environment.  We represent this environment as a proper
 \cl{} list of simple vectors.  
 
 This representation might seem wasteful, because a simple vector is
-represented as a header object and a contents vector containing the
+represented as a header object and a rack containing the
 \emph{length} of the vector, though that information is implicit in
 the value of the program counter, so it could be elided.  The
 representation is wasteful in two ways:
@@ -271,7 +271,7 @@ some advantages:
 
 \begin{itemize}
 \item Currently, every general instance has a header object and a
-  contents vector.  If we were to use a different representation for
+  rack.  If we were to use a different representation for
   environments, then they would have to be allocated in a dedicated
   part of the heap, and that would make the memory-management system
   significantly more complicated.
@@ -317,15 +317,15 @@ A location can have one of different types of values:
     \item Raw machine pointer to a cons cell.  
     \item Raw machine pointer to the header object of a general
       instance.
-    \item Raw machine pointer that may point inside the contents
-      vector of some other object. In this case, the location has to
+    \item Raw machine pointer that may point inside the rack
+      of some other object. In this case, the location has to
       be indicated as \emph{tied} to another location that contains
       either a Lisp pointer or a raw machine pointer to one of the
       previous types.  This possibility will be used when (say) a
       pointer to an object is stored in some location, and a temporary
       pointer to one of the elements of the object is needed.  The
       garbage collector will modify this pointer value by the same
-      amount as that used to modify the contents vector. 
+      amount as that used to modify the rack. 
     \end{itemize}
   \end{itemize}
 \end{itemize}

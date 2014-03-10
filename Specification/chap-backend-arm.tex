@@ -117,7 +117,7 @@ caller puts the linkage vector in this register, and then calls the
 entry point of the function.  When an internal call is made, the
 caller does not change this register, because it already contains the
 correct linkage vector.  Notice that the linkage vector is a
-disembodied contents vector.  When a function A calls a function B, if
+disembodied rack.  When a function A calls a function B, if
 A can be sure that B uses the same code-object and thus the same
 linkage vector, then as A is about to call B, A makes sure that this
 register contains the same value as it did upon entry to A.  It can do

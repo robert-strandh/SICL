@@ -95,31 +95,30 @@ words aligned on a double-word boundary.
 Recall that a \emph{general instance} is a heap allocated object that
 is not a \texttt{cons} cell.  
 All general instances are represented in (at
-least) two parts, a \emph{header object} and a \emph{contents vector}.
+least) two parts, a \emph{header object} and a \emph{rack}.
 The header object always consists of two consecutive words aligned on
 a double-word boundary (just like \texttt{cons} cells).  The first
 word always contains a tagged pointer to a \emph{class} object (which
 is another general instance).  The second word contains a \emph{raw
-  pointer} to the first word of the contents vector.  In most cases,
-the only place that can contain a raw pointer to a contents vector is
+  pointer} to the first word of the rack.  In most cases,
+the only place that can contain a raw pointer to a rack is
 the second word of a header object.  However, in some cases (for
-performance reasons) a raw pointer to a contents vector can be the
+performance reasons) a raw pointer to a rack can be the
 value of some slot.  In this case, we say that we have a
-\emph{disembodied} pointer to a contents vector.  An object containing
+\emph{disembodied} pointer to a rack.  An object containing
 such a disembodied pointer must be known to the garbage collector, and
 the object must also contain (directly or indirectly) an ordinary
-tagged \cl{} pointer to a header object containing that contents
-vector.%
+tagged \cl{} pointer to a header object containing that rack..%
 \footnote{The reason for this restriction is that it must always be possible
-  to find the header object of a contents vector so as to determine
+  to find the header object of a rack so as to determine
   the class of which the object is an instance.  If we could have
   an object X that contained only the disembodied raw pointer to the
-  contents vector, then it may be the case that the pointer to the
+  rack, then it may be the case that the pointer to the
   header object is no longer referenced by any other object, whereas
   the disembodied pointer in X is still reachable.  Then it would be
   impossible to determine the class of the object.}
 
-The first entry of the contents vector of every general instance is a
+The first entry of the rack of every general instance is a
 small fixnum called the \emph{stamp} of the general instance.  The
 stamp is the \emph{unique class number} of the class of the general
 instance as it was when the instance was created.  The main purpose of
@@ -132,7 +131,7 @@ said to be \emph{flexible}.
 \seesec{sec-data-representation-standard-objects}
 
 One advantage of representing general instances this way is that the
-contents vector is \emph{internally consistent}.  To explain what we
+rack is \emph{internally consistent}.  To explain what we
 mean by this concept, let us take an \emph{adjustable array} as an
 example.  The implementation of \texttt{aref} must check that the
 indices are valid, compute the offset of the element and then access
@@ -142,10 +141,10 @@ that the indices are no longer valid.  In most implementations, to
 ensure that \texttt{aref} is \emph{thread safe}, it is necessary to
 prevent other threads from intervening between the index check and the
 access, for instance by using a \emph{lock}.  In \sysname{}, adjusting
-the array involves creating a new contents vector with new dimensions,
-and then with a single store instruction associate the new contents
-vector with the array.  The implementation of \texttt{aref} would then
-initially obtain a pointer to the contents vector and then do the
+the array involves creating a new rack with new dimensions,
+and then with a single store instruction associate the new rack
+with the array.  The implementation of \texttt{aref} would then
+initially obtain a pointer to the rack and then do the
 index check, the computation of the offset, and the access without
 risking any interference.  No locking is therefore required.  Another
 example is a \emph{generic function}.  When a method is added or
@@ -153,10 +152,10 @@ deleted, or when a new sequence of argument classes is seen, the
 generic function must be destructively updated.  Normally, this
 operation would require some locking primitive in order to prevent
 other threads from invoking a partially updated generic function.  In
-\sysname{}, to update a generic function this way, a new contents
-vector would be allocated and the modifications would be made there,
+\sysname{}, to update a generic function this way, a new rack
+would be allocated and the modifications would be made there,
 leaving the original generic function intact until the final
-instruction to store a reference to the the new contents vector in the
+instruction to store a reference to the the new rack in the
 header object. 
 
 A general instance can be \emph{rigid} or \emph{flexible}.  A rigid
@@ -186,7 +185,7 @@ of \emph{obsolete instance} in the system, i.e., instances that must
 be \emph{updated} at some later point in time.
 
 The solution is to store some kind of \emph{version} information in
-the contents vector so that when an attempt is made to access an
+the rack so that when an attempt is made to access an
 obsolete instance, the instance can first be updated to correspond to
 the current definition of its class.  This version information must
 allow the system to determine whether any slots have been added or
@@ -197,17 +196,17 @@ to trace the obsolete version of the instance.  Our solution allows
 both.  We simply store a reference to the \emph{list of effective
   slots} that the class of the instance defined when the instance was
 created.  This reference is stored as the \emph{second} word of the
-contents vector (recall that the first word is taken up by the
+rack (recall that the first word is taken up by the
 \emph{stamp}). \seesec{sec-data-representation-general-instances}
 
 This solution makes it possible to determine the layout of the
-contents vector of an obsolete instance, so that it can be traced by
+rack of an obsolete instance, so that it can be traced by
 the garbage collector when necessary.  This solution also allows the
 system to determine which slots have been added and which slots have
 been removed since the instance was created.  As indicated in
 \refSec{sec-data-representation-general-instance}, in order to detect
 whether an object is obsolete, the contents of the first word of the
-contents vector (i.e,, the \emph{stamp}) is compared to the
+rack (i.e,, the \emph{stamp}) is compared to the
 \emph{class unique number} of the class of the object.  However, this
 test is performed automatically in most cases, because when an
 obsolete object is passed as an argument to a generic function, the
@@ -274,8 +273,8 @@ no instances, but the consequences are undefined if a built-in class
 is changed after it has been instantiated.
 
 As a consequence, in rigid instances it is not necessary to keep a
-copy of the class slots in the contents vector.  However, the first
-cell of the contents vector of such instances still contain the
+copy of the class slots in the rack.  However, the first
+cell of the rack of such instances still contain the
 \emph{stamp}, so that every general instance can be treated the same
 by all generic functions, thus avoiding a test for a special case.
 
@@ -304,26 +303,26 @@ The general consensus seems to be that other subtypes are allowed.
 \label{sec-data-representation-arrays}
 
 An array being a general instance, it is represented as a two-word
-header object and a contents vector.  The second word of the contents
-vector contains a proper list of dimensions.  The length of the list
+header object and a rack.  The second word of the rack
+contains a proper list of dimensions.  The length of the list
 is the \emph{rank} of the array.
 
 If the array is \emph{simple}, the second word is directly followed
 by the elements of the array.  If the array is \emph{not} simple, then
 it is either displaced to another array, or it has a fill pointer, or
 both.  If it has a fill pointer, then it is stored in the third word
-of the contents vector.  Finally, if the array is displaced to another
-array, the contents vector contains two words with the array to which
+of the rack.  Finally, if the array is displaced to another
+array, the rack contains two words with the array to which
 this one is displaced, and the displacement offset.  If the array is
 not displaced, then the elements of the array follow.  The size of the
-contents vector is rounded up to the nearest multiple of a word. 
+rack is rounded up to the nearest multiple of a word. 
 
 The exact class of the array differs according to whether the array is
 simple, has a fill pointer, or is displaced. 
 
 All arrays are \emph{adjustable} thanks to the split representation
-with a header object and a contents vector.  Adjusting the array
-typically requires allocating a new contents vector. 
+with a header object and a rack.  Adjusting the array
+typically requires allocating a new rack. 
 
 The element type of the array is determined by the exact class of the
 array. 
@@ -349,11 +348,11 @@ to access it, \texttt{aref} and \texttt{(setf aref)} are \emph{generic
 
 \subsubsection{System class \texttt{vector}}
 
-A vector is a one-dimensional array.  As such, a vector has a contents
-vector where the second word is a proper list of a single element,
+A vector is a one-dimensional array.  As such, a vector has a rack
+where the second word is a proper list of a single element,
 namely the \emph{length} of the vector represented as a fixnum. 
 
-The remaining words of the contents vector contain an optional fill
+The remaining words of the rack contain an optional fill
 pointer, and then either the elements of the vector or displacement
 information as indicated above. 
 
@@ -361,7 +360,7 @@ information as indicated above.
 
 A string is a subtype of \texttt{array}.  Tentatively, we think that
 there is no need to optimize strings that contain only characters that
-could be represented in a single byte.  Thus the contents vector of a
+could be represented in a single byte.  Thus the rack of a
 \emph{simple} string is represented as follows:
 
 \begin{itemize}
@@ -375,7 +374,7 @@ could be represented in a single byte.  Thus the contents vector of a
 \subsection{Symbols}
 
 A symbol is represented with a two-word header (as usual) and a
-contents vector of four consecutive words.  The four words contain:
+rack of four consecutive words.  The four words contain:
 
 \begin{enumerate}
 \item The obligatory \emph{stamp}.
@@ -395,7 +394,7 @@ explicit \emph{global environment} object.
 \subsection{Packages}
 
 A package is represented with a two-word header (as usual) and a
-contents vector of 8 words:
+rack of 8 words:
 
 \begin{enumerate}
 \item The obligatory \emph{stamp}.
@@ -439,7 +438,7 @@ Representation of functions.}
 \end{figure}
 
 A function is represented as a two-word header (as usual) and a
-contents vector with at least four slots in addition to the inherited
+rack with at least four slots in addition to the inherited
 slots.
 
 \begin{enumerate}
@@ -448,17 +447,17 @@ slots.
   point is a \emph{raw address} of an aligned word in the byte vector
   containing the instructions of the function.  The garbage collector
   must update the value of this slot if it decides to move the
-  contents vector of the code vector.  Each backend determines the number
+  rack of the code vector.  Each backend determines the number
   of entry points and their significance, but they typically have to
   do with the number of arguments and whether the call is an ordinary
   call or a tail call.
 \item The \emph{linkage vector} for this function, which is a raw
-  disembodied contents vector pointer pointing to the contents vector
+  disembodied rack pointer pointing to the rack
   of the linkage vector object for this function.  The ordinary \cl{}
-  object containing this contents vector is referred to from the code
+  object containing this rack is referred to from the code
   object in the slot described previously.  The garbage collector must
-  update the value of this slot if it decides to move the contents
-  vector of the linkage vector object.  The first word of the linkage
+  update the value of this slot if it decides to move the rack
+  of the linkage vector object.  The first word of the linkage
   vector contains the \emph{code object} for this function (see below).
 \item An \emph{environment}, which is the local environment in which
   the function was defined. If the function does not close over any
@@ -470,7 +469,7 @@ when inspected by tools that are unaware of their special
 signification.  
 
 A \emph{code object} is represented as a two-word header (as usual)
-and a contents vector containing (in addition to inherited slots):
+and a rack containing (in addition to inherited slots):
 
 \begin{enumerate}
 \item The \emph{linkage vector} which is an ordinary \cl{} simple

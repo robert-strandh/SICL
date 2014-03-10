@@ -227,13 +227,13 @@ seem like every access to an array element would require locking to
 prevent a different thread from adjusting the array between the time
 the \emph{length} is determined and the time the element is accessed.
 
-However, in \sysname{} the contents vector of an array is always
+However, in \sysname{} the rack of an array is always
 \emph{internally consistent} in that the \emph{length} information
 accurately reflects the number of elements.  When an array is
-adjusted, a different contents vector is allocated, and the new
-contents vector is put in place in a single memory store operation.
+adjusted, a different rack is allocated, and the new
+rack is put in place in a single memory store operation.
 Therefore, when the elements of an array are processed in some way,
-the compiler might access the contents vector only once and cache it
+the compiler might access the rack only once and cache it
 in a register.  This optimization is possible even in a loop, as long
 as the compiler can prove that the loop eventually terminates, and as
 long as there is no externally detectable activity between the
