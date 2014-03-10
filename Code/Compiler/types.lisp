@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler-environment)
+(in-package #:sicl-global-environment)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -17,7 +17,7 @@
 ;;; next form only redefines the macro deftype.  In the cross
 ;;; compiler, however, the two symbols are different.  The effect of
 ;;; this form, then, is to define a host macro named
-;;; sicl-compiler-environment:deftype and which puts host functions
+;;; sicl-global-environment:deftype and which puts host functions
 ;;; into the global SICL environment as type functions.
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (cl:defmacro deftype (name lambda-list &body body)

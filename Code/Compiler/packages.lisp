@@ -227,7 +227,7 @@
 
 (defpackage #:sicl-type-proclamations
   (:use #:common-lisp)
-  (:shadowing-import-from #:sicl-compiler-environment
+  (:shadowing-import-from #:sicl-global-environment
 			  #:proclaim))
 
 (defpackage #:sicl-graph-coloring

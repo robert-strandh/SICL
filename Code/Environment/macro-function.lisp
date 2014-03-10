@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-compiler-environment)
+(cl:in-package #:sicl-global-environment)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -67,4 +67,3 @@
 		      (macros *global-environment*))))))
     ;; Return the new value as required by the HyperSpec.
     new-function))
-

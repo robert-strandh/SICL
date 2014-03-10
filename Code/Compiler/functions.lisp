@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler-environment)
+(in-package #:sicl-global-environment)
 
 (proclaim '(ftype (function (datum &rest arguments) nil)
 	    error))

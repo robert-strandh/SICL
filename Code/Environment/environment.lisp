@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler-environment)
+(in-package #:sicl-global-environment)
 
 ;;;; An environment contains ENTRIES of various kinds.  An entry can
 ;;;; be a BASE ENTRY.  This is the kind of entry used for variables,

@@ -1,4 +1,4 @@
-(cl:in-package #:sicl-compiler-environment)
+(cl:in-package #:sicl-global-environment)
 
 (defmacro defun (name lambda-list &body body)
   (multiple-value-bind (declarations documentation forms)

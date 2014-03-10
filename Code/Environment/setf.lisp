@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler-environment)
+(in-package #:sicl-global-environment)
 
 (defmacro setf (place new-value-form &rest more-pairs)
   (cond ((null more-pairs)

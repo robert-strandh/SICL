@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler-environment)
+(in-package #:sicl-global-environment)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -17,7 +17,7 @@
 ;;; next form only redefines the macro define-compiler-macro.  In the
 ;;; cross compiler, however, the two symbols are different.  The
 ;;; effect of this form, then, is to define a host macro named
-;;; sicl-compiler-environment:define-compiler-macro and which puts
+;;; sicl-global-environment:define-compiler-macro and which puts
 ;;; host functions into the global SICL environment as compiler-macro
 ;;; functions.
 (eval-when (:compile-toplevel :load-toplevel :execute)

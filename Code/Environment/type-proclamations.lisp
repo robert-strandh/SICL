@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler-environment)
+(in-package #:sicl-global-environment)
 
 (deftype function-name ()
   `(or symbol (cons (eql setf) (cons symbol null))))

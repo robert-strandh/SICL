@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-compiler-environment
+(defpackage #:sicl-global-environment
   (:nicknames #:sicl-env)
   (:use #:common-lisp)
   ;; When this package is defined in a host implementation for the
