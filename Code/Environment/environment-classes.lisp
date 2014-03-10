@@ -479,35 +479,6 @@
 		 :parameters parameters
 		 :location (make-global-location name)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Function ENSURE-GLOBAL-FUNCTION-ENTRY.
-;;;
-;;; Given a name and an optional lambda expression, make sure there is
-;;; a global function entry in the global environment with that name.
-;;; If there is no such entry then create one and return it.  If there
-;;; already is an entry with that name, then if a lambda list is
-;;; given, then make that lambda list the new lambda list of the
-;;; existing entry.  If the function to be defined has an INLINE
-;;; proclamation in effect, then create the abstract syntax tree for
-;;; the function and store it in the function entry.  Return either
-;;; the newly created entry or the existing entry.
-
-(defun ensure-global-function-entry
-    (name lambda-list ast parameters)
-  (declare (cl:type function-name name))
-  (let ((entry (find name (functions *global-environment*)
-		     :test #'equal :key #'name)))
-    (if (null entry)
-	(let ((new-entry (make-global-function-entry
-			  name lambda-list ast parameters)))
-	  (push new-entry (functions *global-environment*))
-	  new-entry)
-	(progn (setf (lambda-list entry) lambda-list)
-	       (setf (ast entry) ast)
-	       (setf (parameters entry) parameters)
-	       entry))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOCAL-FUNCTION-ENTRY.
