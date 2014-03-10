@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage sicl-environment
+(defpackage sicl-global-environment
   (:use #:common-lisp)
   (:export
    #:definition
