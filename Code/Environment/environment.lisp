@@ -36,6 +36,9 @@
 ;;;; This part is represented as a simply linked list of entries, with
 ;;;; no regard to namespaces.
 
+(deftype function-name ()
+  `(or symbol (cons (eql setf) (cons symbol null))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Unbound cells.
