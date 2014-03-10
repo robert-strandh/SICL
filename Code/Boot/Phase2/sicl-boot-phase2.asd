@@ -7,6 +7,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "environment-packages")
    (:file "rename-package-1")
    (:file "shared-initialize-default")
    (:file "import")
