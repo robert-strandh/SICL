@@ -8,6 +8,7 @@
   :components
   ((:file "packages")
    (:file "environment-packages")
+   (:file "import-to-environment")
    (:file "rename-package-1")
    (:file "shared-initialize-default")
    (:file "import")
