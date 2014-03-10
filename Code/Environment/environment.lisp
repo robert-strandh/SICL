@@ -1,5 +1,10 @@
 (in-package #:sicl-global-environment)
 
+;;;; This file contains definitions of classes, functions, and
+;;;; variables for creating and manipulating global environments.  It
+;;;; contains no definitions involving symbols in the COMMON-LISP
+;;;; package.  Such definitions are located in separate files. 
+
 ;;;; An environment contains ENTRIES of various kinds.  An entry can
 ;;;; be a BASE ENTRY.  This is the kind of entry used for variables,
 ;;;; functions, and macros, but also for autonomous declarations such
@@ -18,7 +23,7 @@
 ;;;; then combined into an object called an INFO object which is
 ;;;; finally returned.
 ;;;;
-;;;; An environment is divided into disconneted parts.  
+;;;; An environment is divided into disconnected parts.  
 ;;;;
 ;;;; One part is always the same, and that is the global environment,
 ;;;; which is the value of the variable *global-environment*.  The
@@ -26,7 +31,7 @@
 ;;;; namespaces.  
 ;;;;
 ;;;; For compilation, another part consists of the extensions to the
-;;;; startup environment that happen when lexial variables, functions,
+;;;; startup environment that happen when lexical variables, functions,
 ;;;; macros etc, are introduced during the compilation of a form.
 ;;;; This part is represented as a simply linked list of entries, with
 ;;;; no regard to namespaces.
@@ -61,7 +66,7 @@
 ;;;
 ;;; Global environment.
 ;;;
-;;; The global envrionment is divided into namespaces, but a namespace
+;;; The global environment is divided into namespaces, but a namespace
 ;;; may be represented in several different slots.  So for instance,
 ;;; what is usually considered the FUNCTION namespace, we have divided
 ;;; into four separate lists, consisting of global function entries,
