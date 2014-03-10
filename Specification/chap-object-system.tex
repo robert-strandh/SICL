@@ -456,6 +456,7 @@ that class or any of its subclasses are removed.  This way, a call to
 a new location will be determined.
 
 \section{Dealing with metastability issues}
+\label{sec-object-system-dealing-with-metastability-issues}
 
 The AMOP gives a few examples of metastability issues that need to be
 dealt with.  It also suggests solutions to these problems, based on
@@ -483,12 +484,29 @@ can not be redefined, we can make sure that every specified generic
 function always remains satiated with respect to the set of specified
 classes.
 
+\begin{theorem}
+If every specified generic function is satiated with respect to the
+set of specified classes, then every call to \texttt{class-slots} will
+terminate.
+\end{theorem}
+
+Proof: Base case: If \texttt{class-slots} is called with an instance
+of \texttt{standard-class}, then by definition of satiation, the call
+will terminate.  If \texttt{class-slots} is called with some other
+class, then calls are made to
+\texttt{compute-applicable-methods-using-classes},
+\texttt{compute-effective-method}, and
+\texttt{compute-discriminating-function} in order to compute a new
+discriminating function for \texttt{class-slots}.  But these functions
+are satiated with respect to \texttt{standard-generic-function} and
+\texttt{class-slots} is a standard-generic-function, so those calls
+will terminate. 
+
 \section{Implementing \texttt{slot-value} and \texttt{(setf slot-value)}}
 
-The functions \texttt{slot-value} and \texttt{(setf slot-value)} play
-a central role in the object system, because they are used by slot
-accessor functions, either directly or indirectly to determine a
-\emph{slot location} in an instance to be used.  
+For reasons of brevity, the following discussion is about the function
+\texttt{slot-value}, but the case of \texttt{(setf slot-value)} is
+entirely analogous. 
 
 In \emph{the Art of the Metaobject Protocol (AMOP)}
 \cite{Kiczales:1991:AMP:574212}, these functions are mentioned as
@@ -496,8 +514,8 @@ prime examples of issues of \emph{metastability}.  The scenario that
 is cited is that \texttt{slot-value} of an instance calls
 \texttt{class-slots} on the class of the instance, and
 \texttt{class-slots} is an accessor which calls \texttt{slot-value}.
-The metastability problem is resolved by recognizing that the
-recursion must eventually reach \texttt{standard-class}, so that
+In the AMOP, the metastability problem is resolved by recognizing that
+the recursion must eventually reach \texttt{standard-class}, so that
 treating \texttt{standard-class} as a special case resolves the
 problem.
 
@@ -510,64 +528,20 @@ definition metaobject, it has to traverse the list of effective slot
 definition metaobjects until one is found that has the \emph{name} of
 the slot given as an argument.  To find the name of an effective slot
 definition metaobject, \texttt{slot-value} has to call
-\texttt{slot-value} which is again a metastability issue. 
+\texttt{slot-definition-name} which is an accessor which calls
+\texttt{slot-value} which is again a metastability issue.
 
-We solve the problems indicated above%
-\fixme{We still need to prove that these special cases actually solve
-  the problem by preventing an infinite recursion.}
-by recognizing as special cases
-the following argument combinations to \texttt{slot-value}:
-
-\begin{itemize}
-\item The slot name is the name of the slot that stores the value
-  returned by \texttt{class-slots} when applied to the class named
-  \texttt{standard-class}, and the class of the instance is the class
-  named \texttt{standard-class}.
-\item The slot name is the name of the slot that stores the value
-  returned by \texttt{slot-definition-name} when applied to an
-  instance of the class \texttt{standard-effective-slot-definition},
-  and the class of the instance is the class named
-  \texttt{standard-effective-slot-definition}. 
-\item The slot name is the name of the slot that stores the value
-  returned by \texttt{slot-definition-location} when applied to an
-  instance of the class \texttt{standard-effective-slot-definition},
-  and the class of the instance is the class named
-  \texttt{standard-effective-slot-definition}. 
-\end{itemize}
-
-To handle the special cases, we store the classes named
-\texttt{standard-class} and
-\texttt{standard-effective-slot-definition} in global variables, and
-we store the \emph{slot location} (as returned by
-\texttt{slot-definition-location}) of the relevant slots, also in
-global variables.  The special case is handled by calling
-\texttt{standard-instance-access} with the instance and the relevant
-location.
-
-With these special cases, it is now possible to compute the
-\emph{method function} of any reader by calling the function
-\texttt{make-reader-method-function} shown in
-\refCode{code-make-reader}.  However, implementing readers this way is
-very slow, so this method is used only for bootstrapping purposes.
-
-\begin{codefragment}
-\inputcode{code-make-reader.code}
-\caption{\label{code-make-reader}
-Function for creating method functions for readers.}
-\end{codefragment}
-
-When none of the special cases apply, \texttt{slot-value} first calls
-\texttt{class-slots} of the class of the instance.  It then calls
-\texttt{find} to find the correct effective slot definition
-metaobject, passing it the class name and the \texttt{key} function
-being \texttt{(function slot-definition-name)} which is a reader.
-Finally, it calls \texttt{slot-value-using-class} as required by the
-specification.
+However, in \sysname{}, as
+\refSec{sec-generic-function-dispatch-accessor-methods} explains,
+accessors in \sysname{} do not call \texttt{slot-value}, so the
+scenario from the AMOP does not apply.  Furthermore, since the
+accessors \texttt{class-slots} and \texttt{slot-definition-name} are
+\emph{satiated}
+\seesec{sec-object-system-dealing-with-metastability-issues} these
+functions do not have to call \texttt{slot-location} for the base
+case. 
 
 The standard methods on \texttt{slot-value-using-class} call the
 reader function \texttt{slot-definition-location} on the effective
 slot definition and use that location to call
 \texttt{standard-instance-access} on the instance.
-
-The cases of \texttt{(setf slot-value)} and \texttt{(setf
-  slot-value-using-class)} are handled in the analogous way.
