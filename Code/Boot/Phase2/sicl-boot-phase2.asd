@@ -22,6 +22,7 @@
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
    (:file "mop-class-hierarchy")
+   (:file "environment")
    (:file "define-variables")
    (:file "finalize-all-bridge-classes")
    (:file "add-remove-direct-method-support")
