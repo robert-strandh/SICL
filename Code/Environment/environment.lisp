@@ -164,8 +164,7 @@
    ;; combinations.
    (%method-combinations :initform '() :accessor method-combinations)))
 
-(cl:defparameter *global-environment*
-  (make-instance 'global-environment))
+(cl:defvar *global-environment*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -762,7 +761,7 @@
 ;;;
 ;;; Class DYNAMIC-EXTENT-DECLARATION-ENTRY.
 
-(defclass dynamic-extent-declaration-entry (auxliary-entry)
+(defclass dynamic-extent-declaration-entry (auxiliary-entry)
   ())
 
 (defun make-dynamic-extent-declaration-entry (location-entry)
