@@ -6,7 +6,7 @@
   ((:file "packages")
    (:file "type-proclamations"
     :depends-on ("packages"))
-   (:file "environment"
+   (:file "environment-classes"
     :depends-on ("packages" "type-proclamations"))
    (:file "environment-query"
     :depends-on ("environment"))
