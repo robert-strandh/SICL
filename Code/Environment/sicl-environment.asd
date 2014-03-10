@@ -18,6 +18,8 @@
     :depends-on ("environment"))
    (:file "macro-function"
     :depends-on ("environment"))
+   (:file "fully-expand-form"
+    :depends-on ("environment" "macro-function"))
    (:file "symbol-value"
     :depends-on ("environment"))
    (:file "constantp"
