@@ -3,7 +3,8 @@
 (define-symbol-macro *t*
     (find-bridge-class t))
 
-(defvar *standard-object*)
+(define-symbol-macro *standard-object*
+    (find-bridge-class 'cl:standard-object))
 
 (defvar *funcallable-standard-object*)
 
