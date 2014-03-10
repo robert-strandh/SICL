@@ -2,6 +2,7 @@
 
 (defpackage sicl-global-environment
   (:use #:common-lisp)
+  (:shadow #:type)
   (:export
    #:definition
    #:location
