@@ -60,7 +60,7 @@
       ,@(loop repeat count
 	      collect "	mov ebx, [ebx + 3]	; CDR down a level.")
       "	mov ebx, [ebx - 1]	; CAR to get to the level vector."
-      "	mov ebx, [ebx + 1]	; Load contents vector of level vector.")))
+      "	mov ebx, [ebx + 1]	; Load rack of level vector.")))
 
 (defun source/destination-operand (location)
   (format nil "[ebx + ~a]" (* 4 (1+ (index location)))))
@@ -76,8 +76,8 @@
       ,@(loop repeat count
 	      collect "	mov eax, [eax + 3]	; CDR down a level.")
       "	mov eax, [eax - 1]	; CAR to get to the level vector."
-      "	mov eax, [eax + 1]	; Load contents vector of level vector."
-      ;; Load the appropriate element from the contents vector.
+      "	mov eax, [eax + 1]	; Load rack of level vector."
+      ;; Load the appropriate element from the rack.
       ,(format nil "	mov eax, [eax + ~a]	; Load lexical."
 	       (* 4 (1+ (index input)))))))
 
@@ -106,8 +106,8 @@
       ,@(loop repeat count
 	      collect "	mov ebx, [ebx + 3]	; CDR down a level.")
       "	mov ebx, [ebx - 1]	; CAR to get to the level vector."
-      "	mov ebx, [ebx + 1]	; Load contents vector of level vector."
-      ;; Save the appropriate element to the contents vector.
+      "	mov ebx, [ebx + 1]	; Load rack of level vector."
+      ;; Save the appropriate element to the rack.
       ,(format nil "	mov [ebx + ~a], eax	; Save lexical."
 	       (* 4 (1+ (index location)))))))
 
@@ -173,10 +173,10 @@
     ;; Store function object for the callee to access.
     ;; FIXME: probably wrong.
     ,(format nil "	mov [~a], eax	; Store callee." (+ (ash 1 30) 12))
-    "	mov eax, [eax + 1]	; Load contents vector of function."
+    "	mov eax, [eax + 1]	; Load rack of function."
     "	mov ebx, [eax + 8]	; Load the entry-point offset."
     "	mov eax, [eax]	; Load the code object."
-    "	mov eax, [eax + 1]	; Load contents vector of the code object."
+    "	mov eax, [eax + 1]	; Load rack of the code object."
     "	mov eax, [eax]	; Load the start of the code."
     "	add eax, ebx	; Add the entry-point offset."
     "	call eax	; Call the entry point."

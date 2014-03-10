@@ -381,7 +381,7 @@
   ;; be in *lv-fun-reg* and that we issue a CALL instruction to the
   ;; entry point of the function.
   (let ((name (sicl-mir:name *lv-fun-reg*)))
-    ;; Start by loading the contents vector of the function object to
+    ;; Start by loading the rack of the function object to
     ;; *lv-fun-reg*.
     (add-code "MOV" (list (make-reg name) (make-mem name 1)))
     ;; Next, load the entry point address to RAX.
@@ -402,7 +402,7 @@
 (defmethod generate-instruction
     ((instruction sicl-mir:tailcall-instruction) stream)
   (let ((name (sicl-mir:name *lv-fun-reg*)))
-    ;; Start by loading the contents vector of the function object to
+    ;; Start by loading the rack of the function object to
     ;; *lv-fun-reg*.
     (add-code "MOV" (list (make-reg name) (make-mem name 1)))
     ;; Next, load the entry point address to RAX.
