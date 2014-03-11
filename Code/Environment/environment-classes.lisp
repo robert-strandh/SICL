@@ -937,6 +937,16 @@
 		 :name name
 		 :definition tag))
 
+(defgeneric go-tag-entry-p (object))
+
+(defmethod go-tag-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod go-tag-entry-p ((object go-tag-entry))
+  (declare (ignorable object))
+  t)
+
 (defun add-go-tag-entry (env name tag)
   (add-to-environment env (make-go-tag-entry name tag)))
 
@@ -952,6 +962,16 @@
   (make-instance 'type-entry
 		 :name name
 		 :definition expander))
+
+(defgeneric type-entry-p (object))
+
+(defmethod type-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod type-entry-p ((object type-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
