@@ -33,9 +33,9 @@
 	       (setf (parameters entry) parameters)
 	       entry))))
 
-(defun find-in-namespace (name environment namespace)
+(defun find-in-namespace (name environment predicate)
   (find-if (lambda (entry)
-	     (and (typep entry namespace)
+	     (and (funcall predicate entry)
 		  (equal (name entry) name)))
 	   environment))
 
@@ -49,7 +49,7 @@
 			     (constant-variables *global-environment*)
 			     (symbol-macros *global-environment*)
 			     (special-variables *global-environment*))
-		     'variable-space))
+		     #'variable-space-p))
 
 (defun find-function (name environment)
   (find-in-namespace name
@@ -60,7 +60,7 @@
 			     (macros *global-environment*)
 			     (functions *global-environment*)
 			     (special-operators *global-environment*))
-		     'function-space))
+		     #'function-space-p))
 
 (defun find-type (entry env)
   `(and ,@(loop for e in (append env (proclamations *global-environment*))
@@ -187,7 +187,7 @@
 			    :dynamic-extent-p dynamic-extent-p))))))
 
 (defun block-info (name env)
-  (let ((entry (find-in-namespace name env 'block-space)))
+  (let ((entry (find-in-namespace name env #'block-space-p)))
     (if (null entry)
 	nil
 	(make-instance 'block-info
@@ -195,7 +195,7 @@
 		       :definition (definition entry)))))
 
 (defun tag-info (name env)
-  (let ((entry (find-in-namespace name env 'tag-space)))
+  (let ((entry (find-in-namespace name env #'tag-space-p)))
     (if (null entry)
 	nil
 	(make-instance 'tag-info
