@@ -47,7 +47,7 @@ R8 & Register variable (callee saved) \\
 R9 & Frame pointer\\
 R10 & Dynamic environment (callee saved) \\
 R11 & Register variable (callee saved)\\
-R12, IP & Linkage vector\\
+R12, IP & Linkage rack\\
 R13, SP & Stack pointer \\
 R14, LR & Link register, scratch \\
 R15, PC & Program counter \\
@@ -113,22 +113,22 @@ be restored.  A CATCH will store R10 along with other callee-saved
 registers so that it can be restored in case of a throw.
 
 R12 is also treated specially.  When an external call is made, the
-caller puts the linkage vector in this register, and then calls the
+caller puts the linkage rack in this register, and then calls the
 entry point of the function.  When an internal call is made, the
 caller does not change this register, because it already contains the
-correct linkage vector.  Notice that the linkage vector is a
+correct linkage rack.  Notice that the linkage rack is a
 disembodied rack.  When a function A calls a function B, if
-A can be sure that B uses the same code-object and thus the same
-linkage vector, then as A is about to call B, A makes sure that this
+A can be sure that B uses the same code object and thus the same
+linkage rack, then as A is about to call B, A makes sure that this
 register contains the same value as it did upon entry to A.  It can do
 that either by not using the register for any other purpose, or by
 spilling it and restoring it before the call to B.  B guarantees that
 the register will contain the same value as it did when B was called.
 In the opposite case, i.e., if the compiler can not determine that A
 and B use the same code object, then upon calling B, A must save the
-register and load the linkage vector of B into it.  Sometime after B
+register and load the linkage rack of B into it.  Sometime after B
 returns and before A itself returns to its caller, A must restore the
-register in case A's caller uses the same linkage vector as A.  Notice
+register in case A's caller uses the same linkage rack as A.  Notice
 that this protocol implies that if A and B use different code objects,
 then a call from A to B can never be a tail call.%
 \fixme{This might no longer be true.  Check and modify if necessary.}
@@ -140,7 +140,7 @@ important for debugging purposes, but also for the garbage collector.
 However, for performance reasons, we do not want to pass the code
 object at each function call, since we are hoping that most function
 calls will be to a function using the same code object.  For that
-purpose, the linkage vector always contains a back pointer to the code
+purpose, the linkage rack always contains a back pointer to the code
 object. 
 
 The current thread is contained in the dynamic environment as the

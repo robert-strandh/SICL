@@ -4,9 +4,9 @@
 A \emph{code object} contains:
 
 \begin{itemize}
-\item A linkage vector containing external objects that the running
+\item A linkage rack containing external objects that the running
   code needs to access.
-\item A byte vector of machine-code instructions.  
+\item A code vector which is a byte vector of machine-code instructions.  
 \item Debugging information.
 \end{itemize}
 
@@ -15,7 +15,7 @@ A \emph{function} contains:
 \begin{itemize}
 \item A code object.
 \item A captured static environment. 
-\item An offset into the byte vector in the code object.  That offset
+\item An offset into the code vector in the code object.  That offset
   indicates the entry point for the function, i.e. the first
   instruction of the function. 
 \end{itemize}

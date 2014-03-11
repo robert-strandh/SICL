@@ -259,7 +259,7 @@ a slot of the generic function, because once it is computed and
 installed, it is no longer needed.  In order for the generic function
 itself to behave in exactly the same way as its discriminating
 function, whenever a new discriminating function is \emph{installed},
-the \emph{entry point}, the \emph{linkage vector}, and the
+the \emph{entry point}, the \emph{linkage rack}, and the
 \emph{static environment} are copied from the discriminating function
 to the corresponding slots of the generic function itself.
 
@@ -451,14 +451,14 @@ slots.
   of entry points and their significance, but they typically have to
   do with the number of arguments and whether the call is an ordinary
   call or a tail call.
-\item The \emph{linkage vector} for this function, which is a raw
+\item The \emph{linkage rack} for this function, which is a raw
   disembodied rack pointer pointing to the rack
-  of the linkage vector object for this function.  The ordinary \cl{}
+  of the linkage vector for this function.  The ordinary \cl{}
   object containing this rack is referred to from the code
   object in the slot described previously.  The garbage collector must
   update the value of this slot if it decides to move the rack
-  of the linkage vector object.  The first word of the linkage
-  vector contains the \emph{code object} for this function (see below).
+  of the linkage vector.  The first word of the linkage
+  rack contains the \emph{code object} for this function (see below).
 \item An \emph{environment}, which is the local environment in which
   the function was defined. If the function does not close over any
   variables, then the value of this slot is \texttt{NIL}.
@@ -490,7 +490,7 @@ simplify calls between functions in the same compilation unit, because
 the caller and the callee would then share the same linkage vector.
 In contrast, a call from a function in one compilation unit to a
 function in a different compilation unit involves (in the most general
-case) accessing the linkage vector of the callee and storing it in a
+case) accessing the linkage rack of the callee and storing it in a
 register.
 
 For a \emph{generic function}, the description of the slots above
@@ -514,11 +514,11 @@ can occur:
   \texttt{function}), but nothing else is know about it, then an
   \emph{external call} is made.  Such a call consists of copying the
   contents of the \emph{static environment} slot and the \emph{linkage
-    vector} slot to the predetermined place specific to the backend,
+    rack} slot to the predetermined place specific to the backend,
   and then to issue a \emph{call} instruction (or equivalent) to the
   address indicated by the most general \emph{entry point} slot of the
   function object.  When the call is to a \emph{global function}, then
-  the linkage vector contains a \texttt{cons} cell whose \texttt{car}
+  the linkage rack contains a \texttt{cons} cell whose \texttt{car}
   is guaranteed to contain a function object, so this situation is
   applicable in this case. 
 \item When it can not only be determined statically that the object
@@ -532,7 +532,7 @@ can occur:
   caller and the callee are \emph{global functions} (so that the
   static environment is NIL for both), then it suffices to issue a
   \texttt{call} instruction (or equivalent) to a relative address that
-  can be determined statically.  The linkage vector does not need to
+  can be determined statically.  The linkage rack does not need to
   be passed because it is shared between the caller and the callee.
   The relative address can be chosen so as to avoid type checking of
   arguments with known types. 
@@ -543,7 +543,7 @@ can occur:
   it may pay off to start by checking that the object is a function,
   then accessing its \emph{lambda list} to determine that the number
   of arguments is acceptable, and then cache the static environment,
-  the linkage vector, and the alternative entry point in \emph{local
+  the linkage rack, and the alternative entry point in \emph{local
     registers}.   A typical use for this situation is in the
   \emph{sequence functions} for the keyword arguments \texttt{:test},
   \texttt{:test-not}, and \texttt{:key}.  

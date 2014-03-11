@@ -43,7 +43,7 @@ RBP & Frame pointer & Caller\\
 RSI & Second argument, fourth return value & Caller\\
 RDI & First argument, value count & Caller\\
 R8 &  Argument count, return value pointer& Caller\\
-R9 & Linkage vector & Caller\\
+R9 & Linkage rack & Caller\\
 R10 & Static env. argument & Caller\\
 R11 & Scratch & Caller\\
 R12 & Register variable & Callee\\
@@ -56,7 +56,7 @@ R15 & Register variable & Callee\\
 \section{Representation of function objects}
 
 For this backend, a function object contains its static environment
-and linkage vector as usual.  In addition, every function object has
+and linkage rack as usual.  In addition, every function object has
 $7$ entry points:
 
 \begin{itemize}
@@ -90,7 +90,7 @@ Normal call to external function, passing at most $4$ arguments:
 \item Compute the callee function object and the arguments into
   temporary locations.
 \item Store the arguments in RDI, RSI, RDX, and RCX.
-\item Load the linkage vector of the callee from the callee
+\item Load the linkage rack of the callee from the callee
   function object into R9.
 \item Load the static environment of the callee from the callee
   function object into R10.
@@ -117,7 +117,7 @@ Normal call to external function, passing at more than $4$ arguments:
 \item Store the remaining arguments in [RSP$ + 0$], [RSP$ + 8$],
   $\ldots$, [RSP$ + 8(N - 5)$].
 \item Store the argument count in R8 as a fixnum.
-\item Load the linkage vector of the callee from the callee
+\item Load the linkage rack of the callee from the callee
   function object into R9.
 \item Load the static environment of the callee from the callee
   function object into R10.
@@ -154,7 +154,7 @@ Tail call to external function, passing at most $4$ arguments:
 \item Compute the callee function object and the arguments into
   temporary locations.
 \item Store the arguments in RDI, RSI, RDX, and RCX.
-\item Load the linkage vector of the callee from the callee
+\item Load the linkage rack of the callee from the callee
   function object into R9.
 \item Load the static environment of the callee from the callee
   function object into R10.
@@ -178,8 +178,8 @@ callee in order to optimize it in the context of the caller.  This
 prefix contains argument count checking and type checking of
 arguments.  The address to use for the call is computed statically as
 an offset from the current program counter, so that a CALL instruction
-with a fixed relative address can be used.  The linkage vector of the
-caller and the callee are the same, so no linkage vector argument
+with a fixed relative address can be used.  The linkage rack of the
+caller and the callee are the same, so no linkage rack argument
 needs to be passed.  Furthermore, the caller might be able to avoid
 loading the static environment if it is known that the callee uses the
 same static environment (most often the NULL static environment) as
