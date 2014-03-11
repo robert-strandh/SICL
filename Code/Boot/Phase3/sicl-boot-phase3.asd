@@ -21,6 +21,7 @@
    (:file "mop-class-hierarchy")
    (:file "environment-classes")
    (:file "finalize-all-target-classes")
+   (:file "global-environment")
    (:file "patch-all-target-objects")
    (:file "shared-initialize-support")
    (:file "update-functions")
