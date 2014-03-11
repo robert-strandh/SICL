@@ -13,7 +13,7 @@
 ;;; registers that contain arguments, the register containing the
 ;;; argument count, the registers containing the static and the
 ;;; dynamic environments, and the register that contains the linkage
-;;; vector.  The other registers do not contain any useful values.
+;;; rack.  The other registers do not contain any useful values.
 ;;;
 ;;; Some registers contain values that must be restored before
 ;;; returning to the caller and before making a tail call, because
@@ -158,7 +158,7 @@
 	      *var1-reg* *var2-reg* *var3-reg* *var4-reg*))
   ;; Insert ASSIGNMENT instructions after the enter instruction.
   ;; These assignment instructions save the callee-saved registers, as
-  ;; well as the static environment, and the linkage vector to their
+  ;; well as the static environment, and the linkage rack to their
   ;; corresponding lexical variables.
   (let ((saves (list (cons *denv-reg* *denv-lexical*)
 		     (cons *lv-fun-reg* *lv-lexical*)
@@ -225,7 +225,7 @@
     (sicl-mir:insert-instruction-before
      (sicl-mir:make-assignment-instruction (car new-inputs) *lv-fun-reg*)
      instruction)
-    ;; Add the linkage vector registers, and the argument count
+    ;; Add the linkage rack registers, and the argument count
     ;; register as input to the funcall instruction, right after the
     ;; callee input itself.
     (setf (sicl-mir:inputs instruction)
@@ -268,7 +268,7 @@
     (sicl-mir:insert-instruction-before
      (sicl-mir:make-assignment-instruction (car new-inputs) *lv-fun-reg*)
      instruction)
-    ;; Add the linkage vector registers, and the argument count
+    ;; Add the linkage rack registers, and the argument count
     ;; register as input to the funcall instruction, right after the
     ;; callee input itself.
     (setf (sicl-mir:inputs instruction)
@@ -294,7 +294,7 @@
 		(sicl-mir:inputs instruction))))
 
 ;;; For the ENCLOSE-INSTRUCTION, we just add the static environment
-;;; and the linkage-vector as inputs to the instruction so that the
+;;; and the linkage rack as inputs to the instruction so that the
 ;;; register allocator can do its thing.
 (defmethod convert-instruction ((instruction sicl-mir:enclose-instruction))
   (convert-instruction-graph (car (sicl-mir:inputs instruction)))
@@ -354,14 +354,14 @@
 
 (defmethod convert-instruction
     ((instruction sicl-mir:load-constant-instruction))
-  (let ((lv-index (sicl-mir:linkage-vector-index instruction)))
+  (let ((lv-index (sicl-mir:linkage-rack-index instruction)))
     (change-class instruction 'sicl-mir:memref-instruction
 		  :displacement (* 8 (1+ lv-index))))
   (push *lv-lexical* (sicl-mir:inputs instruction)))
 
 (defmethod convert-instruction
     ((instruction sicl-mir:load-global-instruction))
-  (let* ((lv-index (sicl-mir:linkage-vector-index instruction))
+  (let* ((lv-index (sicl-mir:linkage-rack-index instruction))
 	 (temp (sicl-mir:new-temporary))
 	 (new (sicl-mir:make-memref-instruction
 	       *lv-lexical*

@@ -58,7 +58,7 @@
 (defvar *r10-lexical*)
 (defvar *r11-lexical*)
 
-(defvar *linkage-vector-lexical*)
+(defvar *linkage-rack-lexical*)
 (defvar *return-address-lexical*)
 (defvar *static-environment-lexical*)
 
@@ -77,7 +77,7 @@
 	(*r8-lexical* (sicl-mir:new-temporary))
 	(*r10-lexical* (sicl-mir:new-temporary))
 	(*r11-lexical* (sicl-mir:new-temporary))
-	(*linkage-vector-lexical* (sicl-mir:new-temporary))
+	(*linkage-rack-lexical* (sicl-mir:new-temporary))
 	(*return-address-lexical* (sicl-mir:new-temporary))
 	(*static-environment-lexical* (sicl-mir:new-temporary))
 	(all-instructions '()))
@@ -110,7 +110,7 @@
 	(loop for i in '(0 1 2 3 4 5 6 7 8 10 11 12 14)
 	      collect (aref *registers* i)))
   (let ((saves (list (cons (aref *registers* 3) *static-environment-lexical*)
-		     (cons (aref *registers* 12) *linkage-vector-lexical*)
+		     (cons (aref *registers* 12) *linkage-rack-lexical*)
 		     (cons (aref *registers* 14) *return-address-lexical*)
 		     (cons (aref *registers* 10) *r10-lexical*)
 		     (cons (aref *registers* 11) *r11-lexical*)
@@ -148,18 +148,18 @@
 	      instruction)
 	     (setf (car rest) (aref *registers* i)))
     ;; Insert instructions for loading the static environment and the
-    ;; linkage vector of the callee into appropriate registers.
+    ;; linkage rack of the callee into appropriate registers.
     (sicl-mir:insert-instruction-before
      (sicl-mir:make-load-static-env-instruction
       (car new-inputs)
       (aref *registers* 3))
      instruction)
     (sicl-mir:insert-instruction-before
-     (sicl-mir:make-load-linkage-vector-instruction
+     (sicl-mir:make-load-linkage-rack-instruction
       (car new-inputs)
       (aref *registers* 12))
      instruction)
-    ;; Add the static environment and linkage vector registers as
+    ;; Add the static environment and linkage rack registers as
     ;; input to the funcall instruction, right after the callee input
     ;; itself.
     (setf (sicl-mir:inputs instruction)
@@ -204,18 +204,18 @@
 		(sicl-mir:make-assignment-instruction lexical register)
 		instruction)))
     ;; Insert instructions for loading the static environment and the
-    ;; linkage vector of the callee into appropriate registers.
+    ;; linkage rack of the callee into appropriate registers.
     (sicl-mir:insert-instruction-before
      (sicl-mir:make-load-static-env-instruction
       (car new-inputs)
       (aref *registers* 3))
      instruction)
     (sicl-mir:insert-instruction-before
-     (sicl-mir:make-load-linkage-vector-instruction
+     (sicl-mir:make-load-linkage-rack-instruction
       (car new-inputs)
       (aref *registers* 12))
      instruction)
-    ;; Add the static environment and linkage vector registers as
+    ;; Add the static environment and linkage rack registers as
     ;; input to the tailcall instruction, right after the callee input
     ;; itself.
     (setf (sicl-mir:inputs instruction)
@@ -224,12 +224,12 @@
 		  new-inputs))))
 
 ;;; For the ENCLOSE-INSTRUCTION, we just add the static environment
-;;; and the linkage-vector as inputs to the instruction so that the
+;;; and the linkage rack as inputs to the instruction so that the
 ;;; register allocator can do its thing.
 (defmethod convert-instruction ((instruction sicl-mir:enclose-instruction))
   (convert-instruction-graph (car (sicl-mir:inputs instruction)))
   (push *static-environment-lexical* (sicl-mir:inputs instruction))
-  (push *linkage-vector-lexical* (sicl-mir:inputs instruction)))
+  (push *linkage-rack-lexical* (sicl-mir:inputs instruction)))
 
 (defmethod convert-instruction ((instruction sicl-mir:get-values-instruction))
   (let ((new-outputs (copy-list (sicl-mir:outputs instruction))))
@@ -273,8 +273,8 @@
 
 (defmethod convert-instruction
     ((instruction sicl-mir:load-constant-instruction))
-  (push *linkage-vector-lexical* (sicl-mir:inputs instruction)))
+  (push *linkage-rack-lexical* (sicl-mir:inputs instruction)))
 
 (defmethod convert-instruction
     ((instruction sicl-mir:load-global-instruction))
-  (push *linkage-vector-lexical* (sicl-mir:inputs instruction)))
+  (push *linkage-rack-lexical* (sicl-mir:inputs instruction)))

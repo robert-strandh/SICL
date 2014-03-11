@@ -78,7 +78,7 @@
 
 (define-built-in-class function (t)
   ((%entry-point :initarg :entry-point)
-   (%linkage-vector :initarg :linkage-vector)
+   (%linkage-rack :initarg :linkage-rack)
    (%environment :initform nil :initarg :environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

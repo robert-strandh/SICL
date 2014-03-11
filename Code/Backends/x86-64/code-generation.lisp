@@ -377,7 +377,7 @@
 (defmethod generate-instruction
     ((instruction sicl-mir:funcall-instruction) stream)
   ;; When we come here, the function object is already contained in
-  ;; *lv-fun-reg*.  The end result we want is that the linkage vector
+  ;; *lv-fun-reg*.  The end result we want is that the linkage rack
   ;; be in *lv-fun-reg* and that we issue a CALL instruction to the
   ;; entry point of the function.
   (let ((name (sicl-mir:name *lv-fun-reg*)))
@@ -392,9 +392,9 @@
     ;; FIXME: check the offset of the static environment.
     ;; FIXME: generate the offset of the static environment automatically.
     (add-code "MOV" (list (make-reg *senv-reg*) (make-mem name 24)))
-    ;; Next, load the linkage vector into *lv-fun-reg*.
-    ;; FIXME: check the offset of the linkage vector.
-    ;; FIXME: generate the offset of the linkage vector automatically.
+    ;; Next, load the linkage rack into *lv-fun-reg*.
+    ;; FIXME: check the offset of the linkage rack.
+    ;; FIXME: generate the offset of the linkage rack automatically.
     (add-code "MOV" (list (make-reg name) (make-mem name 32)))
     ;; Finally, call the entry point.
     (add-code "CALL" (list (make-reg 'rax)))))
@@ -413,9 +413,9 @@
     ;; FIXME: check the offset of the static environment.
     ;; FIXME: generate the offset of the static environment automatically.
     (add-code "MOV" (list (make-reg *senv-reg*) (make-mem name 24)))
-    ;; Next, load the linkage vector into *lv-fun-reg*.
-    ;; FIXME: check the offset of the linkage vector.
-    ;; FIXME: generate the offset of the linkage vector automatically.
+    ;; Next, load the linkage rack into *lv-fun-reg*.
+    ;; FIXME: check the offset of the linkage rack.
+    ;; FIXME: generate the offset of the linkage rack automatically.
     (add-code "MOV" (list (make-reg name) (make-mem name 32)))
     ;; Finally, jump to the entry point.
     (add-code "JMP" (list (make-reg 'rax)))))
