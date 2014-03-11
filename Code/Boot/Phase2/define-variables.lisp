@@ -9,11 +9,11 @@
 (defvar *standard-writer-method*
   (find-bridge-class 'standard-writer-method))
 
-(defvar *standard-object*
-  (find-bridge-class 'standard-object))
+(define-symbol-macro *standard-object*
+    (find-target-class 'cl:standard-object))
 
-(defvar *funcallable-standard-object*
-  (find-bridge-class 'funcallable-standard-object))
+(define-symbol-macro *funcallable-standard-object*
+    (find-target-class 'funcallable-standard-object))
 
 (defvar *standard-direct-slot-definition*
   (find-bridge-class 'standard-direct-slot-definition))
