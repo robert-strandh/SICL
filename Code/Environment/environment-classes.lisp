@@ -1016,6 +1016,16 @@
 		 :base-entry location-entry
 		 :type type))
 
+(defgeneric type-declaration-entry-p (object))
+
+(defmethod type-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod type-declaration-entry-p ((object type-declaration-entry))
+  (declare (ignorable object))
+  t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class INLINE-OR-NOTINLINE-DECLARATION-ENTRY.
@@ -1026,6 +1036,17 @@
 
 (defclass inline-or-notinline-declaration-entry (auxiliary-entry)
   ())
+
+(defgeneric inline-or-notinline-declaration-entry-p (object))
+
+(defmethod inline-or-notinline-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod inline-or-notinline-declaration-entry-p
+    ((object inline-or-notinline-declaration-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
