@@ -393,17 +393,47 @@
 ;;;
 ;;; The nature of the entry.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; DEFINITION-ENTRY.
+;;;
 ;;; For entries that have a complete definition in the environment.
 ;;; This is the case for macros, symbol macros, constant variables,
 ;;; blocks, and go tags.
+
 (defclass definition-entry ()
   ((%definition :initarg :definition :accessor definition)))
 
+(defgeneric definition-entry-p (object))
+
+(defmethod definition-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod definition-entry-p ((object definition-entry))
+  (declare (ignorable object))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; LOCATION-ENTRY.
+;;;
 ;;; This type of entry has some kind of location associated with it.
 ;;; This is the case for special variables, lexical variables, and
 ;;; functions.
+
 (defclass location-entry ()
   ((%location :initarg :location :reader location)))
+
+(defgeneric location-entry-p (object))
+
+(defmethod location-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod location-entry-p ((object location-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
