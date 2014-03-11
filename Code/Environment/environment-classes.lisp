@@ -777,6 +777,16 @@
 		 :name name
 		 :definition expander))
 
+(defgeneric global-macro-entry-p (object))
+
+(defmethod global-macro-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod global-macro-entry-p ((object global-macro-entry))
+  (declare (ignorable object))
+  t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOCAL-MACRO-ENTRY.
@@ -788,6 +798,16 @@
   (make-instance 'local-macro-entry
 		 :name name
 		 :definition expander))
+
+(defgeneric local-macro-entry-p (object))
+
+(defmethod local-macro-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod local-macro-entry-p ((object local-macro-entry))
+  (declare (ignorable object))
+  t)
 
 (defun add-local-macro-entry (env name expander)
   (add-to-environment env (make-local-macro-entry name expander)))
