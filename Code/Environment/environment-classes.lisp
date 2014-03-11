@@ -543,6 +543,16 @@
 		 :name name
 		 :location (make-lexical-location name)))
 
+(defgeneric lexical-variable-entry-p (object))
+
+(defmethod lexical-variable-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod lexical-variable-entry-p ((object lexical-variable-entry))
+  (declare (ignorable object))
+  t)
+
 (defun add-lexical-variable-entry (env name)
   (add-to-environment env (make-lexical-variable-entry name)))
 
@@ -562,6 +572,16 @@
     (make-instance 'symbol-macro-entry
 		   :name name
 		   :definition expander)))
+
+(defgeneric symbol-macro-entry-p (object))
+
+(defmethod symbol-macro-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod symbol-macro-entry-p ((object symbol-macro-entry))
+  (declare (ignorable object))
+  t)
 
 (defun add-symbol-macro-entry (env name expansion)
   (add-to-environment env (make-symbol-macro-entry name expansion)))
