@@ -24,6 +24,7 @@
    (:file "make-method-lambda-defuns")
    (:file "mop-class-hierarchy")
    (:file "environment-classes")
+   (:file "environment-constructors")
    (:file "environment-query")
    (:file "define-variables")
    (:file "finalize-all-bridge-classes")
