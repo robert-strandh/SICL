@@ -830,6 +830,16 @@
     (base-entry named-entry function-space)
   ())
 
+(defgeneric special-operator-entry-p (object))
+
+(defmethod special-operator-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod special-operator-entry-p ((object special-operator-entry))
+  (declare (ignorable object))
+  t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class COMPILER-MACRO-ENTRY.
@@ -900,6 +910,16 @@
   (make-instance 'block-entry
 		 :name name
 		 :definition block))
+
+(defgeneric block-entry-p (object))
+
+(defmethod block-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod block-entry-p ((object block-entry))
+  (declare (ignorable object))
+  t)
 
 (defun add-block-entry (env name block)
   (add-to-environment env (make-block-entry name block)))
