@@ -605,6 +605,16 @@
    (%parameters :initform nil :initarg :parameters :accessor parameters)
    (%lambda-list :initform :none :initarg :lambda-list :accessor lambda-list)))
 
+(defgeneric function-entry-p (object))
+
+(defmethod function-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod function-entry-p ((object function-entry))
+  (declare (ignorable object))
+  t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class GLOBAL-FUNCTION-ENTRY.
@@ -669,6 +679,16 @@
 		 :ast ast
 		 :parameters parameters
 		 :location (make-global-location name)))
+
+(defgeneric global-function-entry-p (object))
+
+(defmethod global-function-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod global-function-entry-p ((object global-function-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
