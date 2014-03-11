@@ -19,6 +19,7 @@
    (:file "defmethod-support")
    (:file "defmethod-defmacro")
    (:file "mop-class-hierarchy")
+   (:file "environment-classes")
    (:file "finalize-all-target-classes")
    (:file "patch-all-target-objects")
    (:file "shared-initialize-support")
