@@ -7,6 +7,7 @@
   ((:file "packages")
    (:file "rename-package-1")
    (:file "import")
+   (:file "import-to-environment")
    (:file "list-utilities")
    (:file "ensure")
    (:file "defclass-support")
