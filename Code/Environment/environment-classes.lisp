@@ -185,18 +185,12 @@
 (defclass global-location (location)
   ((%storage :initarg :storage :initform (list +funbound+) :reader storage)))
 
-(defun make-global-location (name)
-  (make-instance 'global-location :name name))
-
 ;;; Like a global location, a special location also has storage
 ;;; associated with it, but it serves a somewhat different purpose.
 ;;; It is used only when an attempt to find a special binding in the
 ;;; dynamic environment fails.  
 (defclass special-location (location)
   ((%storage :initform (list +unbound+) :reader storage)))
-
-(defun make-special-location (name)
-  (make-instance 'special-location :name name))
 
 ;;; A lexical location does not have any storage associated with it.
 ;;; The storage for a lexical location is determined by the compiler,
@@ -206,28 +200,6 @@
 ;;; debugging purposes.
 (defclass lexical-location (location)
   ())
-
-(defun make-lexical-location (name)
-  (make-instance 'lexical-location :name name))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Augmenting an environment.
-
-(defun add-to-environment (environment entry)
-  (cons entry environment))
-
-(defun augment-environment (environment entries)
-  (append entries environment))
-
-(defun augment-environment-with-declarations (environment declarations)
-  (let ((declaration-specifiers
-	  (sicl-code-utilities:canonicalize-declaration-specifiers
-	   (reduce #'append (mapcar #'cdr declarations)))))
-    (augment-environment
-     environment
-     (loop for spec in declaration-specifiers
-	   collect (make-entry-from-declaration spec environment)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -449,11 +421,6 @@
     (base-entry named-entry variable-space definition-entry)
   ())
 
-(defun make-constant-variable-entry (name definition)
-  (make-instance 'constant-variable-entry
-		 :name name
-		 :definition definition))
-
 (defgeneric constant-variable-entry-p (object))
 
 (defmethod constant-variable-entry-p (object)
@@ -513,12 +480,6 @@
     (base-entry named-entry variable-space location-entry)
   ((%defined-p :initform nil :initarg :defined-p :accessor defined-p)))
 
-(defun make-special-variable-entry (name &optional defined-p)
-  (make-instance 'special-variable-entry
-		 :name name
-		 :location (make-special-location name)
-		 :defined-p defined-p))
-
 (defgeneric special-variable-entry-p (object))
 
 (defmethod special-variable-entry-p (object)
@@ -538,11 +499,6 @@
     (base-entry named-entry variable-space location-entry)
   ())
 
-(defun make-lexical-variable-entry (name)
-  (make-instance 'lexical-variable-entry
-		 :name name
-		 :location (make-lexical-location name)))
-
 (defgeneric lexical-variable-entry-p (object))
 
 (defmethod lexical-variable-entry-p (object)
@@ -553,9 +509,6 @@
   (declare (ignorable object))
   t)
 
-(defun add-lexical-variable-entry (env name)
-  (add-to-environment env (make-lexical-variable-entry name)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SYMBOL-MACRO-ENTRY.
@@ -564,14 +517,6 @@
 (defclass symbol-macro-entry
     (base-entry named-entry variable-space definition-entry)
   ())
-
-(defun make-symbol-macro-entry (name expansion)
-  (let ((expander (lambda (form environment)
-		    (declare (ignore form environment))
-		    expansion)))
-    (make-instance 'symbol-macro-entry
-		   :name name
-		   :definition expander)))
 
 (defgeneric symbol-macro-entry-p (object))
 
@@ -582,9 +527,6 @@
 (defmethod symbol-macro-entry-p ((object symbol-macro-entry))
   (declare (ignorable object))
   t)
-
-(defun add-symbol-macro-entry (env name expansion)
-  (add-to-environment env (make-symbol-macro-entry name expansion)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -668,18 +610,6 @@
 (defclass global-function-entry (function-entry)
   ())
 
-(defun make-global-function-entry (name &optional
-					  (lambda-list :none)
-					  ast
-					  parameters)
-  (declare (cl:type function-name name))
-  (make-instance 'global-function-entry
-		 :name name
-		 :lambda-list lambda-list
-		 :ast ast
-		 :parameters parameters
-		 :location (make-global-location name)))
-
 (defgeneric global-function-entry-p (object))
 
 (defmethod global-function-entry-p (object)
@@ -697,11 +627,6 @@
 (defclass local-function-entry (function-entry)
   ())
 
-(defun make-local-function-entry (name)
-  (make-instance 'local-function-entry
-		 :name name
-		 :location (make-lexical-location name)))
-
 (defgeneric local-function-entry-p (object))
 
 (defmethod local-function-entry-p (object)
@@ -711,9 +636,6 @@
 (defmethod local-function-entry-p ((object local-function-entry))
   (declare (ignorable object))
   t)
-
-(defun add-local-function-entry (env name)
-  (add-to-environment env (make-local-function-entry name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -772,11 +694,6 @@
 (defclass global-macro-entry (macro-entry)
   ())
 
-(defun make-global-macro-entry (name expander)
-  (make-instance 'global-macro-entry
-		 :name name
-		 :definition expander))
-
 (defgeneric global-macro-entry-p (object))
 
 (defmethod global-macro-entry-p (object)
@@ -794,11 +711,6 @@
 (defclass local-macro-entry (macro-entry)
   ())
 
-(defun make-local-macro-entry (name expander)
-  (make-instance 'local-macro-entry
-		 :name name
-		 :definition expander))
-
 (defgeneric local-macro-entry-p (object))
 
 (defmethod local-macro-entry-p (object)
@@ -808,9 +720,6 @@
 (defmethod local-macro-entry-p ((object local-macro-entry))
   (declare (ignorable object))
   t)
-
-(defun add-local-macro-entry (env name expander)
-  (add-to-environment env (make-local-macro-entry name expander)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -893,11 +802,6 @@
   (declare (ignorable object))
   t)
 
-(defun make-compiler-macro-entry (base-entry expander)
-  (make-instance 'compiler-macro-entry
-		 :base-entry base-entry
-		 :definition expander))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class BLOCK-ENTRY.
@@ -905,11 +809,6 @@
 (defclass block-entry
     (base-entry named-entry block-space definition-entry)
   ())
-  
-(defun make-block-entry (name block)
-  (make-instance 'block-entry
-		 :name name
-		 :definition block))
 
 (defgeneric block-entry-p (object))
 
@@ -921,9 +820,6 @@
   (declare (ignorable object))
   t)
 
-(defun add-block-entry (env name block)
-  (add-to-environment env (make-block-entry name block)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class GO-TAG-ENTRY.
@@ -931,11 +827,6 @@
 (defclass go-tag-entry
     (base-entry named-entry tag-space definition-entry)
   ())
-
-(defun make-go-tag-entry (name tag)
-  (make-instance 'go-tag-entry
-		 :name name
-		 :definition tag))
 
 (defgeneric go-tag-entry-p (object))
 
@@ -947,9 +838,6 @@
   (declare (ignorable object))
   t)
 
-(defun add-go-tag-entry (env name tag)
-  (add-to-environment env (make-go-tag-entry name tag)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TYPE-ENTRY.
@@ -957,11 +845,6 @@
 (defclass type-entry
     (base-entry named-entry type-space definition-entry)
   ())
-
-(defun make-type-entry (name expander)
-  (make-instance 'type-entry
-		 :name name
-		 :definition expander))
 
 (defgeneric type-entry-p (object))
 
@@ -1011,11 +894,6 @@
 (defclass type-declaration-entry (auxiliary-entry)
   ((%type :initarg :type :reader type)))
 
-(defun make-type-declaration-entry (location-entry type)
-  (make-instance 'type-declaration-entry
-		 :base-entry location-entry
-		 :type type))
-
 (defgeneric type-declaration-entry-p (object))
 
 (defmethod type-declaration-entry-p (object)
@@ -1055,10 +933,6 @@
 (defclass inline-declaration-entry (inline-or-notinline-declaration-entry)
   ())
 
-(defun make-inline-declaration-entry (base-entry)
-  (make-instance 'inline-declaration-entry
-		 :base-entry base-entry))
-
 (defgeneric inline-declaration-entry-p (object))
 
 (defmethod inline-declaration-entry-p (object)
@@ -1076,10 +950,6 @@
 (defclass notinline-declaration-entry (inline-or-notinline-declaration-entry)
   ())
 
-(defun make-notinline-declaration-entry (base-entry)
-  (make-instance 'notinline-declaration-entry
-		 :base-entry base-entry))
-
 (defgeneric notinline-declaration-entry-p (object))
 
 (defmethod notinline-declaration-entry-p (object)
@@ -1096,10 +966,6 @@
 
 (defclass dynamic-extent-declaration-entry (auxiliary-entry)
   ())
-
-(defun make-dynamic-extent-declaration-entry (location-entry)
-  (make-instance 'dynamic-extent-declaration-entry
-		 :location (location location-entry)))
 
 (defgeneric dynamic-extent-declaration-entry-p (object))
 
@@ -1119,10 +985,6 @@
 (defclass ignore-declaration-entry (auxiliary-entry)
   ())
 
-(defun make-ignore-declaration-entry (location-entry)
-  (make-instance 'ignore-declaration-entry
-		 :location (location location-entry)))
-
 (defgeneric ignore-declaration-entry-p (object))
 
 (defmethod ignore-declaration-entry-p (object)
@@ -1139,10 +1001,6 @@
 
 (defclass ignorable-declaration-entry (auxiliary-entry)
   ())
-
-(defun make-ignorable-declaration-entry (location-entry)
-  (make-instance 'ignorable-declaration-entry
-		 :location (location location-entry)))
 
 (defgeneric ignorable-declaration-entry-p (object))
 
@@ -1173,11 +1031,6 @@
   ((%quality :initarg :quality)
    (%value :initarg :value)))
 
-(defun make-optimize-declaration-entry (quality &optional (value 3))
-  (make-instance 'optimize-declaration-entry
-		 :quality quality
-		 :value value))
-
 (defgeneric optimize-declaration-entry-p (object))
 
 (defmethod optimize-declaration-entry-p (object)
@@ -1195,10 +1048,6 @@
 
 (defclass declaration-declaration-entry (base-entry named-entry)
   ((%name :initarg :name :reader name)))
-
-(defun make-declaration-declaration-entry (name)
-  (make-instance 'declaration-declaration-entry
-		 :name name))
 
 (defgeneric declaration-declaration-entry-p (object))
 

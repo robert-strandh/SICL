@@ -8,8 +8,10 @@
     :depends-on ("packages"))
    (:file "environment-classes"
     :depends-on ("packages" "type-proclamations"))
-   (:file "environment-query"
+   (:file "environment-constructors"
     :depends-on ("environment"))
+   (:file "environment-query"
+    :depends-on ("environment-constructors"))
    (:file "macroexpand"
     :depends-on ("environment-query"))
    (:file "type-expand"

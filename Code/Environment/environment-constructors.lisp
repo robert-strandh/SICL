@@ -1,0 +1,120 @@
+(cl:in-package #:sicl-global-environment)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Constructors for locations.
+
+(defun make-global-location (name)
+  (make-instance 'global-location :name name))
+
+(defun make-special-location (name)
+  (make-instance 'special-location :name name))
+
+(defun make-lexical-location (name)
+  (make-instance 'lexical-location :name name))
+
+(defun make-constant-variable-entry (name definition)
+  (make-instance 'constant-variable-entry
+		 :name name
+		 :definition definition))
+
+(defun make-special-variable-entry (name &optional defined-p)
+  (make-instance 'special-variable-entry
+		 :name name
+		 :location (make-special-location name)
+		 :defined-p defined-p))
+
+(defun make-lexical-variable-entry (name)
+  (make-instance 'lexical-variable-entry
+		 :name name
+		 :location (make-lexical-location name)))
+
+(defun make-symbol-macro-entry (name expansion)
+  (let ((expander (lambda (form environment)
+		    (declare (ignore form environment))
+		    expansion)))
+    (make-instance 'symbol-macro-entry
+		   :name name
+		   :definition expander)))
+
+(defun make-global-function-entry (name &optional
+					  (lambda-list :none)
+					  ast
+					  parameters)
+  (declare (cl:type function-name name))
+  (make-instance 'global-function-entry
+		 :name name
+		 :lambda-list lambda-list
+		 :ast ast
+		 :parameters parameters
+		 :location (make-global-location name)))
+
+(defun make-local-function-entry (name)
+  (make-instance 'local-function-entry
+		 :name name
+		 :location (make-lexical-location name)))
+
+(defun make-global-macro-entry (name expander)
+  (make-instance 'global-macro-entry
+		 :name name
+		 :definition expander))
+
+(defun make-local-macro-entry (name expander)
+  (make-instance 'local-macro-entry
+		 :name name
+		 :definition expander))
+
+(defun make-compiler-macro-entry (base-entry expander)
+  (make-instance 'compiler-macro-entry
+		 :base-entry base-entry
+		 :definition expander))
+
+(defun make-block-entry (name block)
+  (make-instance 'block-entry
+		 :name name
+		 :definition block))
+
+(defun make-go-tag-entry (name tag)
+  (make-instance 'go-tag-entry
+		 :name name
+		 :definition tag))
+
+(defun make-type-entry (name expander)
+  (make-instance 'type-entry
+		 :name name
+		 :definition expander))
+
+(defun make-type-declaration-entry (location-entry type)
+  (make-instance 'type-declaration-entry
+		 :base-entry location-entry
+		 :type type))
+
+(defun make-inline-declaration-entry (base-entry)
+  (make-instance 'inline-declaration-entry
+		 :base-entry base-entry))
+
+(defun make-notinline-declaration-entry (base-entry)
+  (make-instance 'notinline-declaration-entry
+		 :base-entry base-entry))
+
+(defun make-dynamic-extent-declaration-entry (location-entry)
+  (make-instance 'dynamic-extent-declaration-entry
+		 :location (location location-entry)))
+
+(defun make-ignore-declaration-entry (location-entry)
+  (make-instance 'ignore-declaration-entry
+		 :location (location location-entry)))
+
+(defun make-ignorable-declaration-entry (location-entry)
+  (make-instance 'ignorable-declaration-entry
+		 :location (location location-entry)))
+
+(defun make-optimize-declaration-entry (quality &optional (value 3))
+  (make-instance 'optimize-declaration-entry
+		 :quality quality
+		 :value value))
+
+(defun make-declaration-declaration-entry (name)
+  (make-instance 'declaration-declaration-entry
+		 :name name))
+

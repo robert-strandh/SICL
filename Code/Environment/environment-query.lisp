@@ -2,6 +2,43 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Augmenting an environment.
+
+(defun add-to-environment (environment entry)
+  (cons entry environment))
+
+(defun augment-environment (environment entries)
+  (append entries environment))
+
+(defun augment-environment-with-declarations (environment declarations)
+  (let ((declaration-specifiers
+	  (sicl-code-utilities:canonicalize-declaration-specifiers
+	   (reduce #'append (mapcar #'cdr declarations)))))
+    (augment-environment
+     environment
+     (loop for spec in declaration-specifiers
+	   collect (make-entry-from-declaration spec environment)))))
+
+(defun add-lexical-variable-entry (env name)
+  (add-to-environment env (make-lexical-variable-entry name)))
+
+(defun add-symbol-macro-entry (env name expansion)
+  (add-to-environment env (make-symbol-macro-entry name expansion)))
+
+(defun add-local-function-entry (env name)
+  (add-to-environment env (make-local-function-entry name)))
+
+(defun add-local-macro-entry (env name expander)
+  (add-to-environment env (make-local-macro-entry name expander)))
+
+(defun add-block-entry (env name block)
+  (add-to-environment env (make-block-entry name block)))
+
+(defun add-go-tag-entry (env name tag)
+  (add-to-environment env (make-go-tag-entry name tag)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Querying the environment.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
