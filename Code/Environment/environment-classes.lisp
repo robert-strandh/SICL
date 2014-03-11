@@ -236,12 +236,30 @@
 (defclass entry ()
   ())
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; BASE-ENTRY.
+;;; 
 ;;; A base entry is an entry that does not refer to any other entry.
 ;;; Entries that represent functions, variables, macros, and optimize
 ;;; declarations are examples of base entries. 
 (defclass base-entry (entry)
   ())
 
+(defgeneric base-entry-p (entry))
+
+(defmethod base-entry-p (entry)
+  (declare (ignore entry))
+  nil)
+
+(defmethod base-entry-p ((entry base-entry))
+  (declare (ignorable entry))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; AUXILIARY-ENTRY.
+;;; 
 ;;; An auxiliary entry contains a reference to a base entry.  Type
 ;;; declarations, dynamic-extent declarations, and ignore declarations
 ;;; are examples of auxiliary entries, because they all refer to some
@@ -249,6 +267,20 @@
 (defclass auxiliary-entry (entry)
   ((%base-entry :initarg :base-entry :reader base-entry)))
 
+(defgeneric auxiliary-entry-p (entry))
+
+(defmethod auxiliary-entry-p (entry)
+  (declare (ignore entry))
+  nil)
+
+(defmethod auxiliary-entry-p ((entry auxiliary-entry))
+  (declare (ignorable entry))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; NAMED-ENTRY.
+;;; 
 ;;; A mixin class for entries having a name associated with them. 
 (defclass named-entry ()
   ((%name :initarg :name :reader name)))
@@ -710,6 +742,16 @@
 (defclass compiler-macro-entry
     (auxiliary-entry function-space definition-entry)
   ())
+
+(defgeneric compiler-macro-entry-p (object))
+
+(defmethod compiler-macro-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod compiler-macro-entry-p ((object compiler-macro-entry))
+  (declare (ignorable object))
+  t)
 
 (defun make-compiler-macro-entry (base-entry expander)
   (make-instance 'compiler-macro-entry
