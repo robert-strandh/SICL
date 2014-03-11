@@ -1059,6 +1059,16 @@
   (make-instance 'inline-declaration-entry
 		 :base-entry base-entry))
 
+(defgeneric inline-declaration-entry-p (object))
+
+(defmethod inline-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod inline-declaration-entry-p ((object inline-declaration-entry))
+  (declare (ignorable object))
+  t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class NOTINLINE-DECLARATION-ENTRY.
@@ -1069,6 +1079,16 @@
 (defun make-notinline-declaration-entry (base-entry)
   (make-instance 'notinline-declaration-entry
 		 :base-entry base-entry))
+
+(defgeneric notinline-declaration-entry-p (object))
+
+(defmethod notinline-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod notinline-declaration-entry-p ((object notinline-declaration-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
