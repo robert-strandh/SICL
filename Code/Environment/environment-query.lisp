@@ -64,26 +64,26 @@
 
 (defun find-type (entry env)
   `(and ,@(loop for e in (append env (proclamations *global-environment*))
-		when (and (typep e 'type-declaration-entry)
+		when (and (type-declaration-entry-p e)
 			  (eq (base-entry e) entry))
 		  collect (type e))))
 
 (defun find-inline-info (entry env)
   (loop for e in (append env (proclamations *global-environment*))
-	do (when (and (typep e 'inline-or-notinline-declaration-entry)
+	do (when (and (inline-or-notinline-declaration-entry-p e)
 		      (eq (base-entry e) entry))
-	     (return (if (typep e 'inline-declaration-entry)
+	     (return (if (inline-declaration-entry-p e)
 			 :inline
 			 :notinline)))))
 
 (defun find-ignore-info (entry env)
   (cond ((loop for e in (append env (proclamations *global-environment*))
-	       when (and (typep e 'ignore-declaration-entry)
+	       when (and (ignore-declaration-entry-p e)
 			 (eq (base-entry e) entry))
 		 return t)
 	 :ignore)
 	((loop for e in (append env (proclamations *global-environment*))
-	       when (and (typep e 'ignorable-declaration-entry)
+	       when (and (ignorable-declaration-entry-p e)
 			 (eq (base-entry e) entry))
 		 return t)
 	 :ignorable)
@@ -91,7 +91,7 @@
 
 (defun find-dynamic-extent-info (entry env)
   (loop for e in (append env (proclamations *global-environment*))
-	when (and (typep e 'dynamic-extent-declaration-entry)
+	when (and (dynamic-extent-declaration-entry-p e)
 		  (eq (base-entry e) entry))
 	  return t))
 
@@ -118,11 +118,11 @@
 			:ignore-info nil
 			:dynamic-extent-p nil))
 	       nil))
-	  ((typep entry 'constant-variable-entry)
+	  ((constant-variable-entry-p entry)
 	   (make-instance 'constant-variable-info
 			  :name (name entry)
 			  :definition (definition entry)))
-	  ((typep entry 'symbol-macro-entry)
+	  ((symbol-macro-entry-p entry)
 	   (make-instance 'symbol-macro-info
 			  :name (name entry)
 			  :definition (definition entry)
@@ -131,7 +131,7 @@
 	   (let ((type (find-type entry env))
 		 (ignore-info (find-ignore-info entry env))
 		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
-	     (make-instance (if (typep entry 'special-variable-entry)
+	     (make-instance (if (special-variable-entry-p entry)
 				'special-location-info
 				'lexical-location-info)
 			    :location (location entry)
@@ -165,7 +165,7 @@
 			:ignore-info nil
 			:dynamic-extent-p nil))
 	       nil))
-	  ((typep entry 'macro-entry)
+	  ((macro-entry-p entry)
 	   (make-instance 'macro-info
 			  :name (name entry)
 			  :definition (definition entry)))
@@ -174,7 +174,7 @@
 		 (inline-info (find-inline-info entry env))
 		 (ignore-info (find-ignore-info entry env))
 		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
-	     (make-instance (if (typep entry 'global-function-entry)
+	     (make-instance (if (global-function-entry-p entry)
 				'global-function-location-info
 				'lexical-function-location-info)
 			    :location (location entry)
