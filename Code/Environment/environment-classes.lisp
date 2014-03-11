@@ -454,6 +454,16 @@
 		 :name name
 		 :definition definition))
 
+(defgeneric constant-variable-entry-p (object))
+
+(defmethod constant-variable-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod constant-variable-entry-p ((object constant-variable-entry))
+  (declare (ignorable object))
+  t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SPECIAL-VARIABLE-ENTRY.
@@ -508,6 +518,16 @@
 		 :name name
 		 :location (make-special-location name)
 		 :defined-p defined-p))
+
+(defgeneric special-variable-entry-p (object))
+
+(defmethod special-variable-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod special-variable-entry-p ((object special-variable-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
