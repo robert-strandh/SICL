@@ -1144,6 +1144,16 @@
   (make-instance 'ignorable-declaration-entry
 		 :location (location location-entry)))
 
+(defgeneric ignorable-declaration-entry-p (object))
+
+(defmethod ignorable-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod ignorable-declaration-entry-p ((object ignorable-declaration-entry))
+  (declare (ignorable object))
+  t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class AUTONOMOUS-DECLARATION-ENTRY.
@@ -1167,7 +1177,17 @@
   (make-instance 'optimize-declaration-entry
 		 :quality quality
 		 :value value))
-  
+
+(defgeneric optimize-declaration-entry-p (object))
+
+(defmethod optimize-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod optimize-declaration-entry-p
+    ((object optimize-declaration-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1179,6 +1199,17 @@
 (defun make-declaration-declaration-entry (name)
   (make-instance 'declaration-declaration-entry
 		 :name name))
+
+(defgeneric declaration-declaration-entry-p (object))
+
+(defmethod declaration-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod declaration-declaration-entry-p
+    ((object declaration-declaration-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
