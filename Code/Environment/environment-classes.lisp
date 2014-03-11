@@ -1101,6 +1101,17 @@
   (make-instance 'dynamic-extent-declaration-entry
 		 :location (location location-entry)))
 
+(defgeneric dynamic-extent-declaration-entry-p (object))
+
+(defmethod dynamic-extent-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod dynamic-extent-declaration-entry-p
+    ((object dynamic-extent-declaration-entry))
+  (declare (ignorable object))
+  t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class IGNORE-DECLARATION-ENTRY.
@@ -1111,6 +1122,16 @@
 (defun make-ignore-declaration-entry (location-entry)
   (make-instance 'ignore-declaration-entry
 		 :location (location location-entry)))
+
+(defgeneric ignore-declaration-entry-p (object))
+
+(defmethod ignore-declaration-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod ignore-declaration-entry-p ((object ignore-declaration-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
