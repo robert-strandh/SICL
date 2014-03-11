@@ -261,12 +261,101 @@
 ;;; can locate entries in a particular namespace in the local
 ;;; environment.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class and predicate for FUNCTION-SPACE.
+
 (defclass function-space () ())
+
+(defgeneric function-space-p (object))
+
+(defmethod function-space-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod function-space-p ((object function-space))
+  (declare (ignorable object))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class and predicate for VARIABLE-SPACE.
+
 (defclass variable-space () ())
+
+(defgeneric variable-space-p (object))
+
+(defmethod variable-space-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod variable-space-p ((object variable-space))
+  (declare (ignorable object))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class and predicate for BLOCK-SPACE.
+
 (defclass block-space () ())
+
+(defgeneric block-space-p (object))
+
+(defmethod block-space-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod block-space-p ((object block-space))
+  (declare (ignorable object))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class and predicate for TAG-SPACE.
+
 (defclass tag-space () ())
+
+(defgeneric tag-space-p (object))
+
+(defmethod tag-space-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod tag-space-p ((object tag-space))
+  (declare (ignorable object))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class and predicate for TYPE-SPACE.
+
 (defclass type-space () ())
+
+(defgeneric type-space-p (object))
+
+(defmethod type-space-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod type-space-p ((object type-space))
+  (declare (ignorable object))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class and predicate for DECLARATION-SPACE.
+
 (defclass declaration-space () ())
+
+(defgeneric declaration-space-p (object))
+
+(defmethod declaration-space-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod declaration-space-p ((object declaration-space))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
