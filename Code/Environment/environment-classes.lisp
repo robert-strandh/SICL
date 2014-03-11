@@ -702,6 +702,16 @@
 		 :name name
 		 :location (make-lexical-location name)))
 
+(defgeneric local-function-entry-p (object))
+
+(defmethod local-function-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod local-function-entry-p ((object local-function-entry))
+  (declare (ignorable object))
+  t)
+
 (defun add-local-function-entry (env name)
   (add-to-environment env (make-local-function-entry name)))
 
@@ -716,6 +726,16 @@
 (defclass macro-entry
     (base-entry named-entry function-space definition-entry)
   ())
+
+(defgeneric macro-entry-p (object))
+
+(defmethod macro-entry-p (object)
+  (declare (ignore object))
+  nil)
+
+(defmethod macro-entry-p ((object macro-entry))
+  (declare (ignorable object))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
