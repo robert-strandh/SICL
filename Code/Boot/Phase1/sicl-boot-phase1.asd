@@ -119,6 +119,10 @@
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defgenerics")
    (:file "add-remove-direct-method-defmethods")
+   ;; Define generic functions SICL-BOOT-PHASE1:ADD-METHOD and
+   ;; SICL-BOOT-PHASE1:REMOVE-METHOD.  The function ADD-METHOD will be
+   ;; called from ADD-READER/WRITER-METHOD when the MOP class
+   ;; hierarchy is used in phase 2 to generate bridge classes.
    (:file "add-remove-method-support")
    (:file "add-remove-method-defgenerics")
    (:file "add-remove-method-defmethods")
