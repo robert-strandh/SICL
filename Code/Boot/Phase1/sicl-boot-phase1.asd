@@ -135,6 +135,13 @@
    ;; bridge generic function should be created if it does not already
    ;; exist.
    (:file "ensure-accessor-function")
+   ;; Define ordinary functions ADD-READER/WRITER-METHOD.  These
+   ;; functions are not part of the specification, but represent
+   ;; convenient abstractions.  They are called from the :AFTER
+   ;; methods on INITIALIZE-INSTANCE specialized to certain class
+   ;; metaobjects.  Here, the purpose is to add the reader and writer
+   ;; methods for each slot with such accessors when a bridge class is
+   ;; created. 
    (:file "add-accessor-method")
    (:file "slot-definition-class-support")
    (:file "slot-definition-class-defuns")
