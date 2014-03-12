@@ -172,6 +172,12 @@
    (:file "slot-definition-class-support")
    (:file "slot-definition-class-defgenerics")
    (:file "slot-definition-class-defmethods")
+   ;; Define a version of VALIDATE-SUPERCLASS as an ordinary function
+   ;; that always returns true.  This function is called by the
+   ;; :AROUND method on INITIALIZE-INSTANCE specialized to certain
+   ;; class metaobjects as part of the class initialization protocol.
+   ;; During bootstrapping, we do not expect any problems so we can
+   ;; always return true.
    (:file "validate-superclass")
    (:file "class-initialization-support")
    (:file "class-initialization-defmethods")
