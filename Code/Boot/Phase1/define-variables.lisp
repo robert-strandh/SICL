@@ -34,6 +34,20 @@
 (defvar *standard-writer-method*
   (find-class 'standard-writer-method))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Variable *STANDARD-DIRECT-SLOT-DEFINITION*.
+;;;
+;;; This variable is referred to by the default methods on the generic
+;;; functions DIRECT-SLOT-DEFINITION-CLASS that is defined later in
+;;; phase 1.  This function is called when the MOP hierarchy is loaded
+;;; in phase 2 in order to create bridge classes.  Creating a bridge
+;;; class (which is a host instance) implicitly creates direct slot
+;;; definition metaobjects for the slots.  Those slot definition
+;;; metaobjects need to be host instances just like the bridge class
+;;; itself.  This is why the value of this variable is the host class
+;;; named STANDARD-DIRECT-SLOT-DEFINITION.
+
 (defvar *standard-direct-slot-definition*
   (find-class 'standard-direct-slot-definition))
 
