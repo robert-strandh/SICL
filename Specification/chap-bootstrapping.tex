@@ -183,6 +183,18 @@ protocols for class metaobjects, generic function metaobjects, etc.
 We define special versions of \texttt{ensure-class} and
 \texttt{ensure-generic-function} that 
 
+Finally, during phase 1, we define functions that will ultimately be
+used for manipulating the bridge classes and bridge generic functions
+that are created during phase 1, including computing the
+discriminating function of bridge generic functions and creating
+instances of bridge classes.  For functions like
+\texttt{make-instance} that we can not create in phase 1 because they
+would class with the host function of the same name, we only define
+the supporting ordinary functions and we stop short of defining the
+main functions.  We define all this machinery in phase 1, because it
+will use the accessors that are implicitly defined when MOP classes
+are created here. 
+
 \subsubsection{Phase 2}
 
 The purpose of this phase is to make it possible to create bridge
