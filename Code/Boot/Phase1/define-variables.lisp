@@ -39,7 +39,7 @@
 ;;; Variable *STANDARD-DIRECT-SLOT-DEFINITION*.
 ;;;
 ;;; This variable is referred to by the default methods on the generic
-;;; functions DIRECT-SLOT-DEFINITION-CLASS that is defined later in
+;;; function DIRECT-SLOT-DEFINITION-CLASS that is defined later in
 ;;; phase 1.  This function is called when the MOP hierarchy is loaded
 ;;; in phase 2 in order to create bridge classes.  Creating a bridge
 ;;; class (which is a host instance) implicitly creates direct slot
@@ -50,6 +50,22 @@
 
 (defvar *standard-direct-slot-definition*
   (find-class 'standard-direct-slot-definition))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Variable *STANDARD-EFFECTIVE-SLOT-DEFINITION*.
+;;;
+;;; This variable is referred to by the default methods on the generic
+;;; function EFFECTIVE-SLOT-DEFINITION-CLASS that is defined later in
+;;; phase 1.  This function is called by function
+;;; COMPUTE-EFFECTIVE-SLOT-DEFINITION which is part of the class
+;;; finalization protocol in order to create an effective slot
+;;; definition metaobject from a list of direct slot definition
+;;; metaobjects.  Here, the effective slot definition metaobject we
+;;; want to create is a host instance, because it will be part of a
+;;; bridge class, and a bridge class is a host instance as well.  This
+;;; is why the value of this variable is the host class named
+;;; STANDARD-EFFECTIVE-SLOT-DEFINITION.
 
 (defvar *standard-effective-slot-definition*
   (find-class 'standard-effective-slot-definition))
