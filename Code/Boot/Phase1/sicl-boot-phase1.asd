@@ -52,7 +52,7 @@
    ;; contents in various ways.
    (:file "class-database")
    ;; Define a special version of ENSURE-CLASS that checks whether
-   ;; there is a bridge class of the name that it is given as an
+   ;; there is a bridge class with the name that it is given as an
    ;; argument.  If not, it calls CL:MAKE-INSTANCE to create an
    ;; instance of the host class of that name, and adds the new class
    ;; to the database.  In either case, a bridge class is returned.
@@ -72,7 +72,20 @@
    ;; method that returns FALSE and a method specialized to
    ;; SPECIALIZER that returns true.
    (:file "specializerp")
+   ;; Define a special variable *BRIDGE-GENERIC-FUNCTIONS* to hold a
+   ;; list of all bridge generic functions that are created, and
+   ;; define function to query and add new functions.  When a bridge
+   ;; generic function is added to the database, the FDEFINITION is
+   ;; assigned as well, so that the function can be called normally.
+   ;; We still need the database though, because later on, we are
+   ;; going to want to satiate all bridge generic functions.
    (:file "generic-function-database")
+   ;; Define a special version of ENSURE-GENERIC-FUNCTION that checks
+   ;; whether there is a bridge generic function with the name given
+   ;; as argument, if not, it calls CL:MAKE-INSTANCE to create a
+   ;; bridge generic function with that name, and adds the new generic
+   ;; function to the database (implicitly setting its FDEFINITION).
+   ;; In either case, a bridge generic function is returned. 
    (:file "ensure-generic-function")
    (:file "ensure-method")
    (:file "reader-writer-method-class-support")
