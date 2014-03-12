@@ -74,26 +74,27 @@ host class or the name of a host class.
 \end{definition}
 
 \begin{definition}
-A \emph{target class} is a class metaobject represented as a target
-instance of some target class. 
+An \emph{ersatz instance} is a target instance represented as a host
+data structure, using a host structure instance to represent the
+\emph{header} and a host simple vector to represent the \emph{rack}.
 \end{definition}
 
 \begin{definition}
-A \emph{target instance} is an instance of a target class.
+An \emph{ersatz class} is an ersatz instance that can be instantiated
+to obtain another ersatz instance.
 \end{definition}
 
 \begin{definition}
 A \emph{bridge class} is a representation of a target class as a host
-instance.
+instance.  A bridge class can be instantiated to obtain a bridge
+instance. 
 \end{definition}
 
 \begin{definition}
-A \emph{bridge instance} is a target instance, except that the class of
-the instance is not a target class but a bridge class.
+A \emph{bridge instance} is a target instance represented just like an
+ersatz instance, except that the class objects stored in the header is
+not an ersatz class, but a bridge class. 
 \end{definition}
-
-Notice that according to this definition, a bridge instance is not an
-instance of a bridge class.
 
 \begin{definition}
 A \emph{host generic function} is a generic function created by
@@ -111,39 +112,36 @@ class specializers of such a method are host classes.
 \end{definition}
 
 \begin{definition}
-A \emph{target generic function} is an instance of the target class
-\texttt{target:generic-function}.  Arguments to the discriminating
-function of such a generic function are target instances.
-\texttt{target:class-of} is called on some required arguments in order
-to determine what methods to call, and the function
-\texttt{target:unique-number} is called to determine the unique
-number of the class.
+An \emph{ersatz generic function} is an instance of the ersatz class
+\texttt{target:generic-function}.  An ersatz generic function can not
+be executed.  It can only be translated into a target generic function.
 \end{definition}
 
 \begin{definition}
-A \emph{target method} is an instance of the target class
+An \emph{ersatz method} is an instance of the ersatz class
 \texttt{target:method}.  The class specializers of such a method are
-target classes.
+ersatz classes.
 \end{definition}
 
 \begin{definition}
 A \emph{bridge generic function} is a generic function which is a host
-instance of the host class \texttt{target:generic-function}.  Arguments to
-the discriminating function of such a generic function are
-typically target instances (but not necessarily, because of our
-definition of "target instance").  \texttt{target:class-of} is called on
-some required arguments in order to determine what methods to
-call, and \texttt{target:unique-number} is called to determine the
-unique number of the class.
+instance of the host class \texttt{target:bridge-generic-function}.
+This class is a subclass of \texttt{host:funcallable-standard-object}
+and of the bridge class \texttt{target:standard-generic-function}.
+A bridge generic function is executable just like any host function.
+
+Arguments to a bridge generic function are ersatz instances.  The
+bridge generic function uses the 
+\emph{identification}
+\seesec{sec-generic-function-dispatch-the-discriminating-function} of
+the required arguments to dispatch on. 
 \end{definition}
 
 \begin{definition}
 A \emph{bridge method} is a a method which is a host instance of the host
-class \texttt{target:method}.  The class specializers of such a method can
-be bridge classes or target classes depending on context, but the
-class accessors (\texttt{target:class-direct-superclasses}, etc.) as well
-as \texttt{target:unique-number} must be defined in that context to
-work on the specializers. 
+class \texttt{target:method}.  The class specializers of such a method are
+bridge classes.  The \emph{method function} of a bridge method is an
+ordinary host function.
 \end{definition}
 
 \subsubsection{Phase 1}
