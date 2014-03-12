@@ -126,6 +126,14 @@
    (:file "add-remove-method-support")
    (:file "add-remove-method-defgenerics")
    (:file "add-remove-method-defmethods")
+   ;; Define ordinary function ENSURE-ACCESSOR-FUNCTION to call
+   ;; ENSURE-GENERIC-FUNCTION.  Recall that ENSURE-ACCESSOR-FUNCTION
+   ;; is an indirection to ENSURE-GENERIC-FUNCTION called by
+   ;; ADD-READER/WRITER-METHOD in order to ensure that the generic
+   ;; function exists.  The reason for the indirection is that we want
+   ;; it to mean something different in phase 2.  Here it means that a
+   ;; bridge generic function should be created if it does not already
+   ;; exist.
    (:file "ensure-accessor-function")
    (:file "add-accessor-method")
    (:file "slot-definition-class-support")
