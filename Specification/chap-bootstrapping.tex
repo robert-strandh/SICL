@@ -92,7 +92,7 @@ instance.
 
 \begin{definition}
 A \emph{bridge instance} is a target instance represented just like an
-ersatz instance, except that the class objects stored in the header is
+ersatz instance, except that the class object stored in the header is
 not an ersatz class, but a bridge class. 
 \end{definition}
 
@@ -115,6 +115,7 @@ class specializers of such a method are host classes.
 An \emph{ersatz generic function} is an instance of the ersatz class
 \texttt{target:generic-function}.  An ersatz generic function can not
 be executed.  It can only be translated into a target generic function.
+The methods on an ersatz generic function are ersatz methods. 
 \end{definition}
 
 \begin{definition}
@@ -135,6 +136,8 @@ bridge generic function uses the
 \emph{identification}
 \seesec{sec-generic-function-dispatch-the-discriminating-function} of
 the required arguments to dispatch on. 
+
+The methods on a bridge generic function are bridge methods.
 \end{definition}
 
 \begin{definition}
@@ -163,6 +166,22 @@ finalization protocol of the host will make sure that instances of
 these host classes have the effective slots determined by class
 inheritance.  In other words, each of the classes define slots with
 the right names, the right initargs, etc.
+
+We define \emph{databases} and associated query functions for
+\emph{bridge classes} and \emph{bridge generic function}, because when
+one of the MOP classes defined in phase 1 is instantiated, it
+explicitly creates a bridge class, and it implicitly creates bridge
+generic functions and bridge methods for the accessors of those
+classes.  Other host instances are created here, in particular
+instances of \texttt{target:standard-direct-slot-definition}, but
+these instances do not require a separate database, because they are
+referred to by the bridge classes that are created. 
+
+During phase 1, we also establish the \texttt{:after} methods on
+\texttt{host:initialize-instance} that implement the initialization
+protocols for class metaobjects, generic function metaobjects, etc.
+We define special versions of \texttt{ensure-class} and
+\texttt{ensure-generic-function} that 
 
 \subsubsection{Phase 2}
 
