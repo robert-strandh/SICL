@@ -179,6 +179,11 @@
    ;; During bootstrapping, we do not expect any problems so we can
    ;; always return true.
    (:file "validate-superclass")
+   ;; Define :AROUND and :AFTER methods on INITIALIZE-INSTANCE
+   ;; specialized to certain class metaobjects, for the purpose of
+   ;; implementing the class initialization protocol.  Here, these
+   ;; methods will be on host generic functions in order to initialize
+   ;; bridge classes.  
    (:file "class-initialization-support")
    (:file "class-initialization-defmethods")
    (:file "compute-applicable-methods-support")
