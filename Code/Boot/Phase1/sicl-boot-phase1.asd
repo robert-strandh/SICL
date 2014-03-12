@@ -87,6 +87,11 @@
    ;; function to the database (implicitly setting its FDEFINITION).
    ;; In either case, a bridge generic function is returned. 
    (:file "ensure-generic-function")
+   ;; Define a special version of ENSURE-METHOD that calls
+   ;; CL:MAKE-INSTANCE to make a host instance of the class
+   ;; SICL-BOOT-PHASE1:STANDARD-METHOD and then adds the newly created
+   ;; method to the bridge generic function that was given to it as an
+   ;; argument.
    (:file "ensure-method")
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defgenerics")
