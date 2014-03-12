@@ -5,10 +5,35 @@
 	       :sicl-additional-conditions)
   :serial t
   :components
-  ((:file "packages")
+  (;; Define packages ASPIRING-SICL-CLOS and SICL-BOOT-PHASE1.  The
+   ;; package ASPIRING-SICL-CLOS supplies the symbols that are names
+   ;; of MOP classes, other than the names of such classes that are
+   ;; supplied by the COMMON-LISP package.  The package
+   ;; SICL-BOOT-PHASE1 imports the symbols of ASPIRING-SICL-CLOS and
+   ;; shadows the symbol of the COMMON-LISP package that name MOP
+   ;; classes and MOP generic functions.
+   (:file "packages")
+   ;; Add SICL-CLOS as a nickname to the package SICL-BOOT-PHASE1.
+   ;; The purpose of this manipulation is so that CLOS code that is
+   ;; loaded will be defined in the package SICL-BOOT-PHASE1.  
    (:file "rename-package-1")
+   ;; Define a fake version of the macro DEFINE-BUILT-IN-CLASS that
+   ;; expands to DEFCLASS, except that if the built-in class to be
+   ;; defined is named T, then the entire DEFINE-BUILT-IN-CLASS form
+   ;; expands to NIL instead.
    (:file "define-built-in-class")
+   ;; Define a version of the macro DEFCLASS that expands to
+   ;; CL:DEFCLASS, except that if the symbol T is among the list of
+   ;; superclasses, then it is removed. 
    (:file "defclass")
+   ;; Define the MOP classes as host classes.  The names of those
+   ;; classes will be in the package SICL-BOOT-PHASE1 when in the real
+   ;; system it would be in the COMMON-LISP package, and in the
+   ;; package ASPIRING-SICL-CLOS when in the real system it would be
+   ;; in the SICL-CLOS package.  Defining the MOP classes also defines
+   ;; generic functions corresponding to the accessors.  These generic
+   ;; functions will be ordinary host generic functions.  The names of
+   ;; those functions will be in the package SICL-BOOT-PHASE1.
    (:file "mop-class-hierarchy")
    (:file "bridge-generic-function")
    (:file "define-variables")
