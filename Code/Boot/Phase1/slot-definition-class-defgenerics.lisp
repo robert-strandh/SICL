@@ -1,0 +1,1 @@
+../../CLOS/slot-definition-class-defgenerics.lisp

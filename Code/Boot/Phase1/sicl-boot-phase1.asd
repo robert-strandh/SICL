@@ -144,7 +144,8 @@
    ;; created. 
    (:file "add-accessor-method")
    (:file "slot-definition-class-support")
-   (:file "slot-definition-class-defuns")
+   (:file "slot-definition-class-defgenerics")
+   (:file "slot-definition-class-defmethods")
    (:file "validate-superclass")
    (:file "class-initialization-support")
    (:file "class-initialization-defmethods")
