@@ -108,6 +108,13 @@
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defgenerics")
    (:file "reader-writer-method-class-defmethods")
+   ;; Define generic functions SICL-BOOT-PHASE1:ADD-DIRECT-METHOD and
+   ;; SICL-BOOT-PHASE1:REMOVE-DIRECT-METHOD.  Recall that
+   ;; ADD-DIRECT-METHOD is called to add a reference to a method from
+   ;; a specializer (typically a class) used in that method.  It will
+   ;; be called from ADD-METHOD when the MOP class hierarchy is used
+   ;; in phase 2 to create bridge classes, in order to add a reference
+   ;; to a bridge method from a bridge class.
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defgenerics")
    (:file "add-remove-direct-method-defmethods")
