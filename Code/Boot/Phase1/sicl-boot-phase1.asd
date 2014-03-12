@@ -51,9 +51,26 @@
    ;; bridge classes, and define functions to query and modify the
    ;; contents in various ways.
    (:file "class-database")
+   ;; Define a special version of ENSURE-CLASS that checks whether
+   ;; there is a bridge class of the name that it is given as an
+   ;; argument.  If not, it calls CL:MAKE-INSTANCE to create an
+   ;; instance of the host class of that name, and adds the new class
+   ;; to the database.  In either case, a bridge class is returned.
+   ;; If no metaclass is given, it instantiates the host class named
+   ;; STANDARD-CLASS.
    (:file "ensure-class")
+   ;; Define a special version of ENSURE-BUILT-IN-CLASS that does the
+   ;; same thing as ENSURE-CLASS, except that it takes no METACLASS
+   ;; argument and it always calls CL:MAKE-INSTANCE with the symbol
+   ;; BUILT-IN-CLASS as the metaclass to instantiate.
    (:file "ensure-built-in-class")
+   ;; We define a generic function called CLASSP with a default method
+   ;; that returns FALSE and a method specialized to CLASS that
+   ;; returns true.
    (:file "classp")
+   ;; We define a generic function called SPECIALIZERP with a default
+   ;; method that returns FALSE and a method specialized to
+   ;; SPECIALIZER that returns true.
    (:file "specializerp")
    (:file "generic-function-database")
    (:file "ensure-generic-function")
