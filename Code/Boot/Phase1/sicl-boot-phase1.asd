@@ -93,6 +93,18 @@
    ;; method to the bridge generic function that was given to it as an
    ;; argument.
    (:file "ensure-method")
+   ;; Define generic functions SICL-BOOT-PHASE1:READER-METHOD-CLASS
+   ;; and SICL-BOOT-PHASE1:WRITER-METHOD-CLASS and methods on these
+   ;; functions that return whatever *STANDARD-READER-METHOD* and
+   ;; *STANDARD-WRITER-METHOD* stand for.  These functions will be
+   ;; called when the MOP class hierarchy is used in phase 2 to
+   ;; generate bridge classes.  Therefore, the classes that they
+   ;; should return are host classes, so that when bridge classes
+   ;; (which are host instances) and bridge generic functions (which
+   ;; are also host instances) are created, the methods that are
+   ;; created are bridge methods (which are also host instances).
+   ;; This is why the variables *STANDARD-READER-METHOD* and
+   ;; *STANDARD-WRITER-METHOD* contain host classes.
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defgenerics")
    (:file "reader-writer-method-class-defmethods")
