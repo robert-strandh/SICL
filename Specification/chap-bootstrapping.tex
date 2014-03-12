@@ -195,41 +195,32 @@ main functions.  We define all this machinery in phase 1, because it
 will use the accessors that are implicitly defined when MOP classes
 are created here. 
 
+The support code for \texttt{shared-initialize} for the purpose of
+creating ersatz instances is defined here, because shared initialize
+accesses the \emph{class} of the instance to initialize, and the class
+if an ersatz instance is a bridge instance.  So the generic functions
+called by shared-initialize when an ersatz instance is created are
+host generic functions taking bridge classes as arguments. 
+
 \subsubsection{Phase 2}
 
-The purpose of this phase is to make it possible to create bridge
-generic functions and bridge classes.
-
-In order to create a generic function, we need the
-existence of other generic functions.  We break this cycle by using
-host generic functions to create bridge generic functions.  Examples 
-of host generic functions that are defined in this phase are
-\texttt{ensure-generic-function-using-class},
-\texttt{compute-applicable-methods-using-classes},
-\texttt{compute-discriminating-function}, etc.  Furthermore, in this
-phase, we define \texttt{:after} method on
-\texttt{host:initialize-instance} specialized for the host classes
-\texttt{target:generic-function} and \texttt{target:method}.  
+The purpose of this phase is to create bridge classes and bridge
+generic functions.  For that purpose, we define the specified macros
+\texttt{defclass}, \texttt{defgeneric}, and \texttt{defmethod}.  These
+macros expand to calls to corresponding \texttt{ensure-...} functions
+of phase 1.  These macros need some support code that is also defined
+here, such as the canonicalization functions for \texttt{defclass} and
+\texttt{make-method-lambda} for \texttt{defmethod}.  
 
 Next, we create bridge classes corresponding to the classes of the MOP
-hierarchy.  We do this by redefining \texttt{defclass} to call
-\texttt{target:ensure-class} which calls \texttt{host:make-instance}
-of the appropriate host class.  When a bridge class is created, it
-will automatically create generic functions corresponding to slot
-readers and writers.  This is done by calling
-\texttt{host:make-instance} directly or indirectly through
-\texttt{ensure-generic-function}.  Thus the generic functions created
-this way are bridge generic functions, and the methods are bridge
-methods.
+hierarchy.  When a bridge class is created, it will automatically
+create bridge generic functions corresponding to slot readers and
+writers.  This is done by calling \texttt{ensure-generic-function} of
+phase 1.
 
 Creating bridge classes this way will also instantiate the host class
 \texttt{target:direct-slot-definition}, so that our bridge classes
-contain bridge instances in their slots. 
-
-Before creating the bridge classes, we must define \texttt{:after}
-methods on \texttt{host:initialize-instance} specialized for the host
-classes \texttt{target:standard-class} and
-\texttt{target:funcallable-standard-class}.  
+contain host instances bridge in their slots. 
 
 \subsubsection{Phase 3}
 
