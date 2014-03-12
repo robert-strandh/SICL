@@ -35,8 +35,21 @@
    ;; functions will be ordinary host generic functions.  The names of
    ;; those functions will be in the package SICL-BOOT-PHASE1.
    (:file "mop-class-hierarchy")
+   ;; Define the class BRIDGE-GENERIC-FUNCTION as a subclass of the
+   ;; host class FUNCALLABLE-STANDARD-OBJECT and of the newly created
+   ;; class SICL-BOOT-PHASE1:STANDARD-GENERIC-FUNCTION.
    (:file "bridge-generic-function")
+   ;; Various parts of CLOS use default objects, such as the class
+   ;; named STANDARD-OBJECT when no explicit superclass is given to
+   ;; DEFCLASS, or the class STANDARD-DIRECT-SLOT-DEFINITION as the
+   ;; default class of direct slot definition objects.  In the SICL
+   ;; implementation of CLOS, these default objects are the values of
+   ;; special variables (with only a global value).  We must therefore
+   ;; define these variables, or cheat and define them as symbol macros. 
    (:file "define-variables")
+   ;; Define a special variable *BRIDGE-CLASSES* to hold a list of
+   ;; bridge classes, and define functions to query and modify the
+   ;; contents in various ways.
    (:file "class-database")
    (:file "ensure-class")
    (:file "ensure-built-in-class")
