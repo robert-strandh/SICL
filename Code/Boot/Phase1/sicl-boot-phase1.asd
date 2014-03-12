@@ -186,6 +186,12 @@
    ;; bridge classes.  
    (:file "class-initialization-support")
    (:file "class-initialization-defmethods")
+   ;; Define host generic functions COMPUTE-APPLICABLE-METHODS and
+   ;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES and default methods on
+   ;; those generic functions.  Here they will be host generic
+   ;; functions and host methods that take bridge generic functions as
+   ;; arguments, and they will return lists of bridge methods.  These
+   ;; functions are called by COMPUTE-DISCRIMINATING-FUNCTION. 
    (:file "compute-applicable-methods-support")
    (:file "compute-applicable-methods-defgenerics")
    (:file "compute-applicable-methods-defmethods")
