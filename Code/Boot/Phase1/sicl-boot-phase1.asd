@@ -287,6 +287,9 @@
    ;; initialized.
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
+   ;; Define primary methods on the host generic function PRINT-OBJECT
+   ;; so that some host instances representing classes and slot
+   ;; definition metaobjects are printed in a more convenient way.
    (:file "print-object")
    (:file "class-finalization-defgenerics")
    (:file "class-finalization-support")
