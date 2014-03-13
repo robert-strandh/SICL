@@ -220,6 +220,10 @@
    ;; function.  These functions are called by
    ;; COMPUTE-DISCRIMINATING-FUNCTION.
    (:file "discriminating-automaton")
+   ;; Define ordinary functions for turning a discriminating automaton
+   ;; into a discriminating tagbody form.  The tagbody form contains
+   ;; effective methods as literals and is later compiled (using
+   ;; COMPILE) into an ordinary host function.
    (:file "discriminating-tagbody")
    (:file "heap-instance")
    (:file "class-of")
