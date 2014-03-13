@@ -332,6 +332,14 @@
    (:file "slot-value-etc-support")
    (:file "slot-value-etc-defgenerics")
    (:file "slot-value-etc-defmethods")
+   ;; The function SHARED-INITALIZE initializes an instance, but it
+   ;; accomplishes its task by accessing class metaobjects and
+   ;; effective slot definition metaobjects.  When an ersatz instance
+   ;; is initialized, the class metaobject is a bridge class (which is
+   ;; a host instance) and the effective slot definition metaobject is
+   ;; also a host instance.  The accessors that take such metaobjects
+   ;; as arguments are therefore host generic functions.  This is why
+   ;; the support code for shared-initialize is defined here.
    (:file "shared-initialize-support")
    (:file "initialize-built-in-instance-support")
    (:file "make-instance-support")
