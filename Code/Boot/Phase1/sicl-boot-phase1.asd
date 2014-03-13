@@ -197,10 +197,10 @@
    (:file "compute-applicable-methods-defmethods")
    ;; Define host generic function COMPUTE-EFFECTIVE-METHOD.  The
    ;; effective method is computed from a sorted list of applicable
-   ;; methods by first computing a form containing the applicable
-   ;; methods as literals, and then calling the compiler to turn all
-   ;; that into an ordinary host function.  This function is called by
-   ;; COMPUTE-DISCRIMINATING-FUNCTION.
+   ;; bridge methods by first computing a form containing the
+   ;; applicable methods as literals, and then calling the compiler to
+   ;; turn all that into an ordinary host function.  This function is
+   ;; called by COMPUTE-DISCRIMINATING-FUNCTION.
    (:file "compute-effective-method-support")
    (:file "compute-effective-method-support-a")
    (:file "method-combination-compute-effective-method-support")
