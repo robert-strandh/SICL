@@ -339,7 +339,13 @@
    ;; a host instance) and the effective slot definition metaobject is
    ;; also a host instance.  The accessors that take such metaobjects
    ;; as arguments are therefore host generic functions.  This is why
-   ;; the support code for shared-initialize is defined here.
+   ;; the support code for shared-initialize is defined here.  On the
+   ;; other hand, SHARED-INITIALIZE takes the ersatz instance itself
+   ;; as an argument, so if it is defined as a generic function, it
+   ;; would have to be a bridge generic function, but if
+   ;; SHARED-INITIALIZE were defined here, it would be a host generic
+   ;; function.  This is the reason that only the support code is
+   ;; defined here and not the generic function.
    (:file "shared-initialize-support")
    (:file "initialize-built-in-instance-support")
    (:file "make-instance-support")
