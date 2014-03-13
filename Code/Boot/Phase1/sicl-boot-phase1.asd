@@ -271,6 +271,10 @@
    ;; FUNCALLABLE-STANDARD-OBJECT, so we just call the equivalent host
    ;; function.
    (:file "set-funcallable-instance-function")
+   ;; Define :AROUND and :AFTER methods on the host generic functions
+   ;; INITIALIZE-INSTANCE and REINITIALIZE-INSTANCE in order to
+   ;; implement the generic function initialization protocol so that
+   ;; bridge generic functions can be properly initialized.
    (:file "generic-function-initialization-support")
    (:file "generic-function-initialization-defmethods")
    (:file "direct-slot-definition-p")
