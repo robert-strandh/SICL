@@ -262,6 +262,14 @@
    ;; nothing, so that we can safely call them from other code.
    (:file "dependent-maintenance-support")
    (:file "dependent-maintenance-defuns")
+   ;; Define ordinary function SET-FUNCALLABLE-INSTANCE-FUNCTION to
+   ;; set the funcallable instance function of a bridge generic
+   ;; function.  Here in phase 1, a bridge generic function is a
+   ;; subclass of the host class FUNCALLABLE-STANDARD-OBJECT, and a
+   ;; host with a conforming CLOS implementation has its own version
+   ;; of this function that works on instance is of the host class
+   ;; FUNCALLABLE-STANDARD-OBJECT, so we just call the equivalent host
+   ;; function.
    (:file "set-funcallable-instance-function")
    (:file "generic-function-initialization-support")
    (:file "generic-function-initialization-defmethods")
