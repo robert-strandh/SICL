@@ -281,6 +281,10 @@
    ;; methods so that it returns true for a direct slot definition
    ;; metaobject. 
    (:file "direct-slot-definition-p")
+   ;; Define :AROUND and :AFTER methods on the host generic function
+   ;; INITIALIZE-INSTANCE in order to implement the method
+   ;; initialization protocol so that bridge methods can be properly
+   ;; initialized.
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
    (:file "print-object")
