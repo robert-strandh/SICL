@@ -347,6 +347,15 @@
    ;; function.  This is the reason that only the support code is
    ;; defined here and not the generic function.
    (:file "shared-initialize-support")
+   ;; When a built-in ersatz instance is initialized there is no
+   ;; equivalent of shared-initialize, simply because built-in
+   ;; instances can not be reinitialized, so there is no need for
+   ;; shared-initialize.  Instead the ordinary function named
+   ;; INITIALIZE-BUILT-IN-INSTANCE does roughly the same work for a
+   ;; built-in ersatz instance that SHARED-INITIALIZE does for a
+   ;; standard instance.  So for the same reason that the support code
+   ;; for SHARED-UNITIZE is defined here, the support code for
+   ;; INITIALIZE-BUILT-IN-INSTANCE is also defined here.
    (:file "initialize-built-in-instance-support")
    (:file "make-instance-support")
    (:file "make-built-in-instance-support")
