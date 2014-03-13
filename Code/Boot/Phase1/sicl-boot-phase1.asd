@@ -291,6 +291,13 @@
    ;; so that some host instances representing classes and slot
    ;; definition metaobjects are printed in a more convenient way.
    (:file "print-object")
+   ;; Define host generic functions and methods for
+   ;; FINALIZE-INHERITANCE, COMPUTE-CLASS-PRECEDENCE-LIST,
+   ;; COMPUTE-DEFAULT-INITARGS, and COMPUTE-SLOTS in order to
+   ;; implement class finalization for bridge classes.  These
+   ;; functions must call accessors on bridge classes, and those
+   ;; accessors are host generic functions which is why these
+   ;; functions are defined here.
    (:file "class-finalization-defgenerics")
    (:file "class-finalization-support")
    (:file "class-finalization-defmethods")
