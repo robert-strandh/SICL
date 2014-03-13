@@ -322,6 +322,13 @@
    ;; purpose of allocating ersatz instances of built-in bridge
    ;; classes.
    (:file "allocate-built-in-instance")
+   ;; When the support code for SHARED-INITIALIZE is used to
+   ;; initialize an ersatz instance, it uses SLOT-BOUNDP-USING-CLASS
+   ;; and (SETF SLOT-VALUE-USING-CLASS) to accomplish its task.  These
+   ;; two functions are passed a bridge class (which is a host
+   ;; instance) and a host instance representing an effective slot
+   ;; definition metaobject.  This is why these two functions are
+   ;; defined here as host generic functions.
    (:file "slot-value-etc-support")
    (:file "slot-value-etc-defgenerics")
    (:file "slot-value-etc-defmethods")
