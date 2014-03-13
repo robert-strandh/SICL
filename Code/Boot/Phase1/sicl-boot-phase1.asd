@@ -310,7 +310,7 @@
    ;; This function will be called in phase 2 once all the bridge
    ;; classes that we will need have been created.
    (:file "finalize-bridge-classes")
-   ;; Define ordinary functino ALLOCATE-INSTANCE for the purpose of
+   ;; Define ordinary function ALLOCATE-INSTANCE for the purpose of
    ;; creating ersatz instances.  We can not use the generic version
    ;; of allocate instance, because if we define a generic function
    ;; here, it will be a host generic function, and the generic
@@ -321,6 +321,9 @@
    ;; support code of MAKE-INSTANCE, which is defined below. 
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
+   ;; Define ordinary function ALLOCATE-BUILT-IN-INSTANCE for the
+   ;; purpose of allocating ersatz instances of built-in bridge
+   ;; classes.
    (:file "allocate-built-in-instance")
    (:file "slot-value-etc-support")
    (:file "slot-value-etc-defgenerics")
