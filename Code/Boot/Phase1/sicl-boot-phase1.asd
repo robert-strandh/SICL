@@ -235,6 +235,11 @@
    ;; ALLOCATE-INSTANCE and the support code for SHARED-INITIALIZE
    ;; (see below).
    (:file "ersatz-instance")
+   ;; Define a somewhat strange version of CLASS-OF.  It is strange,
+   ;; because it will sometimes be used on an ersatz instance and
+   ;; sometimes on a host instance (bridge class, bridge generic
+   ;; function, etc).  For that reason, we design it to work with
+   ;; both.  
    (:file "class-of")
    (:file "standard-instance-access")
    (:file "compute-discriminating-function-support")
