@@ -241,6 +241,11 @@
    ;; function, etc).  For that reason, we design it to work with
    ;; both.  
    (:file "class-of")
+   ;; Define the specified ordinary function STANDARD-INSTANCE-ACCESS
+   ;; and the unspecified function (SETF STANDARD-INSTANCE-ACCESS) to
+   ;; work on ersatz instances.  These functions are used by the
+   ;; support code of SHARED-INITIALIZE to initialize the ersatz
+   ;; instance.
    (:file "standard-instance-access")
    (:file "compute-discriminating-function-support")
    (:file "compute-discriminating-function-support-a")
