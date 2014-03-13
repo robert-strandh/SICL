@@ -357,6 +357,12 @@
    ;; for SHARED-UNITIZE is defined here, the support code for
    ;; INITIALIZE-BUILT-IN-INSTANCE is also defined here.
    (:file "initialize-built-in-instance-support")
+   ;; Define ordinary functions for support code for MAKE-INSTANCE for
+   ;; the purpose of creating ersatz instance.  This support code
+   ;; directly calls ALLOCATE-INSTANCE, defined above.  It also calls
+   ;; INITIALIZE-INSTANCE, but as a function passed as an argument
+   ;; because here INITIALIZE-INSTANCE means initializing host
+   ;; instances.
    (:file "make-instance-support")
    (:file "make-built-in-instance-support")
    (:file "satiate-generic-functions")
