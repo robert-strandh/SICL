@@ -208,6 +208,12 @@
    (:file "method-combination-compute-effective-method-defmethods")
    (:file "compute-effective-method-defgenerics")
    (:file "compute-effective-method-defmethods")
+   ;; Define ordinary functions that do some of what the CL sequence
+   ;; functions do, but that work only on lists.  We use these
+   ;; functions to avoid using the sequence functions because we might
+   ;; want to make the sequence functions generic, and we do not want
+   ;; to invoke generic functions in order to compute the
+   ;; discriminating function of generic functions.
    (:file "list-utilities")
    (:file "discriminating-automaton")
    (:file "discriminating-tagbody")
