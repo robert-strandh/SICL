@@ -215,6 +215,10 @@
    ;; to invoke generic functions in order to compute the
    ;; discriminating function of generic functions.
    (:file "list-utilities")
+   ;; Define ordinary functions for computing and minimizing the
+   ;; discriminating automaton from the call history of a generic
+   ;; function.  These functions are called by
+   ;; COMPUTE-DISCRIMINATING-FUNCTION.
    (:file "discriminating-automaton")
    (:file "discriminating-tagbody")
    (:file "heap-instance")
