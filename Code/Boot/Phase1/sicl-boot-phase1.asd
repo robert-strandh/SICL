@@ -301,6 +301,9 @@
    (:file "class-finalization-defgenerics")
    (:file "class-finalization-support")
    (:file "class-finalization-defmethods")
+   ;; Define ordinary functions COMPUTE-BUILT-IN-SLOTS and
+   ;; FINALIZE-BUILT-IN-INHERITANCE to finalize built-in bridge
+   ;; classes.
    (:file "built-in-class-finalization")
    (:file "finalize-bridge-classes")
    (:file "allocate-instance-support")
