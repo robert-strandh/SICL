@@ -1,1 +1,0 @@
-../../CLOS/allocate-instance-defuns.lisp

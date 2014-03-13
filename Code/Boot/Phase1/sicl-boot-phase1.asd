@@ -320,7 +320,8 @@
    ;; that would be messy because ALLOCATE-INSTANCE is called from the
    ;; support code of MAKE-INSTANCE, which is defined below. 
    (:file "allocate-instance-support")
-   (:file "allocate-instance-defuns")
+   (:file "allocate-instance-defgenerics")
+   (:file "allocate-instance-defmethods")
    ;; Define ordinary function ALLOCATE-BUILT-IN-INSTANCE for the
    ;; purpose of allocating ersatz instances of built-in bridge
    ;; classes.

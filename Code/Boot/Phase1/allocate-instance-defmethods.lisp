@@ -1,0 +1,1 @@
+../../CLOS/allocate-instance-defmethods.lisp
