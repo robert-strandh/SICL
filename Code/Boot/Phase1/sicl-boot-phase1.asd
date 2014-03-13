@@ -305,6 +305,10 @@
    ;; FINALIZE-BUILT-IN-INHERITANCE to finalize built-in bridge
    ;; classes.
    (:file "built-in-class-finalization")
+   ;; Define an ordinary function FINALIZE-BRIDGE-CLASSES that calls
+   ;; FINALIZE-INHERITANCE on all the classes in *BRIDGE-CLASSES*.
+   ;; This function will be called in phase 2 once all the bridge
+   ;; classes that we will need have been created.
    (:file "finalize-bridge-classes")
    (:file "allocate-instance-support")
    ;; We can not use the generic version of allocate instance, because
