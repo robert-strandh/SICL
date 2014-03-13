@@ -364,6 +364,11 @@
    ;; because here INITIALIZE-INSTANCE means initializing host
    ;; instances.
    (:file "make-instance-support")
+   ;; Define an ordinary function for support code for
+   ;; MAKE-BUILT-IN-INSTANCE.  It mirrors the support code for
+   ;; MAKE-INSTANCE in that it directly calls
+   ;; ALLOCATE-BUILT-IN-INSTANCE defined above, and
+   ;; INITIALIZE-BUILT-IN-INSTANCE passed as an argument
    (:file "make-built-in-instance-support")
    (:file "satiate-generic-functions")
    (:file "rename-package-2")))
