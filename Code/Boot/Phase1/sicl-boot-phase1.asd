@@ -225,6 +225,15 @@
    ;; effective methods as literals and is later compiled (using
    ;; COMPILE) into an ordinary host function.
    (:file "discriminating-tagbody")
+   ;; Creating and initializing an ersatz instance requires querying
+   ;; the class of that instance to obtain information about instance
+   ;; size, slot initargs, etc.  But the class of an ersatz instance
+   ;; is a bridge class, and a bridge class is a host instance.  So in
+   ;; order to query the class of an ersatz instance, we need to use
+   ;; the host generic functions defined here in phase 1.  This is why
+   ;; we define what an ersatz instance is here, and also
+   ;; ALLOCATE-INSTANCE and the support code for SHARED-INITIALIZE
+   ;; (see below).
    (:file "ersatz-instance")
    (:file "class-of")
    (:file "standard-instance-access")
