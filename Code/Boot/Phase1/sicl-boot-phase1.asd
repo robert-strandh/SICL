@@ -225,7 +225,7 @@
    ;; effective methods as literals and is later compiled (using
    ;; COMPILE) into an ordinary host function.
    (:file "discriminating-tagbody")
-   (:file "heap-instance")
+   (:file "ersatz-instance")
    (:file "class-of")
    (:file "standard-instance-access")
    (:file "compute-discriminating-function-support")
