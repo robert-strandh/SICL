@@ -277,6 +277,9 @@
    ;; bridge generic functions can be properly initialized.
    (:file "generic-function-initialization-support")
    (:file "generic-function-initialization-defmethods")
+   ;; Define host generic function DIRECT-SLOT-DEFINITION-P and
+   ;; methods so that it returns true for a direct slot definition
+   ;; metaobject. 
    (:file "direct-slot-definition-p")
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
