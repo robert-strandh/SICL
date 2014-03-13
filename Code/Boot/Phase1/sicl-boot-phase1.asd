@@ -376,4 +376,6 @@
    ;; phase 2 once all the bridge generic functions that we will need
    ;; have been created.
    (:file "satiate-generic-functions")
+   ;; Remove the package nickname SICL-CLOS from the package named
+   ;; SICL-BOOT-PHASE1.
    (:file "rename-package-2")))
