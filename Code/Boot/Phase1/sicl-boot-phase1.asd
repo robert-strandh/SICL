@@ -370,5 +370,10 @@
    ;; ALLOCATE-BUILT-IN-INSTANCE defined above, and
    ;; INITIALIZE-BUILT-IN-INSTANCE passed as an argument
    (:file "make-built-in-instance-support")
+   ;; Define an ordinary function SATIATE-BRIDGE-GENERIC-FUNCTION that
+   ;; calls SATIATE-GENERIC-FUNCTION on all the generic functions in
+   ;; *BRIDGE-GENERIC-FUNCTIONS*.  This function will be called in
+   ;; phase 2 once all the bridge generic functions that we will need
+   ;; have been created.
    (:file "satiate-generic-functions")
    (:file "rename-package-2")))
