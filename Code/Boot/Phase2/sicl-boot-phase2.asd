@@ -60,6 +60,10 @@
    ;; syntax of the DEFCLASS forms, and for canonicalizing superclass
    ;; specifications, slot specifications, and class options.
    (:file "defclass-support")
+   ;; Define the macro SICL-BOOT-PHASE2:DEFCLASS.  It expands to a
+   ;; call to ENSURE-CLASS.  The symbol SICL-BOOT-PHASE1:ENSURE-CLASS
+   ;; is imported from phase 1, which means that this DEFCLASS will
+   ;; create a bridge class.
    (:file "defclass-defmacro")
    (:file "define-built-in-class-defmacro")
    (:file "defgeneric-defmacro")
