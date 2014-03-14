@@ -9,6 +9,10 @@
   (;; Define package SICL-BOOT-PHASE2 which uses the COMMON-LISP
    ;; package and the ASPIRING-SICL-CLOS package.
    (:file "packages")
+   ;; Define the package SICL-GLOBAL-ENVIRONMENT.  This package uses
+   ;; the COMMON-LISP package, does not shadow any symbols, and
+   ;; exports the names of all the classes and functions required to
+   ;; manipulate a global environment.
    (:file "environment-packages")
    (:file "import-to-environment")
    (:file "rename-package-1")
