@@ -81,6 +81,10 @@
    ;; syntax of the DEFMETHOD forms, and for canonicalizing the list
    ;; of specializers.
    (:file "defmethod-support")
+   ;; Define the macro SICL-BOOT-PHASE2:DEFMETHOD.  It expands to a
+   ;; call to ENSURE-METHOD.  The symbol
+   ;; SICL-BOOT-PHASE1:ENSURE-METHOD is imported from phase 1, which
+   ;; means that this DEFMETHOD will create a bridge method.
    (:file "defmethod-defmacro")
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
