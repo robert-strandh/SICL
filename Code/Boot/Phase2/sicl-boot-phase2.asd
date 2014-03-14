@@ -154,6 +154,12 @@
    ;; functions are called by COMPUTE-DISCRIMINATING-FUNCTION.
    (:file "compute-applicable-methods-support")
    (:file "compute-applicable-methods-defuns")
+   ;; Define ordinary function COMPUTE-EFFECTIVE-METHOD.  The
+   ;; effective method is computed from a sorted list of applicable
+   ;; ersatz methods by first computing a form containing the
+   ;; applicable methods as literals, and then calling the cross
+   ;; compiler to turn all that into an ersatz function.  This
+   ;; function is called by COMPUTE-DISCRIMINATING-FUNCTION.
    (:file "compute-effective-method-support")
    (:file "compute-effective-method-support-a")
    (:file "method-combination-compute-effective-method-support")
