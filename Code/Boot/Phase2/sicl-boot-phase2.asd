@@ -76,6 +76,10 @@
    ;; 1, which means that this DEFGENERIC will create a bridge generic
    ;; function.
    (:file "defgeneric-defmacro")
+   ;; Define ordinary functions to be used by the expansion code for
+   ;; DEFMETHOD.  These functions are responsible for checking the
+   ;; syntax of the DEFMETHOD forms, and for canonicalizing the list
+   ;; of specializers.
    (:file "defmethod-support")
    (:file "defmethod-defmacro")
    (:file "make-method-lambda-support")
