@@ -92,6 +92,9 @@
    ;; suitable for method invocation. 
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
+   ;; Load the hierarchy of MOP classes, which will create bridge
+   ;; classes, bridge generic functions, bridge methods, and bridge
+   ;; slot definitions.  All of these are instances of host classes. 
    (:file "mop-class-hierarchy")
    (:file "environment-classes")
    (:file "environment-constructors")
