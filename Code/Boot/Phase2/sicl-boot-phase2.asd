@@ -122,6 +122,9 @@
    ;; are accessed as values of special variables.  This component
    ;; assigns meaning to those variables.
    (:file "define-variables")
+   ;; Since we have all the bridge classes that we are ever going to
+   ;; define, we finalize them all now.  FIXME: This step may actually
+   ;; not be necessary.
    (:file "finalize-all-bridge-classes")
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defuns")
