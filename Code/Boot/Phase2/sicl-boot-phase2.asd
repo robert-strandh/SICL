@@ -70,6 +70,11 @@
    ;; SICL-BOOT-PHASE1:ENSURE-BUILT-IN-CLASS is imported from phase 1,
    ;; which means that this macro will create a built-in bridge class.
    (:file "define-built-in-class-defmacro")
+   ;; Define the macro SICL-BOOT-PHASE2:DEFGENERIC.  It expands to a
+   ;; call to ENSURE-GENERIC-FUNCTION.  The symbol
+   ;; SICL-BOOT-PHASE1:ENSURE-GENERIC-FUNCTION is imported from phase
+   ;; 1, which means that this DEFGENERIC will create a bridge generic
+   ;; function.
    (:file "defgeneric-defmacro")
    (:file "defmethod-support")
    (:file "defmethod-defmacro")
