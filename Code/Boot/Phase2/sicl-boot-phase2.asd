@@ -20,6 +20,9 @@
    ;; package SICL-GLOBAL-ENVIRONMENT will use the definition of those
    ;; symbols in the SICL-BOOT-PHASE2 package.
    (:file "import-to-environment")
+   ;; Add nickname SICL-CLOS to the SICL-BOOT-PHASE2 package so that
+   ;; code that gets loaded in the SICL-CLOS package in reality gets
+   ;; loaded into the SICL-BOOT-PHASE2 package. 
    (:file "rename-package-1")
    (:file "shared-initialize-default")
    (:file "import")
