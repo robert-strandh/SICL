@@ -6,7 +6,9 @@
 	       :sicl-boot-phase1)
   :serial t
   :components
-  ((:file "packages")
+  (;; Define package SICL-BOOT-PHASE2 which uses the COMMON-LISP
+   ;; package and the ASPIRING-SICL-CLOS package.
+   (:file "packages")
    (:file "environment-packages")
    (:file "import-to-environment")
    (:file "rename-package-1")
