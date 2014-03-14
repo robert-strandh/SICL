@@ -36,6 +36,12 @@
    ;; initializes ersatz instances by accessing the ersatz class of
    ;; the ersatz instance.
    (:file "shared-initialize-default")
+   ;; Up until now, the package named ASPIRING-SICL-CLOS contained
+   ;; only the names of the specified classes whose names were not
+   ;; exported from the package COMMON-LISP.  Now, we add names of
+   ;; specified accessors to the package ASPIRING-SICL-CLOS so that
+   ;; when we define bridge generic functions, their names will be
+   ;; symbols in the package ASPIRING-SICL-CLOS. 
    (:file "import")
    (:file "list-utilities")
    (:file "functionp")
