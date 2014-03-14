@@ -175,6 +175,8 @@
    ;; effective methods as literals and is later compiled (using
    ;; the cross compiler) into an ersatz function.
    (:file "discriminating-tagbody")
+   ;; Define function COMPILE to mean the cross compiler which creates
+   ;; an ersatz function from a lambda expression.
    (:file "compile")
    ;; Define ordinary function COMPUTE-DISCRIMINATING-FUNCTION.  Here,
    ;; it will be used to compute the discriminating function of an
