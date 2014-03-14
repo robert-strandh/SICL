@@ -147,6 +147,11 @@
    ;; and during bootstrapping, we do not expect any errors, so we can
    ;; wing it.
    (:file "classp")
+   ;; Define ordinary functions COMPUTE-APPLICABLE-METHODS and
+   ;; COMPUTE-APPLICABLE-METHODS-USING-CLASSES.  Here they will be
+   ;; ordinary functions that take ersatz generic functions as
+   ;; arguments, and they will return lists of ersatz methods.  These
+   ;; functions are called by COMPUTE-DISCRIMINATING-FUNCTION.
    (:file "compute-applicable-methods-support")
    (:file "compute-applicable-methods-defuns")
    (:file "compute-effective-method-support")
