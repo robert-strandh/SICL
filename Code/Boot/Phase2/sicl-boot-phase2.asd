@@ -55,6 +55,10 @@
    ;; do not expect any errors during bootstrapping, so we can wing
    ;; it.
    (:file "functionp")
+   ;; Define ordinary functions to be used by the expansion code for
+   ;; DEFCLASS.  These functions are responsible for checking the
+   ;; syntax of the DEFCLASS forms, and for canonicalizing superclass
+   ;; specifications, slot specifications, and class options.
    (:file "defclass-support")
    (:file "defclass-defmacro")
    (:file "define-built-in-class-defmacro")
