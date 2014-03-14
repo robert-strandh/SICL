@@ -14,6 +14,11 @@
    ;; exports the names of all the classes and functions required to
    ;; manipulate a global environment.
    (:file "environment-packages")
+   ;; Import and shadow symbols DEFCLASS, DEFGENERIC, and DEFMACRO
+   ;; from the SICL-BOOT-PHASE2 package to the
+   ;; SICL-GLOBAL-ENVIRONMENT, so that code that is loaded in the
+   ;; package SICL-GLOBAL-ENVIRONMENT will use the definition of those
+   ;; symbols in the SICL-BOOT-PHASE2 package.
    (:file "import-to-environment")
    (:file "rename-package-1")
    (:file "shared-initialize-default")
