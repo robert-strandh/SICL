@@ -50,6 +50,10 @@
    ;; to invoke generic functions in order to compute the
    ;; discriminating function of generic functions.
    (:file "list-utilities")
+   ;; Declare an ordinary function called FUNCTIONP and that always
+   ;; returns true.  This function is used for error checking, and we
+   ;; do not expect any errors during bootstrapping, so we can wing
+   ;; it.
    (:file "functionp")
    (:file "defclass-support")
    (:file "defclass-defmacro")
