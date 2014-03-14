@@ -176,6 +176,12 @@
    ;; the cross compiler) into an ersatz function.
    (:file "discriminating-tagbody")
    (:file "compile")
+   ;; Define ordinary function COMPUTE-DISCRIMINATING-FUNCTION.  Here,
+   ;; it will be used to compute the discriminating function of an
+   ;; ersatz generic function.  The discriminating function will be
+   ;; computed by calling the cross compiler on a lambda expression
+   ;; consisting mainly of the TAGBODY form returned by the function
+   ;; COMPUTE-DISCRIMINATING-TAGBODY defined above.
    (:file "compute-discriminating-function-support")
    (:file "compute-discriminating-function-support-a")
    (:file "compute-discriminating-function-defuns")
