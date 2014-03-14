@@ -112,8 +112,8 @@
    (:file "environment-classes")
    (:file "environment-constructors")
    (:file "environment-query")
-   ;; Now that we have all the bridge classes and all the bridge
-   ;; generic functions that we are ever going to define, it is time
+   ;; Now that we have all the bridge classes (but not all the bridge
+   ;; generic functions) that we are ever going to define, it is time
    ;; to think about how to use those bridge classes and those bridge
    ;; generic functions in order to create ersatz instances.  As in
    ;; phase 1, there are a number of default values that are needed
