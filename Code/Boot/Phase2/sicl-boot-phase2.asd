@@ -192,6 +192,12 @@
    ;; nothing, so that we can safely call them from other code.
    (:file "dependent-maintenance-support")
    (:file "dependent-maintenance-defuns")
+   ;; Define ordinary function SET-FUNCALLABLE-INSTANCE-FUNCTION to
+   ;; set the funcallable instance function of an ersatz generic
+   ;; function.  FIXME: right now, this function does nothing.  What
+   ;; it should do is to copy the slots of the discriminating function
+   ;; (which is an ordinary ersatz function) to the generic function
+   ;; (which is an ersatz generic function). 
    (:file "set-funcallable-instance-function")
    (:file "add-remove-method-support")
    (:file "add-remove-method-defuns")
