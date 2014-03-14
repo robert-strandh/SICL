@@ -96,6 +96,19 @@
    ;; classes, bridge generic functions, bridge methods, and bridge
    ;; slot definitions.  All of these are instances of host classes. 
    (:file "mop-class-hierarchy")
+   ;; Here in phase 2 is the right place to define bridge classes for
+   ;; which the accessors are going to be used later during the
+   ;; bootstrapping process, because those accessors will be the
+   ;; FDEFINITION of the corresponding symbols, so they will be usable
+   ;; as ordinary functions in the host bootstrapping environment.  In
+   ;; later phases, defining classes and generic functions will define
+   ;; ersatz generic functions which are not executable in the host
+   ;; environment.  Since we are going to want to load up a global
+   ;; ersatz environment with ersatz classes and ersatz functions, it
+   ;; is handy (though not totally necessary, because we could use
+   ;; reinitialize-instance) to have executable accessors for that
+   ;; global ersatz environment.  This is why we include the
+   ;; definition of environment classes here.
    (:file "environment-classes")
    (:file "environment-constructors")
    (:file "environment-query")
