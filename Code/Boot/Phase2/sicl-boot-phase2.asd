@@ -165,6 +165,10 @@
    (:file "method-combination-compute-effective-method-support")
    (:file "method-combination-compute-effective-method-defuns")
    (:file "compute-effective-method-defuns")
+   ;; Define ordinary functions for computing and minimizing the
+   ;; discriminating automaton from the call history of a generic
+   ;; function.  These functions are called by
+   ;; COMPUTE-DISCRIMINATING-FUNCTION.
    (:file "discriminating-automaton")
    (:file "discriminating-tagbody")
    (:file "compile")
