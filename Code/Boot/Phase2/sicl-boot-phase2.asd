@@ -205,6 +205,13 @@
    ;; hierarchy is used in phase 3 to generate ersatz classes.
    (:file "add-remove-method-support")
    (:file "add-remove-method-defuns")
+   ;; When the support code for SHARED-INITIALIZE is used to
+   ;; initialize an ersatz instance, it uses SLOT-BOUNDP-USING-CLASS
+   ;; and (SETF SLOT-VALUE-USING-CLASS) to accomplish its task.  Here,
+   ;; these two functions are passed an ersatz class (which is a host
+   ;; instance) and an ersatz instance representing an effective slot
+   ;; definition metaobject.  This is why these two functions are
+   ;; defined here as bridge generic functions.
    (:file "slot-value-etc-defgenerics")
    (:file "slot-value-etc-support")
    (:file "slot-value-etc-defmethods")
