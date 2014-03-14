@@ -24,6 +24,17 @@
    ;; code that gets loaded in the SICL-CLOS package in reality gets
    ;; loaded into the SICL-BOOT-PHASE2 package. 
    (:file "rename-package-1")
+   ;; Define an ordinary function named
+   ;; SICL-BOOT-PHASE2:SHARED-INITIALIZE-DEFAULT and that calls the
+   ;; function which is the value of the variable
+   ;; *SHARED-INITIALIZE-DEFAULT*.  The initial value of this variable
+   ;; is the function SICL-BOOT-PHASE1:SHARED-INITIALIZE-DEFAULT, so
+   ;; that SHARED-INITIALIZE initializes an ersatz instance by
+   ;; accessing the bridge class of that instance.  Later, when the
+   ;; class of an ersatz instance is another ersatz instance, we
+   ;; change the value of the variable to be a function that
+   ;; initializes ersatz instances by accessing the ersatz class of
+   ;; the ersatz instance.
    (:file "shared-initialize-default")
    (:file "import")
    (:file "list-utilities")
