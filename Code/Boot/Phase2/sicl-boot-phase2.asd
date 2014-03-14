@@ -86,6 +86,10 @@
    ;; SICL-BOOT-PHASE1:ENSURE-METHOD is imported from phase 1, which
    ;; means that this DEFMETHOD will create a bridge method.
    (:file "defmethod-defmacro")
+   ;; Define MAKE-METHOD-LAMBDA as an ordinary function.
+   ;; MAKE-METHOD-LAMBDA is called by the expansion code of DEFMETHOD
+   ;; in order to turn the method body into a lambda expression
+   ;; suitable for method invocation. 
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
    (:file "mop-class-hierarchy")
