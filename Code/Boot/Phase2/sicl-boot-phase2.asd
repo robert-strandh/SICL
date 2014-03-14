@@ -142,6 +142,10 @@
    ;; to an ersatz method from an ersatz class.
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defuns")
+   ;; Define an ordinary function CLASSP that always returns true.
+   ;; The function CLASSP is used for the purpose of error checking,
+   ;; and during bootstrapping, we do not expect any errors, so we can
+   ;; wing it.
    (:file "classp")
    (:file "compute-applicable-methods-support")
    (:file "compute-applicable-methods-defuns")
