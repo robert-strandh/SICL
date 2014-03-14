@@ -126,6 +126,20 @@
    ;; define, we finalize them all now.  FIXME: This step may actually
    ;; not be necessary.
    (:file "finalize-all-bridge-classes")
+   ;; While we already have all the bridge classes we need, we need
+   ;; more bridge generic functions.  The additional ones we need are
+   ;; not accessors, but instead the entire remaining MOP machinery.
+   ;; We can not define that machinery in the form of generic
+   ;; functions here, because part of the purpose of the machinery is
+   ;; to make generic functions work.  For that reason, we define the
+   ;; machinery in the form of ordinary functions.  To begin with, we
+   ;; define ordinary functions SICL-BOOT-PHASE1:ADD-DIRECT-METHOD and
+   ;; SICL-BOOT-PHASE1:REMOVE-DIRECT-METHOD.  Recall that
+   ;; ADD-DIRECT-METHOD is called to add a reference to a method from
+   ;; a specializer (typically a class) used in that method.  It will
+   ;; be called from ADD-METHOD when the MOP class hierarchy is used
+   ;; in phase 3 to create ersatz classes, in order to add a reference
+   ;; to an ersatz method from an ersatz class.
    (:file "add-remove-direct-method-support")
    (:file "add-remove-direct-method-defuns")
    (:file "classp")
