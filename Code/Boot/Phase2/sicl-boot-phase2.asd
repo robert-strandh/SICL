@@ -65,6 +65,10 @@
    ;; is imported from phase 1, which means that this DEFCLASS will
    ;; create a bridge class.
    (:file "defclass-defmacro")
+   ;; Define the macro SICL-BOOT-PHASE2:DEFINE-BUILT-IN-CLASS.  It
+   ;; expands to a call to ENSURE-BUILT-IN-CLASS.  The symbol
+   ;; SICL-BOOT-PHASE1:ENSURE-BUILT-IN-CLASS is imported from phase 1,
+   ;; which means that this macro will create a built-in bridge class.
    (:file "define-built-in-class-defmacro")
    (:file "defgeneric-defmacro")
    (:file "defmethod-support")
