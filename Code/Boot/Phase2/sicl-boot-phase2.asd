@@ -333,6 +333,10 @@
    ;; ersatz classes.  
    (:file "class-initialization-support")
    (:file "class-initialization-defmethods")
+   ;; Define :AROUND and :AFTER methods on the bridge generic
+   ;; functions INITIALIZE-INSTANCE and REINITIALIZE-INSTANCE in order
+   ;; to implement the generic function initialization protocol so
+   ;; that ersatz generic functions can be properly initialized.
    (:file "generic-function-initialization-support")
    (:file "generic-function-initialization-defmethods")
    (:file "direct-slot-definition-p")
