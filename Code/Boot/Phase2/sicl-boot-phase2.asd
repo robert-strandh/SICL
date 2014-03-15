@@ -349,6 +349,9 @@
    ;; initialized.
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
+   ;; Define a special variable *TARGET-CLASSES* to hold a list of
+   ;; ersatz classes, and define functions to query and modify the
+   ;; contents in various ways.
    (:file "class-database")
    (:file "generic-function-database")
    (:file "class-finalization-defgenerics")
