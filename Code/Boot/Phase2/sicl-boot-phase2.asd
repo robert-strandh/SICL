@@ -357,6 +357,13 @@
    ;; list of all ersatz generic functions that are created, and
    ;; define function to query and add new functions.
    (:file "generic-function-database")
+   ;; Define bridge generic functions and methods for
+   ;; FINALIZE-INHERITANCE, COMPUTE-CLASS-PRECEDENCE-LIST,
+   ;; COMPUTE-DEFAULT-INITARGS, and COMPUTE-SLOTS in order to
+   ;; implement class finalization for ersatz classes.  These
+   ;; functions must call accessors on ersatz classes, and those
+   ;; accessors are bridge generic functions which is why these
+   ;; functions are defined here.
    (:file "class-finalization-defgenerics")
    (:file "class-finalization-support")
    (:file "class-finalization-defmethods")
