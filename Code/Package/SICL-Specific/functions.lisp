@@ -8,7 +8,7 @@
   (:default-initargs :expected-type '(or package character string symbol)))
 
 (defun package-designator-to-package (package-designator)
-  (cond ((sicl-package-low:packagep package-designator)
+  (cond ((packagep package-designator)
 	 package-designator)
 	((typep package-designator 'string-designator)
 	 (find-package package-designator))
@@ -24,49 +24,49 @@
   (loop for rest = nicknames then (cdr rest)
 	while (consp rest)
 	do (assert (null (find-package (car rest)))))
-  (let ((package (sicl-package-low:allocate-package)))
-    (setf (sicl-package-low:name package) (string name))
-    (setf (sicl-package-low:nicknames package (copy-list nicknames)))
+  (let ((package (sicl-clos:make-built-in-instance 'package)))
+    (setf (name package) (string name))
+    (setf (nicknames package (copy-list nicknames)))
     (use-package use package)
     package))
 
 (defun package-name (package-designator)
   (let ((package (package-designator-to-package package-designator)))
-    (sicl-package-low:name package)))
+    (name package)))
 
 (defun package-shadowing-symbols (package-designator)
   (let ((package (package-designator-to-package package-designator)))
-    (copy-list (sicl-package-low:shadowing-symbols package))))
+    (copy-list (shadowing-symbols package))))
 
 (defun package-use-list (package-designator)
   (let ((package (package-designator-to-package package-designator)))
-    (copy-list (sicl-package-low:use-list package))))
+    (copy-list (use-list package))))
 
 (defun package-used-by-list (package-designator)
   (let ((package (package-designator-to-package package-designator)))
-    (copy-list (sicl-package-low:used-by-list package))))
+    (copy-list (used-by-list package))))
 
 ;;; FIXME: it should be the CL-USER package.
 (defparameter *package* nil)
 
 (defun find-symbol (symbol-name &optional (package-designator *package*))
   (let ((package (package-designator-to-package package-designator)))
-    (loop for symbols = (sicl-package-low:external-symbols package)
+    (loop for symbols = (external-symbols package)
 	    then (cdr symbols)
 	  while (consp symbols)
 	  when (string= (symbol-name (car symbols)) symbol-name)
 	    do (return-from find-symbol
 		 (values (car symbols) :external)))
-    (loop for symbols = (sicl-package-low:internal-symbols package)
+    (loop for symbols = (internal-symbols package)
 	    then (cdr symbols)
 	  while (consp symbols)
 	  when (string= (symbol-name (car symbols)) symbol-name)
 	    do (return-from find-symbol
 		 (values (car symbols) :internal)))
-    (loop for packages = (sicl-package-low:use-list package)
+    (loop for packages = (use-list package)
 	    then (cdr packages)
 	  while (consp packages)
-	  do (loop for symbols = (sicl-package-low:external-symbols (car packages))
+	  do (loop for symbols = (external-symbols (car packages))
 		     then (cdr symbols)
 		   while (consp symbols)
 		   when (string= (symbol-name (car symbols)) symbol-name)
@@ -81,7 +81,7 @@
 	(let ((new-symbol (make-symbol symbol-name))
 	      (package (package-designator-to-package package-designator)))
 	  (setf (sicl-symbol-low:package new-symbol) package)
-	  (push new-symbol (sicl-package-low:internal-symbols package))
+	  (push new-symbol (internal-symbols package))
 	  (values new-symbol nil))
 	(values symbol-or-nil status))))
 
@@ -104,7 +104,7 @@
 				    ,@body))))
 	     (,package-var (package-designator-to-package ,package-form)))
 	 (mapc ,function-name
-	       (sicl-package-low:external-symbols ,package-var)))
+	       (external-symbols ,package-var)))
        ,result-form)))
 
 ;;; FIXME: check syntax better
@@ -124,18 +124,18 @@
 				    ,@body))))
 	     (,package-var ,package-form))
 	 (mapc ,function-name
-	       (sicl-package-low:external-symbols ,package-var))
+	       (external-symbols ,package-var))
 	 (mapc ,function-name
-	       (sicl-package-low:internal-symbols ,package-var))
+	       (internal-symbols ,package-var))
 	 (mapc (lambda (used-package)
 		 (mapc
 		  (lambda (symbol)
 		    (unless (symbol-member
 			     symbol
-			     (sicl-package-low:shadowing-symbols ,package-var))
+			     (shadowing-symbols ,package-var))
 		      (mapc ,function-name symbol)))
-		  (sicl-package-low:external-symbols used-package)))
-	       (sicl-package-low:use-list ,package-var)))
+		  (external-symbols used-package)))
+	       (use-list ,package-var)))
        ,result-form)))
 
 ;;; FIXME: check for conflicts
