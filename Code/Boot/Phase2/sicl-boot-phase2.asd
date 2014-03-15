@@ -375,6 +375,13 @@
    ;; all the classes in *TARGET-CLASSES*.  This function will be
    ;; called in phase 3 once all the ersatz classes have been created.
    (:file "finalize-target-classes")
+   ;; Define ordinary functions, generic functions, and methods for
+   ;; patching ersatz instances.  Patching an ersatz instance means
+   ;; replacing host instances (such as bridge classes) by ersatz
+   ;; instances.  We patch classes and slot definition metaobjects,
+   ;; but we do not patch initfunctions, because we need for
+   ;; initfunctions to be executable in the host environment later
+   ;; when we make ersatz instances from ersatz classes.
    (:file "patch-target-objects")
    (:file "print-object")
    (:file "satiate-all-generic-functions")
