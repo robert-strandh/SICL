@@ -3,11 +3,11 @@
 (define-built-in-class package ()
   ((%name
     :initarg :name
-    :accessor package-name)
+    :accessor name)
    (%nicknames
     :initarg :nicknames
     :initform '()
-    :accessor package-nicknames)
+    :accessor nicknames)
    (%use-list
     :initarg :use-list
     :initform '()
