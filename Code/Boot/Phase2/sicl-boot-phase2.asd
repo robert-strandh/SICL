@@ -199,12 +199,13 @@
    ;; (which is an ordinary ersatz function) to the generic function
    ;; (which is an ersatz generic function). 
    (:file "set-funcallable-instance-function")
-   ;; Define ordinary functions SICL-BOOT-PHASE2:ADD-METHOD and
+   ;; Define bridge generic functions SICL-BOOT-PHASE2:ADD-METHOD and
    ;; SICL-BOOT-PHASE2:REMOVE-METHOD.  The function ADD-METHOD will be
    ;; called from ADD-READER/WRITER-METHOD when the MOP class
    ;; hierarchy is used in phase 3 to generate ersatz classes.
    (:file "add-remove-method-support")
-   (:file "add-remove-method-defuns")
+   (:file "add-remove-method-defgenerics")
+   (:file "add-remove-method-defmethods")
    ;; When the support code for SHARED-INITIALIZE is used to
    ;; initialize an ersatz instance, it uses SLOT-BOUNDP-USING-CLASS
    ;; and (SETF SLOT-VALUE-USING-CLASS) to accomplish its task.  Here,
