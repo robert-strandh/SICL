@@ -235,6 +235,8 @@
    (:file "initialize-instance-defmethods")
    (:file "reinitialize-instance-defmethods")   
    (:file "shared-initialize-defmethods")
+   ;; Define INITIALIZE-BUILT-IN-INSTANCE as a bridge generic
+   ;; function, and default method.
    (:file "initialize-built-in-instance-defgenerics")
    (:file "initialize-built-in-instance-defmethods")
    (:file "specializerp")
