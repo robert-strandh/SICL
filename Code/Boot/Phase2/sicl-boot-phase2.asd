@@ -367,6 +367,9 @@
    (:file "class-finalization-defgenerics")
    (:file "class-finalization-support")
    (:file "class-finalization-defmethods")
+   ;; Define ordinary functions COMPUTE-BUILT-IN-SLOTS and
+   ;; FINALIZE-BUILT-IN-INHERITANCE to finalize built-in ersatz
+   ;; classes.
    (:file "built-in-class-finalization")
    (:file "finalize-target-classes")
    (:file "patch-target-objects")
