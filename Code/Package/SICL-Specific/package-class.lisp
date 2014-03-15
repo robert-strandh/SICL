@@ -1,4 +1,4 @@
-(in-package #:sicl-package-low)
+(in-package #:sicl-package)
 
 (define-built-in-class package ()
   ((%name
