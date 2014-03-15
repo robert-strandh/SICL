@@ -339,6 +339,9 @@
    ;; that ersatz generic functions can be properly initialized.
    (:file "generic-function-initialization-support")
    (:file "generic-function-initialization-defmethods")
+   ;; Define bridge generic function direct-slot-definition-p with
+   ;; methods so that it returns true for a slot definition
+   ;; metaobject, and false otherwise.
    (:file "direct-slot-definition-p")
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
