@@ -353,6 +353,9 @@
    ;; ersatz classes, and define functions to query and modify the
    ;; contents in various ways.
    (:file "class-database")
+   ;; Define a special variable *TARGET-GENERIC-FUNCTIONS* to hold a
+   ;; list of all ersatz generic functions that are created, and
+   ;; define function to query and add new functions.
    (:file "generic-function-database")
    (:file "class-finalization-defgenerics")
    (:file "class-finalization-support")
