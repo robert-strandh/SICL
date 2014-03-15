@@ -260,7 +260,7 @@
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defgenerics")
    (:file "reader-writer-method-class-defmethods")
-   ;; Define an ordinary function named SICL-BOOT-PHASE2:make-instance
+   ;; Define an ordinary function named SICL-BOOT-PHASE2:MAKE-INSTANCE
    ;; and that calls the function which is the value of the variable
    ;; *MAKE-INSTANCE-DEFAULT*.  The initial value of this variable is
    ;; the function SICL-BOOT-PHASE1:MAKE-INSTANCE-DEFAULT, so that
@@ -269,6 +269,9 @@
    ;; value of the variable to be a function that creates an ersatz
    ;; instance by instantiating an ersatz class.
    (:file "make-instance")
+   ;; Define ordinary function MAKE-BUILT-IN-INSTANCE that calls
+   ;; SICL-BOOT-PHASE1:MAKE-BUILT-IN-INSTANCE-DEFAULT, thus making a
+   ;; built-in instance by instantiating a built-in bridge class.
    (:file "make-built-in-instance")
    (:file "ensure-accessor-function")
    (:file "add-accessor-method")
