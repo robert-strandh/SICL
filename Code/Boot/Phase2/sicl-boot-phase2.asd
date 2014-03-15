@@ -343,6 +343,10 @@
    ;; methods so that it returns true for a slot definition
    ;; metaobject, and false otherwise.
    (:file "direct-slot-definition-p")
+   ;; Define :AROUND and :AFTER methods on the bridge generic function
+   ;; INITIALIZE-INSTANCE in order to implement the method
+   ;; initialization protocol so that ersatz methods can be properly
+   ;; initialized.
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
    (:file "class-database")
