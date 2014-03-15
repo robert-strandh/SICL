@@ -243,6 +243,20 @@
    ;; true.  This function is used only for error checking, and during
    ;; bootstrapping, we do not expect this kind of error.
    (:file "specializerp")
+   ;; Define bridge generic functions
+   ;; SICL-BOOT-PHASE2:READER-METHOD-CLASS and
+   ;; SICL-BOOT-PHASE2:WRITER-METHOD-CLASS and methods on these
+   ;; functions that return whatever *STANDARD-READER-METHOD* and
+   ;; *STANDARD-WRITER-METHOD* stand for.  These functions will be
+   ;; called from ADD-READER/WRITER-METHOD when the MOP class
+   ;; hierarchy is used in phase 3 to generate ersatz classes by
+   ;; instantiating bridge classes.  Therefore, the classes that they
+   ;; should return are bridge classes, so that when ersatz classes
+   ;; and ersatz generic functions are created by instantiating bridge
+   ;; classes, the methods that are created are ersatz methods.  This
+   ;; is why the variables *STANDARD-READER-METHOD* and
+   ;; *STANDARD-WRITER-METHOD* contain bridge classes, as can be seen
+   ;; in the component define-variables.lisp
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defgenerics")
    (:file "reader-writer-method-class-defmethods")
