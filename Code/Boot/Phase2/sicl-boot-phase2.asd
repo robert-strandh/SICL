@@ -230,6 +230,8 @@
    ;; not include it here.
    (:file "initialize-instance-support")
    (:file "reinitialize-instance-support")
+   ;; Define bridge methods on INITIALIZE-INSTANCE,
+   ;; REINITIALIZE-INSTANCE, and shared-initialize.
    (:file "initialize-instance-defmethods")
    (:file "reinitialize-instance-defmethods")   
    (:file "shared-initialize-defmethods")
