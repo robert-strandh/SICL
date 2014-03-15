@@ -290,6 +290,32 @@
    ;; methods for each slot with such accessors when an ersatz class
    ;; is created.
    (:file "add-accessor-method")
+   ;; Define bridge generic functions
+   ;; DIRECT/EFFECTIVE-SLOT-DEFINITION-CLASS.
+   ;;
+   ;; The function DIRECT-SLOT-DEFINITION-CLASS is called by the
+   ;; :AROUND method on INITIALIZE-INSTANCE specialized to certain
+   ;; class metaobjects in order to convert canonicalized slot
+   ;; descriptions to instances of whatever direct slot definition
+   ;; class is wanted by that particular class.  The default method on
+   ;; DIRECT-SLOT-DEFINITION-CLASS returns the value of the variable
+   ;; *STANDARD-DIRECT-SLOT-DEFINITION*.  Since this function is
+   ;; called when an ersatz class is created in order to create direct
+   ;; slot definition metaobjectss on that class, those slot
+   ;; definition metaobjects will be ersatz instances as well.  This
+   ;; is why the value of the variable
+   ;; *STANDARD-DIRECT-SLOT-DEFINITION* is set to the bridge class
+   ;; named STANDARD-DIRECT-SLOT-DEFINITION.
+   ;;
+   ;; The function EFFECTIVE-SLOT-DEFINITION-CLASS is called by the
+   ;; function COMPUTE-EFFECTIVE-SLOT-DEFINITION which is part of the
+   ;; class finalization protocol in order to create an effective slot
+   ;; definition metaobject from a list of direct slot definition
+   ;; metaobjects.  Here, the effective slot definition metaobject we
+   ;; want to create is a an ersatz instance, because it will be part
+   ;; of an ersatz class.  This is why the value of the variable
+   ;; *STANDARD-EFFECTIVE-SLOT-DEFINITION* is set to the bridge class
+   ;; named STANDARD-EFFECTIVE-SLOT-DEFINITION.
    (:file "slot-definition-class-support")
    (:file "slot-definition-class-defgenerics")
    (:file "slot-definition-class-defmethods")
