@@ -371,6 +371,9 @@
    ;; FINALIZE-BUILT-IN-INHERITANCE to finalize built-in ersatz
    ;; classes.
    (:file "built-in-class-finalization")
+   ;; Define ordinary function FINALIZE-TARGET-CLASSES that finalizes
+   ;; all the classes in *TARGET-CLASSES*.  This function will be
+   ;; called in phase 3 once all the ersatz classes have been created.
    (:file "finalize-target-classes")
    (:file "patch-target-objects")
    (:file "print-object")
