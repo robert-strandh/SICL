@@ -217,6 +217,8 @@
    (:file "slot-value-etc-support")
    (:file "slot-value-etc-defmethods")
    (:file "slot-value-etc-specified-defuns")
+   ;; Define bridge generic functions INITIALIZE-INSTANCE,
+   ;; REINITIALIZE-INSTANCE, and shared-initialize.
    (:file "initialize-instance-defgenerics")
    (:file "reinitialize-instance-defgenerics")
    (:file "shared-initialize-defgenerics")
