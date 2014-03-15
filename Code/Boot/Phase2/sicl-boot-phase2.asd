@@ -222,6 +222,12 @@
    (:file "initialize-instance-defgenerics")
    (:file "reinitialize-instance-defgenerics")
    (:file "shared-initialize-defgenerics")
+   ;; Define ordinary functions constituting support code for
+   ;; INITIALIZE-INSTANCE and REINITIALIZE-INSTANCE.  The function
+   ;; SHARED-INITIALIZE-DEFAULT has already been defined before in
+   ;; phase 2 to make an indirect call to the version of
+   ;; SHARED-INITIALIZE-DEFAULT that we defined in phase 1, so we do
+   ;; not include it here.
    (:file "initialize-instance-support")
    (:file "reinitialize-instance-support")
    (:file "initialize-instance-defmethods")
