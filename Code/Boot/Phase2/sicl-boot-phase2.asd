@@ -273,6 +273,14 @@
    ;; SICL-BOOT-PHASE1:MAKE-BUILT-IN-INSTANCE-DEFAULT, thus making a
    ;; built-in instance by instantiating a built-in bridge class.
    (:file "make-built-in-instance")
+   ;; Define ordinary function ENSURE-ACCESSOR-FUNCTION to call
+   ;; *ENSURE-GENERIC-FUNCTION.  Recall that ENSURE-ACCESSOR-FUNCTION
+   ;; is an indirection to ENSURE-GENERIC-FUNCTION called by
+   ;; ADD-READER/WRITER-METHOD in order to ensure that the generic
+   ;; function exists.  The reason for the indirection is that we want
+   ;; it to mean something different in phase 1.  Here it means that
+   ;; an ersatz generic function should be created if it does not
+   ;; already exist.
    (:file "ensure-accessor-function")
    (:file "add-accessor-method")
    (:file "slot-definition-class-support")
