@@ -239,6 +239,9 @@
    ;; function, and default method.
    (:file "initialize-built-in-instance-defgenerics")
    (:file "initialize-built-in-instance-defmethods")
+   ;; Define an ordinary function SPECIALIZERP that always returns
+   ;; true.  This function is used only for error checking, and during
+   ;; bootstrapping, we do not expect this kind of error.
    (:file "specializerp")
    (:file "reader-writer-method-class-support")
    (:file "reader-writer-method-class-defgenerics")
