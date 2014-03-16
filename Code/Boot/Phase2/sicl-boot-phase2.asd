@@ -390,6 +390,14 @@
    ;; defined, because the next step is to satiate them all by calling
    ;; the entry in phase1 for doing so.
    (:file "satiate-all-generic-functions")
+   ;; Here in phase 2, ENSURE-CLASS is a symbol that is imported from
+   ;; the package SICL-BOOT-PHASE1 and it means that a bridge class
+   ;; should be created from a host class.  In phase 3, we need for
+   ;; ENSURE-CLASS to mean that an ersatz class should be created from
+   ;; a bridge class.  However, the computations to obtain that effect
+   ;; belong here in phase 2.  For that reason, we define an ordinary
+   ;; function *ENSURE-CLASS here, and that is called from
+   ;; ENSURE-CLASS in phase 3.
    (:file "xensure-class")
    (:file "xensure-built-in-class")
    (:file "xensure-generic-function")
