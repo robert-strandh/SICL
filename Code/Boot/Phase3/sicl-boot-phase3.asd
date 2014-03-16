@@ -91,6 +91,9 @@
    ;; and store the instance in
    ;; SICL-GLOBAL-ENVIRONMENT:*GLOBAL-ENVIRONMENT*.
    (:file "global-environment")
+   ;; Patch all ersatz instances created so far by calling the function 
+   ;; SICL-BOOT-PHASE2:PATCH-ERSATZ-OBJECTS from phase 2.
+   ;; FIXME: does that include the global environment we just created?
    (:file "patch-all-ersatz-objects")
    (:file "shared-initialize-support")
    (:file "update-functions")
