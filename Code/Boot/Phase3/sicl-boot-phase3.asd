@@ -80,6 +80,9 @@
    ;; classes, ersatz generic functions, ersatz methods, and ersatz
    ;; slot definitions.  All of these are instances of bridge classes.
    (:file "mop-class-hierarchy")
+   ;; Load the classes for manipulating global environments, which
+   ;; will create ersatz classes, ersatz generic functions, etc., all
+   ;; of which are instances of bridge classes.
    (:file "environment-classes")
    (:file "finalize-all-target-classes")
    (:file "global-environment")
