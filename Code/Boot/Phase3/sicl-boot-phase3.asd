@@ -15,6 +15,11 @@
    ;; ASPIRING-SICL-CLOS package because we want the ersatz generic
    ;; functions to have the correct names.
    (:file "import")
+   ;; Shadowing import the names of the specified macros DEFCLASS,
+   ;; DEFGENERIC, and DEFMETHOD into the package
+   ;; SICL-GLOBAL-ENVIRONMENT from the package SICL-BOOT-PHASE3, so
+   ;; that when we load the class definitions for the global
+   ;; environment, they will be defined as ersatz classes.
    (:file "import-to-environment")
    (:file "list-utilities")
    (:file "ensure")
