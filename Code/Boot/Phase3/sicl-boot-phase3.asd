@@ -34,6 +34,10 @@
    ;; and *ENSURE-METHOD of phase 2, meaning these functions create
    ;; ersatz instances by instantiating bridge classes. 
    (:file "ensure")
+   ;; Define ordinary functions to be used by the expansion code for
+   ;; DEFCLASS.  These functions are responsible for checking the
+   ;; syntax of the DEFCLASS forms, and for canonicalizing superclass
+   ;; specifications, slot specifications, and class options.
    (:file "defclass-support")
    (:file "defclass-defmacro")
    (:file "define-built-in-class-defmacro")
