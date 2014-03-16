@@ -4,7 +4,9 @@
   :depends-on (:sicl-boot-phase2)
   :serial t
   :components
-  ((:file "packages")
+  (;; Define package SICL-BOOT-PHASE3.  It uses the package named
+   ;; COMMON-LISP and also the package named ASPIRING-SICL-CLOS.
+   (:file "packages")
    (:file "rename-package-1")
    (:file "import")
    (:file "import-to-environment")
