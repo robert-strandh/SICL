@@ -28,6 +28,11 @@
    ;; to invoke generic functions in order to compute the
    ;; discriminating function of generic functions.
    (:file "list-utilities")
+   ;; Define ordinary functions ENSURE-CLASS, ENSURE-BUILT-IN-CLASS,
+   ;; ENSURE-GENERIC-FUNCTION, and ENSURE-METHOD to call
+   ;; *ENSURE-CLASS, *ENSURE-BUILT-IN-CLASS, *ENSURE-GENERIC-FUNCTION,
+   ;; and *ENSURE-METHOD of phase 2, meaning these functions create
+   ;; ersatz instances by instantiating bridge classes. 
    (:file "ensure")
    (:file "defclass-support")
    (:file "defclass-defmacro")
