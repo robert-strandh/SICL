@@ -383,6 +383,8 @@
    ;; initfunctions to be executable in the host environment later
    ;; when we make ersatz instances from ersatz classes.
    (:file "patch-target-objects")
+   ;; Define bridge generic function PRINT-OBJECT and methods specialized to
+   ;; all metaobject classes. 
    (:file "print-object")
    (:file "satiate-all-generic-functions")
    (:file "xensure-class")
