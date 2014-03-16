@@ -65,6 +65,10 @@
    ;; suitable for method invocation. 
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
+   ;; Define ordinary functions to be used by the expansion code for
+   ;; DEFMETHOD.  These functions are responsible for checking the
+   ;; syntax of the DEFMETHOD forms, and for canonicalizing the list
+   ;; of specializers.
    (:file "defmethod-support")
    (:file "defmethod-defmacro")
    (:file "mop-class-hierarchy")
