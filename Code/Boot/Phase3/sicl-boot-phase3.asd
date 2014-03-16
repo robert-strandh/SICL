@@ -84,6 +84,8 @@
    ;; will create ersatz classes, ersatz generic functions, etc., all
    ;; of which are instances of bridge classes.
    (:file "environment-classes")
+   ;; Finalize all the ersatz classes we have defined so far.  FIXME:
+   ;; This step may actually not be necessary.
    (:file "finalize-all-ersatz-classes")
    (:file "global-environment")
    (:file "patch-all-ersatz-objects")
