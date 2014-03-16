@@ -55,10 +55,14 @@
    ;; Define the macro SICL-BOOT-PHASE3:DEFGENERIC.  It expands to a
    ;; call to ENSURE-GENERIC-FUNCTION.  The symbol
    ;; SICL-BOOT-PHASE3:ENSURE-GENERIC-FUNCTION names a function that
-   ;; calls SICL-BOOT-PHASE3:*ENSURE-GENERIC-FUNCTION, which means that
-   ;; DEFGENERIC will create an ersatz generic function by
+   ;; calls SICL-BOOT-PHASE3:*ENSURE-GENERIC-FUNCTION, which means
+   ;; that DEFGENERIC will create an ersatz generic function by
    ;; instantiating a bridge class.
    (:file "defgeneric-defmacro")
+   ;; Define MAKE-METHOD-LAMBDA as an ordinary function.
+   ;; MAKE-METHOD-LAMBDA is called by the expansion code of DEFMETHOD
+   ;; in order to turn the method body into a lambda expression
+   ;; suitable for method invocation. 
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
    (:file "defmethod-support")
