@@ -45,6 +45,12 @@
    ;; which means that this DEFCLASS will create an ersatz class by
    ;; instantiating a bridge class. 
    (:file "defclass-defmacro")
+   ;; Define the macro SICL-BOOT-PHASE3:DEFINE-BUILT-IN-CLASS.  It
+   ;; expands to a call to ENSURE-BUILT-IN-CLASS.  The symbol
+   ;; SICL-BOOT-PHASE3:ENSURE-BUILT-IN-CLASS names a function that
+   ;; calls SICL-BOOT-PHASE2:*ENSURE-BUILT-IN-CLASS, which means that
+   ;; this DEFINE-BUILT-IN-CLASS will create an built-in ersatz class
+   ;; by instantiating a bridge class.
    (:file "define-built-in-class-defmacro")
    (:file "defgeneric-defmacro")
    (:file "make-method-lambda-support")
