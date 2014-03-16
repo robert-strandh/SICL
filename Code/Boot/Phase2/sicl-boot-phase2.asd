@@ -386,6 +386,9 @@
    ;; Define bridge generic function PRINT-OBJECT and methods specialized to
    ;; all metaobject classes. 
    (:file "print-object")
+   ;; At this point, all specified generic functions should have been
+   ;; defined, because the next step is to satiate them all by calling
+   ;; the entry in phase1 for doing so.
    (:file "satiate-all-generic-functions")
    (:file "xensure-class")
    (:file "xensure-built-in-class")
