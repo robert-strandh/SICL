@@ -87,6 +87,9 @@
    ;; Finalize all the ersatz classes we have defined so far.  FIXME:
    ;; This step may actually not be necessary.
    (:file "finalize-all-ersatz-classes")
+   ;; Create an ersatz instance of the bridge class GLOBAL-ENVIRONMENT
+   ;; and store the instance in
+   ;; SICL-GLOBAL-ENVIRONMENT:*GLOBAL-ENVIRONMENT*.
    (:file "global-environment")
    (:file "patch-all-ersatz-objects")
    (:file "shared-initialize-support")
