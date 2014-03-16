@@ -349,11 +349,11 @@
    ;; initialized.
    (:file "method-initialization-support")
    (:file "method-initialization-defmethods")
-   ;; Define a special variable *TARGET-CLASSES* to hold a list of
+   ;; Define a special variable *ERSATZ-CLASSES* to hold a list of
    ;; ersatz classes, and define functions to query and modify the
    ;; contents in various ways.
    (:file "class-database")
-   ;; Define a special variable *TARGET-GENERIC-FUNCTIONS* to hold a
+   ;; Define a special variable *ERSATZ-GENERIC-FUNCTIONS* to hold a
    ;; list of all ersatz generic functions that are created, and
    ;; define function to query and add new functions.
    (:file "generic-function-database")
@@ -371,10 +371,10 @@
    ;; FINALIZE-BUILT-IN-INHERITANCE to finalize built-in ersatz
    ;; classes.
    (:file "built-in-class-finalization")
-   ;; Define ordinary function FINALIZE-TARGET-CLASSES that finalizes
-   ;; all the classes in *TARGET-CLASSES*.  This function will be
+   ;; Define ordinary function FINALIZE-ERSATZ-CLASSES that finalizes
+   ;; all the classes in *ERSATZ-CLASSES*.  This function will be
    ;; called in phase 3 once all the ersatz classes have been created.
-   (:file "finalize-target-classes")
+   (:file "finalize-ersatz-classes")
    ;; Define ordinary functions, generic functions, and methods for
    ;; patching ersatz instances.  Patching an ersatz instance means
    ;; replacing host instances (such as bridge classes) by ersatz
@@ -382,7 +382,7 @@
    ;; but we do not patch initfunctions, because we need for
    ;; initfunctions to be executable in the host environment later
    ;; when we make ersatz instances from ersatz classes.
-   (:file "patch-target-objects")
+   (:file "patch-ersatz-objects")
    ;; Define bridge generic function PRINT-OBJECT and methods specialized to
    ;; all metaobject classes. 
    (:file "print-object")
