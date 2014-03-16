@@ -9,6 +9,11 @@
    (:file "packages")
    ;; Add nickname SICL-CLOS to the package SICL-BOOT-PHASE3.
    (:file "rename-package-1")
+   ;; Import name of accessors for MOP classes into the package named
+   ;; ASPIRING-SICL-CLOS.  In phases 1 and 2, these names were symbols
+   ;; in the BOOT packages.  Now, we want them to be in the
+   ;; ASPIRING-SICL-CLOS package because we want the ersatz generic
+   ;; functions to have the correct names.
    (:file "import")
    (:file "import-to-environment")
    (:file "list-utilities")
