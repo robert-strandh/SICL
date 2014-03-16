@@ -405,6 +405,9 @@
    (:file "xensure-built-in-class")
    (:file "xensure-generic-function")
    (:file "xensure-method")
+   ;; Define ordinary function ALLOCATE-INSTANCE that allocates an
+   ;; ersatz instance from a bridge class.  This function is called
+   ;; from the support code for MAKE-INSTANCE defined below.
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
    (:file "allocate-built-in-instance")
