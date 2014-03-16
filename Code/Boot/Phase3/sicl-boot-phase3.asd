@@ -84,9 +84,9 @@
    ;; will create ersatz classes, ersatz generic functions, etc., all
    ;; of which are instances of bridge classes.
    (:file "environment-classes")
-   (:file "finalize-all-target-classes")
+   (:file "finalize-all-ersatz-classes")
    (:file "global-environment")
-   (:file "patch-all-target-objects")
+   (:file "patch-all-ersatz-objects")
    (:file "shared-initialize-support")
    (:file "update-functions")
    (:file "xensure-class")
