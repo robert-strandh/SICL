@@ -76,6 +76,9 @@
    ;; SICL-BOOT-PHASE3:*ENSURE-METHOD, which means that DEFGMETHOD
    ;; will create an ersatz method by instantiating a bridge class.
    (:file "defmethod-defmacro")
+   ;; Load the hierarchy of MOP classes, which will create ersatz
+   ;; classes, ersatz generic functions, ersatz methods, and ersatz
+   ;; slot definitions.  All of these are instances of bridge classes.
    (:file "mop-class-hierarchy")
    (:file "environment-classes")
    (:file "finalize-all-target-classes")
