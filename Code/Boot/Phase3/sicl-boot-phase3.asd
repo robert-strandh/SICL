@@ -52,6 +52,12 @@
    ;; this DEFINE-BUILT-IN-CLASS will create an built-in ersatz class
    ;; by instantiating a bridge class.
    (:file "define-built-in-class-defmacro")
+   ;; Define the macro SICL-BOOT-PHASE3:DEFGENERIC.  It expands to a
+   ;; call to ENSURE-GENERIC-FUNCTION.  The symbol
+   ;; SICL-BOOT-PHASE3:ENSURE-GENERIC-FUNCTION names a function that
+   ;; calls SICL-BOOT-PHASE3:*ENSURE-GENERIC-FUNCTION, which means that
+   ;; DEFGENERIC will create an ersatz generic function by
+   ;; instantiating a bridge class.
    (:file "defgeneric-defmacro")
    (:file "make-method-lambda-support")
    (:file "make-method-lambda-defuns")
