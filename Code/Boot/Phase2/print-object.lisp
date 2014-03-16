@@ -7,7 +7,7 @@
 
 (defmethod print-object (object stream)
   (print-unreadable-object (object stream)
-    (format stream "*some target-object")))
+    (format stream "*some ersatz-object")))
 
 (defmethod print-object ((object function) stream)
   (print-unreadable-object (object stream)

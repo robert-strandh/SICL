@@ -9,10 +9,10 @@
 			(metaclass nil metaclass-p)
 		      &allow-other-keys)
   ;; If the class already exists, then do nothing.
-  (let ((class (find-target-class name nil)))
+  (let ((class (find-ersatz-class name nil)))
     (if (null class)
 	(let ((superclasses (loop for name in direct-superclasses
-				  for class = (find-target-class name)
+				  for class = (find-ersatz-class name)
 				  collect class))
 	      (remaining-keys (copy-list arguments)))
 	  (loop while (remf remaining-keys :metaclass))
@@ -26,6 +26,6 @@
 				:name name
 				:direct-superclasses superclasses
 				remaining-keys)))
-	    (add-target-class name result)
+	    (add-ersatz-class name result)
 	    result))
 	class)))

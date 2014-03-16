@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-boot-phase2)
 
 (define-symbol-macro *t*
-  (find-target-class 't))
+  (find-ersatz-class 't))
 
 (defvar *standard-reader-method*
   (find-bridge-class 'standard-reader-method))
@@ -10,10 +10,10 @@
   (find-bridge-class 'standard-writer-method))
 
 (define-symbol-macro *standard-object*
-    (find-target-class 'cl:standard-object))
+    (find-ersatz-class 'cl:standard-object))
 
 (define-symbol-macro *funcallable-standard-object*
-    (find-target-class 'funcallable-standard-object))
+    (find-ersatz-class 'funcallable-standard-object))
 
 (defvar *standard-direct-slot-definition*
   (find-bridge-class 'standard-direct-slot-definition))

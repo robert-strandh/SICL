@@ -58,17 +58,17 @@
    #:*ensure-built-in-class
    #:*ensure-generic-function
    #:*ensure-method
-   #:finalize-target-classes
-   #:patch-target-objects
+   #:finalize-ersatz-classes
+   #:patch-ersatz-objects
    #:make-instance-default
    #:slot-value-using-class
    #:slot-boundp-using-class
    #:allocate-instance-default
    #:allocate-built-in-instance
-   #:find-target-class
-   #:add-target-class
-   #:find-target-generic-function
-   #:add-target-generic-function
+   #:find-ersatz-class
+   #:add-ersatz-class
+   #:find-ersatz-generic-function
+   #:add-ersatz-generic-function
    #:make-instance
    #:*make-instance-default*
    #:*shared-initialize-default*))

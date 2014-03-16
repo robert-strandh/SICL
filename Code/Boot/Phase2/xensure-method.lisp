@@ -13,7 +13,7 @@
 		       &key specializers
 		       &allow-other-keys)
   (let ((specs (loop for s in specializers
-		     collect (find-target-class s)))
+		     collect (find-ersatz-class s)))
 	(remaining-keys (copy-list keys)))
     (loop while (remf remaining-keys :specializers))
     (let ((method (apply #'make-instance

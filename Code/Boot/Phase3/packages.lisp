@@ -18,10 +18,10 @@
   (:import-from #:sicl-boot-phase2
 		#:slot-value-using-class
 		#:slot-boundp-using-class
-		#:find-target-class
-		#:add-target-class
-		#:find-target-generic-function
-		#:add-target-generic-function)
+		#:find-ersatz-class
+		#:add-ersatz-class
+		#:find-ersatz-generic-function
+		#:add-ersatz-generic-function)
   (:shadowing-import-from #:sicl-boot-phase2
 			  #:make-instance)
   (:shadow

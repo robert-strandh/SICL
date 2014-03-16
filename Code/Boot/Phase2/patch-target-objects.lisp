@@ -2,32 +2,32 @@
 
 (defgeneric patch-instance (object))
 
-(defun analogous-target-class (bridge-class)
-  (find-target-class (sicl-boot-phase1::class-name bridge-class)))
+(defun analogous-ersatz-class (bridge-class)
+  (find-ersatz-class (sicl-boot-phase1::class-name bridge-class)))
 
 (defmethod patch-instance (object)
   (let ((bridge-class (heap-instance-class object)))
     (setf (heap-instance-class object)
-	  (analogous-target-class bridge-class))))
+	  (analogous-ersatz-class bridge-class))))
 
 (defmethod patch-instance ((object standard-object))
   (let* ((bridge-class (heap-instance-class object))
-	 (target-class (analogous-target-class bridge-class)))
+	 (ersatz-class (analogous-ersatz-class bridge-class)))
     (setf (standard-instance-access object 1)
-	  (class-slots target-class))
+	  (class-slots ersatz-class))
     (call-next-method)))
 
 (defmethod patch-instance ((object standard-generic-function))
   (let ((mc (generic-function-method-class object)))
     (reinitialize-instance
      object
-     :method-class (analogous-target-class mc)))
+     :method-class (analogous-ersatz-class mc)))
   (call-next-method))
 
 
 ;;; For now, do not patch the initfunction.  The plan is to leave the
 ;;; initfunction intact until the last moment, so that we can execute
-;;; it when allocating class instances from target classes.  If the
+;;; it when allocating class instances from ersatz classes.  If the
 ;;; plan works, then this function will migrate to a later phase.
 
 ;;; (defmethod patch-instance ((object slot-definition))
@@ -43,7 +43,7 @@
   (heap-instance-p
    (heap-instance-class heap-instance)))
 
-(defun patch-target-objects ()
+(defun patch-ersatz-objects ()
   (let ((seen '()))
     (labels ((traverse (object)
 	       (unless (member object seen)
@@ -62,6 +62,6 @@
 			  do (traverse element)))
 		   (t
 		    nil)))))
-      (loop for obj in (append *target-generic-functions*
-			       *target-classes*)
+      (loop for obj in (append *ersatz-generic-functions*
+			       *ersatz-classes*)
 	    do (traverse obj)))))
