@@ -7,6 +7,7 @@
   (;; Define package SICL-BOOT-PHASE3.  It uses the package named
    ;; COMMON-LISP and also the package named ASPIRING-SICL-CLOS.
    (:file "packages")
+   ;; Add nickname SICL-CLOS to the package SICL-BOOT-PHASE3.
    (:file "rename-package-1")
    (:file "import")
    (:file "import-to-environment")
