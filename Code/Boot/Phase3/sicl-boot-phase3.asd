@@ -70,6 +70,11 @@
    ;; syntax of the DEFMETHOD forms, and for canonicalizing the list
    ;; of specializers.
    (:file "defmethod-support")
+   ;; Define the macro SICL-BOOT-PHASE3:DEFMETHOD.  It expands to a
+   ;; call to ENSURE-METHOD.  The symbol
+   ;; SICL-BOOT-PHASE3:ENSURE-METHOD names a function that calls
+   ;; SICL-BOOT-PHASE3:*ENSURE-METHOD, which means that DEFGMETHOD
+   ;; will create an ersatz method by instantiating a bridge class.
    (:file "defmethod-defmacro")
    (:file "mop-class-hierarchy")
    (:file "environment-classes")
