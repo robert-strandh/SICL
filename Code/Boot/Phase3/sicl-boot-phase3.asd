@@ -21,6 +21,12 @@
    ;; that when we load the class definitions for the global
    ;; environment, they will be defined as ersatz classes.
    (:file "import-to-environment")
+   ;; Define ordinary functions that do some of what the CL sequence
+   ;; functions do, but that work only on lists.  We use these
+   ;; functions to avoid using the sequence functions because we might
+   ;; want to make the sequence functions generic, and we do not want
+   ;; to invoke generic functions in order to compute the
+   ;; discriminating function of generic functions.
    (:file "list-utilities")
    (:file "ensure")
    (:file "defclass-support")
