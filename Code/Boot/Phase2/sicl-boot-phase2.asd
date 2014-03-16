@@ -410,6 +410,10 @@
    ;; from the support code for MAKE-INSTANCE defined below.
    (:file "allocate-instance-support")
    (:file "allocate-instance-defuns")
+   ;; Define ordinary function ALLOCATE-BUILT-IN-INSTANCE that
+   ;; allocates a built-in ersatz instance from a bridge class.  This
+   ;; function is called from the support code for
+   ;; MAKE-BUILT-IN-INSTANCE in phase 3.
    (:file "allocate-built-in-instance")
    (:file "make-instance-support")
    (:file "rename-package-2")))
