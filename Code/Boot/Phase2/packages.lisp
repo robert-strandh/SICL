@@ -71,4 +71,5 @@
    #:add-ersatz-generic-function
    #:make-instance
    #:*make-instance-default*
-   #:*shared-initialize-default*))
+   #:*shared-initialize-default*
+   #:*find-class*))
