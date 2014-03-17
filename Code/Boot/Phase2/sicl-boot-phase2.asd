@@ -386,9 +386,19 @@
    ;; Define bridge generic function PRINT-OBJECT and methods specialized to
    ;; all metaobject classes. 
    (:file "print-object")
-   ;; At this point, all specified generic functions should have been
-   ;; defined, because the next step is to satiate them all by calling
-   ;; the entry in phase1 for doing so.
+   ;; At this point, all specified bridge generic functions should
+   ;; have been defined, because the next step is to satiate them all
+   ;; by calling the entry in phase1 for doing so.  Furthermore, at
+   ;; this point, every class that we ever want make instances of must
+   ;; have been defined.  The reason is that we satiate the bridge
+   ;; generic functions with respect to classes that have been defined
+   ;; so far, and we count on generic functions to be satiated.  If a
+   ;; bridge generic function is ever called with an ersatz instance
+   ;; whose class is an ersatz class, and which requires the general
+   ;; machinery of a generic function, we are in trouble.  The reason
+   ;; is that the specilizers of bridge methods are bridge classes, so
+   ;; we would then try to compare an ersatz class and a bridge class,
+   ;; which will fail.
    (:file "satiate-all-generic-functions")
    ;; Here in phase 2, ENSURE-CLASS, ENSURE-BUILT-IN-CLASS,
    ;; ENSURE-GENERIC-FUNCTION, and ENSURE-METHOD are symbols that are
