@@ -5,3 +5,6 @@
 
 (setf sicl-boot-phase2:*shared-initialize-default*
       #'shared-initialize-default)
+
+(setf sicl-boot-phase2:*find-class*
+      #'sicl-boot-phase2:find-ersatz-class)
