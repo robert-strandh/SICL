@@ -72,4 +72,6 @@
    #:make-instance
    #:*make-instance-default*
    #:*shared-initialize-default*
-   #:*find-class*))
+   #:*find-class*
+   #:*find-ersatz-class*
+   #:*add-ersatz-class*))
