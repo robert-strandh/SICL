@@ -23,6 +23,10 @@
    ;; COMMON-LISP package and exports the names of all the classes and
    ;; functions required to manipulate packages.
    (:file "package-packages")
+   ;; Define the package SICL-SYMBOL.  This package uses the
+   ;; COMMON-LISP package and exports the names of all the classes and
+   ;; functions required to manipulate packages.
+   (:file "symbol-packages")
    ;; Add nickname SICL-CLOS to the SICL-BOOT-PHASE2 package so that
    ;; code that gets loaded in the SICL-CLOS package in reality gets
    ;; loaded into the SICL-BOOT-PHASE2 package. 
