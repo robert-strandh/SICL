@@ -95,6 +95,9 @@
    ;; SICL-BOOT-PHASE2:PATCH-ERSATZ-OBJECTS from phase 2.
    ;; FIXME: does that include the global environment we just created?
    (:file "patch-all-ersatz-objects")
+   ;; We define the support code for SHARED-INITIALIZE again here,
+   ;; because this time it needs to use bridge generic functions to
+   ;; access ersatz classes in order to initialize ersatz instances.
    (:file "shared-initialize-support")
    (:file "update-functions")
    (:file "xensure-class")
