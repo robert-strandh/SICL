@@ -10,10 +10,16 @@
 ;;;; reason, we must allocate more slot storage than there are slots
 ;;;; with :INSTANCE allocation.
 
+;;; The AMOP says that ALLOCATE-INSTANCE checks whether the class is
+;;; finalized, and if not, calls FINALIZE-INHERITANCE.  However, the
+;;; INITARGS received by ALLOCATE-INSTANCE should be the defaulted
+;;; initargs, and computing the defaulted initargs requires the class
+;;; to be finalized.  I peek at PCL shows that the class is finalized
+;;; in MAKE-INSTANCE, before ALLOCATE-INSTANCE is called, which makes
+;;; more sense.
+
 (defun allocate-instance-default (class &rest initargs)
   (declare (ignore initargs))
-  (unless (class-finalized-p class)
-    (finalize-inheritance class))
   (let* ((slots (allocate-slot-storage (instance-size class)))
 	 (instance (allocate-heap-instance class slots)))
     ;; Store the unique number of the class in the instance.
