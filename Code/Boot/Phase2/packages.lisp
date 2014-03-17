@@ -74,4 +74,6 @@
    #:*shared-initialize-default*
    #:*find-class*
    #:*find-ersatz-class*
-   #:*add-ersatz-class*))
+   #:*add-ersatz-class*
+   #:*find-ersatz-generic-function*
+   #:*add-ersatz-generic-function*))
