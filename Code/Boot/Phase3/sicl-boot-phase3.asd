@@ -87,10 +87,6 @@
    ;; Finalize all the ersatz classes we have defined so far.  FIXME:
    ;; This step may actually not be necessary.
    (:file "finalize-all-ersatz-classes")
-   ;; Create an ersatz instance of the bridge class GLOBAL-ENVIRONMENT
-   ;; and store the instance in
-   ;; SICL-GLOBAL-ENVIRONMENT:*GLOBAL-ENVIRONMENT*.
-   (:file "global-environment")
    ;; Patch all ersatz instances created so far by calling the function 
    ;; SICL-BOOT-PHASE2:PATCH-ERSATZ-OBJECTS from phase 2.
    ;; FIXME: does that include the global environment we just created?
@@ -107,6 +103,10 @@
    ;; now access ersatz classes in order to initialize ersatz
    ;; instances.
    (:file "update-functions")
+   ;; Create an ersatz instance of the bridge class GLOBAL-ENVIRONMENT
+   ;; and store the instance in
+   ;; SICL-GLOBAL-ENVIRONMENT:*GLOBAL-ENVIRONMENT*.
+   (:file "global-environment")
    ;; Here in phase 3, ENSURE-CLASS, ENSURE-BUILT-IN-CLASS,
    ;; ENSURE-GENERIC-FUNCTION, and ENSURE-METHOD are symbols that mean
    ;; that an ersatz class, an ersatz generic function, or an ersatz
