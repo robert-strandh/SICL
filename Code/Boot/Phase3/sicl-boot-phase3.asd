@@ -99,6 +99,13 @@
    ;; because this time it needs to use bridge generic functions to
    ;; access ersatz classes in order to initialize ersatz instances.
    (:file "shared-initialize-support")
+   ;; Update the variable named *MAKE-INSTANCE-DEFAULT* to contain the
+   ;; function named SICL-BOOT-PHASE2:MAKE-INSTANCE-DEFAULT and the
+   ;; variable named *SHARED-INITIALIZE-DEFAULT* to contain the
+   ;; function name SICL-BOOT-PHASE3:SHARED-INITIALIZE-DEFAULT defined
+   ;; above.  This means that MAKE-INSTANCE and SHARED-INITIALIZE will
+   ;; now access ersatz classes in order to initialize ersatz
+   ;; instances.
    (:file "update-functions")
    (:file "xensure-class")
    (:file "xensure-built-in-class")
