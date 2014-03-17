@@ -20,6 +20,11 @@
    ;; package SICL-GLOBAL-ENVIRONMENT will use the definition of those
    ;; symbols in the SICL-BOOT-PHASE2 package.
    (:file "import-to-environment")
+   ;; Define the package SICL-PACKAGE.  This package uses the
+   ;; COMMON-LISP package, does not shadow any symbols and exports the
+   ;; names of all the classes and functions required to manipulate
+   ;; packages.
+   (:file "package-packages")
    ;; Add nickname SICL-CLOS to the SICL-BOOT-PHASE2 package so that
    ;; code that gets loaded in the SICL-CLOS package in reality gets
    ;; loaded into the SICL-BOOT-PHASE2 package. 
