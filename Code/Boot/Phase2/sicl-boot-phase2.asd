@@ -23,6 +23,7 @@
    ;; COMMON-LISP package and exports the names of all the classes and
    ;; functions required to manipulate packages.
    (:file "package-packages")
+   (:file "import-to-package")
    ;; Define the package SICL-SYMBOL.  This package uses the
    ;; COMMON-LISP package and exports the names of all the classes and
    ;; functions required to manipulate packages.
