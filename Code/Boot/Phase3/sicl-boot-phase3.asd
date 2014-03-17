@@ -107,6 +107,16 @@
    ;; now access ersatz classes in order to initialize ersatz
    ;; instances.
    (:file "update-functions")
+   ;; Here in phase 3, ENSURE-CLASS, ENSURE-BUILT-IN-CLASS,
+   ;; ENSURE-GENERIC-FUNCTION, and ENSURE-METHOD are symbols that mean
+   ;; that an ersatz class, an ersatz generic function, or an ersatz
+   ;; method should be created from a bridge class.  In phase 4, we
+   ;; need for these names to mean that an ersatz instance should be
+   ;; created from an ersatz class.  However, the computations to
+   ;; obtain that effect belong here in phase 3.  For that reason, we
+   ;; define ordinary functions *ENSURE-CLASS, *ENSURE-BUILT-IN-CLASS,
+   ;; *ENSURE-GENERIC-FUNCTION, and *ENSURE-METHOD here, and that are
+   ;; called from the analogous ENSURE-... functions in phase 3.
    (:file "xensure-class")
    (:file "xensure-built-in-class")
    (:file "xensure-generic-function")
