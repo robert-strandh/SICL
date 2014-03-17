@@ -392,7 +392,7 @@
    (:file "satiate-all-generic-functions")
    ;; Here in phase 2, ENSURE-CLASS, ENSURE-BUILT-IN-CLASS,
    ;; ENSURE-GENERIC-FUNCTION, and ENSURE-METHOD are symbols that are
-   ;; imported from the package SICL-BOOT-PHASE1 and they means that a
+   ;; imported from the package SICL-BOOT-PHASE1 and they mean that a
    ;; bridge class, a bridge generic function, or a bridge method
    ;; should be created from a host class.  In phase 3, we need for
    ;; these names to mean that an ersatz instance should be created
