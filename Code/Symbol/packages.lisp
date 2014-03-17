@@ -3,6 +3,16 @@
 (defpackage #:sicl-symbol
   (:use #:common-lisp)
   (:export
-   #:name
+   #:symbol
+   #:symbolp
+   #:keyword
+   #:keywordp
+   #:symbol-name
    #:package
+   #:symbol-package
+   #:make-symbol
+   #:copy-symbol
+   #:gensym
+   #:*gensym-counter*
+   #:gentemp
    ))
