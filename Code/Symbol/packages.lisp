@@ -2,6 +2,7 @@
 
 (defpackage #:sicl-symbol
   (:use #:common-lisp)
+  (:shadow #:package)
   (:export
    #:symbol
    #:symbolp
