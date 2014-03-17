@@ -121,4 +121,5 @@
    (:file "xensure-built-in-class")
    (:file "xensure-generic-function")
    (:file "xensure-method")
+   ;; Remove the nickname SICL-CLOS from the package SICL-BOOT-PHASE3.
    (:file "rename-package-2")))
