@@ -10,9 +10,8 @@
    ;; package and the ASPIRING-SICL-CLOS package.
    (:file "packages")
    ;; Define the package SICL-GLOBAL-ENVIRONMENT.  This package uses
-   ;; the COMMON-LISP package, does not shadow any symbols, and
-   ;; exports the names of all the classes and functions required to
-   ;; manipulate a global environment.
+   ;; the COMMON-LISP package and exports the names of all the classes
+   ;; and functions required to manipulate a global environment.
    (:file "environment-packages")
    ;; Import and shadow symbols DEFCLASS, DEFGENERIC, and DEFMACRO
    ;; from the SICL-BOOT-PHASE2 package to the
@@ -21,9 +20,8 @@
    ;; symbols in the SICL-BOOT-PHASE2 package.
    (:file "import-to-environment")
    ;; Define the package SICL-PACKAGE.  This package uses the
-   ;; COMMON-LISP package, does not shadow any symbols and exports the
-   ;; names of all the classes and functions required to manipulate
-   ;; packages.
+   ;; COMMON-LISP package and exports the names of all the classes and
+   ;; functions required to manipulate packages.
    (:file "package-packages")
    ;; Add nickname SICL-CLOS to the SICL-BOOT-PHASE2 package so that
    ;; code that gets loaded in the SICL-CLOS package in reality gets
