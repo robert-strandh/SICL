@@ -1,5 +1,11 @@
 (cl:in-package #:sicl-boot-phase2)
 
+(defparameter *find-ersatz-class*
+  #'find-ersatz-class)
+
+(defparameter *add-ersatz-class*
+  #'add-ersatz-class)
+
 (defun *ensure-class (name
 		      &rest arguments
 		      &key
@@ -9,11 +15,12 @@
 			(metaclass nil metaclass-p)
 		      &allow-other-keys)
   ;; If the class already exists, then do nothing.
-  (let ((class (find-ersatz-class name nil)))
+  (let ((class (funcall *find-ersatz-class* name nil)))
     (if (null class)
-	(let ((superclasses (loop for name in direct-superclasses
-				  for class = (find-ersatz-class name)
-				  collect class))
+	(let ((superclasses
+		(loop for name in direct-superclasses
+		      for class = (funcall *find-ersatz-class* name)
+		      collect class))
 	      (remaining-keys (copy-list arguments)))
 	  (loop while (remf remaining-keys :metaclass))
 	  (loop while (remf remaining-keys :direct-superclasses))
@@ -26,6 +33,6 @@
 				:name name
 				:direct-superclasses superclasses
 				remaining-keys)))
-	    (add-ersatz-class name result)
+	    (funcall *add-ersatz-class* name result)
 	    result))
 	class)))
