@@ -41,6 +41,12 @@
    ;; COMMON-LISP package and exports the names of all the classes and
    ;; functions required to manipulate arrays.
    (:file "array-packages")
+   ;; Before loading the definition of the class ARRAY, we need to
+   ;; make sure the accessor ARRAY-DIMENSIONS is shadowed in the
+   ;; package SICL-ARRAY.  Otherwise we will redefine the host
+   ;; functions with that name.  Also, we need to import the symbol
+   ;; DEFINE-BUILT-IN-CLASS into the package SICL-ARRAY.
+   (:file "import-to-array")
    ;; Add nickname SICL-CLOS to the SICL-BOOT-PHASE2 package so that
    ;; code that gets loaded in the SICL-CLOS package in reality gets
    ;; loaded into the SICL-BOOT-PHASE2 package. 
