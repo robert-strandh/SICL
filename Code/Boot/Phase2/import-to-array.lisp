@@ -4,6 +4,7 @@
 		  '#:sicl-array)
 
 (unintern 'cl:array-dimensions '#:sicl-array)
+(unintern 'cl:fill-pointer '#:sicl-array)
 
-(shadow '(#:array-dimensions)
+(shadow '(#:array-dimensions #:fill-pointer)
 	'#:sicl-array)
