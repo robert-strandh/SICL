@@ -119,6 +119,8 @@
    ;; Load the built-in class SEQUENCE which will create an ersatz
    ;; class which is an instance of a bridge class.
    (:file "sequence-class")
+   ;; Load the ersatz built-in class ARRAY and its subclasses.
+   (:file "array-classes")
    ;; Finalize all the ersatz classes we have defined so far.  FIXME:
    ;; This step may actually not be necessary.
    (:file "finalize-all-ersatz-classes")
