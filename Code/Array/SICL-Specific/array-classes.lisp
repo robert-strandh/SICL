@@ -13,7 +13,7 @@
 (defgeneric array-dimensions (array))
 
 (define-built-in-class array (t)
-  ((%dimensions :initarg :dimensions)))
+  ((%dimensions :initarg :dimensions :reader array-dimensions)))
 
 (define-built-in-class simple-array (array)
   ())
