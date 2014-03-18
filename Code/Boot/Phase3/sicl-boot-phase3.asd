@@ -39,6 +39,12 @@
    ;; when we load the class definitions for the global environment,
    ;; they will be defined as ersatz classes.
    (:file "import-to-sequence")
+   ;; Shadowing import the names of the macros DEFCLASS,
+   ;; DEFINE-BUILT-IN-CLASS, DEFGENERIC, and DEFMETHOD into the
+   ;; package SICL-ARRAY from the package SICL-BOOT-PHASE3, so that
+   ;; when we load the class definitions for the global environment,
+   ;; they will be defined as ersatz classes.
+   (:file "import-to-array")
    ;; Define ordinary functions that do some of what the CL sequence
    ;; functions do, but that work only on lists.  We use these
    ;; functions to avoid using the sequence functions because we might
