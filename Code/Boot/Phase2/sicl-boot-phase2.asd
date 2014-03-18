@@ -23,6 +23,9 @@
    ;; COMMON-LISP package and exports the names of all the classes and
    ;; functions required to manipulate packages.
    (:file "package-packages")
+   ;; Before loading the definition of the class PACKAGE, we need to
+   ;; import the symbol DEFINE-BUILT-IN-CLASS into the package
+   ;; SICL-PACKAGE.
    (:file "import-to-package")
    ;; Define the package SICL-SYMBOL.  This package uses the
    ;; COMMON-LISP package and exports the names of all the classes and
