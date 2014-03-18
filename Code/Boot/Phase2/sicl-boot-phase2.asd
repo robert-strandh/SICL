@@ -153,6 +153,8 @@
    (:file "package-class")
    ;; Define built-in bridge class SEQUENCE.
    (:file "sequence-class")
+   ;; Define built-in bridge class ARRAY and its subclasses.
+   (:file "array-classes")
    ;; Now that we have all the bridge classes (but not all the bridge
    ;; generic functions) that we are ever going to define, it is time
    ;; to think about how to use those bridge classes and those bridge
