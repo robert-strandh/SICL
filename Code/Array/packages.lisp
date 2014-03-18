@@ -1,6 +1,12 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:sicl-array
-  (:user #:common-lisp)
-  (:shadow #:array-dimensions
-	   #:aref))
+  (:use #:common-lisp)
+  (:export
+   #:array
+   #:arrayp
+   #:make-array
+   #:array-rank
+   #:array-dimensions
+   #:array-dimension
+   ))
