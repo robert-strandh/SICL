@@ -31,22 +31,22 @@
 ;;; floating-point numbers that require no more than the available
 ;;; bits can also be represented like this.  We also represent UNBOUND
 ;;; (i.e. a distinguished object used to fill unbound slots and
-;;; variable values) as an immediate quantity.  
+;;; variable values) as an immediate quantity.  Notice however that
+;;; unbound functions are not represented this way, because they are
+;;; represented by a particular function that signals an error.
 ;;;
-;;; Usually, when we refer to "heap object" or "heap-allocated
-;;; object", we exclude CONS cells, even thogh technically, CONS cells
-;;; are also heap allocated.  The reson we treat CONS cells
-;;; differently from other heap-allocated data is simply to save
-;;; space.  Since we require heap-allocated objects with the "other"
-;;; tag to have a header word pointing to the class metaobject of the
-;;; object, this would add 50% more space to each CONS cell.  Since we
-;;; assume that Lisp programs still use a significant number of CONS
-;;; cells, this decision seems worth it. 
+;;; A CONS cell is represented as two consecutive words.  CONS cells
+;;; have their own tag.
+;;; 
+;;; A heap allocated object other than CONS cell is called a GENERAL
+;;; INSTANCE.  General instances are represented as a two-word HEADER
+;;; where the first word refers to the CLASS of the instance and the
+;;; second word to the RACK.  
 
 (defconstant +tag-fixnum+    #b00)
 (defconstant +tag-cons+      #b01)
 (defconstant +tag-immediate+ #b10)
-(defconstant +tag-other+     #b11)
+(defconstant +tag-general+   #b11)
 
 (defconstant +tag-mask+      #b11)
 
@@ -62,26 +62,11 @@
 ;;;
 ;;; Fixnum range and conversion.
 
-(defconstant +most-positive-fixnum+
+(defconstant most-positive-fixnum
   (1- (ash 1 (- +word-size-in-bits+ +tag-width+ 1))))
 
-(defconstant +most-negative-fixnum+
+(defconstant most-negative-fixnum
   (- (ash 1 (- +word-size-in-bits+ +tag-width+ 1))))
-
-;;; We allow negative words. 
-(defun host-integer-to-word (host-integer)
-  (assert (<= +most-negative-fixnum+ host-integer +most-positive-fixnum+))
-  (+ (ash host-integer +tag-width+) +tag-fixnum+))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Character conversion.
-
-;;; Assume for now that the host is using Unicode encoding. 
-(defun host-char-to-word (host-char)
-  (let ((code (char-code host-char)))
-    (assert (<= 0 code (1- (ash 2 24))))
-    (+ (ash code +immediate-tag-width+) +tag-character+)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -96,7 +81,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CONS cell utilities.
+;;; Utilities for CONS cells.
 
 (defconstant +car-offset+
   (- +tag-cons+))
@@ -106,10 +91,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Heap object utilities.
+;;; Utilities for general instances.
 
 (defconstant +class-offset+
-  (- +tag-other+))
+  (- +tag-general+))
 
-(defconstant +contents-offset+
-  (- +word-size-in-bytes+ +tag-other+))
+(defconstant +rack-offset+
+  (- +word-size-in-bytes+ +tag-general+))
