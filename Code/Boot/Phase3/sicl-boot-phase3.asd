@@ -21,6 +21,12 @@
    ;; that when we load the class definitions for the global
    ;; environment, they will be defined as ersatz classes.
    (:file "import-to-environment")
+   ;; Shadowing import the names of the macros DEFCLASS,
+   ;; DEFINE-BUILT-IN-CLASS, DEFGENERIC, and DEFMETHOD into the
+   ;; package SICL-PACKAGE from the package SICL-BOOT-PHASE3, so that
+   ;; when we load the class definitions for the global environment,
+   ;; they will be defined as ersatz classes.
+   (:file "import-to-package")
    ;; Define ordinary functions that do some of what the CL sequence
    ;; functions do, but that work only on lists.  We use these
    ;; functions to avoid using the sequence functions because we might
@@ -84,13 +90,13 @@
    ;; will create ersatz classes, ersatz generic functions, etc., all
    ;; of which are instances of bridge classes.
    (:file "environment-classes")
-   ;; Load the built-in class PACKAGE will create an ersatz class,
-   ;; ersatz generic functions, etc., all of which are instances of
-   ;; bridge classes.
+   ;; Load the built-in class PACKAGE which will create an ersatz
+   ;; class, ersatz generic functions, etc., all of which are
+   ;; instances of bridge classes.
    (:file "package-class")
-   ;; Load the built-in class SYMBOL will create an ersatz class,
-   ;; ersatz generic functions, etc., all of which are instances of
-   ;; bridge classes.
+   ;; Load the built-in class SYMBOL which will create an ersatz
+   ;; class, ersatz generic functions, etc., all of which are
+   ;; instances of bridge classes.
    (:file "symbol-class")
    ;; Finalize all the ersatz classes we have defined so far.  FIXME:
    ;; This step may actually not be necessary.
