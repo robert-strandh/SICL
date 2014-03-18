@@ -20,7 +20,7 @@
 ;;;; should be allocated following the slots in the rack.
 
 (defun allocate-built-in-instance
-    (class &rest initargs &key (additional-storage 0))
+    (class &rest initargs &key (additional-storage 0) &allow-other-keys)
   (declare (ignore initargs))
   (unless (class-finalized-p class)
     (finalize-built-in-inheritance class))
