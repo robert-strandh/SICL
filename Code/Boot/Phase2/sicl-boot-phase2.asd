@@ -151,6 +151,8 @@
    (:file "symbol-class")
    ;; Define built-in bridge class PACKAGE and its accessors.
    (:file "package-class")
+   ;; Define built-in bridge class SEQUENCE.
+   (:file "sequence-class")
    ;; Now that we have all the bridge classes (but not all the bridge
    ;; generic functions) that we are ever going to define, it is time
    ;; to think about how to use those bridge classes and those bridge
