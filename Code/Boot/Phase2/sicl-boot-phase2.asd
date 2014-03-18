@@ -38,6 +38,10 @@
    ;; symbol DEFINE-BUILT-IN-CLASS into the package SICL-SYMBOL.
    (:file "import-to-symbol")
    ;; Define the package SICL-ARRAY.  This package uses the
+   ;; COMMON-LISP package and exports the name of the SEQUENCE class
+   ;; and the names of all the sequence functions.
+   (:file "sequence-packages")
+   ;; Define the package SICL-ARRAY.  This package uses the
    ;; COMMON-LISP package and exports the names of all the classes and
    ;; functions required to manipulate arrays.
    (:file "array-packages")
