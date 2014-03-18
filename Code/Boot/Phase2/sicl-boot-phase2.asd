@@ -41,6 +41,10 @@
    ;; COMMON-LISP package and exports the name of the SEQUENCE class
    ;; and the names of all the sequence functions.
    (:file "sequence-packages")
+   ;; Before loading the definition of the class SEQUENCE, we need to
+   ;; import the symbol DEFINE-BUILT-IN-CLASS into the package
+   ;; SICL-SEQUENCE.
+   (:file "import-to-sequence")
    ;; Define the package SICL-ARRAY.  This package uses the
    ;; COMMON-LISP package and exports the names of all the classes and
    ;; functions required to manipulate arrays.
