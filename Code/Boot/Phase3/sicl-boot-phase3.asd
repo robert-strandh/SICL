@@ -132,6 +132,11 @@
    ;; because this time it needs to use bridge generic functions to
    ;; access ersatz classes in order to initialize ersatz instances.
    (:file "shared-initialize-support")
+   ;; We define the support code for INITIALIZE-BUILT-IN-INSTANCE
+   ;; again here, because this time it needs to use bridge generic
+   ;; functions to access ersatz classes in order to initialize
+   ;; built-in ersatz instances.
+   (:file "initialize-built-in-instance-support")
    ;; Update the variable named *MAKE-INSTANCE-DEFAULT* to contain the
    ;; function named SICL-BOOT-PHASE2:MAKE-INSTANCE-DEFAULT and the
    ;; variable named *SHARED-INITIALIZE-DEFAULT* to contain the
