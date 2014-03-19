@@ -61,6 +61,7 @@
    #:finalize-ersatz-classes
    #:patch-ersatz-objects
    #:make-instance-default
+   #:make-built-in-instance-default
    #:slot-value-using-class
    #:slot-boundp-using-class
    #:allocate-instance-default
