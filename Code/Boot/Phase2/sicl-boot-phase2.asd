@@ -469,4 +469,5 @@
    ;; MAKE-BUILT-IN-INSTANCE in phase 3.
    (:file "allocate-built-in-instance")
    (:file "make-instance-support")
+   (:file "make-built-in-instance-support")
    (:file "rename-package-2")))
