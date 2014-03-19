@@ -180,22 +180,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class COMPILATION-UNIT.
-
-;;; FIXME: make sure this definition works without explicit reference
-;;; to STANDARD-OBJECT.
-(defclass compilation-unit (standard-object)
-  (;; The linkage vector is a simple vector.  It is common to all
-   ;; functions of the compilation unit.  The first element of the
-   ;; linkage vector is a back pointer to the compilation unit.
-   (%linkage-vector :initarg :linkage-vector)
-   ;; The code vector is a vector with element type (unsigned-byte 8),
-   ;; or perhaps something else for backends where each instruction is
-   ;; an entire word.
-   (%code-vector :initarg :code-vector)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class GLOBAL-ENVIRONMENT.
 ;;;
 ;;; FIXME: take this definition the file environment.lisp in the
