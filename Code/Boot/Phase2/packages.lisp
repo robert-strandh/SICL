@@ -71,6 +71,7 @@
    #:add-ersatz-generic-function
    #:make-instance
    #:*make-instance-default*
+   #:*make-built-in-instance-default*
    #:*shared-initialize-default*
    #:*find-class*
    #:*find-ersatz-class*
