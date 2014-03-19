@@ -14,17 +14,31 @@
 ;;;; The software is provided "as-is" with no warranty.  The user of
 ;;;; this software assumes any responsibility of the consequences. 
 
-;;;; This file is part of the loop module of the SICL project.
+;;;; This file is part of the LOOP module of the SICL project.
 ;;;; See the file SICL.text for a description of the project. 
 
-;;;; A portable implementation of the LOOP macro.
-;;;; This implementation does not use any iteration construct. 
+;;;; The LOOP module provides a portable implementation of the LOOP
+;;;; macro as described in the Common Lisp HyperSpec.
 
-;;; It would be good if we could get rid of the use of mapping
-;;; functions here, so that the mapping functions could use loop
-;;; without introducing a circular dependency.  I am not sure at this
-;;; point how important it is to avoid such circular dependencies, but
-;;; I don't want to take the risk either. 
+;;;; This implementation does not use any iteration construct.
+;;;; Depending on the use case for this module, using iteration
+;;;; constructs to implement LOOP may or may not be a problem.
+;;;;
+;;;; If this module is used as part of a new implementation (the
+;;;; TARGET) to be bootstrapped from an existing conforming Common
+;;;; Lisp implementation (the HOST), then any iteration construct
+;;;; could be used, including LOOP, simply because the host
+;;;; implementation of these constructs would be used to cross-compile
+;;;; target files using LOOP.
+;;;;
+;;;; On the other hand, if this module is to be added to an existing
+;;;; Common Lisp implementation, perhaps in order to obtain a better
+;;;; implementation of LOOP, or perhaps because it is a partial
+;;;; implementation that does not yet have a LOOP macro, then it is
+;;;; important that this module not use LOOP itself.  We decide to go
+;;;; one step further by also not using any other iteration
+;;;; constructs, so that those iteration constructs could be
+;;;; implemented by using the definition of LOOP in this module.
 
 (cl:in-package #:sicl-loop)
 
@@ -37,11 +51,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Conditions for parsing
+;;;
+;;; FIXME: Remove condition reporters from the DEFINE-CONDITION forms
+;;; and put them in a separate (language-specific) file.  
 
 (define-condition loop-parse-error (parse-error) ())
 
-;;; Root class for loop parse errors that report
-;;; something that was found, but should not be there. 
+;;; Root class for loop parse errors that report something that was
+;;; found, but should not be there.
 (define-condition loop-parse-error-found (parse-error)
   ((%found :initarg :found :reader found)))
 
@@ -268,6 +285,13 @@
 	     "Expected (hash-value other-var), but found: ~s"
 	     (found condition)))))
 
+(define-condition conflicting-stepping-directions (loop-parse-error)
+  ()
+  (:report
+   (lambda (condition stream)
+     (format stream
+	     "Conflicting stepping directions."))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Utilities
@@ -284,19 +308,20 @@
 
 ;;; A parser is a function that takes a list of arbitrary Lisp objects
 ;;; and returns two values, the result of the parse and the remainder
-;;; of the list that needs to be parsed.  When a parser fails, the
-;;; second value returned is the same as the the list of Lisp objects
-;;; that it received as an argument. 
+;;; of the list that needs to be parsed.  The second return value is
+;;; identical to the list of Lisp objects that it received as an
+;;; argument if and only if the parser failed to parse the list of
+;;; objects.  In that case, the first return value is not specified.
 
-;;; Returns a list of clauses parsed by repeated 
-;;; invocations of the parser.
+;;; Returns a list of clauses parsed by repeated invocations of the
+;;; parser.
 (defun parse-sequence (body parser)
   (multiple-value-bind (clause rest1)
       (funcall parser body)
     (if (eq rest1 body)
-	;; Failed parsing the body according to the parser we recieved. 
-	;; Indicate failure by returning the empty list and the same
-	;; body as we recieved as argument. 
+	;; Failed parsing the body according to the parser we
+	;; received.  Indicate failure by returning the empty list and
+	;; the same body as we recieved as argument.
 	(values '() body)
 	;; We succeeded parsing the body according to the parser we
 	;; received.  Parse the remainder of the body recursively, and
@@ -330,7 +355,8 @@
   `(defun ,name (,body-var)
      (when (or (null ,body-var)
 	       (and ,@(mapcar (lambda (start-symbol)
-				`(not (symbol-equal (car ,body-var) ',start-symbol)))
+				`(not (symbol-equal (car ,body-var)
+						    ',start-symbol)))
 			      start-symbols)))
        (return-from ,name (values nil ,body-var)))
      ,@body))
@@ -348,12 +374,11 @@
 ;;; The syntax of a type-spec is:
 ;;;
 ;;;    type-spec ::= simple-type-spec | destructured-type-spec
-;;;    
 ;;;    simple-type-spec ::= fixnum | float | t | nil
-;;;    
 ;;;    destructured-type-spec ::= of-type d-type-spec
+;;;    d-type-spec ::= type-specifier | (d-type-spec . d-type-spec)
 
-;;; Parse a d-var-spec
+;;; Parse a d-var-spec.
 (defun parse-d-var-spec (body)
   (if (null body)
       (error 'expected-var-spec-but-end)
@@ -422,15 +447,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parse a name-clause
-
+;;;
 ;;; A name-clause is a clause that gives a name to the loop.  It
 ;;; translates to a block name, so that return-from can be used to
 ;;; exit the loop.  By default, the name of the loop is nil.
-
+;;;
 ;;; The name-clause is optional, and if present, must be the first one
 ;;; in the body.  The syntax is:
 ;;;
-;;;    named name
+;;;    NAMED name
 ;;;
 ;;; where name is a symbol.
 
@@ -451,13 +476,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parse a with-clause
-
+;;;
 ;;; A with-clause allows the creation of local variables.  It is
 ;;; executed once. 
 ;;;
 ;;; The syntax of a with-clause is:
 ;;;
-;;;    with-clause ::= with var1 [type-spec] [= form1] {and var2 [type-spec] [= form2]}*
+;;;    with-clause ::= WITH var1 [type-spec] [= form1] 
+;;;                    {AND var2 [type-spec] [= form2]}*
 ;;;
 ;;; where var1 and var2 are destructuring variable specifiers
 ;;; (d-var-spec) allowing multiple local variables to be created in a
@@ -483,8 +509,11 @@
 (defclass with-clause (clause subclauses-mixin variable-clause-mixin) ())
 
 (defclass with-subclause (var-and-type-spec-mixin)
-  ((%form :initarg :form :reader form)
-   (%form-present :initarg :form-present :reader form-present)))
+  (;; The initialization form, or NIL if there is no form.
+   (%form :initarg :form :reader form)
+   ;; TRUE if and only if there is an explicit initialization form
+   ;; present.
+   (%form-present-p :initarg :form-present-p :reader form-present-p)))
 
 (define-elementary-parser parse-and-with-subclause body (#:and)
   (multiple-value-bind (var type-spec rest1)
@@ -493,21 +522,21 @@
 	    (not (symbol-equal (car rest1) '#:=)))
 	(values
 	 (make-instance 'with-subclause
-                    :var-spec var
-                    :type-spec type-spec
-                    :form nil
-                    :form-present nil)
+	   :var-spec var
+	   :type-spec type-spec
+	   :form nil
+	   :form-present-p nil)
 	 rest1)
 	;; Else, there is a `='
 	(multiple-value-bind (form rest2)
 	    (parse-form (cdr rest1))
-      (values
-       (make-instance 'with-subclause
-                      :var-spec var
-                      :type-spec type-spec
-                      :form form
-                      :form-present t)
-       rest2)))))
+	  (values
+	   (make-instance 'with-subclause
+	     :var-spec var
+	     :type-spec type-spec
+	     :form form
+	     :form-present-p t)
+	   rest2)))))
 
 (defun parse-with-subclauses (body)
   (parse-sequence body #'parse-and-with-subclause))
@@ -522,53 +551,144 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clauses FOR/AS
-
+;;;
 ;;; A for/as clause has the following syntax:
 ;;;
 ;;;    for-as-clause ::= {for | as} for-as-subclause {and for-as-subclause}* 
 ;;;    for-as-subclause::= for-as-arithmetic | for-as-in-list | 
 ;;;                        for-as-on-list | for-as-equals-then | 
 ;;;                        for-as-across | for-as-hash | for-as-package 
-;;;    for-as-arithmetic::= var [type-spec] for-as-arithmetic-subclause 
-;;;    for-as-arithmetic-subclause::= arithmetic-up | arithmetic-downto | 
-;;;                                   arithmetic-downfrom 
-;;;    arithmetic-up::= [[{from | upfrom} form1 |   {to | upto | below} form2 |   by form3]]+ 
-;;;    arithmetic-downto::= [[{{from form1}}1  |   {{{downto | above} form2}}1  |   by form3]] 
-;;;    arithmetic-downfrom::= [[{{downfrom form1}}1  |   {to | downto | above} form2 |   by form3]] 
-;;;    for-as-in-list::= var [type-spec] in form1 [by step-fun] 
-;;;    for-as-on-list::= var [type-spec] on form1 [by step-fun] 
-;;;    for-as-equals-then::= var [type-spec] = form1 [then form2] 
-;;;    for-as-across::= var [type-spec] across vector 
-;;;    for-as-hash::= var [type-spec] being {each | the}  
-;;;               {{hash-key | hash-keys} {in | of} hash-table  
-;;;                [using (hash-value other-var)] |  
-;;;                {hash-value | hash-values} {in | of} hash-table  
-;;;                [using (hash-key other-var)]} 
-;;;    for-as-package::= var [type-spec] being {each | the}  
-;;;                      {symbol | symbols | 
-;;;                      present-symbol | present-symbols | 
-;;;                      external-symbol | external-symbols} 
-;;;                      [{in | of} package] 
 
 (defclass for/as-clause (clause subclause-mixin variable-clause-mixin) ())
 
-(defclass for/as-subclause (var-and-type-spec-mixin) ())
+(defclass for/as-subclause (var-and-type-spec-mixin)
+  (;; The value of this slot is a list of bindings of the form
+   ;; (<variable> <form>) where <variable> is a either the loop
+   ;; variable associated with this subclause, or a symbol created by
+   ;; GENSYM and <form> depends on the origin of the binding.
+   (%bindings :initarg :bindings :reader bindings)
+   ;; The value of this slot is either NIL, meaning that there is no
+   ;; termination condition for this subclause, or a form to be
+   ;; evaluated before the iteration of the loop starts.
+   (%termination :initarg :termination :reader termination)
+   (%step :initarg :step :reader step)))
+
+;;; Parse a FOR/AS subclause starting with AND.  In order to give a
+;;; reasonable error message, we parse the VAR and the TYPE-SPEC
+;;; first.  We then try each FOR/AS parser in sequence passing them
+;;; the original list as opposed to the remaining list after parsing
+;;; VAR and TYPE-SPEC.  If all of them fail, there must be something
+;;; unacceptable following the VAR and the TYPE-SPEC.  By passing the
+;;; original list, we give each FOR/AS parser access to the VAR and
+;;; the TYPE-SPEC.  The downside of this method is that we parse the
+;;; VAR and the TYPE-SPEC once in each individual FOR/AS parser.
+(define-elementary-parser parse-and-for/as-subclause body (#:and)
+  ;; All for/as clauses start with a variable and an optional type
+  ;; spec.  Start by parsing them.
+  (multiple-value-bind (var type-spec rest1)
+      (parse-var-and-type-spec (cdr body))
+    (if (null rest1)
+	;; After parsing the variable and the optional type-spec, we
+	;; are now at the end of the list, which is incorrect syntax. 
+	(error 'expected-for/as-subclause-but-end)
+	;; Try each FOR/AS parser until one succeeds.  We pass each
+	;; parser the original list (with the initial AND removed) so
+	;; they have access to the variable and the type-spec.
+	(multiple-value-bind (subclause rest2)
+	    (parse-alternative (cdr body)
+			       #'parse-for/as-in
+			       #'parse-for/as-on
+			       #'parse-for/as-equals-then
+			       #'parse-for/as-across
+			       #'parse-for/as-hash/package
+			       #'parse-for/as-arithmetic)
+	  (if (eq rest2 body)
+	      (error 'expected-for/as-subclause-but-found
+		     :found (car rest1))
+	      (values subclause rest2))))))
+
+(define-elementary-parser parse-for/as-clause body (#:for #:as)
+  (multiple-value-bind (subclauses rest)
+      (parse-sequence (cons 'and (cdr body))
+		      #'parse-and-for/as-subclause)
+    (values (make-instance 'for/as-clause
+	      :subclauses subclauses)
+	    rest)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Clauses FOR/AS arithmetic.
+;;;
+;;;    for-as-arithmetic::= var [type-spec] for-as-arithmetic-subclause 
+;;;    for-as-arithmetic-subclause::= arithmetic-up | arithmetic-downto | 
+;;;                                   arithmetic-downfrom 
+;;;    arithmetic-up::= [[{from | upfrom} form1 | 
+;;;                       {to | upto | below} form2 | 
+;;;                       by form3]]+ 
+;;;    arithmetic-downto::= [[{{from form1}} | 
+;;;                           {{{downto | above} form2}} |
+;;;                           by form3]] 
+;;;    arithmetic-downfrom::= [[{{downfrom form1}} | 
+;;;                             {to | downto | above} form2 |
+;;;                             by form3]] 
+;;;
+;;; This grammar is an approximation because there are additional
+;;; constraints that can not be expressed as a context-free grammar.
+;;; From section 6.1.2.1.1 in the HyperSpec, we learn that a clause is
+;;; introduced by one of the following prepositions: FROM, DOWNFROM,
+;;; UPFROM, TO, DOWNTO, UPTO, BELOW, ABOVE, and BY.  These
+;;; prepositions are divided into three groups as follows:
+;;;
+;;;    Group 1: FROM, DOWNFROM, UPFROM
+;;;             Prepositions in this group indicate initial value of the 
+;;;             loop variable.  If no preposition from this group is present,
+;;;             then the initial value is 0.
+;;;
+;;;    Group 2: TO, DOWNTO, UPTO, BELOW, ABOVE
+;;;             Prepositions in this group indicate iteration termination 
+;;;             in the form of a VALUE (the value of the form) and a
+;;;             comparison operator (<=, >=, <, >).  If no preposition from
+;;;             this group is present, then no test for termination is made.
+;;;
+;;;    Group 3: BY
+;;;             This preposition indicates a step increment.  The value
+;;;             must be a positive number.  If this preposition is not
+;;;             present, the default step increment is 1. 
+;;;
+;;; From section 6.1.2.1.1 we also learn that at least one preposition
+;;; must be used, and at most one from each group is allowed in a
+;;; single subclause.  As far as syntax is concerned, the order in
+;;; which the prepositions appear is not important.  However, the
+;;; order influences the result because evaluation is left-to-right as
+;;; usual.
+;;;
+;;; As the grammar indicates, not every combination of prepositions is
+;;; allowed.  In particular, stepping direction is either INCREMENTAL
+;;; or DECREMENTAL, and some prepositions determine this direction.
+;;; It is then now allowed to have two prepositions that indicate
+;;; opposite stepping directions.  The prepositions FROM, TO, and BY
+;;; are neutral when it comes to stepping direction, and if only
+;;; neutral prepositions are used, then the stepping direction is
+;;; incremental by default.  The prepositions UPFROM, UPTO, and BELOW
+;;; indicate that the stepping direction is incremental.  The
+;;; prepositions DOWNFROM, downto, and ABOVE indicate that the
+;;; stepping direction is decremental.
 
 (defclass for/as-arithmetic-subclause (for/as-subclause)
-  ((%prepositions :initarg :prepositions :reader prepositions)))
+  ())
 
-(defclass for/as-arithmetic-up-subclause (for/as-arithmetic-subclause) ())
-
-(defclass for/as-arithmetic-downto-subclause (for/as-arithmetic-subclause) ())
-
-(defclass for/as-arithmetic-downfrom-subclause (for/as-arithmetic-subclause) ())
-
+;;; Every preposition has a form associated with it. 
 (defclass preposition ()
   ((%form :initarg :form :reader form)))
 
+;;; Some prepositions also have a variable associated with them that
+;;; will hold the value of the form. 
+(defclass with-var-mixin ()
+  ((%var :initform (gensym) :reader var)))
+
 (defclass preposition-first-group (preposition) ())
-(defclass preposition-second-group (preposition) ())
-(defclass preposition-third-group (preposition) ())
+(defclass preposition-second-group (preposition with-var-mixin) ())
+(defclass preposition-third-group (preposition with-var-mixin) ())
 
 (defclass preposition-from (preposition-first-group) ())
 (defclass preposition-downfrom (preposition-first-group) ())
@@ -582,37 +702,187 @@
 
 (defclass preposition-by (preposition-third-group) ())
 
+(define-elementary-parser parse-preposition-from body (#:from)
+  (values (make-instance 'preposition-from :form (cadr body))
+	  (cddr body)))
+
+(define-elementary-parser parse-preposition-downfrom body (#:downfrom)
+  (values (make-instance 'preposition-downfrom :form (cadr body))
+	  (cddr body)))
+
+(define-elementary-parser parse-preposition-upfrom body (#:upfrom)
+  (values (make-instance 'preposition-upfrom :form (cadr body))
+	  (cddr body)))
+
+(define-elementary-parser parse-preposition-to body (#:to)
+  (values (make-instance 'preposition-to :form (cadr body))
+	  (cddr body)))
+
+(define-elementary-parser parse-preposition-downto body (#:downto)
+  (values (make-instance 'preposition-downto :form (cadr body))
+	  (cddr body)))
+
+(define-elementary-parser parse-preposition-upto body (#:upto)
+  (values (make-instance 'preposition-upto :form (cadr body))
+	  (cddr body)))
+
+(define-elementary-parser parse-preposition-below body (#:below)
+  (values (make-instance 'preposition-below :form (cadr body))
+	  (cddr body)))
+
+(define-elementary-parser parse-preposition-above body (#:above)
+  (values (make-instance 'preposition-above :form (cadr body))
+	  (cddr body)))
+
+(define-elementary-parser parse-preposition-by body (#:by)
+  (values (make-instance 'preposition-by :form (cadr body))
+	  (cddr body)))
+
+(defun parse-preposition (body)
+  (parse-alternative body
+		     #'parse-preposition-from
+		     #'parse-preposition-downfrom
+		     #'parse-preposition-upfrom
+		     #'parse-preposition-to
+		     #'parse-preposition-upto
+		     #'parse-preposition-below
+		     #'parse-preposition-above
+		     #'parse-preposition-by))
+
+;;; In order to give pertinent error messages in case the various
+;;; constraints are not respected, we first attempt to parse any
+;;; number of prepositions that occur.  Only later do we check the
+;;; constraints on those prepositions. 
+(defun parse-prepositions (body)
+  (parse-sequence body #'parse-preposition))
+
+;;; Generate a binding from a preposition.  If the preposition is in
+;;; the first group, the LOOP-VAR becomes the variable in the binding.
+;;; Otherwise the binding itself contains the variable. 
+(defun generate-binding (loop-var preposition)
+  (if (typep preposition 'preposition-first-group)
+      `(,(if (typep preposition 'preposition-first-group)
+	     loop-var
+	     (var preposition))
+	,(form preposition))))
+
+;;; For a list of prepositions, already checked for errors, return
+;;; TRUE if and only if they imply that stepping is decremental. 
+(defun decremental-stepping-p (prepositions)
+  (or (member-if (lambda (x) (typep x 'preposition-downfrom)) prepositions)
+      (member-if (lambda (x) (typep x 'preposition-downto)) prepositions)
+      (member-if (lambda (x) (typep x 'preposition-above)) prepositions)))
+
+(defun make-for/as-arithmetic-subclause (loop-var prepositions)
+  (let ((g1 (find-if (lambda (p) (typep preposition 'preposition-first-group))
+		     prepositions))
+	(g2 (find-if (lambda (p) (typep preposition 'preposition-second-group))
+		     prepositions))
+	(g3 (find-if (lambda (p) (typep preposition 'preposition-third-group))
+		     prepositions))
+	(bindings (mapcar (lambda (preposition)
+			    (generate-binding loop-var preposition))
+			  prepositions)))
+    (if (decremental-stepping-p prepositions)
+	(make-instance 'for/as-arithmetic-subclause
+	  :bindings bindings
+	  :termination (etypecase g2
+			 (null
+			  nil)
+			 ((to downto)
+			  `(when (< ,loop-var ,(var g2))
+			     (loop-finish)))
+			 (above
+			  `(when (<= ,loop-var ,(var g2))
+			     (loop-finish))))
+	  :step `(decf ,loop-var ,(if (null g3) 1 (var g3))))
+	(make-instance 'for/as-arithmetic-subclause
+	  :bindings bindings
+	  :termination (etypecase g2
+			 (null
+			  nil)
+			 ((to upto)
+			  `(when (> ,loop-var ,(var g2))
+			     (loop-finish)))
+			 (below
+			  `(when (>= ,loop-var ,(var g2))
+			     (loop-finish))))
+	  :step `(incff ,loop-var ,(if (null g3) 1 (var g3)))))))
+  
+
+;;; Parse a FOR/AS arithmetic subclause.  The list we are given starts
+;;; with the variable and the optional type-spec.
+(defun parse-for/as-arithmetic (body)
+  (multiple-value-bind (var type-spec rest1)
+      (parse-var-and-type-spec body)
+    ;; FIXME: handle type-spec.
+    (declare (ignore type-spec))
+    (multiple-value-bind (prepositions rest2)
+	(parse-prepositions rest1)
+      ;; check the prepositions
+      (cond ((null prepositions)
+	     (error 'expected-preposition-but-end))
+	    ((or (< 1 (count 'preposition-first-group
+			     prepositions
+			     :test (lambda (x y) (typep y x))))
+		 (< 1 (count 'preposition-second-group
+			     prepositions
+			     :test (lambda (x y) (typep y x))))
+		 (< 1 (count 'preposition-third-group
+			     prepositions
+			     :test (lambda (x y) (typep y x)))))
+	     (error 'too-many-prepositions-from-one-group))
+	    ((or (and (member-if (lambda (x) (typep x 'preposition-downfrom))
+				 prepositions)
+		      (or (member-if (lambda (x) (typep x 'preposition-below))
+				     prepositions)
+			  (member-if (lambda (x) (typep x 'preposition-upto))
+				     prepositions)))
+		 (and (member-if (lambda (x) (typep x 'preposition-upfrom))
+				 prepositions)
+		      (or (member-if (lambda (x) (typep x 'preposition-above))
+				     prepositions)
+			  (member-if (lambda (x) (typep x 'preposition-downto))
+				     prepositions))))
+	     (error 'conflicting-stepping-directions))
+	    (t (values (make-for/as-arithmetic-subclause var prepositions)
+		       rest2))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Clauses FOR/AS IN/ON
+;;;
+;;;    for-as-in-list::= var [type-spec] in form1 [by step-fun] 
+;;;    for-as-on-list::= var [type-spec] on form1 [by step-fun] 
+
 (defclass for/as-in-on-list-subclause (for/as-subclause)
-  ((%list-form :initarg :list-form :reader list-form)
-   (%step-fun-form :initarg :step-fun-form :reader step-fun-form)))
+  ())
 
 (defclass for/as-in-list-subclause (for/as-in-on-list-subclause) ())
 
 (defclass for/as-on-list-subclause (for/as-in-on-list-subclause) ())
 
-(defclass for/as-equals-then-subclause (for/as-subclause)
-  ((%form1 :initarg :form1 :reader form1)
-   (%form2 :initarg :form2 :reader form2)))
-
-(defclass for/as-across-subclause (for/as-subclause) 
-  ((%array-form :initarg :array-form :reader array-form)))
-
-(defclass for/as-hash-subclause (for/as-subclause)
-  ((%hash-table-form :initarg :hash-table-form :reader hash-table-form)
-   (%other-var :initarg :other-var :reader other-var)))
-
-(defclass for/as-hash-key-subclause (for/as-hash-subclause) ())
-
-(defclass for/as-hash-value-subclause (for/as-hash-subclause) ())
-
-(defclass for/as-package-subclause (for/as-subclause)
-  ((%package-form :initarg :package-form :reader package-form)))
-
-(defclass for/as-package-symbols-subcause (for/as-package-subclause) ())
-
-(defclass for/as-package-present-symbols-subcause (for/as-package-subclause) ())
-
-(defclass for/as-package-external-symbols-subcause (for/as-package-subclause) ())
+;;; Recall that a d-var-spec is either a simple variable (i.e., a
+;;; symbol), NIL, or a CONS of two d-var-spec.  This function takes
+;;; the non-NIL symbols and replace each one with the result of
+;;; calling GENSYM.  It returns two values, the first value is the
+;;; modified d-var-spec, and the second value is an alist where the
+;;; CAR of each element is the original symbol in the d-var-spec and
+;;; the CDR is the corresponding GENSYMed symbol that replaced it. 
+(defun fresh-variables (d-var-spec)
+  (let ((dictionary '()))
+    (labels ((traverse (tree)
+	       (cond ((null tree) nil)
+		     ((symbolp tree)
+		      (let ((new (gensym)))
+			(push (cons tree new) dictionary)
+			new))
+		     ((consp tree)
+		      (cons (traverse (car tree)) (traverse (cdr tree))))
+		     (t
+		      ;; FIXME: replace with a specific condition
+		      (error "not a valid d-var-spec ~s" tree)))))
+      (values (traverse d-var-spec) dictionary))))
 
 ;;; This function is called when we have already
 ;;; seen `for/as var in/on'.
@@ -622,21 +892,70 @@
     (if (or (null rest1)
 	    (not (symbol-equal (car rest1) '#:by)))
 	(values (make-instance class-name
-			       :list-form form
-			       :step-fun-form #'cdr)
+		  :list-form form
+		  :step-fun-form #'cdr)
 		rest1)
 	(multiple-value-bind (step-fun-form rest2)
 	    (parse-form (cdr rest1))
 	  (values (make-instance class-name
-				 :list-form form
-				 :step-fun-form step-fun-form)
+		    :list-form form
+		    :step-fun-form step-fun-form)
 		  rest2)))))
+
+;;; Parse a FOR/AS IN/ON subclause.  The list we are given starts
+;;; with the variable and the optional type-spec.
+(defun parse-for/as-in/on (body)
+  (multiple-value-bind (var type-spec rest1)
+      (parse-var-and-type-spec body)
+    ;; FIXME: handle type-spec.
+    (declare (ignore type-spec))
+    (cond ((symbol-equal (car rest1) '#:in)
+	   (parse-for/as-in/on (cdr body) 'for/as-in-list-subclause var))
+	  ((symbol-equal (car rest1) '#:on)
+	   (parse-for/as-in/on (cdr body) 'for/as-on-list-subclause var))
+	  (t
+	   (values nil body)))))
+	  
+(defun parse-for/as-in (body)
+  (multiple-value-bind (var type-spec rest1)
+      (parse-var-and-type-spec body)
+    ;; FIXME: handle type-spec.
+    (declare (ignore type-spec))
+    (if (symbol-equal (car rest1) '#:in)
+	(
+  
 
 (define-elementary-parser parse-for/as-in body (#:in)
   (parse-for/as-in/on (cdr body) 'for/as-in-list-subclause))
 
 (define-elementary-parser parse-for/as-on body (#:on)
   (parse-for/as-in/on (cdr body) 'for/as-on-list-subclause))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Clauses FOR/AS ACROSS
+;;;
+;;;    for-as-across::= var [type-spec] across vector 
+
+(defclass for/as-across-subclause (for/as-subclause) 
+  ((%array-form :initarg :array-form :reader array-form)))
+
+(define-elementary-parser parse-for/as-across body (#:across)
+  (multiple-value-bind (form rest)
+      (parse-form body)
+    (values (make-instance 'for/as-across-subclause
+	      :array-form form)
+	    rest)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Clause FOR/AS = THEN
+;;;
+;;;    for-as-equals-then::= var [type-spec] = form1 [then form2] 
+
+(defclass for/as-equals-then-subclause (for/as-subclause)
+  ((%form1 :initarg :form1 :reader form1)
+   (%form2 :initarg :form2 :reader form2)))
 
 (define-elementary-parser parse-for/as-equals-then body (#:=)
   (multiple-value-bind (form1 rest1)
@@ -654,12 +973,23 @@
 		    :form2 form2)
 		  rest2)))))
 
-(define-elementary-parser parse-for/as-across body (#:across)
-  (multiple-value-bind (form rest)
-      (parse-form body)
-    (values (make-instance 'for/as-across-subclause
-	      :array-form form)
-	    rest)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Clauses FOR/AS hash
+;;;
+;;;    for-as-hash::= var [type-spec] being {each | the}  
+;;;               {{hash-key | hash-keys} {in | of} hash-table  
+;;;                [using (hash-value other-var)] |  
+;;;                {hash-value | hash-values} {in | of} hash-table  
+;;;                [using (hash-key other-var)]} 
+
+(defclass for/as-hash-subclause (for/as-subclause)
+  ((%hash-table-form :initarg :hash-table-form :reader hash-table-form)
+   (%other-var :initarg :other-var :reader other-var)))
+
+(defclass for/as-hash-key-subclause (for/as-hash-subclause) ())
+
+(defclass for/as-hash-value-subclause (for/as-hash-subclause) ())
 
 (define-elementary-parser parse-for/as-hash-keys body (#:hash-key #:hash-keys)
   (pop body)
@@ -678,8 +1008,8 @@
 	   (cond ((or (null body)
 		      (not (symbol-equal (car body) '#:using)))
 		  (values (make-instance 'for/as-hash-key-subclause
-                                         :hash-table-form hash-table-form
-                                         :other-var nil)
+			    :hash-table-form hash-table-form
+			    :other-var nil)
 			  body))
 		 ((null (cdr body))
 		  (error 'expected-hash-value-but-end))
@@ -714,8 +1044,8 @@
 	   (cond ((or (null body)
 		      (not (symbol-equal (car body) '#:using)))
 		  (values (make-instance 'for-as-hash-value-subclause
-                                         :hash-table-form hash-table-form
-                                         :other-var nil)
+			    :hash-table-form hash-table-form
+			    :other-var nil)
 			  body))
 		 ((null (cdr body))
 		  (error 'expected-hash-key-but-end))
@@ -732,6 +1062,25 @@
 				  :hash-table-form hash-table-form
 				  :other-var (cadr using-arg))
 				(cdr body))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Clauses FOR/AS package
+;;;
+;;;    for-as-package::= var [type-spec] being {each | the}  
+;;;                      {symbol | symbols | 
+;;;                      present-symbol | present-symbols | 
+;;;                      external-symbol | external-symbols} 
+;;;                      [{in | of} package] 
+
+(defclass for/as-package-subclause (for/as-subclause)
+  ((%package-form :initarg :package-form :reader package-form)))
+
+(defclass for/as-package-symbols-subcause (for/as-package-subclause) ())
+
+(defclass for/as-package-present-symbols-subcause (for/as-package-subclause) ())
+
+(defclass for/as-package-external-symbols-subcause (for/as-package-subclause) ())
 
 ;;; This function is called when we have already seen `for/as var
 ;;; being each' and then either symbol, symbols, present-symbol,
@@ -779,104 +1128,6 @@
 			    (lambda (body)
 			      (error 'expected-hash-or-package-but-found
 				     :found (car body)))))))
-
-(define-elementary-parser parse-preposition-from body (#:from)
-  (values (make-instance 'preposition-from :form (cadr body))
-	  (cddr body)))
-
-(define-elementary-parser parse-preposition-downfrom body (#:downfrom)
-  (values (make-instance 'preposition-downfrom :form (cadr body))
-	  (cddr body)))
-
-(define-elementary-parser parse-preposition-upfrom body (#:upfrom)
-  (values (make-instance 'preposition-upfrom :form (cadr body))
-	  (cddr body)))
-
-(define-elementary-parser parse-preposition-to body (#:to)
-  (values (make-instance 'preposition-to :form (cadr body))
-	  (cddr body)))
-
-(define-elementary-parser parse-preposition-upto body (#:upto)
-  (values (make-instance 'preposition-upto :form (cadr body))
-	  (cddr body)))
-
-(define-elementary-parser parse-preposition-below body (#:below)
-  (values (make-instance 'preposition-below :form (cadr body))
-	  (cddr body)))
-
-(define-elementary-parser parse-preposition-above body (#:above)
-  (values (make-instance 'preposition-above :form (cadr body))
-	  (cddr body)))
-
-(define-elementary-parser parse-preposition-by body (#:by)
-  (values (make-instance 'preposition-by :form (cadr body))
-	  (cddr body)))
-
-(defun parse-preposition (body)
-  (parse-alternative body
-		     #'parse-preposition-from
-		     #'parse-preposition-downfrom
-		     #'parse-preposition-upfrom
-		     #'parse-preposition-to
-		     #'parse-preposition-upto
-		     #'parse-preposition-below
-		     #'parse-preposition-above
-		     #'parse-preposition-by))
-
-(defun parse-prepositions (body)
-  (parse-sequence body #'parse-preposition))
-
-(defun parse-for/as-arithmetic (body)
-  (multiple-value-bind (prepositions rest)
-      (parse-preposition body)
-    (declare (ignore rest))
-    ;; check the prepositions
-    (cond ((null prepositions)
-	   (error 'expected-preposition-but-end))
-	  ((or (plusp (count 'preposition-first-group
-			     prepositions
-			     :test (lambda (x y) (typep y x))))
-	       (plusp (count 'preposition-second-group
-			     prepositions
-			     :test (lambda (x y) (typep y x))))
-	       (plusp (count 'preposition-third-group
-			     prepositions
-			     :test (lambda (x y) (typep y x)))))
-	       
-	   (error 'too-many-prepositions-from-one-group))
-	  (t (values (make-instance 'for/as-arithmetic-subclause
-		       :prepositions prepositions)
-		     body)))))
-
-(define-elementary-parser parse-and-for/as-subclause body (#:and)
-  (multiple-value-bind (var type-spec rest1)
-      ;; All for/as clauses start with a variable and an
-      ;; optional type spec.  Start by parsing them.
-      (parse-var-and-type-spec (cdr body))
-    (if (null rest1)
-	(error 'expected-for/as-subclause-but-end)
-	(multiple-value-bind (subclause rest2)
-	    (parse-alternative rest1
-			       #'parse-for/as-in
-			       #'parse-for/as-on
-			       #'parse-for/as-equals-then
-			       #'parse-for/as-across
-			       #'parse-for/as-hash/package
-			       #'parse-for/as-arithmetic)
-	  (if (eq rest2 rest1)
-	      (error 'expected-for/as-subclause-but-found
-		     :found (car rest1))
-	      (setf (var-spec subclause) var
-		    (type-spec subclause) type-spec))
-	  (values subclause rest2)))))
-
-(define-elementary-parser parse-for/as-clause body (#:for #:as)
-  (multiple-value-bind (subclauses rest)
-      (parse-sequence (cons 'and (cdr body))
-		      #'parse-and-for/as-subclause)
-    (values (make-instance 'for/as-clause
-	      :subclauses subclauses)
-	    rest)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1040,8 +1291,8 @@
   (if (null body)
       (error 'expected-form-but-end)
       (let ((result (make-instance class-name
-                                   :form (car body)
-                                   :into-tail-var (gensym "LIST-TAIL-"))))
+		      :form (car body)
+		      :into-tail-var (gensym "LIST-TAIL-"))))
         (if (and (not (null (cdr body)))
                  (symbol-equal (cadr body) '#:into))
             (cond ((null (cddr body))
@@ -1473,7 +1724,7 @@
 
 (defmethod generate-bindings ((clause with-clause))
   (mapcar (lambda (subclause)
-            `(,(var-spec subclause) ,(if (form-present subclause)
+            `(,(var-spec subclause) ,(if (form-present-p subclause)
                                          (form subclause)
                                          nil)))
           (subclauses clause)))
