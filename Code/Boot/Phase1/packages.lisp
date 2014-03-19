@@ -26,6 +26,16 @@
 (defpackage #:sicl-boot-common
   (:export
    #:*unbound-value*
+   ;; Types
+   #:heap-instance
+   ;; Miscellaneous functions.
+   #:allocate-heap-instance
+   #:allocate-slot-storage
+   #:heap-instance-p
+   #:heap-instance-class
+   #:heap-instance-slots
+   #:slot-contents
+   #:standard-instance-access
    ))
 
 (defpackage #:sicl-boot-phase1
@@ -83,16 +93,7 @@
    ;; Accessors for slot definition metaobjects.
    #:slot-definition-name
    #:slot-definition-location
-   ;; Types
-   #:heap-instance
    ;; Miscellaneous functions.
-   #:allocate-heap-instance
-   #:allocate-slot-storage
-   #:heap-instance-p
-   #:heap-instance-class
-   #:heap-instance-slots
-   #:slot-contents
-   #:standard-instance-access
    #:ensure-class
    #:ensure-built-in-class
    #:ensure-generic-function

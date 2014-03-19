@@ -14,16 +14,6 @@
    #:ensure-generic-function)
   (:import-from
    #:sicl-boot-phase1
-   ;; Types
-   #:heap-instance
-   ;; Miscellaneous functions.
-   #:allocate-heap-instance
-   #:allocate-slot-storage
-   #:heap-instance-p
-   #:heap-instance-class
-   #:heap-instance-slots
-   #:slot-contents
-   #:standard-instance-access
    #:ensure-class
    #:ensure-built-in-class
    #:ensure-method
