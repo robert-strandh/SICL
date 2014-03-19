@@ -28,9 +28,7 @@
    #:ensure-built-in-class
    #:ensure-method
    #:find-bridge-class
-   #:initialize-built-in-instance-default
-   ;; Variables
-   *unbound-value*)
+   #:initialize-built-in-instance-default)
   (:shadow #:defclass
 	   #:defgeneric
 	   #:defmethod
