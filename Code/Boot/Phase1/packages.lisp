@@ -23,8 +23,10 @@
    #:real-class
    #:forward-referenced-class))
 
+(defpackage #:sicl-boot-common)
+
 (defpackage #:sicl-boot-phase1
-  (:use #:common-lisp #:aspiring-sicl-clos)
+  (:use #:common-lisp #:aspiring-sicl-clos #:sicl-boot-common)
   (:import-from #:sicl-code-utilities
 		#:proper-list-p
 		#:parse-generic-function-lambda-list

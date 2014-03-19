@@ -1,7 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
 (defpackage #:sicl-boot-phase3
-  (:use #:common-lisp #:aspiring-sicl-clos)
+  (:use #:common-lisp #:aspiring-sicl-clos #:sicl-boot-common)
   (:import-from #:sicl-code-utilities
 		#:proper-list-p
 		#:parse-generic-function-lambda-list
