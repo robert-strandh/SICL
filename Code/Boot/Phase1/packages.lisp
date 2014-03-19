@@ -108,7 +108,7 @@
 
 ;;; Names of symbols that should ultimately be exported from the
 ;;; SICL-CLOS package, exclusing names of symbols that are already
-;;; exported from teh COMMON-LISP package.
+;;; exported from the COMMON-LISP package.
 (defparameter sicl-boot-phase1:*more-names*
   (mapcar
    #'cl:symbol-name
@@ -118,6 +118,7 @@
      #:class-direct-default-initargs
      #:class-precedence-list
      #:class-slots
+     #:effective-slots
      #:class-default-initargs
      #:class-finalized-p
      #:class-prototype
