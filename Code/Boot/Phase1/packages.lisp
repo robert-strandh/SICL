@@ -150,4 +150,6 @@
      #:slot-definition-initfunction
      #:slot-definition-readers
      #:slot-definition-writers
-     #:slot-definition-location)))
+     #:slot-definition-location
+     ;; Miscellaneous functions
+     #:make-built-in-instance)))
