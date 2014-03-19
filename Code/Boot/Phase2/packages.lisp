@@ -17,8 +17,7 @@
    #:ensure-class
    #:ensure-built-in-class
    #:ensure-method
-   #:find-bridge-class
-   #:initialize-built-in-instance-default)
+   #:find-bridge-class)
   (:shadow #:defclass
 	   #:defgeneric
 	   #:defmethod
@@ -62,6 +61,7 @@
    #:*make-instance-default*
    #:*make-built-in-instance-default*
    #:*shared-initialize-default*
+   #:*initialize-built-in-instance-default*
    #:*find-class*
    #:*find-ersatz-class*
    #:*add-ersatz-class*
