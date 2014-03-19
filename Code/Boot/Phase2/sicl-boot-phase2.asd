@@ -71,6 +71,7 @@
    ;; initializes ersatz instances by accessing the ersatz class of
    ;; the ersatz instance.
    (:file "shared-initialize-default")
+   (:file "initialize-built-in-instance-default")
    ;; Up until now, the package named ASPIRING-SICL-CLOS contained
    ;; only the names of the specified classes whose names were not
    ;; exported from the package COMMON-LISP.  Now, we add names of
