@@ -159,8 +159,14 @@ named \texttt{T} because that would require shadowing the symbol
 \texttt{T} which would create many other problems.  It is however not
 required to have \texttt{T} as a superclass for these classes.  All
 that matters is that these classes have the right slots, and
-\texttt{T} does not supply any slots anyway.  These host classes have
-the analogous superclasses compared their corresponding target MOP
+\texttt{T} does not supply any slots anyway.  In order to be able to
+use the file of MOP classes unmodified, we define a version if
+\texttt{defclass} that expand into \texttt{host:defclass} except that
+\texttt{T} is removed if it is a superclass.  We also define a version
+of \texttt{define-built-in-class} that expands into \texttt{defclass}
+except that if the class to be defined is named \texttt{T} it expands
+to \texttt{nil} instead.  These host classes created here have the
+analogous superclasses compared their corresponding target MOP
 classes, and they define the analogous slots.  Their metaclasses are
 all wrong of course, because each one of them has
 \texttt{host:standard-class} as metaclass.  The class finalization
