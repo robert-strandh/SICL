@@ -202,7 +202,16 @@ each one of them has \texttt{host:standard-class} as metaclass.  The
 class finalization protocol of the host will make sure that instances
 of these host classes have the effective slots determined by class
 inheritance.  In other words, each of the classes define slots with
-the right names, the right initargs, etc.
+the right names, the right initargs, etc.  Loading the class hierarchy
+automatically creates accessors for class slots. 
+
+Next, we define the class named \texttt{bridge-generic-function}.
+This class has the host class named
+\texttt{funcallable-standard-object} and the MOP class
+\texttt{standard-generic-function} that was created in the previous
+step as superclasses.  Instances of this class are fully-functional
+host functions, but their specializers are bridge classes and they
+take ersatz instances as arguments. 
 
 We define \emph{databases} and associated query functions for
 \emph{bridge classes} and \emph{bridge generic function}, because when
