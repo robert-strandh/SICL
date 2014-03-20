@@ -213,6 +213,20 @@ step as superclasses.  Instances of this class are fully-functional
 host functions, but their specializers are bridge classes and they
 take ersatz instances as arguments. 
 
+Next, we define a certain number of global variables that are used by
+various parts of CLOS.  The variable \texttt{*t*} is used to find the
+class named \texttt{T} to use as a default specializer in methods.
+The variable \texttt{*standard-object*} is used to find the class
+named \texttt{standard-object} to use as a default superclass when
+none is given in a \texttt{defclass} form.  In the running system,
+these are plain variables containing references to the respective
+classes.  However, during bootstrapping, they do not yet exist.  For
+that reason, these symbols are not variable here, but instead symbol
+macros that expand to a form that searches for the corresponding
+bridge class.  The remaining variables hold values of host classes, so
+they are normal variables, since the host classes already exist at
+this point.
+
 We define \emph{databases} and associated query functions for
 \emph{bridge classes} and \emph{bridge generic function}, because when
 one of the MOP classes defined in phase 1 is instantiated, it
