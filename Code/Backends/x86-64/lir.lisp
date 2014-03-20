@@ -354,14 +354,14 @@
 
 (defmethod convert-instruction
     ((instruction sicl-mir:load-constant-instruction))
-  (let ((lv-index (sicl-mir:linkage-rack-index instruction)))
+  (let ((lv-index (sicl-mir:linkage-vector-index instruction)))
     (change-class instruction 'sicl-mir:memref-instruction
 		  :displacement (* 8 (1+ lv-index))))
   (push *lv-lexical* (sicl-mir:inputs instruction)))
 
 (defmethod convert-instruction
     ((instruction sicl-mir:load-global-instruction))
-  (let* ((lv-index (sicl-mir:linkage-rack-index instruction))
+  (let* ((lv-index (sicl-mir:linkage-vector-index instruction))
 	 (temp (sicl-mir:new-temporary))
 	 (new (sicl-mir:make-memref-instruction
 	       *lv-lexical*
