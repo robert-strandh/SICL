@@ -9,7 +9,7 @@
    (:file "environment-classes"
     :depends-on ("packages" "type-proclamations"))
    (:file "environment-constructors"
-    :depends-on ("environment"))
+    :depends-on ("environment-classes"))
    (:file "environment-query"
     :depends-on ("environment-constructors"))
    (:file "macroexpand"
@@ -21,6 +21,8 @@
    (:file "special-operator-p"
     :depends-on ("environment-query"))
    (:file "macro-function"
+    :depends-on ("environment-query"))
+   (:file "compiler-macros"
     :depends-on ("environment-query"))
    (:file "fully-expand-form"
     :depends-on ("environment-query" "macro-function"))
