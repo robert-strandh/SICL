@@ -149,31 +149,60 @@ ordinary host function.
 
 \subsubsection{Phase 1}
 
-Phase 1 is characterized by the fact that the MOP classes are host
-classes and the MOP generic functions are host generic functions.  We
-use \texttt{host:defclass} to create a hierarchy of host classes
-corresponding to the hierarchy of MOP classes.  The names of those
-host classes will be \texttt{target:standard-object},
-\texttt{target:metaobject}, etc., except that we do not create a class
-named \texttt{T} because that would require shadowing the symbol
-\texttt{T} which would create many other problems.  It is however not
-required to have \texttt{T} as a superclass for these classes.  All
-that matters is that these classes have the right slots, and
-\texttt{T} does not supply any slots anyway.  In order to be able to
-use the file of MOP classes unmodified, we define a version if
-\texttt{defclass} that expand into \texttt{host:defclass} except that
-\texttt{T} is removed if it is a superclass.  We also define a version
-of \texttt{define-built-in-class} that expands into \texttt{defclass}
+Phase 1 is characterized by the fact that the MOP names are names of
+host classes and host generic functions.  
+
+We start by defining several packages.
+
+The package named
+\texttt{sicl-boot-common} contains and exports symbols that are used
+the same way throughout the boot process.  In particular, it contains
+symbols for allocating and accessing ersatz instances.  This package
+is used by the phase-specific packages.  
+
+The package named \texttt{aspiring-sicl-clos} contains symbols that
+will eventually have the package \texttt{sicl-clos} as their home
+package.  This package can not be named \texttt{sicl-clos} at this
+point, because that name is going to be used as a nickname for
+phase-specific packages during the boot process.  Furthermore, this
+package initially only contains the names of classes.  
+
+The package named \texttt{sicl-boot-phase1} is the phase-specific
+package for phase 1.  During phase 1, it will have the nickname
+\texttt{sicl-clos}, but this nickname is removed at the end of phase
+1.   This package shadows symbols that are defined in the package
+\texttt{common-lisp} and that name MOP-specified names.  This package
+also shadows the symbol \texttt{defclass}, for reasons explained
+below. 
+
+In the following steps, we define macros \texttt{defclass} and
+\texttt{define-built-in-class} in preparation for loading the MOP
+class hierarchy.  In order to be able to use the file of MOP classes
+unmodified, we define a version if \texttt{defclass} that expand into
+\texttt{host:defclass} except that \texttt{T} is removed if it is a
+superclass.  We also define a version of
+\texttt{define-built-in-class} that expands into \texttt{defclass}
 except that if the class to be defined is named \texttt{T} it expands
-to \texttt{nil} instead.  These host classes created here have the
-analogous superclasses compared their corresponding target MOP
-classes, and they define the analogous slots.  Their metaclasses are
-all wrong of course, because each one of them has
-\texttt{host:standard-class} as metaclass.  The class finalization
-protocol of the host will make sure that instances of these host
-classes have the effective slots determined by class inheritance.  In
-other words, each of the classes define slots with the right names,
-the right initargs, etc.
+to \texttt{nil} instead.  The reason for this trickery is that we do
+not want to shadow the symbol \texttt{T} since it is used for other
+purposes in the MOP class hierarchy.  Since we do not shadow
+\texttt{T}, we can not define a class with that name.  Furthermore,
+\texttt{T} will not be the superclass of any of the classes defined in
+phase 1.  It is however not required to have \texttt{T} as a
+superclass for these classes.  All that matters is that these classes
+have the right slots, and \texttt{T} does not supply any slots anyway.
+
+In the next step, we load the file containing the MOP class hierarchy.
+The names of the host classes created will be
+\texttt{target:standard-object}, \texttt{target:metaobject}, etc.
+These host classes created here have the analogous superclasses
+compared their corresponding target MOP classes, and they define the
+analogous slots.  Their metaclasses are all wrong of course, because
+each one of them has \texttt{host:standard-class} as metaclass.  The
+class finalization protocol of the host will make sure that instances
+of these host classes have the effective slots determined by class
+inheritance.  In other words, each of the classes define slots with
+the right names, the right initargs, etc.
 
 We define \emph{databases} and associated query functions for
 \emph{bridge classes} and \emph{bridge generic function}, because when
@@ -213,14 +242,14 @@ host generic functions taking bridge classes as arguments.
 
 \subsubsection{Phase 2}
 
-The purpose of this phase is to create bridge classes and bridge
-generic functions corresponding to MOP classes and MOP generic
-functions.  For that purpose, we define the specified macros
-\texttt{defclass}, \texttt{defgeneric}, and \texttt{defmethod}.  These
-macros expand to calls to corresponding \texttt{ensure-...} functions
-of phase 1.  These macros need some support code that is also defined
-here, such as the canonicalization functions for \texttt{defclass} and
-\texttt{make-method-lambda} for \texttt{defmethod}.
+Phase 2 is characterized by the fact that MOP names are names of
+bridge classes and bridge generic functions.  For that purpose, we
+define the specified macros \texttt{defclass}, \texttt{defgeneric},
+and \texttt{defmethod}.  These macros expand to calls to corresponding
+\texttt{ensure-...} functions of phase 1.  These macros need some
+support code that is also defined here, such as the canonicalization
+functions for \texttt{defclass} and \texttt{make-method-lambda} for
+\texttt{defmethod}.
 
 Next, we create bridge classes corresponding to the classes of the MOP
 hierarchy.  When a bridge class is created, it will automatically
