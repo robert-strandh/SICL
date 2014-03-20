@@ -115,6 +115,6 @@
     (and (= (- end1 start1) (- end2 start2))
 	 (loop for i1 from start1 below end1
 	       for i2 from start2 below end2
-	       unless (eql (char string1 i1) (char string2 i2))
+	       unless (char= (char string1 i1) (char string2 i2))
 		 return nil
 	       finally (return t)))))
