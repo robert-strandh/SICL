@@ -118,3 +118,17 @@
 	       unless (char= (char string1 i1) (char string2 i2))
 		 return nil
 	       finally (return t)))))
+
+(defun string-equal (string1 string2 &key (start1 0) end1 (start2 0) end2)
+  (let ((string1 (string string1))
+	(string2 (string string2)))
+    (when (null end1) (setf end1 (length string1)))
+    (when (null end2) (setf end2 (length string2)))
+    (check-bounding-indices string1 start1 end1)
+    (check-bounding-indices string2 start2 end2)
+    (and (= (- end1 start1) (- end2 start2))
+	 (loop for i1 from start1 below end1
+	       for i2 from start2 below end2
+	       unless (char-equal (char string1 i1) (char string2 i2))
+		 return nil
+	       finally (return t)))))
