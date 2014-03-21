@@ -3,6 +3,7 @@
 (defpackage #:sicl-string
   (:use #:common-lisp)
   (:shadow
+   #:string
    #:string-upcase
    #:string-downcase
    #:string-capitalize
