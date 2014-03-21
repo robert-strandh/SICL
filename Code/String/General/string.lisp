@@ -1,7 +1,7 @@
 (cl:in-package #:sicl-string)
 
 (deftype string-designator ()
-  (or string symbol character))
+  '(or string symbol character))
 
 (defun string (designator)
   (declare (type string-designator designator))
