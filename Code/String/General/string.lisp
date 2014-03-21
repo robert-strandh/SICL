@@ -173,3 +173,9 @@
   (string< string2 string1
 	   :start1 start2 :end1 end2
 	   :start2 start1 :end2 end1))
+
+(defun string-greaterp (string1 string2 &key (start1 0) end1 (start2 0) end2)
+  (string-lessp string2 string1
+		:start1 start2 :end1 end2
+		:start2 start1 :end2 end1))
+
