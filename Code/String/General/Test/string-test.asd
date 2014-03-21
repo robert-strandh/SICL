@@ -6,6 +6,6 @@
    (:file "string"
     :depends-on ("packages"))
    (:file "string-test"
-    :depends-on "string")))
+    :depends-on ("string"))))
 
    
