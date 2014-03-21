@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(asdf:defsystem :string-test
+(asdf:defsystem :sicl-string-test
   :components
   ((:file "packages")
    (:file "string"
