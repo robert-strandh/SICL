@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-string-test
+(defpackage #:sicl-string
   (:use #:common-lisp)
   (:shadow
    #:string-upcase
