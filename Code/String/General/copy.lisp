@@ -54,6 +54,15 @@
 		   (char string source-index)))
     result))
 
+;;; Extract an interval from a general (i.e., not necessarily simple)
+;;; string to a fresh copy.  We assume that the caller has checked
+;;; that STRING is a string, and that START and END are valid bounding
+;;; indices for STRING.
+(defun extract-interval (string start end)
+  (if (simple-string-p string)
+      (extract-interval-simple string start end)
+      (extract-interval-general string start end)))
+
 (defun copy-string (string)
   (let ((result (make-string (length string))))
     (loop for i from 0 below (length string)
