@@ -6,4 +6,5 @@
   ((:file "packages")
    (:file "utilities")
    (:file "copy")
+   (:file "case-conversion")
    (:file "string")))
