@@ -9,7 +9,8 @@
 		    (type fixnum start end)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start below end
-	  do (setf (schar string i) (char-upcase (schar string i))))))
+	  do (setf (schar string i) (char-upcase (schar string i)))))
+  string)
 
 (defun nstring-upcase-simple-base (string start end)
   (assert (typep string 'simple-base-string))
@@ -20,7 +21,8 @@
 		    (type fixnum start end)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start below end
-	  do (setf (schar string i) (char-upcase (schar string i))))))
+	  do (setf (schar string i) (char-upcase (schar string i)))))
+  string)
 
 (defun nstring-upcase-general (string start end)
   (assert (stringp string))
@@ -31,7 +33,8 @@
 		    (type fixnum start end)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start below end
-	  do (setf (char string i) (char-upcase (char string i))))))
+	  do (setf (char string i) (char-upcase (char string i)))))
+  string)
 
 (defun nstring-upcase (string &key (start 0) end)
   (declare (type string string))
