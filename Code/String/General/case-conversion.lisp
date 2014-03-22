@@ -103,8 +103,12 @@
   (let ((length (length string)))
     (when (null end) (setf end length))
     (check-bounding-indices string start end)
-    (loop for i from start below end
-	  do (setf (char string i) (char-downcase (char string i)))))
+    (cond ((typep string 'simple-base-string)
+	   (nstring-downcase-simple-base string start end))
+	  ((simple-string-p string)
+	   (nstring-downcase-simple string start end))
+	  (t
+	   (nstring-downcase-general string start end))))
   string)
 
 (defun string-downcase (string-designator &key (start 0) end)
