@@ -86,6 +86,18 @@
 	  do (setf (schar string i) (char-downcase (schar string i)))))
   string)
 
+(defun nstring-downcase-general (string start end)
+  (assert (stringp string))
+  (assert (>= start 0))
+  (assert (<= end (length string)))
+  (assert (<= start end))
+  (locally (declare (type string string)
+		    (type fixnum start end)
+		    (optimize (speed 3) (safety 0) (debug 0)))
+    (loop for i of-type fixnum from start below end
+	  do (setf (char string i) (char-downcase (char string i)))))
+  string)
+
 (defun nstring-downcase (string &key (start 0) end)
   (declare (type string string))
   (let ((length (length string)))
