@@ -64,8 +64,4 @@
       (extract-interval-general string start end)))
 
 (defun copy-string (string)
-  (let ((result (make-string (length string))))
-    (loop for i from 0 below (length string)
-	  do (setf (char result i) (char string i)))
-    result))
-
+  (extract-interval string 0 (length string)))
