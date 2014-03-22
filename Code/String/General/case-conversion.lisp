@@ -1,5 +1,9 @@
 (cl:in-package #:sicl-string)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions NSTRING-UPCASE and STRING-UPCASE.
+
 (defun nstring-upcase-simple (string start end)
   (assert (simple-string-p string))
   (assert (>= start 0))
@@ -41,14 +45,22 @@
   (let ((length (length string)))
     (when (null end) (setf end length))
     (check-bounding-indices string start end)
-    (loop for i from start below end
-	  do (setf (char string i) (char-upcase (char string i)))))
+    (cond ((typep string 'simple-base-string)
+	   (nstring-upcase-simple-base string start end))
+	  ((simple-string-p string)
+	   (nstring-upcase-simple string start end))
+	  (t
+	   (nstring-upcase-general string start end))))
   string)
 
 (defun string-upcase (string-designator &key (start 0) end)
   (let* ((string (string string-designator))
 	 (copy (copy-string string)))
     (nstring-upcase copy start end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions NSTRING-DOWNCASE and STRING-DOWNCASE.
 
 (defun nstring-downcase (string &key (start 0) end)
   (declare (type string string))
@@ -63,6 +75,10 @@
   (let* ((string (string string-designator))
 	 (copy (copy-string string)))
     (nstring-downcase copy start end)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Functions NSTRING-CAPITALIZE and STRING-CAPITALIZE.
 
 (defun nstring-capitalize (string &key (start 0) end)
   (declare (type string string))
