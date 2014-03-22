@@ -11,6 +11,26 @@
 	  do (setf (car rest) (char-upcase (car rest))))
   list)
 
+(defun test-one-nstring-upcase (string &key (start 0) end)
+  (let ((list1 (coerce string 'list))
+	(result (nstring-upcase string :start start :end end)))
+    (let ((list2 (coerce result 'list)))
+      (assert (eq result string))
+      (let ((real-end (if (null end) (length list2) end)))
+	(assert (equal (nlist-upcase list1 start real-end) list2))))))
+
+(defun test-nstring-upcase (n)
+  (loop repeat n
+	do (let* ((length (random 10))
+		  (string (make-string length))
+		  (start (random (1+ length)))
+		  (end (+ start (random (1+ (- length start))))))
+	     ;; Fill the string with some random characters.
+	     (loop for i from 0 below length
+		   do (setf (char string i)
+			    (code-char (random 500))))
+	     (test-one-nstring-upcase string :start start :end end))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test NSTRING-DOWNCASE
