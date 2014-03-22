@@ -10,12 +10,6 @@
     (character (make-string 1 :initial-element designator))
     (symbol (symbol-name designator))))
 
-(defun copy-string (string)
-  (let ((result (make-string (length string))))
-    (loop for i from 0 below (length string)
-	  do (setf (char result i) (char string i)))
-    result))
-
 (defun check-bounding-indices (string start end)
   (let ((length (length string)))
     (unless (typep start `(integer 0 ,length))
