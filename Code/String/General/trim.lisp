@@ -4,23 +4,26 @@
 ;;;
 ;;; Utilities.
 
+;;; We assume that the bag has been checked so that it is known to
+;;; be a proper list of characters.
 (defun character-in-list-bag-p (character bag)
+  (declare (optimize (speed 3) (safety 0) (debug 0)))
   (loop for c in bag
-	when (eql character c)
+	when (char= character c)
 	  return t))
 
 (declaim (inline character-in-list-bag-p))
 
 (defun character-in-simple-string-bag-p (character bag)
   (loop for i from 0 below (length bag)
-	when (eql character (schar bag i))
+	when (char= character (schar bag i))
 	  return t))
 
 (declaim (inline character-in-simple-string-bag-p))
 
 (defun character-in-general-string-bag-p (character bag)
   (loop for i from 0 below (length bag)
-	when (eql character (char bag i))
+	when (char= character (char bag i))
 	  return t))
 
 (declaim (inline character-in-general-string-bag-p))
@@ -33,11 +36,17 @@
 ;;; list, and a string represented as a simple string.
 (defun string-left-trim-list-simple-string
     (character-bag string)
-  (loop with length = (length string)
-	for i from 0 below length
-	unless (character-in-list-bag-p (schar string i) character-bag)
-	  return (extract-interval-simple string i length)
-	finally (return "")))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-list-bag-p (schar string 0) character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum from 0 below length
+		unless (character-in-list-bag-p (schar string i) character-bag)
+		  return (extract-interval-simple string i length)
+		finally (return ""))))))
 
 (defun string-trim (character-bag string-designator)
   (flet ((in-bag-p (char) (find char character-bag)))
