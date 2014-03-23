@@ -28,6 +28,13 @@
 
 (declaim (inline character-in-general-string-bag-p))
 
+(defun character-in-general-vector-bag-p (character bag)
+  (loop for i from 0 below (length bag)
+	when (char= character (aref bag i))
+	  return t))
+
+(declaim (inline character-in-general-vector-bag-p))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function STRING-LEFT-TRIM.
