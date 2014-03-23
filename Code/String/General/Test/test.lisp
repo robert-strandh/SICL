@@ -101,3 +101,24 @@
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
 	     (test-one-nstring-capitalize string :start start :end end))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test STRING-LEFT-TRIM
+
+(defun list-left-trim (chars list)
+  (loop while (and (consp list) (member (car list) chars))
+	do (pop list))
+  list)
+
+(defun test-one-string-left-trim (bag string)
+  (let ((list-bag (coerce bag 'list))
+	(list-string (coerce string 'list)))
+    (assert (equal (coerce (list-left-trim list-bag list-string) 'string)
+		   (string-left-trim bag string)))))
+
+(defun test-string-left-trim (n)
+  (loop repeat n
+	do (let ((string (random-string 0 10 60 100))
+		 (bag (random-string 0 5 60 150)))
+	     (test-one-string-left-trim bag string))))
