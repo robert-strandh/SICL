@@ -2,6 +2,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Utilities
+
+;;; Generate a random string of length between MIN-LENGTH and
+;;; MAX-LENGTH containing characters with codes between MIN-CODE and
+;;; MAX-CODE.
+(defun random-string (min-length max-length min-code max-code)
+  (let* ((length (+ min-length (random (1+ (- max-length min-length)))))
+	 (result (make-string length)))
+    ;; Fill the string with some random characters.
+    (loop for i from 0 below length
+	  for code = (+ min-code (random (1+ (- max-code min-code))))
+	  for char = (code-char code)
+	  do (setf (char result i) char))
+    result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test NSTRING-UPCASE
 
 (defun nlist-upcase (list start end)
@@ -96,4 +113,3 @@
 		   do (setf (char string i)
 			    (code-char (random 500))))
 	     (test-one-nstring-capitalize string :start start :end end))))
-
