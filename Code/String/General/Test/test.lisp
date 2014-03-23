@@ -38,14 +38,10 @@
 
 (defun test-nstring-upcase (n)
   (loop repeat n
-	do (let* ((length (random 10))
-		  (string (make-string length))
+	do (let* ((string (random-string 0 10 0 500))
+		  (length (length string))
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
-	     ;; Fill the string with some random characters.
-	     (loop for i from 0 below length
-		   do (setf (char string i)
-			    (code-char (random 500))))
 	     (test-one-nstring-upcase string :start start :end end))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -69,14 +65,10 @@
 
 (defun test-nstring-downcase (n)
   (loop repeat n
-	do (let* ((length (random 10))
-		  (string (make-string length))
+	do (let* ((string (random-string 0 10 0 500))
+		  (length (length string))
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
-	     ;; Fill the string with some random characters.
-	     (loop for i from 0 below length
-		   do (setf (char string i)
-			    (code-char (random 500))))
 	     (test-one-nstring-downcase string :start start :end end))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -104,12 +96,8 @@
 
 (defun test-nstring-capitalize (n)
   (loop repeat n
-	do (let* ((length (random 10))
-		  (string (make-string length))
+	do (let* ((string (random-string 0 10 0 500))
+		  (length (length string))
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
-	     ;; Fill the string with some random characters.
-	     (loop for i from 0 below length
-		   do (setf (char string i)
-			    (code-char (random 500))))
 	     (test-one-nstring-capitalize string :start start :end end))))
