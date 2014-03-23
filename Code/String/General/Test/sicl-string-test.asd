@@ -8,5 +8,6 @@
    (:file "copy")
    (:file "case-conversion")
    (:file "string")
-   (:file "test")
-   (:file "comparison")))
+   (:file "trim")
+   (:file "comparison")
+   (:file "test")))
