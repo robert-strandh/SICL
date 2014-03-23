@@ -7,4 +7,5 @@
    (:file "utilities")
    (:file "copy")
    (:file "case-conversion")
-   (:file "string")))
+   (:file "string")
+   (:file "comparison")))
