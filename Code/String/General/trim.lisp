@@ -7,7 +7,8 @@
 ;;; We assume that the bag has been checked so that it is known to
 ;;; be a proper list of characters.
 (defun character-in-list-bag-p (character bag)
-  (declare (optimize (speed 3) (safety 0) (debug 0)))
+  (declare (type character character)
+	   (optimize (speed 3) (safety 0) (debug 0)))
   (loop for c in bag
 	when (char= character c)
 	  return t))
@@ -15,6 +16,9 @@
 (declaim (inline character-in-list-bag-p))
 
 (defun character-in-simple-string-bag-p (character bag)
+  (declare (type character character)
+	   (type simple-string bag)
+	   (optimize (speed 3) (safety 0) (debug 0)))
   (loop for i from 0 below (length bag)
 	when (char= character (schar bag i))
 	  return t))
@@ -22,6 +26,9 @@
 (declaim (inline character-in-simple-string-bag-p))
 
 (defun character-in-general-string-bag-p (character bag)
+  (declare (type character character)
+	   (type string bag)
+	   (optimize (speed 3) (safety 0) (debug 0)))
   (loop for i from 0 below (length bag)
 	when (char= character (char bag i))
 	  return t))
@@ -29,6 +36,9 @@
 (declaim (inline character-in-general-string-bag-p))
 
 (defun character-in-simple-vector-bag-p (character bag)
+  (declare (type character character)
+	   (type simple-vector bag)
+	   (optimize (speed 3) (safety 0) (debug 0)))
   (loop for i from 0 below (length bag)
 	when (char= character (svref bag i))
 	  return t))
@@ -36,6 +46,9 @@
 (declaim (inline character-in-simple-vector-bag-p))
 
 (defun character-in-general-vector-bag-p (character bag)
+  (declare (type character character)
+	   (type vector bag)
+	   (optimize (speed 3) (safety 0) (debug 0)))
   (loop for i from 0 below (length bag)
 	when (char= character (aref bag i))
 	  return t))
