@@ -36,6 +36,7 @@
 ;;; list, and a string represented as a simple string.
 (defun string-left-trim-list-simple-string
     (character-bag string)
+  (declare (type simple-string string))
   (let ((length (length string)))
     (declare (type fixnum length))
     (if (or (zerop length)
@@ -52,6 +53,7 @@
 ;;; list, and a string represented as a general string.
 (defun string-left-trim-list-general-string
     (character-bag string)
+  (declare (type string string))
   (let ((length (length string)))
     (declare (type fixnum length))
     (if (or (zerop length)
