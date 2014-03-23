@@ -25,10 +25,19 @@
 
 (declaim (inline character-in-general-string-bag-p))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING-LEFT-TRIM.
 
+;;; A version of STRING-LEFT-TRIM for a character bag represented as a
+;;; list, and a string represented as a simple string.
 (defun string-left-trim-list-simple-string
-    (character-bag string-designator)
-  
+    (character-bag string)
+  (loop with length = (length string)
+	for i from 0 below length
+	unless (character-in-list-bag-p (schar string i) character-bag)
+	  return (extract-interval-simple string i length)
+	finally (return "")))
 
 (defun string-trim (character-bag string-designator)
   (flet ((in-bag-p (char) (find char character-bag)))
