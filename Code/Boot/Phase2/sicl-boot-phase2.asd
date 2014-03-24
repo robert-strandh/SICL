@@ -37,6 +37,10 @@
    ;; the host functions with that name.  Also, we need to import the
    ;; symbol DEFINE-BUILT-IN-CLASS into the package SICL-SYMBOL.
    (:file "import-to-symbol")
+   ;; Define the package SICL-FUNCTION.  This package uses the
+   ;; COMMON-LISP package and exports the names of all the classes and
+   ;; functions required to manipulate functions.
+   (:file "function-package")
    ;; Define the package SICL-ARRAY.  This package uses the
    ;; COMMON-LISP package and exports the name of the SEQUENCE class
    ;; and the names of all the sequence functions.
