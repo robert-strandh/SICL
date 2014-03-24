@@ -41,6 +41,10 @@
    ;; COMMON-LISP package and exports the names of all the classes and
    ;; functions required to manipulate functions.
    (:file "function-package")
+   ;; Before loading the definitions of the function-related classes,
+   ;; we need to import the symbols DEFINE-BUILT-IN-CLASS and DEFCLASS
+   ;; to the package SICL-FUNCTION.
+   (:file "import-to-function")
    ;; Define the package SICL-ARRAY.  This package uses the
    ;; COMMON-LISP package and exports the name of the SEQUENCE class
    ;; and the names of all the sequence functions.
