@@ -240,6 +240,27 @@
 		  return (extract-interval-simple string i length)
 		finally (return ""))))))
 
+;;; A version of STRING-LEFT-TRIM for a character bag represented as a
+;;; general vector, and a string represented as a general string.
+(defun string-left-trim-simple-string-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-general-vector-bag-p
+		  (char string 0)
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum from 0 below length
+		unless (character-in-general-vector-bag-p
+			(char string i)
+			character-bag)
+		  return (extract-interval-simple string i length)
+		finally (return ""))))))
+
 (defun string-trim (character-bag string-designator)
   (flet ((in-bag-p (char) (find char character-bag)))
     (let* ((string (string string-designator))
