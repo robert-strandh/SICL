@@ -219,3 +219,51 @@
 	     (test-one-string-right-trim
 	      (string-to-non-simple-vector bag)
 	      (string-to-non-simple-string string)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test STRING-TRIM
+
+(defun list-trim (chars list)
+  (list-right-trim chars (list-left-trim chars list)))
+
+(defun test-one-string-trim (bag string)
+  (let ((list-bag (coerce bag 'list))
+	(list-string (coerce string 'list)))
+    (assert (equal (list-trim list-bag list-string)
+		   (coerce (string-trim bag string) 'list)))))
+
+(defun test-string-trim (n)
+  (loop repeat n
+	do (let ((string (random-string 0 10 60 100))
+		 (bag (random-string 0 5 60 150)))
+	     (test-one-string-trim
+	      bag
+	      string)
+	     (test-one-string-trim
+	      bag
+	      (string-to-non-simple-string string))
+	     (test-one-string-trim
+	      (string-to-non-simple-string bag)
+	      string)
+	     (test-one-string-trim
+	      (string-to-non-simple-string bag)
+	      (string-to-non-simple-string string))
+	     (test-one-string-trim
+	      (coerce bag 'list)
+	      string)
+	     (test-one-string-trim
+	      (coerce bag 'list)
+	      (string-to-non-simple-string string))
+	     (test-one-string-trim
+	      (string-to-simple-vector bag)
+	      string)
+	     (test-one-string-trim
+	      (string-to-simple-vector bag)
+	      (string-to-non-simple-string string))
+	     (test-one-string-trim
+	      (string-to-non-simple-vector bag)
+	      string)
+	     (test-one-string-trim
+	      (string-to-non-simple-vector bag)
+	      (string-to-non-simple-string string)))))
