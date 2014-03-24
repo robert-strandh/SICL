@@ -161,6 +161,7 @@
    ;; Define built-in bridge class PACKAGE and its accessors.
    (:file "package-class")
    (:file "function-class")
+   (:file "compilation-unit-class")
    ;; Define built-in bridge class SEQUENCE.
    (:file "sequence-class")
    ;; Define built-in bridge class ARRAY and its subclasses.
