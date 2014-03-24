@@ -34,6 +34,14 @@
 				:expected-type 'proper-list))
 			(t nil)))))
 
+;;; Check that a vector contains only characters.
+(defun verify-vector-bag (bag)
+  (loop for element across bag
+	unless (characterp element)
+	  do (error 'bag-contains-non-character
+		    :datum element
+		    :expected-type 'character)))
+
 ;;; We assume that the bag has been checked so that it is known to
 ;;; be a proper list of characters.
 (defun character-in-list-bag-p (character bag)
