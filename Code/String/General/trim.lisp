@@ -67,7 +67,9 @@
   (let ((length (length string)))
     (declare (type fixnum length))
     (if (or (zerop length)
-	    (not (character-in-list-bag-p (schar string 0) character-bag)))
+	    (not (character-in-list-bag-p
+		  (schar string 0)
+		  character-bag)))
 	string
 	(locally
 	    (declare (optimize (speed 3) (debug 0) (safety 0)))
@@ -84,7 +86,9 @@
   (let ((length (length string)))
     (declare (type fixnum length))
     (if (or (zerop length)
-	    (not (character-in-list-bag-p (char string 0) character-bag)))
+	    (not (character-in-list-bag-p
+		  (char string 0)
+		  character-bag)))
 	string
 	(locally
 	    (declare (optimize (speed 3) (debug 0) (safety 0)))
@@ -290,13 +294,236 @@
 ;;;
 ;;; Function STRING-RIGHT-TRIM.
 
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; list, and a string represented as a simple string.
+(defun string-right-trim-list-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-list-bag-p
+		  (schar string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-list-bag-p (schar string i) character-bag)
+		  return (extract-interval-simple string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; list, and a string represented as a general string.
+(defun string-right-trim-list-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-list-bag-p
+		  (char string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-list-bag-p (char string i) character-bag)
+		  return (extract-interval-general string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; simple-string, and a string represented as a simple string.
+(defun string-right-trim-simple-string-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-simple-string-bag-p
+		  (schar string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-simple-string-bag-p
+			(schar string i)
+			character-bag)
+		  return (extract-interval-simple string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; simple-string, and a string represented as a general string.
+(defun string-right-trim-simple-string-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-simple-string-bag-p
+		  (char string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-simple-string-bag-p
+			(char string i)
+			character-bag)
+		  return (extract-interval-general string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; general-string, and a string represented as a simple string.
+(defun string-right-trim-general-string-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-general-string-bag-p
+		  (schar string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-general-string-bag-p
+			(schar string i)
+			character-bag)
+		  return (extract-interval-simple string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; general-string, and a string represented as a general string.
+(defun string-right-trim-general-string-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-general-string-bag-p
+		  (char string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-general-string-bag-p
+			(char string i)
+			character-bag)
+		  return (extract-interval-general string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; simple vector, and a string represented as a simple string.
+(defun string-right-trim-simple-vector-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-simple-vector-bag-p
+		  (schar string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-simple-vector-bag-p
+			(schar string i)
+			character-bag)
+		  return (extract-interval-simple string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; simple vector, and a string represented as a general string.
+(defun string-right-trim-simple-vector-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-simple-vector-bag-p
+		  (char string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-simple-vector-bag-p
+			(char string i)
+			character-bag)
+		  return (extract-interval-general string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; general vector, and a string represented as a simple string.
+(defun string-right-trim-general-vector-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-general-vector-bag-p
+		  (schar string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-general-vector-bag-p
+			(schar string i)
+			character-bag)
+		  return (extract-interval-simple string 0 (1+ i))
+		finally (return ""))))))
+
+;;; A version of STRING-RIGHT-TRIM for a character bag represented as a
+;;; general vector, and a string represented as a general string.
+(defun string-right-trim-general-vector-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (not (character-in-general-vector-bag-p
+		  (char string (1- length))
+		  character-bag)))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-general-vector-bag-p
+			(char string i)
+			character-bag)
+		  return (extract-interval-general string 0 (1+ i))
+		finally (return ""))))))
+
 (defun string-right-trim (character-bag string-designator)
-  (flet ((in-bag-p (char) (find char character-bag)))
-    (let* ((string (string string-designator))
-	   (last (position-if-not #'in-bag-p string :from-end t)))
-      (if (null last)
-	  string
-	  (subseq string 0 (1+ last))))))
+  (let ((string (string string-designator))
+	(bag character-bag))
+    (etypecase bag
+      (list
+       (if (simple-string-p string)
+	   (string-right-trim-list-simple-string bag string)
+	   (string-right-trim-list-general-string bag string)))
+      (simple-string
+       (if (simple-string-p string)
+	   (string-right-trim-simple-string-simple-string bag string)
+	   (string-right-trim-simple-string-general-string bag string)))
+      (string
+       (if (simple-string-p string)
+	   (string-right-trim-general-string-simple-string bag string)
+	   (string-right-trim-general-string-general-string bag string)))
+      (simple-vector
+       (if (simple-string-p string)
+	   (string-right-trim-simple-vector-simple-string bag string)
+	   (string-right-trim-simple-vector-general-string bag string)))
+      (vector
+       (if (simple-string-p string)
+	   (string-right-trim-general-vector-simple-string bag string)
+	   (string-right-trim-general-vector-general-string bag string))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
