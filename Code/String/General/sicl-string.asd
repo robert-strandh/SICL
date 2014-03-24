@@ -5,6 +5,7 @@
   :components
   ((:file "packages")
    (:file "conditions")
+   (:file "condition-reporters-en")
    (:file "utilities")
    (:file "copy")
    (:file "case-conversion")
