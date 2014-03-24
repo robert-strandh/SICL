@@ -131,7 +131,9 @@
 	(locally
 	    (declare (optimize (speed 3) (debug 0) (safety 0)))
 	  (loop for i of-type fixnum from 0 below length
-		unless (character-in-list-bag-p (char string i) character-bag)
+		unless (character-in-list-bag-p
+			(char string i)
+			character-bag)
 		  return (extract-interval-general string i length)
 		finally (return ""))))))
 
@@ -350,7 +352,9 @@
 	(locally
 	    (declare (optimize (speed 3) (debug 0) (safety 0)))
 	  (loop for i of-type fixnum downfrom (1- length) to 0
-		unless (character-in-list-bag-p (schar string i) character-bag)
+		unless (character-in-list-bag-p
+			(schar string i)
+			character-bag)
 		  return (extract-interval-simple string 0 (1+ i))
 		finally (return ""))))))
 
@@ -573,11 +577,310 @@
 ;;;
 ;;; Function STRING-TRIM.
 
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; list, and a string represented as a simple string.
+(defun string-trim-list-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-list-bag-p
+		       (schar string 0)
+		       character-bag))
+		 (not (character-in-list-bag-p
+		       (schar string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-list-bag-p
+			(schar string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-list-bag-p
+				       (schar string j)
+				       character-bag)
+				 return (extract-interval-simple string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; list, and a string represented as a general string.
+(defun string-trim-list-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-list-bag-p
+		       (char string 0)
+		       character-bag))
+		 (not (character-in-list-bag-p
+		       (char string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-list-bag-p
+			(char string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-list-bag-p
+				       (char string j)
+				       character-bag)
+				 return (extract-interval-general string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; simple-string, and a string represented as a simple string.
+(defun string-trim-simple-string-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-simple-string-bag-p
+		       (schar string 0)
+		       character-bag))
+		 (not (character-in-simple-string-bag-p
+		       (schar string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-simple-string-bag-p
+			(schar string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-simple-string-bag-p
+				       (schar string j)
+				       character-bag)
+				 return (extract-interval-simple string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; simple-string, and a string represented as a general string.
+(defun string-trim-simple-string-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-simple-string-bag-p
+		       (char string 0)
+		       character-bag))
+		 (not (character-in-simple-string-bag-p
+		       (char string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-simple-string-bag-p
+			(char string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-simple-string-bag-p
+				       (char string j)
+				       character-bag)
+				 return (extract-interval-general string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; general-string, and a string represented as a simple string.
+(defun string-trim-general-string-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-general-string-bag-p
+		       (schar string 0)
+		       character-bag))
+		 (not (character-in-general-string-bag-p
+		       (schar string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-general-string-bag-p
+			(schar string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-general-string-bag-p
+				       (schar string j)
+				       character-bag)
+				 return (extract-interval-simple string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; general-string, and a string represented as a general string.
+(defun string-trim-general-string-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-general-string-bag-p
+		       (char string 0)
+		       character-bag))
+		 (not (character-in-general-string-bag-p
+		       (char string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-general-string-bag-p
+			(char string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-general-string-bag-p
+				       (char string j)
+				       character-bag)
+				 return (extract-interval-general string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; simple vector, and a string represented as a simple string.
+(defun string-trim-simple-vector-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-simple-vector-bag-p
+		       (schar string 0)
+		       character-bag))
+		 (not (character-in-simple-vector-bag-p
+		       (schar string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-simple-vector-bag-p
+			(schar string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-simple-vector-bag-p
+				       (schar string j)
+				       character-bag)
+				 return (extract-interval-simple string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; simple vector, and a string represented as a general string.
+(defun string-trim-simple-vector-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-simple-vector-bag-p
+		       (char string 0)
+		       character-bag))
+		 (not (character-in-simple-vector-bag-p
+		       (char string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-simple-vector-bag-p
+			(char string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-simple-vector-bag-p
+				       (char string j)
+				       character-bag)
+				 return (extract-interval-general string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; general vector, and a string represented as a simple string.
+(defun string-trim-general-vector-simple-string
+    (character-bag string)
+  (declare (type simple-string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-general-vector-bag-p
+		       (schar string 0)
+		       character-bag))
+		 (not (character-in-general-vector-bag-p
+		       (schar string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-general-vector-bag-p
+			(schar string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-general-vector-bag-p
+				       (schar string j)
+				       character-bag)
+				 return (extract-interval-simple string j (1+ i)))
+		finally (return ""))))))
+
+;;; A version of STRING-TRIM for a character bag represented as a
+;;; general vector, and a string represented as a general string.
+(defun string-trim-general-vector-general-string
+    (character-bag string)
+  (declare (type string string))
+  (let ((length (length string)))
+    (declare (type fixnum length))
+    (if (or (zerop length)
+	    (and (not (character-in-general-vector-bag-p
+		       (char string 0)
+		       character-bag))
+		 (not (character-in-general-vector-bag-p
+		       (char string (1- length))
+		       character-bag))))
+	string
+	(locally
+	    (declare (optimize (speed 3) (debug 0) (safety 0)))
+	  (loop for i of-type fixnum downfrom (1- length) to 0
+		unless (character-in-general-vector-bag-p
+			(char string i)
+			character-bag)
+		  return (loop for j from 0 to i
+			       unless (character-in-general-vector-bag-p
+				       (char string j)
+				       character-bag)
+				 return (extract-interval-general string j (1+ i)))
+		finally (return ""))))))
+
 (defun string-trim (character-bag string-designator)
-  (flet ((in-bag-p (char) (find char character-bag)))
-    (let* ((string (string string-designator))
-	   (first (position-if-not #'in-bag-p string)))
-      (if (null first)
-	  string
-	  (let ((last (position-if-not #'in-bag-p string :from-end t)))
-	    (subseq string first (1+ last)))))))
+  (let ((string (string string-designator))
+	(bag character-bag))
+    (etypecase bag
+      (list
+       (verify-list-bag bag)
+       (if (simple-string-p string)
+	   (string-trim-list-simple-string bag string)
+	   (string-trim-list-general-string bag string)))
+      (simple-string
+       (if (simple-string-p string)
+	   (string-trim-simple-string-simple-string bag string)
+	   (string-trim-simple-string-general-string bag string)))
+      (string
+       (if (simple-string-p string)
+	   (string-trim-general-string-simple-string bag string)
+	   (string-trim-general-string-general-string bag string)))
+      (simple-vector
+       (verify-vector-bag bag)
+       (if (simple-string-p string)
+	   (string-trim-simple-vector-simple-string bag string)
+	   (string-trim-simple-vector-general-string bag string)))
+      (vector
+       (verify-vector-bag bag)
+       (if (simple-string-p string)
+	   (string-trim-general-vector-simple-string bag string)
+	   (string-trim-general-vector-general-string bag string))))))
