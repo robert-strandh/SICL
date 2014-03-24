@@ -261,22 +261,34 @@
 		  return (extract-interval-simple string i length)
 		finally (return ""))))))
 
-(defun string-trim (character-bag string-designator)
-  (flet ((in-bag-p (char) (find char character-bag)))
-    (let* ((string (string string-designator))
-	   (first (position-if-not #'in-bag-p string)))
-      (if (null first)
-	  string
-	  (let ((last (position-if-not #'in-bag-p string :from-end t)))
-	    (subseq string first (1+ last)))))))
-
 (defun string-left-trim (character-bag string-designator)
-  (flet ((in-bag-p (char) (find char character-bag)))
-    (let* ((string (string string-designator))
-	   (first (position-if-not #'in-bag-p string)))
-      (if (null first)
-	  string
-	  (subseq string first)))))
+  (let ((string (string string-designator))
+	(bag character-bag))
+    (etypecase bag
+      (list
+       (if (simple-string-p string)
+	   (string-left-trim-list-simple-string bag string)
+	   (string-left-trim-list-general-string bag string)))
+      (simple-string
+       (if (simple-string-p string)
+	   (string-left-trim-simple-string-simple-string bag string)
+	   (string-left-trim-simple-string-general-string bag string)))
+      (string
+       (if (simple-string-p string)
+	   (string-left-trim-general-string-simple-string bag string)
+	   (string-left-trim-general-string-general-string bag string)))
+      (simple-vector
+       (if (simple-string-p string)
+	   (string-left-trim-simple-vector-simple-string bag string)
+	   (string-left-trim-simple-vector-general-string bag string)))
+      (vector
+       (if (simple-string-p string)
+	   (string-left-trim-general-vector-simple-string bag string)
+	   (string-left-trim-general-vector-general-string bag string))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING-RIGHT-TRIM.
 
 (defun string-right-trim (character-bag string-designator)
   (flet ((in-bag-p (char) (find char character-bag)))
@@ -285,3 +297,16 @@
       (if (null last)
 	  string
 	  (subseq string 0 (1+ last))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING-TRIM.
+
+(defun string-trim (character-bag string-designator)
+  (flet ((in-bag-p (char) (find char character-bag)))
+    (let* ((string (string string-designator))
+	   (first (position-if-not #'in-bag-p string)))
+      (if (null first)
+	  string
+	  (let ((last (position-if-not #'in-bag-p string :from-end t)))
+	    (subseq string first (1+ last)))))))
