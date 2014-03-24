@@ -137,7 +137,7 @@
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
 ;;; general-string, and a string represented as a simple string.
-(defun string-left-trim-simple-string-simple-string
+(defun string-left-trim-general-string-simple-string
     (character-bag string)
   (declare (type simple-string string))
   (let ((length (length string)))
@@ -158,7 +158,7 @@
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
 ;;; general-string, and a string represented as a general string.
-(defun string-left-trim-simple-string-general-string
+(defun string-left-trim-general-string-general-string
     (character-bag string)
   (declare (type string string))
   (let ((length (length string)))
@@ -179,7 +179,7 @@
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
 ;;; simple vector, and a string represented as a simple string.
-(defun string-left-trim-simple-string-simple-string
+(defun string-left-trim-simple-vector-simple-string
     (character-bag string)
   (declare (type simple-string string))
   (let ((length (length string)))
@@ -200,7 +200,7 @@
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
 ;;; simple vector, and a string represented as a general string.
-(defun string-left-trim-simple-string-general-string
+(defun string-left-trim-simple-vector-general-string
     (character-bag string)
   (declare (type string string))
   (let ((length (length string)))
@@ -221,7 +221,7 @@
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
 ;;; general vector, and a string represented as a simple string.
-(defun string-left-trim-simple-string-simple-string
+(defun string-left-trim-general-vector-simple-string
     (character-bag string)
   (declare (type simple-string string))
   (let ((length (length string)))
@@ -242,7 +242,7 @@
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
 ;;; general vector, and a string represented as a general string.
-(defun string-left-trim-simple-string-general-string
+(defun string-left-trim-general-vector-general-string
     (character-bag string)
   (declare (type string string))
   (let ((length (length string)))
