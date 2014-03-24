@@ -4,6 +4,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "conditions")
    (:file "utilities")
    (:file "copy")
    (:file "case-conversion")
