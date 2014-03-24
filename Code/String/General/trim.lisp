@@ -300,6 +300,7 @@
 	(bag character-bag))
     (etypecase bag
       (list
+       (verify-list-bag bag)
        (if (simple-string-p string)
 	   (string-left-trim-list-simple-string bag string)
 	   (string-left-trim-list-general-string bag string)))
@@ -535,6 +536,7 @@
 	(bag character-bag))
     (etypecase bag
       (list
+       (verify-list-bag bag)
        (if (simple-string-p string)
 	   (string-right-trim-list-simple-string bag string)
 	   (string-right-trim-list-general-string bag string)))
