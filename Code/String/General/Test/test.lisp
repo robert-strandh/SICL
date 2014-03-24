@@ -134,11 +134,40 @@
 (defun test-one-string-left-trim (bag string)
   (let ((list-bag (coerce bag 'list))
 	(list-string (coerce string 'list)))
-    (assert (equal (coerce (list-left-trim list-bag list-string) 'string)
-		   (string-left-trim bag string)))))
+    (assert (equal (list-left-trim list-bag list-string)
+		   (coerce (string-left-trim bag string) 'list)))))
 
 (defun test-string-left-trim (n)
   (loop repeat n
 	do (let ((string (random-string 0 10 60 100))
 		 (bag (random-string 0 5 60 150)))
-	     (test-one-string-left-trim bag string))))
+	     (test-one-string-left-trim
+	      bag
+	      string)
+	     (test-one-string-left-trim
+	      bag
+	      (string-to-non-simple-string string))
+	     (test-one-string-left-trim
+	      (string-to-non-simple-string bag)
+	      string)
+	     (test-one-string-left-trim
+	      (string-to-non-simple-string bag)
+	      (string-to-non-simple-string string))
+	     (test-one-string-left-trim
+	      (coerce bag 'list)
+	      string)
+	     (test-one-string-left-trim
+	      (coerce bag 'list)
+	      (string-to-non-simple-string string))
+	     (test-one-string-left-trim
+	      (string-to-simple-vector bag)
+	      string)
+	     (test-one-string-left-trim
+	      (string-to-simple-vector bag)
+	      (string-to-non-simple-string string))
+	     (test-one-string-left-trim
+	      (string-to-non-simple-vector bag)
+	      string)
+	     (test-one-string-left-trim
+	      (string-to-non-simple-vector bag)
+	      (string-to-non-simple-string string)))))
