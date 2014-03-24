@@ -17,6 +17,26 @@
 	  do (setf (char result i) char))
     result))
 
+;;; Convert a string to a non-simple string (provided that strings
+;;; with fill pointers are not simple on the host platform).
+(defun string-to-non-simple-string (string)
+  (make-array (length string)
+	      :element-type 'character
+	      :initial-contents (coerce string 'list)
+	      :fill-pointer (length string)))
+
+;;; Convert a string to a simple vector.
+(defun string-to-simple-vector (string)
+  (make-array (length string)
+	      :initial-contents (coerce string 'list)))
+
+;;; Convert s string to a non-simple vector (provided that strings
+;;; with fill pointers are not simple on the host platform).
+(defun string-to-non-simple-vector (string)	      
+  (make-array (length string)
+	      :initial-contents (coerce string 'list)
+	      :fill-pointer (length string)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test NSTRING-UPCASE
