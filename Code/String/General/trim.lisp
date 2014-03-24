@@ -90,7 +90,7 @@
 	    (declare (optimize (speed 3) (debug 0) (safety 0)))
 	  (loop for i of-type fixnum from 0 below length
 		unless (character-in-list-bag-p (char string i) character-bag)
-		  return (extract-interval-simple string i length)
+		  return (extract-interval-general string i length)
 		finally (return ""))))))
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
@@ -132,7 +132,7 @@
 		unless (character-in-simple-string-bag-p
 			(char string i)
 			character-bag)
-		  return (extract-interval-simple string i length)
+		  return (extract-interval-general string i length)
 		finally (return ""))))))
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
@@ -174,7 +174,7 @@
 		unless (character-in-general-string-bag-p
 			(char string i)
 			character-bag)
-		  return (extract-interval-simple string i length)
+		  return (extract-interval-general string i length)
 		finally (return ""))))))
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
@@ -216,7 +216,7 @@
 		unless (character-in-simple-vector-bag-p
 			(char string i)
 			character-bag)
-		  return (extract-interval-simple string i length)
+		  return (extract-interval-general string i length)
 		finally (return ""))))))
 
 ;;; A version of STRING-LEFT-TRIM for a character bag represented as a
@@ -258,7 +258,7 @@
 		unless (character-in-general-vector-bag-p
 			(char string i)
 			character-bag)
-		  return (extract-interval-simple string i length)
+		  return (extract-interval-general string i length)
 		finally (return ""))))))
 
 (defun string-left-trim (character-bag string-designator)
