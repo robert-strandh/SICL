@@ -4,6 +4,28 @@
 ;;;
 ;;; Utilities.
 
+;;; Check that a list is a proper list of characters.  It has already been
+;;; checked that the bag is a list.
+(defun verify-list-bag (bag)
+  (unless (null bag)
+    (loop with slow = bag
+	  with fast = bag
+	  while (consp fast)
+	  unless (characterp (car fast))
+	    do (error "bag contains a non-character: ~s" (car fast))
+	  do (setf fast (cdr fast))
+	  while (consp fast)
+	  until (eq slow fast)
+	  unless (characterp (car fast))
+	    do (error "bag contains a non-character: ~s" (car fast))
+	  do (setf fast (cdr fast))
+	     (setf slow (cdr slow))
+	  finally (cond ((eq slow fast)
+			 (error "bag should be a proper list, but is a circular list"))
+			((and (atom fast) (not (null fast)))
+			 (error "bag should be a proper list, but ends with ~s" fast))
+			(t nil)))))
+
 ;;; We assume that the bag has been checked so that it is known to
 ;;; be a proper list of characters.
 (defun character-in-list-bag-p (character bag)
