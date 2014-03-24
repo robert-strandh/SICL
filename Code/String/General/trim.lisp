@@ -12,18 +12,26 @@
 	  with fast = bag
 	  while (consp fast)
 	  unless (characterp (car fast))
-	    do (error "bag contains a non-character: ~s" (car fast))
+	    do (error 'bag-contains-non-character
+		      :datum (car fast)
+		      :expected-type 'character)
 	  do (setf fast (cdr fast))
 	  while (consp fast)
 	  until (eq slow fast)
 	  unless (characterp (car fast))
-	    do (error "bag contains a non-character: ~s" (car fast))
+	    do (error 'bag-contains-non-character
+		      :datum (car fast)
+		      :expected-type 'character)
 	  do (setf fast (cdr fast))
 	     (setf slow (cdr slow))
 	  finally (cond ((eq slow fast)
-			 (error "bag should be a proper list, but is a circular list"))
+			 (error 'bag-is-circular-list
+				:datum bag
+				:expected-type 'proper-list))
 			((and (atom fast) (not (null fast)))
-			 (error "bag should be a proper list, but ends with ~s" fast))
+			 (error 'bag-is-dotted-list
+				:datum bag
+				:expected-type 'proper-list))
 			(t nil)))))
 
 ;;; We assume that the bag has been checked so that it is known to
