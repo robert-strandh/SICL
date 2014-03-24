@@ -321,10 +321,12 @@
 	   (string-left-trim-general-string-simple-string bag string)
 	   (string-left-trim-general-string-general-string bag string)))
       (simple-vector
+       (verify-vector-bag bag)
        (if (simple-string-p string)
 	   (string-left-trim-simple-vector-simple-string bag string)
 	   (string-left-trim-simple-vector-general-string bag string)))
       (vector
+       (verify-vector-bag bag)
        (if (simple-string-p string)
 	   (string-left-trim-general-vector-simple-string bag string)
 	   (string-left-trim-general-vector-general-string bag string))))))
@@ -557,10 +559,12 @@
 	   (string-right-trim-general-string-simple-string bag string)
 	   (string-right-trim-general-string-general-string bag string)))
       (simple-vector
+       (verify-vector-bag bag)
        (if (simple-string-p string)
 	   (string-right-trim-simple-vector-simple-string bag string)
 	   (string-right-trim-simple-vector-general-string bag string)))
       (vector
+       (verify-vector-bag bag)
        (if (simple-string-p string)
 	   (string-right-trim-general-vector-simple-string bag string)
 	   (string-right-trim-general-vector-general-string bag string))))))
