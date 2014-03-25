@@ -160,6 +160,34 @@
 ;;;
 ;;; Function STRING=.
 
+(defun string=-simple-simple
+    (string1 string2 start1 end1 start2 end2)
+  (and (= (- end1 start1) (- end2 start2))
+       (= (first-mismatch-simple-simple-char-=
+	   string1 string2 start1 end1 start2 end2)
+	  end1)))
+
+(defun string=-simple-general
+    (string1 string2 start1 end1 start2 end2)
+  (and (= (- end1 start1) (- end2 start2))
+       (= (first-mismatch-simple-general-char-=
+	   string1 string2 start1 end1 start2 end2)
+	  end1)))
+
+(defun string=-general-simple
+    (string1 string2 start1 end1 start2 end2)
+  (and (= (- end1 start1) (- end2 start2))
+       (= (first-mismatch-general-simple-char-=
+	   string1 string2 start1 end1 start2 end2)
+	  end1)))
+
+(defun string=-general-general
+    (string1 string2 start1 end1 start2 end2)
+  (and (= (- end1 start1) (- end2 start2))
+       (= (first-mismatch-general-general-char-=
+	   string1 string2 start1 end1 start2 end2)
+	  end1)))
+
 (defun string= (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
 	(string2 (string string2)))
@@ -167,12 +195,13 @@
     (when (null end2) (setf end2 (length string2)))
     (check-bounding-indices string1 start1 end1)
     (check-bounding-indices string2 start2 end2)
-    (and (= (- end1 start1) (- end2 start2))
-	 (loop for i1 from start1 below end1
-	       for i2 from start2 below end2
-	       unless (char= (char string1 i1) (char string2 i2))
-		 return nil
-	       finally (return t)))))
+    (if (simple-string-p string1)
+	(if (simple-string-p string2)
+	    (string=-simple-simple string1 string2 start1 end1 start2 end2)
+	    (string=-simple-general string1 string2 start1 end1 start2 end2))
+	(if (simple-string-p string2)
+	    (string=-general-simple string1 string2 start1 end1 start2 end2)
+	    (string=-general-general string1 string2 start1 end1 start2 end2)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
