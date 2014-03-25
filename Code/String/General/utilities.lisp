@@ -11,5 +11,7 @@
 	     :datum end
 	     :expected-type `(integer 0 ,length)))
     (unless (<= start end)
-      ;; FIXME: signal a more appropriate condition.
-      (error "START must be less than or equal to END."))))
+      (error 'invalid-bounding-indices
+	     :start start
+	     :end end
+	     :target string))))
