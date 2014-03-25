@@ -37,6 +37,13 @@
 	      :initial-contents (coerce string 'list)
 	      :fill-pointer (length string)))
 
+;;; Return two random valid bounding indices for SEQUENCE.
+(defun random-bounding-indices (sequence)
+  (let* ((length (length sequence))
+	 (start (random (1+ length)))
+	 (end (+ start (random (1+ (- length start))))))
+    (values start end)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test NSTRING-UPCASE
@@ -267,3 +274,56 @@
 	     (test-one-string-trim
 	      (string-to-non-simple-vector bag)
 	      (string-to-non-simple-string string)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test STRING=.
+
+(defun list= (list1 list2 start1 end1 start2 end2)
+  (let ((l1 (loop for i from 0
+		  for c in list1
+		  when (and (>= i start1) (< i end1))
+		    collect c))
+	(l2 (loop for i from 0
+		  for c in list2
+		  when (and (>= i start2) (< i end2))
+		    collect c)))
+    (and (= (length l1) (length l2))
+	 (loop for c1 in l1
+	       for c2 in l2
+	       unless (char= c1 c2)
+		 return nil
+	       finally (return t)))))
+
+(defun test-one-string=
+    (string1 string2 &rest args &key (start1 0) end1 (start2 0) end2)
+  (let ((e1 (if (null end1) (length string1) end1))
+	(e2 (if (null end2) (length string2) end2)))
+    (assert (eq (apply #'string= string1 string2 args)
+		(list= (coerce string1 'list) (coerce string2 'list)
+		       start1 e1 start2 e2)))))
+
+(defun test-string= (n)
+  (loop repeat n
+	do (let ((string1 (random-string 0 5 64 66))
+		 (string2 (random-string 0 5 64 66)))
+	     (multiple-value-bind (start1 end1)
+		 (random-bounding-indices string1)
+	       (multiple-value-bind (start2 end2)
+		   (random-bounding-indices string2)
+		 (test-one-string=
+		  string1
+		  string2
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2)
+		 (test-one-string=
+		  (string-to-non-simple-string string1)
+		  string2
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2)
+		 (test-one-string=
+		  string1
+		  (string-to-non-simple-string string2)
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2)
+		 (test-one-string=
+		  (string-capitalize string1)
+		  string2
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
