@@ -13,3 +13,8 @@
 (define-condition bag-contains-non-character (type-error)
   ()
   (:report report-string-condition))
+
+(define-condition invalid-bounding-indices (error)
+  ((%target :initarg :target :reader target)
+   (%start :initarg start :reader start)
+   (%end :initarg end :reader end)))
