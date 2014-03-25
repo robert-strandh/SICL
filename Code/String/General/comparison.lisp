@@ -80,6 +80,82 @@
 	    return i
 	  finally (return i))))
 
+(defun first-mismatch-simple-simple-char-equal
+    (string1 string2 start1 end1 start2 end2)
+  (assert (simple-string-p string1))
+  (assert (>= start1 0))
+  (assert (<= end1 (length string1)))
+  (assert (<= start1 end1))
+  (assert (simple-string-p string1))
+  (assert (>= start2 0))
+  (assert (<= end2 (length string2)))
+  (assert (<= start2 end2))
+  (locally (declare (type simple-base-string string1 string2)
+		    (type fixnum start1 end1 start2 end2)
+		    (optimize (speed 3) (safety 0) (debug 0)))
+    (loop for i of-type fixnum from start1 below end1
+	  for j of-type fixnum from start2 below end2
+	  unless (char-equal (schar string1 i) (schar string2 j))
+	    return i
+	  finally (return i))))
+
+(defun first-mismatch-simple-general-char-equal
+    (string1 string2 start1 end1 start2 end2)
+  (assert (simple-string-p string1))
+  (assert (>= start1 0))
+  (assert (<= end1 (length string1)))
+  (assert (<= start1 end1))
+  (assert (simple-string-p string1))
+  (assert (>= start2 0))
+  (assert (<= end2 (length string2)))
+  (assert (<= start2 end2))
+  (locally (declare (type simple-base-string string1 string2)
+		    (type fixnum start1 end1 start2 end2)
+		    (optimize (speed 3) (safety 0) (debug 0)))
+    (loop for i of-type fixnum from start1 below end1
+	  for j of-type fixnum from start2 below end2
+	  unless (char-equal (schar string1 i) (char string2 j))
+	    return i
+	  finally (return i))))
+
+(defun first-mismatch-general-simple-char-equal
+    (string1 string2 start1 end1 start2 end2)
+  (assert (simple-string-p string1))
+  (assert (>= start1 0))
+  (assert (<= end1 (length string1)))
+  (assert (<= start1 end1))
+  (assert (simple-string-p string1))
+  (assert (>= start2 0))
+  (assert (<= end2 (length string2)))
+  (assert (<= start2 end2))
+  (locally (declare (type simple-base-string string1 string2)
+		    (type fixnum start1 end1 start2 end2)
+		    (optimize (speed 3) (safety 0) (debug 0)))
+    (loop for i of-type fixnum from start1 below end1
+	  for j of-type fixnum from start2 below end2
+	  unless (char-equal (char string1 i) (schar string2 j))
+	    return i
+	  finally (return i))))
+
+(defun first-mismatch-general-general-char-equal
+    (string1 string2 start1 end1 start2 end2)
+  (assert (simple-string-p string1))
+  (assert (>= start1 0))
+  (assert (<= end1 (length string1)))
+  (assert (<= start1 end1))
+  (assert (simple-string-p string1))
+  (assert (>= start2 0))
+  (assert (<= end2 (length string2)))
+  (assert (<= start2 end2))
+  (locally (declare (type simple-base-string string1 string2)
+		    (type fixnum start1 end1 start2 end2)
+		    (optimize (speed 3) (safety 0) (debug 0)))
+    (loop for i of-type fixnum from start1 below end1
+	  for j of-type fixnum from start2 below end2
+	  unless (char-equal (char string1 i) (char string2 j))
+	    return i
+	  finally (return i))))
+
 (defun string= (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
 	(string2 (string string2)))
