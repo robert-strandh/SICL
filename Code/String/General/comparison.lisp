@@ -156,6 +156,10 @@
 	    return i
 	  finally (return i))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING=.
+
 (defun string= (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
 	(string2 (string string2)))
@@ -170,6 +174,10 @@
 		 return nil
 	       finally (return t)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING-EQUAL.
+
 (defun string-equal (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
 	(string2 (string string2)))
@@ -183,6 +191,10 @@
 	       unless (char-equal (char string1 i1) (char string2 i2))
 		 return nil
 	       finally (return t)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING<.
 
 (defun string< (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
@@ -202,6 +214,10 @@
 			      end1
 			      nil)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING-LESSP.
+
 (defun string-lessp (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
 	(string2 (string string2)))
@@ -220,15 +236,27 @@
 			      end1
 			      nil)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING>.
+
 (defun string> (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (string< string2 string1
 	   :start1 start2 :end1 end2
 	   :start2 start1 :end2 end1))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING-GREATERP.
+
 (defun string-greaterp (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (string-lessp string2 string1
 		:start1 start2 :end1 end2
 		:start2 start1 :end2 end1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING<=.
 
 (defun string<= (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
@@ -248,6 +276,10 @@
 			      end1
 			      nil)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING-NOT-GREATERP.
+
 (defun string-not-greaterp (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
 	(string2 (string string2)))
@@ -266,10 +298,18 @@
 			      end1
 			      nil)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING>=.
+
 (defun string>= (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (string<= string2 string1
 	    :start1 start2 :end1 end2
 	    :start2 start1 :end2 end1))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING-NOT-LESSP.
 
 (defun string-not-lessp (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (string-not-greaterp string2 string1
