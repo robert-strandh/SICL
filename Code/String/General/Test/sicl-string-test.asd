@@ -4,6 +4,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "string-type")
    (:file "conditions")
    (:file "condition-reporters-en")
    (:file "utilities")
