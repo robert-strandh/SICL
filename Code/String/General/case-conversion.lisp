@@ -56,7 +56,7 @@
 (defun string-upcase (string-designator &key (start 0) end)
   (let* ((string (string string-designator))
 	 (copy (copy-string string)))
-    (nstring-upcase copy start end)))
+    (nstring-upcase copy :start start :end end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -114,7 +114,7 @@
 (defun string-downcase (string-designator &key (start 0) end)
   (let* ((string (string string-designator))
 	 (copy (copy-string string)))
-    (nstring-downcase copy start end)))
+    (nstring-downcase copy :start start :end end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -140,4 +140,4 @@
 (defun string-capitalize (string-designator &key (start 0) end)
   (let* ((string (string string-designator))
 	 (copy (copy-string string)))
-    (nstring-capitalize copy start end)))
+    (nstring-capitalize copy :start start :end end)))
