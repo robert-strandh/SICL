@@ -10,11 +10,12 @@
   (assert (>= start1 0))
   (assert (<= end1 (length string1)))
   (assert (<= start1 end1))
-  (assert (simple-string-p string1))
+  (assert (simple-string-p string2))
   (assert (>= start2 0))
   (assert (<= end2 (length string2)))
   (assert (<= start2 end2))
-  (locally (declare (type simple-base-string string1 string2)
+  (locally (declare (type simple-string string1)
+		    (type simple-string string2)
 		    (type fixnum start1 end1 start2 end2)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start1 below end1
@@ -29,11 +30,12 @@
   (assert (>= start1 0))
   (assert (<= end1 (length string1)))
   (assert (<= start1 end1))
-  (assert (simple-string-p string1))
+  (assert (stringp string2))
   (assert (>= start2 0))
   (assert (<= end2 (length string2)))
   (assert (<= start2 end2))
-  (locally (declare (type simple-base-string string1 string2)
+  (locally (declare (type simple-string string1)
+		    (type string string2)
 		    (type fixnum start1 end1 start2 end2)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start1 below end1
@@ -44,15 +46,16 @@
 
 (defun first-mismatch-general-simple-char=
     (string1 string2 start1 end1 start2 end2)
-  (assert (simple-string-p string1))
+  (assert (stringp string1))
   (assert (>= start1 0))
   (assert (<= end1 (length string1)))
   (assert (<= start1 end1))
-  (assert (simple-string-p string1))
+  (assert (simple-string-p string2))
   (assert (>= start2 0))
   (assert (<= end2 (length string2)))
   (assert (<= start2 end2))
-  (locally (declare (type simple-base-string string1 string2)
+  (locally (declare (type string string1)
+		    (type simple-string string2)
 		    (type fixnum start1 end1 start2 end2)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start1 below end1
@@ -63,15 +66,16 @@
 
 (defun first-mismatch-general-general-char=
     (string1 string2 start1 end1 start2 end2)
-  (assert (simple-string-p string1))
+  (assert (stringp string1))
   (assert (>= start1 0))
   (assert (<= end1 (length string1)))
   (assert (<= start1 end1))
-  (assert (simple-string-p string1))
+  (assert (stringp string2))
   (assert (>= start2 0))
   (assert (<= end2 (length string2)))
   (assert (<= start2 end2))
-  (locally (declare (type simple-base-string string1 string2)
+  (locally (declare (type string string1)
+		    (type string string2)
 		    (type fixnum start1 end1 start2 end2)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start1 below end1
@@ -86,11 +90,12 @@
   (assert (>= start1 0))
   (assert (<= end1 (length string1)))
   (assert (<= start1 end1))
-  (assert (simple-string-p string1))
+  (assert (simple-string-p string2))
   (assert (>= start2 0))
   (assert (<= end2 (length string2)))
   (assert (<= start2 end2))
-  (locally (declare (type simple-base-string string1 string2)
+  (locally (declare (type simple-string string1)
+		    (type simple-string string2)
 		    (type fixnum start1 end1 start2 end2)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start1 below end1
@@ -105,11 +110,12 @@
   (assert (>= start1 0))
   (assert (<= end1 (length string1)))
   (assert (<= start1 end1))
-  (assert (simple-string-p string1))
+  (assert (stringp string2))
   (assert (>= start2 0))
   (assert (<= end2 (length string2)))
   (assert (<= start2 end2))
-  (locally (declare (type simple-base-string string1 string2)
+  (locally (declare (type simple-string string1)
+		    (type string string2)
 		    (type fixnum start1 end1 start2 end2)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start1 below end1
@@ -120,15 +126,16 @@
 
 (defun first-mismatch-general-simple-char-equal
     (string1 string2 start1 end1 start2 end2)
-  (assert (simple-string-p string1))
+  (assert (stringp string1))
   (assert (>= start1 0))
   (assert (<= end1 (length string1)))
   (assert (<= start1 end1))
-  (assert (simple-string-p string1))
+  (assert (simple-string-p string2))
   (assert (>= start2 0))
   (assert (<= end2 (length string2)))
   (assert (<= start2 end2))
-  (locally (declare (type simple-base-string string1 string2)
+  (locally (declare (type string string1)
+		    (type simple-string string2)
 		    (type fixnum start1 end1 start2 end2)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start1 below end1
@@ -139,15 +146,16 @@
 
 (defun first-mismatch-general-general-char-equal
     (string1 string2 start1 end1 start2 end2)
-  (assert (simple-string-p string1))
+  (assert (stringp string1))
   (assert (>= start1 0))
   (assert (<= end1 (length string1)))
   (assert (<= start1 end1))
-  (assert (simple-string-p string1))
+  (assert (stringp string2))
   (assert (>= start2 0))
   (assert (<= end2 (length string2)))
   (assert (<= start2 end2))
-  (locally (declare (type simple-base-string string1 string2)
+  (locally (declare (type string string1)
+		    (type string string2)
 		    (type fixnum start1 end1 start2 end2)
 		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop for i of-type fixnum from start1 below end1
@@ -163,28 +171,28 @@
 (defun string=-simple-simple
     (string1 string2 start1 end1 start2 end2)
   (and (= (- end1 start1) (- end2 start2))
-       (= (first-mismatch-simple-simple-char-=
+       (= (first-mismatch-simple-simple-char=
 	   string1 string2 start1 end1 start2 end2)
 	  end1)))
 
 (defun string=-simple-general
     (string1 string2 start1 end1 start2 end2)
   (and (= (- end1 start1) (- end2 start2))
-       (= (first-mismatch-simple-general-char-=
+       (= (first-mismatch-simple-general-char=
 	   string1 string2 start1 end1 start2 end2)
 	  end1)))
 
 (defun string=-general-simple
     (string1 string2 start1 end1 start2 end2)
   (and (= (- end1 start1) (- end2 start2))
-       (= (first-mismatch-general-simple-char-=
+       (= (first-mismatch-general-simple-char=
 	   string1 string2 start1 end1 start2 end2)
 	  end1)))
 
 (defun string=-general-general
     (string1 string2 start1 end1 start2 end2)
   (and (= (- end1 start1) (- end2 start2))
-       (= (first-mismatch-general-general-char-=
+       (= (first-mismatch-general-general-char=
 	   string1 string2 start1 end1 start2 end2)
 	  end1)))
 
