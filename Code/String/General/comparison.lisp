@@ -274,25 +274,125 @@
     (string1 string2 start1 end1 start2 end2)
   (let ((pos (first-mismatch-simple-simple-char=
 	      string1 string2 start1 end1 start2 end2)))
-    (if (= (- pos start1) (- end2 start2)) nil pos)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.  Therefore STRING1 is not less than
+	       ;; STRING2.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       pos))
+	  ((= (- pos start1) (- end2 start2))
+	   ;; We did not reach the end of STRING1, but we did reach
+	   ;; the end of STRING2.  Then STRING1 is strictly greater
+	   ;; than STRING2.
+	   nil)
+	  ((char< (schar string1 pos)
+		  (schar string2 (+ start2 (- pos start1))))
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is less than the character in
+	   ;; STRING2.
+	   pos)
+	  (t
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is NOT less than the character in
+	   ;; STRING2.
+	   nil))))
 
 (defun string<-simple-general
     (string1 string2 start1 end1 start2 end2)
   (let ((pos (first-mismatch-simple-general-char=
 	      string1 string2 start1 end1 start2 end2)))
-    (if (= (- pos start1) (- end2 start2)) nil pos)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.  Therefore STRING1 is not less than
+	       ;; STRING2.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       pos))
+	  ((= (- pos start1) (- end2 start2))
+	   ;; We did not reach the end of STRING1, but we did reach
+	   ;; the end of STRING2.  Then STRING1 is strictly greater
+	   ;; than STRING2.
+	   nil)
+	  ((char< (schar string1 pos)
+		  (char string2 (+ start2 (- pos start1))))
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is less than the character in
+	   ;; STRING2.
+	   pos)
+	  (t
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is NOT less than the character in
+	   ;; STRING2.
+	   nil))))
 
 (defun string<-general-simple
     (string1 string2 start1 end1 start2 end2)
   (let ((pos (first-mismatch-general-simple-char=
 	      string1 string2 start1 end1 start2 end2)))
-    (if (= (- pos start1) (- end2 start2)) nil pos)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.  Therefore STRING1 is not less than
+	       ;; STRING2.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       pos))
+	  ((= (- pos start1) (- end2 start2))
+	   ;; We did not reach the end of STRING1, but we did reach
+	   ;; the end of STRING2.  Then STRING1 is strictly greater
+	   ;; than STRING2.
+	   nil)
+	  ((char< (char string1 pos)
+		  (schar string2 (+ start2 (- pos start1))))
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is less than the character in
+	   ;; STRING2.
+	   pos)
+	  (t
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is NOT less than the character in
+	   ;; STRING2.
+	   nil))))
 
 (defun string<-general-general
     (string1 string2 start1 end1 start2 end2)
   (let ((pos (first-mismatch-general-general-char=
 	      string1 string2 start1 end1 start2 end2)))
-    (if (= (- pos start1) (- end2 start2)) nil pos)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.  Therefore STRING1 is not less than
+	       ;; STRING2.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       pos))
+	  ((= (- pos start1) (- end2 start2))
+	   ;; We did not reach the end of STRING1, but we did reach
+	   ;; the end of STRING2.  Then STRING1 is strictly greater
+	   ;; than STRING2.
+	   nil)
+	  ((char< (char string1 pos)
+		  (char string2 (+ start2 (- pos start1))))
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is less than the character in
+	   ;; STRING2.
+	   pos)
+	  (t
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is NOT less than the character in
+	   ;; STRING2.
+	   nil))))
 
 (defun string< (string1 string2 &key (start1 0) end1 (start2 0) end2)
   (let ((string1 (string string1))
