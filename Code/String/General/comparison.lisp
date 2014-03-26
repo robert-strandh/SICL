@@ -1394,3 +1394,97 @@
 	    (string-not-lessp-general-general
 	     string1 string2 start1 end1 start2 end2)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function STRING/=.
+
+(defun string/=-simple-simple
+    (string1 string2 start1 end1 start2 end2)
+  (let ((pos (first-mismatch-simple-simple-char=
+	      string1 string2 start1 end1 start2 end2)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1.
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       pos))
+	  (t
+	   ;; We did not reach the end of STRING1, so the two strings
+	   ;; must be different.
+	   pos))))
+
+(defun string/=-simple-general
+    (string1 string2 start1 end1 start2 end2)
+  (let ((pos (first-mismatch-simple-general-char=
+	      string1 string2 start1 end1 start2 end2)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1.
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       pos))
+	  (t
+	   ;; We did not reach the end of STRING1, so the two strings
+	   ;; must be different.
+	   pos))))
+
+(defun string/=-general-simple
+    (string1 string2 start1 end1 start2 end2)
+  (let ((pos (first-mismatch-general-simple-char=
+	      string1 string2 start1 end1 start2 end2)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1.
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       pos))
+	  (t
+	   ;; We did not reach the end of STRING1, so the two strings
+	   ;; must be different.
+	   pos))))
+
+(defun string/=-general-general
+    (string1 string2 start1 end1 start2 end2)
+  (let ((pos (first-mismatch-general-general-char=
+	      string1 string2 start1 end1 start2 end2)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1.
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       pos))
+	  (t
+	   ;; We did not reach the end of STRING1, so the two strings
+	   ;; must be different.
+	   pos))))
+
+(defun string/= (string1 string2 &key (start1 0) end1 (start2 0) end2)
+  (let ((string1 (string string1))
+	(string2 (string string2)))
+    (when (null end1) (setf end1 (length string1)))
+    (when (null end2) (setf end2 (length string2)))
+    (check-bounding-indices string1 start1 end1)
+    (check-bounding-indices string2 start2 end2)
+    (if (simple-string-p string1)
+	(if (simple-string-p string2)
+	    (string/=-simple-simple
+	     string1 string2 start1 end1 start2 end2)
+	    (string/=-simple-general
+	     string1 string2 start1 end1 start2 end2))
+	(if (simple-string-p string2)
+	    (string/=-general-simple
+	     string1 string2 start1 end1 start2 end2)
+	    (string/=-general-general
+	     string1 string2 start1 end1 start2 end2)))))
