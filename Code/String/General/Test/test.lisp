@@ -985,3 +985,31 @@
 		  (string-capitalize string1)
 		  string2
 		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Global test.
+
+(defun test (n)
+  (test-nstring-upcase n)
+  (test-string-upcase n)
+  (test-nstring-downcase n)
+  (test-string-downcase n)
+  (test-nstring-capitalize n)
+  (test-string-capitalize n)
+  (test-string-left-trim n)
+  (test-string-right-trim n)
+  (test-string-trim n)
+  (test-string= n)
+  (test-string-equal n)
+  (test-string< n)
+  (test-string-lessp n)
+  (test-string> n)
+  (test-string-greaterp n)
+  (test-string<= n)
+  (test-string-not-greaterp n)
+  (test-string>= n)
+  (test-string-not-lessp n)
+  (test-string/= n)
+  (test-string-not-equal n))
+
