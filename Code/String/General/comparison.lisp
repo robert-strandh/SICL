@@ -1251,7 +1251,146 @@
 ;;;
 ;;; Function STRING-NOT-LESSP.
 
+(defun string-not-lessp-simple-simple
+    (string1 string2 start1 end1 start2 end2)
+  (let ((pos (first-mismatch-simple-simple-char-equal
+	      string1 string2 start1 end1 start2 end2)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.  Therefore STRING1 is greater than or
+	       ;; equal to STRING2.
+	       pos
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       nil))
+	  ((= (- pos start1) (- end2 start2))
+	   ;; We did not reach the end of STRING1, but we did reach
+	   ;; the end of STRING2.  Then STRING1 is strictly greater
+	   ;; than STRING2.
+	   pos)
+	  ((char-lessp (schar string1 pos)
+		       (schar string2 (+ start2 (- pos start1))))
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is less than the character in
+	   ;; STRING2.
+	   nil)
+	  (t
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is NOT less than the character in
+	   ;; STRING2.
+	   pos))))
+
+(defun string-not-lessp-simple-general
+    (string1 string2 start1 end1 start2 end2)
+  (let ((pos (first-mismatch-simple-general-char-equal
+	      string1 string2 start1 end1 start2 end2)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.  Therefore STRING1 is greater than or
+	       ;; equal to STRING2.
+	       pos
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       nil))
+	  ((= (- pos start1) (- end2 start2))
+	   ;; We did not reach the end of STRING1, but we did reach
+	   ;; the end of STRING2.  Then STRING1 is strictly greater
+	   ;; than STRING2.
+	   pos)
+	  ((char-lessp (schar string1 pos)
+		       (char string2 (+ start2 (- pos start1))))
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is less than the character in
+	   ;; STRING2.
+	   nil)
+	  (t
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is NOT less than the character in
+	   ;; STRING2.
+	   pos))))
+
+(defun string-not-lessp-general-simple
+    (string1 string2 start1 end1 start2 end2)
+  (let ((pos (first-mismatch-general-simple-char-equal
+	      string1 string2 start1 end1 start2 end2)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.  Therefore STRING1 is greater than or
+	       ;; equal to STRING2.
+	       pos
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       nil))
+	  ((= (- pos start1) (- end2 start2))
+	   ;; We did not reach the end of STRING1, but we did reach
+	   ;; the end of STRING2.  Then STRING1 is strictly greater
+	   ;; than STRING2.
+	   pos)
+	  ((char-lessp (char string1 pos)
+		       (schar string2 (+ start2 (- pos start1))))
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is less than the character in
+	   ;; STRING2.
+	   nil)
+	  (t
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is NOT less than the character in
+	   ;; STRING2.
+	   pos))))
+
+(defun string-not-lessp-general-general
+    (string1 string2 start1 end1 start2 end2)
+  (let ((pos (first-mismatch-general-general-char-equal
+	      string1 string2 start1 end1 start2 end2)))
+    (cond ((= pos end1)
+	   ;; We reached the end of STRING1
+	   (if (= (- end1 start1) (- end2 start2))
+	       ;; We also reached the end of STRING2, so the strings
+	       ;; are equal.  Therefore STRING1 is greater than or equal to
+	       ;; STRING2.
+	       nil
+	       ;; There are more characters left in STRING2, so
+	       ;; STRING1 is a prefix of STRING2.
+	       nil))
+	  ((= (- pos start1) (- end2 start2))
+	   ;; We did not reach the end of STRING1, but we did reach
+	   ;; the end of STRING2.  Then STRING1 is strictly greater
+	   ;; than STRING2.
+	   pos)
+	  ((char-lessp (char string1 pos)
+		       (char string2 (+ start2 (- pos start1))))
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is less than the character in
+	   ;; STRING2.
+	   nil)
+	  (t
+	   ;; We did not reach the end of either string, and the
+	   ;; character in STRING1 is NOT less than the character in
+	   ;; STRING2.
+	   pos))))
+
 (defun string-not-lessp (string1 string2 &key (start1 0) end1 (start2 0) end2)
-  (string-not-greaterp string2 string1
-		       :start1 start2 :end1 end2
-		       :start2 start1 :end2 end1))
+  (let ((string1 (string string1))
+	(string2 (string string2)))
+    (when (null end1) (setf end1 (length string1)))
+    (when (null end2) (setf end2 (length string2)))
+    (check-bounding-indices string1 start1 end1)
+    (check-bounding-indices string2 start2 end2)
+    (if (simple-string-p string1)
+	(if (simple-string-p string2)
+	    (string-not-lessp-simple-simple
+	     string1 string2 start1 end1 start2 end2)
+	    (string-not-lessp-simple-general
+	     string1 string2 start1 end1 start2 end2))
+	(if (simple-string-p string2)
+	    (string-not-lessp-general-simple
+	     string1 string2 start1 end1 start2 end2)
+	    (string-not-lessp-general-general
+	     string1 string2 start1 end1 start2 end2)))))
+
