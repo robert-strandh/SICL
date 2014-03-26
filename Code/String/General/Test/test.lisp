@@ -409,7 +409,7 @@
 	(e2 (if (null end2) (length string2) end2)))
     (assert (eq (apply #'string< string1 string2 args)
 		(list< (coerce string1 'list) (coerce string2 'list)
-			    start1 e1 start2 e2)))))
+		       start1 e1 start2 e2)))))
 
 (defun test-string< (n)
   (loop repeat n
@@ -511,7 +511,9 @@
 	    return i
 	  when (char> c2 c1)
 	    return nil
-	  finally (return (if (< (- end2 start2) (- end1 start1)) i nil)))))
+	  finally (return (if (< (- end2 start2) (- end1 start1))
+			      (+ start1 (- end2 start2))
+			      nil)))))
 
 (defun test-one-string>
     (string1 string2 &rest args &key (start1 0) end1 (start2 0) end2)
@@ -519,7 +521,7 @@
 	(e2 (if (null end2) (length string2) end2)))
     (assert (eq (apply #'string> string1 string2 args)
 		(list> (coerce string1 'list) (coerce string2 'list)
-			    start1 e1 start2 e2)))))
+		       start1 e1 start2 e2)))))
 
 (defun test-string> (n)
   (loop repeat n
@@ -566,7 +568,9 @@
 	    return i
 	  when (char-greaterp c2 c1)
 	    return nil
-	  finally (return (if (< (- end2 start2) (- end1 start1)) i nil)))))
+	  finally (return (if (< (- end2 start2) (- end1 start1))
+			      (+ start1 (- end2 start2))
+			      nil)))))
 
 (defun test-one-string-greaterp
     (string1 string2 &rest args &key (start1 0) end1 (start2 0) end2)
