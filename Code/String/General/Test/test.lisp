@@ -46,7 +46,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Test NSTRING-UPCASE
+;;; Test NSTRING-UPCASE, STRING-UPCASE.
 
 (defun nlist-upcase (list start end)
   (loop for rest on list
@@ -71,9 +71,24 @@
 		  (end (+ start (random (1+ (- length start))))))
 	     (test-one-nstring-upcase string :start start :end end))))
 
+(defun test-one-string-upcase (string &key (start 0) end)
+  (let ((list1 (coerce string 'list))
+	(result (string-upcase string :start start :end end)))
+    (let ((list2 (coerce result 'list)))
+      (let ((real-end (if (null end) (length list2) end)))
+	(assert (equal (nlist-upcase list1 start real-end) list2))))))
+
+(defun test-string-upcase (n)
+  (loop repeat n
+	do (let* ((string (random-string 0 10 0 500))
+		  (length (length string))
+		  (start (random (1+ length)))
+		  (end (+ start (random (1+ (- length start))))))
+	     (test-one-string-upcase string :start start :end end))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Test NSTRING-DOWNCASE
+;;; Test NSTRING-DOWNCASE, STRING-DOWNCASE
 
 (defun nlist-downcase (list start end)
   (loop for rest on list
