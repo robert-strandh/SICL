@@ -130,7 +130,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Test NSTRING-CAPITALIZE
+;;; Test NSTRING-CAPITALIZE, STRING-CAPITALIZE
 
 (defun nlist-capitalize (list start end)
   (loop with prev = #\Space
@@ -158,6 +158,21 @@
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
 	     (test-one-nstring-capitalize string :start start :end end))))
+
+(defun test-one-string-capitalize (string &key (start 0) end)
+  (let ((list1 (coerce string 'list))
+	(result (string-capitalize string :start start :end end)))
+    (let ((list2 (coerce result 'list)))
+      (let ((real-end (if (null end) (length list2) end)))
+	(assert (equal (nlist-capitalize list1 start real-end) list2))))))
+
+(defun test-string-capitalize (n)
+  (loop repeat n
+	do (let* ((string (random-string 0 10 0 500))
+		  (length (length string))
+		  (start (random (1+ length)))
+		  (end (+ start (random (1+ (- length start))))))
+	     (test-one-string-capitalize string :start start :end end))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
