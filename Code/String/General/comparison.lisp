@@ -275,7 +275,7 @@
   (let ((pos (first-mismatch-simple-simple-char=
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is not less than
@@ -297,7 +297,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -306,7 +306,7 @@
   (let ((pos (first-mismatch-simple-general-char=
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is not less than
@@ -328,7 +328,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -337,7 +337,7 @@
   (let ((pos (first-mismatch-general-simple-char=
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is not less than
@@ -359,7 +359,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -368,7 +368,7 @@
   (let ((pos (first-mismatch-general-general-char=
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is not less than
@@ -390,7 +390,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -422,7 +422,7 @@
   (let ((pos (first-mismatch-simple-simple-char-equal
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is not less than
@@ -444,7 +444,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -453,7 +453,7 @@
   (let ((pos (first-mismatch-simple-general-char-equal
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is not less than
@@ -475,7 +475,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -484,7 +484,7 @@
   (let ((pos (first-mismatch-general-simple-char-equal
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is not less than
@@ -506,7 +506,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -515,7 +515,7 @@
   (let ((pos (first-mismatch-general-general-char-equal
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is not less than
@@ -537,7 +537,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -858,7 +858,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -886,7 +886,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -914,7 +914,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -942,7 +942,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -993,7 +993,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -1021,7 +1021,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -1049,7 +1049,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -1077,7 +1077,7 @@
 	   pos)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   nil))))
 
@@ -1109,7 +1109,7 @@
   (let ((pos (first-mismatch-simple-simple-char=
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or
@@ -1131,7 +1131,7 @@
 	   nil)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   pos))))
 
@@ -1140,7 +1140,7 @@
   (let ((pos (first-mismatch-simple-general-char=
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or
@@ -1162,7 +1162,7 @@
 	   nil)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   pos))))
 
@@ -1171,7 +1171,7 @@
   (let ((pos (first-mismatch-general-simple-char=
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or
@@ -1193,7 +1193,7 @@
 	   nil)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   pos))))
 
@@ -1202,7 +1202,7 @@
   (let ((pos (first-mismatch-general-general-char=
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or equal to
@@ -1224,7 +1224,7 @@
 	   nil)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   pos))))
 
@@ -1256,7 +1256,7 @@
   (let ((pos (first-mismatch-simple-simple-char-equal
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or
@@ -1278,7 +1278,7 @@
 	   nil)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   pos))))
 
@@ -1287,7 +1287,7 @@
   (let ((pos (first-mismatch-simple-general-char-equal
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or
@@ -1309,7 +1309,7 @@
 	   nil)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   pos))))
 
@@ -1318,7 +1318,7 @@
   (let ((pos (first-mismatch-general-simple-char-equal
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or
@@ -1340,7 +1340,7 @@
 	   nil)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   pos))))
 
@@ -1349,11 +1349,11 @@
   (let ((pos (first-mismatch-general-general-char-equal
 	      string1 string2 start1 end1 start2 end2)))
     (cond ((= pos end1)
-	   ;; We reached the end of STRING1
+	   ;; We reached the end of STRING1.
 	   (if (= (- end1 start1) (- end2 start2))
 	       ;; We also reached the end of STRING2, so the strings
-	       ;; are equal.  Therefore STRING1 is greater than or equal to
-	       ;; STRING2.
+	       ;; are equal.  Therefore STRING1 is greater than or
+	       ;; equal to STRING2.
 	       nil
 	       ;; There are more characters left in STRING2, so
 	       ;; STRING1 is a prefix of STRING2.
@@ -1371,7 +1371,7 @@
 	   nil)
 	  (t
 	   ;; We did not reach the end of either string, and the
-	   ;; character in STRING1 is NOT less than the character in
+	   ;; character in STRING1 is greater than the character in
 	   ;; STRING2.
 	   pos))))
 
