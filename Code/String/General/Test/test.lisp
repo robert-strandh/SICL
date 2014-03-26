@@ -113,6 +113,21 @@
 		  (end (+ start (random (1+ (- length start))))))
 	     (test-one-nstring-downcase string :start start :end end))))
 
+(defun test-one-string-downcase (string &key (start 0) end)
+  (let ((list1 (coerce string 'list))
+	(result (string-downcase string :start start :end end)))
+    (let ((list2 (coerce result 'list)))
+      (let ((real-end (if (null end) (length list2) end)))
+	(assert (equal (nlist-downcase list1 start real-end) list2))))))
+
+(defun test-string-downcase (n)
+  (loop repeat n
+	do (let* ((string (random-string 0 10 0 500))
+		  (length (length string))
+		  (start (random (1+ length)))
+		  (end (+ start (random (1+ (- length start))))))
+	     (test-one-string-downcase string :start start :end end))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test NSTRING-CAPITALIZE
