@@ -92,7 +92,20 @@
 		  (length (length string))
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
-	     (test-one-string-upcase string :start start :end end))))
+	     (when (zerop (random 2))
+	       (setf end nil))
+	     (test-one-string-upcase
+	      string
+	      :start start :end end)
+	     (test-one-string-upcase
+	      (string-to-non-simple-string string)
+	      :start start :end end)
+	     (let ((string (random-string 0 10 94 110)))
+	       (multiple-value-bind (start end)
+		   (random-bounding-indices string)
+		 (test-one-string-upcase
+		  (string-to-simple-base-string string)
+		  :start start :end end))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
