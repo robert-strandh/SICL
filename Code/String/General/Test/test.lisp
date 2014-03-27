@@ -416,6 +416,10 @@
 		  (string-to-non-simple-string string2)
 		  :start1 start1 :start2 start2 :end1 end1 :end2 end2)
 		 (test-one-string=
+		  (string-to-non-simple-string string1)
+		  (string-to-non-simple-string string2)
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2)
+		 (test-one-string=
 		  (string-capitalize string1)
 		  string2
 		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
@@ -466,6 +470,10 @@
 		  :start1 start1 :start2 start2 :end1 end1 :end2 end2)
 		 (test-one-string-equal
 		  string1
+		  (string-to-non-simple-string string2)
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2)
+		 (test-one-string-equal
+		  (string-to-non-simple-string string1)
 		  (string-to-non-simple-string string2)
 		  :start1 start1 :start2 start2 :end1 end1 :end2 end2)
 		 (test-one-string-equal
