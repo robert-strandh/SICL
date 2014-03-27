@@ -1207,7 +1207,7 @@
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or equal to
 	       ;; STRING2.
-	       nil
+	       pos
 	       ;; There are more characters left in STRING2, so
 	       ;; STRING1 is a prefix of STRING2.
 	       nil))
@@ -1354,7 +1354,7 @@
 	       ;; We also reached the end of STRING2, so the strings
 	       ;; are equal.  Therefore STRING1 is greater than or
 	       ;; equal to STRING2.
-	       nil
+	       pos
 	       ;; There are more characters left in STRING2, so
 	       ;; STRING1 is a prefix of STRING2.
 	       nil))
