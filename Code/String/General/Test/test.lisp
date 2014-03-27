@@ -271,7 +271,36 @@
 	      string)
 	     (test-one-string-left-trim
 	      (string-to-non-simple-vector bag)
-	      (string-to-non-simple-string string)))))
+	      (string-to-non-simple-string string))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-left-trim '(#\a . #\b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition)))
+	     (let ((bag (list #\a #\b)))
+	       (setf (cdr (last bag)) bag)
+	       (multiple-value-bind (should-be-nil condition)
+		   (ignore-errors
+		    (string-left-trim bag string))
+		 (assert (null should-be-nil))
+		 (assert (typep condition 'condition))))
+	     (let ((bag (list #\a 234)))
+	       (setf (cdr (last bag)) bag)
+	       (multiple-value-bind (should-be-nil condition)
+		   (ignore-errors
+		    (string-left-trim bag string))
+		 (assert (null should-be-nil))
+		 (assert (typep condition 'condition))))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-left-trim '(#\a b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition)))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-left-trim #(#\a b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -319,7 +348,36 @@
 	      string)
 	     (test-one-string-right-trim
 	      (string-to-non-simple-vector bag)
-	      (string-to-non-simple-string string)))))
+	      (string-to-non-simple-string string))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-right-trim '(#\a . #\b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition)))
+	     (let ((bag (list #\a #\b)))
+	       (setf (cdr (last bag)) bag)
+	       (multiple-value-bind (should-be-nil condition)
+		   (ignore-errors
+		    (string-right-trim bag string))
+		 (assert (null should-be-nil))
+		 (assert (typep condition 'condition))))
+	     (let ((bag (list #\a 234)))
+	       (setf (cdr (last bag)) bag)
+	       (multiple-value-bind (should-be-nil condition)
+		   (ignore-errors
+		    (string-right-trim bag string))
+		 (assert (null should-be-nil))
+		 (assert (typep condition 'condition))))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-right-trim '(#\a b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition)))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-right-trim #(#\a b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -367,7 +425,36 @@
 	      string)
 	     (test-one-string-trim
 	      (string-to-non-simple-vector bag)
-	      (string-to-non-simple-string string)))))
+	      (string-to-non-simple-string string))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-trim '(#\a . #\b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition)))
+	     (let ((bag (list #\a #\b)))
+	       (setf (cdr (last bag)) bag)
+	       (multiple-value-bind (should-be-nil condition)
+		   (ignore-errors
+		    (string-trim bag string))
+		 (assert (null should-be-nil))
+		 (assert (typep condition 'condition))))
+	     (let ((bag (list #\a 234)))
+	       (setf (cdr (last bag)) bag)
+	       (multiple-value-bind (should-be-nil condition)
+		   (ignore-errors
+		    (string-trim bag string))
+		 (assert (null should-be-nil))
+		 (assert (typep condition 'condition))))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-trim '(#\a b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition)))
+	     (multiple-value-bind (should-be-nil condition)
+		 (ignore-errors
+		  (string-trim #(#\a b) string))
+	       (assert (null should-be-nil))
+	       (assert (typep condition 'condition))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
