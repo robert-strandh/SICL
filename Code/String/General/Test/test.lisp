@@ -287,11 +287,24 @@
 
 (defun test-nstring-capitalize (n)
   (loop repeat n
-	do (let* ((string (random-string 0 10 0 500))
+	do (let* ((string (random-string 0 30 0 110))
 		  (length (length string))
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
-	     (test-one-nstring-capitalize string :start start :end end))))
+	     (when (zerop (random 2))
+	       (setf end nil))
+	     (test-one-nstring-capitalize
+	      string
+	      :start start :end end)
+	     (test-one-nstring-capitalize
+	      (string-to-non-simple-string string)
+	      :start start :end end)
+	     (let ((string (random-string 0 10 94 110)))
+	       (multiple-value-bind (start end)
+		   (random-bounding-indices string)
+		 (test-one-nstring-capitalize
+		  (string-to-simple-base-string string)
+		  :start start :end end))))))
 
 (defun test-one-string-capitalize (string &key (start 0) end)
   (let ((list1 (coerce string 'list))
