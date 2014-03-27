@@ -106,7 +106,17 @@
     (let ((list2 (coerce result 'list)))
       (assert (eq result string))
       (let ((real-end (if (null end) (length list2) end)))
-	(assert (equal (nlist-upcase list1 start real-end) list2))))))
+	(assert (equal (nlist-upcase list1 start real-end) list2))))
+    (multiple-value-bind (start end)
+	(random-invalid-bounding-indices string)
+      (multiple-value-bind (result condition)
+	  (ignore-errors (nstring-upcase
+			  string :start start :end end))
+	(assert (and (null result)
+		     (or (typep condition
+				'invalid-bounding-indices)
+			 (typep condition
+				'type-error))))))))
 
 (defun test-nstring-upcase (n)
   (loop repeat n
@@ -134,7 +144,17 @@
 	(result (string-upcase string :start start :end end)))
     (let ((list2 (coerce result 'list)))
       (let ((real-end (if (null end) (length list2) end)))
-	(assert (equal (nlist-upcase list1 start real-end) list2))))))
+	(assert (equal (nlist-upcase list1 start real-end) list2))))
+    (multiple-value-bind (start end)
+	(random-invalid-bounding-indices string)
+      (multiple-value-bind (result condition)
+	  (ignore-errors (string-upcase
+			  string :start start :end end))
+	(assert (and (null result)
+		     (or (typep condition
+				'invalid-bounding-indices)
+			 (typep condition
+				'type-error))))))))
 
 (defun test-string-upcase (n)
   (loop repeat n
@@ -174,7 +194,17 @@
     (let ((list2 (coerce result 'list)))
       (assert (eq result string))
       (let ((real-end (if (null end) (length list2) end)))
-	(assert (equal (nlist-downcase list1 start real-end) list2))))))
+	(assert (equal (nlist-downcase list1 start real-end) list2))))
+    (multiple-value-bind (start end)
+	(random-invalid-bounding-indices string)
+      (multiple-value-bind (result condition)
+	  (ignore-errors (nstring-downcase
+			  string :start start :end end))
+	(assert (and (null result)
+		     (or (typep condition
+				'invalid-bounding-indices)
+			 (typep condition
+				'type-error))))))))
 
 (defun test-nstring-downcase (n)
   (loop repeat n
@@ -202,7 +232,17 @@
 	(result (string-downcase string :start start :end end)))
     (let ((list2 (coerce result 'list)))
       (let ((real-end (if (null end) (length list2) end)))
-	(assert (equal (nlist-downcase list1 start real-end) list2))))))
+	(assert (equal (nlist-downcase list1 start real-end) list2))))
+    (multiple-value-bind (start end)
+	(random-invalid-bounding-indices string)
+      (multiple-value-bind (result condition)
+	  (ignore-errors (string-downcase
+			  string :start start :end end))
+	(assert (and (null result)
+		     (or (typep condition
+				'invalid-bounding-indices)
+			 (typep condition
+				'type-error))))))))
 
 (defun test-string-downcase (n)
   (loop repeat n
@@ -233,7 +273,17 @@
     (let ((list2 (coerce result 'list)))
       (assert (eq result string))
       (let ((real-end (if (null end) (length list2) end)))
-	(assert (equal (nlist-capitalize list1 start real-end) list2))))))
+	(assert (equal (nlist-capitalize list1 start real-end) list2))))
+    (multiple-value-bind (start end)
+	(random-invalid-bounding-indices string)
+      (multiple-value-bind (result condition)
+	  (ignore-errors (nstring-capitalize
+			  string :start start :end end))
+	(assert (and (null result)
+		     (or (typep condition
+				'invalid-bounding-indices)
+			 (typep condition
+				'type-error))))))))
 
 (defun test-nstring-capitalize (n)
   (loop repeat n
@@ -248,7 +298,17 @@
 	(result (string-capitalize string :start start :end end)))
     (let ((list2 (coerce result 'list)))
       (let ((real-end (if (null end) (length list2) end)))
-	(assert (equal (nlist-capitalize list1 start real-end) list2))))))
+	(assert (equal (nlist-capitalize list1 start real-end) list2))))
+    (multiple-value-bind (start end)
+	(random-invalid-bounding-indices string)
+      (multiple-value-bind (result condition)
+	  (ignore-errors (string-capitalize
+			  string :start start :end end))
+	(assert (and (null result)
+		     (or (typep condition
+				'invalid-bounding-indices)
+			 (typep condition
+				'type-error))))))))
 
 (defun test-string-capitalize (n)
   (loop repeat n
