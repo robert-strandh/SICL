@@ -284,7 +284,7 @@
 		    (string-left-trim bag string))
 		 (assert (null should-be-nil))
 		 (assert (typep condition 'condition))))
-	     (let ((bag (list #\a 234)))
+	     (let ((bag (list #\a #\b 234 #\c #\d)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
@@ -361,7 +361,7 @@
 		    (string-right-trim bag string))
 		 (assert (null should-be-nil))
 		 (assert (typep condition 'condition))))
-	     (let ((bag (list #\a 234)))
+	     (let ((bag (list #\a #\b 234 #\c #\d)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
@@ -438,7 +438,7 @@
 		    (string-trim bag string))
 		 (assert (null should-be-nil))
 		 (assert (typep condition 'condition))))
-	     (let ((bag (list #\a 234)))
+	     (let ((bag (list #\a #\b 234 #\c #\d)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
@@ -1172,9 +1172,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test STRING.
+
+(defun test-string (n)
+  (loop repeat n
+	do (let* ((char (code-char (random 500)))
+		  (string (string char)))
+	     (assert (eql (char string 0) char)))
+	   (let* ((string (random-string 0 10 0 500))
+		  (symbol (make-symbol string)))
+	     (assert (equal string (string symbol))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global test.
 
 (defun test (n)
+  (test-string n)
   (test-nstring-upcase n)
   (test-string-upcase n)
   (test-nstring-downcase n)
