@@ -50,6 +50,8 @@
   (let* ((length (length sequence))
 	 (start (random (1+ length)))
 	 (end (+ start (random (1+ (- length start))))))
+    (when (and (= end length) (zerop (random 2)))
+      (setf end nil))
     (values start end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
