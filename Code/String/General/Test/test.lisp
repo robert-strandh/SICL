@@ -553,6 +553,56 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test a comparison function for invalid indices
+
+(defun test-invalid-comparison (function)
+  (let ((string1 (random-string 0 10 0 500))
+	(string2 (random-string 0 10 0 500)))
+    (multiple-value-bind (start1 end1)
+	(random-bounding-indices string1)
+      (multiple-value-bind (start2 end2)
+	  (random-invalid-bounding-indices string2)
+	(multiple-value-bind (result condition)
+	    (ignore-errors (funcall function
+				    string1 string2
+				    :start1 start1 :end1 end1
+				    :start2 start2 :end2 end2))
+	  (assert (and (null result)
+		       (or (typep condition
+				  'invalid-bounding-indices)
+			   (typep condition
+				  'type-error)))))))
+    (multiple-value-bind (start1 end1)
+	(random-invalid-bounding-indices string1)
+      (multiple-value-bind (start2 end2)
+	  (random-bounding-indices string2)
+	(multiple-value-bind (result condition)
+	    (ignore-errors (funcall function
+				    string1 string2
+				    :start1 start1 :end1 end1
+				    :start2 start2 :end2 end2))
+	  (assert (and (null result)
+		       (or (typep condition
+				  'invalid-bounding-indices)
+			   (typep condition
+				  'type-error)))))))
+    (multiple-value-bind (start1 end1)
+	(random-invalid-bounding-indices string1)
+      (multiple-value-bind (start2 end2)
+	  (random-invalid-bounding-indices string2)
+	(multiple-value-bind (result condition)
+	    (ignore-errors (funcall function
+				    string1 string2
+				    :start1 start1 :end1 end1
+				    :start2 start2 :end2 end2))
+	  (assert (and (null result)
+		       (or (typep condition
+				  'invalid-bounding-indices)
+			   (typep condition
+				  'type-error)))))))))
+      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test STRING=.
 
 (defun list= (list1 list2 start1 end1 start2 end2)
@@ -606,7 +656,8 @@
 		 (test-one-string=
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string=)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
