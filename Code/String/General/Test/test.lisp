@@ -714,7 +714,8 @@
 		 (test-one-string-equal
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string-equal)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -773,7 +774,8 @@
 		 (test-one-string<
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string<)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -832,7 +834,8 @@
 		 (test-one-string-lessp
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string-lessp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -893,7 +896,8 @@
 		 (test-one-string>
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string>)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -954,7 +958,8 @@
 		 (test-one-string-greaterp
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string-greaterp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1013,7 +1018,8 @@
 		 (test-one-string<=
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string<=)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1072,7 +1078,8 @@
 		 (test-one-string-not-greaterp
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string-not-greaterp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1133,7 +1140,8 @@
 		 (test-one-string>=
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string>=)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1194,7 +1202,8 @@
 		 (test-one-string-not-lessp
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string-not-lessp)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1254,7 +1263,8 @@
 		 (test-one-string/=
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string/=)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1314,7 +1324,8 @@
 		 (test-one-string-not-equal
 		  (string-capitalize string1)
 		  string2
-		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))))
+		  :start1 start1 :start2 start2 :end1 end1 :end2 end2))))
+	   (test-invalid-comparison #'string-not-equal)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
