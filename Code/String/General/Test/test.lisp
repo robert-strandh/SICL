@@ -54,6 +54,41 @@
       (setf end nil))
     (values start end)))
 
+;;; Return two random invalid bounding indices for SEQUENCE.
+(defun random-invalid-bounding-indices (sequence)
+  (let ((length (length sequence)))
+    (ecase (random 8)
+      (0
+       ;; start is not a number, end a valid integer
+       (values nil (random (1+ length))))
+      (1
+       ;; start negative, end a valid integer.
+       (values (- (1+ (random 5))) (random (1+ length))))
+      (2
+       ;; start is greater than length, end is length
+       (values (+ length 1 (random 3)) length))
+      (3
+       ;; start is greater than length, end is nil
+       (values (+ length 1 (random 3)) nil))
+      (4
+       ;; start is valid, end is not a number or nil
+       (values (random (1+ length)) 'a))
+      (5
+       ;; start is valid, end is negative
+       (values (random (1+ length)) (- (1+ (random 5)))))
+      (6
+       ;; start is valid, end is greater than length
+       (values (random (1+ length)) (+ length 1 (random 3))))
+      (7
+       ;; If the length of the string is at least 1, then
+       ;; return a valid start and a valid end, but end < start.
+       ;; Otherwise, return -1 and 0.
+       (if (plusp length)
+	   (let* ((start (1+ (random length)))
+		  (end (random start)))
+	     (values start end))
+	   (values -1 0))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test NSTRING-UPCASE, STRING-UPCASE.
