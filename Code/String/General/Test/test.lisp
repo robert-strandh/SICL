@@ -276,31 +276,31 @@
 		 (ignore-errors
 		  (string-left-trim '(#\a . #\b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition)))
+	       (assert (typep condition 'bag-is-dotted-list)))
 	     (let ((bag (list #\a #\b)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
 		    (string-left-trim bag string))
 		 (assert (null should-be-nil))
-		 (assert (typep condition 'condition))))
+		 (assert (typep condition 'bag-is-circular-list))))
 	     (let ((bag (list #\a #\b 234 #\c #\d)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
 		    (string-left-trim bag string))
 		 (assert (null should-be-nil))
-		 (assert (typep condition 'condition))))
+		 (assert (typep condition 'bag-contains-non-character))))
 	     (multiple-value-bind (should-be-nil condition)
 		 (ignore-errors
 		  (string-left-trim '(#\a b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition)))
+	       (assert (typep condition 'bag-contains-non-character)))
 	     (multiple-value-bind (should-be-nil condition)
 		 (ignore-errors
 		  (string-left-trim #(#\a b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition))))))
+	       (assert (typep condition 'bag-contains-non-character))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -353,31 +353,31 @@
 		 (ignore-errors
 		  (string-right-trim '(#\a . #\b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition)))
+	       (assert (typep condition 'bag-is-dotted-list)))
 	     (let ((bag (list #\a #\b)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
 		    (string-right-trim bag string))
 		 (assert (null should-be-nil))
-		 (assert (typep condition 'condition))))
+		 (assert (typep condition 'bag-is-circular-list))))
 	     (let ((bag (list #\a #\b 234 #\c #\d)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
 		    (string-right-trim bag string))
 		 (assert (null should-be-nil))
-		 (assert (typep condition 'condition))))
+		 (assert (typep condition 'bag-contains-non-character))))
 	     (multiple-value-bind (should-be-nil condition)
 		 (ignore-errors
 		  (string-right-trim '(#\a b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition)))
+	       (assert (typep condition 'bag-contains-non-character)))
 	     (multiple-value-bind (should-be-nil condition)
 		 (ignore-errors
 		  (string-right-trim #(#\a b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition))))))
+	       (assert (typep condition 'bag-contains-non-character))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -430,31 +430,31 @@
 		 (ignore-errors
 		  (string-trim '(#\a . #\b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition)))
+	       (assert (typep condition 'bag-is-dotted-list)))
 	     (let ((bag (list #\a #\b)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
 		    (string-trim bag string))
 		 (assert (null should-be-nil))
-		 (assert (typep condition 'condition))))
+		 (assert (typep condition 'bag-is-circular-list))))
 	     (let ((bag (list #\a #\b 234 #\c #\d)))
 	       (setf (cdr (last bag)) bag)
 	       (multiple-value-bind (should-be-nil condition)
 		   (ignore-errors
 		    (string-trim bag string))
 		 (assert (null should-be-nil))
-		 (assert (typep condition 'condition))))
+		 (assert (typep condition 'bag-contains-non-character))))
 	     (multiple-value-bind (should-be-nil condition)
 		 (ignore-errors
 		  (string-trim '(#\a b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition)))
+	       (assert (typep condition 'bag-contains-non-character)))
 	     (multiple-value-bind (should-be-nil condition)
 		 (ignore-errors
 		  (string-trim #(#\a b) string))
 	       (assert (null should-be-nil))
-	       (assert (typep condition 'condition))))))
+	       (assert (typep condition 'bag-contains-non-character))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
