@@ -17,6 +17,14 @@
 	  do (setf (char result i) char))
     result))
 
+;;; Convert a string to a simple base string.  The characters of the
+;;; string must be base characters.
+(defun string-to-simple-base-string (string)
+  (let ((result (make-string (length string) :element-type 'base-char)))
+    (loop for i from 0 below (length string)
+	  do (setf (char result i) (char string i)))
+    result))
+
 ;;; Convert a string to a non-simple string (provided that strings
 ;;; with fill pointers are not simple on the host platform).
 (defun string-to-non-simple-string (string)
