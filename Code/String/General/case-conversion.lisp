@@ -120,13 +120,56 @@
 ;;;
 ;;; Functions NSTRING-CAPITALIZE and STRING-CAPITALIZE.
 
-(defun nstring-capitalize (string &key (start 0) end)
-  (declare (type string string))
-  (let ((length (length string)))
-    (when (null end) (setf end length))
-    (check-bounding-indices string start end)
+(defun nstring-capitalize-simple-base (string start end)
+  (assert (typep string 'simple-base-string))
+  (assert (>= start 0))
+  (assert (<= end (length string)))
+  (assert (<= start end))
+  (locally (declare (type simple-base-string string)
+		    (type fixnum start end)
+		    (optimize (speed 3) (safety 0) (debug 0)))
     (loop with state = nil
-	  for i from start below end
+	  for i of-type fixnum from start below end
+	  for char = (schar string i)
+	  do (if state
+		 (if (alphanumericp char)
+		     (setf (schar string i) (char-downcase char))
+		     (setf state nil))
+		 (when (alphanumericp char)
+		   (setf (schar string i) (char-upcase char))
+		   (setf state t)))))
+  string)
+
+(defun nstring-capitalize-simple (string start end)
+  (assert (simple-string-p string))
+  (assert (>= start 0))
+  (assert (<= end (length string)))
+  (assert (<= start end))
+  (locally (declare (type simple-string string)
+		    (type fixnum start end)
+		    (optimize (speed 3) (safety 0) (debug 0)))
+    (loop with state = nil
+	  for i of-type fixnum from start below end
+	  for char = (schar string i)
+	  do (if state
+		 (if (alphanumericp char)
+		     (setf (schar string i) (char-downcase char))
+		     (setf state nil))
+		 (when (alphanumericp char)
+		   (setf (schar string i) (char-upcase char))
+		   (setf state t)))))
+  string)
+
+(defun nstring-capitalize-general (string start end)
+  (assert (stringp string))
+  (assert (>= start 0))
+  (assert (<= end (length string)))
+  (assert (<= start end))
+  (locally (declare (type string string)
+		    (type fixnum start end)
+		    (optimize (speed 3) (safety 0) (debug 0)))
+    (loop with state = nil
+	  for i of-type fixnum from start below end
 	  for char = (char string i)
 	  do (if state
 		 (if (alphanumericp char)
@@ -135,6 +178,19 @@
 		 (when (alphanumericp char)
 		   (setf (char string i) (char-upcase char))
 		   (setf state t)))))
+  string)
+
+(defun nstring-capitalize (string &key (start 0) end)
+  (declare (type string string))
+  (let ((length (length string)))
+    (when (null end) (setf end length))
+    (check-bounding-indices string start end)
+    (cond ((typep string 'simple-base-string)
+	   (nstring-capitalize-simple-base string start end))
+	  ((simple-string-p string)
+	   (nstring-capitalize-simple string start end))
+	  (t
+	   (nstring-capitalize-general string start end))))
   string)
 
 (defun string-capitalize (string-designator &key (start 0) end)
