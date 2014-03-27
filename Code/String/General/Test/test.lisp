@@ -77,7 +77,20 @@
 		  (length (length string))
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
-	     (test-one-nstring-upcase string :start start :end end))))
+	     (when (zerop (random 2))
+	       (setf end nil))
+	     (test-one-nstring-upcase
+	      string
+	      :start start :end end)
+	     (test-one-nstring-upcase
+	      (string-to-non-simple-string string)
+	      :start start :end end)
+	     (let ((string (random-string 0 10 94 110)))
+	       (multiple-value-bind (start end)
+		   (random-bounding-indices string)
+		 (test-one-nstring-upcase
+		  (string-to-simple-base-string string)
+		  :start start :end end))))))
 
 (defun test-one-string-upcase (string &key (start 0) end)
   (let ((list1 (coerce string 'list))
@@ -132,7 +145,20 @@
 		  (length (length string))
 		  (start (random (1+ length)))
 		  (end (+ start (random (1+ (- length start))))))
-	     (test-one-nstring-downcase string :start start :end end))))
+	     (when (zerop (random 2))
+	       (setf end nil))
+	     (test-one-nstring-downcase
+	      string
+	      :start start :end end)
+	     (test-one-nstring-downcase
+	      (string-to-non-simple-string string)
+	      :start start :end end)
+	     (let ((string (random-string 0 10 94 110)))
+	       (multiple-value-bind (start end)
+		   (random-bounding-indices string)
+		 (test-one-nstring-downcase
+		  (string-to-simple-base-string string)
+		  :start start :end end))))))
 
 (defun test-one-string-downcase (string &key (start 0) end)
   (let ((list1 (coerce string 'list))
