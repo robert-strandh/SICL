@@ -21,4 +21,9 @@
 
 (defpackage #:sicl-loop
   (:use #:common-lisp
-	#:sicl-additional-conditions))
+	#:sicl-additional-conditions)
+  (:shadow
+   ;; There is a Common Lisp function called STEP, so we need to
+   ;; shadow this name.
+   #:step
+   ))
