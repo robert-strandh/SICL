@@ -20,6 +20,7 @@
    (:file "conditions")
    (:file "condition-reporters-en")
    (:file "utilities")
+   (:file "combinatory-parsing")
    (:file "parse")
    (:file "analysis")
    (:file "loop")))
