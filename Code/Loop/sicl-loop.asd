@@ -20,4 +20,5 @@
    (:file "conditions")
    (:file "condition-reporters-en")
    (:file "utilities")
+   (:file "parse")
    (:file "loop")))
