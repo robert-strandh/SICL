@@ -12,6 +12,10 @@
 
 (cl:in-package #:sicl-loop)
 
+;;;; The terminology used here is that of the BNF grammar in the
+;;;; dictionary description of the loop macro in the HyperSpec.  It is
+;;;; not the same as the terminology used in the section 6.1.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Common classes
@@ -74,14 +78,54 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause NAME
+;;; Clause NAME-CLAUSE.
+;;;
+;;; A NAME-CLAUSE is a clause that gives a name to the loop.  It
+;;; translates to a block name, so that RETURN-FROM can be used to
+;;; exit the loop.  By default, the name of the loop is nil.
+;;;
+;;; The name-clause is optional, and if present, must be the first one
+;;; in the body.  The syntax is:
+;;;
+;;;    NAMED name
+;;;
+;;; where name is a symbol.
 
 (defclass name-clause (clause)
   ((%name :initarg :name :reader name)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause WITH
+;;; Clause WITH-CLAUSE.
+;;;
+;;; A WITH-CLAUSE allows the creation of local variables.  It is
+;;; executed once.
+;;;
+;;; The syntax of a with-clause is:
+;;;
+;;;    with-clause ::= WITH var1 [type-spec] [= form1] 
+;;;                    {AND var2 [type-spec] [= form2]}*
+;;;
+;;; where var1 and var2 are destructuring variable specifiers
+;;; (d-var-spec) allowing multiple local variables to be created in a
+;;; single with-clause by destructuring the value of the corresponding
+;;; form.
+;;;
+;;; When there are several consecutive with-claues, the execution is
+;;; done sequentially, so that variables created in one with-clause
+;;; can be used in the forms of subsequent with-clauses.  If parallel
+;;; creation of variables is wanted, then the with-clause can be
+;;; followed by one or more and-clauses. 
+;;;
+;;; The (destructuring) type specifier is optional.  If no type
+;;; specifier is given, it is as if t was given. 
+;;;
+;;; The initialization form is optional.  If there is a corresponding
+;;; type specifier for a variable, but no initialization form, then
+;;; the variable is initialized to a value that is appropriate for the
+;;; type.  In particular, for the type t the value is nil, for the
+;;; type number, the value is 0, and for the type float, the value is
+;;; 0.0.  
 
 (defclass with-clause (clause subclauses-mixin variable-clause-mixin) ())
 
@@ -94,11 +138,75 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR/AS
+;;; Clause INITIAL.
+;;;
+;;; An INITIAL clause does not exist as a separate grammar item in
+;;; the HyperSpec, but we define it here anyway.  The syntax is:
+;;;
+;;;    initial ::= initially compound-form+
 
-(defclass for/as-clause (clause subclause-mixin variable-clause-mixin) ())
 
-(defclass for/as-subclause (var-and-type-spec-mixin)
+(defclass initially-clause
+    (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Clause FINAL.
+;;;
+;;; A FINAL clause does not exist as a separate grammar item in
+;;; the HyperSpec, but we define it here anyway.  The syntax is:
+;;;
+;;;    final ::= finally compound-form+
+
+(defclass finally-clause
+    (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
+  ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Clause FOR-AS-CLAUSE.
+;;;
+;;; The HyperSpec says that a FOR-AS-CLAUSE has the following syntax:
+;;;
+;;;    for-as-clause ::= {for | as} for-as-subclause {and for-as-subclause}* 
+;;;    for-as-subclause::= for-as-arithmetic | for-as-in-list | 
+;;;                        for-as-on-list | for-as-equals-then | 
+;;;                        for-as-across | for-as-hash | for-as-package 
+;;;
+;;; For the purpose of specialization, we need different names for the
+;;; main clauses as well as for the subclauses, so we alter this
+;;; grammar a bit and define it like this instead:
+;;;
+;;;    for-as-clause::= 
+;;;      for-as-arithmetic-clause | for-as-in-list-clause | 
+;;;      for-as-on-list-clause | for-as-equals-then-clause | 
+;;;      for-as-across-clause | for-as-hash-clause | for-as-package-clause
+;;;    
+;;;    for-as-arithmetic-clause ::=
+;;;      {for | as} for-as-arithmetic {and for-as-subclause}* 
+;;;    
+;;;    for-as-in-list-clause ::=
+;;;      {for | as} for-as-in-list {and for-as-subclause}* 
+;;;    
+;;;    for-as-on-list-clause ::=
+;;;      {for | as} for-as-on-list {and for-as-subclause}* 
+;;;    
+;;;    for-as-equals-then-clause ::=
+;;;      {for | as} for-as-equals-then {and for-as-subclause}* 
+;;;    
+;;;    for-as-across-clause ::=
+;;;      {for | as} for-as-across {and for-as-subclause}* 
+;;;
+;;;    for-as-hash-clause ::=
+;;;      {for | as} for-as-hash {and for-as-subclause}* 
+;;;
+;;;    for-as-package-clause ::=
+;;;      {for | as} for-as-package {and for-as-subclause}* 
+
+(defclass for-as-clause (clause subclause-mixin variable-clause-mixin) ())
+
+(defclass for-as-subclause (var-and-type-spec-mixin)
   (;; The value of this slot is a list of bindings of the form
    ;; (<variable> <form>) where <variable> is a either the loop
    ;; variable associated with this subclause, or a symbol created by
@@ -112,10 +220,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR/AS arithmetic.
+;;; Clause FOR-AS-ARITHMETIC.
 
-(defclass for/as-arithmetic-subclause (for/as-subclause)
-  ())
+(defclass for-as-arithmetic-clause (for-as-clause) ())
+
+(defclass for-as-arithmetic (for-as-subclause) ())
 
 ;;; Every preposition has a form associated with it. 
 (defclass preposition ()
@@ -144,70 +253,66 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR/AS IN/ON
+;;; Clauses FOR-AS-IN-LIST FOR-AS-ON-LIST
+;;;
+;;; The clause FOR-AS-IN-ON-LIST does not exist in the HyperSpec.  We
+;;; use it as a common superclass.
 
-(defclass for/as-in-on-list-subclause (for/as-subclause)
-  ())
+(defclass for-as-in-on-list-clause (for-as-clause) ())
 
-(defclass for/as-in-list-subclause (for/as-in-on-list-subclause) ())
+(defclass for-as-in-on-list (for-as-subclause) ())
 
-(defclass for/as-on-list-subclause (for/as-in-on-list-subclause) ())
+(defclass for-as-in-list (for-as-in-on-list) ())
+
+(defclass for-as-on-list (for-as-in-on-list) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR/AS ACROSS
+;;; Clauses FOR-AS ACROSS
 
-(defclass for/as-across-subclause (for/as-subclause) 
+(defclass for-as-across-clause (for-as-clause) ())
+
+(defclass for-as-across (for-as-subclause) 
   ((%array-form :initarg :array-form :reader array-form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause FOR/AS = THEN
+;;; Clause FOR-AS = THEN
 
-(defclass for/as-equals-then-subclause (for/as-subclause)
+(defclass for-as-equals-then-clause (for-as-clause) ())
+
+(defclass for-as-equals-then (for-as-subclause)
   ((%form1 :initarg :form1 :reader form1)
    (%form2 :initarg :form2 :reader form2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR/AS hash
+;;; Clauses FOR-AS hash
 
-(defclass for/as-hash-subclause (for/as-subclause)
+(defclass for-as-hash-clause (for-as-clause) ())
+
+(defclass for-as-hash (for-as-subclause)
   ((%hash-table-form :initarg :hash-table-form :reader hash-table-form)
    (%other-var :initarg :other-var :reader other-var)))
 
-(defclass for/as-hash-key-subclause (for/as-hash-subclause) ())
+(defclass for-as-hash-key (for-as-hash) ())
 
-(defclass for/as-hash-value-subclause (for/as-hash-subclause) ())
+(defclass for-as-hash-value (for-as-hash) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR/AS package
+;;; Clauses FOR-AS package
 
-(defclass for/as-package-subclause (for/as-subclause)
+(defclass for-as-package-clause (for-as-clause) ())
+
+(defclass for-as-package (for-as-subclause)
   ((%package-form :initarg :package-form :reader package-form)))
 
-(defclass for/as-package-symbols-subcause (for/as-package-subclause) ())
+(defclass for-as-package-symbols (for-as-package) ())
 
-(defclass for/as-package-present-symbols-subcause (for/as-package-subclause) ())
+(defclass for-as-package-present-symbols (for-as-package) ())
 
-(defclass for/as-package-external-symbols-subcause (for/as-package-subclause) ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clause INITIALLY
-
-(defclass initially-clause
-    (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clause FINALLY
-
-(defclass finally-clause
-    (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
-  ())
+(defclass for-as-package-external-symbols (for-as-package) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
