@@ -48,20 +48,6 @@
 ;;; dictionary description of the loop macro in the HyperSpec.  It is
 ;;; not the same as the terminology used in the section 6.1. 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Utilities
-
-;;; Loop keywords are symbols, but they are not recognized by symbol
-;;; identity as is usually the case, but instead by their names.  The
-;;; HyperSpec doesn't say what function to use for comparing the
-;;; names.  We assume string= here, meaning that the names are case 
-;;; sensitive. 
-
-(defun symbol-equal (symbol1 symbol2)
-  (and (symbolp symbol1)
-       (string= symbol1 symbol2)))
-
 ;;; A parser is a function that takes a list of arbitrary Lisp objects
 ;;; and returns two values, the result of the parse and the remainder
 ;;; of the list that needs to be parsed.  The second return value is
@@ -640,23 +626,23 @@
 		      (error "not a valid d-var-spec ~s" tree)))))
       (values (traverse d-var-spec) dictionary))))
 
-;;; This function is called when we have already
-;;; seen `for/as var in/on'.
-(defun parse-for/as-in/on (body class-name)
-  (multiple-value-bind (form rest1)
-      (parse-form body)
-    (if (or (null rest1)
-	    (not (symbol-equal (car rest1) '#:by)))
-	(values (make-instance class-name
-		  :list-form form
-		  :step-fun-form #'cdr)
-		rest1)
-	(multiple-value-bind (step-fun-form rest2)
-	    (parse-form (cdr rest1))
-	  (values (make-instance class-name
-		    :list-form form
-		    :step-fun-form step-fun-form)
-		  rest2)))))
+;; ;;; This function is called when we have already
+;; ;;; seen `for/as var in/on'.
+;; (defun parse-for/as-in/on (body class-name)
+;;   (multiple-value-bind (form rest1)
+;;       (parse-form body)
+;;     (if (or (null rest1)
+;; 	    (not (symbol-equal (car rest1) '#:by)))
+;; 	(values (make-instance class-name
+;; 		  :list-form form
+;; 		  :step-fun-form #'cdr)
+;; 		rest1)
+;; 	(multiple-value-bind (step-fun-form rest2)
+;; 	    (parse-form (cdr rest1))
+;; 	  (values (make-instance class-name
+;; 		    :list-form form
+;; 		    :step-fun-form step-fun-form)
+;; 		  rest2)))))
 
 ;;; Parse a FOR/AS IN/ON subclause.  The list we are given starts
 ;;; with the variable and the optional type-spec.
@@ -672,13 +658,13 @@
 	  (t
 	   (values nil body)))))
 	  
-(defun parse-for/as-in (body)
-  (multiple-value-bind (var type-spec rest1)
-      (parse-var-and-type-spec body)
-    ;; FIXME: handle type-spec.
-    (declare (ignore type-spec))
-    (if (symbol-equal (car rest1) '#:in)
-	(
+;; (defun parse-for/as-in (body)
+;;   (multiple-value-bind (var type-spec rest1)
+;;       (parse-var-and-type-spec body)
+;;     ;; FIXME: handle type-spec.
+;;     (declare (ignore type-spec))
+;;     (if (symbol-equal (car rest1) '#:in)
+;; 	(
   
 
 (define-elementary-parser parse-for/as-in body (#:in)
