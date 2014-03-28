@@ -135,3 +135,30 @@
 (define-condition conflicting-stepping-directions (loop-parse-error)
   ()
   (:report report-loop-condition))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Conditions for syntactic and semantic analysis
+;;;
+;;; FIXME: Define English language condition reporters for these
+;;;        conditions.
+
+;;; The root of all syntax errors.
+(define-condition loop-syntax-error (program-error) ())
+
+;;; This condition is signaled when a name-clause is found
+;;; and the first clause is not a name-clause. 
+(define-condition name-clause-not-first (loop-syntax-error) ())
+
+;;; This condition is signaled when the first clause is a name-clause
+;;; but there are other name-clauses. 
+(define-condition multiple-name-clauses (loop-syntax-error) ())
+
+;;; This condition is signaled when a variable-clause (other than an
+;;; initially-clause or a finally-clause) appears after a main-clause
+;;; (other than an initially-clause or a finally-clause).  
+(define-condition invalid-clause-order (loop-syntax-error) ())
+
+;;; The root of all semantic errors.
+(define-condition loop-semantic-error (program-error) ())
+
