@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "conditions")
    (:file "loop")))
