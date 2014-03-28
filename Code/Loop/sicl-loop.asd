@@ -2,6 +2,7 @@
 
 (asdf:defsystem :sicl-loop
   :depends-on ("sicl-additional-conditions")
+  :serial t
   :components
-  ((:file "packages" :depends-on ())
-   (:file "loop" :depends-on ("packages"))))
+  ((:file "packages")
+   (:file "loop")))
