@@ -316,7 +316,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause DO
+;;; Clause DO-CLAUSE
+;;;
+;;; The HyperSpec does not have a specific name for the DO clause, but
+;;; we need a name of the class for the purpose of specialization.
 
 (defclass do-clause
     (clause main-clause-mixin compound-forms-mixin) ())
@@ -324,13 +327,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause RETURN
+;;;
+;;; The HyperSpec does not have a specific name for the RETURN clause,
+;;; but we need a name of the class for the purpose of specialization.
 
 (defclass return-clause (clause main-clause-mixin)
   ((%form :initarg :form :reader form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses for accumulation
+;;; Clause ACCUMULATION-CLAUSE.
+;;;
+;;; The non-terminal symbol used in the HyperSpec is ACCUMULATION
+;;; rather than ACCUMULATION-CLAUSE as we call it here. 
 
 (defclass accumulation-clause (clause main-clause-mixin)
   ((%form :initform nil :initarg :form :accessor form)
@@ -338,7 +347,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses for list accumulation
+;;; Clause LIST-ACCUMULATION-CLAUSE.
+;;;
+;;; The non-terminal symbol used in the HyperSpec is LIST-ACCUMULATION
+;;; rather than LIST-ACCUMULATION-CLAUSE as we call it here.
 
 (defclass list-accumulation-clause (accumulation-clause)
   ((%into-tail-var :initform nil :initarg :into-tail-var :accessor into-tail-var)))
@@ -349,7 +361,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses for numeric accumulation.
+;;; Clause NUMERIC-ACCUMULATION-CLAUSE and subclasses.
+;;;
+;;; The non-terminal symbol used in the HyperSpec is
+;;; NUMERIC-ACCUMULATION rather than NUMERIC-ACCUMULATION-CLAUSE as we
+;;; call it here.
 
 (defclass numeric-accumulation-clause (accumulation-clause)
   ((%type-spec :initform t :initarg :type-spec :accessor type-spec)))
@@ -361,7 +377,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Conditional clauses.
+;;; Clause CONDITIONAL-CLAUSE.
+;;;
+;;; The non-terminal symbol used in the HyperSpec is CONDITIONAL
+;;; rather than CONDITIONAL-CLAUSE as we call it here.
 
 (defclass conditional-clause (clause main-clause)
   ((%test-form :initarg :test-form :reader test-form)
