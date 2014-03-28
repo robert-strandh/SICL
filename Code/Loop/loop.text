@@ -1,3 +1,7 @@
+
+The LOOP module provides a portable implementation of the LOOP
+macro as described in the Common Lisp HyperSpec.
+
 This implementation does not use any iteration construct.  Depending
 on the use case for this module, using iteration constructs to
 implement LOOP may or may not be a problem.

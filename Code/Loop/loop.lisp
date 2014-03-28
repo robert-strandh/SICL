@@ -17,9 +17,6 @@
 ;;;; This file is part of the LOOP module of the SICL project.
 ;;;; See the file SICL.text for a description of the project. 
 
-;;;; The LOOP module provides a portable implementation of the LOOP
-;;;; macro as described in the Common Lisp HyperSpec.
-
 (cl:in-package #:sicl-loop)
 
 (declaim (optimize (debug 3)))
