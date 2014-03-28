@@ -268,7 +268,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR-AS ACROSS
+;;; Clauses FOR-AS-ACROSS-CLAUSE and FOR-AS-ACROSS
 
 (defclass for-as-across-clause (for-as-clause) ())
 
@@ -277,7 +277,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause FOR-AS = THEN
+;;; Clauses FOR-AS-EQUALS-THEN-CLAUSE and FOR-AS-EQUALS-THEN
 
 (defclass for-as-equals-then-clause (for-as-clause) ())
 
@@ -287,7 +287,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR-AS hash
+;;; Clauses FOR-AS-HASH-CLAUSE and FOR-AS-HASH
 
 (defclass for-as-hash-clause (for-as-clause) ())
 
@@ -301,7 +301,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR-AS package
+;;; Clauses FOR-AS-PACKAGE-CLAUSE and FOR-AS-PACKAGE
 
 (defclass for-as-package-clause (for-as-clause) ())
 
