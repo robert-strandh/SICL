@@ -1,7 +1,3 @@
-;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013
-;;;;
-;;;;     Robert Strandh (robert.strandh@gmail.com)
-;;;; 
 ;;;; Copyright (c) 2010, 2011
 ;;;;
 ;;;;     Matthieu Villeneuve (matthieu.villeneuve@gmail.com)
@@ -19,13 +15,10 @@
 
 (cl:in-package #:sicl-loop)
 
-(declaim (optimize (debug 3)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Code generation
 
-;;;;;
 (defun progn-or-single-form (forms)
   (if (> (length forms) 1)
       `(progn ,@forms)
@@ -175,4 +168,3 @@
                 ((not (eq (accumulation-type body) clause-accumulation-type))
                  (error "Conflicting accumulation types")))))
       (initialize-accumulation (rest clauses) body))))
-;;;;;
