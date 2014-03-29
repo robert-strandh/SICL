@@ -1024,59 +1024,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Parse numeric accumulation
-
-(defclass numeric-accumulation-clause (accumulation-clause)
-  ((%type-spec :initform t :initarg :type-spec :accessor type-spec)))
-
-(defclass count-clause (numeric-accumulation-clause) ())
-(defclass sum-clause (numeric-accumulation-clause) ())
-(defclass maximize-clause (numeric-accumulation-clause) ())
-(defclass minimize-clause (numeric-accumulation-clause) ())
-
-;;; This function is called when we have seen 
-;;; one of count(ing), sum(ming), maximiz(e)(ing), minimiz(e)(ing)
-(defun parse-numeric-accumulation-clause (body class-name)
-  (if (null body)
-      (error 'expected-form-but-end)
-      (let ((result (make-instance class-name
-		      :form (car body))))
-	(if (and (not (null (cdr body)))
-		 (symbol-equal (cadr body) '#:into))
-	    (cond ((null (cddr body))
-		   (error 'expected-simple-var-but-end))
-		  ((not (symbolp (caddr body)))
-		   (error 'expected-simple-var-but-found
-			  :found (caddr body)))
-		  (t
-		   (setf (into-var result) (caddr body))
-		   (multiple-value-bind (type-spec rest)
-		       (parse-type-spec (cdddr body))
-		     (setf (type-spec result) type-spec)
-		     (values result rest))))
-	    (values result (cdr body))))))
-
-(define-elementary-parser parse-count-clause body (#:count #:counting)
-  (parse-numeric-accumulation-clause (cdr body) 'count-clause))
-
-(define-elementary-parser parse-sum-clause body (#:sum #:summing)
-  (parse-numeric-accumulation-clause (cdr body) 'sum-clause))
-
-(define-elementary-parser parse-maximize-clause body (#:maximize #:maximizing)
-  (parse-numeric-accumulation-clause (cdr body) 'maximize-clause))
-
-(define-elementary-parser parse-minimize-clause body (#:minimize #:minimizing)
-  (parse-numeric-accumulation-clause (cdr body) 'minimize-clause))
-
-(defun parse-numeric-accumulation (body)
-  (parse-alternative body
-		     #'parse-count-clause
-		     #'parse-sum-clause
-		     #'parse-maximize-clause
-		     #'parse-minimize-clause))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Parse accumulation
 
 (defun parse-accumulation (body)

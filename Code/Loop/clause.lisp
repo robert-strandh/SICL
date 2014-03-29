@@ -255,22 +255,6 @@
   ((%form :initform nil :initarg :form :accessor form)
    (%into-var :initform nil :initarg :into-var :accessor into-var)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clause NUMERIC-ACCUMULATION-CLAUSE and subclasses.
-;;;
-;;; The non-terminal symbol used in the HyperSpec is
-;;; NUMERIC-ACCUMULATION rather than NUMERIC-ACCUMULATION-CLAUSE as we
-;;; call it here.
-
-(defclass numeric-accumulation-clause (accumulation-clause)
-  ((%type-spec :initform t :initarg :type-spec :accessor type-spec)))
-
-(defclass count-clause (numeric-accumulation-clause) ())
-(defclass sum-clause (numeric-accumulation-clause) ())
-(defclass maximize-clause (numeric-accumulation-clause) ())
-(defclass minimize-clause (numeric-accumulation-clause) ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause CONDITIONAL-CLAUSE.
