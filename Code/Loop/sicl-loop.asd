@@ -28,4 +28,5 @@
    (:file "final-clause")
    (:file "with-clause")
    (:file "return-clause")
+   (:file "do-clause")
    (:file "analysis")))

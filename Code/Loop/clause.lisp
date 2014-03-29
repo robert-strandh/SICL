@@ -246,16 +246,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause DO-CLAUSE
-;;;
-;;; The HyperSpec does not have a specific name for the DO clause, but
-;;; we need a name of the class for the purpose of specialization.
-
-(defclass do-clause
-    (clause main-clause-mixin compound-forms-mixin) ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Clause ACCUMULATION-CLAUSE.
 ;;;
 ;;; The non-terminal symbol used in the HyperSpec is ACCUMULATION
