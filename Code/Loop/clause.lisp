@@ -93,49 +93,6 @@
 
 (defclass name-clause (clause)
   ((%name :initarg :name :reader name)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clause WITH-CLAUSE.
-;;;
-;;; A WITH-CLAUSE allows the creation of local variables.  It is
-;;; executed once.
-;;;
-;;; The syntax of a with-clause is:
-;;;
-;;;    with-clause ::= WITH var1 [type-spec] [= form1] 
-;;;                    {AND var2 [type-spec] [= form2]}*
-;;;
-;;; where var1 and var2 are destructuring variable specifiers
-;;; (d-var-spec) allowing multiple local variables to be created in a
-;;; single with-clause by destructuring the value of the corresponding
-;;; form.
-;;;
-;;; When there are several consecutive with-claues, the execution is
-;;; done sequentially, so that variables created in one with-clause
-;;; can be used in the forms of subsequent with-clauses.  If parallel
-;;; creation of variables is wanted, then the with-clause can be
-;;; followed by one or more and-clauses. 
-;;;
-;;; The (destructuring) type specifier is optional.  If no type
-;;; specifier is given, it is as if t was given. 
-;;;
-;;; The initialization form is optional.  If there is a corresponding
-;;; type specifier for a variable, but no initialization form, then
-;;; the variable is initialized to a value that is appropriate for the
-;;; type.  In particular, for the type t the value is nil, for the
-;;; type number, the value is 0, and for the type float, the value is
-;;; 0.0.  
-
-(defclass with-clause (clause subclauses-mixin variable-clause-mixin) ())
-
-(defclass with-subclause (var-and-type-spec-mixin)
-  (;; The initialization form, or NIL if there is no form.
-   (%form :initarg :form :reader form)
-   ;; TRUE if and only if there is an explicit initialization form
-   ;; present.
-   (%form-present-p :initarg :form-present-p :reader form-present-p)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause FOR-AS-CLAUSE.

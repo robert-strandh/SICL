@@ -26,4 +26,5 @@
    (:file "type-spec")
    (:file "initial-clause")
    (:file "final-clause")
+   (:file "with-clause")
    (:file "analysis")))
