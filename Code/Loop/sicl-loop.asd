@@ -23,4 +23,5 @@
    (:file "clause")
    (:file "combinatory-parsing")
    (:file "parse-common")
+   (:file "initial-clause")
    (:file "analysis")))

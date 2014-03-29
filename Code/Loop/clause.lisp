@@ -138,20 +138,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause INITIAL.
-;;;
-;;; An INITIAL clause does not exist as a separate grammar item in
-;;; the HyperSpec, but we define it here anyway.  The syntax is:
-;;;
-;;;    initial ::= initially compound-form+
-
-
-(defclass initially-clause
-    (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Clause FINAL.
 ;;;
 ;;; A FINAL clause does not exist as a separate grammar item in
