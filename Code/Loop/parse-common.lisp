@@ -32,4 +32,34 @@
 	     (cons 'progn forms))
 	   (singleton #'identity #'consp)))
 		      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; This parser succeeds whenever the list of tokens is either empty
+;;; or starts with a form that is not a loop keyword that can start a
+;;; clause.  When it succeeds, it returns NIL as the result and the
+;;; original list of tokens.
+
+(defparameter *clause-keywords*
+  '(#:initially #:finally
+    #:with
+    #:do #:return
+    #:collect #:collecting
+    #:append #:appending
+    #:nconc #:nconcing
+    #:count #:counting
+    #:sum #:summing
+    #:maximize #:maximizing
+    #:minimize #:minimizing
+    #:if #:when #:unless
+    #:while #:until #:repeat #:always #:never #:thereis
+    #:for #:as))
+
+(defun non-clause-keyword (tokens)
+  (if (or (null tokens)
+	  (member (car tokens) *clause-keywords*
+		  :test #'symbol-equal))
+      (values t nil tokens)
+      (values nil nil tokens)))
+
+	      
 
