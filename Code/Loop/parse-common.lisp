@@ -61,5 +61,22 @@
       (values t nil tokens)
       (values nil nil tokens)))
 
-	      
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mange a list of clause parsers. 
 
+(defparameter *clause-parsers* '())
+
+(defun add-clause-parser (parser)
+  (push parser *clause-parsers*))
+
+;;; A parser that tries every parser in *CLAUSE-PARSERS* until one
+;;; succeeds.
+
+(defun parse-clause (tokens)
+  (loop for parser in *clause-parsers*
+	do (multiple-value-bind (successp result rest)
+	       (funcall parser tokens)
+	     (when successp
+	       (return (values t result rest))))
+	finally (return (values nil nil tokens))))
