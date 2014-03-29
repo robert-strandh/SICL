@@ -31,7 +31,7 @@
 ;;;
 ;;; Parser
 
-(define-parser initial-clause
+(define-parser initial-clause-parser
   (consecutive (lambda (initially compound+)
 		 (declare (ignore initially))
 		 (make-instance 'initial-clause
@@ -39,3 +39,4 @@
 	       (keyword-parser 'initially)
 	       'compound+))
 
+(add-clause-parser 'initial-clause-parser)
