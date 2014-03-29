@@ -22,4 +22,5 @@
    (:file "utilities")
    (:file "clause")
    (:file "combinatory-parsing")
+   (:file "parse-common")
    (:file "analysis")))
