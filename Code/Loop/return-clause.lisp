@@ -39,7 +39,7 @@
 
 (define-parser return-it-clause-parser
   (consecutive (lambda (return it)
-		 (declare (ignore return i))
+		 (declare (ignore return it))
 		 (make-instance 'return-it-clause))
 	       (keyword-parser 'return)
 	       (keyword-parser 'it)))
