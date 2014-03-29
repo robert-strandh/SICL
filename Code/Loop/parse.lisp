@@ -1024,45 +1024,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Parse list accumulation clauses
-
-(defclass list-accumulation-clause (accumulation-clause)
-  ((%into-tail-var :initform nil :initarg :into-tail-var :accessor into-tail-var)))
-
-(defclass collect-clause (list-accumulation-clause) ())
-(defclass append-clause (list-accumulation-clause) ())
-(defclass nconc-clause (list-accumulation-clause) ())
-
-;;; This function is called when we have seen 
-;;; one of collect(ing), append(ing), nconc(ing).
-(defun parse-list-accumulation-clause (body class-name)
-  (if (null body)
-      (error 'expected-form-but-end)
-      (let ((result (make-instance class-name
-		      :form (car body)
-		      :into-tail-var (gensym "LIST-TAIL-"))))
-        (if (and (not (null (cdr body)))
-                 (symbol-equal (cadr body) '#:into))
-            (cond ((null (cddr body))
-                   (error 'expected-simple-var-but-end))
-                  ((not (symbolp (caddr body)))
-                   (error 'expected-simple-var-but-found :found (caddr body)))
-                  (t
-                   (setf (into-var result) (caddr body))
-                   (values result (cdddr body))))
-            (values result (cdr body))))))
-
-(define-elementary-parser parse-collect body (#:collect #:collecting)
-  (parse-list-accumulation-clause (cdr body) 'collect-clause))
-
-(define-elementary-parser parse-append body (#:append #:appending)
-  (parse-list-accumulation-clause (cdr body) 'append-clause))
-
-(define-elementary-parser parse-nconc body (#:nconc #:nconcing)
-  (parse-list-accumulation-clause (cdr body) 'nconc-clause))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Parse numeric accumulation
 
 (defclass numeric-accumulation-clause (accumulation-clause)
