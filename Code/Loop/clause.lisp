@@ -256,16 +256,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause RETURN
-;;;
-;;; The HyperSpec does not have a specific name for the RETURN clause,
-;;; but we need a name of the class for the purpose of specialization.
-
-(defclass return-clause (clause main-clause-mixin)
-  ((%form :initarg :form :reader form)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Clause ACCUMULATION-CLAUSE.
 ;;;
 ;;; The non-terminal symbol used in the HyperSpec is ACCUMULATION

@@ -27,4 +27,5 @@
    (:file "initial-clause")
    (:file "final-clause")
    (:file "with-clause")
+   (:file "return-clause")
    (:file "analysis")))
