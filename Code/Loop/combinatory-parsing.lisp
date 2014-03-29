@@ -42,19 +42,19 @@
        (setf (fdefinition ',name)
 	     (progn ,@body)))))
 
-;;; Take a predicate P and return a parser Q that invokes the
-;;; predicate on the first token.  If P returns true then Q succeeds
-;;; and returns the result of invoking the predicate on the token
-;;; together with the remaining tokens (all tokens except the first
-;;; one).  If P returns false, then Q fails.  If there are no tokens,
-;;; then Q also fails. 
-(defun singleton (predicate)
+;;; Take a function designator (called the TRANSFORMER) and a
+;;; predicate P and return a parser Q that invokes the predicate on
+;;; the first token.  If P returns true then Q succeeds and returns
+;;; the result of invoking TRANSFORMER on the token together with the
+;;; remaining tokens (all tokens except the first one).  If P returns
+;;; false, then Q fails.  If there are no tokens, then Q also fails.
+(defun singleton (transformer predicate)
   (lambda (tokens)
     (if (null tokens)
 	(values nil nil tokens)
 	(let ((result (funcall predicate (car tokens))))
 	  (if result
-	      (values t result (cdr tokens))
+	      (values t (funcall transformer (car tokens)) (cdr tokens))
 	      (values nil nil tokens))))))
 
 ;;; Take a list of parsers P1, P2, ..., Pn and return a parser Q that
@@ -111,6 +111,5 @@
 		     (return (values t
 				     (apply combiner (reverse results))
 				     remaining-tokens))))))))
-
 
 ;;;  LocalWords:  parsers
