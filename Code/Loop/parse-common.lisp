@@ -14,6 +14,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Given a symbol S (no matter what package), return a singleton
+;;; parser Q that recognizes symbols with the same name as S.  If Q
+;;; succeeds, it returns S.
+
+(defun keyword-parser (symbol)
+  (singleton (constantly symbol)
+	     (lambda (token) (symbol-equal symbol token))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Parser for COMPOUND-FORM+, i.e. a non-empty sequence of compound
 ;;; forms.
 
