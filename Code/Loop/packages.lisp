@@ -26,4 +26,7 @@
    ;; There is a Common Lisp function called STEP, so we need to
    ;; shadow this name.
    #:step
+   ;; We use TYPE as an accessor for a TYPE-SPEC so we need to shadow
+   ;; this name.
+   #:type
    ))
