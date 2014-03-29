@@ -112,4 +112,28 @@
 				     (apply combiner (reverse results))
 				     remaining-tokens))))))))
 
+;;; Take a function designator (called the COMBINER) and a parser P
+;;; and return a parser Q that invokes P repeatedly until it fails,
+;;; each time with the tokens remaining from the previous invocation.
+;;; The result of the invocation of Q is the result of calling APPLY
+;;; on COMBINER and the list of the results of each invocation of P.
+;;; Q succeeds if and only if at least one invocation of P succeeds.
+(defun repeat+ (combiner parser)
+  (lambda (tokens)
+    (let ((results '()))
+      (multiple-value-bind (successp result rest)
+	  (funcall parser tokens)
+	(if (not successp)
+	    (values nil nil tokens)
+	    (let ((remaining-tokens rest))
+	      (push result results)
+	      (loop do (multiple-value-bind (successp result rest)
+			   (funcall parser remaining-tokens)
+			 (if successp
+			     (progn (push result results)
+				    (setf remaining-tokens rest))
+			     (return (values t
+					     (apply combiner (reverse results))
+					     remaining-tokens)))))))))))
+
 ;;;  LocalWords:  parsers
