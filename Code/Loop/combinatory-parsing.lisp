@@ -99,7 +99,7 @@
 ;;; Q always succeeds.  If the first invocation of P fails, then Q
 ;;; succeeds returning the result of calling APPLY on COMBINER and the
 ;;; empty list of results, and the original list of tokens as usual.
-(defun repeat (combiner parser)
+(defun repeat* (combiner parser)
   (lambda (tokens)
     (let ((remaining-tokens tokens)
 	  (results '()))
