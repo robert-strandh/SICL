@@ -138,19 +138,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause FINAL.
-;;;
-;;; A FINAL clause does not exist as a separate grammar item in
-;;; the HyperSpec, but we define it here anyway.  The syntax is:
-;;;
-;;;    final ::= finally compound-form+
-
-(defclass finally-clause
-    (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Clause FOR-AS-CLAUSE.
 ;;;
 ;;; The HyperSpec says that a FOR-AS-CLAUSE has the following syntax:
