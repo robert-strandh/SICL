@@ -24,8 +24,8 @@
 ;;;    final-clause ::= finally compound-form+
 
 (defclass final-clause
-    (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
-  ())
+    (clause variable-clause-mixin main-clause-mixin)
+  ((%form :initarg :form :reader form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -35,6 +35,6 @@
   (consecutive (lambda (finally compound+)
 		 (declare (ignore finally))
 		 (make-instance 'final-clause
-		   :forms compound+))
+		   :form compound+))
 	       (keyword-parser 'finally)
 	       'compound+))

@@ -24,8 +24,8 @@
 ;;;    initial-clause ::= initially compound-form+
 
 (defclass initial-clause
-    (clause variable-clause-mixin main-clause-mixin compound-forms-mixin)
-  ())
+    (clause variable-clause-mixin main-clause-mixin)
+  ((%form :initarg :form :reader form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -35,7 +35,7 @@
   (consecutive (lambda (initially compound+)
 		 (declare (ignore initially))
 		 (make-instance 'initial-clause
-		   :forms compound+))
+		   :form compound+))
 	       (keyword-parser 'initially)
 	       'compound+))
 
