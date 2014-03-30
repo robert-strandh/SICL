@@ -31,4 +31,5 @@
    (:file "do-clause")
    (:file "collect-clause")
    (:file "append-clause")
+   (:file "nconc")
    (:file "analysis")))
