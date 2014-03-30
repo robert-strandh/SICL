@@ -35,4 +35,5 @@
    (:file "count-clause")
    (:file "maximize-clause")
    (:file "minimize-clause")
+   (:file "conditional-clause")
    (:file "analysis")))
