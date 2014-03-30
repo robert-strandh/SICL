@@ -12,6 +12,5 @@
 
 (cl:in-package #:sicl-loop)
 
-(defclass append-clause (list-accumulation-clause) ())
 (defclass nconc-clause (list-accumulation-clause) ())
 

@@ -30,4 +30,5 @@
    (:file "return-clause")
    (:file "do-clause")
    (:file "collect-clause")
+   (:file "append-clause")
    (:file "analysis")))
