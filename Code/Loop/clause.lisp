@@ -246,14 +246,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause ACCUMULATION-CLAUSE.
-;;;
-;;; The non-terminal symbol used in the HyperSpec is ACCUMULATION
-;;; rather than ACCUMULATION-CLAUSE as we call it here. 
+;;; Accumulation clauses
 
 (defclass accumulation-clause (clause main-clause-mixin)
-  ((%form :initform nil :initarg :form :accessor form)
-   (%into-var :initform nil :initarg :into-var :accessor into-var)))
+  ())
+
+(defclass accumulate-it-clause (accumulation-clause)
+  ())
+
+(defclass accumulate-form-clause (accumulation-clause)
+  ((%form :initform nil :initarg :form :accessor form)))
+
+(defclass accumulate-it-into-clause (accumulate-it-clause)
+  ((%into-var :initform nil :initarg :into-var :accessor into-var)))
+
+(defclass accumulate-form-into-clause (accumulate-form-clause)
+  ((%into-var :initform nil :initarg :into-var :accessor into-var)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
