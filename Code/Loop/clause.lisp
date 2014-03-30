@@ -263,6 +263,10 @@
 (defclass accumulate-form-into-clause (accumulate-form-clause)
   ((%into-var :initform nil :initarg :into-var :accessor into-var)))
 
+(defclass list-accumulation-mixin () ())
+
+(defclass numeric-accumulation-mixin () ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Clause CONDITIONAL-CLAUSE.
