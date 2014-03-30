@@ -12,17 +12,6 @@
 
 (cl:in-package #:sicl-loop)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clause LIST-ACCUMULATION-CLAUSE.
-;;;
-;;; The non-terminal symbol used in the HyperSpec is LIST-ACCUMULATION
-;;; rather than LIST-ACCUMULATION-CLAUSE as we call it here.
-
-(defclass list-accumulation-clause (accumulation-clause)
-  ((%into-tail-var :initform nil :initarg :into-tail-var :accessor into-tail-var)))
-
-(defclass collect-clause (list-accumulation-clause) ())
 (defclass append-clause (list-accumulation-clause) ())
 (defclass nconc-clause (list-accumulation-clause) ())
 

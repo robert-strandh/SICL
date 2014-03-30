@@ -29,4 +29,5 @@
    (:file "with-clause")
    (:file "return-clause")
    (:file "do-clause")
+   (:file "collect-clause")
    (:file "analysis")))
