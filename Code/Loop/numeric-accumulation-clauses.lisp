@@ -23,7 +23,6 @@
 (defclass numeric-accumulation-clause (accumulation-clause)
   ((%type-spec :initform t :initarg :type-spec :accessor type-spec)))
 
-(defclass sum-clause (numeric-accumulation-clause) ())
 (defclass maximize-clause (numeric-accumulation-clause) ())
 (defclass minimize-clause (numeric-accumulation-clause) ())
 
