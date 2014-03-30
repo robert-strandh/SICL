@@ -33,4 +33,6 @@
    (:file "append-clause")
    (:file "nconc")
    (:file "count")
+   (:file "maximize")
+   (:file "minimize")
    (:file "analysis")))

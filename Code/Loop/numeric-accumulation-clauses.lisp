@@ -23,5 +23,4 @@
 (defclass numeric-accumulation-clause (accumulation-clause)
   ((%type-spec :initform t :initarg :type-spec :accessor type-spec)))
 
-(defclass minimize-clause (numeric-accumulation-clause) ())
 
