@@ -136,4 +136,17 @@
 					     (apply combiner (reverse results))
 					     remaining-tokens)))))))))))
 
+;;; Take a default value and a parser P and return a parser Q that
+;;; always succeeds.  Q invokes P once.  If P succeeds, the Q succeeds
+;;; with the same result as P and with the same remaining tokens.  If
+;;; P fails, then Q succeeds, returning the default value and the
+;;; original list of tokens.
+(defun optional (default parser)
+  (lambda (tokens)
+    (multiple-value-bind (successp result rest)
+	(funcall parser tokens)
+      (if successp
+	  (values t result rest)
+	  (values t default tokens)))))
+
 ;;;  LocalWords:  parsers
