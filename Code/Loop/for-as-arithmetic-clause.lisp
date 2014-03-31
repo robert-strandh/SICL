@@ -218,7 +218,7 @@
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
 
-(define-parser arithmetic-up-9-parser
+(define-parser arithmetic-up-10-parser
   (consecutive (lambda (var type-spec by form1 from form2)
 		 (declare (ignore from to by))
 		 (let ((by-var (gensym)))
@@ -236,7 +236,7 @@
 			    (keyword-parser 'upfrom))
 	       (singleton #'identity (constantly t))))
 
-(define-parser arithmetic-up-9-parser
+(define-parser arithmetic-up-11-parser
   (consecutive (lambda (var type-spec to form1 by form2)
 		 (declare (ignore from to by))
 		 (let ((to-var (gensym))
@@ -256,7 +256,7 @@
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
 
-(define-parser arithmetic-up-9-parser
+(define-parser arithmetic-up-12-parser
   (consecutive (lambda (var type-spec by form1 to form2)
 		 (declare (ignore from to by))
 		 (let ((to-var (gensym))
