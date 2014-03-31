@@ -276,3 +276,16 @@
 			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
 
+(define-parser arithmetic-up-13-parser
+  (consecutive (lambda (var type-spec from form1)
+		 (declare (ignore from to by))
+		 (make-instance 'for-as-arithmetic
+		   :bindings `((,var ,form1))
+		     :termination nil
+		     :step `(incf ,var)))
+	       (singleton #'identity
+			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'type-spec-parser
+	       (alternative (keyword-parser 'from)
+			    (keyword-parser 'upfrom))
+	       (singleton #'identity (constantly t))))
