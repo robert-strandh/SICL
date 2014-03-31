@@ -164,7 +164,7 @@
 
 (define-parser arithmetic-up-7-parser
   (consecutive (lambda (var type-spec from form1 to form2)
-		 (declare (ignore from to by))
+		 (declare (ignore from to))
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
@@ -181,3 +181,24 @@
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
+
+(define-parser arithmetic-up-8-parser
+  (consecutive (lambda (var type-spec to form1 from form2)
+		 (declare (ignore from to))
+		 (let ((to-var (gensym))
+		       (by-var (gensym)))
+		   (make-instance 'for-as-arithmetic
+		     :bindings `((,var ,form1)
+				 (,to-var ,form2))
+		     :termination `(when (>= ,var ,to-var) (go end))
+		     :step `(incf ,var))))
+	       (singleton #'identity
+			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'type-spec-parser
+	       (alternative (keyword-parser 'to)
+			    (keyword-parser 'upto))
+	       (singleton #'identity (constantly t))
+	       (alternative (keyword-parser 'from)
+			    (keyword-parser 'upfrom))
+	       (singleton #'identity (constantly t))))
+
