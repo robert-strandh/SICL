@@ -29,4 +29,7 @@
    ;; We use TYPE as an accessor for a TYPE-SPEC so we need to shadow
    ;; this name.
    #:type
+   ;; We use CONDITION as an accessor for a conditional clause so we
+   ;; need to shadow this name
+   #:condition
    ))
