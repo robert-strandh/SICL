@@ -199,3 +199,22 @@
 	       (alternative (keyword-parser 'from)
 			    (keyword-parser 'upfrom))
 	       (singleton #'identity (constantly t))))
+
+(define-parser arithmetic-up-9-parser
+  (consecutive (lambda (var type-spec from form1 by form2)
+		 (declare (ignore from to by))
+		 (let ((by-var (gensym)))
+		   (make-instance 'for-as-arithmetic
+		     :bindings `((,var ,form1)
+				 (,by-var ,form3))
+		     :termination nil
+		     :step `(incf ,var ,by-var))))
+	       (singleton #'identity
+			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'type-spec-parser
+	       (alternative (keyword-parser 'from)
+			    (keyword-parser 'upfrom))
+	       (singleton #'identity (constantly t))
+	       (keyword-parser 'by)
+	       (singleton #'identity (constantly t))))
+
