@@ -41,4 +41,5 @@
    (:file "always-clause")
    (:file "never-clause")
    (:file "thereis-clause")
+   (:file "for-as-arithmetic-clause")
    (:file "analysis")))

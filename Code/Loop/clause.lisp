@@ -150,39 +150,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clause FOR-AS-ARITHMETIC.
-
-(defclass for-as-arithmetic-clause (for-as-clause) ())
-
-(defclass for-as-arithmetic (for-as-subclause) ())
-
-;;; Every preposition has a form associated with it. 
-(defclass preposition ()
-  ((%form :initarg :form :reader form)))
-
-;;; Some prepositions also have a variable associated with them that
-;;; will hold the value of the form. 
-(defclass with-var-mixin ()
-  ((%var :initform (gensym) :reader var)))
-
-(defclass preposition-first-group (preposition) ())
-(defclass preposition-second-group (preposition with-var-mixin) ())
-(defclass preposition-third-group (preposition with-var-mixin) ())
-
-(defclass preposition-from (preposition-first-group) ())
-(defclass preposition-downfrom (preposition-first-group) ())
-(defclass preposition-upfrom (preposition-first-group) ())
-
-(defclass preposition-to (preposition-second-group) ())
-(defclass preposition-downto (preposition-second-group) ())
-(defclass preposition-upto (preposition-second-group) ())
-(defclass preposition-below (preposition-second-group) ())
-(defclass preposition-above (preposition-second-group) ())
-
-(defclass preposition-by (preposition-third-group) ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Clauses FOR-AS-IN-LIST FOR-AS-ON-LIST
 ;;;
 ;;; The clause FOR-AS-IN-ON-LIST does not exist in the HyperSpec.  We
