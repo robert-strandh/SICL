@@ -36,4 +36,5 @@
    (:file "maximize-clause")
    (:file "minimize-clause")
    (:file "conditional-clause")
+   (:file "while-until-clauses")
    (:file "analysis")))
