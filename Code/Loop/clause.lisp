@@ -267,33 +267,3 @@
 
 (defclass numeric-accumulation-mixin () ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clause CONDITIONAL-CLAUSE.
-;;;
-;;; The non-terminal symbol used in the HyperSpec is CONDITIONAL
-;;; rather than CONDITIONAL-CLAUSE as we call it here.
-
-(defclass conditional-clause (clause main-clause)
-  ((%test-form :initarg :test-form :reader test-form)
-   (%then-clauses :initarg :then-clauses :reader then-clauses)
-   (%else-clauses :initarg :else-clauses :reader else-clauses)))
-
-(defclass if/when-clause (conditional-clause) ())
-
-(defclass unless-clause (conditional-clause) ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clauses for termination test.
-
-(defclass termination-test (clause main-clause-mixin)
-  ((%form :initarg :form :reader form)))
-
-(defclass while-clause (termination-test) ())
-(defclass until-clause (termination-test) ())
-(defclass repeat-clause (termination-test var-and-type-spec-mixin) ())
-(defclass always-clause (termination-test) ())
-(defclass never-clause (termination-test) ())
-(defclass thereis-clause (termination-test) ())
-
