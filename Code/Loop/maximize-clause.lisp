@@ -80,4 +80,4 @@
   (alternative 'maximize-it-into-clause-parser
 	       'maximize-it-clause-parser
 	       'maximize-form-into-clause-parser
-	       'maximize-form-clause-parser
+	       'maximize-form-clause-parser))

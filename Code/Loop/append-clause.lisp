@@ -80,4 +80,5 @@
   (alternative 'append-it-into-clause-parser
 	       'append-it-clause-parser
 	       'append-form-into-clause-parser
-	       'append-form-clause-parser
+	       'append-form-clause-parser))
+

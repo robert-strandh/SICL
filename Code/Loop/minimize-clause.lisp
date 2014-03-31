@@ -80,4 +80,4 @@
   (alternative 'minimize-it-into-clause-parser
 	       'minimize-it-clause-parser
 	       'minimize-form-into-clause-parser
-	       'minimize-form-clause-parser
+	       'minimize-form-clause-parser))

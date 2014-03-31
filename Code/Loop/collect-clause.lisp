@@ -80,4 +80,5 @@
   (alternative 'collect-it-into-clause-parser
 	       'collect-it-clause-parser
 	       'collect-form-into-clause-parser
-	       'collect-form-clause-parser
+	       'collect-form-clause-parser))
+

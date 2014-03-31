@@ -80,4 +80,4 @@
   (alternative 'count-it-into-clause-parser
 	       'count-it-clause-parser
 	       'count-form-into-clause-parser
-	       'count-form-clause-parser
+	       'count-form-clause-parser))

@@ -80,4 +80,4 @@
   (alternative 'nconc-it-into-clause-parser
 	       'nconc-it-clause-parser
 	       'nconc-form-into-clause-parser
-	       'nconc-form-clause-parser
+	       'nconc-form-clause-parser))
