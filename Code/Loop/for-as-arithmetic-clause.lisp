@@ -101,7 +101,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,to-var ,form1)
 				 (,by-var ,form2)
-				 (,from-var ,form3))
+				 (,var ,form3))
 		     :termination `(when (>= ,var ,to-var) (go end))
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
@@ -146,8 +146,8 @@
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,by-var ,form1)
-				 (,var ,form2)
-				 (,to-var ,form3))
+				 (,to-var ,form2)
+				 (,var ,form3))
 		     :termination `(when (>= ,var ,to-var) (go end))
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
@@ -165,8 +165,7 @@
 (define-parser arithmetic-up-7-parser
   (consecutive (lambda (var type-spec from form1 to form2)
 		 (declare (ignore from to))
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
+		 (let ((to-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,form1)
 				 (,to-var ,form2))
@@ -185,11 +184,10 @@
 (define-parser arithmetic-up-8-parser
   (consecutive (lambda (var type-spec to form1 from form2)
 		 (declare (ignore from to))
-		 (let ((to-var (gensym))
-		       (by-var (gensym)))
+		 (let ((to-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings `((,var ,form1)
-				 (,to-var ,form2))
+		     :bindings `((,to-var ,form1)
+				 (,var ,form2))
 		     :termination `(when (>= ,var ,to-var) (go end))
 		     :step `(incf ,var))))
 	       (singleton #'identity
@@ -201,4 +199,3 @@
 	       (alternative (keyword-parser 'from)
 			    (keyword-parser 'upfrom))
 	       (singleton #'identity (constantly t))))
-
