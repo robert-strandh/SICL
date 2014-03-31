@@ -39,4 +39,5 @@
    (:file "while-until-clauses")
    (:file "repeat-clause")
    (:file "always-clause")
+   (:file "never-clause")
    (:file "analysis")))
