@@ -43,4 +43,4 @@
 	       (singleton #'identity (constantly t))))
 
 (define-parser type-spec-parser
-  (alternative 'simple-type-spec 'destructured-type-spec))
+  (alternative 'simple-type-spec-parser 'destructured-type-spec-parser))
