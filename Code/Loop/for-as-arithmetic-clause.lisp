@@ -69,3 +69,27 @@
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
+
+(define-parser arithmetic-up-3-parser
+  (consecutive (lambda (var type-spec to form1 from form2 by form3)
+		 (declare (ignore from to by))
+		 (let ((to-var (gensym))
+		       (by-var (gensym)))
+		   (make-instance 'for-as-arithmetic
+		     :bindings `((,to-var ,form1)
+				 (,var ,form2)
+				 (,by-var ,form3))
+		     :termination `(when (>= ,var ,to-var) (go end))
+		     :step `(incf ,var ,by-var))))
+	       (singleton #'identity
+			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'type-spec-parser
+	       (alternative (keyword-parser 'to)
+			    (keyword-parser 'upto))
+	       (singleton #'identity (constantly t))
+	       (alternative (keyword-parser 'from)
+			    (keyword-parser 'upfrom))
+	       (singleton #'identity (constantly t))
+	       (keyword-parser 'by)
+	       (singleton #'identity (constantly t))))
+
