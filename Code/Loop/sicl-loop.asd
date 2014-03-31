@@ -38,4 +38,5 @@
    (:file "conditional-clause")
    (:file "while-until-clauses")
    (:file "repeat-clause")
+   (:file "always-clause")
    (:file "analysis")))
