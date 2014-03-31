@@ -40,4 +40,5 @@
    (:file "repeat-clause")
    (:file "always-clause")
    (:file "never-clause")
+   (:file "thereis-clause")
    (:file "analysis")))
