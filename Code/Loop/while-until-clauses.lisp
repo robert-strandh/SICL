@@ -27,6 +27,7 @@
 	       (keyword-parser 'while)
 	       (singleton #'identity (constantly t))))
 
+(add-clause-parser 'while-clause-parser)
 
 (define-parser until-clause-parser
   (consecutive (lambda (until form)
@@ -36,8 +37,4 @@
 	       (keyword-parser 'until)
 	       (singleton #'identity (constantly t))))
   
-(define-parser while-until-clause-parser
-  (alternative 'while-clause-parser
-	       'until-clause-parser))
-
-
+(add-clause-parser 'until-clause-parser)
