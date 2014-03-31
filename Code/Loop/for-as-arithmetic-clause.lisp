@@ -250,8 +250,8 @@
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
 	       'type-spec-parser
-	       (alternative (keyword-parser 'from)
-			    (keyword-parser 'upfrom))
+	       (alternative (keyword-parser 'to)
+			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
