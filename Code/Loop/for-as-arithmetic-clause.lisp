@@ -206,7 +206,7 @@
 		 (let ((by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,form1)
-				 (,by-var ,form3))
+				 (,by-var ,form2))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
@@ -224,7 +224,7 @@
 		 (let ((by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,by-var ,form1)
-				 (,var ,form3))
+				 (,var ,form2))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
@@ -244,7 +244,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var 0)
 				 (,to-var ,form1)
-				 (,by-var ,form3))
+				 (,by-var ,form2))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
@@ -255,4 +255,3 @@
 	       (singleton #'identity (constantly t))
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
-
