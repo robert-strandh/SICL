@@ -33,9 +33,10 @@
      ;; message if invoked.  The reason for doing that is to avoid
      ;; warnings at compile time saying the function does not exist. 
      (eval-when (:compile-toplevel)
-       (defun ,name (tokens)
-	 (declare (ignore tokens))
-	 (error "Undefined parser: ~s" ',name)))
+       (setf (fdefinition ',name)
+	     (lambda (tokens)
+	       (declare (ignore tokens))
+	       (error "Undefined parser: ~s" ',name))))
      ;; At load time, we set the FDEFINITION of the name to the
      ;; result of executing BODY.
      (eval-when (:load-toplevel :execute)
