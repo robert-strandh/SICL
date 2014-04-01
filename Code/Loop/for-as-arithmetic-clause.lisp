@@ -56,8 +56,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'from)
 			    (keyword-parser 'upfrom))
@@ -83,8 +82,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'from)
 			    (keyword-parser 'upfrom))
@@ -110,8 +108,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto)
@@ -137,8 +134,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto)
@@ -164,8 +160,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))
@@ -191,8 +186,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))
@@ -222,8 +216,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'from)
 			    (keyword-parser 'upfrom))
@@ -245,8 +238,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto)
@@ -272,8 +264,7 @@
 				 (,by-var ,form2))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'from)
 			    (keyword-parser 'upfrom))
@@ -291,8 +282,7 @@
 				 (,var ,form2))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))
@@ -318,8 +308,7 @@
 				 (,by-var ,form2))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto)
@@ -340,8 +329,7 @@
 				 (,to-var ,form3))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))
@@ -362,8 +350,7 @@
 		   :bindings `((,var ,form1))
 		   :termination nil
 		   :step `(incf ,var)))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'from)
 			    (keyword-parser 'upfrom))
@@ -384,8 +371,7 @@
 		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto)
@@ -406,8 +392,7 @@
 				 (,by-var,form1))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
-	       (singleton #'identity
-			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'simple-var-parser
 	       'type-spec-parser
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
