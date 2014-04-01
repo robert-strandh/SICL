@@ -326,11 +326,32 @@
 		 (declare (ignore from to by))
 		 (make-instance 'for-as-arithmetic
 		   :bindings `((,var ,form1))
-		     :termination nil
-		     :step `(incf ,var)))
+		   :termination nil
+		   :step `(incf ,var)))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
 	       'type-spec-parser
 	       (alternative (keyword-parser 'from)
 			    (keyword-parser 'upfrom))
+	       (singleton #'identity (constantly t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Perser where only TO/UPTO appears (FROM/UPFROM and BY are
+;;; omitted).
+
+(define-parser arithmetic-up-13-parser
+  (consecutive (lambda (var type-spec to form1)
+		 (declare (ignore from to by))
+		 (let ((to-var (gensym)))
+		   (make-instance 'for-as-arithmetic
+		     :bindings `((,var ,0)
+				 (,to-var,form1))
+		     :termination `(when (>= ,var ,to-var) (go end))
+		     :step `(incf ,var))))
+	       (singleton #'identity
+			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'type-spec-parser
+	       (alternative (keyword-parser 'to)
+			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
