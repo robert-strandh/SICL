@@ -96,11 +96,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Persers where FROM/UPFROM TO/UPTO and BY are all present.
+;;; Parsers where FROM/UPFROM TO/UPTO/BELOW and BY are all present.
 ;;; Since they can appear in any order, there are 6 different
-;;; variations. 
+;;; variations.
 
-;;; Order is FROM/UPFROM TO/UPTO BY.
+;;; Order is FROM TO BY.
 (define-parser arithmetic-up-1-parser
   (consecutive (lambda (var type-spec from to by)
 		 (let ((to-var (gensym))
@@ -119,7 +119,7 @@
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       'by-parser))
 
-;;; Order is FROM/UPFROM BY TO/UPTO.
+;;; Order is FROM BY TO.
 (define-parser arithmetic-up-2-parser
   (consecutive (lambda (var type-spec from by to)
 		 (let ((to-var (gensym))
@@ -138,7 +138,7 @@
 	       'by-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
-;;; Order is TO/UPTO FROM/UPFROM BY.
+;;; Order is TO FROM BY.
 (define-parser arithmetic-up-3-parser
   (consecutive (lambda (var type-spec to from by)
 		 (let ((to-var (gensym))
@@ -157,7 +157,7 @@
 	       (alternative 'from-parser 'upfrom-parser)
 	       'by-parser))
 
-;;; Order is TO/UPTO BY FROM/UPFROM.
+;;; Order is TO BY FROM.
 (define-parser arithmetic-up-4-parser
   (consecutive (lambda (var type-spec to by from)
 		 (let ((to-var (gensym))
@@ -176,7 +176,7 @@
 	       'by-parser
 	       (alternative 'from-parser 'upfrom-parser)))
 
-;;; Order is BY FROM/UPFROM TO/UPTO.
+;;; Order is BY FROM TO.
 (define-parser arithmetic-up-5-parser
   (consecutive (lambda (var type-spec by from to)
 		 (let ((to-var (gensym))
@@ -195,7 +195,7 @@
 	       (alternative 'from-parser 'upfrom-parser)
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
-;;; Order is BY TO/UPTO FROM/UPFROM.
+;;; Order is BY TO FROM.
 (define-parser arithmetic-up-6-parser
   (consecutive (lambda (var type-spec by to from)
 		 (let ((to-var (gensym))
@@ -216,11 +216,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Persers where only FROM/UPFROM and TO/UPTO appear (BY is omitted).
-;;; Since they can appear in any order, there are 2 different
-;;; variations.
+;;; Parsers where only FROM/UPFROM and TO/UPTO/BELOW appear (BY is
+;;; omitted).  Since they can appear in any order, there are 2
+;;; different variations.
 
-;;; Order is FROM/UPFROM TO/UPTO.
+;;; Order is FROM TO.
 (define-parser arithmetic-up-7-parser
   (consecutive (lambda (var type-spec from to)
 		 (let ((to-var (gensym)))
@@ -236,7 +236,7 @@
 	       (alternative 'from-parser 'upfrom-parser)
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
-;;; Order is TO/UPTO FROM/UPFROM.
+;;; Order is TO FROM.
 (define-parser arithmetic-up-8-parser
   (consecutive (lambda (var type-spec to from)
 		 (let ((to-var (gensym)))
@@ -254,11 +254,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Persers where only FROM/UPFROM and BY appear (TO/UPTO is omitted).
-;;; Since they can appear in any order, there are 2 different
-;;; variations.
+;;; Parsers where only FROM/UPFROM and BY appear (TO/UPTO/BELOW is
+;;; omitted).  Since they can appear in any order, there are 2
+;;; different variations.
 
-;;; Order is FROM/UPFROM BY.
+;;; Order is FROM BY.
 (define-parser arithmetic-up-9-parser
   (consecutive (lambda (var type-spec from by)
 		 (let ((by-var (gensym)))
@@ -272,7 +272,7 @@
 	       (alternative 'from-parser 'upfrom-parser)
 	       'by-parser))
 
-;;; Order is BY FROM/UPFROM.
+;;; Order is BY FROM.
 (define-parser arithmetic-up-10-parser
   (consecutive (lambda (var type-spec by from)
 		 (let ((by-var (gensym)))
@@ -288,11 +288,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Persers where only TO/UPTO and BY appear (FROM/UPFROM is omitted).
-;;; Since they can appear in any order, there are 2 different
-;;; variations.
+;;; Parsers where only TO/UPTO/BELOW and BY appear (FROM/UPFROM is
+;;; omitted).  Since they can appear in any order, there are 2
+;;; different variations.
 
-;;; Order is TO/UPTO BY.
+;;; Order is TO BY.
 (define-parser arithmetic-up-11-parser
   (consecutive (lambda (var type-spec to by)
 		 (let ((to-var (gensym))
@@ -308,7 +308,7 @@
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       'by-parser))
 
-;;; Order is BY TO/UPTO.
+;;; Order is BY TO.
 (define-parser arithmetic-up-12-parser
   (consecutive (lambda (var type-spec by to)
 		 (let ((to-var (gensym))
@@ -326,7 +326,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Perser where only FROM/UPFROM appears (TO/UPTO and BY are
+;;; Parser where only FROM/UPFROM appears (TO/UPTO/BELOW and BY are
 ;;; omitted).
 
 (define-parser arithmetic-up-13-parser
@@ -341,7 +341,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Perser where only TO/UPTO appears (FROM/UPFROM and BY are
+;;; Parser where only TO/UPTO/BELOW appears (FROM/UPFROM and BY are
 ;;; omitted).
 
 (define-parser arithmetic-up-13-parser
@@ -360,7 +360,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Perser where only BY appears (FROM/UPFROM and TO/UPTO are
+;;; Parser where only BY appears (FROM/UPFROM and TO/UPTO/BELOW are
 ;;; omitted).
 
 (define-parser arithmetic-up-13-parser
