@@ -577,4 +577,21 @@
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'by-parser
 	       'downfrom-parser))
-
+;;; BY- DOWNFROM - TO/DOWNTO/ABOVE
+(define-parser arithmetic-down-5-parser
+  (consecutive (lambda (var type-spec by from to)
+		 (let ((to-var (gensym))
+		       (by-var (gensym)))
+		   (make-instance 'for-as-arithmetic
+		     :bindings '((,by-var ,by)
+				 (,var ,from)
+				 (,to-var (cdr to)))
+		     :termination
+		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
+			(go end))
+		     :step `(decf ,var ,by-var))))
+	       'simple-var-parser
+	       'type-spec-parser
+	       'by-parser
+	       'downfrom-parser
+	       (alternative 'to-parser 'downto-parser 'above-parser)))
