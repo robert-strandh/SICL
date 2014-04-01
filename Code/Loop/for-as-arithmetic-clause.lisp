@@ -301,7 +301,7 @@
 ;;; Order is TO/UPTO BY.
 (define-parser arithmetic-up-11-parser
   (consecutive (lambda (var type-spec to form1 by form2)
-		 (declare (ignore from by))
+		 (declare (ignore by))
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
@@ -323,7 +323,7 @@
 ;;; Order is BY TO/UPTO.
 (define-parser arithmetic-up-12-parser
   (consecutive (lambda (var type-spec by form1 to form2)
-		 (declare (ignore from by))
+		 (declare (ignore by))
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
@@ -349,7 +349,7 @@
 
 (define-parser arithmetic-up-13-parser
   (consecutive (lambda (var type-spec from form1)
-		 (declare (ignore from by))
+		 (declare (ignore from))
 		 (make-instance 'for-as-arithmetic
 		   :bindings `((,var ,form1))
 		   :termination nil
@@ -368,7 +368,6 @@
 
 (define-parser arithmetic-up-13-parser
   (consecutive (lambda (var type-spec to form1)
-		 (declare (ignore from by))
 		 (let ((to-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,0)
@@ -392,7 +391,7 @@
 
 (define-parser arithmetic-up-13-parser
   (consecutive (lambda (var type-spec by form1)
-		 (declare (ignore from by))
+		 (declare (ignore by))
 		 (let ((by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,0)
