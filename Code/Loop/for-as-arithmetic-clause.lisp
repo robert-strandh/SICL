@@ -388,7 +388,7 @@
 ;;;
 ;;; The combination FROM - TO is not allowed. 
 
-;;; FROM - DOWNTO/ABOVE - BY
+;;; FROM/DOWNFROM - DOWNTO/ABOVE - BY
 (define-parser arithmetic-down-1-parser
   (consecutive (lambda (var type-spec from to by)
 		 (let ((to-var (gensym))
@@ -407,7 +407,7 @@
 	       (alternative 'downto-parser 'above-parser)
 	       'by-parser))
 
-;;; FROM - BY - DOWNTO/ABOVE 
+;;; FROM/DOWNFROM - BY - DOWNTO/ABOVE 
 (define-parser arithmetic-down-1-parser
   (consecutive (lambda (var type-spec from by to)
 		 (let ((to-var (gensym))
