@@ -102,134 +102,116 @@
 
 ;;; Order is FROM/UPFROM TO/UPTO BY.
 (define-parser arithmetic-up-1-parser
-  (consecutive (lambda (var type-spec from to form2 by)
+  (consecutive (lambda (var type-spec from to by)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,from)
-				 (,to-var ,form2)
+				 (,to-var ,(cdr to))
 				 (,by-var ,by))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))
+	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       'by-parser))
 
 ;;; Order is FROM/UPFROM BY TO/UPTO.
 (define-parser arithmetic-up-2-parser
-  (consecutive (lambda (var type-spec from by to form3)
+  (consecutive (lambda (var type-spec from by to)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,from)
 				 (,by-var ,by)
-				 (,to-var ,form3))
+				 (,to-var ,(cdr to)))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
 	       'by-parser
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))))
+	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;; Order is TO/UPTO FROM/UPFROM BY.
 (define-parser arithmetic-up-3-parser
-  (consecutive (lambda (var type-spec to form1 from by)
+  (consecutive (lambda (var type-spec to from by)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings `((,to-var ,form1)
+		     :bindings `((,to-var ,(cdr to))
 				 (,var ,from)
 				 (,by-var ,by))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
 	       'type-spec-parser
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))
+	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       (alternative 'from-parser 'upfrom-parser)
 	       'by-parser))
 
 ;;; Order is TO/UPTO BY FROM/UPFROM.
 (define-parser arithmetic-up-4-parser
-  (consecutive (lambda (var type-spec to form1 by from)
+  (consecutive (lambda (var type-spec to by from)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings `((,to-var ,form1)
+		     :bindings `((,to-var ,(cdr to))
 				 (,by-var ,by)
 				 (,var ,from))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
 	       'type-spec-parser
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))
+	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       'by-parser
 	       (alternative 'from-parser 'upfrom-parser)))
 
 ;;; Order is BY FROM/UPFROM TO/UPTO.
 (define-parser arithmetic-up-5-parser
-  (consecutive (lambda (var type-spec by from to form3)
+  (consecutive (lambda (var type-spec by from to)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,by-var ,by)
 				 (,var ,from)
-				 (,to-var ,form3))
+				 (,to-var ,(cdr to)))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
 	       'type-spec-parser
 	       'by-parser
 	       (alternative 'from-parser 'upfrom-parser)
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))))
+	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;; Order is BY TO/UPTO FROM/UPFROM.
 (define-parser arithmetic-up-6-parser
-  (consecutive (lambda (var type-spec by to form2 from)
+  (consecutive (lambda (var type-spec by to from)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,by-var ,by)
-				 (,to-var ,form2)
+				 (,to-var ,(cdr to))
 				 (,var ,from))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
 	       'type-spec-parser
 	       'by-parser
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))
+	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       (alternative 'from-parser 'upfrom-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -240,40 +222,34 @@
 
 ;;; Order is FROM/UPFROM TO/UPTO.
 (define-parser arithmetic-up-7-parser
-  (consecutive (lambda (var type-spec from to form2)
+  (consecutive (lambda (var type-spec from to)
 		 (let ((to-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,from)
-				 (,to-var ,form2))
+				 (,to-var ,(cdr to)))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var))))
 	       'simple-var-parser
 	       'type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))))
+	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;; Order is TO/UPTO FROM/UPFROM.
 (define-parser arithmetic-up-8-parser
-  (consecutive (lambda (var type-spec to form1 from)
+  (consecutive (lambda (var type-spec to from)
 		 (let ((to-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings `((,to-var ,form1)
+		     :bindings `((,to-var ,(cdr to))
 				 (,var ,from))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var))))
 	       'simple-var-parser
 	       'type-spec-parser
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))
+	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       (alternative 'from-parser 'upfrom-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -318,41 +294,35 @@
 
 ;;; Order is TO/UPTO BY.
 (define-parser arithmetic-up-11-parser
-  (consecutive (lambda (var type-spec to form1 by)
+  (consecutive (lambda (var type-spec to by)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var 0)
-				 (,to-var ,form1)
+				 (,to-var ,(cdr to))
 				 (,by-var ,by))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
 	       'type-spec-parser
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))
+	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       'by-parser))
 
 ;;; Order is BY TO/UPTO.
 (define-parser arithmetic-up-12-parser
-  (consecutive (lambda (var type-spec by to form2)
+  (consecutive (lambda (var type-spec by to)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var 0)
 				 (,by-var ,by)
-				 (,to-var ,form3))
+				 (,to-var ,(cdr to)))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
 	       'type-spec-parser
 	       'by-parser
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))))
+	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -375,21 +345,18 @@
 ;;; omitted).
 
 (define-parser arithmetic-up-13-parser
-  (consecutive (lambda (var type-spec to form1)
+  (consecutive (lambda (var type-spec to)
 		 (let ((to-var (gensym)))
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,0)
-				 (,to-var,form1))
+				 (,to-var ,(cdr to)))
 		     :termination
-		     `(when (,(if (eq to 'below) '>= '>) ,var ,to-var)
+		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
 		     :step `(incf ,var))))
 	       'simple-var-parser
 	       'type-spec-parser
-	       (alternative (keyword-parser 'to)
-			    (keyword-parser 'upto)
-			    (keyword-parser 'below))
-	       (singleton #'identity (constantly t))))
+	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
