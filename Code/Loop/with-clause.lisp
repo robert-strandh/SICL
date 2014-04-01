@@ -61,7 +61,7 @@
 ;;;
 ;;; Parsers.
 
-;;; Parser for var type-spec = form
+;;; Parser for var [type-spec] = form
 ;;; We try this parser first.
 (define-parser with-subclause-type-1-parser
   (consecutive (lambda (var-spec type-spec = form)
@@ -72,48 +72,26 @@
 		   :form form))
 	       ;; Accept anything for now.  Analyze later. 
 	       (singleton #'identity (constantly t))
-	       'type-spec-parser
+	       (optional (make-instance 'simple-type-spec :type t)
+			 'type-spec-parser)
 	       (keyword-parser '=)
 	       (singleton #'identity (constantly t))))
 
-;;; Parser for var = form
+;;; Parser for var [type-spec]
 (define-parser with-subclause-type-2-parser
-  (consecutive (lambda (var-spec = form)
-		 (declare (ignore =))
-		 (make-instance 'with-subclause-with-form
-		   :var-spec var-spec
-		   :type-spec (make-instance 'simple-type-spec :type t)
-		   :form form))
-	       ;; Accept anything for now.  Analyze later. 
-	       (singleton #'identity (constantly t))
-	       (keyword-parser '=)
-	       (singleton #'identity (constantly t))))
-
-;;; Parser for var type-spec
-(define-parser with-subclause-type-3-parser
   (consecutive (lambda (var-spec type-spec)
 		 (make-instance 'with-subclause
 		   :var-spec var-spec
 		   :type-spec type-spec))
 	       ;; Accept anything for now.  Analyze later. 
 	       (singleton #'identity (constantly t))
-	       'type-spec-parser))
-
-;;; Parser for var
-(define-parser with-subclause-type-4-parser
-  (consecutive (lambda (var-spec)
-		 (make-instance 'with-subclause
-		   :var-spec var-spec
-		   :type-spec (make-instance 'simple-type-spec :type t)))
-	       ;; Accept anything for now.  Analyze later. 
-	       (singleton #'identity (constantly t))))
+	       (optional (make-instance 'simple-type-spec :type t)
+			 'type-spec-parser)))
 
 ;;; Parser for any type of with subclause without the leading keyword
 (define-parser with-subclause-no-keyword-parser
   (alternative 'with-subclause-type-1-parser
-	       'with-subclause-type-2-parser
-	       'with-subclause-type-3-parser
-	       'with-subclause-type-4-parser))
+	       'with-subclause-type-2-parser))
 
 ;;; Parser for the with subclause starting with the AND keyword.
 (define-parser with-subclause-and-parser
