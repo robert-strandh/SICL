@@ -53,19 +53,39 @@
   (consecutive 'project-form (keyword-parser 'downfrom) 'anything-parser))
 
 (define-parser to-parser
-  (consecutive 'project-form (keyword-parser 'to) 'anything-parser))
+  (consecutive (lambda (keyword form)
+		 (declare (ignore keyword))
+		 (cons '= form))
+	       (keyword-parser 'to)
+	       'anything-parser))
 
 (define-parser upto-parser
-  (consecutive 'project-form (keyword-parser 'upto) 'anything-parser))
+  (consecutive (lambda (keyword form)
+		 (declare (ignore keyword))
+		 (cons '= form))
+	       (keyword-parser 'upto)
+	       'anything-parser))
 
 (define-parser below-parser
-  (consecutive 'project-form (keyword-parser 'below) 'anything-parser))
+  (consecutive (lambda (keyword form)
+		 (declare (ignore keyword))
+		 (cons '/= form))
+	       (keyword-parser 'below)
+	       'anything-parser))
 
 (define-parser downto-parser
-  (consecutive 'project-form (keyword-parser 'downto) 'anything-parser))
+  (consecutive (lambda (keyword form)
+		 (declare (ignore keyword))
+		 (cons '= form))
+	       (keyword-parser 'downto)
+	       'anything-parser))
 
 (define-parser above-parser
-  (consecutive 'project-form (keyword-parser 'above) 'anything-parser))
+  (consecutive (lambda (keyword form)
+		 (declare (ignore keyword))
+		 (cons '/= form))
+	       (keyword-parser 'above)
+	       'anything-parser))
 
 (define-parser by-parser
   (consecutive 'project-form (keyword-parser 'by) 'anything-parser))
