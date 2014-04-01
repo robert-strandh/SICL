@@ -355,3 +355,24 @@
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Perser where only BY appears (FROM/UPFROM and TO/UPTO are
+;;; omitted).
+
+(define-parser arithmetic-up-13-parser
+  (consecutive (lambda (var type-spec by form1)
+		 (declare (ignore from to by))
+		 (let ((by-var (gensym)))
+		   (make-instance 'for-as-arithmetic
+		     :bindings `((,var ,0)
+				 (,by-var,form1))
+		     :termination nil
+		     :step `(incf ,var ,by-var))))
+	       (singleton #'identity
+			  (lambda (x) (and (symbolp x) (not (constantp x)))))
+	       'type-spec-parser
+	       (keyword-parser 'by)
+	       (singleton #'identity (constantly t))))
+
