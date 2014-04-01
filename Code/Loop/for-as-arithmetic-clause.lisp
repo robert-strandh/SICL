@@ -44,7 +44,7 @@
 		     :bindings `((,var ,form1)
 				 (,to-var ,form2)
 				 (,by-var ,form3))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
@@ -68,7 +68,7 @@
 		     :bindings `((,var ,form1)
 				 (,by-var ,form2)
 				 (,to-var ,form3))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
@@ -92,7 +92,7 @@
 		     :bindings `((,to-var ,form1)
 				 (,var ,form2)
 				 (,by-var ,form3))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
@@ -116,7 +116,7 @@
 		     :bindings `((,to-var ,form1)
 				 (,by-var ,form2)
 				 (,var ,form3))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
@@ -140,7 +140,7 @@
 		     :bindings `((,by-var ,form1)
 				 (,var ,form2)
 				 (,to-var ,form3))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
@@ -164,7 +164,7 @@
 		     :bindings `((,by-var ,form1)
 				 (,to-var ,form2)
 				 (,var ,form3))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var ,by-var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
@@ -192,7 +192,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,form1)
 				 (,to-var ,form2))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
@@ -212,7 +212,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,to-var ,form1)
 				 (,var ,form2))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
@@ -347,7 +347,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,0)
 				 (,to-var,form1))
-		     :termination `(when (>= ,var ,to-var) (go end))
+		     :termination `(when (> ,var ,to-var) (go end))
 		     :step `(incf ,var))))
 	       (singleton #'identity
 			  (lambda (x) (and (symbolp x) (not (constantp x)))))
