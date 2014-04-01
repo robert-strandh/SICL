@@ -408,7 +408,7 @@
 	       'by-parser))
 
 ;;; FROM/DOWNFROM - BY - DOWNTO/ABOVE 
-(define-parser arithmetic-down-1-parser
+(define-parser arithmetic-down-2-parser
   (consecutive (lambda (var type-spec from by to)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
@@ -427,7 +427,7 @@
 	       (alternative 'downto-parser 'above-parser)))
 
 ;;; BY- FROM/DOWNFROM - DOWNTO/ABOVE
-(define-parser arithmetic-down-1-parser
+(define-parser arithmetic-down-3-parser
   (consecutive (lambda (var type-spec by from to)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
@@ -446,7 +446,7 @@
 	       (alternative 'downto-parser 'above-parser)))
 
 ;;; BY- DOWNTO/ABOVE - FROM/DOWNFROM 
-(define-parser arithmetic-down-1-parser
+(define-parser arithmetic-down-4-parser
   (consecutive (lambda (var type-spec by to from)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
