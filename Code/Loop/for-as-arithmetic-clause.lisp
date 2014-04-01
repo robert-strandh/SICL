@@ -34,6 +34,44 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Parsers for individual keywords.
+
+(defun project-form (keyword form)
+  (declare (ignore keyword))
+  form)
+
+(define-parser anything-parser
+  (singleton #'identity (constantly t)))
+
+(define-parser from-parser
+  (consecutive 'project-form (keyword-parser 'from) 'anything-parser))
+
+(define-parser upfrom-parser
+  (consecutive 'project-form (keyword-parser 'upfrom) 'anything-parser))
+
+(define-parser downfrom-parser
+  (consecutive 'project-form (keyword-parser 'downfrom) 'anything-parser))
+
+(define-parser to-parser
+  (consecutive 'project-form (keyword-parser 'to) 'anything-parser))
+
+(define-parser upto-parser
+  (consecutive 'project-form (keyword-parser 'upto) 'anything-parser))
+
+(define-parser below-parser
+  (consecutive 'project-form (keyword-parser 'below) 'anything-parser))
+
+(define-parser downto-parser
+  (consecutive 'project-form (keyword-parser 'downto) 'anything-parser))
+
+(define-parser above-parser
+  (consecutive 'project-form (keyword-parser 'above) 'anything-parser))
+
+(define-parser by-parser
+  (consecutive 'project-form (keyword-parser 'by) 'anything-parser))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Parsers for arithmetic up.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
