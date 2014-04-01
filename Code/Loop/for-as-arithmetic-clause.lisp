@@ -24,6 +24,17 @@
 ;;;
 ;;; Parsers.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parsers for arithmetic up.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Persers where FROM/UPFROM TO/UPTO and BY are all present.
+;;; Since they can appear in any order, there are 6 different
+;;; variations. 
+
+;;; Order is FROM/UPFROM TO/UPTO BY.
 (define-parser arithmetic-up-1-parser
   (consecutive (lambda (var type-spec from form1 to form2 by form3)
 		 (declare (ignore from to by))
@@ -47,6 +58,7 @@
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
 
+;;; Order is FROM/UPFROM BY TO/UPTO.
 (define-parser arithmetic-up-2-parser
   (consecutive (lambda (var type-spec from form1 by form2 to form3)
 		 (declare (ignore from to by))
@@ -70,6 +82,7 @@
 			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
 
+;;; Order is TO/UPTO FROM/UPFROM BY.
 (define-parser arithmetic-up-3-parser
   (consecutive (lambda (var type-spec to form1 from form2 by form3)
 		 (declare (ignore from to by))
@@ -93,6 +106,7 @@
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
 
+;;; Order is TO/UPTO BY FROM/UPFROM.
 (define-parser arithmetic-up-4-parser
   (consecutive (lambda (var type-spec to form1 by form2 from form3)
 		 (declare (ignore from to by))
@@ -116,6 +130,7 @@
 			    (keyword-parser 'upfrom))
 	       (singleton #'identity (constantly t))))
 
+;;; Order is BY FROM/UPFROM TO/UPTO.
 (define-parser arithmetic-up-5-parser
   (consecutive (lambda (var type-spec by form1 from form2 to form3)
 		 (declare (ignore from to by))
@@ -139,6 +154,7 @@
 			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
 
+;;; Order is BY TO/UPTO FROM/UPFROM.
 (define-parser arithmetic-up-6-parser
   (consecutive (lambda (var type-spec by form1 to form2 from form3)
 		 (declare (ignore from to by))
@@ -162,6 +178,13 @@
 			    (keyword-parser 'upfrom))
 	       (singleton #'identity (constantly t))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Persers where only FROM/UPFROM and TO/UPTO appear (BY is omitted).
+;;; Since they can appear in any order, there are 2 different
+;;; variations.
+
+;;; Order is FROM/UPFROM TO/UPTO.
 (define-parser arithmetic-up-7-parser
   (consecutive (lambda (var type-spec from form1 to form2)
 		 (declare (ignore from to))
@@ -181,6 +204,7 @@
 			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
 
+;;; Order is TO/UPTO FROM/UPFROM.
 (define-parser arithmetic-up-8-parser
   (consecutive (lambda (var type-spec to form1 from form2)
 		 (declare (ignore from to))
@@ -200,6 +224,13 @@
 			    (keyword-parser 'upfrom))
 	       (singleton #'identity (constantly t))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Persers where only FROM/UPFROM and BY appear (TO/UPTO is omitted).
+;;; Since they can appear in any order, there are 2 different
+;;; variations.
+
+;;; Order is FROM/UPFROM BY.
 (define-parser arithmetic-up-9-parser
   (consecutive (lambda (var type-spec from form1 by form2)
 		 (declare (ignore from to by))
@@ -218,6 +249,7 @@
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
 
+;;; Order is BY FROM/UPFROM.
 (define-parser arithmetic-up-10-parser
   (consecutive (lambda (var type-spec by form1 from form2)
 		 (declare (ignore from to by))
@@ -236,6 +268,13 @@
 			    (keyword-parser 'upfrom))
 	       (singleton #'identity (constantly t))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Persers where only TO/UPTO and BY appear (FROM/UPFROM is omitted).
+;;; Since they can appear in any order, there are 2 different
+;;; variations.
+
+;;; Order is TO/UPTO BY.
 (define-parser arithmetic-up-11-parser
   (consecutive (lambda (var type-spec to form1 by form2)
 		 (declare (ignore from to by))
@@ -256,6 +295,7 @@
 	       (keyword-parser 'by)
 	       (singleton #'identity (constantly t))))
 
+;;; Order is BY TO/UPTO.
 (define-parser arithmetic-up-12-parser
   (consecutive (lambda (var type-spec by form1 to form2)
 		 (declare (ignore from to by))
@@ -275,6 +315,11 @@
 	       (alternative (keyword-parser 'to)
 			    (keyword-parser 'upto))
 	       (singleton #'identity (constantly t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Perser where only FROM/UPFROM appears (TO/UPTO and BY are
+;;; omitted).
 
 (define-parser arithmetic-up-13-parser
   (consecutive (lambda (var type-spec from form1)
