@@ -577,8 +577,9 @@
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'by-parser
 	       'downfrom-parser))
+
 ;;; BY- DOWNFROM - TO/DOWNTO/ABOVE
-(define-parser arithmetic-down-5-parser
+(define-parser arithmetic-down-11-parser
   (consecutive (lambda (var type-spec by from to)
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
@@ -595,3 +596,22 @@
 	       'by-parser
 	       'downfrom-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)))
+
+;;; BY- TO/DOWNTO/ABOVE - DOWNFROM 
+(define-parser arithmetic-down-12-parser
+  (consecutive (lambda (var type-spec by to from)
+		 (let ((to-var (gensym))
+		       (by-var (gensym)))
+		   (make-instance 'for-as-arithmetic
+		     :bindings '((,by-var ,by)
+				 (,to-var (cdr to))
+				 (,var ,from))
+		     :termination
+		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
+			(go end))
+		     :step `(decf ,var ,by-var))))
+	       'simple-var-parser
+	       'type-spec-parser
+	       'by-parser
+	       (alternative 'to-parser 'downto-parser 'above-parser)
+	       'downfrom-parser))
