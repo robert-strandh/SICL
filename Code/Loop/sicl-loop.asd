@@ -42,6 +42,7 @@
    (:file "always-clause")
    (:file "never-clause")
    (:file "thereis-clause")
+   (:file "for-as-clause")
    (:file "for-as-arithmetic-clause")
    (:file "for-as-list-clause")
    (:file "for-as-equals-then-clause")
