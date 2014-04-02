@@ -109,6 +109,7 @@
 		     :bindings `((,var ,from)
 				 (,to-var ,(cdr to))
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -128,6 +129,7 @@
 		     :bindings `((,var ,from)
 				 (,by-var ,by)
 				 (,to-var ,(cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -147,6 +149,7 @@
 		     :bindings `((,to-var ,(cdr to))
 				 (,var ,from)
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -166,6 +169,7 @@
 		     :bindings `((,to-var ,(cdr to))
 				 (,by-var ,by)
 				 (,var ,from))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -185,6 +189,7 @@
 		     :bindings `((,by-var ,by)
 				 (,var ,from)
 				 (,to-var ,(cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -204,6 +209,7 @@
 		     :bindings `((,by-var ,by)
 				 (,to-var ,(cdr to))
 				 (,var ,from))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -227,6 +233,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,from)
 				 (,to-var ,(cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -243,6 +250,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,to-var ,(cdr to))
 				 (,var ,from))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -265,6 +273,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,from)
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
@@ -279,6 +288,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,by-var ,by)
 				 (,var ,from))
+		     :declarations `(type ,(type type-spec))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
@@ -301,6 +311,7 @@
 		     :bindings `((,var 0)
 				 (,to-var ,(cdr to))
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
@@ -317,6 +328,7 @@
 		     :bindings `((,var 0)
 				 (,by-var ,by)
 				 (,to-var ,(cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
@@ -333,6 +345,7 @@
   (consecutive (lambda (var type-spec from)
 		 (make-instance 'for-as-arithmetic
 		   :bindings `((,var ,from))
+		     :declarations `(type ,(type type-spec))
 		   :termination nil
 		   :step `(incf ,var)))
 	       'simple-var-parser
@@ -350,6 +363,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,0)
 				 (,to-var ,(cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			(go end))
@@ -369,6 +383,7 @@
 		   (make-instance 'for-as-arithmetic
 		     :bindings `((,var ,0)
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
@@ -394,9 +409,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,var ,from)
+		     :bindings `((,var ,from)
 				 (,to-var (cdr to))
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -413,9 +429,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,var ,from)
+		     :bindings `((,var ,from)
 				 (,by-var ,by)
 				 (,to-var (cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -432,9 +449,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,to-var (cdr to))
+		     :bindings `((,to-var (cdr to))
 				 (,var ,from)
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -451,9 +469,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,to-var (cdr to))
+		     :bindings `((,to-var (cdr to))
 				 (,by-var ,by)
 				 (,var ,from))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -470,9 +489,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,by-var ,by)
+		     :bindings `((,by-var ,by)
 				 (,var ,from)
 				 (,to-var (cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -489,9 +509,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,by-var ,by)
+		     :bindings `((,by-var ,by)
 				 (,to-var (cdr to))
 				 (,var ,from))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -508,9 +529,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,var ,from)
+		     :bindings `((,var ,from)
 				 (,to-var (cdr to))
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -527,9 +549,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,var ,from)
+		     :bindings `((,var ,from)
 				 (,by-var ,by)
 				 (,to-var (cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -546,9 +569,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,to-var (cdr to))
+		     :bindings `((,to-var (cdr to))
 				 (,var ,from)
 				 (,by-var ,by))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -565,9 +589,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,to-var (cdr to))
+		     :bindings `((,to-var (cdr to))
 				 (,by-var ,by)
 				 (,var ,from))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -584,9 +609,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,by-var ,by)
+		     :bindings `((,by-var ,by)
 				 (,var ,from)
 				 (,to-var (cdr to)))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
@@ -603,9 +629,10 @@
 		 (let ((to-var (gensym))
 		       (by-var (gensym)))
 		   (make-instance 'for-as-arithmetic
-		     :bindings '((,by-var ,by)
+		     :bindings `((,by-var ,by)
 				 (,to-var (cdr to))
 				 (,var ,from))
+		     :declarations `(type ,(type type-spec))
 		     :termination
 		     `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			(go end))
