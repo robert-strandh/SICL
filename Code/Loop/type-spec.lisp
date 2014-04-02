@@ -44,3 +44,8 @@
 
 (define-parser type-spec-parser
   (alternative 'simple-type-spec-parser 'destructured-type-spec-parser))
+
+(define-parser optional-type-spec-parser
+  (optional (make-instance 'simple-type-spec :type t)
+	    'type-spec-parser))
+
