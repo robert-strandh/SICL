@@ -46,3 +46,5 @@
 	       'for-as-subclause-parser
 	       (repeat* #'list
 			'for-as-subclause-parser)))
+
+(add-clause-parser 'for-as-clause-parser)
