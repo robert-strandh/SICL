@@ -44,4 +44,5 @@
    (:file "thereis-clause")
    (:file "for-as-arithmetic-clause")
    (:file "for-as-list-clause")
+   (:file "for-as-equals-then-clause")
    (:file "analysis")))
