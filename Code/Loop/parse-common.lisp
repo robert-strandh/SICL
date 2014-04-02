@@ -63,7 +63,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Mange a list of clause parsers. 
+;;; Manage a list of clause parsers. 
 
 (defparameter *clause-parsers* '())
 
