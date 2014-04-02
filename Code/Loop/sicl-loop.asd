@@ -21,6 +21,7 @@
    (:file "condition-reporters-en")
    (:file "utilities")
    (:file "clause")
+   (:file "expansion")
    (:file "combinatory-parsing")
    (:file "parse-common")
    (:file "var-spec")
