@@ -22,6 +22,10 @@
 ;;;
 ;;; Parsers.
 
+(define-parser for-as-arithmetic-parser
+  (alternative 'arithmetic-up-parser
+	       'arithmetic-down-parser))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser for simple variable.
@@ -395,6 +399,21 @@
 ;;; There is no default start value for decremental stepping, so
 ;;; either FROM or DOWNFROM must always be supplied.
 
+(define-parser arithmetic-up-parser
+  (alternative 'arithmetic-up-1-parser
+	       'arithmetic-up-2-parser
+	       'arithmetic-up-3-parser
+	       'arithmetic-up-4-parser
+	       'arithmetic-up-5-parser
+	       'arithmetic-up-6-parser
+	       'arithmetic-up-7-parser
+	       'arithmetic-up-8-parser
+	       'arithmetic-up-9-parser
+	       'arithmetic-up-10-parser
+	       'arithmetic-up-11-parser
+	       'arithmetic-up-12-parser
+	       'arithmetic-up-13-parser))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parsers where FROM/DOWNFROM TO/DOWNTO/ABOVE and BY are all present.
@@ -640,3 +659,17 @@
 	       'by-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'downfrom-parser))
+
+(define-parser arithmetic-down-parser
+  (alternative 'arithmetic-down-1-parser
+	       'arithmetic-down-2-parser
+	       'arithmetic-down-3-parser
+	       'arithmetic-down-4-parser
+	       'arithmetic-down-5-parser
+	       'arithmetic-down-6-parser
+	       'arithmetic-down-7-parser
+	       'arithmetic-down-8-parser
+	       'arithmetic-down-9-parser
+	       'arithmetic-down-10-parser
+	       'arithmetic-down-11-parser
+	       'arithmetic-down-12-parser))
