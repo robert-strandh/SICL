@@ -24,10 +24,25 @@
 ;;; A parser that tries every parser in *FOR-AS-SUBCLAUSE-PARSERS* until one
 ;;; succeeds.
 
-(defun for-as-subclause-parsers (tokens)
+(defun for-as-subclause-parser (tokens)
   (loop for parser in *for-as-subclause-parsers*
 	do (multiple-value-bind (successp result rest)
 	       (funcall parser tokens)
 	     (when successp
 	       (return (values t result rest))))
 	finally (return (values nil nil tokens))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Parse a FOR-AS clause.
+
+(define-parser for-as-clause-parser
+  (consecutive (lambda (for subclause more-subclauses)
+		 (declare (ignore for))
+		 (make-instance 'for-as-clause
+		   :subclauses (cons subclause more-subclauses)))
+	       (alternative (keyword-parser 'for)
+			    (keyword-parser 'as))
+	       'for-as-subclause-parser
+	       (repeat* #'list
+			'for-as-subclause-parser)))
