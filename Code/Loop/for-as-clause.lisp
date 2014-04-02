@@ -101,6 +101,10 @@
 			    (keyword-parser 'as))
 	       'for-as-subclause-parser
 	       (repeat* #'list
-			'for-as-subclause-parser)))
+			(consecutive (lambda (and subclause)
+				       (declare (ignore and))
+				       subclause)
+				     (keyword-parser 'and)
+				     'for-as-subclause-parser))))
 
 (add-clause-parser 'for-as-clause-parser)
