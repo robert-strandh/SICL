@@ -142,6 +142,7 @@
    ;; variable associated with this subclause, or a symbol created by
    ;; GENSYM and <form> depends on the origin of the binding.
    (%bindings :initarg :bindings :reader bindings)
+   (%declarations :initarg :declarations :reader declarations)
    ;; The value of this slot is either NIL, meaning that there is no
    ;; termination condition for this subclause, or a form to be
    ;; evaluated before the iteration of the loop starts.
