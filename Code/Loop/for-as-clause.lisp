@@ -108,3 +108,10 @@
 				     'for-as-subclause-parser))))
 
 (add-clause-parser 'for-as-clause-parser)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Step a FOR-AS clause.
+
+(defmethod step ((clause for-as-clause))
+  `(progn ,@(mapcar #'step (subclauses clause))))
