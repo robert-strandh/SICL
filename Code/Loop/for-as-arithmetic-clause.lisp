@@ -16,8 +16,6 @@
 ;;;
 ;;; Clause FOR-AS-ARITHMETIC.
 
-(defclass for-as-arithmetic-clause (for-as-clause) ())
-
 (defclass for-as-arithmetic (for-as-subclause) ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
