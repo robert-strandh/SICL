@@ -134,7 +134,7 @@
 ;;;    for-as-package-clause ::=
 ;;;      {for | as} for-as-package {and for-as-subclause}* 
 
-(defclass for-as-clause (clause subclause-mixin variable-clause-mixin) ())
+(defclass for-as-clause (clause subclauses-mixin variable-clause-mixin) ())
 
 (defclass for-as-subclause (var-and-type-spec-mixin)
   (;; The value of this slot is a list of bindings of the form
