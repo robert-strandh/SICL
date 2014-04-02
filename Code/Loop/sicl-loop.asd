@@ -23,6 +23,7 @@
    (:file "clause")
    (:file "combinatory-parsing")
    (:file "parse-common")
+   (:file "var-spec")
    (:file "type-spec")
    (:file "initial-clause")
    (:file "final-clause")
