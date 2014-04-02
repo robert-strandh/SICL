@@ -25,6 +25,7 @@
    (:file "parse-common")
    (:file "var-spec")
    (:file "type-spec")
+   (:file "name-clause")
    (:file "initial-clause")
    (:file "final-clause")
    (:file "with-clause")
