@@ -39,7 +39,7 @@
 
 (defun trace-parser (name parser tokens)
   (let ((*indent-level* (1+ *indent-level*)))
-    (parse-trace-output "trying ~s~%" name)
+    (parse-trace-output "trying ~s on ~s~%" name tokens)
     (multiple-value-bind (successp result rest)
 	(funcall parser tokens)
       (parse-trace-output "~asuccess~%" (if successp "" "no "))
