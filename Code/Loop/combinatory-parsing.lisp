@@ -27,6 +27,24 @@
 ;;; Functions that take one or more parsers as arguments can take
 ;;; either a function or the name of a function.
 
+(defparameter *indent-level* 0)
+
+(defparameter *parse-trace-p* nil)
+
+(defun parse-trace-output (format-control &rest arguments)
+  (when *parse-trace-p*
+    (loop repeat *indent-level*
+	  do (format *trace-output* "  "))
+    (apply #'format *trace-output* format-control arguments)))
+
+(defun trace-parser (name parser tokens)
+  (let ((*indent-level* (1+ *indent-level*)))
+    (parse-trace-output "trying ~s~%" name)
+    (multiple-value-bind (successp result rest)
+	(funcall parser tokens)
+      (parse-trace-output "~asuccess~%" (if successp "" "no "))
+      (values successp result rest))))
+
 (defmacro define-parser (name &body body)
   `(progn
      ;; At compile time, we define a parser that generates an error
@@ -41,7 +59,8 @@
      ;; result of executing BODY.
      (eval-when (:load-toplevel :execute)
        (setf (fdefinition ',name)
-	     (progn ,@body)))))
+	     (lambda (tokens)
+	       (trace-parser ',name (progn ,@body) tokens))))))
 
 ;;; Take a function designator (called the TRANSFORMER) and a
 ;;; predicate P and return a parser Q that invokes the predicate on
