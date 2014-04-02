@@ -26,6 +26,8 @@
   (alternative 'arithmetic-up-parser
 	       'arithmetic-down-parser))
 
+(add-for-as-subclause-parser 'arithmetic-for-as-arithmetic-parser)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Parser for simple variable.
