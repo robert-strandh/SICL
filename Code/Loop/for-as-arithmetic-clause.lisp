@@ -26,7 +26,7 @@
   (alternative 'arithmetic-up-parser
 	       'arithmetic-down-parser))
 
-(add-for-as-subclause-parser 'arithmetic-for-as-arithmetic-parser)
+(add-for-as-subclause-parser 'for-as-arithmetic-parser)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -119,7 +119,7 @@
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       'by-parser))
@@ -139,7 +139,7 @@
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
 	       'by-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
@@ -159,7 +159,7 @@
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       (alternative 'from-parser 'upfrom-parser)
 	       'by-parser))
@@ -179,7 +179,7 @@
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       'by-parser
 	       (alternative 'from-parser 'upfrom-parser)))
@@ -199,7 +199,7 @@
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser
 	       (alternative 'from-parser 'upfrom-parser)
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
@@ -219,7 +219,7 @@
 			(go end))
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       (alternative 'from-parser 'upfrom-parser)))
@@ -243,7 +243,7 @@
 			(go end))
 		     :step `(incf ,var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
@@ -260,7 +260,7 @@
 			(go end))
 		     :step `(incf ,var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       (alternative 'from-parser 'upfrom-parser)))
 
@@ -281,7 +281,7 @@
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
 	       'by-parser))
 
@@ -296,7 +296,7 @@
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser
 	       (alternative 'from-parser 'upfrom-parser)))
 
@@ -319,7 +319,7 @@
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
 	       'by-parser))
 
@@ -336,7 +336,7 @@
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
@@ -353,7 +353,7 @@
 		   :termination nil
 		   :step `(incf ,var)))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -373,7 +373,7 @@
 			(go end))
 		     :step `(incf ,var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -391,7 +391,7 @@
 		     :termination nil
 		     :step `(incf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -437,7 +437,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'from-parser 'downfrom-parser)
 	       (alternative 'downto-parser 'above-parser)
 	       'by-parser))
@@ -457,7 +457,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'from-parser 'downfrom-parser)
 	       'by-parser
 	       (alternative 'downto-parser 'above-parser)))
@@ -477,7 +477,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'downto-parser 'above-parser)
 	       (alternative 'from-parser 'downfrom-parser)
 	       'by-parser))
@@ -497,7 +497,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'downto-parser 'above-parser)
 	       'by-parser
 	       (alternative 'from-parser 'downfrom-parser)))
@@ -517,7 +517,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser
 	       (alternative 'from-parser 'downfrom-parser)
 	       (alternative 'downto-parser 'above-parser)))
@@ -537,7 +537,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser
 	       (alternative 'downto-parser 'above-parser)
 	       (alternative 'from-parser 'downfrom-parser)))
@@ -557,7 +557,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'downfrom-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'by-parser))
@@ -577,7 +577,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'downfrom-parser
 	       'by-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)))
@@ -597,7 +597,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'downfrom-parser
 	       'by-parser))
@@ -617,7 +617,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'by-parser
 	       'downfrom-parser))
@@ -637,7 +637,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser
 	       'downfrom-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)))
@@ -657,7 +657,7 @@
 			(go end))
 		     :step `(decf ,var ,by-var))))
 	       'simple-var-parser
-	       'type-spec-parser
+	       'optional-type-spec-parser
 	       'by-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
 	       'downfrom-parser))

@@ -72,8 +72,7 @@
 		   :form form))
 	       ;; Accept anything for now.  Analyze later. 
 	       (singleton #'identity (constantly t))
-	       (optional (make-instance 'simple-type-spec :type t)
-			 'type-spec-parser)
+	       'optional-type-spec-parser
 	       (keyword-parser '=)
 	       (singleton #'identity (constantly t))))
 
@@ -85,8 +84,7 @@
 		   :type-spec type-spec))
 	       ;; Accept anything for now.  Analyze later. 
 	       (singleton #'identity (constantly t))
-	       (optional (make-instance 'simple-type-spec :type t)
-			 'type-spec-parser)))
+	       'optional-type-spec-parser))
 
 ;;; Parser for any type of with subclause without the leading keyword
 (define-parser with-subclause-no-keyword-parser
