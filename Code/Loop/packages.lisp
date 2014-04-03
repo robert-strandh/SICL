@@ -1,11 +1,7 @@
-;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013
+;;;; Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014
 ;;;;
 ;;;;     Robert Strandh (robert.strandh@gmail.com)
 ;;;; 
-;;;; Copyright (c) 2010, 2011
-;;;;
-;;;;     Matthieu Villeneuve (matthieu.villeneuve@gmail.com)
-;;;;
 ;;;; all rights reserved. 
 ;;;;
 ;;;; Permission is hereby granted to use this software for any 
