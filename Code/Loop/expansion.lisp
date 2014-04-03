@@ -30,6 +30,12 @@
   (declare (ignore clause))
   '())
 
+(defgeneric termination (clause))
+
+(defmethod termination (clause)
+  (declare (ignore clause))
+  '())
+
 (defgeneric body (clause))
 
 (defmethod body (clause)
@@ -47,4 +53,3 @@
 (defmethod epilogue (clause)
   (declare (ignore clause))
   '())
-
