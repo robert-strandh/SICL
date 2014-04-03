@@ -106,18 +106,26 @@
 ;;; each Pi.
 (defun consecutive (combiner &rest parsers)
   (lambda (tokens)
-    (let ((remaining-tokens tokens)
-	  (results '()))
-      (loop for parser in parsers
-	    do (multiple-value-bind (successp result rest)
-		   (funcall parser remaining-tokens)
+    ;; We promised not to use the LOOP macro, so we do this with
+    ;; TAGBODY instead. 
+    (block nil
+      (let ((remaining-tokens tokens)
+	    (remaining-parsers parsers)
+	    (results '()))
+	(tagbody
+	 again
+	   (if (null remaining-parsers)
+	       (return (values t
+			       (apply combiner (reverse results))
+			       remaining-tokens))
+	       (multiple-value-bind (successp result rest)
+		   (funcall (car remaining-parsers) remaining-tokens)
+		 (pop remaining-parsers)
 		 (if successp
 		     (progn (push result results)
-			    (setf remaining-tokens rest))
-		     (return (values nil nil tokens))))
-	    finally (return (values t
-				    (apply combiner (reverse results))
-				    remaining-tokens))))))
+			    (setf remaining-tokens rest)
+			    (go again))
+		     (return (values nil nil tokens))))))))))
 
 ;;; Take a function designator (called the COMBINER) and a parser P
 ;;; and return a parser Q that invokes P repeatedly until it fails,
