@@ -33,8 +33,8 @@
 
 (defun parse-trace-output (format-control &rest arguments)
   (when *parse-trace-p*
-    (loop repeat *indent-level*
-	  do (format *trace-output* "  "))
+    (format *trace-output*
+	    (make-string (* 2 *indent-level*) :initial-element #\Space))
     (apply #'format *trace-output* format-control arguments)))
 
 (defun trace-parser (name parser tokens)
@@ -83,12 +83,20 @@
 ;;; every Pi fails, then Q also fails.
 (defun alternative (&rest parsers)
   (lambda (tokens)
-    (loop for parser in parsers
-	  do (multiple-value-bind (successp result rest)
-		 (funcall parser tokens)
-	       (when successp
-		 (return (values t result rest))))
-	  finally (return (values nil nil tokens)))))
+    ;; We promised not to use the LOOP macro, so we do this with
+    ;; TAGBODY instead. 
+    (block nil
+      (let ((remaining-parsers parsers))
+	(tagbody
+	 again
+	   (if (null remaining-parsers)
+	       (return (values nil nil tokens))
+	       (multiple-value-bind (successp result rest)
+		   (funcall (car remaining-parsers) tokens)
+		 (pop remaining-parsers)
+		 (if successp
+		     (return (values t result rest))
+		     (go again)))))))))
 
 ;;; Take a function designator (called the COMBINER) and a list of
 ;;; parsers P1, P2, ..., Pn and return a parser Q that invokes every
