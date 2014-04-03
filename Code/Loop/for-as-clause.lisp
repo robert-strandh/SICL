@@ -61,6 +61,9 @@
    ;; variable associated with this subclause, or a symbol created by
    ;; GENSYM and <form> depends on the origin of the binding.
    (%bindings :initarg :bindings :reader bindings)
+   ;; The value of this slot is a list of declarations (without the
+   ;; `declare' symbol).  These declarations go at the beginning of
+   ;; the body of the LET form that introduces the bindings. 
    (%declarations :initarg :declarations :reader declarations)
    ;; The value of this slot is either NIL, meaning that there is no
    ;; termination condition for this subclause, or a form to be
