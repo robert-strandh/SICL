@@ -48,4 +48,5 @@
    (:file "for-as-arithmetic-clause")
    (:file "for-as-list-clause")
    (:file "for-as-equals-then-clause")
+   (:file "for-as-hash-clause")
    (:file "analysis")))

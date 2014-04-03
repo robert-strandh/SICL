@@ -87,20 +87,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR-AS-HASH-CLAUSE and FOR-AS-HASH
-
-(defclass for-as-hash-clause (for-as-clause) ())
-
-(defclass for-as-hash (for-as-subclause)
-  ((%hash-table-form :initarg :hash-table-form :reader hash-table-form)
-   (%other-var :initarg :other-var :reader other-var)))
-
-(defclass for-as-hash-key (for-as-hash) ())
-
-(defclass for-as-hash-value (for-as-hash) ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Clauses FOR-AS-PACKAGE-CLAUSE and FOR-AS-PACKAGE
 
 (defclass for-as-package-clause (for-as-clause) ())
