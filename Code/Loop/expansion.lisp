@@ -18,13 +18,13 @@
   (declare (ignore clause))
   '())
 
-(defgeneric prologue (clause)
+(defgeneric prologue (clause))
 
 (defmethod prologue (clause)
   (declare (ignore clause))
   '())
 
-(defgeneric prologue (clause)
+(defgeneric prologue (clause))
 
 (defmethod prologue (clause)
   (declare (ignore clause))
@@ -53,3 +53,16 @@
 (defmethod epilogue (clause)
   (declare (ignore clause))
   '())
+
+(defun expand-clauses (all-clauses)
+  (labels ((do-bindings (clauses)
+	     (if (null clauses)
+		 `(progn ,@(mapcar #'prologue all-clauses)
+			 ,@(mapcar #'termination all-clauses)
+			 ,@(mapcar #'body all-clauses)
+			 ,@(mapcar #'step all-clauses)
+			 ,@(mapcar #'epilogue all-clauses))
+		 `(let ,(bindings (car clauses))
+		    `(declare ,@(declarations (car clauses)))
+		    ,(do-bindings (cdr clauses))))))
+    (do-bindings clauses)))
