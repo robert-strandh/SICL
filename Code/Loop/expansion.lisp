@@ -62,7 +62,9 @@
 			  start
 			    ,@(mapcar #'termination all-clauses)
 			    ,@(mapcar #'body all-clauses)
-			    ,@(mapcar #'step all-clauses)
+			    ,@(reduce #'append
+				      (mapcar #'step all-clauses)
+				      :from-end t)
 			    ,@(mapcar #'epilogue all-clauses)
 			    (go start)
 			  end))

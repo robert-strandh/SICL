@@ -157,7 +157,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
@@ -182,7 +182,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
@@ -207,7 +207,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
@@ -232,7 +232,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
@@ -257,7 +257,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -282,7 +282,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -310,7 +310,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var)))))
+		       :step `((incf ,var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
@@ -331,7 +331,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var)))))
+		       :step `((incf ,var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
@@ -356,7 +356,7 @@
 		       :prologue `(progn (setq ,var ,from)
 					 (setq ,by-var ,by))
 		       :termination nil
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)
@@ -375,7 +375,7 @@
 		       :prologue `(progn (setq ,by-var ,by)
 					 (setq ,var ,from))
 		       :termination nil
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -402,7 +402,7 @@
 		       :prologue `(progn (setq ,to-var ,(cdr to))
 					 (setq ,by-var ,by))
 		       :termination nil
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)
@@ -423,7 +423,7 @@
 		       :prologue `(progn (setq ,by-var ,by)
 					 (setq ,to-var ,(cdr to)))
 		       :termination nil
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -443,7 +443,7 @@
 		       :declarations `((cl:type ,type ,var))
 		       :prologue `(progn (setq ,var ,from))
 		       :termination nil
-		       :step `(incf ,var))))
+		       :step `((incf ,var)))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'upfrom-parser)))
@@ -467,7 +467,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
 			  (go end))
-		       :step `(incf ,var)))))
+		       :step `((incf ,var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'upto-parser 'below-parser)))
@@ -489,7 +489,7 @@
 		       :prologue `(progn (,var ,0)
 					 (setq ,by-var ,by))
 		       :termination nil
-		       :step `(incf ,var ,by-var)))))
+		       :step `((incf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser))
@@ -540,7 +540,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'downfrom-parser)
@@ -565,7 +565,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'from-parser 'downfrom-parser)
@@ -590,7 +590,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'downto-parser 'above-parser)
@@ -615,7 +615,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'downto-parser 'above-parser)
@@ -640,7 +640,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -665,7 +665,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -690,7 +690,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'downfrom-parser
@@ -715,7 +715,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'downfrom-parser
@@ -740,7 +740,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
@@ -765,7 +765,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       (alternative 'to-parser 'downto-parser 'above-parser)
@@ -790,7 +790,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
@@ -815,7 +815,7 @@
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '<= '<) ,var ,to-var)
 			  (go end))
-		       :step `(decf ,var ,by-var)))))
+		       :step `((decf ,var ,by-var))))))
 	       'simple-var-parser
 	       'optional-type-spec-parser
 	       'by-parser
