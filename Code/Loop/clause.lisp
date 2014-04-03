@@ -76,15 +76,6 @@
 
 (defclass main-clause-mixin () ())
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clauses FOR-AS-ACROSS-CLAUSE and FOR-AS-ACROSS
-
-(defclass for-as-across-clause (for-as-clause) ())
-
-(defclass for-as-across (for-as-subclause) 
-  ((%array-form :initarg :array-form :reader array-form)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Accumulation clauses
