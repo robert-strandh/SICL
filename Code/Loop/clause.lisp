@@ -78,37 +78,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Clauses FOR-AS-IN-LIST FOR-AS-ON-LIST
-;;;
-;;; The clause FOR-AS-IN-ON-LIST does not exist in the HyperSpec.  We
-;;; use it as a common superclass.
-
-(defclass for-as-in-on-list-clause (for-as-clause) ())
-
-(defclass for-as-in-on-list (for-as-subclause) ())
-
-(defclass for-as-in-list (for-as-in-on-list) ())
-
-(defclass for-as-on-list (for-as-in-on-list) ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Clauses FOR-AS-ACROSS-CLAUSE and FOR-AS-ACROSS
 
 (defclass for-as-across-clause (for-as-clause) ())
 
 (defclass for-as-across (for-as-subclause) 
   ((%array-form :initarg :array-form :reader array-form)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clauses FOR-AS-EQUALS-THEN-CLAUSE and FOR-AS-EQUALS-THEN
-
-(defclass for-as-equals-then-clause (for-as-clause) ())
-
-(defclass for-as-equals-then (for-as-subclause)
-  ((%form1 :initarg :form1 :reader form1)
-   (%form2 :initarg :form2 :reader form2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
