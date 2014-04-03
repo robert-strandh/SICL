@@ -85,21 +85,6 @@
 (defclass for-as-across (for-as-subclause) 
   ((%array-form :initarg :array-form :reader array-form)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Clauses FOR-AS-PACKAGE-CLAUSE and FOR-AS-PACKAGE
-
-(defclass for-as-package-clause (for-as-clause) ())
-
-(defclass for-as-package (for-as-subclause)
-  ((%package-form :initarg :package-form :reader package-form)))
-
-(defclass for-as-package-symbols (for-as-package) ())
-
-(defclass for-as-package-present-symbols (for-as-package) ())
-
-(defclass for-as-package-external-symbols (for-as-package) ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Accumulation clauses
