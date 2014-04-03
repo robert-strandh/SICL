@@ -69,6 +69,8 @@
    ;; termination condition for this subclause, or a form to be
    ;; evaluated before the iteration of the loop starts.
    (%termination :initarg :termination :reader termination)
+   ;; The value of this slot is a form that goes at the end of the
+   ;; loop body.
    (%step :initarg :step :reader step)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
