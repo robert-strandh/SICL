@@ -127,17 +127,17 @@
 ;;; Compute the bindings.
 
 (defmethod bindings ((clause for-as-clause))
-  (loop for subclause in (subclauses clause)
-	append (bindings subclause)))
+  (reduce #'append (mapcar #'bindings (subclauses clause))
+	  :from-end t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the declarations.
 
 (defmethod declarations ((clause for-as-clause))
-  (loop for subclause in (subclauses clause)
-	append (declarations subclause)))
-  
+  (reduce #'append (mapcar #'declarations (subclauses clause))
+	  :from-end t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compute the prologue.
