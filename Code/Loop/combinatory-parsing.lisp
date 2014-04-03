@@ -139,14 +139,18 @@
   (lambda (tokens)
     (let ((remaining-tokens tokens)
 	  (results '()))
-      (loop do (multiple-value-bind (successp result rest)
-		   (funcall parser remaining-tokens)
-		 (if successp
-		     (progn (push result results)
-			    (setf remaining-tokens rest))
-		     (return (values t
-				     (apply combiner (reverse results))
-				     remaining-tokens))))))))
+      (block nil
+	(tagbody
+	 again
+	   (multiple-value-bind (successp result rest)
+	       (funcall parser remaining-tokens)
+	     (if successp
+		 (progn (push result results)
+			(setf remaining-tokens rest)
+			(go again))
+		 (return (values t
+				 (apply combiner (reverse results))
+				 remaining-tokens)))))))))
 
 ;;; Take a function designator (called the COMBINER) and a parser P
 ;;; and return a parser Q that invokes P repeatedly until it fails,
@@ -163,14 +167,18 @@
 	    (values nil nil tokens)
 	    (let ((remaining-tokens rest))
 	      (push result results)
-	      (loop do (multiple-value-bind (successp result rest)
-			   (funcall parser remaining-tokens)
-			 (if successp
-			     (progn (push result results)
-				    (setf remaining-tokens rest))
-			     (return (values t
-					     (apply combiner (reverse results))
-					     remaining-tokens)))))))))))
+	      (block nil
+		(tagbody
+		 again 
+		   (multiple-value-bind (successp result rest)
+		       (funcall parser remaining-tokens)
+		     (if successp
+			 (progn (push result results)
+				(setf remaining-tokens rest)
+				(go again))
+			 (return (values t
+					 (apply combiner (reverse results))
+					 remaining-tokens))))))))))))
 
 ;;; Take a default value and a parser P and return a parser Q that
 ;;; always succeeds.  Q invokes P once.  If P succeeds, the Q succeeds
