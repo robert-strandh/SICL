@@ -98,4 +98,3 @@
 (defclass list-accumulation-mixin () ())
 
 (defclass numeric-accumulation-mixin () ())
-
