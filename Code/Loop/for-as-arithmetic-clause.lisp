@@ -20,6 +20,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; From a TYPE-SPEC determine a value used for variable
+;;; initialization and a type to use in a declaration, and return them
+;;; as two values.  The type returned may be different from the
+;;; TYPE-SPEC argument because we may not be able to determine a
+;;; initialization value that would conform to the TYPE-SPEC, and in
+;;; that case, we must modify the type so that it covers the
+;;; initialization value that we give.
+;;;
+;;; Perhaps this code should be moved to the code utilities module.
+
+(defun arithmetic-value-and-type (type-spec)
+  (cond ((eq type-spec 'fixnum)
+	 (values 0 type-spec))
+	((eq type-spec 'float)
+	 (values 0.0 type-spec))
+	((eq type-spec 'short-float)
+	 (values 0s0 type-spec))
+	((eq type-spec 'single-float)
+	 (values 0f0 type-spec))
+	((eq type-spec 'double-float)
+	 (values 0d0 type-spec))
+	((eq type-spec 'long-float)
+	 (values 0l0 type-spec))
+	((and (consp type-spec)
+	      (eq (car type-spec) 'integer)
+	      (consp (cdr type-spec))
+	      (integerp (cadr type-spec)))
+	 (values (cadr type-spec) type-spec))
+	;; We could add some more here, for instance intervals
+	;; of floats.
+	(t
+	 (values 0 't))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Parsers.
 
 (define-parser for-as-arithmetic-parser
