@@ -151,7 +151,7 @@
 				   (,to-var ,initial-value)
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from)
+		       :prologue `(progn (setq ,var ,from)
 					 (setq ,to-var ,(cdr to))
 					 (setq ,by-var ,by))
 		       :termination
@@ -176,7 +176,7 @@
 				   (,by-var ,initial-value)
 				   (,to-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from)
+		       :prologue `(progn (setq ,var ,from)
 					 (setq ,by-var ,by)
 					 (setq ,to-var ,(cdr to)))
 		       :termination
@@ -201,7 +201,7 @@
 				   (,var ,initial-value)
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,to-var ,(cdr to))
+		       :prologue `(progn (setq ,to-var ,(cdr to))
 					 (setq ,var ,from)
 					 (setq ,by-var ,by))
 		       :termination
@@ -226,7 +226,7 @@
 				   (,by-var ,initial-value)
 				   (,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,to-var ,(cdr to))
+		       :prologue `(progn (setq ,to-var ,(cdr to))
 					 (setq ,by-var ,by)
 					 (setq ,var ,from))
 		       :termination
@@ -251,7 +251,7 @@
 				   (,var ,initial-value)
 				   (,to-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,by-var ,by)
+		       :prologue `(progn (setq ,by-var ,by)
 					 (setq ,var ,from)
 					 (setq ,to-var ,(cdr to)))
 		       :termination
@@ -276,7 +276,7 @@
 				   (,to-var ,initial-value)
 				   (,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,by-var ,by)
+		       :prologue `(progn (setq ,by-var ,by)
 					 (setq ,to-var ,(cdr to))
 					 (setq ,var ,from))
 		       :termination
@@ -305,7 +305,7 @@
 		       :bindings `((,var ,initial-value)
 				   (,to-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from)
+		       :prologue `(progn (setq ,var ,from)
 					 (setq ,to-var ,(cdr to)))
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
@@ -326,7 +326,7 @@
 		       :bindings `((,to-var ,initial-value)
 				   (,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,to-var ,(cdr to))
+		       :prologue `(progn (setq ,to-var ,(cdr to))
 					 (setq ,var ,from))
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
@@ -353,7 +353,7 @@
 		       :bindings `((,var ,initial-value)
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from)
+		       :prologue `(progn (setq ,var ,from)
 					 (setq ,by-var ,by))
 		       :termination nil
 		       :step `(incf ,var ,by-var)))))
@@ -372,7 +372,7 @@
 		       :bindings `((,by-var ,initial-value)
 				   (,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,by-var ,by)
+		       :prologue `(progn (setq ,by-var ,by)
 					 (setq ,var ,from))
 		       :termination nil
 		       :step `(incf ,var ,by-var)))))
@@ -399,7 +399,7 @@
 				   (,to-var ,initial-value)
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,to-var ,(cdr to))
+		       :prologue `(progn (setq ,to-var ,(cdr to))
 					 (setq ,by-var ,by))
 		       :termination nil
 		       :step `(incf ,var ,by-var)))))
@@ -420,7 +420,7 @@
 				   (,by-var ,initial-value)
 				   (,to-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,by-var ,by)
+		       :prologue `(progn (setq ,by-var ,by)
 					 (setq ,to-var ,(cdr to)))
 		       :termination nil
 		       :step `(incf ,var ,by-var)))))
@@ -441,7 +441,7 @@
 		     (make-instance 'for-as-arithmetic
 		       :bindings `((,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from))
+		       :prologue `(progn (setq ,var ,from))
 		       :termination nil
 		       :step `(incf ,var))))
 	       'simple-var-parser
@@ -462,7 +462,7 @@
 		       :bindings `((,var ,0)
 				   (,to-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (,var ,0)
+		       :prologue `(progn (,var ,0)
 					 (setq ,to-var ,(cdr to)))
 		       :termination
 		       `(when (,(if (eq (car to) '/=) '>= '>) ,var ,to-var)
@@ -486,7 +486,7 @@
 		       :bindings `((,var ,0)
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (,var ,0)
+		       :prologue `(progn (,var ,0)
 					 (setq ,by-var ,by))
 		       :termination nil
 		       :step `(incf ,var ,by-var)))))
@@ -534,7 +534,7 @@
 				   (,to-var (cdr to))
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from)
+		       :prologue `(progn (setq ,var ,from)
 					 (,to-var (cdr to))
 					 (setq ,by-var ,by))
 		       :termination
@@ -559,7 +559,7 @@
 				   (,by-var ,initial-value)
 				   (,to-var (cdr to)))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from)
+		       :prologue `(progn (setq ,var ,from)
 					 (setq ,by-var ,by)
 					 (,to-var (cdr to)))
 		       :termination
@@ -584,7 +584,7 @@
 				   (,var ,initial-value)
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (,to-var (cdr to))
+		       :prologue `(progn (,to-var (cdr to))
 					 (setq ,var ,from)
 					 (setq ,by-var ,by))
 		       :termination
@@ -609,7 +609,7 @@
 				   (,by-var ,initial-value)
 				   (,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (,to-var (cdr to))
+		       :prologue `(progn (,to-var (cdr to))
 					 (setq ,by-var ,by)
 					 (setq ,var ,from))
 		       :termination
@@ -634,7 +634,7 @@
 				   (,var ,initial-value)
 				   (,to-var (cdr to)))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,by-var ,by)
+		       :prologue `(progn (setq ,by-var ,by)
 					 (setq ,var ,from)
 					 (,to-var (cdr to)))
 		       :termination
@@ -659,7 +659,7 @@
 				   (,to-var (cdr to))
 				   (,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,by-var ,by)
+		       :prologue `(progn (setq ,by-var ,by)
 					 (,to-var (cdr to))
 					 (setq ,var ,from))
 		       :termination
@@ -684,7 +684,7 @@
 				   (,to-var (cdr to))
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from)
+		       :prologue `(progn (setq ,var ,from)
 					 (,to-var (cdr to))
 					 (setq ,by-var ,by))
 		       :termination
@@ -709,7 +709,7 @@
 				   (,by-var ,initial-value)
 				   (,to-var (cdr to)))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,var ,from)
+		       :prologue `(progn (setq ,var ,from)
 					 (setq ,by-var ,by)
 					 (,to-var (cdr to)))
 		       :termination
@@ -734,7 +734,7 @@
 				   (,var ,initial-value)
 				   (,by-var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (,to-var (cdr to))
+		       :prologue `(progn (,to-var (cdr to))
 					 (setq ,var ,from)
 					 (setq ,by-var ,by))
 		       :termination
@@ -759,7 +759,7 @@
 				   (,by-var ,initial-value)
 				   (,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (,to-var (cdr to))
+		       :prologue `(progn (,to-var (cdr to))
 					 (setq ,by-var ,by)
 					 (setq ,var ,from))
 		       :termination
@@ -784,7 +784,7 @@
 				   (,var ,initial-value)
 				   (,to-var (cdr to)))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,by-var ,by)
+		       :prologue `(progn (setq ,by-var ,by)
 					 (setq ,var ,from)
 					 (,to-var (cdr to)))
 		       :termination
@@ -809,7 +809,7 @@
 				   (,to-var (cdr to))
 				   (,var ,initial-value))
 		       :declarations `(type ,type ,var)
-		       :preamble `(progn (setq ,by-var ,by)
+		       :prologue `(progn (setq ,by-var ,by)
 					 (,to-var (cdr to))
 					 (setq ,var ,from))
 		       :termination

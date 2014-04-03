@@ -65,10 +65,10 @@
    ;; `declare' symbol).  These declarations go at the beginning of
    ;; the body of the LET form that introduces the bindings. 
    (%declarations :initarg :declarations :reader declarations)
-   ;; The value of this slot is a form that goes in the preamble.  It
+   ;; The value of this slot is a form that goes in the prologue.  It
    ;; contains assignments of values to the loop variables with the
    ;; forms that appear in the subclause.
-   (%preamble :initarg :preamble :reader preamble)
+   (%prologue :initarg :prologue :reader prologue)
    ;; The value of this slot is either NIL, meaning that there is no
    ;; termination condition for this subclause, or a form to be
    ;; evaluated before the iteration of the loop starts.
