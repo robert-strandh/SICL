@@ -120,6 +120,47 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Expansion methods for FOR-AS clause.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the bindings.
+
+(defmethod bindings ((clause for-as-clause))
+  (loop for subclause in (subclauses clause)
+	append (bindings subclause)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the declarations.
+
+(defmethod declarations ((clause for-as-clause))
+  (loop for subclause in (subclauses clause)
+	append (declarations subclause)))
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the prologue.
+
+(defmethod prologue ((clause for-as-clause))
+  `(progn ,@(mapcar #'prologue (subclauses clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the termination.
+
+(defmethod termination ((clause for-as-clause))
+  `(progn ,@(mapcar #'termination (subclauses clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute the body.
+
+(defmethod body ((clause for-as-clause))
+  `(progn ,@(mapcar #'body (subclauses clause))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Step a FOR-AS clause.
 
 (defmethod step ((clause for-as-clause))
