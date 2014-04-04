@@ -1,8 +1,8 @@
 This test is meant to measure the time to do generic dispatch.  The
 test uses an in-line binary search for 8 different values,
 corresponding to 8 different classes that a function has been called
-with.  Each time around the loop, there are therefore 3 tests
-executed. 
+with, and which do not have adjacent unique numbers.  Each time around
+the loop, there are therefore 3 tests executed.
 
 Results:
 
