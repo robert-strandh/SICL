@@ -13,7 +13,6 @@ Results:
   Intel Core i5-2500K 3,30 GHz
 
     CPU time: 21.9 seconds.
-    CPU time: 19.2 seconds.
     
     If we take this time and subtract the time (19.2 s) to execute a
     function call where we do not set the static link nor the linkage
