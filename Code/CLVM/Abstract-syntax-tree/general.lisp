@@ -15,21 +15,6 @@
 ;;;; in particular for PROCEDURE INTEGRATION (sometimes called
 ;;;; INLINING).
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Retrieving the children of an AST.
-;;;
-;;; Since each node of an AST is different, and have different names
-;;; for the sub-ASTs that it defines, it is not easy to retrieve the
-;;; children of an arbitrary node.  Furthermore, the AST, despite the
-;;; name, is not really a tree, and not even acyclic because of nodes
-;;; such as RETURN-FROM and GO that contain references to ancestors.  
-;;;
-;;; For that reason, we define a method for each type of node in the
-;;; AST that allows us to scan the entire AST without looking at
-;;; details of each node, while avoiding infinite cycles by only
-;;; looking "downwards" in the tree.
-
 (defgeneric children (ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
