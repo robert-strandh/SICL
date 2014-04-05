@@ -135,23 +135,6 @@
   ((%defining-instructions :initform '() :accessor defining-instructions)
    (%using-instructions :initform '() :accessor using-instructions)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a datum on a stream.
-
-(defgeneric draw-datum (datum stream))
-
-;;; During the drawing process, the value of this variable is a hash
-;;; table that contains data that have already been drawn. 
-(defparameter *datum-table* nil)
-
-(defmethod draw-datum :around (datum stream)
-  (when (null (gethash datum *datum-table*))
-    (setf (gethash datum *datum-table*) (gensym))
-    (format stream "  ~a [shape = ellipse, style = filled];~%"
-	    (gethash datum *datum-table*))
-    (call-next-method)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class IMMEDIATE-INPUT.
@@ -173,11 +156,6 @@
 (defun make-immediate-input (value)
   (make-instance 'immediate-input
     :value value))
-
-(defmethod draw-datum ((datum immediate-input) stream)
-  (format stream "   ~a [fillcolor = aquamarine, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -206,11 +184,6 @@
   (make-instance 'word-input
     :value value))
 
-(defmethod draw-datum ((datum word-input) stream)
-  (format stream "   ~a [fillcolor = lightblue, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (value datum)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class CONSTANT-INPUT.
@@ -227,11 +200,6 @@
 (defun make-constant-input (value)
   (make-instance 'constant-input
     :value value))
-
-(defmethod draw-datum ((datum constant-input) stream)
-  (format stream "   ~a [fillcolor = green, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -254,11 +222,6 @@
 (defmethod print-object ((object lexical-location) stream)
   (print-unreadable-object (object stream :type t)
     (format stream "~a" (name object))))
-
-(defmethod draw-datum ((datum lexical-location) stream)
-  (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (name datum)))
 
 ;;; Generate a new lexical location
 (defun new-temporary ()
@@ -287,11 +250,6 @@
     :name name
     :storage storage))
 
-(defmethod draw-datum ((datum special-location) stream)
-  (format stream "   ~a [fillcolor = cyan4, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (name datum)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class GLOBAL-INPUT.
@@ -311,11 +269,6 @@
   (make-instance 'global-input
     :name name
     :storage storage))
-
-(defmethod draw-datum ((datum global-input) stream)
-  (format stream "   ~a [fillcolor = cyan, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -357,11 +310,6 @@
   (make-instance 'external-input
     :value value))
 
-(defmethod draw-datum ((datum external-input) stream)
-  (format stream "   ~a [fillcolor = pink, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (value datum)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class REGISTER-LOCATION.
@@ -380,11 +328,6 @@
   (print-unreadable-object (object stream :type t)
     (format stream "~a" (name object))))
 
-(defmethod draw-datum ((datum register-location) stream)
-  (format stream "   ~a [fillcolor = red, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (name datum)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class STATIC-LOCATION.
@@ -402,12 +345,6 @@
     :layer layer
     :index index))
 
-(defmethod draw-datum ((datum static-location) stream)
-  (format stream "   ~a [fillcolor = yellow, label = \"~a,~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (layer datum)
-	  (index datum)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class DYNAMIC-LOCATION.
@@ -421,11 +358,6 @@
 (defun make-dynamic-location (index)
   (make-instance 'dynamic-location
     :index index))
-
-(defmethod draw-datum ((datum dynamic-location) stream)
-  (format stream "   ~a [fillcolor = darkorchid, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (index datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -445,12 +377,6 @@
   (make-instance 'linkage-location
     :index index
     :name name))
-
-(defmethod draw-datum ((datum linkage-location) stream)
-  (format stream "   ~a [fillcolor = bisque, label = \"~a, ~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (index datum)
-	  (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -529,68 +455,6 @@
     :inputs (inputs instruction)
     :outputs (outputs instruction)
     :successors (successors instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing instructions.
-
-(defparameter *instruction-table* nil)
-
-(defun unique-id (instruction)
-  (gethash instruction *instruction-table*))
-
-(defgeneric draw-instruction (instruction stream))
-  
-(defmethod draw-instruction :around (instruction stream)
-  (when (null (unique-id instruction))
-    (setf (gethash instruction *instruction-table*) (gensym))
-    (format stream "  ~a [shape = box];~%"
-	    (unique-id instruction))
-    (call-next-method)))
-
-(defmethod draw-instruction :before ((instruction instruction) stream)
-  (loop for next in (successors instruction)
-	do (draw-instruction next stream))
-  (loop for next in (successors instruction)
-	for i from 1
-	do (format stream
-		   "  ~a -> ~a [style = bold, label = \"~d\"];~%"
-		   (unique-id instruction)
-		   (gethash next *instruction-table*)
-		   i)))
-  
-(defmethod draw-instruction (instruction stream)
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (unique-id instruction)
-	  (class-name (class-of instruction))))
-
-(defmethod draw-instruction :after (instruction stream)
-  (loop for datum in (inputs instruction)
-	for i from 1
-	do (draw-datum datum stream)
-	   (format stream
-		   "  ~a -> ~a [color = red, style = dashed, label = \"~d\"];~%"
-		   (gethash datum *datum-table*)
-		   (unique-id instruction)
-		   i))
-  (loop for datum in (outputs instruction)
-	for i from 1
-	do (draw-datum datum stream)
-	   (format stream
-		   "  ~a -> ~a [color = blue, style = dashed, label = \"~d\"];~%"
-		   (unique-id instruction)
-		   (gethash datum *datum-table*)
-		   i)))
-
-(defun draw-flowchart (start filename)
-  (with-open-file (stream filename
-			  :direction :output
-			  :if-exists :supersede)
-    (let ((*instruction-table* (make-hash-table :test #'eq))
-	  (*datum-table* (make-hash-table :test #'eq)))
-	(format stream "digraph G {~%")
-	(draw-instruction start stream)
-	(format stream "}~%"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -699,10 +563,6 @@
   (make-instance 'enter-instruction
     :successors (if successor-p (list successor) '())))
 
-(defmethod draw-instruction ((instruction enter-instruction) stream)
-  (format stream "   ~a [label = \"enter\"];~%"
-	  (unique-id instruction)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction NOP-INSTRUCTION.
@@ -713,10 +573,6 @@
 (defun make-nop-instruction (successors)
   (make-instance 'nop-instruction
     :successors successors))
-
-(defmethod draw-instruction ((instruction nop-instruction) stream)
-  (format stream "   ~a [label = \"nop\"];~%"
-	  (unique-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -732,11 +588,6 @@
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
 
-(defmethod draw-instruction
-    ((instruction assignment-instruction) stream)
-  (format stream "   ~a [label = \"<-\"];~%"
-	  (unique-id instruction)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction FUNCALL-INSTRUCTION.
@@ -749,10 +600,6 @@
     :inputs inputs
     :successors (if successor-p (list successor) '())))
 
-(defmethod draw-instruction ((instruction funcall-instruction) stream)
-  (format stream "   ~a [label = \"funcall\"];~%"
-	  (unique-id instruction)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TAILCALL-INSTRUCTION.
@@ -763,10 +610,6 @@
 (defun make-tailcall-instruction (inputs)
   (make-instance 'tailcall-instruction
     :inputs inputs))
-
-(defmethod draw-instruction ((instruction tailcall-instruction) stream)
-  (format stream "   ~a [label = \"tailcall\"];~%"
-	  (unique-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -781,10 +624,6 @@
     :outputs outputs
     :successors (if successor-p (list successor) '())))
 
-(defmethod draw-instruction ((instruction get-values-instruction) stream)
-  (format stream "   ~a [label = \"get-values\"];~%"
-	  (unique-id instruction)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction RETURN-INSTRUCTION.
@@ -795,10 +634,6 @@
 (defun make-return-instruction (inputs)
   (make-instance 'return-instruction
     :inputs inputs))
-
-(defmethod draw-instruction ((instruction return-instruction) stream)
-  (format stream "   ~a [label = \"ret\"];~%"
-	  (unique-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -812,14 +647,6 @@
     :outputs (list output)
     :successors (list successor)
     :code code))
-
-(defmethod draw-instruction ((instruction enclose-instruction) stream)
-  (format stream "   ~a [label = \"enclose\"];~%"
-	  (unique-id instruction))
-  (draw-instruction (code instruction) stream)
-  (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
-	  (gethash (code instruction) *instruction-table*)
-	  (unique-id instruction)))
 
 (defmethod clone-instruction :around ((instruction enclose-instruction))
   (let ((new (call-next-method)))
@@ -839,10 +666,6 @@
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
 
-(defmethod draw-instruction ((instruction get-argcount-instruction) stream)
-  (format stream "   ~a [label = \"AC\", color = orange];~%"
-	  (unique-id instruction)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction GET-ARG-INSTRUCTION.
@@ -856,10 +679,6 @@
     :inputs (list input)
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
-
-(defmethod draw-instruction ((instruction get-arg-instruction) stream)
-  (format stream "   ~a [label = \"arg\", color = orange];~%"
-	  (unique-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -877,11 +696,6 @@
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
 
-(defmethod draw-instruction ((instruction load-constant-instruction) stream)
-  (format stream "   ~a [label = \"LC ~d\"];~%"
-	  (unique-id instruction)
-	  (linkage-vector-index instruction)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction LOAD-GLOBAL-INSTRUCTION.
@@ -898,11 +712,6 @@
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
 
-(defmethod draw-instruction ((instruction load-global-instruction) stream)
-  (format stream "   ~a [label = \"LX ~d\"];~%"
-	  (unique-id instruction)
-	  (linkage-vector-index instruction)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction LOAD-STATIC-ENV-INSTRUCTION.
@@ -916,10 +725,6 @@
     :inputs (list input)
     :outputs (list output)
     :successors (if successor-p (list successor) '())))
-
-(defmethod draw-instruction ((instruction load-static-env-instruction) stream)
-  (format stream "   ~a [label = \"LSE\"];~%"
-	  (unique-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -1300,10 +1105,6 @@
     :inputs (list input)
     :successors (if successor-p (list successor) '())))
 
-(defmethod draw-instruction ((instruction catch-instruction) stream)
-  (format stream "   ~a [label = \"catch\"];~%"
-	  (unique-id instruction)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction UNWIND-INSTRUCTION.
@@ -1327,8 +1128,4 @@
   (make-instance 'unwind-instruction
     :inputs (list input)
     :successors (if successor-p (list successor) '())))
-
-(defmethod draw-instruction ((instruction unwind-instruction) stream)
-  (format stream "   ~a [label = \"unwind\"];~%"
-	  (unique-id instruction)))
 
