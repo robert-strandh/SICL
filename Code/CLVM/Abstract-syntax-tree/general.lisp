@@ -183,14 +183,17 @@
 ;;; LABELS.
 
 (defclass function-ast (ast)
-  ())
+  ((%lambda-list :initarg :lambda-list :reader lambda-list))
 
-(defun make-function-ast (body-ast)
+(defun make-function-ast (body-ast lambda-list)
   (make-instance 'function-ast
-    :children (list body-ast)))
+    :children (list body-ast)
+    :lambda-list lambda-list))
 
 (defmethod body-ast ((ast function-ast))
   (first (children ast)))
+
+(clvm-io:define-save-info function-ast (:lambda-list lambda-list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
