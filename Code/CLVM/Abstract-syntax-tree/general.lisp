@@ -108,20 +108,17 @@
 ;;; 
 ;;; A GLOBAL-AST represents a reference to a global FUNCTION, i.e., a
 ;;; name that is known to be associated with a function in the global
-;;; environment.  Such a reference contains the name of the function,
-;;; the STORAGE cell where the function can be found, and the TYPE of
-;;; the function as it was declared in the context where the AST was
-;;; created.  The storage cell is a CONS cell where the CAR contains
-;;; the function and the CDR is NIL.
+;;; environment.  Such a reference contains the name of the function
+;;; and the TYPE of the function as it was declared in the context
+;;; where the AST was created.
 
 (defclass global-ast (ast)
   ((%name :initarg :name :reader name)
    (%function-type :initarg :function-type :accessor function-type)
-   (%storage :initarg :storage :reader storage)
    (%children :initform '() :allocation :class)))
 
-(defun make-global-ast (name storage)
-  (make-instance 'global-ast :name name :storage storage))
+(defun make-global-ast (name)
+  (make-instance 'global-ast :name name))
 
 (clvm-io:define-save-info global-ast
   (:name name) (:function-type function-type))
@@ -131,19 +128,14 @@
 ;;; Class SPECIAL-AST.
 ;;; 
 ;;; A SPECIAL-AST represents a reference to a special variable.  Such
-;;; a reference contains the name of the variable, and the STORAGE
-;;; cell where the global value of the variable can be found.  This
-;;; value is used only if no binding of the variable is found in the
-;;; dynamic environment.  The storage cell is a CONS cell where the
-;;; CAR contains the global value and the CDR is NIL.
+;;; a reference contains the name of the variable.
 
 (defclass special-ast (ast)
   ((%name :initarg :name :reader name)
-   (%storage :initarg :storage :reader storage)
    (%children :initform '() :allocation :class)))
 
-(defun make-special-ast (name storage)
-  (make-instance 'special-ast :name name :storage storage))
+(defun make-special-ast (name)
+  (make-instance 'special-ast :name name))
 
 (clvm-io:define-save-info special-ast (:name name))
 
@@ -154,10 +146,6 @@
 ;;; A LEXICAL-AST represents a reference to a lexical variable.  Such
 ;;; a reference contains the name of the variable, but it is used only
 ;;; for debugging perposes and for the purpose of error reporting.
-;;;
-;;; A lexical variable does not have any associated location or
-;;; storage, because where it can be found might be different in
-;;; different parts of the code.
 
 (defclass lexical-ast (ast)
   ((%name :initarg :name :reader name)))
