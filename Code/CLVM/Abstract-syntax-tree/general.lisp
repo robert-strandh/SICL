@@ -181,6 +181,38 @@
 ;;; A function AST represents an explicit lambda expression, but also
 ;;; implicit lambda expressions such as the ones found in FLET and
 ;;; LABELS.
+;;;
+;;; The lambda list is not a normal lambda list.  It has the following
+;;; form: 
+;;; ([r1 .. rl [&optional o1 ..om] [&key k1 .. kn &allow-other-keys]]]) 
+;;;
+;;; where: 
+;;;
+;;;   - Each ri is a LEXICAL-AST. 
+;;;
+;;;   - Each oi is a list of two LEXICAL-ASTs.  The second of the 
+;;;     two conceptually contains a Boolean value indicating whether
+;;;     the first one contains a value supplied by the caller.  
+;;;
+;;;   - Each ki is a list of a symbol and two LEXICAL-ASTs.  The
+;;;     symbol is the keyword-name that a caller must supply in order
+;;;     to pass the corresponding argument.  The second of the two
+;;;     LEXICAL-ASTs conceptually contains a Boolean value indicating
+;;;     whether the first LEXICAL-AST contains a value supplied by the
+;;;     caller.
+;;;
+;;; The LEXICAL-ASTs in the lambda list are potentially unrelated to
+;;; the variables that were given in the original lambda expression,
+;;; and they are LEXICAL-ASTs independently of whether the
+;;; corresponding variable that was given in the original lambda
+;;; expression is a lexical variable or a special variable.
+;;;
+;;; The body of the FUNCTION-AST must contain code that tests the
+;;; second of the two LEXICAL-ASTs and initializes variables if
+;;; needed.  The if the second LEXICAL-AST in any oi contains FALSE,
+;;; then the code in the body is not allowed to test the second
+;;; LEXICAL-ASTs of any of the ki because they may not be set
+;;; correctly (conceptually, they all have the value FALSE then).
 
 (defclass function-ast (ast)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)))
