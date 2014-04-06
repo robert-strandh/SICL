@@ -183,7 +183,7 @@
 ;;; LABELS.
 
 (defclass function-ast (ast)
-  ((%lambda-list :initarg :lambda-list :reader lambda-list))
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)))
 
 (defun make-function-ast (body-ast lambda-list)
   (make-instance 'function-ast
@@ -317,6 +317,63 @@
   (first (children ast)))
 
 (clvm-io:define-save-info the-ast (:value-type value-type))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class TYPEQ-AST.
+;;;
+;;; This AST can be thought of as a translation to an AST of a
+;;; hypothetical special form (TYPEQ <form> <type-specifier>) which is
+;;; like the function TYPEP, except that the type specifier is not
+;;; evaluated.  
+;;;
+;;; Like the hypothetical special form, this AST has two children.
+;;; The first child is an AST corresponding to <form> and the second
+;;; child is a CONSTANT-AST containing <type-specifier> as a constant.
+;;; In addition, this AST has a slot that contains <type-specifier>.
+;;; The reason for this duplication of information is that the child
+;;; containing the CONSTANT-AST might later be replaced by a reference
+;;; to some location where the constant can be found, but we still
+;;; need the type information for the purpose of type inference. 
+;;;
+;;; Like a call to the function TYPEP, the value of this AST is a
+;;; generalized Boolean that is TRUE if and only if <form> is of type
+;;; <type-specifier>.
+;;;
+;;; Implementations that interpret the special form (THE <type>
+;;; <form>) as an error if <form> is not of type <type> might generate
+;;; a TYPEQ-AST contained in an IF-AST instead of a THE-AST, and to
+;;; have the ELSE branch of the IF-AST call ERROR.
+;;;
+;;; The TYPEQ-AST can also be used as a target for the standard macro
+;;; CHECK-TYPE.  An implementation might for instance expand
+;;; CHECK-TYPE to a form containing an implementation-specific special
+;;; operator; e.g, (UNLESS (TYPEQ <form> <type-spec>) (CERROR ...))
+;;; and then translate the implementation-specific special operator
+;;; TYPEQ into a TYPEQ-AST.
+;;;
+;;; The TYPEQ-AST generates instructions that are used in the static
+;;; type inference phase.  If static type inference can determine the
+;;; value of the TYPEQ-AST, then no runtime test is required.  If not,
+;;; then a call to TYPEP is generated instead. 
+
+(defclass typeq-ast (ast)
+  ((%type-specifier :initarg :type-specifier :reader type-specifier)))
+
+(defun make-typeq-ast (form-ast type-specifier-ast)
+  (make-instance 'typeq-ast
+    :children (list form-ast type-specifier-ast)))
+
+(defmethod form-ast ((ast typeq-ast))
+  (first (children ast)))
+
+(defmethod type-specifier-ast ((ast typeq-ast))
+  (second (children ast)))
+
+(defmethod initialize-info :after ((ast typeq-ast) &key &allow-other-keys)
+  (reinitialize-instance
+   ast
+   :type-specifier (clvm-ast:value (type-specifier-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
