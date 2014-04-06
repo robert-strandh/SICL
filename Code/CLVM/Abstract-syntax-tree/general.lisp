@@ -172,7 +172,7 @@
   (first (children ast)))
 
 (defmethod argument-asts ((ast call-ast))
-  (cdr (children ast)))
+  (rest (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
