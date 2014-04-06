@@ -183,16 +183,11 @@
 ;;; LABELS.
 
 (defclass function-ast (ast)
-  (;; If the function is known to have only required parameters, then
-   ;; this value is the number of required parameters.  Otherwise,
-   ;; this value is false.  A function is considered for inlining only
-   ;; if it has only required parameters. 
-   (%required-only-p :initarg :required-only-p :reader required-only-p)))
+  ())
 
-(defun make-function-ast (body-ast &optional required-only-p)
+(defun make-function-ast (body-ast)
   (make-instance 'function-ast
-    :children (list body-ast)
-    :required-only-p required-only-p))
+    :children (list body-ast)))
 
 (defmethod body-ast ((ast function-ast))
   (first (children ast)))
