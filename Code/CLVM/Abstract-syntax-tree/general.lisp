@@ -304,24 +304,19 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class THE-AST.
-;;;
-;;; As with the TYPEQ-AST, we keep the list of types in a separate
-;;; slot, so that even if the type specifiers stored in the children
-;;; get replaced by a reference to the linkage vector, we still have
-;;; access to the types for static type inference purposes. 
 
 (defclass the-ast (ast)
-  ((%type-specifiers :initarg :type-specifiers :reader type-specifiers)))
+  ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-the-ast (form-ast &rest types)
   (make-instance 'the-ast
     :children (list* form-ast types)
-    :type-specifiers (mapcar #'value types)))
+    :value-type (mapcar #'value types)))
 
 (defmethod form-ast ((ast the-ast))
   (first (children ast)))
 
-(clvm-io:define-save-info the-ast (:type-specifiers type-specifiers))
+(clvm-io:define-save-info the-ast (:value-type value-type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
