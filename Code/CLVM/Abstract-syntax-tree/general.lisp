@@ -24,6 +24,8 @@
 (defclass ast ()
   ((%children :initform '() :initarg :children :accessor children)))
 
+(clvm-io:define-save-info ast (:children children))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; AST classes for standard common lisp features. 
@@ -77,6 +79,8 @@
 (defun make-immediate-ast (value)
   (make-instance 'immediate-ast :value value))
 
+(clvm-io:define-save-info immediate-ast (:value value))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class CONSTANT-AST. 
@@ -95,6 +99,8 @@
 
 (defun make-constant-ast (value)
   (make-instance 'constant-ast :value value))
+
+(clvm-io:define-save-info constant-ast (:value value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -117,6 +123,9 @@
 (defun make-global-ast (name storage)
   (make-instance 'global-ast :name name :storage storage))
 
+(clvm-io:define-save-info global-ast
+  (:name name) (:function-type function-type))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SPECIAL-AST.
@@ -136,6 +145,8 @@
 (defun make-special-ast (name storage)
   (make-instance 'special-ast :name name :storage storage))
 
+(clvm-io:define-save-info special-ast (:name name))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LEXICAL-AST.
@@ -153,6 +164,8 @@
 
 (defun make-lexical-ast (name)
   (make-instance 'lexical-ast :name name))
+
+(clvm-io:define-save-info lexical-ast (:name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -272,6 +285,8 @@
   (make-instance 'tag-ast
     :name name))
 
+(clvm-io:define-save-info tag-ast (:name name))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class TAGBODY-AST.
@@ -320,6 +335,8 @@
 (defmethod form-ast ((ast the-ast))
   (first (children ast)))
 
+(clvm-io:define-save-info the-ast (:type-specifiers type-specifiers))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOAD-TIME-VALUE-AST.
@@ -334,6 +351,8 @@
 
 (defmethod form-ast ((ast load-time-value-ast))
   (first (children ast)))
+
+(clvm-io:define-save-info load-time-value-ast (:read-only-p read-only-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
