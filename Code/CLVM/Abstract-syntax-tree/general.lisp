@@ -427,6 +427,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class IF-AST.
+;;;
+;;; This AST corresponds directly to the IF special operator.  It
+;;; produces as many values as the AST in the THEN-AST or ELSE-AST
+;;; produces, according to the value of the TEST AST.
 
 (defclass if-ast (ast)
   ())
