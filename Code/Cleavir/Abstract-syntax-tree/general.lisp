@@ -1,4 +1,4 @@
-(in-package #:clvm-ast)
+(in-package #:cleavir-ast)
 
 ;;;; We define the abstract syntax trees (ASTs) that represent not
 ;;;; only Common Lisp code, but also the low-level operations that we
@@ -24,7 +24,7 @@
 (defclass ast ()
   ((%children :initform '() :initarg :children :accessor children)))
 
-(clvm-io:define-save-info ast (:children children))
+(cleavir-io:define-save-info ast (:children children))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -79,7 +79,7 @@
 (defun make-immediate-ast (value)
   (make-instance 'immediate-ast :value value))
 
-(clvm-io:define-save-info immediate-ast (:value value))
+(cleavir-io:define-save-info immediate-ast (:value value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -100,7 +100,7 @@
 (defun make-constant-ast (value)
   (make-instance 'constant-ast :value value))
 
-(clvm-io:define-save-info constant-ast (:value value))
+(cleavir-io:define-save-info constant-ast (:value value))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -120,7 +120,7 @@
 (defun make-global-ast (name)
   (make-instance 'global-ast :name name))
 
-(clvm-io:define-save-info global-ast
+(cleavir-io:define-save-info global-ast
   (:name name) (:function-type function-type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -137,7 +137,7 @@
 (defun make-special-ast (name)
   (make-instance 'special-ast :name name))
 
-(clvm-io:define-save-info special-ast (:name name))
+(cleavir-io:define-save-info special-ast (:name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -153,7 +153,7 @@
 (defun make-lexical-ast (name)
   (make-instance 'lexical-ast :name name))
 
-(clvm-io:define-save-info lexical-ast (:name name))
+(cleavir-io:define-save-info lexical-ast (:name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -225,7 +225,7 @@
 (defmethod body-ast ((ast function-ast))
   (first (children ast)))
 
-(clvm-io:define-save-info function-ast (:lambda-list lambda-list))
+(cleavir-io:define-save-info function-ast (:lambda-list lambda-list))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -303,7 +303,7 @@
   (make-instance 'tag-ast
     :name name))
 
-(clvm-io:define-save-info tag-ast (:name name))
+(cleavir-io:define-save-info tag-ast (:name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -348,7 +348,7 @@
 (defmethod form-ast ((ast the-ast))
   (first (children ast)))
 
-(clvm-io:define-save-info the-ast (:value-type value-type))
+(cleavir-io:define-save-info the-ast (:value-type value-type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -405,7 +405,7 @@
 (defmethod initialize-info :after ((ast typeq-ast) &key &allow-other-keys)
   (reinitialize-instance
    ast
-   :type-specifier (clvm-ast:value (type-specifier-ast ast))))
+   :type-specifier (value (type-specifier-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -431,7 +431,7 @@
 
 ;;; Even though READ-ONLY-P is not a child of the AST, it needs to be
 ;;; saved when the AST is saved. 
-(clvm-io:define-save-info load-time-value-ast (:read-only-p read-only-p))
+(cleavir-io:define-save-info load-time-value-ast (:read-only-p read-only-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:clvm-ast
+(defpackage #:cleavir-ast
   (:use #:common-lisp)
   (:export
    #:ast #:children
@@ -24,8 +24,8 @@
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast #:type-specifiers))
 
-(defpackage #:clvm-ast-graphviz
-  (:use #:common-lisp #:clvm-ast)
+(defpackage #:cleavir-ast-graphviz
+  (:use #:common-lisp #:cleavir-ast)
   (:export
    #:draw-ast))
 

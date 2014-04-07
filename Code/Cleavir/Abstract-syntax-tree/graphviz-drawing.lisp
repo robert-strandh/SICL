@@ -1,4 +1,4 @@
-(in-package #:clvm-ast-graphviz)
+(in-package #:cleavir-ast-graphviz)
 
 ;;;; Drawing an AST. 
 ;;;;
