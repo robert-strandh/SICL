@@ -1,0 +1,189 @@
+\chapter{Abstract syntax tree}
+\label{chap-abstract-syntax-tree}
+
+\section{\texttt{constant-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:value} & \texttt{value} & The corresponding constant.\\
+\hline
+\end{tabular}
+
+A \texttt{constant-ast} is produced whenever the compiler sees a
+constant, and processing is done by \texttt{eval} or \texttt{compile}
+(as opposed to by \texttt{compile-file}).  This constant can either be
+in the form of a self-evaluating object, a constant variable, or a
+quoted object.
+
+At this point, there is no discrimination between the different types
+of constant, nor between integers of different magnitude.  Later on
+in the compilation process, some backend may replace small integer
+constants by immediate values. 
+
+\section{\texttt{global-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:name} & \texttt{name} & The name of the function.\\  
+\hline
+\texttt{:storage} & \texttt{storage} & The storage cell for the function.\\
+\hline
+\end{tabular}
+
+A \texttt{global-ast} is produced whenever the compiler sees a
+reference to a \emph{global function}, i.e., a name in a functional
+position that is not defined as a local function, as a special
+operator, nor as a macro.
+
+\section{\texttt{special-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:name} & \texttt{name} & The name of the variable.\\  
+\hline
+\texttt{:storage} & \texttt{storage} & The storage cell for the variable.\\
+\hline
+\end{tabular}
+
+A \texttt{special-ast} is produced whenever the compiler sees a
+reference to a \emph{special variable}, i.e. a name in a variable
+position that is not defined as a lexical variable, a constant
+variable, nor as a symbol macro.
+
+\section{\texttt{lexical-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:name} & \texttt{name} & The name of the variable.\\  
+\hline
+\end{tabular}
+
+A \texttt{lexical-ast} is produced whenever the compiler sees a
+reference to a \emph{lexical variable}. 
+
+\section{\texttt{call-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:callee-ast} & \texttt{callee-ast} & The AST of the function
+to be called\\  
+\hline
+\texttt{:argument-asts} & \texttt{argument-asts} & A list of ASTs, one
+for each argument\\
+& & to the function.\\
+\hline
+\end{tabular}
+
+A \texttt{call-ast} is produced whenever the compiler sees a function
+call.  It contains ASTs for the function to be called and for the
+arguments to that function.  The AST representing the function can be
+any AST that produces a function as a value.
+
+\section{\texttt{block-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:body-asts} & \texttt{body-asts} & The AST of the body.\\
+\hline
+\end{tabular}
+
+\section{\texttt{eval-when-ast}}
+\section{\texttt{function-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:body-ast} & \texttt{body-ast} & The AST for the body of the function.\\
+\hline
+\end{tabular}
+
+
+\section{\texttt{go-ast}}
+\section{\texttt{if-ast}}
+
+\section{\texttt{load-time-value-ast}}
+
+A \texttt{load-time-value-ast} is produced whenever the compiler sees
+a \texttt{load-time-value} special form, but also when it sees a
+\emph{constant} and processing is done by \texttt{compile-file},
+rather than by \texttt{compile} or \texttt{eval}.  
+
+This AST always contains a \emph{form}, so that if it is the result of
+a \emph{constant}, then it is wrapped in a \texttt{quote} special
+form. 
+
+\section{\texttt{progn-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:form-asts} & \texttt{form-asts} & A list of ASTs of the body.\\
+\hline
+\end{tabular}
+
+\section{\texttt{return-from-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:block-ast} & \texttt{block-ast} & The AST of the
+corresponding block.\\
+\hline
+\texttt{:form-ast} & \texttt{form-ast} & The AST of the value form.\\
+\hline
+\end{tabular}
+
+
+\section{\texttt{setq-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:lhs-ast} & \texttt{lhs-ast} & The AST of the left-hand side.\\
+\hline
+\texttt{:value-ast} & \texttt{value-ast} & The AST of the value form.\\
+\hline
+\end{tabular}
+
+
+\section{\texttt{tagbody-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:items} & \texttt{items} & A list of ASTs corresponding to\\
+& & the items of the \texttt{tagbody} form. \\
+\hline
+\end{tabular}
+
+An item can either be a \texttt{tag-ast} or an AST corresponding to
+some \texttt{statement}. 
+
+\section{\texttt{tag-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:name} & \texttt{name} & The name of the tag.\\
+\hline
+\end{tabular}
+
+\section{\texttt{the-ast}}
