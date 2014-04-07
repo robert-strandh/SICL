@@ -474,3 +474,21 @@
 
 (defmethod cons-ast ((ast car-ast))
   (first (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class CDR-AST.
+;;;
+;;; This AST can be used to implement the function CDR.  However, it
+;;; does not correspond exactly to the function CDR, because the value
+;;; of the single child must be a CONS cell. 
+
+(defclass cdr-ast (ast)
+  ())
+
+(defun make-cdr-ast (cons-ast)
+  (make-instance 'cdr-ast
+    :children (list cons-ast)))
+
+(defmethod cons-ast ((ast cdr-ast))
+  (first (children ast)))
