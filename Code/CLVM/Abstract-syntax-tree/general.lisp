@@ -114,7 +114,7 @@
 
 (defclass global-ast (ast)
   ((%name :initarg :name :reader name)
-   (%function-type :initarg :function-type :accessor function-type)
+   (%function-type :initform t :initarg :function-type :accessor function-type)
    (%children :initform '() :allocation :class)))
 
 (defun make-global-ast (name)
