@@ -600,6 +600,12 @@
   (make-instance 'si-read-ast
     :children (list si-ast slot-number-ast)))
 
+(defmethod si-ast ((ast si-read-ast))
+  (first (children ast)))
+
+(defmethod slot-number-ast ((ast si-read-ast))
+  (second (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SI-WRITE-AST.
