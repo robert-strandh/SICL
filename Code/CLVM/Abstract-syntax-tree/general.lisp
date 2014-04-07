@@ -456,3 +456,21 @@
 
 (defmethod else-ast ((ast if-ast))
   (third (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class CAR-AST.
+;;;
+;;; This AST can be used to implement the function CAR.  However, it
+;;; does not correspond exactly to the function CAR, because the value
+;;; of the single child must be a CONS cell. 
+
+(defclass car-ast (ast)
+  ())
+
+(defun make-car-ast (cons-ast)
+  (make-instance 'car-ast
+    :children (list cons-ast)))
+
+(defmethod cons-ast ((ast car-ast))
+  (first (children ast)))
