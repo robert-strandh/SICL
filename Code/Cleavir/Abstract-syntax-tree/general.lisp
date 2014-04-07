@@ -623,3 +623,12 @@
 (defun make-si-write-ast (si-ast slot-number-ast value-ast)
   (make-instance 'si-write-ast
     :children (list si-ast slot-number-ast value-ast)))
+
+(defmethod si-ast ((ast si-write-ast))
+  (first (children ast)))
+
+(defmethod slot-number-ast ((ast si-write-ast))
+  (second (children ast)))
+
+(defmethod value-ast ((ast si-write-ast))
+  (third (children ast)))
