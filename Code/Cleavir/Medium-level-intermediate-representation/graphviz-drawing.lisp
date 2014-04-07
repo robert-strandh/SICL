@@ -1,4 +1,4 @@
-(in-package #:clvm-mir-graphviz)
+(in-package #:cleavir-mir-graphviz)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
