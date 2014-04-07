@@ -410,6 +410,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOAD-TIME-VALUE-AST.
+;;;
+;;; This AST corresponds directly to the LOAD-TIME-VALUE special
+;;; operator.  It has a single child and it produces a single value.
+;;;
+;;; The optional argument READ-ONLY-P is not a child of the AST
+;;; because it can only be a Boolean which is not evaluated, so we
+;;; know at AST creation time whether it is true or false. 
 
 (defclass load-time-value-ast (ast)
   ((%read-only-p :initarg :read-only-p :reader read-only-p)))
@@ -422,6 +429,8 @@
 (defmethod form-ast ((ast load-time-value-ast))
   (first (children ast)))
 
+;;; Even though READ-ONLY-P is not a child of the AST, it needs to be
+;;; saved when the AST is saved. 
 (clvm-io:define-save-info load-time-value-ast (:read-only-p read-only-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
