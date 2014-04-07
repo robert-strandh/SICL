@@ -582,3 +582,22 @@
 (defun make-fixnum-sub-ast (arg1-ast arg2-ast)
   (make-instance 'fixnum-sub-ast
     :children (list arg1-ast arg2-ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SI-READ-AST.
+;;;
+;;; This AST can be used to read a slot from a standard instance.  It
+;;; has two children, an AST that must have a standard instance as its
+;;; value, and an AST that must have a fixnum as its value and that
+;;; indicates a slot number (starting from 0).  This AST generates a
+;;; single value, namely the contents of the slot with the number given.
+
+(defclass SI-READ-AST.
+
+(defclass si-read-ast (ast)
+  ())
+
+(defun make-si-read-ast (si-ast slot-number-ast)
+  (make-instance 'si-read-ast
+    :children (list si-ast slot-number-ast)))
