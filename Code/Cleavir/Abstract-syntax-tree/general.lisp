@@ -593,11 +593,27 @@
 ;;; indicates a slot number (starting from 0).  This AST generates a
 ;;; single value, namely the contents of the slot with the number given.
 
-(defclass SI-READ-AST.
-
 (defclass si-read-ast (ast)
   ())
 
 (defun make-si-read-ast (si-ast slot-number-ast)
   (make-instance 'si-read-ast
     :children (list si-ast slot-number-ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SI-WRITE-AST.
+;;;
+;;; This AST can be used to write a slot in a standard instance.  It
+;;; has three children, an AST that must have a standard instance as
+;;; its value, an AST that must have a fixnum as its value and that
+;;; indicates a slot number (starting from 0), and an AST that
+;;; generates the new value to store in the slot.  This AST generates
+;;; no values. 
+
+(defclass si-write-ast (ast)
+  ())
+
+(defun make-si-write-ast (si-ast slot-number-ast value-ast)
+  (make-instance 'si-write-ast
+    :children (list si-ast slot-number-ast value-ast)))
