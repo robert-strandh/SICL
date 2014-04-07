@@ -492,3 +492,25 @@
 
 (defmethod cons-ast ((ast cdr-ast))
   (first (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class RPLACA-AST
+;;;
+;;; This AST can be used to implement the function RPLACA and the
+;;; function (SETF CAR) in implementations where it is a function.
+;;; This AST differs from the function RPLACA in that it does not
+;;; generate any value.  
+
+(defclass rplaca-ast (ast)
+  ())
+
+(defun make-rplaca-ast (cons-ast object-ast)
+  (make-instance 'rplaca-ast
+    :children (list cons-ast object-ast)))
+
+(defmethod cons-ast ((ast rplaca-ast))
+  (first (children ast)))
+
+(defmethod object-ast ((ast rplaca-ast))
+  (second (children ast)))
