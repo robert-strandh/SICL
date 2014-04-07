@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(asdf:defsystem :clvm-io
+(asdf:defsystem :cleavir-io
   :serial t
   :components
   ((:file "packages")

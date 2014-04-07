@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:clvm-io
+(defpackage #:cleavir-io
   (:use #:common-lisp)
   (:export
    #:define-save-info
