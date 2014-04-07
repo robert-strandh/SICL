@@ -514,3 +514,25 @@
 
 (defmethod object-ast ((ast rplaca-ast))
   (second (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class RPLACD-AST
+;;;
+;;; This AST can be used to implement the function RPLACD and the
+;;; function (SETF CDR) in implementations where it is a function.
+;;; This AST differs from the function RPLACD in that it does not
+;;; generate any value.  
+
+(defclass rplacd-ast (ast)
+  ())
+
+(defun make-rplacd-ast (cons-ast object-ast)
+  (make-instance 'rplacd-ast
+    :children (list cons-ast object-ast)))
+
+(defmethod cons-ast ((ast rplacd-ast))
+  (first (children ast)))
+
+(defmethod object-ast ((ast rplacd-ast))
+  (second (children ast)))
