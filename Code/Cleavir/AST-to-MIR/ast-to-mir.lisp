@@ -79,6 +79,10 @@
 		  (cleavir-ast:name ast))))))
 	(setf (gethash ast *location-info*) location))))
 
+(defun make-temp (argument)
+  (declare (ignore argument))
+  (cleavir-mir:new-temporary))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile an abstract syntax tree in a compilation context.
@@ -100,6 +104,32 @@
 	  finally (return next))))
 
 (defgeneric compile-ast (ast context))
+
+;;; This function is used by compile methods that need a single
+;;; successor and that produce a single result.  It takes an arbitrary
+;;; context as an argument and returns two values, the successor and a
+;;; location for the result. 
+(defun adapt-context-1-1 (context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (ecase (length successors)
+      (0
+       (let ((location (make-temp nil)))
+	 (values (cleavir-mir:make-return-instruction (list location))
+		 location)))
+      (1
+       (if (null results)
+	   (values (car successors)
+		   (make-temp nil))
+	   (values (nil-fill (cdr results) (car successors))
+		   (car results))))
+      (2
+       (let ((location (if (null results) (make-temp nil) (car results))))
+	 (values (cleavir-mir:make-eq-instruction
+		  (list location (cleavir-mir:make-constant-input 'nil))
+		  successors)
+		 location))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -604,10 +634,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile ASTs that represent low-level operations.
-
-(defun make-temp (argument)
-  (declare (ignore argument))
-  (cleavir-mir:new-temporary))
 
 (defun make-temps (arguments)
   (loop for argument in arguments
