@@ -22,7 +22,8 @@
    #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
    #:tagbody-ast #:make-tagbody-ast #:items
    #:tag-ast #:make-tag-ast #:name
-   #:the-ast #:make-the-ast #:type-specifiers))
+   #:the-ast #:make-the-ast #:type-specifiers
+   #:typeq-ast #:make-typeq-ast #:type-specifier))
 
 (defpackage #:cleavir-ast-graphviz
   (:use #:common-lisp #:cleavir-ast)
