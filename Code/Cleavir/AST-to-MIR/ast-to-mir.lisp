@@ -604,45 +604,6 @@
     (assert (typep ast 'cleavir-ast:function-ast))
     (compile-function (cleavir-ast:body-ast ast))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile an ARGCOUNT-AST.
-;;;
-;;; The ARGCOUNT AST is known only to be found in a context where
-;;; there is a single result required, and a single successor.
-
-(defmethod compile-ast ((ast cleavir-ast:argcount-ast) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (cleavir-mir:make-get-argcount-instruction (car results) (car successors))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile an ARG-AST.
-;;;
-;;; The ARG AST is known only to be found in a context where
-;;; there is a single result required, and a single successor.
-
-(defmethod compile-ast ((ast cleavir-ast:arg-ast) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    ;; This is a kludge.  If the INDEX-AST of the AST is a
-    ;; CONSTANT-AST, then we make a special case, so that we later can
-    ;; easily recognize a GET-ARG instruction with a constant input.
-    (if (typep (cleavir-ast:index-ast ast) 'cleavir-ast:constant-ast)
-	(let ((value (cleavir-ast:value (cleavir-ast:index-ast ast))))
-	  (cleavir-mir:make-get-arg-instruction
-	   (cleavir-mir:make-constant-input value)
-	   (car results) (car successors)))
-	(let ((temp (cleavir-mir:new-temporary)))
-	  (compile-ast (cleavir-ast:index-ast ast)
-		       (context
-			(list temp)
-			(list (cleavir-mir:make-get-arg-instruction
-			       temp (car results) (car successors)))))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile ASTs that represent low-level operations.
@@ -663,23 +624,6 @@
 		       (typep temp 'cleavir-mir:external-input))
 	     (setf succ (compile-ast arg (context `(,temp) `(,succ)))))
 	finally (return succ)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compile a WORD-AST.
-;;;
-
-(defmethod compile-ast ((ast cleavir-ast:word-ast) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (unless (and (= (length results) 1)
-		 (= (length successors) 1))
-      (error "Invalid results for word."))
-    (cleavir-mir:make-assignment-instruction
-     (cleavir-mir:make-word-input (cleavir-ast:value ast))
-     (car results)
-     (car successors))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
