@@ -4,4 +4,7 @@
   :depends-on (:cleavir-ast :cleavir-mir)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "ast-to-mir")))
+
+	  
