@@ -287,14 +287,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a function.
-
-(defun compile-function (body-ast)
-  (cleavir-mir:make-enter-instruction 
-   (compile-ast body-ast (context '() '()))))
-  
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Compile a FUNCTION-AST.
 ;;;
 ;;; The FUNCTION-AST represents a closure, so we compile it by
@@ -312,26 +304,28 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let ((code (compile-function (cleavir-ast:body-ast ast))))
+    (let* ((body (compile-ast (cleavir-ast:body-ast ast) (context '() '())))
+	   (ll (cleavir-ast:lambda-list ast))
+	   (function (cleavir-mir:make-enter-instruction ll body)))
       (ecase (length successors)
 	(0 (let ((temp (cleavir-mir:new-temporary)))
 	     (cleavir-mir:make-enclose-instruction
 	      temp
 	      (cleavir-mir:make-return-instruction (list temp))
-	      code)))
+	      function)))
 	(1 (if (null results)
 	       (progn (warn "closure compiled in a context with no values")
 		      (car successors))
 	       (cleavir-mir:make-enclose-instruction
 		(car results)
 		(nil-fill (cdr results) (car successors))
-		code)))
+		function)))
 	(2 (if (null results)
 	       (car successors)
 	       (cleavir-mir:make-enclose-instruction
 		(car results)
 		(nil-fill (cdr results) (cadr successors))
-		code)))))))
+		function)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -603,7 +597,9 @@
 	(*location-info* (make-hash-table :test #'eq)))
     ;; The top-level ast must represent a thunk.
     (assert (typep ast 'cleavir-ast:function-ast))
-    (compile-function (cleavir-ast:body-ast ast))))
+    (let* ((body (compile-ast (cleavir-ast:body-ast ast) (context '() '())))
+	   (ll (cleavir-ast:lambda-list ast)))
+      (cleavir-mir:make-enter-instruction ll body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
