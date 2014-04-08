@@ -443,6 +443,12 @@
 ;;;
 ;;; Compile a TYPEQ-AST.
 
+(defun make-boolean (boolean result successor)
+  (cleavir-mir:make-assignment-instruction
+   (cleavir-mir:make-external-input boolean)
+   result
+   successor))
+
 (defmethod compile-ast ((ast cleavir-ast:typeq-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
