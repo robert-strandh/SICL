@@ -14,7 +14,7 @@
    #:special-location #:make-special-location
    #:global-input #:make-global-input
    #:load-time-input
-   #:external-input
+   #:external-input #:make-external-input
    #:register-location
    #:static-location
    #:dynamic-location
