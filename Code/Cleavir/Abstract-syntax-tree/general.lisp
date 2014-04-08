@@ -407,6 +407,8 @@
    ast
    :type-specifier (value (type-specifier-ast ast))))
 
+(cleavir-io:define-save-info typeq-ast (:type-specifier type-specifier))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class LOAD-TIME-VALUE-AST.
