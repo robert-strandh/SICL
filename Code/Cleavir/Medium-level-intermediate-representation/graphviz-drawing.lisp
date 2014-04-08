@@ -110,16 +110,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum LINKAGE-LOCATION.
-
-(defmethod draw-datum ((datum linkage-location) stream)
-  (format stream "   ~a [fillcolor = bisque, label = \"~a, ~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (index datum)
-	  (name datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing instructions.
 
 (defparameter *instruction-table* nil)
@@ -129,6 +119,11 @@
 
 (defgeneric draw-instruction (instruction stream))
   
+(defmethod draw-instruction ((instruction typeq-instruction) stream)
+  (format stream "   ~a [label = \"typeq ~a\"];~%"
+	  (unique-id instruction)
+	  (value-type instruction)))
+
 (defmethod draw-instruction :around (instruction stream)
   (when (null (unique-id instruction))
     (setf (gethash instruction *instruction-table*) (gensym))
@@ -248,40 +243,6 @@
   (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
 	  (gethash (code instruction) *instruction-table*)
 	  (unique-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction GET-ARGCOUNT-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction get-argcount-instruction) stream)
-  (format stream "   ~a [label = \"AC\", color = orange];~%"
-	  (unique-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction GET-ARG-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction get-arg-instruction) stream)
-  (format stream "   ~a [label = \"arg\", color = orange];~%"
-	  (unique-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction LOAD-CONSTANT-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction load-constant-instruction) stream)
-  (format stream "   ~a [label = \"LC ~d\"];~%"
-	  (unique-id instruction)
-	  (linkage-vector-index instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction LOAD-GLOBAL-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction load-global-instruction) stream)
-  (format stream "   ~a [label = \"LX ~d\"];~%"
-	  (unique-id instruction)
-	  (linkage-vector-index instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
