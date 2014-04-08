@@ -367,7 +367,7 @@
   (let* ((type-input (cleavir-mir:make-constant-input (cleavir-ast:value type-ast)))
 	 (error-branch
 	   (cleavir-mir:make-funcall-instruction
-	    (list (cleavir-mir:make-global-input 'error nil)
+	    (list (cleavir-mir:make-global-input 'error)
 		  (cleavir-mir:make-constant-input :datum)
 		  var
 		  (cleavir-mir:make-constant-input :expected-type)
