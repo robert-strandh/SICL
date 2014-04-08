@@ -25,6 +25,9 @@
    #:delete-instruction
    #:reinitialize-data
    #:instruction
+   #:no-successors-mixin
+   #:one-successor-mixin
+   #:two-successors-mixin
    #:inputs #:outputs
    #:successors #:predecessors
    #:enter-instruction #:make-enter-instruction
