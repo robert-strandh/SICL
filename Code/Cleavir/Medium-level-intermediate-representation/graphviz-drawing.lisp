@@ -259,3 +259,11 @@
 (defmethod draw-instruction ((instruction unwind-instruction) stream)
   (format stream "   ~a [label = \"unwind\"];~%"
 	  (unique-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Draw instruction EQ-INSTRUCTION.
+
+(defmethod draw-instruction ((instruction eq-instruction) stream)
+  (format stream "   ~a [label = \"eq\"];~%"
+	  (unique-id instruction)))
