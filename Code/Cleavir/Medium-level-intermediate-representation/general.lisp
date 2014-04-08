@@ -728,3 +728,15 @@
     :inputs (list input)
     :successors (if successor-p (list successor) '())))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction EQ-INSTRUCTION.
+
+(defclass eq-instruction (instruction)
+  ())
+
+(defun make-eq-instruction (inputs successors)
+  (make-instance 'eq-instruction
+    :inputs inputs
+    :successors successors))
+
