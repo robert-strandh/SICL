@@ -38,12 +38,12 @@
 (defun context (results successors)
   (unless (and (listp results)
 	       (every (lambda (result)
-			(typep result 'sicl-mir:lexical-location))
+			(typep result 'cleavir-mir:lexical-location))
 		      results))
     (error "illegal results: ~s" results))
   (unless (and (listp successors)
 	       (every (lambda (successor)
-			(typep successor 'sicl-mir:instruction))
+			(typep successor 'cleavir-mir:instruction))
 		      successors))
     (error "illegal successors: ~s" results))
   (when (and (null successors) (not (null results)))
@@ -69,14 +69,14 @@
       (let ((location
 	      (etypecase ast
 		(sicl-ast:lexical-ast
-		 (sicl-mir:make-lexical-location
+		 (cleavir-mir:make-lexical-location
 		  (sicl-ast:name ast)))
 		(sicl-ast:global-ast
-		 (sicl-mir:make-global-input
+		 (cleavir-mir:make-global-input
 		  (sicl-ast:name ast)
 		  (sicl-ast:storage ast)))
 		(sicl-ast:special-ast
-		 (sicl-mir:make-special-location
+		 (cleavir-mir:make-special-location
 		  (sicl-ast:name ast)
 		  (sicl-ast:storage ast))))))
 	(setf (gethash ast *location-info*) location))))
@@ -96,8 +96,8 @@
   (let ((next successor))
     (loop for value in results
 	  do (setf next
-		   (sicl-mir:make-assignment-instruction
-		    (sicl-mir:make-constant-input 'nil)
+		   (cleavir-mir:make-assignment-instruction
+		    (cleavir-mir:make-constant-input 'nil)
 		    value next))
 	  finally (return next))))
 
@@ -208,13 +208,13 @@
   (loop for item in (sicl-ast:items ast)
 	do (when (typep item 'sicl-ast:tag-ast)
 	     (setf (gethash item *go-info*)
-		   (sicl-mir:make-nop-instruction nil))))
+		   (cleavir-mir:make-nop-instruction nil))))
   (with-accessors ((results results)
 		   (successors successors))
       context
     (let ((next (cond ((null successors)
-		       (sicl-mir:make-return-instruction
-			(list (sicl-mir:make-constant-input 'nil))))
+		       (cleavir-mir:make-return-instruction
+			(list (cleavir-mir:make-constant-input 'nil))))
 		      ((null results)
 		       (car successors))
 		      (t
@@ -223,7 +223,7 @@
 	    do (setf next
 		     (if (typep item 'sicl-ast:tag-ast)
 			 (let ((instruction (gethash item *go-info*)))
-			   (setf (sicl-mir:successors instruction)
+			   (setf (cleavir-mir:successors instruction)
 				 (list next))
 			   instruction)
 			 (compile-ast item (context '() (list next))))))
@@ -271,20 +271,20 @@
        ;; supplied and that its return type is NIL.
        (if (and (typep (sicl-ast:callee-ast ast) 'sicl-ast:global-ast)
 		(eq (sicl-ast:name (sicl-ast:callee-ast ast)) 'error))
-	   (sicl-mir:make-funcall-instruction temps)
+	   (cleavir-mir:make-funcall-instruction temps)
 	   (ecase (length successors)
-	     (0 (sicl-mir:make-tailcall-instruction temps))
-	     (1 (sicl-mir:make-funcall-instruction
+	     (0 (cleavir-mir:make-tailcall-instruction temps))
+	     (1 (cleavir-mir:make-funcall-instruction
 		 temps
-		 (sicl-mir:make-get-values-instruction
+		 (cleavir-mir:make-get-values-instruction
 		  results (car successors))))
-	     (2 (let ((temp (sicl-mir:new-temporary)))
-		  (sicl-mir:make-funcall-instruction
+	     (2 (let ((temp (cleavir-mir:new-temporary)))
+		  (cleavir-mir:make-funcall-instruction
 		   temps
-		   (sicl-mir:make-get-values-instruction
+		   (cleavir-mir:make-get-values-instruction
 		    (list temp)
-		    (sicl-mir:make-==-instruction
-		     (list temp (sicl-mir:make-constant-input nil))
+		    (cleavir-mir:make-==-instruction
+		     (list temp (cleavir-mir:make-constant-input nil))
 		     successors)))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -292,7 +292,7 @@
 ;;; Compile a function.
 
 (defun compile-function (body-ast)
-  (sicl-mir:make-enter-instruction 
+  (cleavir-mir:make-enter-instruction 
    (compile-ast body-ast (context '() '()))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -316,21 +316,21 @@
       context
     (let ((code (compile-function (sicl-ast:body-ast ast))))
       (ecase (length successors)
-	(0 (let ((temp (sicl-mir:new-temporary)))
-	     (sicl-mir:make-enclose-instruction
+	(0 (let ((temp (cleavir-mir:new-temporary)))
+	     (cleavir-mir:make-enclose-instruction
 	      temp
-	      (sicl-mir:make-return-instruction (list temp))
+	      (cleavir-mir:make-return-instruction (list temp))
 	      code)))
 	(1 (if (null results)
 	       (progn (warn "closure compiled in a context with no values")
 		      (car successors))
-	       (sicl-mir:make-enclose-instruction
+	       (cleavir-mir:make-enclose-instruction
 		(car results)
 		(nil-fill (cdr results) (car successors))
 		code)))
 	(2 (if (null results)
 	       (car successors)
-	       (sicl-mir:make-enclose-instruction
+	       (cleavir-mir:make-enclose-instruction
 		(car results)
 		(nil-fill (cdr results) (cadr successors))
 		code)))))))
@@ -346,22 +346,22 @@
     (let* ((location (find-or-create-location (sicl-ast:lhs-ast ast)))
 	   (next 
 	     (ecase (length successors)
-	       (0 (sicl-mir:make-return-instruction (list location)))
+	       (0 (cleavir-mir:make-return-instruction (list location)))
 	       (1 (if (null results)
 		      (car successors)
-		      (sicl-mir:make-assignment-instruction
+		      (cleavir-mir:make-assignment-instruction
 		       location
 		       (car results)
 		       (nil-fill (cdr results) (car successors)))))
 	       (2 (if (null results)
-		      (sicl-mir:make-==-instruction
-		       (list location (sicl-mir:make-constant-input 'nil))
+		      (cleavir-mir:make-==-instruction
+		       (list location (cleavir-mir:make-constant-input 'nil))
 		       successors)
-		      (sicl-mir:make-assignment-instruction
+		      (cleavir-mir:make-assignment-instruction
 		       location
 		       (car results)
-		       (sicl-mir:make-==-instruction
-			(list location (sicl-mir:make-constant-input 'nil))
+		       (cleavir-mir:make-==-instruction
+			(list location (cleavir-mir:make-constant-input 'nil))
 			successors)))))))
       (compile-ast (sicl-ast:value-ast ast)
 		   (context (list location) (list next))))))
@@ -372,18 +372,18 @@
 
 (defun make-type-check (type-ast var successor)
   (check-type type-ast sicl-ast:constant-ast)
-  (let* ((type-input (sicl-mir:make-constant-input (sicl-ast:value type-ast)))
+  (let* ((type-input (cleavir-mir:make-constant-input (sicl-ast:value type-ast)))
 	 (error-branch
-	   (sicl-mir:make-funcall-instruction
+	   (cleavir-mir:make-funcall-instruction
 	    ;; We do not know the storage for the ERROR function, but
 	    ;; it should already have been processed so that it is
 	    ;; present in the linkage vector.
-	    (list (sicl-mir:make-global-input 'error nil)
-		  (sicl-mir:make-constant-input :datum)
+	    (list (cleavir-mir:make-global-input 'error nil)
+		  (cleavir-mir:make-constant-input :datum)
 		  var
-		  (sicl-mir:make-constant-input :expected-type)
+		  (cleavir-mir:make-constant-input :expected-type)
 		  type-input))))
-    (sicl-mir:make-typeq-instruction
+    (cleavir-mir:make-typeq-instruction
      (list var type-input)
      (list error-branch successor))))
 
@@ -410,7 +410,7 @@
 	     (loop for result in results
 		   for temp in temps
 		   do (setf next
-			    (sicl-mir:make-assignment-instruction
+			    (cleavir-mir:make-assignment-instruction
 			     temp result next)))
 	     ;; Before assigning to the results, check the
 	     ;; types of the values.
@@ -425,8 +425,8 @@
 		ast
 		(context
 		 (list temp)
-		 (list (sicl-mir:make-==-instruction
-			(list temp (sicl-mir:make-constant-input 'nil))
+		 (list (cleavir-mir:make-==-instruction
+			(list temp (cleavir-mir:make-constant-input 'nil))
 			successors)))))
 	     (compile-ast
 	      ast
@@ -434,9 +434,9 @@
 	       (list (car results))
 	       (list (nil-fill
 		      (cdr results)
-		      (sicl-mir:make-==-instruction
+		      (cleavir-mir:make-==-instruction
 		       (list (car results)
-			     (sicl-mir:make-constant-input 'nil))
+			     (cleavir-mir:make-constant-input 'nil))
 		       successors)))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -450,7 +450,7 @@
     (ecase (length successors)
       (0 
        (let* ((temp1 (make-temp nil))
-	      (next (sicl-mir:make-return-instruction (list temp1)))
+	      (next (cleavir-mir:make-return-instruction (list temp1)))
 	      (false (make-boolean nil temp1 next))
 	      (true (make-boolean t temp1 next))
 	      (temp2 (make-temp nil)))
@@ -458,9 +458,9 @@
 	  (sicl-ast:form-ast ast)
 	  (context
 	   (list temp2)
-	   (list (sicl-mir:make-typeq-instruction
+	   (list (cleavir-mir:make-typeq-instruction
 		  (list temp2
-			(sicl-mir:make-constant-input
+			(cleavir-mir:make-constant-input
 			 (sicl-ast:type-specifier ast)))
 		  (list false true)))))))
       (1 (if (null results)
@@ -476,9 +476,9 @@
 		 (list
 		  (nil-fill
 		   (cdr results)
-		   (sicl-mir:make-typeq-instruction
+		   (cleavir-mir:make-typeq-instruction
 		    (list temp
-			  (sicl-mir:make-constant-input
+			  (cleavir-mir:make-constant-input
 			   (sicl-ast:type-specifier ast)))
 		    (list false true)))))))))
       (2 (if (null results)
@@ -487,9 +487,9 @@
 		(sicl-ast:form-ast ast)
 		(context
 		 (list temp)
-		 (list (sicl-mir:make-typeq-instruction
+		 (list (cleavir-mir:make-typeq-instruction
 			(list temp
-			      (sicl-mir:make-constant-input
+			      (cleavir-mir:make-constant-input
 			       (sicl-ast:type-specifier ast)))
 			successors)))))
 	     (let ((false (make-boolean nil (car results) (car successors)))
@@ -502,9 +502,9 @@
 		 (list
 		  (nil-fill
 		   (cdr results)
-		   (sicl-mir:make-typeq-instruction
+		   (cleavir-mir:make-typeq-instruction
 		    (list temp
-			  (sicl-mir:make-constant-input
+			  (cleavir-mir:make-constant-input
 			   (sicl-ast:type-specifier ast)))
 		    (list false true))))))))))))
 
@@ -529,27 +529,27 @@
       context
     (let ((location (find-or-create-location ast)))
       (ecase (length successors)
-	(0 (sicl-mir:make-return-instruction
+	(0 (cleavir-mir:make-return-instruction
 	    (list location)))
 	(1 (if (null results)
 	       (progn 
 		 (warn "variable compiled in a context with no values")
 		 (car successors))
-	       (sicl-mir:make-assignment-instruction
+	       (cleavir-mir:make-assignment-instruction
 		location
 		(car results) 
 		(nil-fill (cdr results) (car successors)))))
 	(2 (if (null results)
-	       (sicl-mir:make-==-instruction
-		(list location (sicl-mir:make-constant-input nil))
+	       (cleavir-mir:make-==-instruction
+		(list location (cleavir-mir:make-constant-input nil))
 		successors)
-	       (sicl-mir:make-assignment-instruction
+	       (cleavir-mir:make-assignment-instruction
 		location
 		(car results)
 		(nil-fill
 		 (cdr results)
-		 (sicl-mir:make-==-instruction
-		  (list location (sicl-mir:make-constant-input nil))
+		 (cleavir-mir:make-==-instruction
+		  (list location (cleavir-mir:make-constant-input nil))
 		  successors)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -573,27 +573,27 @@
       context
     (let ((location (find-or-create-location ast)))
       (ecase (length successors)
-	(0 (sicl-mir:make-return-instruction
+	(0 (cleavir-mir:make-return-instruction
 	    (list location)))
 	(1 (if (null results)
 	       (progn 
 		 (warn "form compiled in a context with no values")
 		 (car successors))
-	       (sicl-mir:make-assignment-instruction
+	       (cleavir-mir:make-assignment-instruction
 		location
 		(car results) 
 		(nil-fill (cdr results) (car successors)))))
 	(2 (if (null results)
-	       (sicl-mir:make-==-instruction
-		(list location (sicl-mir:make-constant-input nil))
+	       (cleavir-mir:make-==-instruction
+		(list location (cleavir-mir:make-constant-input nil))
 		successors)
-	       (sicl-mir:make-assignment-instruction
+	       (cleavir-mir:make-assignment-instruction
 		location
 		(car results)
 		(nil-fill
 		 (cdr results)
-		 (sicl-mir:make-==-instruction
-		  (list location (sicl-mir:make-constant-input nil))
+		 (cleavir-mir:make-==-instruction
+		  (list location (cleavir-mir:make-constant-input nil))
 		  successors)))))))))
 
 (defun compile-toplevel (ast)
@@ -615,7 +615,7 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (sicl-mir:make-get-argcount-instruction (car results) (car successors))))
+    (cleavir-mir:make-get-argcount-instruction (car results) (car successors))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -633,14 +633,14 @@
     ;; easily recognize a GET-ARG instruction with a constant input.
     (if (typep (sicl-ast:index-ast ast) 'sicl-ast:constant-ast)
 	(let ((value (sicl-ast:value (sicl-ast:index-ast ast))))
-	  (sicl-mir:make-get-arg-instruction
-	   (sicl-mir:make-constant-input value)
+	  (cleavir-mir:make-get-arg-instruction
+	   (cleavir-mir:make-constant-input value)
 	   (car results) (car successors)))
-	(let ((temp (sicl-mir:new-temporary)))
+	(let ((temp (cleavir-mir:new-temporary)))
 	  (compile-ast (sicl-ast:index-ast ast)
 		       (context
 			(list temp)
-			(list (sicl-mir:make-get-arg-instruction
+			(list (cleavir-mir:make-get-arg-instruction
 			       temp (car results) (car successors)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -649,7 +649,7 @@
 
 (defun make-temp (argument)
   (declare (ignore argument))
-  (sicl-mir:new-temporary))
+  (cleavir-mir:new-temporary))
 
 (defun make-temps (arguments)
   (loop for argument in arguments
@@ -659,8 +659,8 @@
   (loop with succ = successor
 	for arg in (reverse arguments)
 	for temp in (reverse temps)
-	do (unless (or (typep temp 'sicl-mir:immediate-input)
-		       (typep temp 'sicl-mir:external-input))
+	do (unless (or (typep temp 'cleavir-mir:immediate-input)
+		       (typep temp 'cleavir-mir:external-input))
 	     (setf succ (compile-ast arg (context `(,temp) `(,succ)))))
 	finally (return succ)))
 
@@ -676,8 +676,8 @@
     (unless (and (= (length results) 1)
 		 (= (length successors) 1))
       (error "Invalid results for word."))
-    (sicl-mir:make-assignment-instruction
-     (sicl-mir:make-word-input (sicl-ast:value ast))
+    (cleavir-mir:make-assignment-instruction
+     (cleavir-mir:make-word-input (sicl-ast:value ast))
      (car results)
      (car successors))))
 
@@ -691,22 +691,22 @@
 		   (successors successors))
       context
     (ecase (length successors)
-      (0 (sicl-mir:make-return-instruction
-	  (list (sicl-mir:make-constant-input (sicl-ast:value ast)))))
+      (0 (cleavir-mir:make-return-instruction
+	  (list (cleavir-mir:make-constant-input (sicl-ast:value ast)))))
       (1 (if (null results)
 	     (progn 
 	       (warn "constant compiled in a context with no values")
 	       (car successors))
-	     (sicl-mir:make-assignment-instruction
-	      (sicl-mir:make-constant-input (sicl-ast:value ast))
+	     (cleavir-mir:make-assignment-instruction
+	      (cleavir-mir:make-constant-input (sicl-ast:value ast))
 	      (car results)
 	      (nil-fill (cdr results) (car successors)))))
       (2 (if (null results)
 	     (if (null (sicl-ast:value ast))
 		 (car successors)
 		 (cadr successors))
-	     (sicl-mir:make-assignment-instruction
-	      (sicl-mir:make-constant-input (sicl-ast:value ast))
+	     (cleavir-mir:make-assignment-instruction
+	      (cleavir-mir:make-constant-input (sicl-ast:value ast))
 	      (car results)
 	      (if (null (sicl-ast:value ast))
 		  (car successors)
