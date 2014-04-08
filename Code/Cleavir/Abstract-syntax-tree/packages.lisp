@@ -23,7 +23,15 @@
    #:tagbody-ast #:make-tagbody-ast #:items
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast #:type-specifiers
-   #:typeq-ast #:make-typeq-ast #:type-specifier))
+   #:typeq-ast #:make-typeq-ast #:type-specifier
+   #:car-ast #:make-car-ast #:cons-ast
+   #:cdr-ast #:make-cdr-ast
+   #:rplaca-ast #:make-rplaca-ast #:object-ast
+   #:rplacd-ast #:make-rplacd-ast
+   #:fixnum-add-ast #:make-fixnum-add-ast
+   #:si-read-ast #:make-si-read-ast #:slot-number-ast #:si-ast
+   #:si-write-ast #:make-si-write-ast
+   ))
 
 (defpackage #:cleavir-ast-graphviz
   (:use #:common-lisp #:cleavir-ast)
