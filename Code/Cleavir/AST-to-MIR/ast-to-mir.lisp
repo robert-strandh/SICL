@@ -283,7 +283,7 @@
 		   temps
 		   (cleavir-mir:make-get-values-instruction
 		    (list temp)
-		    (cleavir-mir:make-==-instruction
+		    (cleavir-mir:make-eq-instruction
 		     (list temp (cleavir-mir:make-constant-input nil))
 		     successors)))))))))))
 
@@ -354,13 +354,13 @@
 		       (car results)
 		       (nil-fill (cdr results) (car successors)))))
 	       (2 (if (null results)
-		      (cleavir-mir:make-==-instruction
+		      (cleavir-mir:make-eq-instruction
 		       (list location (cleavir-mir:make-constant-input 'nil))
 		       successors)
 		      (cleavir-mir:make-assignment-instruction
 		       location
 		       (car results)
-		       (cleavir-mir:make-==-instruction
+		       (cleavir-mir:make-eq-instruction
 			(list location (cleavir-mir:make-constant-input 'nil))
 			successors)))))))
       (compile-ast (cleavir-ast:value-ast ast)
@@ -425,7 +425,7 @@
 		ast
 		(context
 		 (list temp)
-		 (list (cleavir-mir:make-==-instruction
+		 (list (cleavir-mir:make-eq-instruction
 			(list temp (cleavir-mir:make-constant-input 'nil))
 			successors)))))
 	     (compile-ast
@@ -434,7 +434,7 @@
 	       (list (car results))
 	       (list (nil-fill
 		      (cdr results)
-		      (cleavir-mir:make-==-instruction
+		      (cleavir-mir:make-eq-instruction
 		       (list (car results)
 			     (cleavir-mir:make-constant-input 'nil))
 		       successors)))))))))))
@@ -519,7 +519,7 @@
 ;;; is a single successor and the RESULTS contains a single element,
 ;;; we generate an ASSIGNMENT-INSTRUCTION.
 ;;;
-;;; If there are two successors, we must generate a ==-INSTRUCTION
+;;; If there are two successors, we must generate an EQ-INSTRUCTION
 ;;; with those two successor.  If in addition the RESULTS is not the
 ;;; empty list, we must also generate an ASSIGNMENT-INSTRUCTION.
 
@@ -540,7 +540,7 @@
 		(car results) 
 		(nil-fill (cdr results) (car successors)))))
 	(2 (if (null results)
-	       (cleavir-mir:make-==-instruction
+	       (cleavir-mir:make-eq-instruction
 		(list location (cleavir-mir:make-constant-input nil))
 		successors)
 	       (cleavir-mir:make-assignment-instruction
@@ -548,7 +548,7 @@
 		(car results)
 		(nil-fill
 		 (cdr results)
-		 (cleavir-mir:make-==-instruction
+		 (cleavir-mir:make-eq-instruction
 		  (list location (cleavir-mir:make-constant-input nil))
 		  successors)))))))))
 
@@ -563,7 +563,7 @@
 ;;; is a single successor and the RESULTS contains a single element,
 ;;; we generate an ASSIGNMENT-INSTRUCTION.
 ;;;
-;;; If there are two successors, we must generate a ==-INSTRUCTION
+;;; If there are two successors, we must generate an EQ-INSTRUCTION
 ;;; with those two successor.  If in addition the RESULTS is not the
 ;;; empty list, we must also generate an ASSIGNMENT-INSTRUCTION.
 
@@ -584,7 +584,7 @@
 		(car results) 
 		(nil-fill (cdr results) (car successors)))))
 	(2 (if (null results)
-	       (cleavir-mir:make-==-instruction
+	       (cleavir-mir:make-eq-instruction
 		(list location (cleavir-mir:make-constant-input nil))
 		successors)
 	       (cleavir-mir:make-assignment-instruction
@@ -592,7 +592,7 @@
 		(car results)
 		(nil-fill
 		 (cdr results)
-		 (cleavir-mir:make-==-instruction
+		 (cleavir-mir:make-eq-instruction
 		  (list location (cleavir-mir:make-constant-input nil))
 		  successors)))))))))
 
