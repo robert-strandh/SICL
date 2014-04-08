@@ -41,7 +41,9 @@
    #:typeq-instruction #:make-typeq-instruction #:value-type
    #:catch-instruction #:make-catch-instruction
    #:unwind-instruction #:make-unwind-instruction
-   #:eq-instruction #:make-eq-instruction))
+   #:eq-instruction #:make-eq-instruction
+   #:car-instruction #:make-car-instruction
+   #:cdr-instruction #:make-cdr-instruction))
 
 (defpackage #:cleavir-mir-graphviz
   (:use #:common-lisp #:cleavir-mir)

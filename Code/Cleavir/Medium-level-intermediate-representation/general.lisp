@@ -736,3 +736,36 @@
     :inputs inputs
     :successors successors))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction CAR-INSTRUCTION.
+;;;
+;;; This instruction takes a single input which is assumed to be a
+;;; CONS cell, and produces a single output, which is the contents of
+;;; the CAR of the cons cell.
+
+(defclass car-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-car-instruction (input output successor)
+  (make-instance 'car-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction CDR-INSTRUCTION.
+;;;
+;;; This instruction takes a single input which is assumed to be a
+;;; CONS cell, and produces a single output, which is the contents of
+;;; the CDR of the cons cell.
+
+(defclass cdr-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-cdr-instruction (input output successor)
+  (make-instance 'cdr-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
