@@ -402,7 +402,7 @@
 (defmethod type-specifier-ast ((ast typeq-ast))
   (second (children ast)))
 
-(defmethod initialize-info :after ((ast typeq-ast) &key &allow-other-keys)
+(defmethod initialize-instance :after ((ast typeq-ast) &key &allow-other-keys)
   (reinitialize-instance
    ast
    :type-specifier (value (type-specifier-ast ast))))
