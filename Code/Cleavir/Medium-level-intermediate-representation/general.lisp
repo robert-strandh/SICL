@@ -232,14 +232,6 @@
 ;;; Datum class SPECIAL-LOCATION.
 ;;;
 ;;; This datum corresponds to a reference to a special variable.
-;;; The storage is the place where a global value (if any) of the
-;;; special variable is stored.
-;;;
-;;; In later compilation stages, this datum is eliminated.  Instead
-;;; an EXTERNAL-INPUT is used to hold the storage cell containing the
-;;; global value, and this cell (together with the name) is passed as
-;;; argument to a function call that searches for bindings in the
-;;; dynamic environment.
 
 (defclass special-location (datum)
   ((%name :initarg :name :reader name)))
@@ -254,19 +246,13 @@
 ;;;
 ;;; This datum corresponds to a reference to a global FUNCTION,
 ;;; i.e., a function defined in the global environment.  
-;;;
-;;; In later compilation stages, this datum is eliminated.  Instead
-;;; an EXTERNAL-INPUT is used to hold the storage cell containing the
-;;; global value, i.e. the function object that is referred to.
 
 (defclass global-input (datum)
-  ((%name :initarg :name :reader name)
-   (%storage :initarg :storage :reader storage)))
+  ((%name :initarg :name :reader name)))
 
-(defun make-global-input (name storage)
+(defun make-global-input (name)
   (make-instance 'global-input
-    :name name
-    :storage storage))
+    :name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -531,16 +517,22 @@
 ;;;
 ;;; Instruction ENTER-INSTRUCTION.
 ;;;
-;;; This instruction is mostly a placeholder for backend to put
-;;; information that needs to be present right at the beginning of
-;;; each procedure.  It has a single successor.
+;;; This instruction encapsulates all the implementation-specific
+;;; machinery involved in verifying the argument count and parsing the
+;;; arguments.  It has a single successor.
 
 (defclass enter-instruction (instruction)
-  ())
+  ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
-(defun make-enter-instruction (&optional (successor nil successor-p))
-  (make-instance 'enter-instruction
-    :successors (if successor-p (list successor) '())))
+(defun make-enter-instruction (lambda-list successor)
+  (let* ((outputs (loop for item in lambda-list
+			append (cond ((member item lambda-list-keywords) '())
+				     ((consp item) item)
+				     (t (list item))))))
+    (make-instance 'enter-instruction
+      :lambda-list lambda-list
+      :outputs outputs
+      :successors (list successor))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
