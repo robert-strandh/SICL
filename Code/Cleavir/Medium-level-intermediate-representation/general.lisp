@@ -242,13 +242,11 @@
 ;;; dynamic environment.
 
 (defclass special-location (datum)
-  ((%name :initarg :name :reader name)
-   (%storage :initarg :storage :reader storage)))
+  ((%name :initarg :name :reader name)))
 
-(defun make-special-location (name storage)
+(defun make-special-location (name)
   (make-instance 'special-location
-    :name name
-    :storage storage))
+    :name name))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
