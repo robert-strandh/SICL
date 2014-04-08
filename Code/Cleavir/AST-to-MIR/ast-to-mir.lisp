@@ -68,17 +68,17 @@
   (or (gethash ast *location-info*)
       (let ((location
 	      (etypecase ast
-		(sicl-ast:lexical-ast
+		(cleavir-ast:lexical-ast
 		 (cleavir-mir:make-lexical-location
-		  (sicl-ast:name ast)))
-		(sicl-ast:global-ast
+		  (cleavir-ast:name ast)))
+		(cleavir-ast:global-ast
 		 (cleavir-mir:make-global-input
-		  (sicl-ast:name ast)
-		  (sicl-ast:storage ast)))
-		(sicl-ast:special-ast
+		  (cleavir-ast:name ast)
+		  (cleavir-ast:storage ast)))
+		(cleavir-ast:special-ast
 		 (cleavir-mir:make-special-location
-		  (sicl-ast:name ast)
-		  (sicl-ast:storage ast))))))
+		  (cleavir-ast:name ast)
+		  (cleavir-ast:storage ast))))))
 	(setf (gethash ast *location-info*) location))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -116,10 +116,10 @@
 ;;; branch.  The two branches are compiled in the same context as the
 ;;; IF-AST itself.
 
-(defmethod compile-ast ((ast sicl-ast:if-ast) context)
-  (let ((then-branch (compile-ast (sicl-ast:then-ast ast) context))
-	(else-branch (compile-ast (sicl-ast:else-ast ast) context)))
-    (compile-ast (sicl-ast:test-ast ast)
+(defmethod compile-ast ((ast cleavir-ast:if-ast) context)
+  (let ((then-branch (compile-ast (cleavir-ast:then-ast ast) context))
+	(else-branch (compile-ast (cleavir-ast:else-ast ast) context)))
+    (compile-ast (cleavir-ast:test-ast ast)
 		 (context '() (list else-branch then-branch)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -131,9 +131,9 @@
 ;;; required, and with the code for the following form as a single
 ;;; successor.
 
-(defmethod compile-ast ((ast sicl-ast:progn-ast) context)
-  (let ((next (compile-ast (car (last (sicl-ast:form-asts ast))) context)))
-    (loop for sub-ast in (cdr (reverse (sicl-ast:form-asts ast)))
+(defmethod compile-ast ((ast cleavir-ast:progn-ast) context)
+  (let ((next (compile-ast (car (last (cleavir-ast:form-asts ast))) context)))
+    (loop for sub-ast in (cdr (reverse (cleavir-ast:form-asts ast)))
 	  do (setf next (compile-ast sub-ast (context '() (list next)))))
     next))
 
@@ -149,9 +149,9 @@
 
 (defparameter *block-info* nil)
 
-(defmethod compile-ast ((ast sicl-ast:block-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:block-ast) context)
   (setf (gethash ast *block-info*) context)
-  (compile-ast (sicl-ast:body-ast ast) context))
+  (compile-ast (cleavir-ast:body-ast ast) context))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -163,10 +163,10 @@
 ;;; in the same context as the corresponding BLOCK-AST was compiled
 ;;; in.
 
-(defmethod compile-ast ((ast sicl-ast:return-from-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:return-from-ast) context)
   (declare (ignore context))
-  (let ((block-context (gethash (sicl-ast:block-ast ast) *block-info*)))
-    (compile-ast (sicl-ast:form-ast ast) block-context)))
+  (let ((block-context (gethash (cleavir-ast:block-ast ast) *block-info*)))
+    (compile-ast (cleavir-ast:form-ast ast) block-context)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -204,9 +204,9 @@
 
 (defparameter *go-info* nil)
 
-(defmethod compile-ast ((ast sicl-ast:tagbody-ast) context)
-  (loop for item in (sicl-ast:items ast)
-	do (when (typep item 'sicl-ast:tag-ast)
+(defmethod compile-ast ((ast cleavir-ast:tagbody-ast) context)
+  (loop for item in (cleavir-ast:items ast)
+	do (when (typep item 'cleavir-ast:tag-ast)
 	     (setf (gethash item *go-info*)
 		   (cleavir-mir:make-nop-instruction nil))))
   (with-accessors ((results results)
@@ -219,9 +219,9 @@
 		       (car successors))
 		      (t
 		       (nil-fill results (car successors))))))
-      (loop for item in (reverse (sicl-ast:items ast))
+      (loop for item in (reverse (cleavir-ast:items ast))
 	    do (setf next
-		     (if (typep item 'sicl-ast:tag-ast)
+		     (if (typep item 'cleavir-ast:tag-ast)
 			 (let ((instruction (gethash item *go-info*)))
 			   (setf (cleavir-mir:successors instruction)
 				 (list next))
@@ -237,9 +237,9 @@
 ;;; instruction that was entered into the hash table *GO-INFO* when
 ;;; the TAGBODY-AST was compiled.
 
-(defmethod compile-ast ((ast sicl-ast:go-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:go-ast) context)
   (declare (ignore context))
-  (gethash (sicl-ast:tag-ast ast) *go-info*))
+  (gethash (cleavir-ast:tag-ast ast) *go-info*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -255,12 +255,12 @@
 ;;; successors, tests the first value received and selects a successor
 ;;; based on whether that value is NIL or something else.
 
-(defmethod compile-ast ((ast sicl-ast:call-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:call-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((all-args (cons (sicl-ast:callee-ast ast)
-			   (sicl-ast:argument-asts ast)))
+    (let* ((all-args (cons (cleavir-ast:callee-ast ast)
+			   (cleavir-ast:argument-asts ast)))
 	   (temps (make-temps all-args)))
       (compile-arguments
        all-args
@@ -269,8 +269,8 @@
        ;; that the function ERROR never returns.  A more systematic
        ;; approach would be to check that the function is system
        ;; supplied and that its return type is NIL.
-       (if (and (typep (sicl-ast:callee-ast ast) 'sicl-ast:global-ast)
-		(eq (sicl-ast:name (sicl-ast:callee-ast ast)) 'error))
+       (if (and (typep (cleavir-ast:callee-ast ast) 'cleavir-ast:global-ast)
+		(eq (cleavir-ast:name (cleavir-ast:callee-ast ast)) 'error))
 	   (cleavir-mir:make-funcall-instruction temps)
 	   (ecase (length successors)
 	     (0 (cleavir-mir:make-tailcall-instruction temps))
@@ -310,11 +310,11 @@
 ;;; If there is more than one successor, chose the second one for the
 ;;; true value.
 
-(defmethod compile-ast ((ast sicl-ast:function-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:function-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let ((code (compile-function (sicl-ast:body-ast ast))))
+    (let ((code (compile-function (cleavir-ast:body-ast ast))))
       (ecase (length successors)
 	(0 (let ((temp (cleavir-mir:new-temporary)))
 	     (cleavir-mir:make-enclose-instruction
@@ -339,11 +339,11 @@
 ;;;
 ;;; Compile a SETQ-AST.
 
-(defmethod compile-ast ((ast sicl-ast:setq-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:setq-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (let* ((location (find-or-create-location (sicl-ast:lhs-ast ast)))
+    (let* ((location (find-or-create-location (cleavir-ast:lhs-ast ast)))
 	   (next 
 	     (ecase (length successors)
 	       (0 (cleavir-mir:make-return-instruction (list location)))
@@ -363,7 +363,7 @@
 		       (cleavir-mir:make-==-instruction
 			(list location (cleavir-mir:make-constant-input 'nil))
 			successors)))))))
-      (compile-ast (sicl-ast:value-ast ast)
+      (compile-ast (cleavir-ast:value-ast ast)
 		   (context (list location) (list next))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -371,8 +371,8 @@
 ;;; Compile a THE-AST.
 
 (defun make-type-check (type-ast var successor)
-  (check-type type-ast sicl-ast:constant-ast)
-  (let* ((type-input (cleavir-mir:make-constant-input (sicl-ast:value type-ast)))
+  (check-type type-ast cleavir-ast:constant-ast)
+  (let* ((type-input (cleavir-mir:make-constant-input (cleavir-ast:value type-ast)))
 	 (error-branch
 	   (cleavir-mir:make-funcall-instruction
 	    ;; We do not know the storage for the ERROR function, but
@@ -387,12 +387,12 @@
      (list var type-input)
      (list error-branch successor))))
 
-(defmethod compile-ast ((ast sicl-ast:the-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:the-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
     (destructuring-bind (form-ast . type-asts)
-	(sicl-ast:children ast)
+	(cleavir-ast:children ast)
       (ecase (length successors)
 	(0
 	 ;; This case is a bit hard to handle, because we don't know a
@@ -443,7 +443,7 @@
 ;;;
 ;;; Compile a TYPEQ-AST.
 
-(defmethod compile-ast ((ast sicl-ast:typeq-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:typeq-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -455,13 +455,13 @@
 	      (true (make-boolean t temp1 next))
 	      (temp2 (make-temp nil)))
 	 (compile-ast
-	  (sicl-ast:form-ast ast)
+	  (cleavir-ast:form-ast ast)
 	  (context
 	   (list temp2)
 	   (list (cleavir-mir:make-typeq-instruction
 		  (list temp2
 			(cleavir-mir:make-constant-input
-			 (sicl-ast:type-specifier ast)))
+			 (cleavir-ast:type-specifier ast)))
 		  (list false true)))))))
       (1 (if (null results)
 	     (progn (warn "test compiled in a context with no results")
@@ -470,7 +470,7 @@
 		    (true (make-boolean t (car results) (car successors)))
 		    (temp (make-temp nil)))
 	       (compile-ast
-		(sicl-ast:form-ast ast)
+		(cleavir-ast:form-ast ast)
 		(context
 		 (list temp)
 		 (list
@@ -479,24 +479,24 @@
 		   (cleavir-mir:make-typeq-instruction
 		    (list temp
 			  (cleavir-mir:make-constant-input
-			   (sicl-ast:type-specifier ast)))
+			   (cleavir-ast:type-specifier ast)))
 		    (list false true)))))))))
       (2 (if (null results)
 	     (let ((temp (make-temp nil)))
 	       (compile-ast
-		(sicl-ast:form-ast ast)
+		(cleavir-ast:form-ast ast)
 		(context
 		 (list temp)
 		 (list (cleavir-mir:make-typeq-instruction
 			(list temp
 			      (cleavir-mir:make-constant-input
-			       (sicl-ast:type-specifier ast)))
+			       (cleavir-ast:type-specifier ast)))
 			successors)))))
 	     (let ((false (make-boolean nil (car results) (car successors)))
 		   (true (make-boolean t (car results) (cadr successors)))
 		   (temp (make-temp nil)))
 	       (compile-ast
-		(sicl-ast:form-ast ast)
+		(cleavir-ast:form-ast ast)
 		(context
 		 (list temp)
 		 (list
@@ -505,7 +505,7 @@
 		   (cleavir-mir:make-typeq-instruction
 		    (list temp
 			  (cleavir-mir:make-constant-input
-			   (sicl-ast:type-specifier ast)))
+			   (cleavir-ast:type-specifier ast)))
 		    (list false true))))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -523,7 +523,7 @@
 ;;; with those two successor.  If in addition the RESULTS is not the
 ;;; empty list, we must also generate an ASSIGNMENT-INSTRUCTION.
 
-(defmethod compile-ast ((ast sicl-ast:lexical-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:lexical-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -567,7 +567,7 @@
 ;;; with those two successor.  If in addition the RESULTS is not the
 ;;; empty list, we must also generate an ASSIGNMENT-INSTRUCTION.
 
-(defmethod compile-ast ((ast sicl-ast:global-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:global-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -601,8 +601,8 @@
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq)))
     ;; The top-level ast must represent a thunk.
-    (assert (typep ast 'sicl-ast:function-ast))
-    (compile-function (sicl-ast:body-ast ast))))
+    (assert (typep ast 'cleavir-ast:function-ast))
+    (compile-function (cleavir-ast:body-ast ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -611,7 +611,7 @@
 ;;; The ARGCOUNT AST is known only to be found in a context where
 ;;; there is a single result required, and a single successor.
 
-(defmethod compile-ast ((ast sicl-ast:argcount-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:argcount-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -624,20 +624,20 @@
 ;;; The ARG AST is known only to be found in a context where
 ;;; there is a single result required, and a single successor.
 
-(defmethod compile-ast ((ast sicl-ast:arg-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:arg-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
     ;; This is a kludge.  If the INDEX-AST of the AST is a
     ;; CONSTANT-AST, then we make a special case, so that we later can
     ;; easily recognize a GET-ARG instruction with a constant input.
-    (if (typep (sicl-ast:index-ast ast) 'sicl-ast:constant-ast)
-	(let ((value (sicl-ast:value (sicl-ast:index-ast ast))))
+    (if (typep (cleavir-ast:index-ast ast) 'cleavir-ast:constant-ast)
+	(let ((value (cleavir-ast:value (cleavir-ast:index-ast ast))))
 	  (cleavir-mir:make-get-arg-instruction
 	   (cleavir-mir:make-constant-input value)
 	   (car results) (car successors)))
 	(let ((temp (cleavir-mir:new-temporary)))
-	  (compile-ast (sicl-ast:index-ast ast)
+	  (compile-ast (cleavir-ast:index-ast ast)
 		       (context
 			(list temp)
 			(list (cleavir-mir:make-get-arg-instruction
@@ -669,7 +669,7 @@
 ;;; Compile a WORD-AST.
 ;;;
 
-(defmethod compile-ast ((ast sicl-ast:word-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:word-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
@@ -677,7 +677,7 @@
 		 (= (length successors) 1))
       (error "Invalid results for word."))
     (cleavir-mir:make-assignment-instruction
-     (cleavir-mir:make-word-input (sicl-ast:value ast))
+     (cleavir-mir:make-word-input (cleavir-ast:value ast))
      (car results)
      (car successors))))
 
@@ -686,28 +686,28 @@
 ;;; Compile a CONSTANT-AST.
 ;;;
 
-(defmethod compile-ast ((ast sicl-ast:constant-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:constant-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
     (ecase (length successors)
       (0 (cleavir-mir:make-return-instruction
-	  (list (cleavir-mir:make-constant-input (sicl-ast:value ast)))))
+	  (list (cleavir-mir:make-constant-input (cleavir-ast:value ast)))))
       (1 (if (null results)
 	     (progn 
 	       (warn "constant compiled in a context with no values")
 	       (car successors))
 	     (cleavir-mir:make-assignment-instruction
-	      (cleavir-mir:make-constant-input (sicl-ast:value ast))
+	      (cleavir-mir:make-constant-input (cleavir-ast:value ast))
 	      (car results)
 	      (nil-fill (cdr results) (car successors)))))
       (2 (if (null results)
-	     (if (null (sicl-ast:value ast))
+	     (if (null (cleavir-ast:value ast))
 		 (car successors)
 		 (cadr successors))
 	     (cleavir-mir:make-assignment-instruction
-	      (cleavir-mir:make-constant-input (sicl-ast:value ast))
+	      (cleavir-mir:make-constant-input (cleavir-ast:value ast))
 	      (car results)
-	      (if (null (sicl-ast:value ast))
+	      (if (null (cleavir-ast:value ast))
 		  (car successors)
 		  (cadr successors))))))))
