@@ -678,3 +678,15 @@
 	      (if (null (cleavir-ast:value ast))
 		  (car successors)
 		  (cadr successors))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a CAR-AST
+
+(defmethod compile-ast ((ast cleavir-ast:car-ast) context)
+  (multiple-value-bind (successor result)
+      (adapt-context-1-1 context)
+    (let* ((temp (make-temp nil))
+	   (succ (cleavir-mir:make-car-instruction temp result successor))
+	   (new-context (context (list temp) (list succ))))
+      (compile-ast (cleavir-ast:cons-ast ast) new-context))))
