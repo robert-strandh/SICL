@@ -6,12 +6,13 @@
    #:datum
    #:immediate-input
    #:word-input
-   #:constant-input
+   #:constant-input #:make-constant-input
    #:value
-   #:lexical-location
+   #:lexical-location #:make-lexical-location
+   #:new-temporary
    #:name
-   #:special-location
-   #:global-input
+   #:special-location #:make-special-location
+   #:global-input #:make-global-input
    #:load-time-input
    #:external-input
    #:register-location
