@@ -73,12 +73,10 @@
 		  (cleavir-ast:name ast)))
 		(cleavir-ast:global-ast
 		 (cleavir-mir:make-global-input
-		  (cleavir-ast:name ast)
-		  (cleavir-ast:storage ast)))
+		  (cleavir-ast:name ast)))
 		(cleavir-ast:special-ast
 		 (cleavir-mir:make-special-location
-		  (cleavir-ast:name ast)
-		  (cleavir-ast:storage ast))))))
+		  (cleavir-ast:name ast))))))
 	(setf (gethash ast *location-info*) location))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -375,9 +373,6 @@
   (let* ((type-input (cleavir-mir:make-constant-input (cleavir-ast:value type-ast)))
 	 (error-branch
 	   (cleavir-mir:make-funcall-instruction
-	    ;; We do not know the storage for the ERROR function, but
-	    ;; it should already have been processed so that it is
-	    ;; present in the linkage vector.
 	    (list (cleavir-mir:make-global-input 'error nil)
 		  (cleavir-mir:make-constant-input :datum)
 		  var
