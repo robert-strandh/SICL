@@ -513,6 +513,12 @@
 ;;;
 ;;; Instructions for Common Lisp operators.
 
+(defclass no-successors-mixin () ())
+
+(defclass one-successor-mixin () ())
+
+(defclass two-successors-mixin () ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction ENTER-INSTRUCTION.
@@ -521,7 +527,7 @@
 ;;; machinery involved in verifying the argument count and parsing the
 ;;; arguments.  It has a single successor.
 
-(defclass enter-instruction (instruction)
+(defclass enter-instruction (instruction one-successor-mixin)
   ((%lambda-list :initarg :lambda-list :accessor lambda-list)))
 
 (defun make-enter-instruction (lambda-list successor)
@@ -538,7 +544,7 @@
 ;;;
 ;;; Instruction NOP-INSTRUCTION.
 
-(defclass nop-instruction (instruction)
+(defclass nop-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-nop-instruction (successors)
@@ -549,7 +555,7 @@
 ;;;
 ;;; Instruction ASSIGNMENT-INSTRUCTION.
 
-(defclass assignment-instruction (instruction)
+(defclass assignment-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-assignment-instruction
@@ -563,7 +569,7 @@
 ;;;
 ;;; Instruction FUNCALL-INSTRUCTION.
 
-(defclass funcall-instruction (instruction)
+(defclass funcall-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-funcall-instruction (inputs &optional (successor nil successor-p))
@@ -575,7 +581,7 @@
 ;;;
 ;;; Instruction TAILCALL-INSTRUCTION.
 
-(defclass tailcall-instruction (instruction)
+(defclass tailcall-instruction (instruction no-successors-mixin)
   ())
 
 (defun make-tailcall-instruction (inputs)
@@ -586,7 +592,7 @@
 ;;;
 ;;; Instruction GET-VALUES-INSTRUCTION.
 
-(defclass get-values-instruction (instruction)
+(defclass get-values-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-get-values-instruction
@@ -599,7 +605,7 @@
 ;;;
 ;;; Instruction RETURN-INSTRUCTION.
 
-(defclass return-instruction (instruction)
+(defclass return-instruction (instruction no-successors-mixin)
   ())
 
 (defun make-return-instruction (inputs)
@@ -610,7 +616,7 @@
 ;;;
 ;;; Instruction ENCLOSE-INSTRUCTION.
 
-(defclass enclose-instruction (instruction)
+(defclass enclose-instruction (instruction one-successor-mixin)
   ((%code :initarg :code :accessor code)))  
 
 (defun make-enclose-instruction (output successor code)
@@ -647,7 +653,7 @@
 ;;; type specifier around in a separate slot.  This is the purpose of
 ;;; the VALUE-TYPE slot.
 
-(defclass typeq-instruction (instruction)
+(defclass typeq-instruction (instruction one-successor-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-typeq-instruction (inputs successors)
@@ -686,7 +692,7 @@
 ;;; would be that before J is reached, the stack would be unwound to
 ;;; the state it had when the CATCH-INSTRUCTION was executed. 
 
-(defclass catch-instruction (instruction)
+(defclass catch-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-catch-instruction (input &optional (successor nil successor-p))
@@ -702,15 +708,15 @@
 ;;; input and it has a single successor.  It has no outputs.
 ;;;
 ;;; To implement the Common Lisp THROW special operator, it suffices
-;;; have this instruction with the value of the tag as an input and a
-;;; RETURN-INSTRUCTION as its single successor. 
+;;; to have this instruction with the value of the tag as an input and
+;;; a RETURN-INSTRUCTION as its single successor.
 ;;;
 ;;; This instruction can also be used together with the
 ;;; CATCH-INSTRUCTION to implement lexical non-local control transfers
 ;;; such as RETURN-FROM and GO.  See comment for CATCH-INSTRUCTION for
 ;;; details.
 
-(defclass unwind-instruction (instruction)
+(defclass unwind-instruction (instruction one-successor-mixin)
   ())
 
 (defun make-unwind-instruction (input &optional (successor nil successor-p))
@@ -722,7 +728,7 @@
 ;;;
 ;;; Instruction EQ-INSTRUCTION.
 
-(defclass eq-instruction (instruction)
+(defclass eq-instruction (instruction two-successors-mixin)
   ())
 
 (defun make-eq-instruction (inputs successors)
