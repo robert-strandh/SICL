@@ -48,4 +48,4 @@
 (defpackage #:cleavir-mir-graphviz
   (:use #:common-lisp #:cleavir-mir)
   (:export
-   ))
+   #:draw-flowchart))
