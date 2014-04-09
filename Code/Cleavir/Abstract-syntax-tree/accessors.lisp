@@ -131,3 +131,23 @@
 
 (defmethod value-ast ((ast slot-write-ast))
   (third (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class AREF-AST
+;;;
+;;; This AST can be used to read an element of an array.  It
+;;; corresponds roughly to the standard function ROW-MAJOR-AREF. 
+
+(defclass aref-ast (ast)
+  ())
+
+(defun make-aref-ast (array-ast index-ast)
+  (make-instance 'aref-ast
+    :children (list array-ast index-ast)))
+
+(defmethod array-ast ((ast aref-ast))
+  (first (children ast)))
+
+(defmethod index-ast ((ast aref-ast))
+  (second (children ast)))

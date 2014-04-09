@@ -32,6 +32,7 @@
    #:fixnum-add-ast #:make-fixnum-add-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:slot-ast
    #:slot-write-ast #:make-slot-write-ast
+   #:aref-ast #:make-aref-ast #:array-ast #:index-ast
    ))
 
 (defpackage #:cleavir-ast-graphviz
