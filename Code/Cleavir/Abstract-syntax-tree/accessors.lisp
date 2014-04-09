@@ -114,7 +114,8 @@
 ;;; its value, an AST that must have a fixnum as its value and that
 ;;; indicates a slot number (starting from 0), and an AST that
 ;;; generates the new value to store in the slot.  This AST generates
-;;; no values. 
+;;; no values.  An attempt to compile this AST in a context where a
+;;; value is needed will result in an error being signaled.
 
 (defclass slot-write-ast (ast)
   ())
@@ -157,7 +158,9 @@
 ;;; Class ASET-AST
 ;;;
 ;;; This AST can be used to write an element of an array.  It
-;;; corresponds roughly to a function (SETF ROW-MAJOR-ASET).
+;;; corresponds roughly to a function (SETF ROW-MAJOR-ASET).  An
+;;; attempt to compile this AST in a context where a value is needed
+;;; will result in an error being signaled.
 
 (defclass aset-ast (ast)
   ())
