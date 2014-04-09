@@ -3,5 +3,5 @@
 (defpackage #:cleavir-ast-to-mir
   (:use #:common-lisp)
   (:export
-   ))
+   #:compile-toplevel))
 
