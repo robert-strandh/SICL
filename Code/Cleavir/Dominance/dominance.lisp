@@ -1,5 +1,37 @@
 (in-package #:cleavir-dominance)
 
+;;;; Recall that a node A is said to DOMINATE a node B if and only if
+;;;; every path from the start node to B includes A.  The dominance
+;;;; relation is reflexive, transitive, and antisymmetric.  In other
+;;;; words:
+;;;;
+;;;;   * For every node A, A dominates A.
+;;;;
+;;;;   * For nodes A, B, and C, if A dominates B and B dominates C,
+;;;;     then A dominates C.
+;;;;
+;;;;   * For nodes A and B, if A dominates B and B dominates A, then
+;;;;     A = B.
+;;;;
+;;;; A node A is said to IMMEDIATELY DOMINATE a node B if and only if
+;;;; A and B are distinct, A dominates B, and there does not exist a
+;;;; node C district from A and B, such that A dominates C and C
+;;;; dominates B.  A node A that IMMEDIATELY DOMINATES a node B is
+;;;; said to be THE IMMEDIATE DOMINATOR of B, because it is unique. 
+;;;; 
+;;;; A node A is said to STRICTLY DOMINATE a node B if and only if A
+;;;; dominates B and A is distinct from B.
+;;;; 
+;;;; The dominance relation can be represented as a TREE containing
+;;;; each node of the flow graph, where the root of the tree is the
+;;;; start node of the graph, and the parent of each node in the tree
+;;;; other than the root is its unique immediate dominator.  Such a
+;;;; tree is called a DOMINANCE TREE.
+;;;; 
+;;;; For a node A, the DOMINANCE FRONTIER of A is the set of all nodes
+;;;; B such that A dominates an immediate predecessor of B, but A does
+;;;; not strictly dominate B.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Utilities.
@@ -25,7 +57,7 @@
 ;;;
 ;;; Compute the immediate dominator of each node in an arbitrary
 ;;; flowgraph.
-;;;
+;;; 
 ;;; This function is a very close implementation of the algorithm by
 ;;; Thomas Lengauer and Robert Endre Tarjan, as described in their
 ;;; paper "A Fast Algorithm for Finding Dominators in a Flowgraph",
@@ -40,7 +72,7 @@
 ;;;
 ;;; Although advertised as working on flowgraphs (i.e. a graph where
 ;;; the nodes are basic blocks), it works for any types of graph with
-;;; similar characteristics, and in particular for flowchars (i.e., w
+;;; similar characteristics, and in particular for flowchars (i.e.,
 ;;; graph where the nodes are individual instructions).  All that we
 ;;; require is that the nodes in the graph can be compared using EQ,
 ;;; and that a function is supplied that returns a list of successors
@@ -48,7 +80,16 @@
 ;;;
 ;;; We have tested this implementation on randomly generated graphs by
 ;;; comparing it to the result of a trivial algorithm for computing
-;;; dominators (see below).
+;;; dominators (see the file test-dominance.lisp).
+;;;
+;;; The result is returned as an EQ hash table where the keys
+;;; represent each node in the graph, and the value associated with
+;;; the key is the immediate dominator of the node that is the key.
+;;;
+;;; The name of this function is not exported, because there is no
+;;; reason for client code to use it directly.  It is used as a
+;;; subroutine for computing the dominance tree and the dominance
+;;; frontiers.
 
 (defun immediate-dominators (start-node successor-fun)
   (let* ((pred (make-hash-table :test #'eq))
@@ -201,6 +242,8 @@
 ;;;
 ;;; Dominance frontiers.
 
+;;; Compute a hash table that maps every node in a dominance tree to a
+;;; list of its children in that tree.
 (defun children (dominance-tree)
   (let ((result (make-hash-table :test #'eq)))
     (loop for node being each hash-key of dominance-tree
