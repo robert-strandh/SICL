@@ -5,6 +5,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "ast-to-mir")))
+   (:file "general")))
 
 	  
