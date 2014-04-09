@@ -33,6 +33,7 @@
    #:variable-ast #:operation-ast #:normal-ast #:overflow-ast
    #:fixnum-+-ast #:make-fixnum-+-ast
    #:fixnum---ast #:make-fixnum---ast
+   #:arg1-ast #:arg2-ast #:variable-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:slot-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast

@@ -56,6 +56,15 @@
   (make-instance 'fixnum-+-ast
     :children (list arg1-ast arg2-ast variable-ast)))
 
+(defmethod arg1-ast ((ast fixnum-+-ast))
+  (first (children ast)))
+
+(defmethod arg2-ast ((ast fixnum-+-ast))
+  (second (children ast)))
+
+(defmethod variable-ast ((ast fixnum-+-ast))
+  (third (children ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class FIXNUM---AST.
@@ -77,3 +86,12 @@
 (defun make-fixnum---ast (arg1-ast arg2-ast variable-ast)
   (make-instance 'fixnum---ast
     :children (list arg1-ast arg2-ast variable-ast)))
+
+(defmethod arg1-ast ((ast fixnum---ast))
+  (first (children ast)))
+
+(defmethod arg2-ast ((ast fixnum---ast))
+  (second (children ast)))
+
+(defmethod variable-ast ((ast fixnum---ast))
+  (third (children ast)))
