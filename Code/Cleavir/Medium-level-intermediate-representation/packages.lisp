@@ -51,7 +51,8 @@
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
    #:rplacd-instruction #:make-rplacd-instruction
-   #:slot-read-instruction #:make-slot-read-instruction))
+   #:slot-read-instruction #:make-slot-read-instruction
+   #:slot-write-instruction #:make-slot-write-instruction))
 
 (defpackage #:cleavir-mir-graphviz
   (:use #:common-lisp #:cleavir-mir)
