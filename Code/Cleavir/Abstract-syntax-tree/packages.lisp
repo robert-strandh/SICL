@@ -29,6 +29,8 @@
    #:cdr-ast #:make-cdr-ast
    #:rplaca-ast #:make-rplaca-ast #:object-ast
    #:rplacd-ast #:make-rplacd-ast
+   #:fixnum-arithmetic-ast #:make-fixnum-arithmetic-ast
+   #:variable-ast #:operation-ast #:normal-ast #:overflow-ast
    #:fixnum-+-ast #:make-fixnum-+-ast
    #:fixnum---ast #:make-fixnum---ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:slot-ast

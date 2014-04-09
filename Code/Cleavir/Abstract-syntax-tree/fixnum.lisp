@@ -5,6 +5,37 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class FIXNUM-ARITHMETIC-AST.
+;;;
+;;; This AST can be thought of as a combination of an assignment (like
+;;; SETQ) and a test (like IF).  It has four children.  The first
+;;; child is a LEXICAL-AST.  The second child is an AST especially
+;;; designed for this context that both produces a value in the
+;;; LEXICAL-AST and evaluates one of the remaining children according
+;;; to weather the operation generated an overflow. 
+
+(defclass fixnum-arithmetic-ast (ast)
+  ())
+
+(defun make-fixnum-arithmetic-ast
+    (variable-ast operation-ast normal-ast overflow-ast)
+  (make-instance 'fixnum-arithmetic-ast
+    :children (list variable-ast operation-ast normal-ast overflow-ast)))
+
+(defmethod variable-ast ((ast fixnum-arithmetic-ast))
+  (first (children ast)))
+
+(defmethod operation-ast ((ast fixnum-arithmetic-ast))
+  (second (children ast)))
+
+(defmethod normal-ast ((ast fixnum-arithmetic-ast))
+  (third (children ast)))
+
+(defmethod overflow-ast ((ast fixnum-arithmetic-ast))
+  (fourth (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class FIXNUM-+-AST.
 ;;;
 ;;; This AST can be used to implement a binary addition function.  It
