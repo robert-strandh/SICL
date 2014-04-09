@@ -500,7 +500,8 @@
 ;;; This AST can be used to implement the function RPLACA and the
 ;;; function (SETF CAR) in implementations where it is a function.
 ;;; This AST differs from the function RPLACA in that it does not
-;;; generate any value.  
+;;; generate any value.  An attempt to compile this AST in a context
+;;; where a value is needed will result in an error being signaled.
 
 (defclass rplaca-ast (ast)
   ())
@@ -522,7 +523,8 @@
 ;;; This AST can be used to implement the function RPLACD and the
 ;;; function (SETF CDR) in implementations where it is a function.
 ;;; This AST differs from the function RPLACD in that it does not
-;;; generate any value.  
+;;; generate any value.  An attempt to compile this AST in a context
+;;; where a value is needed will result in an error being signaled.
 
 (defclass rplacd-ast (ast)
   ())
