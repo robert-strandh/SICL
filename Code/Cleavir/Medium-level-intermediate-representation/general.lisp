@@ -787,3 +787,21 @@
     :inputs (list input1 input2)
     :outputs '()
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction RPLACD-INSTRUCTION
+;;;
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be a CONS cell, and the second can be any object.  It has no
+;;; outputs.  It replaces the CDR of the CONS cell with the object in
+;;; the second input. 
+
+(defclass rplacd-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-rplacd-instruction (input1 input2 successor)
+  (make-instance 'rplacd-instruction
+    :inputs (list input1 input2)
+    :outputs '()
+    :successors (list successor)))

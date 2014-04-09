@@ -44,7 +44,8 @@
    #:eq-instruction #:make-eq-instruction
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
-   #:rplaca-instruction #:make-rplaca-instruction))
+   #:rplaca-instruction #:make-rplaca-instruction
+   #:rplacd-instruction #:make-rplacd-instruction))
 
 (defpackage #:cleavir-mir-graphviz
   (:use #:common-lisp #:cleavir-mir)
