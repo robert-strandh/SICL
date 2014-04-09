@@ -1,7 +1,66 @@
 \chapter{Abstract syntax tree}
 \label{chap-abstract-syntax-tree}
 
-\section{\texttt{constant-ast}}
+\section{Purpose}
+
+The abstract syntax tree%
+\footnote{An abstract syntax tree is not a tree, and not even an
+  acyclic graph, but it is traditionally called an abstract syntax
+  tree anyway, so we keep this terminology.}  (AST for short) is a
+structured version of the source code in which the use for an
+environment has been eliminated.  An abstract syntax tree consists of
+a graph of class instances.  Each class corresponds to some intrinsic
+category of source code elements.
+
+Every lexical variable has been replaced by a class instance that
+contains its name, but different variables with the same name in the
+source code are represented by different instances.  Global functions
+and special variables are similarly represented by class instances
+that contain the name of the function or variable.  Since different
+lexical variables with different names are represented by different
+instances, there is not need for scoping operators such as
+\texttt{let} or \texttt{let*}, which is why there are no classes that
+correspond to these source constructs.  
+
+Macros and symbol macros have been expanded so that the only operators
+that remain are special operators and global functions.  
+
+There are no classes that correspond to declarations.  Implementations
+should replace type declarations by the use of instances of the
+\texttt{the-ast} class or the \texttt{typeq-ast} class as indicated by
+the \hs{}
+
+Functions that can not be expressed as simpler functions, and that are
+performance critical, have been given their own abstract syntax trees.
+For instance the function that given a \texttt{cons} cell returns the
+\texttt{car} of that \texttt{cons} cell (this is only part of what the
+\cl{} function \texttt{car} does) has been given its own abstract
+syntax tree class.  Implementations are under no obligation to use
+these classes.  It is perfectly possible for an implementation to
+represent every function call to a standard \cl{} function by a
+\texttt{call-ast}.  However, \sysname{} contains features that make it
+easier to optimize the resulting code if these classes are used.
+
+Implementations are free to create subclasses of the AST classes
+listed here, for instance in order to add additional information to
+AST nodes.  In that case, it might be necessary to provide overriding
+or extending methods on the generic functions that handle the abstract
+syntax tree, in particular when it is translated into MIR.  
+
+Implementations are also free to create entirely new AST classes.
+Then it might be necessary to provide primary methods on some generic
+functions that manipulate the abstract syntax tree.%
+\fixme{At some point, provide a list of generic functions that would
+  require overriding, extending, or primary methods.}
+
+\section{Types of abstract syntax-trees}
+
+There is no abstract syntax tree class corresponding to the special
+operator \texttt{eval-when}.  The compiler takes action based on the
+context of the compilation and either evaluates or generates an
+abstract syntax tree.
+
+\subsection{\texttt{constant-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -11,26 +70,24 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-A \texttt{constant-ast} is produced whenever the compiler sees a
-constant, and processing is done by \texttt{eval} or \texttt{compile}
-(as opposed to by \texttt{compile-file}).  This constant can either be
-in the form of a self-evaluating object, a constant variable, or a
-quoted object.
+A \texttt{constant-ast} is typically used by an implementation to
+represent constants in the source code.
+
+This constant can either be in the form of a self-evaluating object,
+the value of a constant variable, or a quoted object.
 
 At this point, there is no discrimination between the different types
 of constant, nor between integers of different magnitude.  Later on
 in the compilation process, some backend may replace small integer
 constants by immediate values. 
 
-\section{\texttt{global-ast}}
+\subsection{\texttt{global-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
 Initarg & Reader & Description\\
 \hline\hline
 \texttt{:name} & \texttt{name} & The name of the function.\\  
-\hline
-\texttt{:storage} & \texttt{storage} & The storage cell for the function.\\
 \hline
 \end{tabular}
 
@@ -39,15 +96,13 @@ reference to a \emph{global function}, i.e., a name in a functional
 position that is not defined as a local function, as a special
 operator, nor as a macro.
 
-\section{\texttt{special-ast}}
+\subsection{\texttt{special-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
 Initarg & Reader & Description\\
 \hline\hline
 \texttt{:name} & \texttt{name} & The name of the variable.\\  
-\hline
-\texttt{:storage} & \texttt{storage} & The storage cell for the variable.\\
 \hline
 \end{tabular}
 
@@ -56,7 +111,7 @@ reference to a \emph{special variable}, i.e. a name in a variable
 position that is not defined as a lexical variable, a constant
 variable, nor as a symbol macro.
 
-\section{\texttt{lexical-ast}}
+\subsection{\texttt{lexical-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -69,7 +124,7 @@ Initarg & Reader & Description\\
 A \texttt{lexical-ast} is produced whenever the compiler sees a
 reference to a \emph{lexical variable}. 
 
-\section{\texttt{call-ast}}
+\subsection{\texttt{call-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -89,7 +144,7 @@ call.  It contains ASTs for the function to be called and for the
 arguments to that function.  The AST representing the function can be
 any AST that produces a function as a value.
 
-\section{\texttt{block-ast}}
+\subsection{\texttt{block-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -99,8 +154,12 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-\section{\texttt{eval-when-ast}}
-\section{\texttt{function-ast}}
+The \texttt{block-ast} is used to represent the \cl{} special operator
+\texttt{block}.  The \texttt{block-ast} does not contain the name of
+the block because the \texttt{return-from-ast} contains a reference to
+the corresponding \texttt{block-ast}.
+
+\subsection{\texttt{function-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -108,13 +167,41 @@ Initarg & Reader & Description\\
 \hline\hline
 \texttt{:body-ast} & \texttt{body-ast} & The AST for the body of the function.\\
 \hline
+\texttt{:lambda-list} & \texttt{lambda list} & The lambda list of the function.\\
+\hline
 \end{tabular}
 
+The \texttt{function-ast} is one of the more complicated ones, because
+it hides all the implementation details of how arguments are parsed. 
 
-\section{\texttt{go-ast}}
-\section{\texttt{if-ast}}
+\subsection{\texttt{go-ast}}
 
-\section{\texttt{load-time-value-ast}}
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:tag-ast} & \texttt{body-ast} & The AST for the tag.\\
+\hline
+\end{tabular}
+
+\subsection{\texttt{if-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:test-ast} & \texttt{body-ast} & The AST for the test.\\
+\hline
+\texttt{:then-ast} & \texttt{then-ast} & The AST for the \emph{then} branch.\\
+\hline
+\texttt{:else-ast} & \texttt{else-ast} & The AST for the \emph{else} branch.\\
+\hline
+\end{tabular}
+
+The \texttt{if-ast} corresponds directly to the \cl{} special operator
+\texttt{if}. 
+
+\subsection{\texttt{load-time-value-ast}}
 
 A \texttt{load-time-value-ast} is produced whenever the compiler sees
 a \texttt{load-time-value} special form, but also when it sees a
@@ -125,7 +212,7 @@ This AST always contains a \emph{form}, so that if it is the result of
 a \emph{constant}, then it is wrapped in a \texttt{quote} special
 form. 
 
-\section{\texttt{progn-ast}}
+\subsection{\texttt{progn-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -135,7 +222,11 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-\section{\texttt{return-from-ast}}
+The \texttt{progn-ast} corresponds directly to the \cl{} special
+operator \texttt{progn}.  It returns the values that are return by the
+last AST in the child forms.
+
+\subsection{\texttt{return-from-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -149,7 +240,7 @@ corresponding block.\\
 \end{tabular}
 
 
-\section{\texttt{setq-ast}}
+\subsection{\texttt{setq-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -162,7 +253,7 @@ Initarg & Reader & Description\\
 \end{tabular}
 
 
-\section{\texttt{tagbody-ast}}
+\subsection{\texttt{tagbody-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -176,7 +267,7 @@ Initarg & Reader & Description\\
 An item can either be a \texttt{tag-ast} or an AST corresponding to
 some \texttt{statement}. 
 
-\section{\texttt{tag-ast}}
+\subsection{\texttt{tag-ast}}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -186,4 +277,4 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-\section{\texttt{the-ast}}
+\subsection{\texttt{the-ast}}
