@@ -330,12 +330,26 @@
 ;;; If there is more than one successor, chose the second one for the
 ;;; true value.
 
+(defun translate-lambda-list (lambda-list)
+  (loop for item in lambda-list
+	collect (cond ((member item lambda-list-keywords)
+		       item)
+		      ((consp item)
+		       (if (= (length item) 3)
+			   (list (first item)
+				 (find-or-create-location (second item))
+				 (find-or-create-location (third item)))
+			   (list (find-or-create-location (second item))
+				 (find-or-create-location (third item)))))
+		      (t
+		       (find-or-create-location item)))))
+
 (defmethod compile-ast ((ast cleavir-ast:function-ast) context)
   (with-accessors ((results results)
 		   (successors successors))
       context
     (let* ((body (compile-ast (cleavir-ast:body-ast ast) (context '() '())))
-	   (ll (cleavir-ast:lambda-list ast))
+	   (ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
 	   (function (cleavir-mir:make-enter-instruction ll body)))
       (ecase (length successors)
 	(0 (let ((temp (cleavir-mir:new-temporary)))
@@ -628,7 +642,7 @@
     ;; The top-level ast must represent a thunk.
     (assert (typep ast 'cleavir-ast:function-ast))
     (let* ((body (compile-ast (cleavir-ast:body-ast ast) (context '() '())))
-	   (ll (cleavir-ast:lambda-list ast)))
+	   (ll (translate-lambda-list (cleavir-ast:lambda-list ast))))
       (cleavir-mir:make-enter-instruction ll body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
