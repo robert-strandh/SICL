@@ -84,7 +84,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class SI-READ-AST.
+;;; Class SLOT-READ-AST.
 ;;;
 ;;; This AST can be used to read a slot from a standard instance.  It
 ;;; has two children, an AST that must have a standard instance as its
@@ -92,22 +92,22 @@
 ;;; indicates a slot number (starting from 0).  This AST generates a
 ;;; single value, namely the contents of the slot with the number given.
 
-(defclass si-read-ast (ast)
+(defclass slot-read-ast (ast)
   ())
 
-(defun make-si-read-ast (si-ast slot-number-ast)
-  (make-instance 'si-read-ast
-    :children (list si-ast slot-number-ast)))
+(defun make-slot-read-ast (slot-ast slot-number-ast)
+  (make-instance 'slot-read-ast
+    :children (list slot-ast slot-number-ast)))
 
-(defmethod si-ast ((ast si-read-ast))
+(defmethod slot-ast ((ast slot-read-ast))
   (first (children ast)))
 
-(defmethod slot-number-ast ((ast si-read-ast))
+(defmethod slot-number-ast ((ast slot-read-ast))
   (second (children ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class SI-WRITE-AST.
+;;; Class SLOT-WRITE-AST.
 ;;;
 ;;; This AST can be used to write a slot in a standard instance.  It
 ;;; has three children, an AST that must have a standard instance as
@@ -116,18 +116,18 @@
 ;;; generates the new value to store in the slot.  This AST generates
 ;;; no values. 
 
-(defclass si-write-ast (ast)
+(defclass slot-write-ast (ast)
   ())
 
-(defun make-si-write-ast (si-ast slot-number-ast value-ast)
-  (make-instance 'si-write-ast
-    :children (list si-ast slot-number-ast value-ast)))
+(defun make-slot-write-ast (slot-ast slot-number-ast value-ast)
+  (make-instance 'slot-write-ast
+    :children (list slot-ast slot-number-ast value-ast)))
 
-(defmethod si-ast ((ast si-write-ast))
+(defmethod slot-ast ((ast slot-write-ast))
   (first (children ast)))
 
-(defmethod slot-number-ast ((ast si-write-ast))
+(defmethod slot-number-ast ((ast slot-write-ast))
   (second (children ast)))
 
-(defmethod value-ast ((ast si-write-ast))
+(defmethod value-ast ((ast slot-write-ast))
   (third (children ast)))

@@ -30,8 +30,8 @@
    #:rplaca-ast #:make-rplaca-ast #:object-ast
    #:rplacd-ast #:make-rplacd-ast
    #:fixnum-add-ast #:make-fixnum-add-ast
-   #:si-read-ast #:make-si-read-ast #:slot-number-ast #:si-ast
-   #:si-write-ast #:make-si-write-ast
+   #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:slot-ast
+   #:slot-write-ast #:make-slot-write-ast
    ))
 
 (defpackage #:cleavir-ast-graphviz
