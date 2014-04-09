@@ -44,6 +44,7 @@
    #:eq-instruction #:make-eq-instruction
    #:fixnum-+-instruction #:make-fixnum-+-instruction
    #:fixnum---instruction #:make-fixnum---instruction
+   #:fixnum-<-instruction #:make-fixnum-<-instruction
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
