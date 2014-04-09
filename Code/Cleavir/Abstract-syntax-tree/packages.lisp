@@ -24,6 +24,7 @@
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast #:type-specifiers
    #:typeq-ast #:make-typeq-ast #:type-specifier
+   #:eq-ast #:make-eq-ast
    #:car-ast #:make-car-ast #:cons-ast
    #:cdr-ast #:make-cdr-ast
    #:rplaca-ast #:make-rplaca-ast #:object-ast

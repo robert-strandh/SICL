@@ -459,6 +459,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class EQ-AST.
+;;;
+;;; This AST can be used to to test whether two objects are identical.
+;;; It has two children.  This AST can only appear in the TEST
+;;; position of an IF-AST.
+
+(defclass eq-ast (ast)
+  ())
+
+(defun make-eq-ast (arg1-ast arg2-ast)
+  (make-instance 'eq-ast
+    :children (list arg1-ast arg2-ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CAR-AST.
 ;;;
 ;;; This AST can be used to implement the function CAR.  However, it
