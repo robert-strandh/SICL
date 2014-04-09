@@ -5,7 +5,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-ADD-AST.
+;;; Class FIXNUM-+-AST.
 ;;;
 ;;; This AST can be used to implement a binary addition function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It generates
@@ -19,16 +19,16 @@
 ;;; non-negative, then a BIGNUM with the value RESULT - 2^n should be
 ;;; created.
 
-(defclass fixnum-add-ast (ast)
+(defclass fixnum-+-ast (ast)
   ())
 
-(defun make-fixnum-add-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-add-ast
+(defun make-fixnum-+-ast (arg1-ast arg2-ast)
+  (make-instance 'fixnum-+-ast
     :children (list arg1-ast arg2-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-SUB-AST.
+;;; Class FIXNUM---AST.
 ;;;
 ;;; This AST can be used to implement a binary subtraction function.
 ;;; It requires both its arguments to be of type FIXNUM.  It generates
@@ -42,10 +42,10 @@
 ;;; non-negative, then a BIGNUM with the value RESULT - 2^n should be
 ;;; created.
 
-(defclass fixnum-sub-ast (ast)
+(defclass fixnum---ast (ast)
   ())
 
-(defun make-fixnum-sub-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-sub-ast
+(defun make-fixnum---ast (arg1-ast arg2-ast)
+  (make-instance 'fixnum---ast
     :children (list arg1-ast arg2-ast)))
 

@@ -29,7 +29,8 @@
    #:cdr-ast #:make-cdr-ast
    #:rplaca-ast #:make-rplaca-ast #:object-ast
    #:rplacd-ast #:make-rplacd-ast
-   #:fixnum-add-ast #:make-fixnum-add-ast
+   #:fixnum-+-ast #:make-fixnum-+-ast
+   #:fixnum---ast #:make-fixnum---ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:slot-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast
