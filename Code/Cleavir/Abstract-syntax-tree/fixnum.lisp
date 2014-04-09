@@ -95,3 +95,25 @@
 
 (defmethod variable-ast ((ast fixnum---ast))
   (third (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FIXNUM-<-AST.
+;;;
+;;; This class can be used to implement a binary LESS-THAN function.
+;;; It requires both its arguments to be of type FIXNUM.  It can only
+;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
+;;; position where a value is required, an error is signaled.
+
+(defclass fixnum-<-ast (ast)
+  ())
+
+(defun make-fixnum-<-ast (arg1-ast arg2-ast)
+  (make-instance 'fixnum-<-ast
+    :children (list arg1-ast arg2-ast)))
+
+(defmethod arg1-ast ((ast fixnum-<-ast))
+  (first (children ast)))
+
+(defmethod arg2-ast ((ast fixnum-<-ast))
+  (second (children ast)))
