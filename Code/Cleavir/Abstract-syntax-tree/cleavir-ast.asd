@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "general")
+   (:file "fixnum")
    (:file "graphviz-drawing")))
