@@ -151,3 +151,26 @@
 
 (defmethod index-ast ((ast aref-ast))
   (second (children ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class ASET-AST
+;;;
+;;; This AST can be used to write an element of an array.  It
+;;; corresponds roughly to a function (SETF ROW-MAJOR-ASET).
+
+(defclass aset-ast (ast)
+  ())
+
+(defun make-aset-ast (array-ast index-ast value-ast)
+  (make-instance 'aset-ast
+    :children (list array-ast index-ast value-ast)))
+
+(defmethod array-ast ((ast aset-ast))
+  (first (children ast)))
+
+(defmethod index-ast ((ast aset-ast))
+  (second (children ast)))
+
+(defmethod value-ast ((ast aset-ast))
+  (third (children ast)))
