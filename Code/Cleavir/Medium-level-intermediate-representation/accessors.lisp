@@ -69,3 +69,22 @@
     :inputs (list input1 input2)
     :outputs '()
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction SLOT-READ-INSTRUCTION.
+;;;
+;;; This instruction takes a two inputs.  The first input is assumed
+;;; to be a standard instance.  The second is assumed to be a FIXNUM
+;;; and represents the index in the instance of the slot to be read.
+;;; This instruction produces a single output, which is the contents
+;;; of the SLOT.
+
+(defclass slot-read-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-slot-read-instruction (input output successor)
+  (make-instance 'slot-read-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
