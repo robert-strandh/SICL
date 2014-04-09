@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "general")
+   (:file "accessors")
    (:file "graphviz-drawing")))
