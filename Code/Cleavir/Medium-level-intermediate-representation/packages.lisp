@@ -43,7 +43,8 @@
    #:unwind-instruction #:make-unwind-instruction
    #:eq-instruction #:make-eq-instruction
    #:car-instruction #:make-car-instruction
-   #:cdr-instruction #:make-cdr-instruction))
+   #:cdr-instruction #:make-cdr-instruction
+   #:rplaca-instruction #:make-rplaca-instruction))
 
 (defpackage #:cleavir-mir-graphviz
   (:use #:common-lisp #:cleavir-mir)

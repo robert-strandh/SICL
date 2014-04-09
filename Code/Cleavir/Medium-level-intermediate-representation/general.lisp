@@ -769,3 +769,21 @@
     :inputs (list input)
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction RPLACA-INSTRUCTION
+;;;
+;;; This instruction takes two inputs.  The first input is assumed to
+;;; be a CONS cell, and the second can be any object.  It has no
+;;; outputs.  It replaces the CAR of the CONS cell with the object in
+;;; the second input. 
+
+(defclass rplaca-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-rplaca-instruction (input1 input2 successor)
+  (make-instance 'rplaca-instruction
+    :inputs (list input1 input2)
+    :outputs '()
+    :successors (list successor)))
