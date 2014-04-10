@@ -594,6 +594,46 @@
 		     collect (list keyword name supplied-p))))
      (if allow-other-keys '(&allow-other-keys) '()))))
 
+(defun extract-initforms (parsed-lambda-list)
+  (let ((optionals (optionals parsed-lambda-list))
+	(keys (keys parsed-lambda-list)))
+    (let ((key-inits-with-test
+	    (if (eq keys :none)
+		'()
+		`(progn
+		   ,@(loop for ((nil name) init-form supplied-p) in keys
+			   collect `(unless ,supplied-p
+				      (setf ,name ,init-form))))))
+	  (key-inits-without-test
+	    (if (eq keys :none)
+		'()
+		`(progn 
+		   ,@(loop for ((nil name) init-form supplied-p) in keys
+			   collect `(setf ,name ,init-form))))))
+      (labels ((process-optionals-with-test (optionals)
+		 (if (null optionals)
+		     key-inits-with-test
+		     (destructuring-bind (name init-form supplied-p)
+			 (car optionals)
+		       `(if (null ,supplied-p)
+			    (progn (setf ,name ,init-form)
+				   ,(process-optionals-without-test
+				     (cdr optionals)))
+			    ,(process-optionals-with-test
+			      (cdr optionals))))))
+	       (process-optionals-without-test (optionals)
+		 (if (null optionals)
+		     key-inits-without-test
+		     (destructuring-bind (name init-form supplied-p)
+			 (car optionals)
+		       (declare (ignore supplied-p))
+		       `(progn (setf ,name ,init-form)
+			       ,(process-optionals-without-test
+				 (cdr optionals)))))))
+	(if (eq optionals :none)
+	    nil
+	    (process-optionals-with-test optionals))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; PARSE-MACRO
