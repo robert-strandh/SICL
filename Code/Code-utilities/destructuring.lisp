@@ -545,6 +545,35 @@
 			   arg-op))
        ignored))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Preprocess an ordinary lambda list.
+;;;
+;;; Preprocessing a lambda list extracts the code for initializing
+;;; unsupplied arguments.  
+;;;
+;;; FIXME: say more.
+
+(defun ensure-supplied-p-parameters (parsed-lambda-list)
+  (let ((required (required parsed-lambda-list))
+	(optionals (optionals parsed-lambda-list))
+	(keys (keys parsed-lambda-list))
+	(allow-other-keys (allow-other-keys parsed-lambda-list)))
+    (make-instance 'lambda-list
+      :required required
+      :optionals (if (eq optionals :none)
+		     :none
+		     (loop for optional in optionals
+			   collect (if (= (length optional) 3)
+				       optional
+				       (append optional (list (gensym))))))
+      :keys (if (eq keys :none)
+		:none
+		(loop for key in keys
+		      collect (if (= (length key) 3)
+				  key
+				  (append key (list (gensym))))))
+      :allow-other-keys allow-other-keys)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
