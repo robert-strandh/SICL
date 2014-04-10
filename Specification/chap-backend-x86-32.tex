@@ -315,7 +315,7 @@ lexically-enclosed inside the \texttt{BLOCK} with an arbitrary number
 of intervening stack frames.  When this is the case, \texttt{BLOCK} is
 implemented as a call to a function, in a way similar to the way
 \texttt{CATCH} is implemented.  The function establishes a
-\texttt{BLOCK}/\texttt{TAGBODY} entry ith a fresh time stamp.  The
+\texttt{BLOCK}/\texttt{TAGBODY} entry with a fresh time stamp.  The
 time stamp is also stored in a lexical varible in the static
 environment.  \refFig{fig-x86-32-block-tag} shows this situation. 
 
@@ -340,7 +340,7 @@ lexically-enclosed inside the \texttt{TAGBODY} with an arbitrary
 number of intervening stack frames.  When this is the case,
 \texttt{TAGBODY} is implemented as a call to a function, in a way
 similar to the way \texttt{BLOCK} is implemented.  The function
-establishes a \texttt{BLOCK}/\texttt{TAGBODY} entry ith a fresh time
+establishes a \texttt{BLOCK}/\texttt{TAGBODY} entry with a fresh time
 stamp.  The time stamp is also stored in a lexical varible in the
 static environment.  For each tag that is the target of a \texttt{GO},
 an address to wich control is transfered is also stored in a lexical
