@@ -634,6 +634,11 @@
 	    nil
 	    (process-optionals-with-test optionals))))))
 
+(defun preprocess-lambda-list (parsed-lambda-list)
+  (let ((ll (ensure-supplied-p-parameters parsed-lambda-list)))
+    (values (extract-entry-lambda-list ll)
+	    (extract-initforms ll))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; PARSE-MACRO
