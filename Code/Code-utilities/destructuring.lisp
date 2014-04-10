@@ -575,6 +575,25 @@
 				  (append key (list (gensym))))))
       :allow-other-keys allow-other-keys)))
 
+(defun extract-entry-lambda-list (parsed-lambda-list)
+  (let ((required (required parsed-lambda-list))
+	(optionals (optionals parsed-lambda-list))
+	(keys (keys parsed-lambda-list))
+	(allow-other-keys (allow-other-keys parsed-lambda-list)))
+    (append
+     required
+     (if (eq optionals :none)
+	 '()
+	 (cons '&optional
+	       (loop for (name nil supplied-p) in optionals
+		     collect (list name supplied-p))))
+     (if (eq keys :none)
+	 '()
+	 (cons '&key
+	       (loop for ((keyword name) nil supplied-p) in keys
+		     collect (list keyword name supplied-p))))
+     (if allow-other-keys '(&allow-other-keys) '()))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; PARSE-MACRO
