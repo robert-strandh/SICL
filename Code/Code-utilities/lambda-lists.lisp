@@ -227,8 +227,6 @@
 		     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Trial stuff.
-;;;
 ;;; A pattern is either:
 ;;;
 ;;;  * a tree (a symbol or a CONS cell), or
@@ -236,8 +234,8 @@
 ;;;
 ;;; An &optional entry (after canonicalization) is one of:
 ;;;
-;;;  * (pattern init-arg)
-;;;  * (pattern init-arg supplied-p-parameter)
+;;;  * (pattern init-form)
+;;;  * (pattern init-form supplied-p-parameter)
 ;;;
 ;;; A &key entry (after canonicalization) is one of:
 ;;;
