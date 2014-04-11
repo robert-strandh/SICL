@@ -49,3 +49,6 @@
   `(typep ,(to-source (cleavir-ast:form-ast ast) dictionary)
 	  ,(to-source (cleavir-ast:type-specifier-ast ast) dictionary)))
 
+(defmethod to-source ((ast cleavir-ast:constant-ast) dictionary)
+  `',(cleavir-ast:value ast))
+
