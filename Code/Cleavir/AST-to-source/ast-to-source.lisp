@@ -63,3 +63,6 @@
   `(funcall ,(to-source (cleavir-ast:callee-ast ast) dictionary)
 	    ,@(loop for arg in (cleavir-ast:argument-asts ast)
 		    collect (to-source arg dictionary))))
+
+(defmethod to-source ((ast cleavir-ast:global-ast) dictionary)
+  `#',(cleavir-ast:name ast))
