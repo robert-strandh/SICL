@@ -50,9 +50,8 @@
 	  ,(to-source (cleavir-ast:type-specifier-ast ast) dictionary)))
 
 (defmethod to-source ((ast cleavir-ast:constant-ast) dictionary)
+  (declare (ignore dictionary))
   `',(cleavir-ast:value ast))
 
 (defmethod to-source ((ast cleavir-ast:lexical-ast) dictionary)
   (cdr (assoc ast dictionary)))
-
-
