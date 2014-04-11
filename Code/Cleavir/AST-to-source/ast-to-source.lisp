@@ -39,3 +39,8 @@
 (defmethod to-source ((ast cleavir-ast:setq-ast) dictionary)
   `(setq ,(cdr (assoc (cleavir-ast:variable-ast ast) dictionary))
 	 ,(to-source (cleavir-ast:value-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:if-ast) dictionary)
+  `(if ,(to-source (cleavir-ast:test-ast ast) dictionary)
+       ,(to-source (cleavir-ast:then-ast ast) dictionary)
+       ,(to-source (cleavir-ast:else-ast ast) dictionary)))
