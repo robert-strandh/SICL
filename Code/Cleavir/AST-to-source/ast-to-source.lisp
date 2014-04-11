@@ -6,7 +6,6 @@
   (to-source ast nil))
 
 (defmethod to-source (ast dictionary)
-  (declare (ignore ast dictionary))
   `(??? ,@(loop for child in (cleavir-ast:children ast)
 		collect (to-source child dictionary))))
 
