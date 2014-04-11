@@ -52,3 +52,7 @@
 (defmethod to-source ((ast cleavir-ast:constant-ast) dictionary)
   `',(cleavir-ast:value ast))
 
+(defmethod to-source ((ast cleavir-ast:lexical-ast) dictionary)
+  (cdr (assoc ast dictionary)))
+
+
