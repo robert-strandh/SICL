@@ -58,3 +58,8 @@
 
 (defmethod to-source ((ast cleavir-ast:car-ast) dictionary)
   `(%car ,(to-source (cleavir-ast:cons-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:call-ast) dictionary)
+  `(funcall ,(to-source (cleavir-ast:callee-ast ast) dictionary)
+	    ,@(loop for arg in (cleavir-ast:argument-asts ast)
+		    collect (to-source arg dictionary))))
