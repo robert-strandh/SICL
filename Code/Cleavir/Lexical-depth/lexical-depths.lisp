@@ -14,22 +14,32 @@
 		 (mapc #'traverse (cleavir-mir:successors instruction)))))
       (traverse enter-instruction))))
 
-;;; Compute the owner of each instruction.  The owner of an
-;;; instruction I is the outermost ENTER-INSTRUCTION of all the
-;;; ENTER-INSTRUCTIONs which I is a descendant.  The return value is
-;;; an EQ hash table mapping instructions to their owners.
-(defun compute-instruction-ownerships (enter-instruction)
+;;; Compute the owner of each instruction and each datum.  The owner
+;;; of an instruction I is the outermost ENTER-INSTRUCTION of all the
+;;; ENTER-INSTRUCTIONs which I is a descendant.  The owner of a datum
+;;; D is the outermost ENTER-INSTRUCTION of all the owners of all the
+;;; instructions using D.  The return value is an EQ hash table
+;;; mapping an instruction or a datum to its owner.
+(defun compute-ownerships (enter-instruction)
   (let ((worklist (list enter-instruction))
 	(result (make-hash-table :test #'eq)))
-    (flet ((process-function (enter-instruction)
-	     (map-instructions
-	      (lambda (instruction)
-		(unless (gethash instruction result)
-		  (setf (gethash instruction result) enter-instruction))
-		(when (and (not (eq instruction enter-instruction))
-			   (typep instruction 'cleavir-mir:enter-instruction))
-		  (setf worklist (append worklist (list instruction)))))
-	      enter-instruction)))
+    (flet
+	((process-function (enter-instruction)
+	   (labels
+	       ((traverse (instruction)
+		  (when  (null (gethash instruction result))
+		    (setf (gethash instruction result) enter-instruction)
+		    (let ((data (append (cleavir-mir:inputs instruction)
+					(cleavir-mir:outputs instruction))))
+		      (loop for datum in data
+			    do (when (null (gethash datum result))
+				 (setf (gethash datum result)
+				       enter-instruction))))
+		    (when (typep instruction 'cleavir-mir:enclose-instruction)
+		      (let ((code (cleavir-mir:code instruction)))
+			(setf worklist (append worklist (list code)))))
+		    (mapc #'traverse (cleavir-mir:successors instruction)))))
+	     (traverse enter-instruction))))
       (loop until (null worklist)
 	    do (process-function (pop worklist))))
     result))
