@@ -4,3 +4,7 @@
 
 (defun ast-to-source (ast)
   (to-source ast nil))
+
+(defmethod to-source (ast dictionary)
+  (declare (ignore ast dictionary))
+  '???)
