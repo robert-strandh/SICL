@@ -35,3 +35,7 @@
 				  v))))))
     `(lambda ,lambda-list
        ,(to-source (cleavir-ast:body-ast ast) (append entries dictionary)))))
+
+(defmethod to-source ((ast cleavir-ast:setq-ast) dictionary)
+  `(setq ,(cdr (assoc (cleavir-ast:variable-ast ast) dictionary))
+	 ,(to-source (cleavir-ast:value-ast ast) dictionary)))
