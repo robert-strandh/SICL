@@ -8,6 +8,18 @@
    :children (loop for child in (cleavir-ast:children original)
 		   collect (gethash child dictionary))))
 
+(defun clone-ast (ast)
+  (let ((dictionary (make-hash-table :test #'eq)))
+    (labels ((traverse (node)
+	       (when (null (gethash node dictionary))
+		 (setf (gethash node dictionary)
+		       (make-instance (class-of node)))
+		 (mapc #'traverse (cleavir-ast:children node)))))
+      (traverse ast))
+    (maphash (lambda (original clone)
+	       (fixup clone original dictionary))
+	     dictionary)))
+			
 (defgeneric clone-node (ast))
 
 (defmethod clone-node (ast)
