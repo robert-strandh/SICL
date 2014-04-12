@@ -20,33 +20,28 @@
 	       (fixup clone original dictionary))
 	     dictionary)))
 			
-(defgeneric clone-node (ast))
-
-(defmethod clone-node (ast)
-  (make-instance (class-of ast)))
-
-(defmethod clone-node :around ((ast cleavir-ast:immediate-ast))
+(defmethod fixup :after ((clone cleavir-ast:immediate-ast) original dictionary)
   (reinitialize-instance
-   (call-next-method)
-   :value (cleavir-ast:value ast)))
+   clone
+   :value (cleavir-ast:value original)))
 
-(defmethod clone-node :around ((ast cleavir-ast:constant-ast))
+(defmethod fixup :after ((clone cleavir-ast:constant-ast) original dictionary)
   (reinitialize-instance
-   (call-next-method)
-   :value (cleavir-ast:value ast)))
+   clone
+   :value (cleavir-ast:value original)))
 
-(defmethod clone-node :around ((ast cleavir-ast:global-ast))
+(defmethod fixup :after ((clone cleavir-ast:global-ast) original dictionary)
   (reinitialize-instance
-   (call-next-method)
-   :name (cleavir-ast:name ast)
-   :function-type (cleavir-ast:function-type ast)))
+   clone
+   :name (cleavir-ast:name original)
+   :function-type (cleavir-ast:function-type original)))
 
-(defmethod clone-node :around ((ast cleavir-ast:special-ast))
+(defmethod fixup :after ((clone cleavir-ast:special-ast) original dictionary)
   (reinitialize-instance
-   (call-next-method)
-   :name (cleavir-ast:name ast)))
+   clone
+   :name (cleavir-ast:name original)))
 
-(defmethod clone-node :around ((ast cleavir-ast:lexical-ast))
+(defmethod fixup :after ((clone cleavir-ast:lexical-ast) original dictionary)
   (reinitialize-instance
-   (call-next-method)
-   :name (cleavir-ast:name ast)))
+   clone
+   :name (cleavir-ast:name original)))
