@@ -69,5 +69,8 @@
      clone
      :lambda-list new-lambda-list)))
 
-			      
-				    
+(defmethod fixup :after ((clone cleavir-ast:tag-ast) original dictionary)
+  (declare (ignore dictionary))
+  (reinitialize-instance
+   clone
+   :name (cleavir-ast:name original)))
