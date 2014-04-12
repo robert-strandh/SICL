@@ -86,3 +86,10 @@
   (reinitialize-instance
    clone
    :type-specifier (cleavir-ast:type-specifier original)))
+
+(defmethod fixup :after ((clone cleavir-ast:load-time-value-ast)
+			 original dictionary)
+  (declare (ignore dictionary))
+  (reinitialize-instance
+   clone
+   :read-only-p (cleavir-ast:read-only-p original)))
