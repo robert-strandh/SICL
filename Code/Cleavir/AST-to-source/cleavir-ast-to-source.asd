@@ -5,4 +5,5 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "ast-to-source")))
+   (:file "ast-to-source")
+   (:file "accessors")))
