@@ -74,3 +74,9 @@
   (reinitialize-instance
    clone
    :name (cleavir-ast:name original)))
+
+(defmethod fixup :after ((clone cleavir-ast:the-ast) original dictionary)
+  (declare (ignore dictionary))
+  (reinitialize-instance
+   clone
+   :value-type (cleavir-ast:value-type original)))
