@@ -80,3 +80,9 @@
   (reinitialize-instance
    clone
    :value-type (cleavir-ast:value-type original)))
+
+(defmethod fixup :after ((clone cleavir-ast:typeq-ast) original dictionary)
+  (declare (ignore dictionary))
+  (reinitialize-instance
+   clone
+   :type-specifier (cleavir-ast:type-specifier original)))
