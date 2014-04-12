@@ -114,8 +114,7 @@
 
 (defclass global-ast (ast)
   ((%name :initarg :name :reader name)
-   (%function-type :initform t :initarg :function-type :accessor function-type)
-   (%children :initform '() :allocation :class)))
+   (%function-type :initform t :initarg :function-type :accessor function-type)))
 
 (defun make-global-ast (name)
   (make-instance 'global-ast :name name))
@@ -145,7 +144,7 @@
 ;;; 
 ;;; A LEXICAL-AST represents a reference to a lexical variable.  Such
 ;;; a reference contains the name of the variable, but it is used only
-;;; for debugging perposes and for the purpose of error reporting.
+;;; for debugging purposes and for the purpose of error reporting.
 
 (defclass lexical-ast (ast)
   ((%name :initarg :name :reader name)))
