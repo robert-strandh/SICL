@@ -50,3 +50,24 @@
   (reinitialize-instance
    clone
    :name (cleavir-ast:name original)))
+
+(defmethod fixup :after ((clone cleavir-ast:function-ast) original dictionary)
+  (let ((new-lambda-list
+	  (loop for item in (cleavir-ast:lambda-list original)
+		collect (cond ((member item lambda-list-keywords)
+			       item)
+			      ((and (consp item) (= (length item) 3))
+			       `(,(first item)
+				 ,(gethash (second item) dictionary)
+				 ,(gethash (third item) dictionary)))
+			      ((and (consp item) (= (length item) 2))
+			       `(,(gethash (second item) dictionary)
+				 ,(gethash (third item) dictionary)))
+			      (t
+			       (gethash item dictionary))))))
+    (reinitialize-instance
+     clone
+     :lambda-list new-lambda-list)))
+
+			      
+				    
