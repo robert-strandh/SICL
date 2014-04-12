@@ -21,27 +21,32 @@
 	     dictionary)))
 			
 (defmethod fixup :after ((clone cleavir-ast:immediate-ast) original dictionary)
+  (declare (ignore dictionary))
   (reinitialize-instance
    clone
    :value (cleavir-ast:value original)))
 
 (defmethod fixup :after ((clone cleavir-ast:constant-ast) original dictionary)
+  (declare (ignore dictionary))
   (reinitialize-instance
    clone
    :value (cleavir-ast:value original)))
 
 (defmethod fixup :after ((clone cleavir-ast:global-ast) original dictionary)
+  (declare (ignore dictionary))
   (reinitialize-instance
    clone
    :name (cleavir-ast:name original)
    :function-type (cleavir-ast:function-type original)))
 
 (defmethod fixup :after ((clone cleavir-ast:special-ast) original dictionary)
+  (declare (ignore dictionary))
   (reinitialize-instance
    clone
    :name (cleavir-ast:name original)))
 
 (defmethod fixup :after ((clone cleavir-ast:lexical-ast) original dictionary)
+  (declare (ignore dictionary))
   (reinitialize-instance
    clone
    :name (cleavir-ast:name original)))
