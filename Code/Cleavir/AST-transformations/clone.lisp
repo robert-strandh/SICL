@@ -20,3 +20,13 @@
    (call-next-method)
    :name (cleavir-ast:name ast)
    :function-type (cleavir-ast:function-type ast)))
+
+(defmethod clone-node :around ((ast cleavir-ast:special-ast))
+  (reinitialize-instance
+   (call-next-method)
+   :name (cleavir-ast:name ast)))
+
+(defmethod clone-node :around ((ast cleavir-ast:lexical-ast))
+  (reinitialize-instance
+   (call-next-method)
+   :name (cleavir-ast:name ast)))
