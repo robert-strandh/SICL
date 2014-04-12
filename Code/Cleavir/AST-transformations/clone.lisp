@@ -1,5 +1,13 @@
 (cl:in-package #:cleavir-ast-transformations)
 
+(defgeneric fixup (clone original dictionary))
+
+(defmethod fixup (clone original dictionary)
+  (reinitialize-instance
+   clone
+   :children (loop for child in (cleavir-ast:children original)
+		   collect (gethash child dictionary))))
+
 (defgeneric clone-node (ast))
 
 (defmethod clone-node (ast)
