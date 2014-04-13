@@ -36,22 +36,29 @@
   (append (cleavir-mir:inputs instruction)
 	  (cleavir-mir:outputs instruction)))
 
+(defvar *ownerships*)
+
+(defun owner (item)
+  (gethash item *ownerships*))
+
+(defun (setf owner) (new-owner item)
+  (setf (gethash item *ownerships*) new-owner))
+
 ;;; Compute the owner of each instruction and each datum.  The return
 ;;; value is an EQ hash table mapping an instruction or a datum to its
 ;;; owner.
 (defun compute-ownerships (enter-instruction)
   (let ((worklist (list enter-instruction))
-	(result (make-hash-table :test #'eq)))
+	(*ownerships* (make-hash-table :test #'eq)))
     (flet
 	((process-function (enter-instruction)
 	   (labels
 	       ((traverse (instruction)
-		  (when  (null (gethash instruction result))
-		    (setf (gethash instruction result) enter-instruction)
+		  (when  (null (owner instruction))
+		    (setf (owner instruction) enter-instruction)
 		    (loop for datum in (data instruction)
-			  do (when (null (gethash datum result))
-			       (setf (gethash datum result)
-				     enter-instruction)))
+			  do (when (null (owner datum))
+			       (setf (owner datum) enter-instruction)))
 		    (when (typep instruction 'cleavir-mir:enclose-instruction)
 		      (let ((code (cleavir-mir:code instruction)))
 			(setf worklist (append worklist (list code)))))
@@ -59,10 +66,10 @@
 	     (traverse enter-instruction))))
       (loop until (null worklist)
 	    do (process-function (pop worklist))))
-    result))
+    *ownerships*))
 
 (defun lexical-depths (enter-instruction)
-  (let ((ownerships (compute-ownerships enter-instruction))
+  (let ((*ownerships* (compute-ownerships enter-instruction))
 	(worklist (list enter-instruction))
 	(depths (make-hash-table :test #'eq)))
     (flet
@@ -76,16 +83,16 @@
 		      (when (typep instruction 'cleavir-mir:enclose-instruction)
 			(let ((code (cleavir-mir:code instruction)))
 			  (setf worklist (append worklist (list code)))))
-		      (loop with i-owner = (gethash instruction ownerships)
+		      (loop with i-owner = (owner instruction)
 			    for datum in (data instruction)
-			    for d-owner = (gethash datum ownerships)
+			    for d-owner = (owner datum)
 			    do (unless (eq d-owner i-owner)
 				 (setf (gethash enter-instruction depths)
 				       (max (gethash enter-instruction depths)
 					    (1+ (gethash d-owner depths))))))
-		      (loop with i-owner = (gethash instruction ownerships)
+		      (loop with i-owner = (owner instruction)
 			    for successor in (cleavir-mir:successors instruction)
-			    for s-owner = (gethash successor ownerships)
+			    for s-owner = (owner successor)
 			    do (if (eq i-owner s-owner)
 				   (traverse successor)
 				   (setf (gethash enter-instruction depths)
