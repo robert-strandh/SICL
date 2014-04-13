@@ -32,6 +32,10 @@
 ;;;;   * Otherwise, the lexical depth of P is d+1, where d is the
 ;;;      maximum depth of any of its lexical parents. 
 
+(defun data (instruction)
+  (append (cleavir-mir:inputs instruction)
+	  (cleavir-mir:outputs instruction)))
+
 ;;; Compute the owner of each instruction and each datum.  The return
 ;;; value is an EQ hash table mapping an instruction or a datum to its
 ;;; owner.
@@ -44,12 +48,10 @@
 	       ((traverse (instruction)
 		  (when  (null (gethash instruction result))
 		    (setf (gethash instruction result) enter-instruction)
-		    (let ((data (append (cleavir-mir:inputs instruction)
-					(cleavir-mir:outputs instruction))))
-		      (loop for datum in data
-			    do (when (null (gethash datum result))
-				 (setf (gethash datum result)
-				       enter-instruction))))
+		    (loop for datum in (data instruction)
+			  do (when (null (gethash datum result))
+			       (setf (gethash datum result)
+				     enter-instruction)))
 		    (when (typep instruction 'cleavir-mir:enclose-instruction)
 		      (let ((code (cleavir-mir:code instruction)))
 			(setf worklist (append worklist (list code)))))
@@ -74,11 +76,8 @@
 		      (when (typep instruction 'cleavir-mir:enclose-instruction)
 			(let ((code (cleavir-mir:code instruction)))
 			  (setf worklist (append worklist (list code)))))
-		      (loop with data = (append
-					 (cleavir-mir:inputs instruction)
-					 (cleavir-mir:outputs instruction))
-			    with i-owner = (gethash instruction ownerships)
-			    for datum in data
+		      (loop with i-owner = (gethash instruction ownerships)
+			    for datum in (data instruction)
 			    for d-owner = (gethash datum ownerships)
 			    do (unless (eq d-owner i-owner)
 				 (setf (gethash enter-instruction depths)
