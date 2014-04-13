@@ -6,4 +6,5 @@
   :components
   ((:file "packages")
    (:file "ast-to-source")
+   (:file "fixnum")
    (:file "accessors")))
