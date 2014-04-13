@@ -4,4 +4,5 @@
   :depends-on (:cleavir-mir)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "lexical-depths")))
