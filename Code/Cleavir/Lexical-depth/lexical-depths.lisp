@@ -32,17 +32,6 @@
 ;;;;   * Otherwise, the lexical depth of P is d+1, where d is the
 ;;;      maximum depth of any of its lexical parents. 
 
-;;; Given an ENTER-INSTRUCTION, call FUNCTION once for each descendant
-;;; of ENTER-INSTRUCTION.
-(defun map-instructions (function enter-instruction)
-  (let ((table (make-hash-table :test #'eq)))
-    (labels ((traverse (instruction)
-	       (unless (gethash instruction table)
-		 (setf (gethash instruction table) t)
-		 (funcall function instruction)
-		 (mapc #'traverse (cleavir-mir:successors instruction)))))
-      (traverse enter-instruction))))
-
 ;;; Compute the owner of each instruction and each datum.  The return
 ;;; value is an EQ hash table mapping an instruction or a datum to its
 ;;; owner.
