@@ -22,3 +22,10 @@
   `(cleavir-low:slot-read
     ,(to-source (cleavir-ast:slot-ast ast) dictionary)
     ,(to-source (cleavir-ast:slot-number-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:slot-write-ast) dictionary)
+  `(cleavir-low:slot-read
+    ,(to-source (cleavir-ast:slot-ast ast) dictionary)
+    ,(to-source (cleavir-ast:slot-number-ast ast) dictionary)
+    ,(to-source (cleavir-ast:value-ast ast) dictionary)))
+
