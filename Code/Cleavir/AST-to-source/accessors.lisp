@@ -17,3 +17,8 @@
   `(cleavir-low:rplacd
     ,(to-source (cleavir-ast:cons-ast ast) dictionary)
     ,(to-source (cleavir-ast:object-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:slot-read-ast) dictionary)
+  `(cleavir-low:slot-read
+    ,(to-source (cleavir-ast:slot-ast ast) dictionary)
+    ,(to-source (cleavir-ast:slot-number-ast ast) dictionary)))
