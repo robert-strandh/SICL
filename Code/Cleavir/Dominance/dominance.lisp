@@ -304,4 +304,24 @@
 	do (setf result (union result df))
 	finally (return result)))
 
-  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; For a set of nodes, compute the iterated dominance frontier of the
+;;; set.
+;;;
+;;; The DOMINANCE-FRONTIERS argument is the result of calling
+;;; DOMINANCE-FRONTIERS, i.e. a table mapping each individual node to
+;;; its dominance frontier.
+
+;;; Compare two sets of nodes for equality.
+(defun set-equal-p (set1 set2)
+  (and (null (set-difference set1 set2 :test #'eq))
+       (null (set-difference set2 set1 :test #'eq))))
+
+(defun dominance-frontier+ (dominance-frontiers nodes)
+  (loop with df = dominance-frontiers
+	with df+ = (dominance-frontier-set df nodes)
+	for df++ = (dominance-frontier-set df (union df+ nodes :test #'eq))
+	until (set-equal-p df+ df++)
+	do (setf df+ df++)
+	finally (return df+)))
