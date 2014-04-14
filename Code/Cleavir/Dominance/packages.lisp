@@ -9,4 +9,6 @@
    #:immediate-dominator
    #:dominance-frontiers
    #:dominance-frontier
+   #:dominance-frontier-set
+   #:dominance-frontier+
    ))
