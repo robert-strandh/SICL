@@ -34,3 +34,9 @@
     ,(to-source (cleavir-ast:array ast) dictionary)
     ,(to-source (cleavir-ast:index-ast ast) dictionary)))
 
+(defmethod to-source ((ast cleavir-ast:aset-ast) dictionary)
+  `(cleavir-low:aset
+    ,(to-source (cleavir-ast:array ast) dictionary)
+    ,(to-source (cleavir-ast:index-ast ast) dictionary)
+    ,(to-source (cleavir-ast:value-ast ast) dictionary)))
+
