@@ -39,7 +39,7 @@
    #:fixnum->-ast #:make-fixnum->-ast
    #:fixnum->=-ast #:make-fixnum->=-ast
    #:fixnum-=-ast #:make-fixnum-=-ast
-   #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:slot-ast
+   #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast
    #:aset-ast #:make-aset-ast 

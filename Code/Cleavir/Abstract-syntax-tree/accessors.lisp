@@ -95,11 +95,11 @@
 (defclass slot-read-ast (ast)
   ())
 
-(defun make-slot-read-ast (slot-ast slot-number-ast)
+(defun make-slot-read-ast (object-ast slot-number-ast)
   (make-instance 'slot-read-ast
-    :children (list slot-ast slot-number-ast)))
+    :children (list object-ast slot-number-ast)))
 
-(defmethod slot-ast ((ast slot-read-ast))
+(defmethod object-ast ((ast slot-read-ast))
   (first (children ast)))
 
 (defmethod slot-number-ast ((ast slot-read-ast))
@@ -120,11 +120,11 @@
 (defclass slot-write-ast (ast)
   ())
 
-(defun make-slot-write-ast (slot-ast slot-number-ast value-ast)
+(defun make-slot-write-ast (object-ast slot-number-ast value-ast)
   (make-instance 'slot-write-ast
-    :children (list slot-ast slot-number-ast value-ast)))
+    :children (list object-ast slot-number-ast value-ast)))
 
-(defmethod slot-ast ((ast slot-write-ast))
+(defmethod object-ast ((ast slot-write-ast))
   (first (children ast)))
 
 (defmethod slot-number-ast ((ast slot-write-ast))
