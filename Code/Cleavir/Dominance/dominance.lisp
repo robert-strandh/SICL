@@ -254,6 +254,10 @@
 ;;;
 ;;; For each node in the graph, compute its dominance frontier.
 
+(defparameter *df2-call-count* 0)
+(defparameter *df2-node-count* 0)
+(defparameter *df2-run-time* 0)
+
 ;;; Compute a hash table that maps every node in a dominance tree to a
 ;;; list of its children in that tree.
 (defun children (dominance-tree)
@@ -268,7 +272,8 @@
 ;;; for each node.  To client code, the object returned is opaque, and
 ;;; can be used to pass to the function DOMINANCE-FRONTIER.
 (defun dominance-frontiers (start-node successor-fun)
-  (let* ((dominance-tree (dominance-tree start-node successor-fun))
+  (let* ((time (get-internal-run-time))
+	 (dominance-tree (dominance-tree start-node successor-fun))
 	 (children (children dominance-tree))
 	 (result (make-hash-table :test #'eq)))
     (flet ((children (node)
@@ -292,6 +297,9 @@
 					   x)
 				 (pushnew y (df x) :test #'eq))))))
 	(traverse start-node)))
+    (incf *df2-call-count*)
+    (incf *df2-run-time* (- (get-internal-run-time) time))
+    (incf *df2-node-count* (hash-table-size result))
     result))
 
 (defun dominance-frontier (dominance-frontiers node)
