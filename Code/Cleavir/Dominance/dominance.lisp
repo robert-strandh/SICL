@@ -31,6 +31,10 @@
 ;;;; For a node A, the DOMINANCE FRONTIER of A is the set of all nodes
 ;;;; B such that A dominates an immediate predecessor of B, but A does
 ;;;; not strictly dominate B.
+;;;;
+;;;; The concept of dominance frontier is extended to a set of nodes,
+;;;; where it simply means the union of the dominance frontier of each
+;;;; node in the set. 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -240,7 +244,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Dominance frontiers.
+;;; For each node in the graph, compute its dominance frontier.
 
 ;;; Compute a hash table that maps every node in a dominance tree to a
 ;;; list of its children in that tree.
@@ -284,3 +288,20 @@
 
 (defun dominance-frontier (dominance-frontiers node)
   (gethash node dominance-frontiers))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; For a set of nodes, compute the dominance frontier of the set.
+;;;
+;;; The DOMINANCE-FRONTIERS argument is the result of calling
+;;; DOMINANCE-FRONTIERS, i.e. a table mapping each individual node to
+;;; its dominance frontier.
+
+(defun dominance-frontier-set (dominance-frontiers nodes)
+  (loop with result = '()
+	for node in nodes
+	for df = (dominance-frontier dominance-frontiers node)
+	do (setf result (union result df))
+	finally (return result)))
+
+  
