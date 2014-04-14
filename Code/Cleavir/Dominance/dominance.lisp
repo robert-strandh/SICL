@@ -328,16 +328,30 @@
 ;;; The DOMINANCE-FRONTIERS argument is the result of calling
 ;;; DOMINANCE-FRONTIERS, i.e. a table mapping each individual node to
 ;;; its dominance frontier.
+;;;
+;;; This algorithm is taken directly from the book by Muchnick.  It is
+;;; probably quite wasteful, but it is simple.  Should it turn out to
+;;; be a bottleneck, it can be improved quite easily. 
 
 ;;; Compare two sets of nodes for equality.
 (defun set-equal-p (set1 set2)
   (and (null (set-difference set1 set2 :test #'eq))
        (null (set-difference set2 set1 :test #'eq))))
 
+(defparameter *df3-call-count* 0)
+(defparameter *df3-node-count-1* 0)
+(defparameter *df3-node-count-2* 0)
+(defparameter *df3-run-time* 0)
+
 (defun dominance-frontier+ (dominance-frontiers nodes)
-  (loop with df = dominance-frontiers
+  (loop with time = (get-internal-run-time)
+	with df = dominance-frontiers
 	with df+ = (dominance-frontier-set df nodes)
 	for df++ = (dominance-frontier-set df (union df+ nodes :test #'eq))
 	until (set-equal-p df+ df++)
 	do (setf df+ df++)
-	finally (return df+)))
+	finally (incf *df3-call-count*)
+		(incf *df3-run-time* (- (get-internal-run-time) time))
+		(incf *df3-node-count-1* (length nodes))
+		(incf *df3-node-count-2* (length df+))
+		(return df+)))
