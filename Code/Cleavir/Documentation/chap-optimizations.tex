@@ -2,4 +2,18 @@
 
 \section{Static single assignment form}
 
+While not an optimization in itself, static single assignment (SSA)
+form is a prerequisite for many optimization techniques, which is why
+we describe it here. 
+
+In their conference paper from 2013
+\cite{Braun:2013:SEC:2450247.2450258}, Braun et al present an
+algorithm capable of a direct translation of abstract syntax trees to
+SSA form.  We do not use it here, because we have not been able to
+couple it with our compilation context which seems to require
+compilation from the end to the beginning of the program. 
+
+Instead, we use the traditional technique based on \emph{iterated
+  dominance frontiers}.
+
 \cite{Muchnick:1998:ACD:286076}
