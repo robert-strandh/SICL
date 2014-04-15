@@ -110,4 +110,11 @@ illustrated by \refFig{fig-ssa-join-1} and by \refFig{fig-ssa-join-2}.
 
 To compute the immediate dominator of every node in the flow graph, we
 use the algorithm by Langauer and Tarjan
-\cite{Lengauer:1979:FAF:357062.357071}. 
+\cite{Lengauer:1979:FAF:357062.357071}.  They present two versions of
+their algorithm; one that with complexity
+$O(m \thinspace\textsf{log}\thinspace n)$ time and one with complexity
+$O(m \thinspace\alpha (m, n))$ time, where $m$ is the number of edges
+in the flow graph, $n$ is the number of nodes, and $\alpha$ is the
+inverse of Ackermann's function.  A more complicated algorithm that
+runs in linear time was discovered by Harel
+\cite{Harel:1985:LAF:22145.22166}.
