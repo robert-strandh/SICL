@@ -27,3 +27,17 @@ notation is essentially the same as that of Cytron et al
 description on the paper by Cytron et al, rather than on Muchnick's
 book.
 
+SSA form is a per-variable property.  Some optimizations are possible
+even if not every variable has this property, so that some variables
+are assigned multiple times.  In order for a variable $V$ to respect
+the SSA property, a $\phi$ function for $V$ is required in control
+flow node $Z$ whenever there are control flow nodes $X$ and $Y$
+containing assignments to $V$, $X \ne Y$, $X \rightarrow^+ Z$, $Y
+\rightarrow^+ Z$.  The node $Z$ is called a \emph{join point} for $V$.
+Since adding a $\phi$ function in $Z$ introduces an assignment to $V$,
+$Z$ must then recursively be considered in order to find other join
+points requiring additional $\phi$ functions.  The concept of a join
+point is more generally defined for an arbitrary set of control flow
+nodes $S$.  The set of join points $J(S)$ is defined as the set of all
+nodes $Z$ such that there are two non-null paths starting from two
+distinct nodes $X$ and $Y$ in S and converge in $Z$. 
