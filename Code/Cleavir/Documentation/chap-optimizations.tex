@@ -16,4 +16,14 @@ compilation from the end to the beginning of the program.
 Instead, we use the traditional technique based on \emph{iterated
   dominance frontiers}.
 
-\cite{Muchnick:1998:ACD:286076}
+Muchnick \cite{Muchnick:1998:ACD:286076} discusses SSA form, but the
+description is very sketchy.  He describes using iterated dominance
+frontiers to find nodes where $\phi$ functions must be inserted, but
+he does not discuss how to rename variables.  He also does not justify
+why the start node of the control flow graph is included in the
+argument to each computation using iterated dominance frontiers.  His
+notation is essentially the same as that of Cytron et al
+\cite{Cytron:1991:ECS:115372.115320}.  For these reasons, we base our
+description on the paper by Cytron et al, rather than on Muchnick's
+book.
+
