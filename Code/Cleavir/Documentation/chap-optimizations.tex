@@ -40,13 +40,59 @@ points requiring additional $\phi$ functions.  The concept of a join
 point is more generally defined for an arbitrary set of control flow
 nodes $S$.  The set of join points $J(S)$ is defined as the set of all
 nodes $Z$ such that there are two non-null paths starting from two
-distinct nodes $X$ and $Y$ in S and converge in $Z$. 
+distinct nodes $X$ and $Y$ in S and converge in $Z$.  The
+\emph{iterated join} $J^+(S)$ is defined as the limit of the
+increasing sets of nodes $J_1(S) = J(S)$, $J_{i+1}(S) = J(S \cup
+J_i(S))$.
+
+Consider the control flow graph in \refFig{fig-ssa-join-1}.  Empty
+boxes contain neither assignments nor references to the variable
+\texttt{x}.  There are three nodes containing assignments to
+\texttt{x}, namely B, C, and D.  The set $J^+(\{B, C, D\}) = \{E\}$.
 
 \begin{figure}
 \begin{center}
 \inputfig{fig-ssa-join-1.pdf_t}
 \end{center}
 \caption{\label{fig-ssa-join-1}
+Example of join point.}
+\end{figure}
+
+Now, to compute the nodes where a $\phi$ function is required, Cytron
+et al use the concept of \emph{iterated dominance frontier}.  First,
+the dominance frontier of a single node $x$, written $DF(x)$ is the
+set of nodes $y$ such that $x$ dominates an immediate predecessor of
+$y$ but $x$ does not strictly dominate $y$.  The dominance frontier of
+a \emph{set} of nodes $S$ is the natural extension of $DF$ to a set,
+namely the union of the vales for each element.  The iterated
+dominance frontier is defined in a way similar to the iterated join. 
+$DF^+(S)$ is defined as the limit of the
+increasing sets of nodes $DF_1(S) = DF(S)$, $DF_{i+1}(S) = DF(S \cup
+DF_i(S))$.
+
+Consider again the control flow graph in \refFig{fig-ssa-join-1}.  The
+set $DF^+(\{B, C, D\}) = \{E, F\}$.  Note that this set includes the
+node $F$ which is not a join point for the nodes that assign to $x$.
+This discrepancy is clearly indicated in the the paper by Cytron et
+al.  If we analyze it a bit more, we see that clearly no $\phi$
+function is required in $F$.  The method using iterated dominance
+frontiers thus computes more nodes than required.  
+
+However, notice that if \refFig{fig-ssa-join-1} represents a \cl{}
+program, then the node $F$ could not contain a reference to
+\texttt{x}, simply because no \cl{} construct allows the creation of
+an uninitialized lexical variable.  Therefore, in $F$, the variable
+\texttt{x} must be \emph{dead}.  
+
+Now consider the control flow graph in \refFig{fig-ssa-join-2}.  The
+only difference from \refFig{fig-ssa-join-1} is that node $E$ does not
+contain a use of the variable \texttt{x}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-ssa-join-2.pdf_t}
+\end{center}
+\caption{\label{fig-ssa-join-2}
 Example of join point.}
 \end{figure}
 
