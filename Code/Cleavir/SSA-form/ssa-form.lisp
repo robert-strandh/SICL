@@ -64,6 +64,41 @@
     (incf *ssa1-node-count-2* (length result))
     result))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compute PHI instructions for a single variable V.
+;;;
+;;; The algorithm is an adaptation of the algorithm in the 1991 paper
+;;; by Cytron et al, "Efficiently Computing Static Single Assignment
+;;; Form and the Control Dependence Graph".
+;;;
+;;; First of all, in this algorithm, we are using individual
+;;; instructions rather than basic blocks.  Therefore, what is a loop
+;;; over all "statements" in the paper is no longer a loop here.
+;;;
+;;; Second, this algorithm is valid for a single variable.  For that
+;;; reason, we do not have a stack for each variable.
+;;;
+;;; Third, what is an explicit stack for each variable in the paper is
+;;; a stack handled by the call stack as an argument here.  For that
+;;; reason, we no not need explicit pops.
+;;;
+;;; Fourth, the paper pushes the variable each time the variable is
+;;; encountered on a left hand side.  Then as many pops are executed
+;;; afterwards.  These pushes and pops are not needed, because the
+;;; intermediate variables are never at the top of the stack.  But
+;;; since we have a basic block per instruction, we actually DO
+;;; (implicitly) push all those intermediate variables. 
+;;;
+;;; TOP-NODE is the topmost (in the dominance tree) node in which the
+;;; variable is mentioned (and therefore assigned to).  PHI-NODES are
+;;; the nodes returned by the function PHI-FUNCTION-NODES above.
+;;; ORIGINAL-VARIABLE is the variable to be processed.  LIVE-P is a
+;;; function that takes a node and returns true if and only if the
+;;; variable is live in that node.  DOMINEES is a function that takes
+;;; a node N and returns a list of nodes that are immediately
+;;; dominated by N.
+
 (defparameter *ssa2-call-count* 0)
 (defparameter *ssa2-run-time* 0)
 
