@@ -735,3 +735,19 @@
   (make-instance 'eq-instruction
     :inputs inputs
     :successors successors))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction PHI-INSTRUCTION.
+;;; 
+;;; This is an instruction used in SSA form.  It has an arbitrary
+;;; number of inputs, a single output and a single successor. 
+
+(defclass phi-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-phi-instruction (inputs output successor)
+  (make-instance 'eq-instruction
+    :inputs inputs
+    :outputs (list output)
+    :successors (list successor)))
