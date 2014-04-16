@@ -4,4 +4,5 @@
   (:use #:common-lisp)
   (:export
    #:phi-function-nodes
+   #:phi-instructions
    ))
