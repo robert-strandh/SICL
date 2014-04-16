@@ -2,27 +2,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compute nodes where a PHI functions should be inserted. 
+;;; Compute nodes where a PHI functions should be inserted for a
+;;; single variable V.
 ;;;
-;;; Given the dominance frontiers as computed by the function
-;;; CLEAVIR-DOMINANCE:DOMINANCE-FRONTIERS and set S of nodes, return a
-;;; set PHI of nodes corresponding to the join ponts where phi
-;;; functions should be inserted for a variable that is defined in the
-;;; nodes in S.
+;;; This function takes the following arguments:
 ;;;
-;;; This function returns nodes where variables might be dead.  It is
-;;; up to client code to eliminate such nodes if needed.
+;;;   * DOMINANCE-FRONTIERS.  The dominance frontiers of every node as
+;;;     computed by the function CLEAVIR-DOMINANCE:DOMINANCE-FRONTIERS.
 ;;;
-;;; The algorithm used is an adaptation of the algorithm in Cytron et
-;;; al, "Efficiently Computing Static Single Assignment Form and the
-;;; Control Dependence Graph".  Their flags named Work is what is
-;;; named PROCESSED-P in our algorithm.  We have no equivalent of
-;;; their flags HasAlready; instead we just test whether the node is
-;;; already a memmber of RESULT.  Our solution might have some extra
-;;; cost associated with it if the number of PHI nodes for some
-;;; variable should turn out to be very large.  Should that be the
-;;; case, we might consider adding a second hash table with the same
-;;; contents as RESULT. 
+;;;   * LIVE-P. A function of one argument that takes a node and
+;;;     returns true if and only if V is live at that node.  Client
+;;;     code can pass (CONSTANTLY T) as an argument, in which case the
+;;;     ordinary (not pruned) SSA form will be computed.
+;;;
+;;;   * NODES.  A set of nodes where V is being defined (i.e., its
+;;;     value is modified)
+;;;
+;;; This function retuns a set (represented as a list) of nodes
+;;; corresponding to the join ponts where phi functions should be
+;;; inserted for V.
+;;;
+;;; The algorithm used is an adaptation of the algorithm in the 1991
+;;; paper by Cytron et al, "Efficiently Computing Static Single
+;;; Assignment Form and the Control Dependence Graph".  Their flags
+;;; named Work is what is named PROCESSED-P in our algorithm.  We have
+;;; no equivalent of their flags HasAlready; instead we just test
+;;; whether the node is already a memmber of RESULT.  Our solution
+;;; might have some extra cost associated with it if the number of PHI
+;;; nodes for some variable should turn out to be very large.  Should
+;;; that be the case, we might consider adding a second hash table
+;;; with the same contents as RESULT.
+;;;
+;;; We include a modification of this algorithm as defined in in paper
+;;; by Choi, Cytron and Ferranti, "Automatic Construction of Sparse
+;;; Data Flow Evaluation Graphs" where nodes are included only if V is
+;;; live there.  
 
 (defparameter *ssa1-call-count* 0)
 (defparameter *ssa1-run-time* 0)
