@@ -64,8 +64,12 @@
     (incf *ssa1-node-count-2* (length result))
     result))
 
+(defparameter *ssa2-call-count* 0)
+(defparameter *ssa2-run-time* 0)
+
 (defun phi-instructions (top-node phi-nodes original-variable live-p dominees)
-  (let ((funs (loop for node in phi-nodes
+  (let ((time (get-internal-run-time))
+	(funs (loop for node in phi-nodes
 		    for count = (length (cleavir-mir:predecessors node))
 		    collect (cons node (make-list (1+ count)))))
 	(name (cleavir-mir:name original-variable)))
@@ -90,7 +94,10 @@
 		       do (traverse dominee variable))))))
       (traverse top-node original-variable))
     (loop for (node output . inputs) in funs
-	  collect (cleavir-mir:make-phi-instruction inputs output node))))
+	  collect (cleavir-mir:make-phi-instruction inputs output node)
+	  finally (incf *ssa2-call-count*)
+		  (incf *ssa2-run-time* (- (get-internal-run-time) time)))))
+
 
 		       
     
