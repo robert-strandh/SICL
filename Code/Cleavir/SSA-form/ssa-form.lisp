@@ -24,8 +24,14 @@
 ;;; case, we might consider adding a second hash table with the same
 ;;; contents as RESULT. 
 
+(defparameter *ssa1-call-count* 0)
+(defparameter *ssa1-run-time* 0)
+(defparameter *ssa1-node-count-1* 0)
+(defparameter *ssa1-node-count-2* 0)
+
 (defun phi-function-nodes (dominance-frontiers nodes)
-  (let ((result '())
+  (let ((time (get-internal-run-time))
+	(result '())
 	(worklist nodes)
 	(processed-p (make-hash-table :test #'eq)))
     (loop until (null worklist)
@@ -37,4 +43,9 @@
 			(unless (gethash y processed-p)
 			  (setf (gethash y processed-p) t)
 			  (push y worklist)))))
+    (incf *ssa1-call-count*)
+    (incf *ssa1-run-time* (- (get-internal-run-time) time))
+    (incf *ssa1-node-count-1* (length nodes))
+    (incf *ssa1-node-count-2* (length result))
     result))
+
