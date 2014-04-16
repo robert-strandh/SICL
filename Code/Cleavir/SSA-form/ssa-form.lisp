@@ -29,7 +29,7 @@
 (defparameter *ssa1-node-count-1* 0)
 (defparameter *ssa1-node-count-2* 0)
 
-(defun phi-function-nodes (dominance-frontiers nodes)
+(defun phi-function-nodes (dominance-frontiers live-p nodes)
   (let ((time (get-internal-run-time))
 	(result '())
 	(worklist nodes)
@@ -38,7 +38,8 @@
 	  for x = (pop worklist)
 	  for df = (cleavir-dominance:dominance-frontier dominance-frontiers x)
 	  do (loop for y in df
-		   do (unless (member y result :test #'eq)
+		   do (when (and (not (member y result :test #'eq))
+				 (funcall live-p y))
 			(push y result)
 			(unless (gethash y processed-p)
 			  (setf (gethash y processed-p) t)
