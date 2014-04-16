@@ -113,12 +113,12 @@
 	   (if (not (funcall live-p node))
 	       nil
 	       (let ((phi-fun (rest (assoc node funs :test #'eq))))
-		 (unless (null phi-fun)
-		   (setf variable (cleavir-mir:make-lexical-location name))
-		   (setf (first phi-fun) variable))
 		 (setf (cleavir-mir:inputs node)
 		       (substitute variable original-variable
 				   (cleavir-mir:inputs node)))
+		 (unless (null phi-fun)
+		   (setf variable (cleavir-mir:make-lexical-location name))
+		   (setf (first phi-fun) variable))
 		 (loop for succ in (cleavir-mir:successors node)
 		       for phi-fun = (rest (assoc succ funs :test #'eq))
 		       for pos = (position node (cleavir-mir:predecessors succ))
