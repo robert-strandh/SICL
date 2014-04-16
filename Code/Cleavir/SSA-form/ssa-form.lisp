@@ -18,8 +18,8 @@
 ;;;   * NODES.  A set of nodes where V is being defined (i.e., its
 ;;;     value is modified)
 ;;;
-;;; This function retuns a set (represented as a list) of nodes
-;;; corresponding to the join ponts where phi functions should be
+;;; This function returns a set (represented as a list) of nodes
+;;; corresponding to the join points where phi functions should be
 ;;; inserted for V.
 ;;;
 ;;; The algorithm used is an adaptation of the algorithm in the 1991
@@ -27,7 +27,7 @@
 ;;; Assignment Form and the Control Dependence Graph".  Their flags
 ;;; named Work is what is named PROCESSED-P in our algorithm.  We have
 ;;; no equivalent of their flags HasAlready; instead we just test
-;;; whether the node is already a memmber of RESULT.  Our solution
+;;; whether the node is already a member of RESULT.  Our solution
 ;;; might have some extra cost associated with it if the number of PHI
 ;;; nodes for some variable should turn out to be very large.  Should
 ;;; that be the case, we might consider adding a second hash table
