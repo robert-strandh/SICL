@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:export
    #:dominance-tree
+   #:children
    #:dominators
    #:strict-dominators
    #:immediate-dominator
