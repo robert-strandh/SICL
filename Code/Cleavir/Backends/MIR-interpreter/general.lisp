@@ -27,6 +27,10 @@
   (declare (ignore environment))
   (cleavir-mir:value input))
 
+(defmethod read-value ((input cleavir-mir:global-input) environment)
+  (declare (ignore environment))
+  (fdefinition (cleavir-mir:name input)))
+
 (defgeneric write-value (output environment value))
 
 (defmethod write-value ((output cleavir-mir:lexical-location) environment value)
