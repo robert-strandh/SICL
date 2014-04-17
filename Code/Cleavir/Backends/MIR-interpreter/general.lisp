@@ -35,6 +35,14 @@
 (defgeneric execute-instruction (instruction environment))
 
 (defmethod execute-instruction
+    ((instruction cleavir-mir:assignment-instruction) environment)
+  (let* ((input (car (cleavir-mir:inputs instruction)))
+	 (value (read-value input environment))
+	 (output (car (cleavir-mir:outputs instruction))))
+    (write-value output environment value)
+    (first (cleavir-mir:successors instruction))))
+
+(defmethod execute-instruction
     ((instruction cleavir-mir:typeq-instruction) environment)
   (let* ((inputs (cleavir-mir:inputs instruction))
 	 (datum (first inputs))
