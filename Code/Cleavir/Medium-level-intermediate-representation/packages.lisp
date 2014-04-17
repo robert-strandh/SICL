@@ -30,7 +30,7 @@
    #:two-successors-mixin
    #:inputs #:outputs
    #:successors #:predecessors
-   #:enter-instruction #:make-enter-instruction
+   #:enter-instruction #:make-enter-instruction #:lambda-list
    #:nop-instruction #:make-nop-instruction
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction
