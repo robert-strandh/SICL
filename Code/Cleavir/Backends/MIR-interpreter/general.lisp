@@ -38,6 +38,13 @@
 
 (defgeneric execute-instruction (instruction environment))
 
+(defparameter *step* nil)
+
+(defmethod execute-instruction :around (instruction environment)
+  (declare (ignore instruction environment))
+  (when *step* (break))
+  (call-next-method))
+
 (defun interpret-mir (enter-instruction environment arguments)
   (push (make-hash-table :test #'eq) environment)
   (let* ((lambda-list (cleavir-mir:lambda-list enter-instruction)) 
