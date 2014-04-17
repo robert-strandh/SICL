@@ -18,4 +18,13 @@
 	finally (setf (gethash lexical (car environment)) value)
 		(return (values))))
 
+(defgeneric read-value (input environment))
+
+(defmethod read-value ((input cleavir-mir:lexical-location) environment)
+  (load-lexical input environment))
+
+(defmethod read-value ((input cleavir-mir:constant-input) environment)
+  (declare (ignore environment))
+  (cleavir-mir:value input))
+
 (defgeneric execute-instruction (instruction environment))
