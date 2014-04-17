@@ -148,7 +148,7 @@
   (let ((then-branch (compile-ast (cleavir-ast:then-ast ast) context))
 	(else-branch (compile-ast (cleavir-ast:else-ast ast) context)))
     (compile-ast (cleavir-ast:test-ast ast)
-		 (context '() (list else-branch then-branch)))))
+		 (context '() (list then-branch else-branch)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
