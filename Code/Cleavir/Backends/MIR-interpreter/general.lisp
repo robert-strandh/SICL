@@ -56,7 +56,7 @@
 	   (error "can't handle &optional or &key yet")))
     (let ((next (first (cleavir-mir:successors enter-instruction))))
       (catch 'return
-	(loop do (execute-instruction next environment))))))
+	(loop do (setf next (execute-instruction next environment)))))))
 
 (defun enclose (enter-instruction environment)
   (lambda (&rest arguments)
