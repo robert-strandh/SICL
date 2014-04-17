@@ -32,5 +32,16 @@
 (defmethod write-value ((output cleavir-mir:lexical-location) environment value)
   (store-lexical output environment value))
 
-
 (defgeneric execute-instruction (instruction environment))
+
+(defmethod execute-instruction
+    ((instruction cleavir-mir:typeq-instruction) environment)
+  (let* ((inputs (cleavir-mir:inputs instruction))
+	 (datum (first inputs))
+	 (type (second inputs))
+	 (successors (cleavir-mir:successors instruction)))
+    (if (typep (read-value datum environment) (read-value type environment))
+	(first successors)
+	(second successors))))
+	       
+    
