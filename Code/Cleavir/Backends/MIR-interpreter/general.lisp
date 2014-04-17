@@ -85,3 +85,14 @@
   (let ((values (loop for input in (cleavir-mir:inputs instruction)
 		      collect (read-value input environment))))
     (throw 'return (apply #'values values))))
+
+;;; FIXME: get the values of the call. 
+(defmethod execute-instruction
+    ((instruction cleavir-mir:funcall-instruction) environment)
+  (let* ((inputs (cleavir-mir:inputs instruction))
+	 (function-datum (first inputs))
+	 (function (read-value function-datum environment))
+	 (arguments (loop for datum in (rest inputs)
+			  collect (read-value datum environment))))
+    (apply function arguments)
+    (first (cleavir-mir:successors instruction))))
