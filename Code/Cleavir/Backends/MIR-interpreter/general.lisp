@@ -27,4 +27,10 @@
   (declare (ignore environment))
   (cleavir-mir:value input))
 
+(defgeneric write-value (output environment value))
+
+(defmethod write-value ((output cleavir-mir:lexical-location) environment value)
+  (store-lexical output environment value))
+
+
 (defgeneric execute-instruction (instruction environment))
