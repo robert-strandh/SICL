@@ -6,7 +6,5 @@
 	 (output (car (cleavir-mir:outputs instruction)))
 	 (input-value (read-value input environment)))
     (assert (consp input-value))
-    (write-value output environment (car input-value))))
-
-
-
+    (write-value output environment (car input-value))
+    (first (cleavir-mir:successors instruction))))
