@@ -76,4 +76,8 @@
 	(first successors)
 	(second successors))))
 	       
-    
+(defmethod execute-instruction
+    ((instruction cleavir-mir:return-instruction) environment)
+  (let ((values (loop for input in (cleavir-mir:inputs instruction)
+		      collect (read-value input environment))))
+    (throw 'return (apply #'values values))))
