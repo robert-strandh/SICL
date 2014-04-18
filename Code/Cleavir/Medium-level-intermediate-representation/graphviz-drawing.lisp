@@ -10,11 +10,14 @@
 ;;; table that contains data that have already been drawn. 
 (defparameter *datum-table* nil)
 
+(defun datum-id (datum)
+  (gethash datum *datum-table*))
+
 (defmethod draw-datum :around (datum stream)
-  (when (null (gethash datum *datum-table*))
+  (when (null (datum-id datum))
     (setf (gethash datum *datum-table*) (gensym))
     (format stream "  ~a [shape = ellipse, style = filled];~%"
-	    (gethash datum *datum-table*))
+	    (datum-id datum))
     (call-next-method)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -23,8 +26,7 @@
 
 (defmethod draw-datum ((datum immediate-input) stream)
   (format stream "   ~a [fillcolor = aquamarine, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (value datum)))
+	  (datum-id datum) (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -32,8 +34,7 @@
 
 (defmethod draw-datum ((datum word-input) stream)
   (format stream "   ~a [fillcolor = lightblue, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (value datum)))
+	  (datum-id datum) (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -41,8 +42,7 @@
 
 (defmethod draw-datum ((datum constant-input) stream)
   (format stream "   ~a [fillcolor = green, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (value datum)))
+	  (datum-id datum) (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -50,8 +50,7 @@
 
 (defmethod draw-datum ((datum lexical-location) stream)
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (name datum)))
+	  (datum-id datum) (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -59,8 +58,7 @@
 
 (defmethod draw-datum ((datum special-location) stream)
   (format stream "   ~a [fillcolor = cyan4, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (name datum)))
+	  (datum-id datum) (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -68,8 +66,7 @@
 
 (defmethod draw-datum ((datum global-input) stream)
   (format stream "   ~a [fillcolor = cyan, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (name datum)))
+	  (datum-id datum) (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -77,8 +74,7 @@
 
 (defmethod draw-datum ((datum external-input) stream)
   (format stream "   ~a [fillcolor = pink, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (value datum)))
+	  (datum-id datum) (value datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -86,8 +82,7 @@
 
 (defmethod draw-datum ((datum register-location) stream)
   (format stream "   ~a [fillcolor = red, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (name datum)))
+	  (datum-id datum) (name datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -95,7 +90,7 @@
 
 (defmethod draw-datum ((datum static-location) stream)
   (format stream "   ~a [fillcolor = yellow, label = \"~a,~a\"]~%"
-	  (gethash datum *datum-table*)
+	  (datum-id datum)
 	  (layer datum)
 	  (index datum)))
 
@@ -105,8 +100,7 @@
 
 (defmethod draw-datum ((datum dynamic-location) stream)
   (format stream "   ~a [fillcolor = darkorchid, label = \"~a\"]~%"
-	  (gethash datum *datum-table*)
-	  (index datum)))
+	  (datum-id datum) (index datum)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -153,7 +147,7 @@
 	do (draw-datum datum stream)
 	   (format stream
 		   "  ~a -> ~a [color = red, style = dashed, label = \"~d\"];~%"
-		   (gethash datum *datum-table*)
+		   (datum-id datum)
 		   (instruction-id instruction)
 		   i))
   (loop for datum in (outputs instruction)
@@ -162,7 +156,7 @@
 	   (format stream
 		   "  ~a -> ~a [color = blue, style = dashed, label = \"~d\"];~%"
 		   (instruction-id instruction)
-		   (gethash datum *datum-table*)
+		   (datum-id datum)
 		   i)))
 
 (defun draw-flowchart (start filename)
