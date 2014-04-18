@@ -205,12 +205,11 @@
 ;;;
 ;;; Datum class LEXICAL-LOCATION.
 ;;;
-;;; In later compilation stages, this datum is eliminated.  Instead
-;;; other data are used such as STATIC-LOCATION,
-;;; DYNAMIC-LOCATION, or REGISTER-LOCATION.  Not all references to a
-;;; particular lexical location are replaced by the same replacement
-;;; location, because where a lexical variable is to be found is
-;;; typically different in different parts of the code.
+;;; This datum class is used when the initial MIR program is created
+;;; for any lexical variable.  
+;;; 
+;;; In later compilation stages, this datum is replaced by more
+;;; specific locations as a result of further analyses of the program.
 
 (defclass lexical-location (datum)
   ((%name :initarg :name :reader name)))
