@@ -320,6 +320,22 @@
 ;;;
 ;;; Draw instruction CDR-INSTRUCTION.
 
-(defmethod draw-instruction ((instruction car-instruction) stream)
+(defmethod draw-instruction ((instruction cdr-instruction) stream)
   (format stream "   ~a [label = \"CDR\"];~%"
+	  (instruction-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Draw instruction RPLACA-INSTRUCTION.
+
+(defmethod draw-instruction ((instruction rplaca-instruction) stream)
+  (format stream "   ~a [label = \"RPLACA\"];~%"
+	  (instruction-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Draw instruction RPLACD-INSTRUCTION.
+
+(defmethod draw-instruction ((instruction rplacd-instruction) stream)
+  (format stream "   ~a [label = \"RPLACD\"];~%"
 	  (instruction-id instruction)))
