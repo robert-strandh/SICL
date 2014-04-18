@@ -244,6 +244,25 @@
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Datum class CAPTURED-LOCATION.
+;;;
+;;; This datum is a special case of a LEXICAL-LOCATION.  It is used
+;;; for locations that are only referred to within several functions,
+;;; so that the location is captured.  Whether a location of this type
+;;; can be allocated in a register or on the stack depends on further
+;;; analyses.  To be safe, client code might want to turn this
+;;; location into a STATIC-LOCATION so that it is allocated in the
+;;; static environment.
+
+(defclass captured-location (lexical-location)
+  ())
+
+(defun make-captured-location (name)
+  (make-instance 'captured-location
+    :name name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Datum class SPECIAL-LOCATION.
 ;;;
 ;;; This datum corresponds to a reference to a special variable.

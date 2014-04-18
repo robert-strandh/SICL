@@ -9,8 +9,8 @@
    #:constant-input #:make-constant-input
    #:value
    #:lexical-location #:make-lexical-location
-   #:simple-location #:make-simple-location
-   #:new-temporary
+   #:simple-location #:make-simple-location #:new-temporary
+   #:captured-location #:make-captured-location
    #:name
    #:special-location #:make-special-location
    #:global-input #:make-global-input
