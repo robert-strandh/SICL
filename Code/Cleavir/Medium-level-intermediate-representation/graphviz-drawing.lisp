@@ -60,6 +60,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Drawing datum SIMPLE-LOCATION.
+
+(defmethod draw-datum ((datum simple-location) stream)
+  (format stream "  ~a [shape = hexagon, style = filled];~%"
+	  (datum-id datum))
+  (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
+	  (datum-id datum) (name datum)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Drawing datum SPECIAL-LOCATION.
 
 (defmethod draw-datum ((datum special-location) stream)
