@@ -550,10 +550,18 @@
 ;;; Preprocess an ordinary lambda list.
 ;;;
 ;;; Preprocessing a lambda list extracts the code for initializing
-;;; unsupplied arguments.  
-;;;
-;;; FIXME: say more.
+;;; unsupplied arguments.  The idea here is that there is some
+;;; low-level argument-parsing mechanism that runs through the
+;;; arguments supplied to a function and sets main parameters and
+;;; SUPPLIED-P parameters according to what it finds.  The code
+;;; generated here then takes over and checks the result of the
+;;; argument-parsing mechanism and sets the value of main parameters
+;;; that have not been supplied, as indicated by the associated
+;;; SUPPLIED-P parameter.
 
+;;; Make sure that every &OPTIONAL and &KEY parameter of
+;;; PARSED-LAMBDA-LIST has not only an INIT-FORM but also a SUPPLIED-P
+;;; parameter.  
 (defun ensure-supplied-p-parameters (parsed-lambda-list)
   (let ((required (required parsed-lambda-list))
 	(optionals (optionals parsed-lambda-list))
@@ -575,6 +583,11 @@
 				  (append key (list (gensym))))))
       :allow-other-keys allow-other-keys)))
 
+;;; Given a parsed lambda list where all the &OPTIONAL and &KEY
+;;; parameters are known to have not only an INIT-FORM but also a
+;;; SUPPLIED-P parameter, generate code that tests each SUPPLIED-P
+;;; parameter and sets the parameter to the value of the INIT-FORM if
+;;; it turns out the SUPPLIED-P parameter is false.
 (defun extract-entry-lambda-list (parsed-lambda-list)
   (let ((required (required parsed-lambda-list))
 	(optionals (optionals parsed-lambda-list))
