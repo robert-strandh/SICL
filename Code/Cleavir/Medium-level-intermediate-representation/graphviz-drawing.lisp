@@ -307,3 +307,19 @@
 (defmethod draw-instruction ((instruction phi-instruction) stream)
   (format stream "   ~a [label = \"phi\"];~%"
 	  (instruction-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Draw instruction CAR-INSTRUCTION.
+
+(defmethod draw-instruction ((instruction car-instruction) stream)
+  (format stream "   ~a [label = \"CAR\"];~%"
+	  (instruction-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Draw instruction CDR-INSTRUCTION.
+
+(defmethod draw-instruction ((instruction car-instruction) stream)
+  (format stream "   ~a [label = \"CDR\"];~%"
+	  (instruction-id instruction)))
