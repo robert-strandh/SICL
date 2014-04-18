@@ -222,10 +222,6 @@
   (print-unreadable-object (object stream :type t)
     (format stream "~a" (name object))))
 
-;;; Generate a new lexical location
-(defun new-temporary ()
-  (make-lexical-location (gensym)))
-  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class SIMPLE-LOCATION.
@@ -242,6 +238,10 @@
   (make-instance 'simple-location
     :name name))
 
+;;; Generate a new lexical location
+(defun new-temporary ()
+  (make-simple-location (gensym)))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class SPECIAL-LOCATION.
