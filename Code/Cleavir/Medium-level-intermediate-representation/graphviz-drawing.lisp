@@ -60,7 +60,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum LEXICAL-LOCATION.
+;;; Drawing datum SPECIAL-LOCATION.
 
 (defmethod draw-datum ((datum special-location) stream)
   (format stream "  ~a [shape = ellipse, style = filled];~%"
