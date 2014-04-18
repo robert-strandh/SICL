@@ -299,3 +299,11 @@
 (defmethod draw-instruction ((instruction eq-instruction) stream)
   (format stream "   ~a [label = \"eq\"];~%"
 	  (instruction-id instruction)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Draw instruction PHI-INSTRUCTION.
+
+(defmethod draw-instruction ((instruction phi-instruction) stream)
+  (format stream "   ~a [label = \"phi\"];~%"
+	  (instruction-id instruction)))
