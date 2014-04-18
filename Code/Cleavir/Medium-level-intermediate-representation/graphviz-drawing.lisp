@@ -16,8 +16,6 @@
 (defmethod draw-datum :around (datum stream)
   (when (null (datum-id datum))
     (setf (gethash datum *datum-table*) (gensym))
-    (format stream "  ~a [shape = ellipse, style = filled];~%"
-	    (datum-id datum))
     (call-next-method)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -25,6 +23,8 @@
 ;;; Drawing datum IMMEDIATE-INPUT.
 
 (defmethod draw-datum ((datum immediate-input) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = aquamarine, label = \"~a\"]~%"
 	  (datum-id datum) (value datum)))
 
@@ -33,6 +33,8 @@
 ;;; Drawing datum WORD-INPUT.
 
 (defmethod draw-datum ((datum word-input) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = lightblue, label = \"~a\"]~%"
 	  (datum-id datum) (value datum)))
 
@@ -41,6 +43,8 @@
 ;;; Drawing datum CONSTANT-INPUT.
 
 (defmethod draw-datum ((datum constant-input) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = green, label = \"~a\"]~%"
 	  (datum-id datum) (value datum)))
 
@@ -49,6 +53,8 @@
 ;;; Drawing datum LEXICAL-LOCATION.
 
 (defmethod draw-datum ((datum lexical-location) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
 	  (datum-id datum) (name datum)))
 
@@ -57,6 +63,8 @@
 ;;; Drawing datum LEXICAL-LOCATION.
 
 (defmethod draw-datum ((datum special-location) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = cyan4, label = \"~a\"]~%"
 	  (datum-id datum) (name datum)))
 
@@ -65,6 +73,8 @@
 ;;; Drawing datum GLOBAL-INPUT.
 
 (defmethod draw-datum ((datum global-input) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = cyan, label = \"~a\"]~%"
 	  (datum-id datum) (name datum)))
 
@@ -73,6 +83,8 @@
 ;;; Drawing datum EXTERNAL-INPUT.
 
 (defmethod draw-datum ((datum external-input) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = pink, label = \"~a\"]~%"
 	  (datum-id datum) (value datum)))
 
@@ -81,6 +93,8 @@
 ;;; Drawing datum REGISTER-LOCATION.
 
 (defmethod draw-datum ((datum register-location) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = red, label = \"~a\"]~%"
 	  (datum-id datum) (name datum)))
 
@@ -89,6 +103,8 @@
 ;;; Drawing datum STATIC-LOCATION.
 
 (defmethod draw-datum ((datum static-location) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = yellow, label = \"~a,~a\"]~%"
 	  (datum-id datum)
 	  (layer datum)
@@ -99,6 +115,8 @@
 ;;; Drawing datum DYNAMIC-LOCATION.
 
 (defmethod draw-datum ((datum dynamic-location) stream)
+  (format stream "  ~a [shape = ellipse, style = filled];~%"
+	  (datum-id datum))
   (format stream "   ~a [fillcolor = darkorchid, label = \"~a\"]~%"
 	  (datum-id datum) (index datum)))
 
