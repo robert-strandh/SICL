@@ -9,6 +9,7 @@
    #:constant-input #:make-constant-input
    #:value
    #:lexical-location #:make-lexical-location
+   #:simple-location #:make-simple-location
    #:new-temporary
    #:name
    #:special-location #:make-special-location

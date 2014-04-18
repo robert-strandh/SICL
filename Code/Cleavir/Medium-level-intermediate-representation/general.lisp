@@ -228,6 +228,22 @@
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Datum class SIMPLE-LOCATION.
+;;;
+;;; This datum is a special case of a LEXICAL-LOCATION.  It is used
+;;; for locations that are only referred to within a single function,
+;;; so that there is no possible capture.  A location of this type can
+;;; be allocated in a register or on the stack.
+
+(defclass simple-location (lexical-location)
+  ())
+
+(defun make-simple-location (name)
+  (make-instance 'simple-location
+    :name name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Datum class SPECIAL-LOCATION.
 ;;;
 ;;; This datum corresponds to a reference to a special variable.
