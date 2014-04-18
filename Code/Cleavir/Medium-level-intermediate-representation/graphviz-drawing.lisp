@@ -114,21 +114,21 @@
 
 (defparameter *instruction-table* nil)
 
-(defun unique-id (instruction)
+(defun instruction-id (instruction)
   (gethash instruction *instruction-table*))
 
 (defgeneric draw-instruction (instruction stream))
   
 (defmethod draw-instruction ((instruction typeq-instruction) stream)
   (format stream "   ~a [label = \"typeq ~a\"];~%"
-	  (unique-id instruction)
+	  (instruction-id instruction)
 	  (value-type instruction)))
 
 (defmethod draw-instruction :around (instruction stream)
-  (when (null (unique-id instruction))
+  (when (null (instruction-id instruction))
     (setf (gethash instruction *instruction-table*) (gensym))
     (format stream "  ~a [shape = box];~%"
-	    (unique-id instruction))
+	    (instruction-id instruction))
     (call-next-method)))
 
 (defmethod draw-instruction :before ((instruction instruction) stream)
@@ -138,13 +138,13 @@
 	for i from 1
 	do (format stream
 		   "  ~a -> ~a [style = bold, label = \"~d\"];~%"
-		   (unique-id instruction)
+		   (instruction-id instruction)
 		   (gethash next *instruction-table*)
 		   i)))
   
 (defmethod draw-instruction (instruction stream)
   (format stream "   ~a [label = \"~a\"];~%"
-	  (unique-id instruction)
+	  (instruction-id instruction)
 	  (class-name (class-of instruction))))
 
 (defmethod draw-instruction :after (instruction stream)
@@ -154,14 +154,14 @@
 	   (format stream
 		   "  ~a -> ~a [color = red, style = dashed, label = \"~d\"];~%"
 		   (gethash datum *datum-table*)
-		   (unique-id instruction)
+		   (instruction-id instruction)
 		   i))
   (loop for datum in (outputs instruction)
 	for i from 1
 	do (draw-datum datum stream)
 	   (format stream
 		   "  ~a -> ~a [color = blue, style = dashed, label = \"~d\"];~%"
-		   (unique-id instruction)
+		   (instruction-id instruction)
 		   (gethash datum *datum-table*)
 		   i)))
 
@@ -181,7 +181,7 @@
 
 (defmethod draw-instruction ((instruction enter-instruction) stream)
   (format stream "   ~a [label = \"enter\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -189,7 +189,7 @@
 
 (defmethod draw-instruction ((instruction nop-instruction) stream)
   (format stream "   ~a [label = \"nop\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -198,7 +198,7 @@
 (defmethod draw-instruction
     ((instruction assignment-instruction) stream)
   (format stream "   ~a [label = \"<-\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -206,7 +206,7 @@
 
 (defmethod draw-instruction ((instruction funcall-instruction) stream)
   (format stream "   ~a [label = \"funcall\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -214,7 +214,7 @@
 
 (defmethod draw-instruction ((instruction tailcall-instruction) stream)
   (format stream "   ~a [label = \"tailcall\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -222,7 +222,7 @@
 
 (defmethod draw-instruction ((instruction get-values-instruction) stream)
   (format stream "   ~a [label = \"get-values\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -230,7 +230,7 @@
 
 (defmethod draw-instruction ((instruction return-instruction) stream)
   (format stream "   ~a [label = \"ret\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -238,11 +238,11 @@
 
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
   (format stream "   ~a [label = \"enclose\"];~%"
-	  (unique-id instruction))
+	  (instruction-id instruction))
   (draw-instruction (code instruction) stream)
   (format stream "  ~a -> ~a [color = pink, style = dashed];~%"
 	  (gethash (code instruction) *instruction-table*)
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -250,7 +250,7 @@
 
 (defmethod draw-instruction ((instruction catch-instruction) stream)
   (format stream "   ~a [label = \"catch\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -258,7 +258,7 @@
 
 (defmethod draw-instruction ((instruction unwind-instruction) stream)
   (format stream "   ~a [label = \"unwind\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -266,4 +266,4 @@
 
 (defmethod draw-instruction ((instruction eq-instruction) stream)
   (format stream "   ~a [label = \"eq\"];~%"
-	  (unique-id instruction)))
+	  (instruction-id instruction)))
