@@ -70,6 +70,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Drawing datum CAPTURED-LOCATION.
+
+(defmethod draw-datum ((datum captured-location) stream)
+  (format stream "  ~a [shape = octagon, style = filled];~%"
+	  (datum-id datum))
+  (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
+	  (datum-id datum) (name datum)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Drawing datum SPECIAL-LOCATION.
 
 (defmethod draw-datum ((datum special-location) stream)
