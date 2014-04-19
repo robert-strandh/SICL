@@ -44,11 +44,16 @@
 (defun (setf owner) (new-owner item)
   (setf (gethash item *ownerships*) new-owner))
 
+(defparameter *ld1-call-count* 0)
+(defparameter *ld1-item-count* 0)
+(defparameter *ld1-time* 0)
+
 ;;; Compute the owner of each instruction and each datum.  The return
 ;;; value is an EQ hash table mapping an instruction or a datum to its
 ;;; owner.
 (defun compute-ownerships (enter-instruction)
-  (let ((worklist (list enter-instruction))
+  (let ((time (get-internal-run-time))
+	(worklist (list enter-instruction))
 	(*ownerships* (make-hash-table :test #'eq)))
     (flet
 	((process-function (enter-instruction)
@@ -66,6 +71,9 @@
 	     (traverse enter-instruction))))
       (loop until (null worklist)
 	    do (process-function (pop worklist))))
+    (incf *ld1-call-count*)
+    (incf *ld1-item-count* (hash-table-count *ownerships*))
+    (incf *ld1-time* (- (get-internal-run-time) time))
     *ownerships*))
 
 (defvar *lexical-depths*)
