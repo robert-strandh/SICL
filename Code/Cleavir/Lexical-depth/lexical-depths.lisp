@@ -76,11 +76,9 @@
 (defun (setf lexical-depth) (new-depth enter-instruction)
   (setf (gethash enter-instruction *lexical-depths*) new-depth))
 
-;;; Return the lexical depth of each procedure of the program, where a
-;;; procedure is represented by its ENTER-INSTRUCTION.
-;;;
-;;; The return value is an EQ hash table mapping each
-;;; ENTER-INSTRUCTION to its lexical depth.
+;;; Return the lexical depth of each instruction and each datum of the
+;;; program.  The return value is an EQ hash table mapping each item
+;;; (instruction or datum) to its lexical depth.
 (defun lexical-depths (enter-instruction)
   (let ((*ownerships* (compute-ownerships enter-instruction))
 	(worklist (list enter-instruction))
@@ -114,4 +112,10 @@
 	       (traverse enter-instruction)))))
       (loop until (null worklist)
 	    do (process-function (pop worklist))))
+    ;; Add remaining instructions and data to table.
+    (maphash (lambda (item owner)
+	       (when (null (gethash item *lexical-depths*))
+		 (setf (gethash item *lexical-depths*)
+		       (gethash owner *lexical-depths*))))
+	     *ownerships*)
     *lexical-depths*))
