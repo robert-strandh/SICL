@@ -136,8 +136,13 @@
     (incf *ld2-time* (- (get-internal-run-time) time))
     *lexical-depths*))
 
+(defparameter *ld3-call-count* 0)
+(defparameter *ld3-node-count* 0)
+(defparameter *ld3-time* 0)
+
 (defun distinguish-lexical-variables (enter-instruction lexical-depths)
-  (let ((*lexical-depths* lexical-depths)
+  (let ((time (get-internal-run-time))
+	(*lexical-depths* lexical-depths)
 	(visited (make-hash-table :test #'eq)))
     ;; First find all lexical locations that should be turned
     ;; into captured lexical locations.
@@ -173,6 +178,7 @@
 		       do (traverse succ))
 		 (when (typep instruction 'cleavir-mir:enclose-instruction)
 		   (traverse (cleavir-mir:code instruction))))))
-      (traverse enter-instruction))))
-    
-    
+      (traverse enter-instruction))
+    (incf *ld3-call-count*)
+    (incf *ld3-node-count* (hash-table-count visited))
+    (incf *ld3-time* (- (get-internal-run-time) time))))
