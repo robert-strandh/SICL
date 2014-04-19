@@ -84,11 +84,16 @@
 (defun (setf lexical-depth) (new-depth enter-instruction)
   (setf (gethash enter-instruction *lexical-depths*) new-depth))
 
+(defparameter *ld2-call-count* 0)
+(defparameter *ld2-item-count* 0)
+(defparameter *ld2-time* 0)
+
 ;;; Return the lexical depth of each instruction and each datum of the
 ;;; program.  The return value is an EQ hash table mapping each item
 ;;; (instruction or datum) to its lexical depth.
 (defun lexical-depths (enter-instruction)
-  (let ((*ownerships* (compute-ownerships enter-instruction))
+  (let ((time (get-internal-run-time))
+	(*ownerships* (compute-ownerships enter-instruction))
 	(worklist (list enter-instruction))
 	(*lexical-depths* (make-hash-table :test #'eq)))
     (flet
@@ -126,6 +131,9 @@
 		 (setf (gethash item *lexical-depths*)
 		       (gethash owner *lexical-depths*))))
 	     *ownerships*)
+    (incf *ld2-call-count*)
+    (incf *ld2-item-count* (hash-table-count *lexical-depths*))
+    (incf *ld2-time* (- (get-internal-run-time) time))
     *lexical-depths*))
 
 (defun distinguish-lexical-variables (enter-instruction lexical-depths)
