@@ -119,3 +119,44 @@
 		       (gethash owner *lexical-depths*))))
 	     *ownerships*)
     *lexical-depths*))
+
+(defun distinguish-lexical-variables (enter-instruction lexical-depths)
+  (let ((*lexical-depths* lexical-depths)
+	(visited (make-hash-table :test #'eq)))
+    ;; First find all lexical locations that should be turned
+    ;; into captured lexical locations.
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction visited)
+		 (setf (gethash instruction visited) t)
+		 (loop with type = 'cleavir-mir:lexical-location
+		       for datum in (data instruction)
+		       do (when (and (typep datum type)
+				     (/= (lexical-depth datum)
+					 (lexical-depth instruction)))
+			    (change-class datum 'cleavir-mir:captured-location)))
+		 (loop for succ in (cleavir-mir:successors instruction)
+		       do (traverse succ))
+		 (when (typep instruction 'cleavir-mir:enclose-instruction)
+		   (traverse (cleavir-mir:code instruction))))))
+      (traverse enter-instruction))
+    ;; Next find all lexical locations that were not converted in the
+    ;; first step, and convert them to simple lexical locations.  It
+    ;; is enough to check the outputs of each instruction because each
+    ;; lexical location must be the output of at least one
+    ;; instruction.
+    (clrhash visited)
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction visited)
+		 (setf (gethash instruction visited) t)
+		 (loop with type = '(and cleavir-mir:lexical-location
+				         (not cleavir-mir:captured-location))
+		       for datum in (cleavir-mir:outputs instruction)
+		       do (when (typep datum type)
+			    (change-class datum 'cleavir-mir:simple-location)))
+		 (loop for succ in (cleavir-mir:successors instruction)
+		       do (traverse succ))
+		 (when (typep instruction 'cleavir-mir:enclose-instruction)
+		   (traverse (cleavir-mir:code instruction))))))
+      (traverse enter-instruction))))
+    
+    
