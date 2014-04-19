@@ -79,7 +79,7 @@
 (defun lexical-depths (enter-instruction)
   (let ((*ownerships* (compute-ownerships enter-instruction))
 	(worklist (list enter-instruction))
-	(depths (make-hash-table :test #'eq)))
+	(*lexical-depths* (make-hash-table :test #'eq)))
     (flet
 	((process-function (enter-instruction)
 	   (setf (lexical-depth enter-instruction) 0)
@@ -109,4 +109,4 @@
 	       (traverse enter-instruction)))))
       (loop until (null worklist)
 	    do (process-function (pop worklist))))
-    depths))
+    *lexical-depths*))
