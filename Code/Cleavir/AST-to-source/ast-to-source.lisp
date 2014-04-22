@@ -46,8 +46,9 @@
        ,(to-source (cleavir-ast:else-ast ast) dictionary)))
 
 (defmethod to-source ((ast cleavir-ast:typeq-ast) dictionary)
-  `(typep ,(to-source (cleavir-ast:form-ast ast) dictionary)
-	  ,(to-source (cleavir-ast:type-specifier-ast ast) dictionary)))
+  `(cleavir-primop:typeq
+    ,(to-source (cleavir-ast:form-ast ast) dictionary)
+    ,(to-source (cleavir-ast:type-specifier-ast ast) dictionary)))
 
 (defmethod to-source ((ast cleavir-ast:constant-ast) dictionary)
   (declare (ignore dictionary))
