@@ -842,15 +842,6 @@
    (convert (second form) env)
    (convert-constant (third form))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting HALT.
-
-(defmethod convert-compound ((symbol (eql 'sicl-word:halt)) form env)
-  (sicl-code-utilities:check-form-proper-list form)
-  (sicl-code-utilities:check-argcount form 0 0)
-  (cleavir-ast:make-halt-ast))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CONVERT is the function that must be called by every conversion
