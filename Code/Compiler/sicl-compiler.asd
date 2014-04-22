@@ -19,7 +19,7 @@
     :depends-on ("packages"))
    (:file "mir"
     :depends-on ("packages"))
-   (:file "phase1"
+   (:file "new-phase1"
     :depends-on ("packages" "abstract-syntax-tree"))
    (:file "ast-transformations"
     :depends-on ("packages"))
@@ -39,14 +39,14 @@
 		 "ast-transformations"
 		 "type-map"
 		 "graph-coloring"
-		 "phase1"
+		 "new-phase1"
 		 "phase2"))
    (:file "compile-lambda-expression"
     :depends-on ("program"
 		 "ast-transformations"
 		 "type-map"
 		 "graph-coloring"
-		 "phase1"
+		 "new-phase1"
 		 "phase2"))
    (:file "compile-time-compile"
-    :depends-on ("phase1"))))
+    :depends-on ("new-phase1"))))
