@@ -835,7 +835,7 @@
 ;;;
 ;;; Converting TYPEQ.
 
-(defmethod convert-compound ((symbol (eql 'sicl-type:typeq)) form env)
+(defmethod convert-compound ((symbol (eql 'cleavir-primop:typeq)) form env)
   (cleavir-ast:make-typeq-ast
    (convert (second form) env)
    (convert-constant (third form))))
