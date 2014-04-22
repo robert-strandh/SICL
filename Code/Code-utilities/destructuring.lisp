@@ -610,16 +610,16 @@
 (defun extract-initforms (parsed-lambda-list)
   (let ((optionals (optionals parsed-lambda-list))
 	(keys (keys parsed-lambda-list)))
-    `(progn ,@(if (eq optionals :none)
-		  '()
-		  (loop for (name init-form supplied-p) in optionals
-			collect `(unless ,supplied-p
-				   (setf ,name ,init-form))))
-	    ,@(if (eq keys :none)
-		  '()
-		  (loop for ((nil name) init-form supplied-p) in keys
-			collect `(unless ,supplied-p
-				   (setf ,name ,init-form)))))))
+    `(,@(if (eq optionals :none)
+	    '()
+	    (loop for (name init-form supplied-p) in optionals
+		  collect `(unless ,supplied-p
+			     (setf ,name ,init-form))))
+      ,@(if (eq keys :none)
+	    '()
+	    (loop for ((nil name) init-form supplied-p) in keys
+		  collect `(unless ,supplied-p
+			     (setf ,name ,init-form)))))))
 
 (defun preprocess-lambda-list (parsed-lambda-list)
   (let ((ll (ensure-supplied-p-parameters parsed-lambda-list)))
