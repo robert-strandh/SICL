@@ -2,6 +2,7 @@
 
 (defpackage #:cleavir-primop
   (:export
+   #:typeq
    #:car #:cdr #:rplaca #:rplacd
    #:fixnum-+ #:fixnum--
    #:fixnum-< #:fixnum-<= #:fixnum-> #:fixnum->= #:fixnum-=
