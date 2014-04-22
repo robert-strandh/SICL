@@ -201,19 +201,93 @@
      (convert-sequence args env))))
 
 
+(defun add-lambda-list-to-env (lambda-list env)
+  (let ((rest lambda-list)
+	(new-env env))
+    (tagbody
+     required
+       (cond ((null rest) (go out))
+	     ((eq (car rest) '&optional) (pop rest) (go optional))
+	     ((eq (car rest) '&key) (pop rest) (go key))
+	     (t (setq new-env
+		      (sicl-env:add-lexical-variable-entry
+		       new-env (pop rest)))
+		(go required)))
+     optional
+       (cond ((null rest) (go out))
+	     ((eq (car rest) '&key) (pop rest) (go key))
+	     (t (setq new-env
+		      (sicl-env:add-lexical-variable-entry
+		       new-env (first rest)))
+		(setq new-env
+		      (sicl-env:add-lexical-variable-entry
+		       new-env (second rest)))
+		(pop rest)
+		(go optional)))
+     key
+       (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
+	      (go out))
+	     (t (setq new-env
+		      (sicl-env:add-lexical-variable-entry
+		       new-env (second rest)))
+		(setq new-env
+		      (sicl-env:add-lexical-variable-entry
+		       new-env (third rest)))
+		(pop rest)
+		(go key)))
+     out)
+    new-env))
+
+(defun var-to-lexical-location (var env)
+  (let ((info (sicl-env:variable-info var env))
+	(location (sicl-env:location info)))
+    (find-or-create-ast location)))
+
+(defun build-ast-lambda-list (lambda-list env)
+  (let ((rest lambda-list)
+	(result nil))
+    (tagbody
+     required
+       (cond ((null rest)
+	      (go out))
+	     ((eq (car rest) '&optional)
+	      (push (pop rest) result)
+	      (go optional))
+	     ((eq (car rest) '&key)
+	      (push (pop rest) result)
+	      (go key))
+	     (t (push (var-to-lexical-location (pop rest)) result)
+		(go required)))
+     optional
+       (cond ((null rest)
+	      (go out))
+	     ((eq (car rest) '&key)
+	      (push (pop rest) result)
+	      (go key))
+	     (t (push (var-to-lexical-location (first rest)) result)
+		(push (var-to-lexical-location (second rest)) result)
+		(pop rest)
+		(go optional)))
+     key
+       (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
+	      (go out))
+	     (t (push (var-to-lexical-location (second rest)) result)
+		(push (var-to-lexical-location (third rest)) result)
+		(pop rest)
+		(go key)))
+     out)
+    (nreverse result)))
+
 (defun convert-code (lambda-list body env)
   (let ((parsed-lambda-list
 	  (sicl-code-utilities:parse-ordinary-lambda-list lambda-list)))
-    (cleavir-ast:make-function-ast
-     (convert `(let* ,(sicl-code-utilities:match-lambda-list
-		       parsed-lambda-list '(argcount) 'arg)
-		 ,@body)
-	      env)
-     (if (and (eq (sicl-code-utilities:optionals parsed-lambda-list) :none)
-	      (eq (sicl-code-utilities:rest-body parsed-lambda-list) :none)
-	      (eq (sicl-code-utilities:keys parsed-lambda-list) :none))
-	 (length (sicl-code-utilities:required parsed-lambda-list))
-	 nil))))
+    (multiple-value-bind (entry-lambda-list initforms)
+	(sicl-code-utilities:preprocess-lambda-list parsed-lambda-list)
+      (let* ((new-env (add-lambda-list-to-env entry-lambda-list env))
+	     (ast-lambda-list build-ast-lambda-list entry-lambda-list new-env))
+	(cleavir-ast:make-function-ast
+	 (convert `(progn ,@initforms ,@body) new-env)
+	 ast-lambda-list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
