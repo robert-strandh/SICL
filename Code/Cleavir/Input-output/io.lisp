@@ -24,7 +24,7 @@
   (let ((*package* (find-package '#:keyword)))
     (pprint-logical-block (stream nil :prefix "[" :suffix "]")
       (format stream "~s ~2i" (class-name (class-of obj)))
-      (loop for info in (save-info obj)
+      (loop for info in (reverse (save-info obj))
 	    do (format stream
 		       "~_~s ~W "
 		       (car info)
