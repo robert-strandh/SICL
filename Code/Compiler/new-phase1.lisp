@@ -833,7 +833,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting TYPEQ.
+;;; Converting CLEAVIR-PRIMOP:TYPEQ.
 
 (defmethod convert-compound ((symbol (eql 'cleavir-primop:typeq)) form env)
   (cleavir-ast:make-typeq-ast
