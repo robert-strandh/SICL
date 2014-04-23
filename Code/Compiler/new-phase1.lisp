@@ -911,6 +911,20 @@
 				   (convert arg2 environment)
 				   (convert variable environment))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM--.
+
+(defmethod convert-compound
+    ((symbol (eql 'cleavir-primop:fixnum--)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 3 3)
+  (destructuring-bind (arg1 arg2 variable) (cdr form)
+    (cleavir-ast:make-fixnum---ast (convert arg1 environment)
+				   (convert arg2 environment)
+				   (convert variable environment))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CONVERT is the function that must be called by every conversion
