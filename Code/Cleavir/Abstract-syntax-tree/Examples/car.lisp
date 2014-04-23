@@ -1,66 +1,83 @@
 ;;;; This example shows an AST that implements the CAR function.
 ;;;;
-;;;; It corresponds-to the following approximate source code:
+;;;; It corresponds to the following source code:
 ;;;;
 ;;;; (lambda (object)
-;;;;   (if (typeq object null)
+;;;;   (if (cleavir-primop:typeq object null)
 ;;;;       nil
-;;;;       (if (typeq object cons)
-;;;;           (%car object)
+;;;;       (if (cleavir-primop:typeq object cons)
+;;;;           (cleavir-primop:car object)
 ;;;;           (error 'type-error 
 ;;;;                  :datum object
 ;;;;                  :expected-type '(or cons null)))))
 ;;;;
-;;;; Where TYPEQ is a hypothetical special operator that produces the
-;;;; TYPEQ-AST, and %CAR is a hypothetical special operator that
+;;;; Where CLEAVIR-PRIMOP:TYPEQ is a special operator that produces
+;;;; the TYPEQ-AST, and CLEAVIR-PRIMOP:CAR is a special operator that
 ;;;; produces the CAR-AST.
-;;;;
-;;;; The format of the AST below has been edited slightly compared to
-;;;; the raw output from PRINT in order to be easier to read.  When
-;;;; read, it still produces a correct AST, however.
 
 [CLEAVIR-AST:FUNCTION-AST
-   :LAMBDA-LIST (#1=[CLEAVIR-AST:LEXICAL-AST
-                       :CHILDREN COMMON-LISP:NIL
-                       :NAME CLEAVIR-AST::OBJECT ])
-   :CHILDREN 
-      ([CLEAVIR-AST:IF-AST
-	  :CHILDREN 
-	     ([CLEAVIR-AST::TYPEQ-AST
-		 :CHILDREN (#1# 
-			    [CLEAVIR-AST:CONSTANT-AST
-			       :CHILDREN COMMON-LISP:NIL
-			       :VALUE COMMON-LISP:NULL ]) ]
-	      [CLEAVIR-AST:CONSTANT-AST
-		 :CHILDREN COMMON-LISP:NIL
-		 :VALUE COMMON-LISP:NIL ]
-	      [CLEAVIR-AST:IF-AST
-		 :CHILDREN 
-		    ([CLEAVIR-AST::TYPEQ-AST
-			:CHILDREN (#1# 
-                                   [CLEAVIR-AST:CONSTANT-AST
-				      :CHILDREN COMMON-LISP:NIL
-				      :VALUE COMMON-LISP:CONS ]) ]
-		     [CLEAVIR-AST::CAR-AST
-			:CHILDREN (#1#) ]
-		     [CLEAVIR-AST:CALL-AST
-			:CHILDREN 
-			   ([CLEAVIR-AST:GLOBAL-AST
-			       :CHILDREN COMMON-LISP:NIL
-			       :NAME COMMON-LISP:ERROR
-			       :FUNCTION-TYPE COMMON-LISP:T ]
-			    [CLEAVIR-AST:CONSTANT-AST
-			       :CHILDREN COMMON-LISP:NIL
-			       :VALUE COMMON-LISP:TYPE-ERROR ]
-			    [CLEAVIR-AST:CONSTANT-AST
-			       :CHILDREN COMMON-LISP:NIL
-			       :VALUE :DATUM ]
-			    #1#
-			    [CLEAVIR-AST:CONSTANT-AST
-			       :CHILDREN COMMON-LISP:NIL
-			       :VALUE :EXPECTED-TYPE ]
-			    [CLEAVIR-AST:CONSTANT-AST
-			       :CHILDREN COMMON-LISP:NIL
-			       :VALUE (COMMON-LISP:OR
-				       COMMON-LISP:CONS
-				       COMMON-LISP:NULL) ]) ]) ]) ]) ] 
+   :LAMBDA-LIST
+   (#1=[CLEAVIR-AST:LEXICAL-AST
+          :NAME
+          COMMON-LISP-USER::X
+          :CHILDREN
+          COMMON-LISP:NIL ])
+   :CHILDREN
+   ([CLEAVIR-AST:PROGN-AST
+       :CHILDREN
+       ([CLEAVIR-AST:IF-AST
+           :CHILDREN
+           ([CLEAVIR-AST:TYPEQ-AST
+               :CHILDREN
+               (#1#
+                [CLEAVIR-AST:CONSTANT-AST
+                   :VALUE
+                   COMMON-LISP:NULL
+                   :CHILDREN
+                   COMMON-LISP:NIL ]) ]
+            [CLEAVIR-AST:CONSTANT-AST
+               :VALUE
+               COMMON-LISP:NIL
+               :CHILDREN
+               COMMON-LISP:NIL ]
+            [CLEAVIR-AST:IF-AST
+               :CHILDREN
+               ([CLEAVIR-AST:TYPEQ-AST
+                   :CHILDREN
+                   (#1#
+                    [CLEAVIR-AST:CONSTANT-AST
+                       :VALUE
+                       COMMON-LISP:CONS
+                       :CHILDREN
+                       COMMON-LISP:NIL ]) ]
+                [CLEAVIR-AST:CAR-AST :CHILDREN (#1#) ]
+                [CLEAVIR-AST:CALL-AST
+                   :CHILDREN
+                   ([CLEAVIR-AST:GLOBAL-AST
+                       :FUNCTION-TYPE
+                       (COMMON-LISP:AND)
+                       :NAME
+                       COMMON-LISP:ERROR
+                       :CHILDREN
+                       COMMON-LISP:NIL ]
+                    [CLEAVIR-AST:CONSTANT-AST
+                       :VALUE
+                       COMMON-LISP:TYPE-ERROR
+                       :CHILDREN
+                       COMMON-LISP:NIL ]
+                    [CLEAVIR-AST:CONSTANT-AST
+                       :VALUE
+                       :DATUM
+                       :CHILDREN
+                       COMMON-LISP:NIL ]
+                    #1#
+                    [CLEAVIR-AST:CONSTANT-AST
+                       :VALUE
+                       :EXPECTED-TYPE
+                       :CHILDREN
+                       COMMON-LISP:NIL ]
+                    [CLEAVIR-AST:CONSTANT-AST
+                       :VALUE
+                       (COMMON-LISP:OR COMMON-LISP:NULL COMMON-LISP:CONS)
+                       :CHILDREN
+                       COMMON-LISP:NIL ]) ]) ]) ]) ]) ] 
