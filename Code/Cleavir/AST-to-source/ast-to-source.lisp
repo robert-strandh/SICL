@@ -84,3 +84,9 @@
     ,(to-source (cleavir-ast:arg1-ast ast) dictionary)
     ,(to-source (cleavir-ast:arg2-ast ast) dictionary)
     ,(to-source (cleavir-ast:variable-ast ast) dictionary)))
+
+(defmethod to-source ((ast cleavir-ast:fixnum---ast) dictionary)
+  `(cleavir-primop:fixnum--
+    ,(to-source (cleavir-ast:arg1-ast ast) dictionary)
+    ,(to-source (cleavir-ast:arg2-ast ast) dictionary)
+    ,(to-source (cleavir-ast:variable-ast ast) dictionary)))
