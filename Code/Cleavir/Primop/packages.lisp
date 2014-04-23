@@ -4,7 +4,7 @@
   (:export
    #:typeq
    #:car #:cdr #:rplaca #:rplacd
-   #:fixnum-+ #:fixnum--
+   #:fixnum-arithmetic #:fixnum-+ #:fixnum--
    #:fixnum-< #:fixnum-<= #:fixnum-> #:fixnum->= #:fixnum-=
    #:slot-read #:slot-write
    #:aref #:aset))
