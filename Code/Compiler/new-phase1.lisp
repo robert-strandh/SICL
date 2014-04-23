@@ -840,6 +840,26 @@
    (convert (second form) env)
    (convert-constant (third form))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CAR.
+
+(defmethod convert-compound
+    ((symbol (eql 'cleavir-primop:car)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 1)
+  (cleavir-ast:make-car-ast (convert (cadr form) environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:CDR.
+
+(defmethod convert-compound
+    ((symbol (eql 'cleavir-primop:cdr)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 1)
+  (cleavir-ast:make-cdr-ast (convert (cadr form) environment)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CONVERT is the function that must be called by every conversion
