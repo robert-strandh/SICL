@@ -884,6 +884,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Converting CLEAVIR-PRIMOP:FIXNUM-ARITHMETIC.
+
+(defmethod convert-compound
+    ((symbol (eql 'cleavir-primop:fixnum-arithmetic)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 4 4)
+  (destructuring-bind (variable operation normal overflow) (cdr form)
+    (assert (symbolp variable))
+    (let ((new-env (sicl-env:add-lexical-variable-entry environment variable)))
+      (cleavir-ast:make-fixnum-arithmetic-ast (convert variable new-env)
+					      (convert operation new-env)
+					      (convert normal new-env)
+					      (convert overflow new-env)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Converting CLEAVIR-PRIMOP:FIXNUM-+.
 
 (defmethod convert-compound
