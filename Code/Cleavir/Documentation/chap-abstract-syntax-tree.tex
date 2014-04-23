@@ -293,3 +293,30 @@ Initarg & Reader & Description\\
 
 \subsection{\texttt{the-ast}}
 \label{the-ast}
+
+\section{Abstract syntax trees for fixnum arithmetic}
+
+\subsection{\texttt{fixnum-arithmetic-ast}}
+
+This AST can be thought of as a combination of the \texttt{setq-ast}
+\seesec{setq-ast} and the \texttt{if-ast} \seesec{if-ast} in that one
+child is a \texttt{lexical-ast} \seesec{lexical-ast} to be assigned,
+one represents a test and two more represent ASTs to be executed if
+the test succeeds and fails respectively.  Hence, this AST has four
+children.
+
+The first child is an AST of type \texttt{lexical-ast}.  This AST
+represents a lexical variable that will hold the result of the fixnum
+arithmetic operation.
+
+The second child is an AST that represents the particular operation.
+Currently, only \texttt{fixnum-+-ast} and \texttt{fixnum---ast} are
+the only types of AST allowed in this position.  The operation acts
+like a test in that the outcome can be \emph{normal} or
+\emph{overflow}.  
+
+The third child is an AST that will be evaluated when the outcome of
+the operation is \emph{normal}. 
+
+The fourth child is an AST that will be evaluated when the outcome of
+the operation is \emph{overflow}.
