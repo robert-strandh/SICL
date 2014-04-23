@@ -12,7 +12,9 @@
 	       :sicl-compiler-loops
 	       :sicl-environment
 	       :sicl-reader-simple
-	       :sicl-type)
+	       :sicl-type
+	       :cleavir-ast
+	       :cleavir-primop)
   :components
   ((:file "packages" :depends-on ())
    (:file "abstract-syntax-tree"
