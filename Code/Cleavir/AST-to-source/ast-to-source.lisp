@@ -67,3 +67,7 @@
 
 (defmethod to-source ((ast cleavir-ast:global-ast) dictionary)
   `#',(cleavir-ast:name ast))
+
+(defmethod to-source ((ast cleavir-ast:progn-ast) dictionary)
+  `(progn ,@(loop for child in (cleavir-ast:children ast)
+		  collect (to-source child dictionary))))
