@@ -848,7 +848,7 @@
     ((symbol (eql 'cleavir-primop:car)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (cleavir-ast:make-car-ast (convert (cadr form) environment)))
+  (cleavir-ast:make-car-ast (convert (second form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -858,7 +858,7 @@
     ((symbol (eql 'cleavir-primop:cdr)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 1)
-  (cleavir-ast:make-cdr-ast (convert (cadr form) environment)))
+  (cleavir-ast:make-cdr-ast (convert (second form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
