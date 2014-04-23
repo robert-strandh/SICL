@@ -860,6 +860,17 @@
   (sicl-code-utilities:check-argcount form 1 1)
   (cleavir-ast:make-cdr-ast (convert (cadr form) environment)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting CLEAVIR-PRIMOP:RPLACA.
+
+(defmethod convert-compound
+    ((symbol (eql 'cleavir-primop:rplaca)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 2 2)
+  (cleavir-ast:make-rplaca-ast (convert (second form) environment)
+			       (convert (third form) environment)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CONVERT is the function that must be called by every conversion
