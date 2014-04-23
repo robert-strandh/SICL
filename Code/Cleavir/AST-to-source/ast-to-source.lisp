@@ -57,6 +57,9 @@
 (defmethod to-source ((ast cleavir-ast:lexical-ast) dictionary)
   (cdr (assoc ast dictionary)))
 
+(defmethod to-source ((ast cleavir-ast:special-ast) dictionary)
+  (cdr (assoc ast dictionary)))
+
 (defmethod to-source ((ast cleavir-ast:call-ast) dictionary)
   `(funcall ,(to-source (cleavir-ast:callee-ast ast) dictionary)
 	    ,@(loop for arg in (cleavir-ast:argument-asts ast)
