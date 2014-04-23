@@ -26,7 +26,7 @@
       (format stream "~s ~2i" (class-name (class-of obj)))
       (loop for info in (reverse (save-info obj))
 	    do (format stream
-		       "~_~s ~W "
+		       "~_~s ~_~W "
 		       (car info)
 		       (funcall (cadr info) obj))))))
 
