@@ -61,6 +61,7 @@ context of the compilation and either evaluates or generates an
 abstract syntax tree.
 
 \subsection{\texttt{constant-ast}}
+\label{constant-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -82,6 +83,7 @@ in the compilation process, some backend may replace small integer
 constants by immediate values. 
 
 \subsection{\texttt{global-ast}}
+\label{global-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -97,6 +99,7 @@ position that is not defined as a local function, as a special
 operator, nor as a macro.
 
 \subsection{\texttt{special-ast}}
+\label{special-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -112,6 +115,7 @@ position that is not defined as a lexical variable, a constant
 variable, nor as a symbol macro.
 
 \subsection{\texttt{lexical-ast}}
+\label{lexical-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -125,6 +129,7 @@ A \texttt{lexical-ast} is produced whenever the compiler sees a
 reference to a \emph{lexical variable}. 
 
 \subsection{\texttt{call-ast}}
+\label{call-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -145,6 +150,7 @@ arguments to that function.  The AST representing the function can be
 any AST that produces a function as a value.
 
 \subsection{\texttt{block-ast}}
+\label{block-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -160,6 +166,7 @@ the block because the \texttt{return-from-ast} contains a reference to
 the corresponding \texttt{block-ast}.
 
 \subsection{\texttt{function-ast}}
+\label{function-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -175,6 +182,7 @@ The \texttt{function-ast} is one of the more complicated ones, because
 it hides all the implementation details of how arguments are parsed. 
 
 \subsection{\texttt{go-ast}}
+\label{go-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -185,6 +193,7 @@ Initarg & Reader & Description\\
 \end{tabular}
 
 \subsection{\texttt{if-ast}}
+\label{if-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -202,6 +211,7 @@ The \texttt{if-ast} corresponds directly to the \cl{} special operator
 \texttt{if}. 
 
 \subsection{\texttt{load-time-value-ast}}
+\label{load-time-value-ast}
 
 A \texttt{load-time-value-ast} is produced whenever the compiler sees
 a \texttt{load-time-value} special form, but also when it sees a
@@ -213,6 +223,7 @@ a \emph{constant}, then it is wrapped in a \texttt{quote} special
 form. 
 
 \subsection{\texttt{progn-ast}}
+\label{progn-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -227,6 +238,7 @@ operator \texttt{progn}.  It returns the values that are return by the
 last AST in the child forms.
 
 \subsection{\texttt{return-from-ast}}
+\label{return-from-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -239,8 +251,8 @@ corresponding block.\\
 \hline
 \end{tabular}
 
-
 \subsection{\texttt{setq-ast}}
+\label{setq-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -254,6 +266,7 @@ Initarg & Reader & Description\\
 
 
 \subsection{\texttt{tagbody-ast}}
+\label{tagbody-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -268,6 +281,7 @@ An item can either be a \texttt{tag-ast} or an AST corresponding to
 some \texttt{statement}. 
 
 \subsection{\texttt{tag-ast}}
+\label{tag-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -278,3 +292,4 @@ Initarg & Reader & Description\\
 \end{tabular}
 
 \subsection{\texttt{the-ast}}
+\label{the-ast}
