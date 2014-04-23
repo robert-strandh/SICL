@@ -297,6 +297,7 @@ Initarg & Reader & Description\\
 \section{Abstract syntax trees for fixnum arithmetic}
 
 \subsection{\texttt{fixnum-arithmetic-ast}}
+\label{fixnum-arithmetic-ast}
 
 This AST can be thought of as a combination of the \texttt{setq-ast}
 \seesec{setq-ast} and the \texttt{if-ast} \seesec{if-ast} in that one
@@ -320,3 +321,27 @@ the operation is \emph{normal}.
 
 The fourth child is an AST that will be evaluated when the outcome of
 the operation is \emph{overflow}.
+
+\subsection{\texttt{fixnum-+-ast}}
+\label{fixnum-+-ast}
+
+This AST can only occur as the second child of a
+\texttt{fixnum-arithmetic-ast} \seesec{fixnum-arithmetic-ast}.  It has
+three children.
+
+The first and the second child are ASTs that represent the arguments
+to the fixnum operation.  The third child is typically the same
+\texttt{lexical-ast} that occurs as the first child of the parent AST,
+but this is not a requirement. 
+
+The semantics of this AST are that the operand are added and if the
+outcome is \emph{normal}, i.e., there is no overflow, then the lexical
+variable is assigned the result of the operation, i.e., the sum of the
+two operands.  If the operation results in an \emph{overflow}, then
+the lexical variable is still a fixnum representing the result of the
+operation as follows:  If the result is \emph{negative}, then the
+sum of the two operands is $2^n + r$ where $n$ is the number of bits
+used to represent a fixnum, and $r$ is the value of the lexical
+variable.  If the result is \emph{positive}, then the sum of the two
+operands is $r - 2^n$.
+
