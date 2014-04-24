@@ -296,43 +296,15 @@ Initarg & Reader & Description\\
 
 \section{Abstract syntax trees for fixnum arithmetic}
 
-\subsection{\texttt{fixnum-arithmetic-ast}}
-\label{fixnum-arithmetic-ast}
-
-This AST can be thought of as a combination of the \texttt{setq-ast}
-\seesec{setq-ast} and the \texttt{if-ast} \seesec{if-ast} in that one
-child is a \texttt{lexical-ast} \seesec{lexical-ast} to be assigned,
-one represents a test and two more represent ASTs to be executed if
-the test succeeds and fails respectively.  Hence, this AST has four
-children.
-
-The first child is an AST of type \texttt{lexical-ast}.  This AST
-represents a lexical variable that will hold the result of the fixnum
-arithmetic operation.
-
-The second child is an AST that represents the particular operation.
-Currently, only \texttt{fixnum-+-ast} and \texttt{fixnum---ast} are
-the only types of AST allowed in this position.  The operation acts
-like a test in that the outcome can be \emph{normal} or
-\emph{overflow}.  
-
-The third child is an AST that will be evaluated when the outcome of
-the operation is \emph{normal}. 
-
-The fourth child is an AST that will be evaluated when the outcome of
-the operation is \emph{overflow}.
-
 \subsection{\texttt{fixnum-+-ast}}
 \label{fixnum-+-ast}
 
-This AST can only occur as the second child of a
-\texttt{fixnum-arithmetic-ast} \seesec{fixnum-arithmetic-ast}.  It has
-three children.
+This AST can only occur as the first child of an \texttt{if-ast}
+\seesec{if-ast}.  It has three children.
 
 The first and the second child are ASTs that represent the arguments
-to the fixnum operation.  The third child is typically the same
-\texttt{lexical-ast} that occurs as the first child of the parent AST,
-but this is not a requirement. 
+to the fixnum operation.  The third child is a
+\texttt{lexical-ast} that will hold the result of the operation.
 
 The semantics of this AST are that the operand are added and if the
 outcome is \emph{normal}, i.e., there is no overflow, then the lexical
@@ -348,14 +320,12 @@ operands is $r - 2^n$.
 \subsection{\texttt{fixnum---ast}}
 \label{fixnum---ast}
 
-This AST can only occur as the second child of a
-\texttt{fixnum-arithmetic-ast} \seesec{fixnum-arithmetic-ast}.  It has
-three children.
+This AST can only occur as the first child of an \texttt{if-ast}
+\seesec{if-ast}.  It has three children.
 
 The first and the second child are ASTs that represent the arguments
-to the fixnum operation.  The third child is typically the same
-\texttt{lexical-ast} that occurs as the first child of the parent AST,
-but this is not a requirement. 
+to the fixnum operation.  The third child is a
+\texttt{lexical-ast} that will hold the result of the operation.
 
 The semantics of this AST are that the operand are subtracted and if
 the outcome is \emph{normal}, i.e., there is no overflow, then the
