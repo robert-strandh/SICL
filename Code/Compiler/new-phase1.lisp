@@ -893,10 +893,9 @@
   (destructuring-bind (variable operation normal overflow) (cdr form)
     (assert (symbolp variable))
     (let ((new-env (sicl-env:add-lexical-variable-entry environment variable)))
-      (cleavir-ast:make-fixnum-arithmetic-ast (convert variable new-env)
-					      (convert operation new-env)
-					      (convert normal new-env)
-					      (convert overflow new-env)))))
+      (cleavir-ast:make-if-ast (convert operation new-env)
+			       (convert normal new-env)
+			       (convert overflow new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
