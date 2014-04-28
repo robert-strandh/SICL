@@ -1,1 +1,10 @@
 \section{Our method}
+
+A SICL object is either an \emph{immediate object} or a \emph{heap
+  object}.  A heap object is either a \texttt{cons} cell or a
+\emph{general instance}.  General instances and cons cells have unique
+\emph{tags}.  Every general instance is represented by its
+\emph{header}.  The header contains two pointers, one to the
+\emph{class} of the instance and one to the \emph{rack} of the
+instance.  The pointer to the class is a tagged pointer to another
+general instance.  The pointer to the rack is a raw machine pointer.  
