@@ -17,3 +17,18 @@ This representation is shown in \refFig{fig-general-instance}.
 \caption{\label{fig-general-instance}
 Representation of a general instance.}
 \end{figure}
+
+Each class is assigned a \emph{unique number} starting at $0$.  The
+number is assigned when the class is finalized, and a new number is
+assigned whenever a class is finalized as a result of changes to the
+class or any of its superclasses.  Currently, class numbers are never
+reused.  This way of allocating class numbers is advantageous because
+it often results in a subtree of classes occupying a \emph{dense
+  interval} of class numbers, the importance of which is discussed
+below. 
+
+The first element of the rack of every general instance is called the
+\emph{stamp}.  The stamp is the unique number of the class as it was
+when the instance was created updated as a result of changes to its
+class.  An instance is \emph{obsolete} if and only if its stamp is not
+the same as the unique number of its class.
