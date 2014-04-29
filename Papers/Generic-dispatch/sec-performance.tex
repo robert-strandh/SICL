@@ -29,7 +29,7 @@ called in each iteration:
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with i = *i*
         repeat 1000000000
-	do (x i)))
+        do (x i)))
 \end{verbatim}
 
 In order to minimize overhead due to looping, we set the
@@ -84,7 +84,7 @@ simulated slot reader:
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
-	do (y j)))
+        do (y j)))
 \end{verbatim}
 
 On our computer executing this function takes less than $3$ seconds,
@@ -125,7 +125,7 @@ test:
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
-	do (yy j)))
+        do (yy j)))
         maximize (yy (car l))))
 \end{verbatim}
 
