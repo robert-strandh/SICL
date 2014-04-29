@@ -95,3 +95,98 @@ simulated slot reader:
 
 On our computer executing this function takes around $5$ seconds,
 which represents a significant improvement.
+
+The comparison above is somewhat biased in our favor, because we can
+not be sure that a single test will suffice in order to determine the
+correct method to invoke.  For that reason, we devised the following
+test: 
+
+\begin{verbatim}
+(defun yy (instance)
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (let* ((rack (s-rack instance))
+         (stamp (svref rack 0)))
+    (declare (type fixnum stamp))
+    (cond ((> stamp 1280)
+           (error "1"))
+          ((> stamp 640)
+           (error "2"))
+          ((> stamp 320)
+           (error "3"))
+          ((> stamp 160)
+           (error "4"))
+          ((> stamp 80)
+           (error "5"))
+          ((> stamp 40)
+           (error "6"))
+          ((> stamp 20)
+           (error "7"))
+          ((> stamp 10)
+           (error "8"))
+          (t (svref rack 1)))))
+
+(proclaim '(notinline yy))
+
+(defun gg ()
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (loop for l = *l2* then (cdr l)
+        repeat 1000000000
+        maximize (yy (car l))))
+\end{verbatim}
+
+This test simulates a situation where the generic dispatch needs $8$
+tests to determine what method to call, which can be thought of as a
+generic function with $256$ methods, or alternatively a single method
+but where the call history contains $256$ classes with sparse unique
+numbers. 
+
+On our computer executing this function takes around $6.5$ seconds,
+which seems to suggest that the number of comparisons has only a
+modest impact on the performance.  
+
+The following test is meant to show the impact of a very large number
+of classes, so that constants are no longer very small:
+
+\begin{verbatim}
+(defun gg ()
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (loop for l = *l2* then (cdr l)
+        repeat 1000000000
+        maximize (yy (car l))))
+
+(defun yyy (instance)
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (let* ((rack (s-rack instance))
+         (stamp (svref rack 0)))
+    (declare (type fixnum stamp))
+    (cond ((> stamp 12800000)
+           (error "1"))
+          ((> stamp 6400000)
+           (error "2"))
+          ((> stamp 3200000)
+           (error "3"))
+          ((> stamp 1600000)
+           (error "4"))
+          ((> stamp 800000)
+           (error "5"))
+          ((> stamp 400000)
+           (error "6"))
+          ((> stamp 200000)
+           (error "7"))
+          ((> stamp 100000)
+           (error "8"))
+          (t (svref rack 1)))))
+
+(proclaim '(notinline yyy))
+
+(defun ggg ()
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (loop for l = *l2* then (cdr l)
+        repeat 1000000000
+        maximize (yyy (car l))))
+\end{verbatim}
+
+On our computer executing this function takes around $6.5$ seconds,
+which seems to suggest that the number size of the constants have very
+little impact on performance.
+
