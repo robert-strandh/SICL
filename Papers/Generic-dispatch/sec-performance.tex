@@ -101,22 +101,14 @@ test:
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
     (declare (type fixnum stamp))
-    (cond ((> stamp 1280)
-           (error "1"))
-          ((> stamp 640)
-           (error "2"))
-          ((> stamp 320)
-           (error "3"))
-          ((> stamp 160)
-           (error "4"))
-          ((> stamp 80)
-           (error "5"))
-          ((> stamp 40)
-           (error "6"))
-          ((> stamp 20)
-           (error "7"))
-          ((> stamp 10)
-           (error "8"))
+    (cond ((> stamp 1280) (error "1"))
+          ((> stamp 640)  (error "2"))
+          ((> stamp 320)  (error "3"))
+          ((> stamp 160)  (error "4"))
+          ((> stamp 80)   (error "5"))
+          ((> stamp 40)   (error "6"))
+          ((> stamp 20)   (error "7"))
+          ((> stamp 10)   (error "8"))
           (t (svref rack 1)))))
 
 (proclaim '(notinline yy))
@@ -137,7 +129,9 @@ numbers.
 
 On our computer executing this function takes less than $4.5$ seconds,
 which seems to suggest that the number of comparisons has only a
-modest impact on the performance.  
+modest impact on the performance.  In fact, the numbers suggest that
+less than a single additional clock cycle per additional comparison is
+required. 
 
 The following test is meant to show the impact of a very large number
 of classes, so that constants are no longer very small:
@@ -148,22 +142,14 @@ of classes, so that constants are no longer very small:
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
     (declare (type fixnum stamp))
-    (cond ((> stamp 12800000)
-           (error "1"))
-          ((> stamp 6400000)
-           (error "2"))
-          ((> stamp 3200000)
-           (error "3"))
-          ((> stamp 1600000)
-           (error "4"))
-          ((> stamp 800000)
-           (error "5"))
-          ((> stamp 400000)
-           (error "6"))
-          ((> stamp 200000)
-           (error "7"))
-          ((> stamp 100000)
-           (error "8"))
+    (cond ((> stamp 12800000) (error "1"))
+          ((> stamp 6400000)  (error "2"))
+          ((> stamp 3200000)  (error "3"))
+          ((> stamp 1600000)  (error "4"))
+          ((> stamp 800000)   (error "5"))
+          ((> stamp 400000)   (error "6"))
+          ((> stamp 200000)   (error "7"))
+          ((> stamp 100000)   (error "8"))
           (t (svref rack 1)))))
 
 (proclaim '(notinline yyy))
