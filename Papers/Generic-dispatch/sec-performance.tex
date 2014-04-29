@@ -180,3 +180,19 @@ execute as the previous one, which seems to suggest that the size of
 the constants has very little impact on performance, at least on our
 platform.
 
+The tests include loop overhead that should be subtracted from the
+timing results, but this overhead is probably very small, so we can
+ignore it.  Furthermore, disassembling the simulated slot readers show
+that the code is very close to what we expect the SICL compiler to
+emit, so there is very little overhead there as well.  
+
+Notice, however, that the results all include the overhead of a
+function call.  This function call can not be avoided, which suggests
+that our results reflect the real observable improvement.  However,
+in order to appreciate the performance improvement of dispatch
+mechanism itself, the overhead of the function call should not be
+included, which suggests that the net improvement is significantly
+higher than a factor $3$. 
+
+
+
