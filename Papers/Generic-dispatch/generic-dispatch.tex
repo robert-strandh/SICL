@@ -23,7 +23,15 @@ Robert Strandh\\
 \maketitle
 
 \begin{abstract}
-Some abstract.
+We describe a method for generic dispatch that is adapted to modern
+computers where accessing memory is potentially quite expensive.
+Instead of the traditional hashing scheme used by PCL, we assign a
+\emph{unique number} to each class and the dispatch consists of
+comparisons of the number assigned to an instance to a certain number
+of (usually small) constant integers.  While our implementation (SICL)
+is not yet in a state where we are able to get exact performance
+figures, a conservative simulation suggests that our method is
+significantly fast than the one used in SBCL, which uses PCL.
 \end{abstract}
 
 \category{H.4}{Information Systems Applications}{Miscellaneous}
