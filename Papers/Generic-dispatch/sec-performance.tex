@@ -1,1 +1,47 @@
 \section{Performance of our method}
+
+Unfortunately, our system (called SICL) is not yet in sufficiently
+finalized to allow us to make any tests of performance.  However, we
+constructed a few simulations that give us some indications of the
+performance of our method compared to the method used by PCL.
+
+In our first test, we decided to measure the time it takes for the
+generic dispatch of a simple slot reader. 
+
+First, we created a class with a single slot and a reader for that
+slot like this:
+
+\begin{verbatim}
+(defclass c () ((%x :initarg :x :reader x)))  
+\end{verbatim}
+
+Next, we created a circular list of a single instance of this class:
+
+\begin{verbatim}
+(defparameter *l* (list (make-instance 'c :x 1)))
+
+(setf (cdr *l*) *l*)
+\end{verbatim}
+
+Then, we created a function containing a loop where each iteration
+reads the slot x:
+
+\begin{verbatim}
+(defun f ()
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (loop for l = *l* then (cdr l)
+        repeat 1000000000
+        maximize (x (car l))))
+\end{verbatim}
+
+In order to minimize overhead due to looping, we set the
+\texttt{optimize} flags as shown. 
+
+The loop calls the reader $10^9$ times.  On our computer (an x86-64
+running GNU/Linux) executing this function takes around $16$ seconds.
+That time includes not only calling the slot reader, but also
+computing the \texttt{car} and the \texttt{cdr} of a \texttt{cons}
+cell in each iteration, computing the \texttt{max}, and of course loop
+iteration overhead.  Furthermore, calling the slot reader involves not
+only the generic dispatch, but also checking the argument count and
+some other function-call overhead.
