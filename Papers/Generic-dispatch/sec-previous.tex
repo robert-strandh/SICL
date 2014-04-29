@@ -1,3 +1,77 @@
 \section{Previous work}
 
-PCL \cite{Kiczales:1990:EMD:91556.91600}
+\subsection{PCL}
+
+In PCL\footnote{PCL stands for Portable Common Loops.}
+\cite{Kiczales:1990:EMD:91556.91600} a standard object is represented
+as a two-word header object where the first words is a pointer to a
+\emph{class wrapper} and the second word is a pointer to the
+\emph{slot vector} of the instance.  The class wrapper is also a
+two-word structure that contains a \emph{hash seed} and a pointer to
+the class object. 
+
+Each generic function contains a \emph{memoization table}.  Each entry
+of the table contains a class wrapper and the entry point for the
+effective method to be called for instances of the corresponding
+class.  The memoization table uses a simple hashing mechanism, so that
+the hash seed of the class wrapper of the argument is reduced modulo
+the size of the memoization table in order to find the corresponding
+entry.  The class wrapper in the entry is compared using \texttt{eq}
+to the class wrapper of the argument, and if they are the same, the
+corresponding effective method is called.  When there is no hit, it
+could be that there is a hash collision, or it could be that no entry
+exists in the table for the class of the argument.  Thus, if there is
+no initial hit, the table is searched sequentially until an entry is
+found or all the entries have been examined. 
+
+In the best case then, the following operations are required for a
+simple slot reader generic function:
+
+\begin{enumerate}
+\item Access the class wrapper of the argument; a memory access.
+\item Access the hash seed of the class wrapper; a memory access.
+\item Access the size of the memoization table; a memory access.
+\item Reduce the hash seed of the class wrapper modulo the size of the
+  memoization table; a simple masking operation if the size of the
+  table is a power of $2$.
+\item Access the memoization table of the generic function; a memory
+  access.
+\item Access the class wrapper in the memoization table entry; a
+  memory access.
+\item Compare the class wrapper in the memoization table entry to the
+  class wrapper of the argument; a simple register comparison.
+\item Access the entry point of the effective method in the
+  memoization table entry; a memory access.
+\item Jump to the entry point of the effective method; an
+  unconditional jump.
+\item The effective method accesses the slot vector of the instance; a
+  memory access.
+\item The slot containing the desired object is read and returned; a
+  memory access.
+\end{enumerate}
+
+As we can see, there are $8$ memory accesses involved. 
+
+The authors also mention an optimization for slot readers and slot
+writers in the case where such a generic function is called with only
+a few different classes.  In that case, they suggest replacing the
+table lookup with a simple test for the different cases.  However,
+since class wrappers are heap-allocated objects, a copying garbage
+collector may move them around.  For that reason, class wrappers can
+not be inline constants in the code, and must be stored in the generic
+function.  If such an optimization is implemented, the mechanism is
+reduced to the following steps:
+
+\begin{enumerate}
+\item Access the class wrapper of the argument; a memory access.
+\item Access one or more class wrappers stored in the generic
+  function; at least one memory access.
+\item Compare the class wrapper of the argument to the class
+  wrapper(s) stored in the generic function; fast register operation.
+\item Access the slot vector of the instance; a memory access.
+\item The slot containing the desired object is read and returned; a
+  memory access.
+\end{enumerate}
+
+The minimum number of memory access is reduced to $4$ if the generic
+function is called with instances of a single class.  
