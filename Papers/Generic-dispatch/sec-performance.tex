@@ -44,4 +44,39 @@ computing the \texttt{car} and the \texttt{cdr} of a \texttt{cons}
 cell in each iteration, computing the \texttt{max}, and of course loop
 iteration overhead.  Furthermore, calling the slot reader involves not
 only the generic dispatch, but also checking the argument count and
-some other function-call overhead.
+some other function-call overhead.  For now, we ignore all this
+overhead. 
+
+To get some indication of the performance of our method, we need to
+simulate the layout of a SICL general instance.  We do that by
+defining the header as a \cl{} \texttt{struct} and by using a
+\emph{simple vector} for the rack.  The definition of the header looks
+like this:
+
+\begin{verbatim}
+(defstruct s class rack)
+\end{verbatim}
+
+We create a circular list of a simulated general instance as follows:
+
+\begin{verbatim}
+(defparameter *l2* 
+  (let ((rack (make-array 2 :initial-contents '(10 1))))
+    (list (make-s :class nil :rack rack))))
+
+(setf (cdr *l2*) *l2*)
+\end{verbatim}
+
+Our simulated slot reader is defined like this:
+
+\begin{verbatim}
+(defun y (instance)
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (let* ((rack (s-rack instance))
+         (stamp (svref rack 0)))
+    (if (= stamp 10)
+        (svref rack 1)
+        (error "1"))))
+
+(proclaim '(notinline y))
+\end{verbatim}
