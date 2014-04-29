@@ -74,9 +74,24 @@ Our simulated slot reader is defined like this:
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
+    (declare (type fixnum stamp))
     (if (= stamp 10)
         (svref rack 1)
         (error "1"))))
 
 (proclaim '(notinline y))
 \end{verbatim}
+
+Finally, we define a function containing a loop that calls our
+simulated slot reader:
+
+\begin{verbatim}
+(defun g ()
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (loop for l = *l2* then (cdr l)
+        repeat 1000000000
+        maximize (y (car l))))
+\end{verbatim}
+
+On our computer executing this function takes around $5$ seconds,
+which represents a significant improvement.
