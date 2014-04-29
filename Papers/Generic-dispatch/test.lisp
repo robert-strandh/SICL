@@ -1,24 +1,20 @@
 (defclass c () ((%x :initarg :x :reader x)))
 
-(defparameter *l* (list (make-instance 'c :x 1)))
-               
-(setf (cdr *l*) *l*)
+(defparameter *i* (make-instance 'c :x 1))
 
 (defun f ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
-  (loop for l = *l* then (cdr l)
+  (loop with i = *i*
         repeat 1000000000
-        maximize (x (car l))))
+	do (x i)))
 
-(time (f))
+(time (f)) ; 13s
 
 (defstruct s class rack)
 
-(defparameter *l2* 
+(defparameter *j* 
   (let ((rack (make-array 2 :initial-contents '(10 1))))
-    (list (make-s :class nil :rack rack))))
-
-(setf (cdr *l2*) *l2*)
+    (make-s :class nil :rack rack)))
 
 (defun y (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
@@ -33,11 +29,11 @@
 
 (defun g ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
-  (loop for l = *l2* then (cdr l)
+  (loop with j = *j*
         repeat 1000000000
-        maximize (y (car l))))
+	do (y j)))
 
-(time (g))
+(time (g)) ; < 3s
 
 (defun yy (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
@@ -66,9 +62,11 @@
 
 (defun gg ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
-  (loop for l = *l2* then (cdr l)
+  (loop with j = *j*
         repeat 1000000000
-        maximize (yy (car l))))
+	do (yy j)))
+
+(time (gg)) ; < 4.5s
 
 (defun yyy (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
@@ -97,6 +95,8 @@
 
 (defun ggg ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
-  (loop for l = *l2* then (cdr l)
+  (loop with j = *j*
         repeat 1000000000
-        maximize (yyy (car l))))
+        do (yyy j)))
+
+(time (ggg)) ; < 4.5s
