@@ -34,7 +34,15 @@ as fixnum or floating-point addition and inline them, but the default
 function could very well be an ordinary generic function without any
 significant loss of performance. 
 
-Talk about print-object and other special cases.
+Although it is easy to switch to a different mechanism when the number
+of methods turns out to be very large, or more generally, when the
+call history contains a large number of elements, preliminary tests
+indicate that it might not be necessary to do so.  The canonical
+example of a generic function where a different mechanism might be
+considered is that of \texttt{print-object}.  However, our preliminary
+tests show that the additional cost of a comparison is very small (a
+single processor cycle) so that even if the call history is very
+large, the cost of these comparisons is modest. 
 
 Talk about the future of SICL.
  
