@@ -11,6 +11,29 @@ generic dispatch mechanism in SICL.
 Having said that, we can still speculate about the impact of our
 method, should the results be confirmed in a more realistic setting. 
 
+With our method, the amount of work to be done in a simple slot reader
+or slot writer is no greater than the work needed for a non-generic
+version, such as \texttt{symbol-name} or \texttt{package-nicknames} in
+a typical \cl{} implementation.  Our method therefore makes it
+feasible to make such readers and writers generic, and this is exactly
+what we do in SICL.  We use the same \clos{} mechanisms (i.e., class
+initialization, class finalization, etc.) for built-in classes as
+those used for standard classes, even though built-in classes can not
+be redefined.  By using the same mechanism, we remove a number of
+special cases and we are able to simplify the overall structure of the
+system. 
+
+It is even possible to go one step further.  The amount of work
+required in our dispatch mechanism is no greater than the work needed
+in a binary addition function that tests for the exact type of its
+arguments.  Hence it is entirely feasible to make such a function
+generic, allowing the user to add methods for other kinds of objects
+such as polynomials or other mathematical objects.  For reasonable
+performance, it would still be required to capture special cases such
+as fixnum or floating-point addition and inline them, but the default
+function could very well be an ordinary generic function without any
+significant loss of performance. 
+
 Talk about print-object and other special cases.
 
 Talk about the future of SICL.
