@@ -3,6 +3,22 @@
 PCL \cite{Bobrow:1986:CML:28697.28700} is a common system to include
 in a \cl{} implementation.  PCL was written so that \clos{} could be
 added to a pre-\clos{} Common Lisp implementation such as the one
-defined in CLtL \cite{Steele:1984:CLL} without too much effort.  
+defined in CLtL \cite{Steele:1984:CLL} without too much effort.  Even
+\cl{} implementations that do not use PCL (such as ECL) include
+\clos{} late in the process of building a complete system.
+
+\sicl{}\footnote{https://github.com/robert-strandh/SICL} takes a
+different approach.  With very few exceptions, \sicl{} is written in
+entirely standard \cl{}, and it is designed to be bootstrapped using a
+conforming \cl{} implementation, which therefore includes a complete
+implementation of \clos{}.  \sicl{} takes advantage of the conforming
+host by making extensive use of \clos{}.  In particular, \clos{} is
+bootstrapped \emph{first}, using the host \clos{} implementation to
+break circularity in definitions. 
+
+The \sicl{} implementation of \clos{} is a truly metacircular
+implementation in that very few compromises are necessary because of
+bootstrapping or metastability issues.
 
 AMOP \cite{Kiczales:1991:AMP:574212}
+
