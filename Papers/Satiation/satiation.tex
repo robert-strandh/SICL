@@ -1,0 +1,39 @@
+\documentclass{acm_proc_article-sp}
+\usepackage[utf8]{inputenc}
+
+\def\inputfig#1{\input #1}
+\def\inputtex#1{\input #1}
+\def\inputal#1{\input #1}
+\def\inputcode#1{\input #1}
+
+\inputtex{logos.tex}
+\inputtex{refmacros.tex}
+\inputtex{other-macros.tex}
+
+\begin{document}
+\title{Resolving metastability issues at bootstrapping}
+\numberofauthors{1}
+\author{\alignauthor
+Robert Strandh\\
+\affaddr{University of Bordeaux}\\
+\affaddr{351, Cours de la Libération}\\
+\affaddr{Talence, France}\\
+\email{robert.strandh@u-bordeaux1.fr}}
+
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\category{H.4}{Information Systems Applications}{Miscellaneous}
+%A category including the fourth, optional field follows...
+\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
+
+\inputtex{sec-introduction.tex}
+\inputtex{sec-previous.tex}
+\inputtex{sec-our-method.tex}
+\inputtex{sec-conclusions.tex}
+
+\bibliographystyle{abbrv}
+\bibliography{generic-dispatch}
+\end{document}
