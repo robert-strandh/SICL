@@ -1,13 +1,13 @@
 \section{Our technique}
 
-A SICL object is either an \emph{immediate object} or a \emph{heap
+A \sicl{} object is either an \emph{immediate object} or a \emph{heap
   object}.  A heap object is either a \texttt{cons} cell or a
 \emph{general instance}.  General instances and cons cells have unique
 \emph{tags}.  Every general instance is represented by its
 \emph{header}.  The header contains two pointers, one to the
 \emph{class} of the instance and one to the \emph{rack} of the
 instance.  The pointer to the class is a tagged pointer to another
-general instance.  The pointer to the rack is a raw machine pointer.  
+general instance.  The pointer to the rack is a raw machine pointer.
 This representation is shown in \refFig{fig-general-instance}.
 
 \begin{figure}
@@ -32,3 +32,20 @@ The first element of the rack of every general instance is called the
 when the instance was created updated as a result of changes to its
 class.  An instance is \emph{obsolete} if and only if its stamp is not
 the same as the unique number of its class.
+
+Like the technique used by PCL, our technique automatically detects
+obsolete instances.  When a class is updated, every generic function
+that dispatches on this class%
+\footnote{The function
+  \texttt{specializer-direct-generic-functions} returns a list of
+  generic functions that have a method using the class as a specializer.}
+is determined, and the \emph{call history} of each such generic
+function is searched for entries using the class.  These entries are
+removed and then the discriminating function is either recomputed from
+the call history, or is set to a function that, when invoked,
+recomputes the discriminating function from the call history.   The
+result is that, if an obsolete instance is used in dispatch, its stamp
+will not be valid for dispatch, so the discriminating function will
+fail to recognize the instance, forcing an update of the instance, and
+a new dispatch attempt. 
+
