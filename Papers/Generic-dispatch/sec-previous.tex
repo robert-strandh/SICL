@@ -1,5 +1,36 @@
 \section{Previous work}
 
+Most work on generic dispatch has been done in the context of more
+mainstream programming languages such as \cplusplus{} or \java{}.
+There are three aspects of \cl{} that complicate the situation with
+respect to such languages:
+
+\begin{enumerate}
+\item Multiple inheritance.
+\item Multiple dispatch.
+\item Interactivity.
+\end{enumerate}
+
+Multiple inheritance%
+\footnote{\cplusplus{} also has multiple inheritance of course.}
+makes it possible for a slot to have a different \emph{position} in
+the slot vector in instances of different classes.  Slot accessors
+must take this possibility into account.
+
+Multiple dispatch makes it more difficult to use table-based
+techniques with entries for each class, because the size of the table
+grows exponentially in the number of specialized parameters.
+Table-compression techniques help overcome some of these problems, at
+the cost of a more complicated, and thus more expensive, dispatch
+algorithm. 
+
+Many existing techniques are based on the complete program being
+available in order to compute dispatch tables.  The interactive nature
+of \cl{} makes it more difficult to use such techniques, because every
+table may have to be recomputed whenever a small modification is made
+to a class.  Though, some techniques may amortize this cost by
+\emph{invalidating} some tables and recomputing them when required.
+
 \subsection{PCL}
 
 In PCL\footnote{PCL stands for Portable Common Loops.}
