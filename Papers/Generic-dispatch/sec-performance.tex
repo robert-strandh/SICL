@@ -28,20 +28,22 @@ called in each iteration:
 (defun f ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with i = *i*
-        repeat 1000000000
-        do (x i)))
+        repeat 10000
+        do (loop repeat 100000
+                 do (x i))))
 \end{verbatim}
 
 In order to minimize overhead due to looping, we set the
-\texttt{optimize} flags as shown. 
+\texttt{optimize} flags as shown.
 
-The loop calls the reader $10^9$ times.  On our computer (a 3.3GHz
-x86-64 running GNU/Linux) executing this function takes around $13$
-seconds.  That time includes not only calling the slot reader, but
-also the loop iteration overhead.  Furthermore, calling the slot
-reader involves not only the generic dispatch, but also checking the
-argument count and some other function-call overhead.  For now, we
-ignore all this overhead.
+The loop calls the reader $10^9$ times.  Since $10^9$ may not be a
+fixnum on some $32$-bit platforms, we use a nested loop.  On our
+computer (a 3.3GHz x86-64 running GNU/Linux) executing this function
+takes around $13$ seconds.  That time includes not only calling the
+slot reader, but also the loop iteration overhead.  Furthermore,
+calling the slot reader involves not only the generic dispatch, but
+also checking the argument count and some other function-call
+overhead.  For now, we ignore all this overhead.
 
 To get some indication of the performance of our method, we need to
 simulate the layout of a SICL general instance.  We do that by
