@@ -31,6 +31,11 @@ table may have to be recomputed whenever a small modification is made
 to a class.  Though, some techniques may amortize this cost by
 \emph{invalidating} some tables and recomputing them when required.
 
+The fact that \cl{} is interactive also makes it possible for the
+existence of \emph{obsolete instances}, i.e., instances where the
+slots no longer correspond to the definition of the class, so they
+have to be \emph{updated} before they are inspected.  
+
 \subsection{PCL}
 
 In PCL\footnote{PCL stands for Portable Common Loops.}
@@ -106,6 +111,11 @@ reduced to the following steps:
 
 The minimum number of memory access is reduced to $4$ if the generic
 function is called with instances of a single class.  
+
+The technique used by PCL automatically catches obsolete instances.
+When a class is modified, the current wrapper is eliminated from all
+existing memoization tables, forcing the lookup to fail, and thus
+triggering the update of the obsolete instance.  
 
 \subsection{Other work}
 
