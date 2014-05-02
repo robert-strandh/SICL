@@ -1,20 +1,20 @@
 \section{Conclusions and future work}
 
-We have presented a fast method for generic dispatch in \cl{}.
+We have presented a fast technique for generic dispatch in \cl{}.
 Clearly, our tests do not represent any scientifically convincing
-argument that our method is faster than that of PCL.  Rather, the
-presentation of the method itself should be considered essence of the
-paper, and the performance simulations should only be viewed as
-indications that our method is worth pursuing as the bases of the
-generic dispatch mechanism in SICL. 
+argument that our technique is faster than existing
+techniques. Rather, the presentation of the technique itself should be
+considered essence of the paper, and the performance simulations
+should only be viewed as indications that our technique is worth
+pursuing as the bases of the generic dispatch mechanism in SICL.
 
 Having said that, we can still speculate about the impact of our
-method, should the results be confirmed in a more realistic setting. 
+technique, should the results be confirmed in a more realistic setting. 
 
-With our method, the amount of work to be done in a simple slot reader
+With our technique, the amount of work to be done in a simple slot reader
 or slot writer is no greater than the work needed for a non-generic
 version, such as \texttt{symbol-name} or \texttt{package-nicknames} in
-a typical \cl{} implementation.  Our method therefore makes it
+a typical \cl{} implementation.  Our technique therefore makes it
 feasible to make such readers and writers generic, and this is exactly
 what we do in SICL.  We use the same \clos{} mechanisms (i.e., class
 initialization, class finalization, etc.) for built-in classes as
@@ -44,5 +44,12 @@ tests show that the additional cost of a comparison is very small (a
 single processor cycle) so that even if the call history is very
 large, the cost of these comparisons is modest. 
 
-Talk about the future of SICL.
- 
+For a scientifically significant comparison of our technique to
+existing techniques, we first need to get \sicl{} into a sufficiently
+finished state that more elaborate tests can be designed.  In
+particular, we then need to test situations where cache misses might
+significantly impact performance.  Furthermore, we need to gather
+information about techniques used in existing high-performance
+implementations, which may not be easy since several of the existing
+high-performance implementations are commercial and closed source.
+\fixme{Talk about the future of SICL.}
