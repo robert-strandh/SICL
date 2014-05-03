@@ -45,6 +45,23 @@ calling the slot reader involves not only the generic dispatch, but
 also checking the argument count and some other function-call
 overhead.  For now, we ignore all this overhead.
 
+{\small\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+Impl & OS & Proc & Clock & Time & Cycles\\
+\hline\hline
+SBCL 1.1.8 & Linux & x86-64  & 3.3GHz & 13 & 39\\
+SBCL 1.1.6 & MacOS & x86-64 & 3GHz & 45 & 135\\
+SBCL 1.1.13 & MacOS & x86-64 & 1.8GHz & 11 & 20 \\
+SBCL 1.1.16 & MacOS & x86-64 & 1.7GHz & 4.7 & 8 \\
+CMU 20d & Linux & x86-64 & 3GHz & 158 & 474\\
+Allegro 9.0 & MacOS & x86-64 & 2.2GHz & 10 & 22\\
+Clozure 1.9 & MacOS & x86-64 & 1.7GHz & 21 & 36\\
+Clozure 1.9 & Linux & x86-64 & 3GHz & 122 & 366\\
+ABCL 1.2.1 & MacOS & x86-64 & 1.8GHz & 183 & 329\\
+ABCL 1.0.1 & Linux & x86-64 & 3GHz & 152 & 456\\
+\hline
+\end{tabular}}
+
 To get some indication of the performance of our method, we need to
 simulate the layout of a SICL general instance.  We do that by
 defining the header as a \cl{} \texttt{struct} and by using a
