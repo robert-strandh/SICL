@@ -33,6 +33,90 @@ when the instance was created updated as a result of changes to its
 class.  An instance is \emph{obsolete} if and only if its stamp is not
 the same as the unique number of its class.
 
+Together, the unique number of the class and the stamp of the instance
+play a role similar to that of the \emph{class wrapper} of PCL.  The
+unique number of the class corresponds to the most recent wrapper for
+the class and the stamp corresponds to a wrapper that may have become
+obsolete as a result of updates to the class.  
+
+Our dispatch technique works by comparing the stamp of each
+specialized argument to a set of non-negative constant integers in a
+way similar to a binary search.  The result of these comparisons
+identifies the argument as being an instance of a particular class, or
+of one of a set of classes for which the same effective method is
+valid.  As an example, let us take a generic function that specializes
+on a single argument, and that has already been called with classes
+numbered 1, 4, 5, 6, 8, and 10, where classes numbered 4, 5, and 6
+result in the same effective method being invoked.  The discriminating
+function of this generic function would then look like this:
+
+\begin{verbatim}
+(tagbody 
+    (if (< stamp 7)
+        (if (< stamp 4)
+            (if (= stamp 1)
+                (go m1)
+                (go miss))
+            (go m2))
+        (if (= stamp 8)
+            (go m3)
+            (if (= stamp 10)
+                (go m4)
+                (go miss))))
+  m1
+    ;; invoke method for class numbered 1
+     ...
+    (go out)
+  m2
+    ;; invoke method for classes numbered 4, 5, 6
+     ...
+    (go out)
+  m3
+    ;; invoke method for class numbered 8
+     ...
+    (go out)   
+  m4
+    ;; invoke method for class numbered 10
+     ...
+    (go out)   
+  miss
+    ;; handle miss
+    ...
+  out)
+\end{verbatim}
+
+This discriminating function is generated from the \emph{call history}
+of the generic function.  The call history is a simple list of
+entries, where each entry contains a list of classes for each
+specialized parameter and a corresponding effective method to call. 
+
+As can be seen from the example above, in this case, a maximum of
+three tests will be performed for six different classes.  The number
+of tests required is logarithmic in the number of entries of the call
+history.
+
+The advantage of this technique is that on modern processors,
+comparing integers is very fast, whereas table lookups require memory
+accesses which are significantly more costly in general.
+
+In terms of different types of operations, our technique
+requires the following steps for a simple slot reader:
+
+\begin{enumerate}
+\item Access the rack of the argument; a memory access.
+\item Access the stamp of the rack; a memory access.
+\item Compare the stamps to a set of constants; fast register
+  operations.
+\item The slot containing the desired object is read and returned; a
+  memory access.
+\end{enumerate}
+
+As we can see, only 3 memory accesses are required.  The number of
+comparisons is not constant, of course, but it is very small for the
+vast majority of generic functions, and quite reasonable (compared to
+the cost of a memory access) even when a very large number cases need
+to be handled. 
+
 Like the technique used by PCL, our technique automatically detects
 obsolete instances.  When a class is updated, every generic function
 that dispatches on this class%
