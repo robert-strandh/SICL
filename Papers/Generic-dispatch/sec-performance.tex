@@ -68,6 +68,17 @@ In the table, we have included only implementations reputed to be
 CLISP and ECL compare favorably to the slower implementations that we
 tested. 
 
+Note that the test above was designed to be as advantageous as
+possible to table-based methods in the following ways:
+
+\begin{itemize}
+\item The only instance involved will rapidly reside in the cache, so
+  the additional cost of memory references is not measured.
+\item There is a single class involved, allowing the implementation to
+  select a better strategy for the discriminating function, as the
+  paper on PCL suggests. 
+\end{itemize}
+
 To get some indication of the performance of our technique, we need to
 simulate the layout of a SICL general instance.  We do that by
 defining the header as a \cl{} \texttt{struct} and by using a
