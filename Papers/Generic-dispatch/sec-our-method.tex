@@ -133,3 +133,10 @@ will not be valid for dispatch, so the discriminating function will
 fail to recognize the instance, forcing an update of the instance, and
 a new dispatch attempt. 
 
+In contrast to the technique used by PCL, our technique makes it more
+costly to update classes.  In PCL, invalidating a class wrapper is a
+simple matter of setting the hash seed to $0$.  Our technique requires
+that the call history be updated and the discriminating function to be
+recomputed for every generic function with a method that specializes
+on the class being updated.  While this cost is unbounded, it is
+acceptable in practice. 
