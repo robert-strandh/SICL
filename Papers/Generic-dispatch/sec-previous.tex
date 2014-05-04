@@ -136,4 +136,10 @@ Their method is applicable only to \emph{single inheritance} systems.
 The technical report of Bachrach and Burke \cite{Bachrach:2000} is
 concerned with the language Dylan which is similar to \cl{} in many
 respects, although in terms of generic dispatch, it allows for
-specializers other than classes and singletons. 
+specializers other than classes and singletons, and features such as
+\emph{sealing} of classes and methods allow for further optimizations
+of generic dispatch.  Their approach is similar to ours, in that they
+construct a \emph{decision tree} for each generic function.  It is
+different from ours in that the decision tree is not implemented as
+inline code, but instead as a data structure consisting of
+\emph{engine nodes}.
