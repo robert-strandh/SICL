@@ -145,6 +145,7 @@ inline code, but instead as a data structure consisting of
 \emph{engine nodes}, requiring the dispatch code to make several
 memory accesses.  On the other hand, their technique is more flexible
 in that it allows for each call site to exploit the decision tree and
-optimize according to locally available information.  Unfortunately,
-this technical report is in an unfinished state, making it hard to
-determine the work and the results behind it.
+optimize according to locally available information, sometimes
+resulting in particular call sites not requiring any dispatch code at
+all.  Unfortunately, this technical report is in an unfinished state,
+making it hard to determine the work and the results behind it.
