@@ -140,3 +140,15 @@ that the call history be updated and the discriminating function to be
 recomputed for every generic function with a method that specializes
 on the class being updated.  While this cost is unbounded, it is
 acceptable in practice. 
+
+While not directly related to dispatch performance, an important
+consequence of the split between the header and the rack for every
+general instance is that generic functions can be updated without
+requiring locking, by using a simple version of software transactional
+memory.  When a generic function needs to be updated, for instance as
+a result of one of the classes it specializes on being updated, the
+rack and the call history can be copied, and then modifications can be
+made to the copy, and finally, the copied rack can replace the
+original rack by the use of a \texttt{compare-and-swap} instruction.
+Should the instruction fail, the attempted update is restarted. 
+
