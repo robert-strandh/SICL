@@ -142,4 +142,7 @@ of generic dispatch.  Their approach is similar to ours, in that they
 construct a \emph{decision tree} for each generic function.  It is
 different from ours in that the decision tree is not implemented as
 inline code, but instead as a data structure consisting of
-\emph{engine nodes}.
+\emph{engine nodes}, requiring the dispatch code to make several
+memory accesses.  On the other hand, their technique is more flexible
+in that it allows for each call site to exploit the decision tree and
+optimize according to locally available information.
