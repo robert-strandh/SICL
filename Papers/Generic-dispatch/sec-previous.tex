@@ -117,6 +117,15 @@ When a class is modified, the current wrapper is eliminated from all
 existing memoization tables, forcing the lookup to fail, and thus
 triggering the update of the obsolete instance.  
 
+While not mentioned in the published work, PCL also allows for a
+discriminating function that tests argument types using
+\texttt{typep}.  While in general quite expensive, \texttt{typep} can
+be efficient when a built-in type known at compile time is tested for.
+If the number of cases is small and the \texttt{typep} test can be
+determined to be inexpensive, then this kind of discriminating
+function could potentially achieve performance similar to our
+technique. 
+
 \subsection{Other work}
 
 The work of Zibin and Gil \cite{Zibin:2002:FAC:582419.582434} also
