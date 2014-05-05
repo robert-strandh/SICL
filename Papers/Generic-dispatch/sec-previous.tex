@@ -170,3 +170,14 @@ must then be accessed (requiring index arithmetic and a memory access)
 before the relevant method can be invoked.  Merging the per-argument
 tables using standard table-compression techniques add yet more
 comparisons and memory accesses. 
+
+Like Bachrach and Burke, Hölze and Ungar
+\cite{Holzle:1994:ODC:178243.178478} optimize dispatch by specializing
+the dispatch algorithm for each call site.  They use run-time type
+information as feedback to the compiler which can then often create
+more efficient dispatch code simply because for a given call site it
+is common that only a small subset of all possible argument types are
+actually used.  We have not addressed this possibility, because it
+would require a way to recompile the caller, or at least a single call
+site whenever a change to the callee or to the class hierarchy is
+made.  
