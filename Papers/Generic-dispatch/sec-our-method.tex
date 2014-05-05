@@ -2,9 +2,15 @@
 
 A \sicl{} object is either an \emph{immediate object} or a \emph{heap
   object}.  A heap object is either a \texttt{cons} cell or a
-\emph{general instance}.  General instances and cons cells have unique
-\emph{tags}.  Every general instance is represented by its
-\emph{header}.  The header contains two pointers, one to the
+\emph{general instance}.%
+\footnote{Since heap allocated objects are either \texttt{cons} cells
+  or general instances, it follows that general instances are used to
+  represent not only \emph{standard objects}, but also structure
+  instances, instances of built-in classes such as \texttt{symbol} and
+  \texttt{package}, arrays, bignums, complex numbers, etc.}
+General instances and cons cells have
+distinct unique \emph{tags}.  Every general instance is represented by
+its \emph{header}.  The header contains two pointers, one to the
 \emph{class} of the instance and one to the \emph{rack} of the
 instance.  The pointer to the class is a tagged pointer to another
 general instance.  The pointer to the rack is a raw machine pointer.
