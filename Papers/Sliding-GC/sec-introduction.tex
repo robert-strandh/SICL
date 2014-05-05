@@ -1,3 +1,43 @@
 \section{Introduction}
 
-\cite{Wilson:1992:UGC:645648.664824}
+As is evident from the Books by Jones et al
+\cite{Jones:2011:GCH:2025255} \cite{Jones:1996:GCA:236254}, garbage
+collection is a rich and much research field.  As processor technology
+evolves, advantages and inconveniences of different techniques
+change.  Current technology requires techniques that take into account
+the big difference in performance between the processor and the
+memory, as well as the existence of several \emph{cores} and
+\emph{threads}. 
+
+In this paper, we consider an improvement to the table-based sliding
+collector proposed by Haddon and Waite \fixme{add bibtex entry} in
+1967.  
+
+The sliding collector is a member of the family of
+\emph{mark-and-compact} techniques.  Techniques in this family do not
+require as much additional memory as do copying collectors.
+Furthermore, the techniques that use \emph{sliding} preserve the
+\emph{allocation order} between objects, and therefore their
+\emph{relative age}, whereas copying collectors and mark-and-sweep
+collectors do not.  By preserving the allocation order, two great
+advantages are gained:
+
+\begin{itemize}
+\item If the heap is part of a generational garbage collector, it is
+  always possible to promote the oldest objects, whereas with a
+  copying collector, a significant number of recently allocated 
+  objects may well be promoted, even though they are likely to die
+  soon after being promoted. 
+\item As Wilson \cite{Wilson:1992:UGC:645648.664824} points out,
+  objects that are allocated together, die together.  Thus, if the
+  allocation order is preserved, the heap is likely to have
+  large intervals of live objects and large intervals of dead
+  objects.  When the allocation order is not preserved, the heap will
+  more likely contain more and smaller intervals of live and dead
+  objects. 
+\end{itemize}
+
+The main reason that sliding techniques have largely been abandoned,
+is that they incur a much higher cost than both mark-and-sweep
+collectors and copying collectors, either in terms of additional
+computations or additional memory requirements, or both. 
