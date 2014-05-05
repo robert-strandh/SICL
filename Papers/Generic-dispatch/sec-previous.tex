@@ -126,6 +126,21 @@ determined to be inexpensive, then this kind of discriminating
 function could potentially achieve performance similar to our
 technique. 
 
+\subsection{Work by Zendra et al}
+
+Perhaps the work that is most similar to our is that of Zendra et al
+\cite{Zendra:1997:EDD:263698.263728}.  Like the present work, they are
+interested in performance improvements to dispatch on modern
+architectures by eliminating table lookups.  Unlike the present work,
+the context of their work is a static language (Eiffel) which
+simplifies many aspect of the optimization.  For one thing, they use
+global type inference to optimize away dispatch entirely when not
+needed, and they can inline the dispatch mechanism at each call site
+because there can be no changes to the class hierarchy or to the
+applicable methods at runtime.  Like the present work, they also use
+inline code performing a binary search in order to determine which
+applicable method to invoke.
+
 \subsection{Other work}
 
 The work of Zibin and Gil \cite{Zibin:2002:FAC:582419.582434} also
