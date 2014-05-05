@@ -158,3 +158,15 @@ optimize according to locally available information, sometimes
 resulting in particular call sites not requiring any dispatch code at
 all.  Unfortunately, this technical report is in an unfinished state,
 making it hard to determine the work and the results behind it.
+
+Dujardin et al \cite{Dujardin:1998:FAC:271510.271521} give a fast
+algorithm for creating compressed tables for multiple dispatch.  While
+the dispatch is still constant time after compression, as with other
+table-compression techniques, theirs adds overhead to the dispatch
+itself.  The unique number of the type of each argument must be used
+to index a per-argument table in order to obtain indices in the
+compressed table.  And of course the element in the compressed table
+must then be accessed (requiring index arithmetic and a memory access)
+before the relevant method can be invoked.  Merging the per-argument
+tables using standard table-compression techniques add yet more
+comparisons and memory accesses. 
