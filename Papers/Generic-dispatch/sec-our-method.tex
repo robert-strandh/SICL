@@ -25,11 +25,18 @@ class or any of its superclasses.  Currently, class numbers are never
 reused.  This way of allocating class numbers is advantageous because
 it often results in a subtree of classes occupying a \emph{dense
   interval} of class numbers, the importance of which is discussed
-below. 
+below.  On a $64$-bit architecture with $63$-bit or $62$-bit fixnums,
+the unique number will always be a fixnum.  On $32$-bit architectures
+this is very likely also true, and it is certainly true if class
+numbers are reused.%
+\footnote{The garbage collector would have to take care of recycling
+  class numbers.}  If class numbers are not reused, on a $32$-bit
+platform one might have to use two words in order to be on the safe
+side.
 
 The first element of the rack of every general instance is called the
 \emph{stamp}.  The stamp is the unique number of the class as it was
-when the instance was created updated as a result of changes to its
+when the instance was created or updated as a result of changes to its
 class.  An instance is \emph{obsolete} if and only if its stamp is not
 the same as the unique number of its class.
 
