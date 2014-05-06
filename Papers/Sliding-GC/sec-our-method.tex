@@ -1,1 +1,11 @@
 \section{Our method}
+
+Our method uses a \emph{break table} just like the method by Haddon
+and Waite, but instead of building, moving, and sorting the table
+while objects are moved, it first moves the objects and then
+constructs the table.  For that, additional space in the form of a bit
+vector is required.  The bit vector has one bit per word of memory in
+the heap, which amounts to less than $2$\% additional memory on a
+$64$-bit machine. 
+
+
