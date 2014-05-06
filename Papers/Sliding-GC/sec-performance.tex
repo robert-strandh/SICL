@@ -1,0 +1,51 @@
+\section{Performance}
+
+It is notoriously hard to test the performance of garbage collection
+algorithms.  Nevertheless, we would like to get some idea of the time
+the various phases take.  To that end, we created a few test cases
+which (together with some educated guesses) will give us some ballpark
+figures with respect to performance of our method, at least as
+compared to other methods. 
+
+\subsection{Phase 1, marking}
+
+We did not attempt to test the marking phase, because it is no
+different from the marking phase of any other algorithm.
+
+\subsection{Phase 2, compaction}
+
+To test the compaction phase, we wrote the following compaction
+program:
+
+{\small\begin{verbatim}
+(defparameter *size* (ash 1 20))
+
+(defparameter *heap* (make-array *size*))
+
+(defparameter *bitmap*
+  (make-array *size* :element-type 'bit))
+
+(defun move (heap bitmap)
+  (declare (type (simple-vector #.*size*) heap)
+           (type (array bit (#.*size*)) bitmap)
+           (optimize (speed 3) (safety 0) (debug 0)))
+  (let* ((d (position 0 bitmap))
+         (s (position 1 bitmap :start d)))
+    (declare (type (integer 0 #.*size*) d s))
+    (loop until (= s #.*size*)
+          do (setf (aref heap d) (aref heap s))
+             (incf d)
+             (incf s)
+             (loop until (or (= s #.*size*)
+                             (= (sbit bitmap s) 1))
+                   do (incf s)))))
+  \end{verbatim}}
+
+The choice of the size of the heap ($2^{20}$ words = $8$Mbytes on a
+$64$-bit machine) is deliberate.  It is what we believe to be a
+reasonable size for the nursery, and it is larger than the size of the
+cache on our machine.
+
+To test worst-case performance, we initialized the bitmap so that all
+elements contain $1$ except the first one, in order that every element
+of the heap except the first one has to be moved.  
