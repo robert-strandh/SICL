@@ -51,4 +51,35 @@ Heap after compaction.}
 \end{figure}
 
 In phase 3, a \emph{break table} is built at the position of the
-destination pointer.
+destination pointer.  The break table contains \emph{entries}
+consisting of two words each.  The first word of each entry is the
+address of the beginning of a zone of dead objects, and the second
+word of the entry is the sum of the sizes of the dead zones preceding
+it.  \refFig{fig-example-d} shows the break table of the example heap
+in \refFig{fig-example-a}.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-example-d.pdf_t}
+\end{center}
+\caption{\label{fig-example-d}
+Break table.}
+\end{figure}
+
+The break table is built by scanning the bitmap from start to end.  In
+practice, since the heap is likely to contain fairly large contiguous
+zones, the bitmap will contain long runs of $0$s and long runs of
+$1$s.  It is therefore advantageous to scan the bitmap a word at a
+time, making this phase quite efficient. 
+
+In phase 4, the lower part of the heap is traversed word by word in
+order to adjust the pointers according to the contents of the break
+table.  For each pointer value $p$, an entry $e_i = (a_i,b_i)$ is
+located such that $p < a_i$ and either $i = 0$ or $a_{i-1} < p$.  The
+pointer value $p$ is adjusted by subtracting $b_i$ from it.  To find
+the entry, the break table is search using \emph{binary search}.
+However, it is very likely that the entry for a particular pointer is
+the same as the entry for the pointer immediately preceding it.  By
+testing this case first, the vast majority of full binary searches can
+be avoided. 
+
