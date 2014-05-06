@@ -22,7 +22,7 @@ Example of initial heap.}
 \end{figure}
 
 In phase 2, the heap is compacted by sliding the live objects to the
-beginning of the heap.  In this phase, 2 pointers are used, a
+beginning of the heap.  In this phase, two pointers are used, a
 \emph{source} pointer pointing to words containing live objects, and a
 \emph{destination} pointer pointing to words containing dead objects,
 as illustrated by \refFig{fig-example-b}.  Words are copied from the
@@ -78,8 +78,17 @@ table.  For each pointer value $p$, an entry $e_i = (a_i,b_i)$ is
 located such that $p < a_i$ and either $i = 0$ or $a_{i-1} < p$.  The
 pointer value $p$ is adjusted by subtracting $b_i$ from it.  To find
 the entry, the break table is search using \emph{binary search}.
-However, it is very likely that the entry for a particular pointer is
-the same as the entry for the pointer immediately preceding it.  By
-testing this case first, the vast majority of full binary searches can
-be avoided. 
 
+While the overhead of the binary search may seem unacceptably high,
+two properties contribute to keeping this overhead low:
+
+\begin{enumerate}
+\item While the break table could contain as many as $N/4$ entries
+  where $N$ is the number of words in the heap, in practice, it
+  contains far fewer than that, again because the heap is likely to
+  contain relatively few relatively large zones.
+\item It is very likely that the entry in the break table required to
+  adjust a particular pointer is the same as the entry required to
+  adjust the pointer immediately preceding it.  By testing this case
+  first, the vast majority of full binary searches can be avoided.
+\end{enumerate}
