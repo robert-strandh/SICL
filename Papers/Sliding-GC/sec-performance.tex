@@ -49,3 +49,33 @@ cache on our machine.
 To test worst-case performance, we initialized the bitmap so that all
 elements contain $1$ except the first one, in order that every element
 of the heap except the first one has to be moved.  
+
+\subsection{Phase 3, building table}
+
+\begin{verbatim}
+ (defun build-table (heap bitmap start)
+  (let ((address (position 0 bitmap))
+        (acc 0))
+    (declare 
+       (type fixnum address acc start)
+       (type (simple-vector #.*size*))
+       (type (simple-array bit (#.*size*)) bitmap)
+       (optimize (speed 3) (safety 0) (debug 0)))
+    (loop until (= address #.*size*)
+          do (setf (svref heap start) address)
+             (setf (svref heap (1+ start)) acc)
+             (incf start 2)
+             (let ((pos-1 (position 
+                            1 bitmap 
+                            :start address)))
+               (when (null pos-1)
+                 (return start))
+               (incf acc (- pos-1 address))
+               (setf address 
+                     (or (position 0 bitmap 
+                                   :start pos-1)
+                         #.*size*)))
+          finally (setf (svref heap start) address)
+                  (setf (svref heap (1+ start)) acc)
+                  (return #.*size*))))
+\end{verbatim}
