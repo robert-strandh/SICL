@@ -8,6 +8,11 @@ vector is required.  The bit vector has one bit per word of memory in
 the heap, which amounts to less than $2$\% additional memory on a
 $64$-bit machine. 
 
+\refFig{fig-example-a} shows a heap in which shaded areas indicate
+live objects and white areas indicate dead objects.  The heap contains
+16 word as shown by the addresses.  At the bottom of the figure is
+shown the bitmap after the mark phase (phase 1) is complete.
+
 \begin{figure}
 \begin{center}
 \inputfig{fig-example-a.pdf_t}
@@ -16,7 +21,34 @@ $64$-bit machine.
 Example of initial heap.}
 \end{figure}
 
-\refFig{fig-example-a} shows a heap in which shaded areas indicate
-live objects and white areas indicate dead objects.  The heap contains
-16 word as shown by the addresses.  At the bottom of the figure is
-shown the bitmap after the mark phase is complete.
+In phase 2, the heap is compacted by sliding the live objects to the
+beginning of the heap.  In this phase, 2 pointers are used, a
+\emph{source} pointer pointing to words containing live objects, and a
+\emph{destination} pointer pointing to words containing dead objects,
+as illustrated by \refFig{fig-example-b}.  Words are copied from the
+source location to the destination location.  In each iteration, the
+destination location is incremented by one unit, whereas the source
+location is incremented until either it reaches the end of the heap,
+or a word containing a live object as indicated by the bitmap
+containing a $1$.
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-example-b.pdf_t}
+\end{center}
+\caption{\label{fig-example-b}
+Pointers to source and destination locations.}
+\end{figure}
+
+\refFig{fig-example-c} shows the situation when phase 2 is complete. 
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-example-c.pdf_t}
+\end{center}
+\caption{\label{fig-example-c}
+Heap after compaction.}
+\end{figure}
+
+In phase 3, a \emph{break table} is built at the position of the
+destination pointer.
