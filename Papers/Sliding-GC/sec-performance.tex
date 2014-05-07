@@ -147,5 +147,21 @@ consumed by the compaction phase is determined by two elements:
 We further hypothesize that the performance of this phase is
 independent of the \emph{size} of the zones of dead elements. 
 
-We start by testing the last hypothesis. 
+We start by testing the last hypothesis.  For that, we run the
+function \texttt{build-table} above with two different bitmaps, both
+containing $2^{10}$ zones of dead objects and the same number of zones
+of live objects.  In the first test, the size of each live zone is a
+single word.  In the second case, the size of each live zone is $2^8$
+words.  The result of this test is shown in the following table:
 
+\begin{tabular}{|r|r|}
+\hline
+Live zone size & CPU time (ms)\\
+\hline
+$1$ & $1.0$\\
+$2^8$ & $1.0$\\
+\hline
+\end{tabular}
+
+As we can see, the hypothesis that the sizes of the zones do not
+influence the performance of this phase is confirmed.  
