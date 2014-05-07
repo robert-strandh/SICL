@@ -7,6 +7,13 @@ which (together with some educated guesses) will give us some ballpark
 figures with respect to performance of our method, at least as
 compared to other methods. 
 
+For our tests, we chose a heap size of $2^{19}$ words of $8$ bytes
+each.  This heap size was not chosen randomly.  It was chosen so that
+the entire heap would fit in the cache memory of the computer used for
+the tests (x86-64, GNU/Linux, SBCL), and research
+\cite{Marlow:2011:MGC:2076022.1993482} indicates that a nursery this
+size is a good choice.
+
 \subsection{Phase 1, marking}
 
 We did not attempt to test the marking phase, because it is no
@@ -18,7 +25,7 @@ To test the compaction phase, we wrote the following compaction
 program:
 
 {\small\begin{verbatim}
-(defparameter *size* (ash 1 20))
+(defparameter *size* (ash 1 19))
 
 (defparameter *heap* (make-array *size*))
 
@@ -41,14 +48,37 @@ program:
                    do (incf s)))))
   \end{verbatim}}
 
-The choice of the size of the heap ($2^{20}$ words = $8$Mbytes on a
-$64$-bit machine) is deliberate.  It is what we believe to be a
-reasonable size for the nursery, and it is larger than the size of the
-cache on our machine.
+The hypothesis here is that the time consumed by the compaction phase
+is determined by $2$ elements:
 
-To test worst-case performance, we initialized the bitmap so that all
-elements contain $1$ except the first one, in order that every element
-of the heap except the first one has to be moved.  
+\begin{enumerate}
+\item A constant term that has to do with scanning the bitmap.
+\item A term proportional to the number of elements that have to be
+  moved.
+\end{enumerate}
+
+To test the hypothesis, we executed the function \texttt{move} with
+three different bitmaps as shown in the following table:
+
+\begin{tabular}{|r|r|}
+\hline
+Element count & CPU time (ms)\\
+\hline
+$1$ & $0.8$ \\
+$2^{18}$ & $1.1$\\
+$2^{19}-1$ & $1.4$\\
+\hline
+\end{tabular}
+
+To avoid measuring the performance of the function \texttt{position},
+the first line in the table was executed with a bitmap where the
+element with index $1$ was equal to $1$.  The second line in the table
+was executed with a bitmap where every other element was $1$.  The
+third line in the table was executed with a bitmap where only element
+$0$ was $0$.  In all cases, the test was run in a loop with $1000$
+iterations.  The loop was the argument of the \texttt{time} macro, and
+the right column of the table shows the result returned by
+\texttt{time} divided by $1000$. 
 
 \subsection{Phase 3, building table}
 
