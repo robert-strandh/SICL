@@ -104,7 +104,7 @@ time would therefore be closer to $0.3$ms.
 
 \subsection{Phase 3, building table}
 
-\begin{verbatim}
+{\small\begin{verbatim}
  (defun build-table (heap bitmap start)
   (let ((address (position 0 bitmap))
         (acc 0))
@@ -130,4 +130,4 @@ time would therefore be closer to $0.3$ms.
           finally (setf (svref heap start) address)
                   (setf (svref heap (1+ start)) acc)
                   (return #.*size*))))
-\end{verbatim}
+\end{verbatim}}
