@@ -14,6 +14,18 @@ the tests (x86-64, GNU/Linux, SBCL), and research
 \cite{Marlow:2011:MGC:2076022.1993482} indicates that a nursery this
 size is a good choice.
 
+Thus, we have the following definitions valid for all the tests:
+
+{\small\begin{verbatim}
+(defparameter *size* (ash 1 19))
+
+(defparameter *heap* (make-array *size*))
+
+(defparameter *bitmap*
+  (make-array *size* :element-type 'bit))
+\end{verbatim}}
+
+
 \subsection{Phase 1, marking}
 
 We did not attempt to test the marking phase, because it is no
@@ -25,13 +37,6 @@ To test the compaction phase, we wrote the following compaction
 program:
 
 {\small\begin{verbatim}
-(defparameter *size* (ash 1 19))
-
-(defparameter *heap* (make-array *size*))
-
-(defparameter *bitmap*
-  (make-array *size* :element-type 'bit))
-
 (defun move (heap bitmap)
   (declare (type (simple-vector #.*size*) heap)
            (type (array bit (#.*size*)) bitmap)
@@ -46,7 +51,7 @@ program:
              (loop until (or (= s #.*size*)
                              (= (sbit bitmap s) 1))
                    do (incf s)))))
-  \end{verbatim}}
+\end{verbatim}}
 
 The hypothesis here is that the time consumed by the compaction phase
 is determined by $2$ elements:
