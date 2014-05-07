@@ -1,12 +1,12 @@
 \section{Our method}
 
 Our method uses a \emph{break table} just like the method by Haddon
-and Waite, but instead of building, moving, and sorting the table
-while objects are moved, we first move the objects and then
-construct the table.  For that, additional space in the form of a bit
-vector is required.  The bit vector has one bit per word of memory in
-the heap, which amounts to less than $2$\% additional memory on a
-$64$-bit machine. 
+and Waite \cite{Haddon:1967}, but instead of building, moving, and
+sorting the table while objects are moved, we first move the objects
+and then construct the table.  For that, additional space in the form
+of a bit vector is required.  The bit vector has one bit per word of
+memory in the heap, which amounts to less than $2$\% additional memory
+on a $64$-bit machine.
 
 \refFig{fig-example-a} shows a heap in which shaded areas indicate
 live objects and white areas indicate dead objects.  The heap contains
