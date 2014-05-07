@@ -51,13 +51,14 @@ Heap after compaction.}
 \end{figure}
 
 In phase 3, a \emph{break table} is built at the position of the
-destination pointer.  The break table is a sequence $a_0, d_0, a_1,
-d_1, \ldots, a_n, d_n, a_{n+1}$ of alternating \emph{addresses} and
-\emph{deltas}.  The table has an odd number of elements, because it
-both starts and ends with an address.  Each $a_i$ (except possibly
-$a_0$ and $a_{n+1}$) is the index of the beginning of a zone of dead
-objects.  Each $d_i$ is the sum of the sizes of the dead zones
-preceding $a_i$.
+destination pointer.  The break table consists of a sequence $a_0,
+d_0, a_1, d_1, \ldots, a_n, d_n, a_{n+1}$ of alternating
+\emph{addresses} and \emph{deltas}.  The value $a_0$ is always $0$.
+The table has an odd number of elements, because it both starts and
+ends with an address.  Each $a_i$ (except possibly $a_0$ and
+$a_{n+1}$) is the index of the beginning of a zone of dead objects.
+Each $d_i$ is the sum of the sizes of the dead zones preceding
+$a_{i+1}$.
 
 \refFig{fig-example-d} shows the break table of the example heap in
 \refFig{fig-example-a}.
@@ -78,9 +79,9 @@ time, making this phase quite efficient.
 
 In phase 4, the lower part of the heap is traversed word by word in
 order to adjust the pointers according to the contents of the break
-table.  For each pointer value $p$, an entry $e_i = (a_i,b_i)$ is
-located such that $p < a_i$ and either $i = 0$ or $a_{i-1} < p$.  The
-pointer value $p$ is adjusted by subtracting $b_i$ from it.  To find
+table.  For each pointer value $p$, the table is searched for values 
+$a_i, d_i, a_{i+1}$ such that $a_i \le p < a_{i+1}$.  The
+pointer value $p$ is adjusted by subtracting $d_i$ from it.  To find
 the entry, the break table is search using \emph{binary search}.
 
 While the overhead of the binary search may seem unacceptably high,
