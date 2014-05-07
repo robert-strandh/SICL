@@ -54,7 +54,7 @@ program:
 \end{verbatim}}
 
 The hypothesis here is that the time consumed by the compaction phase
-is determined by $2$ elements:
+is determined by two elements:
 
 \begin{enumerate}
 \item A constant term that has to do with scanning the bitmap.
@@ -104,30 +104,48 @@ time would therefore be closer to $0.3$ms.
 
 \subsection{Phase 3, building table}
 
+In order to test the performance of building the table, we used the
+following function:
+
 {\small\begin{verbatim}
- (defun build-table (heap bitmap start)
-  (let ((address (position 0 bitmap))
-        (acc 0))
-    (declare 
-       (type fixnum address acc start)
-       (type (simple-vector #.*size*))
-       (type (simple-array bit (#.*size*)) bitmap)
-       (optimize (speed 3) (safety 0) (debug 0)))
-    (loop until (= address #.*size*)
-          do (setf (svref heap start) address)
-             (setf (svref heap (1+ start)) acc)
-             (incf start 2)
-             (let ((pos-1 (position 
-                            1 bitmap 
-                            :start address)))
-               (when (null pos-1)
-                 (return start))
-               (incf acc (- pos-1 address))
-               (setf address 
-                     (or (position 0 bitmap 
-                                   :start pos-1)
-                         #.*size*)))
-          finally (setf (svref heap start) address)
-                  (setf (svref heap (1+ start)) acc)
-                  (return #.*size*))))
+(defun build-table (heap bitmap start)
+  (let ((acc 0)
+        (end start))
+    (declare (type fixnum acc start end)
+             (type (simple-vector #.*size*) heap)
+             (type (simple-array bit (#.*size*)) bitmap)
+             (optimize (speed 3) (safety 0) (debug 0)))
+    (loop for address of-type fixnum from 0 
+          for prev of-type bit = 1 then bit
+          for bit of-type bit across bitmap
+          do (when (= bit 0)
+               (when (= prev 1)
+                 (setf (svref heap end) address)
+                 (setf (svref heap (1+ end)) acc)
+                 (incf end 2))
+               (incf acc))
+          finally (when (= prev 1)
+                    (setf (svref heap end) address)
+                    (setf (svref heap (1+ end)) acc)
+                    (incf end 2))
+                  (return end))))
 \end{verbatim}}
+
+In the program above, the parameter \texttt{start} contains the total
+number of live words in the heap, which is the same as the start index
+into the heap where the table should be built. 
+
+As for the compaction phase, the hypothesis here is that the time
+consumed by the compaction phase is determined by two elements:
+
+\begin{enumerate}
+\item A constant term that has to do with scanning the bitmap.
+\item A term proportional to the number of entries in the table to be
+  built, which is the same as the number of zones of dead elements.
+\end{enumerate}
+
+We further hypothesize that the performance of this phase is
+independent of the \emph{size} of the zones of dead elements. 
+
+We start by testing the last hypothesis. 
+
