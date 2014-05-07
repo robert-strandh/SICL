@@ -51,12 +51,16 @@ Heap after compaction.}
 \end{figure}
 
 In phase 3, a \emph{break table} is built at the position of the
-destination pointer.  The break table contains \emph{entries}
-consisting of two words each.  The first word of each entry is the
-address of the beginning of a zone of dead objects, and the second
-word of the entry is the sum of the sizes of the dead zones preceding
-it.  \refFig{fig-example-d} shows the break table of the example heap
-in \refFig{fig-example-a}.
+destination pointer.  The break table is a sequence $a_0, d_0, a_1,
+d_1, \ldots, a_n, d_n, a_{n+1}$ of alternating \emph{addresses} and
+\emph{deltas}.  The table has an odd number of elements, because it
+both starts and ends with an address.  Each $a_i$ (except possibly
+$a_0$ and $a_{n+1}$) is the index of the beginning of a zone of dead
+objects.  Each $d_i$ is the sum of the sizes of the dead zones
+preceding $a_i$.
+
+\refFig{fig-example-d} shows the break table of the example heap in
+\refFig{fig-example-a}.
 
 \begin{figure}
 \begin{center}
