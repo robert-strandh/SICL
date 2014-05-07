@@ -80,6 +80,23 @@ iterations.  The loop was the argument of the \texttt{time} macro, and
 the right column of the table shows the result returned by
 \texttt{time} divided by $1000$. 
 
+The hypothesis above seems confirmed where scanning the bitmap seems
+to take around $0.8$ms and moving an element seems to take around
+$1$ns per element.  
+
+Now, in a typical collection cycle at least around half of the
+elements of the heap would be dead (if not, objects would be
+\emph{promoted}).  Furthermore, since objects that are allocated
+together die together, the bitmap will contain long runs of $0$s and
+long runs of $1$s, and because objects either die young or survive a
+long time, the bitmap will typically start with a run of $1$s.  A
+slightly more clever implementation of the bitmap would then test $64$
+bits at a time rather than individual bits like we do in our test.  In
+such an implementation, the time for managing the bitmap would be
+negligible.  In a typical collection cycle, significantly fewer than
+half of the elements would have to be moved.  The expected compaction
+time would therefore be closer to $0.3$ms. 
+
 \subsection{Phase 3, building table}
 
 \begin{verbatim}
