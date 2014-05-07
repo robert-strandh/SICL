@@ -165,3 +165,29 @@ $2^8$ & $1.0$\\
 
 As we can see, the hypothesis that the sizes of the zones do not
 influence the performance of this phase is confirmed.  
+
+Next we tested the function \texttt{build-table} for different sizes
+of the table to be built.  The size of each live zone was a single
+word.  The following table shows the result:
+
+\begin{tabular}{|r|r|}
+\hline
+Table size & CPU time (ms)\\
+\hline
+$2^{1}$ & $1.0$\\
+$2^{9}$ & $1.0$\\
+$2^{11}$ & $1.0$\\
+$2^{13}$ & $1.1$\\
+$2^{15}$ & $1.4$\\
+$2^{17}$ & $1.2$\\
+\hline
+\end{tabular}
+
+It appears that the time to build the table is entirely dominated by
+the time to traverse the bitmap.  We have no explanation as to why the
+time does not increase monotonically with the table size, but we have
+run this test numerous times and we still get this surprising result.  
+
+With improved bitmap management code, we believe that building the
+table will typically take about the same as compacting the heap, i.e.,
+around $0.3$ms. 
