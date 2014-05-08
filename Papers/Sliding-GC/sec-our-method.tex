@@ -71,6 +71,20 @@ $a_{i+1}$.
 Break table.}
 \end{figure}
 
+Notice that if both the bottom zone and the top zone of the heap
+contain live objects, then our break table may require $3$ additional
+words of storage compared to the total free available.  The reason for
+this additional requirement is that our table contains
+\emph{sentinels} (the first two words and the last word) that are not
+strictly required, but by including them, we avoid special cases in
+our procedure for searching the table.  We can easily make sure that
+three additional words are available by triggering a collection when
+granting a request for memory would leave fewer than three free words
+at the end of the heap.  Haddon and Waite \cite{Haddon:1967} did not
+have this luxury, because they assumed an existing mark-and-sweep
+collector.  For that reason, their paper contains an extensive
+argument that their break table can fit in the available space. 
+
 The break table is built by scanning the bitmap from start to end.  In
 practice, since the heap is likely to contain fairly large contiguous
 zones, the bitmap will contain long runs of $0$s and long runs of
