@@ -4,12 +4,16 @@
 
 In 1967, Haddon and Waite \cite{Haddon:1967} designed the first
 algorithm for compacting garbage collection.  The context of their
-work was assumed to be an existing garbage collector using a free
-list, and when that collector fails due to fragmentation, even though
-there is enough total space available, their compacting algorithm
-would take over and compact the heap.  The cost of their algorithm was
-considered unimportant, because the alternative would be to fail by
-terminating the program.
+work was assumed to be an existing mark-and-sweep garbage collector
+using a free list, and when that collector fails due to fragmentation,
+even though there is enough total space available, their compacting
+algorithm would take over and compact the heap.  The cost of their
+algorithm was considered unimportant, because the alternative would be
+to fail by terminating the program.
+
+Rather than invoking a marking procedure to determine live data, they
+imagined using the existing free list to determine areas of available
+storage. 
 
 \subsection{Other work}
 
