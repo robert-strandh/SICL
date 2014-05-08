@@ -15,6 +15,11 @@ Rather than invoking a marking procedure to determine live data, they
 imagined using the existing free list to determine areas of available
 storage. 
 
+An entry in their break table indicates a start address of a zones of
+live data and the total amount of free space below that address.
+There are many different possible variations on the exact contents of
+the break table, but they are all equivalent.
+
 \subsection{Other work}
 
 Cohen and Nocolau \cite{Cohen:1983:CCA:69575.357226} compared several
