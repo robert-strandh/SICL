@@ -1,4 +1,17 @@
 \section{Previous work}
 
+\subsection{Haddon and Waite}
+
+In 1967, Haddon and Waite \cite{Haddon:1967} designed the first
+algorithm for compacting garbage collection.  The context of their
+work was assumed to be an existing garbage collector using a free
+list, and when that collector fails due to fragmentation, even though
+there is enough total space available, their compacting algorithm
+would take over and compact the heap.  The cost of their algorithm was
+considered unimportant, because the alternative would be to fail by
+terminating the program.
+
+\subsection{Other work}
+
 Cohen and Nocolau \cite{Cohen:1983:CCA:69575.357226} compared several
 compacting collection techniques.
