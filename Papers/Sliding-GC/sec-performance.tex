@@ -191,3 +191,21 @@ run this test numerous times and we still get this surprising result.
 With improved bitmap management code, we believe that building the
 table will typically take about the same as compacting the heap, i.e.,
 around $0.3$ms. 
+
+\subsection{Phase 3, adjusting pointers}
+
+In the worst case, every live pointer must be updated, and each such
+pointer requires $n$ iterations to search the break table, where $n$
+is the depth of that table.  The number of live pointers is the
+difference of the size of the heap and the number of words required
+for the break table.  In the worst case, the number of words required
+for the break table is as small as possible which is $2^{n+1}$, so
+that the number of live pointers is $2^N - 2^{n+1}$.  The total amount
+of work required can therefore be expressed as $n \cdot (2^N -
+2^{n+1})$.  When $N = 19$, this function has a maximum for $n = 15$
+
+We can get an upper bound on the time to adjust the pointers by
+creating a heap with roughly $2^{19} - 2^{16}$ words containing random
+values in some interval $[0,K]$ followed by a break table with
+$2^{16}$ words, with addresses in the interval $[0,K+1]$.
+
