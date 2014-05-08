@@ -20,6 +20,11 @@ live data and the total amount of free space below that address.
 There are many different possible variations on the exact contents of
 the break table, but they are all equivalent.
 
+They show that, if each object requires at least two words of storage,
+then the total amount of free space in the entire heap is large enough
+to hold the break table.  As a result, no additional space is
+required for their technique to work.
+
 \subsection{Other work}
 
 Cohen and Nocolau \cite{Cohen:1983:CCA:69575.357226} compared several
