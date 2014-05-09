@@ -262,3 +262,14 @@ different ways:
   do not need to be adjusted.
 \end{itemize}
 
+Furthermore, there is a simple optimization that we think can
+eliminate a large fraction of the table searches.  By keeping the
+result ($a_i$, $d_i$, and $a_{i+1}$) between iterations and comparing
+the pointer to be adjusted to these values, we think that in many
+cases we will get a hit, simply because it is likely that two
+consecutive pointers belong to the same live zone and refer to objects
+in that zone.  
+
+An educated guess, then is that a typical value for this phase would
+be closer to $5$ms. 
+
