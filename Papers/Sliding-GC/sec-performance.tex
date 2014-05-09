@@ -273,3 +273,40 @@ in that zone.
 An educated guess, then is that a typical value for this phase would
 be closer to $5$ms. 
 
+\subsection{Overall performance}
+
+Taken together, the performance figures in the previous section
+suggest that the entire compaction phase of our suggested
+\emph{mark-and-compact} sliding collector would take around $6$ms on a
+fairly modest desktop, with an absolute worst-case of around $30$ms.
+
+Including the mark phase, there are two possibilities:
+
+\begin{itemize}
+\item Compaction dominates over marking.  Then the figures given above
+  are reasonable estimates of the total time for the entire
+  collection.
+\item Marking dominates over compaction.  Then the figures given above
+  are sufficiently good that our method is no more expensive than
+  others such as mark-and-sweep and copying. 
+\end{itemize}
+
+In addition, we should not forget the reasons for choosing a
+sliding collector in the first place:
+
+\begin{itemize}
+\item Compared to a copying collector, only half the space is
+  required, or, alternatively, the space available in the nursery is
+  twice as big.  When this is the case, the number of required
+  collections decreases, which gives more time for short-lived objects
+  to die, thereby decreasing the total amount of work spent in garbage
+  collection. 
+\item Also compared to a copying collector, the relative ages of
+  objects are kept intact, which decreases the risk of promoting
+  objects that will die soon after a collection. 
+\item Compaction eliminates the potential problem of fragmentation. 
+\end{itemize}
+
+All these factor contribute to decreasing the total cost of garbage
+collection, although measuring the exact impact is of course very
+hard. 
