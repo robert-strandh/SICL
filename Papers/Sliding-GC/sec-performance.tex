@@ -209,3 +209,25 @@ creating a heap with roughly $2^{19} - 2^{16}$ words containing random
 values in some interval $[0,K]$ followed by a break table with
 $2^{16}$ words, with addresses in the interval $[0,K+1]$.
 
+In order to search the break table, we used the following binary
+search function:
+
+{\small\begin{verbatim}
+(defun binary-search (heap first last address)
+  (declare (type (simple-vector #.*size*) heap)
+           (type (integer 0 (#.*size*)) 
+                 first last address)
+           (optimize (speed 3) (debug 0) (safety 0)))
+  (let ((f first)
+        (l last))
+    (declare (type (integer 0 (#.*size*)) f l))
+    (loop until (= (- l f) 2)
+          do (let* ((mid (1+ (ash (ash (+ l f) -2) 1)))
+                    (elt (svref heap mid)))
+               (declare (type fixnum elt))
+               (if (< address elt)
+                   (setf l mid)
+                   (setf f mid))))
+    (svref heap (1+ f))))
+\end{verbatim}}
+
