@@ -231,3 +231,15 @@ search function:
     (svref heap (1+ f))))
 \end{verbatim}}
 
+The following function was used to adjust the pointers of the heap:
+
+{\small\begin{verbatim}
+(defun adjust ()
+  (declare (optimize (speed 3) (debug 0) (safety 0)))
+  (loop with w = (worst-frontier 19)
+        with l = (1- (expt 2 19))
+        with g = *g*
+        for i from 0 below w
+        do (incf (aref *g* i)
+                 (binary-search g w l i))))
+\end{verbatim}}
