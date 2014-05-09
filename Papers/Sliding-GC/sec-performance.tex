@@ -10,7 +10,7 @@ compared to other methods.
 For our tests, we chose a heap size of $2^{19}$ words of $8$ bytes
 each.  This heap size was not chosen randomly.  It was chosen so that
 the entire heap would fit in the cache memory of the computer used for
-the tests (x86-64, GNU/Linux, SBCL), and research
+the tests (x86-64, 1.6GHz, GNU/Linux, SBCL), and research
 \cite{Marlow:2011:MGC:2076022.1993482} indicates that a nursery this
 size is a good choice.
 
@@ -243,3 +243,22 @@ The following function was used to adjust the pointers of the heap:
         do (incf (aref *g* i)
                  (binary-search g w l i))))
 \end{verbatim}}
+
+On our computer, this function takes approximately $30$ms to run,
+again on a heap containing $2^{19}$ words.  While this number may seem
+high, we should keep in mind that it is pessimistic in several
+different ways:
+
+\begin{itemize}
+\item This test assumes that almost $90\%$ of the heap is live.  When
+  there are this many live objects, they will be \emph{promoted}, so a
+  typical number should be significantly less than $50\%$.
+\item It assumes that there are $2^{15}$ dead zones, which would make
+  each zone very small.  A more typical situation is that dead zones
+  are significantly larger, so that there are significantly fewer. 
+\item It assumes that every live word in the heap contains a pointer
+  that needs to be adjusted.  More typically, many words contain
+  immediate data, or pointers to older generations, and these pointers
+  do not need to be adjusted.
+\end{itemize}
+
