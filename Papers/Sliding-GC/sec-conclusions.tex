@@ -1,1 +1,25 @@
 \section{Conclusions and future work}
+
+We have presented an improvement to the compacting and sliding
+collector invented by Haddon and Waite \cite{Haddon:1967}.  Our method
+is an improvement in that it does not require the partially built
+table to be moved, because the entire table is built \emph{after}
+the compaction phase is finished. 
+
+While it is extremely difficult to compare performance of different
+methods for garbage collection, in order to get an indication of the
+performance of our method, we created a number of tests.  We believe
+these tests show that the method we suggest is not prohibitively
+expensive.  The advantages of compaction to overall performance of the
+garbage collector are hard to measure or even estimate, but we think
+that they will compensate for the slight increase in cost of
+compaction compared to ordinary copying or mark-and-sweep.
+
+We plan to use this algorithm in the per-thread nursery collector in
+our system \sicl{}.%
+\footnote{https://github.com/robert-strandh/SICL}
+Inspired by the Multics system, we plan to
+instrument the system with a number of \emph{meters} so that
+performance data can be collected at all times.  Only then will we be
+able to obtain a final verdict concerning the performance of this
+method. 
