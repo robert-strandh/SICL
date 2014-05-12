@@ -31,8 +31,8 @@
 (defconstant +nursery-size+ (* +word-size+ (expt 2 19)))
 
 ;;; In each thread, this variable gets bound to a vector that contains
-;;; the nursery.  An object takes up at least two words in the
-;;; nursery, and objects are aligned on a double-word boundary.
+;;; the nursery.  The vector contains unsigned words, so its type is
+;;; (array (integer 0 (#.+word-size+)) (#.+nursery-size)).
 (defvar *nursery*)
 
 ;;; In each thread, this variable gets bound to a bitvector (though
