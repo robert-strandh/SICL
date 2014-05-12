@@ -37,7 +37,7 @@
 
 ;;; In each thread, this variable gets bound to a non-negative fixnum
 ;;; indicating the address of the beginning of the nursery.
-(defvar *nursery-start*)
+(defvar *nursery-address*)
 
 ;;; In each thread, this variable gets bound to a bitvector (though
 ;;; not represented as a common Lisp bitvector).  The representation
@@ -144,10 +144,6 @@
 			      (1+ i)
 			      i))))
     (aref nursery (- i size))))
-
-;;; In each thread, this variable gets bound to the address of element
-;;; zero of the nursery. 
-(defvar *nursery-address*)
 
 ;;; Slide the objects in the nursery according to the liveness bitvector
 (defun slide-objects (nursery nursery-live)
