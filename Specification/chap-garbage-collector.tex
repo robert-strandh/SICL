@@ -27,40 +27,35 @@ No work has been done yet on the global collector.
 The global collector is a concurrent collector, i.e., it runs in
 parallel with the mutator threads.  With modern processors, it is
 probably practical to assign at least one core more or less
-permanently to the global collector.  We suggest using a concurrent
-mark-and-sweep collector.  With such a collector, objects
-never move, a property which has several advantages.  For one thing,
-pointers to objects can then freely be manipulated by foreign
-functions without requiring that the foreign language be aware of when
-the garbage collector is run.  Furthermore, objects that are keys in
-an \texttt{eq} hash table can use the permanent address as a hash
-value, and there is no need to reorganize the hash table as a result
-of running the garbage collector. 
+permanently to the global collector.  According to current thinking,
+the global collector will be a combination of a mark-and-sweep
+collector and a mark-and-compact collector as follows.  
 
-One main disadvantage of a memory-management system in which the
-objects do not move is that \emph{fragmentation} can be a problem.
-However, with our data representation, we imagine dividing the heap
-into two parts; one part containing only header objects and another
-part containing only racks.  Header object can, for
-instance, be allocated at the beginning of the heap and rack
-at the end of the heap, but there is no requirement that a
-part be contiguous, nor for its size to be fixed.  Fragmentation in
-the part containing header objects can now be eliminated because all
-objects there have the same size.  Furthermore, since each rack
-is referred to by exactly one header object, we can freely move
-racks around%
-\footnote{A rack can be moved only if no mutator register
-  holds a pointer to one of its elements.  We have yet to work out the
-  best way of making sure this restriction is respected.}  
-without sacrificing our property that ``objects never move'', simply
-because by ``object'' we mean the header object.  We suggest using bit
-vectors to represent the ``color'' of each object.%
-\footnote{Recall that \emph{black} means ``fully scanned'', \emph{white}
-  means ``not yet seen'', and \emph{gray} means ``scanned but may
-  refer to white objects''}
-In a 64-bit system, 2 mark bits would be required for each 128-bit
-header object.  Dead objects would be collected into a simply linked
-list as usual. 
+We define a global heap where \texttt{cons} cells and the
+\emph{headers} of general instances are allocated from the
+\emph{beginning} of the heap and \emph{racks} are allocated from the
+\emph{end}.  Since all general instances have a two-word header and
+\texttt{cons} cells consist of two words as well, we can use a
+mark-and-sweep collector for these objects without suffering any
+fragmentation.  The advantage of a mark-and-sweep collector is that
+objects will never move, which is an advantage when they are used as
+keys in hash tables and when they are used to communicate with
+code in foreign languages that assume that an address of an object is
+fixed once and for all.
+
+For the racks, we plan to use the sliding collector created by Kermany
+et all \cite{Kermany:2006:CCI:1133981.1134023}.  Their collector uses
+very little additional memory because, although it define two semi
+spaces, nearly half of the pages will always be \emph{virtual}, i.e.,
+without any backing store.  Furthermore, their collector is
+\emph{parallel}, meaning that several threads can collect
+simultaneously and \emph{concurrent}, i.e., it can work in parallel
+with mutator threads.  We do not plan to use this collector for the
+nurseries, because it uses memory-mapping techniques which incur
+additional cost.
+
+Even though racks more around, objects do not, simply because the
+objects \emph{is} the header, and headers do not move.  
 
 \section{Nursery collector}
 The directory \texttt{Code/Garbage-collector} contains some code that
@@ -103,9 +98,11 @@ can contain at most as many entries as there are dead header objects.
 
 In the \emph{adjust phase}, header objects and racks are
 scanned, and fields containing pointers are adjusted according to the
-offset table.  The offset table is searched using binary search. 
+offset table.  The offset table is searched using binary search,
+except that a simple caching scheme is used to avoid a full binary
+search in nearly all cases. 
 
-In the \emph{vector compaction phase}, header objects are scanned in
+In the \emph{rack compaction phase}, header objects are scanned in
 order of increasing addresses, and the corresponding racks
 are compacted towards the end of the heap.
 
