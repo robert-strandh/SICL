@@ -35,6 +35,10 @@
 ;;; (array (integer 0 (#.+word-size+)) (#.+nursery-size)).
 (defvar *nursery*)
 
+;;; In each thread, this variable gets bound to a non-negative fixnum
+;;; indicating the address of the beginning of the nursery.
+(defvar *nursery-start*)
+
 ;;; In each thread, this variable gets bound to a bitvector (though
 ;;; not represented as a common Lisp bitvector).  The representation is
 ;;; as follows: we use a vector of words.  The length of the vector is
