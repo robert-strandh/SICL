@@ -40,21 +40,18 @@
 (defvar *nursery-start*)
 
 ;;; In each thread, this variable gets bound to a bitvector (though
-;;; not represented as a common Lisp bitvector).  The representation is
-;;; as follows: we use a vector of words.  The length of the vector is
-;;; (/ +nursery-size+ +word-size 2), so to each bit in the bitvector
-;;; corresponds a pair of words in the nursery.  Each word if the
-;;; bitvector is a +word-size+ unsigned integer, representing liveness
-;;; information for +word-size+ consecutive double words in the
-;;; nursery.  The word at index i of the bitvector vector represents
-;;; the objects at indexes between (* 2 +word-size+ i)) and (1- (* 2
-;;; +word-size+ (1+ i))) in the nursery.  When the bit (ash 1 k) is
-;;; set in word i, then the two consecutive words at indexes m and m+1
-;;; in the nursery are free, where m can be expressed as (* 2 (+ (*
-;;; +word-size+ i) k)).  By doing it this way, we can use
-;;; integer-length to find the most significant bit that is set in a
-;;; word, and thus the corresponding free word in the nursery with the
-;;; highest index.
+;;; not represented as a common Lisp bitvector).  The representation
+;;; is as follows: we use a vector of words.  The length of the vector
+;;; is (/ +nursery-size+ +word-size+ 2), so to each bit in the
+;;; bitvector corresponds a pair of words in the nursery.  Each word
+;;; of the bitvector is a +word-size+ unsigned integer, representing
+;;; liveness information for +word-size+ consecutive double words in
+;;; the nursery.  The word at index i of the bitvector vector
+;;; represents the objects at indexes between (* 2 +word-size+ i)) and
+;;; (1- (* 2 +word-size+ (1+ i))) in the nursery.  When the bit (ash 1
+;;; k) is set in word i, then the two consecutive words at indexes m
+;;; and m+1 in the nursery are live, where m can be expressed as (* 2
+;;; (+ (* +word-size+ i) k)).
 (defvar *nursery-live*)
 
 ;;; After the *nursery-live* bitvector has been created by tracing
