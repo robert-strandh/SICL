@@ -41,25 +41,28 @@
 
 ;;; In each thread, this variable gets bound to a bitvector (though
 ;;; not represented as a common Lisp bitvector).  The representation
-;;; is as follows: we use a vector of words.  The length of the vector
-;;; is (/ +nursery-size+ +word-size+ 2), so to each bit in the
-;;; bitvector corresponds a pair of words in the nursery.  Each word
-;;; of the bitvector is a +word-size+ unsigned integer, representing
-;;; liveness information for +word-size+ consecutive double words in
-;;; the nursery.  The word at index i of the bitvector vector
-;;; represents the objects at indexes between (* 2 +word-size+ i)) and
-;;; (1- (* 2 +word-size+ (1+ i))) in the nursery.  When the bit (ash 1
-;;; k) is set in word i, then the two consecutive words at indexes m
-;;; and m+1 in the nursery are live, where m can be expressed as (* 2
-;;; (+ (* +word-size+ i) k)).
+;;; is as follows: we use a vector of half words (to guarantee that
+;;; they will be fixnums).  The length of the vector is (/
+;;; +nursery-size+ +word-size+), so to each bit in the bitvector
+;;; corresponds a pair of words in the nursery.  Each word of the
+;;; bitvector is a (/ +word-size+ 2) bit unsigned integer,
+;;; representing liveness information for (/ +word-size+ 2)
+;;; consecutive double words in the nursery.  The word at index i of
+;;; the bitvector represents the objects at indexes between (*
+;;; +word-size+ i)) and (1- (* +word-size+ (1+ i))) in the nursery.
+;;; When the bit (ash 1 k) is set in word i, then the two consecutive
+;;; words at indexes m and m+1 in the nursery are live, where m can be
+;;; expressed as (* 2 (+ (* +word-size+ i) k)).
 (defvar *nursery-live*)
 
 ;;; Slide the objects in the nursery according to the liveness bitvector
 (defun slide-objects (nursery nursery-live)
   (let ((run-time (get-internal-run-time)))
-    ;; Find the position of the first word in the vector representing the 
-    ;; liveness bitvector that has a `1' in it, meaning the nursery has
-    ;; its first free position in the corresponding place.
+    ;; Find the position of the first word in the vector representing
+    ;; the liveness bitvector that has a `0' in it, meaning the
+    ;; nursery has its first free position in the corresponding place.
+    ;; There is always such a position, because we trigger a
+    ;; collection before the heap is exhausted.
     (let* ((wordpos (position-if-not #'zerop nursery-live))
 	   (word (aref nursery-live wordpos)))
       ;; Find the position of the least-significant `1' in the word
