@@ -1,13 +1,14 @@
 (in-package #:sicl-gc)
 
-;;; Sliding garbage collector for the nursery.  We are assuming an
-;;; invariant that says that the only references to an object in the
-;;; nursery are from the roots or from other objects in the nursery.
-;;; This means that there can be no reference from an older generation
-;;; to an object in the nursery.  We maintain this invariant by using
-;;; a write barrier.  Whenever an attempt is made to store a pointer
-;;; to an object A in the nursery in an object B in an older
-;;; generation, we move A and its transitive closure to an older
+;;; Sliding garbage collector for the nursery.
+
+;;; We assume an invariant that says that the only references to an
+;;; object in the nursery are from the roots or from other objects in
+;;; the nursery.  This means that there can be no reference from a the
+;;; shared heap to an object in the nursery.  We maintain this
+;;; invariant by using a write barrier.  Whenever an attempt is made
+;;; to store a pointer to an object A in the nursery in an object B in
+;;; the shared heap, we move A and its transitive closure to an older
 ;;; generation.
 
 ;;; We trace the live objects and we obtain a bitvector (though not
@@ -22,14 +23,16 @@
 
 (defconstant +word-size+ 64)
 
-;;; The size of the nursery in words.  This should be a multiple 
-;;; of the word size.
-(defconstant +nursery-size+ (* +word-size+ (expt 2 12)))
+;;; The size of the nursery in words.  This should be a multiple of
+;;; the word size and smaller than the size of the processor cache.
+;;; We currently define it to be 2^19 64-bit words, because this gives
+;;; a size of 2^22 bytes = 4MB which corresponds to a typical cache
+;;; size.
+(defconstant +nursery-size+ (* +word-size+ (expt 2 19)))
 
 ;;; In each thread, this variable gets bound to a vector that contains
-;;; the youngest generation objects (the nursery).  An object takes up
-;;; at least two words in the nursery, and objects are aligned on a
-;;; double-word boundary.
+;;; the nursery.  An object takes up at least two words in the
+;;; nursery, and objects are aligned on a double-word boundary.
 (defvar *nursery*)
 
 ;;; In each thread, this variable gets bound to a bitvector (though
@@ -180,5 +183,3 @@
 		       (increment-from))))
 	  (incf *nursery-recovered-space* (- +nursery-size+ to-pos)))))
     (incf *nursery-slide-time* (- (get-internal-run-time) run-time))))
-
-			
