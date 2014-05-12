@@ -31,7 +31,7 @@ Cohen and Nicolau \cite{Cohen:1983:CCA:69575.357226} compared several
 compacting collection techniques.
 
 Abuaiadh et al \cite{Abuaiadh:2004:EPH:1028976.1028995} designed a
-compaction algorithm that using forwarding information much like the
+compaction algorithm that uses forwarding information much like the
 Lisp2 algorithm.  However, to avoid the cost of an entire pointer per
 object, they use a single word of forwarding information of around
 $256$ bytes, which amounts to no more than a few bits per word.
@@ -47,4 +47,11 @@ the nursery (around 4 MB).
 Kermany et al \cite{Kermany:2006:CCI:1133981.1134023} describe a
 compacting algorithm that uses memory-mapping operations in order to
 compact the heap.  Their algorithm is parallel, concurrent, and
-incremental
+incremental.  However, in addition to the cost of marking, moving
+objects, and updating pointers, compared to the method described in
+this paper, there is an additional cost associated with the
+memory-mapping operations which is non-negligible.  Forwarding
+information is handled the same way as in the method used by Abuaiadh
+et al.  Like the method described by Haddon and Waite, and the method
+presented in this paper, relative allocation order between the objects
+is preserved.
