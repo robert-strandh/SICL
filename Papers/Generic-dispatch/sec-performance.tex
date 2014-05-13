@@ -11,26 +11,26 @@ generic dispatch of a simple slot reader.
 First, we created a class with a single slot and a reader for that
 slot like this:
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defclass c () ((%x :initarg :x :reader x)))  
-\end{verbatim}
+\end{verbatim}}
 
 Next, we defined an instance of this class:
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defparameter *i* (make-instance 'c :x 1))
-\end{verbatim}
+\end{verbatim}}
 
 Then, we created a function containing a loop where the slot reader is
 called in each iteration: 
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defun f ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with i = *i*
         repeat 10000
         do (loop repeat 100000
-                 do (x i))))
+                 do (x i))))}
 \end{verbatim}
 
 In order to minimize overhead due to looping, we set the
@@ -44,7 +44,6 @@ below shows the result of this test on a small selection of platforms.
 \hline
 Impl & OS & Proc & Clock & Time & Cyc\\
 \hline\hline
-SBCL 1.1.6 & MacOS & x86-64 & 3GHz & 45 & 135\\
 SBCL 1.1.13 & MacOS & x86-64 & 1.8GHz & 11 & 20 \\
 SBCL 1.1.16 & MacOS & x86-64 & 3.3GHz & 4.7 & 16 \\
 SBCL 1.1.18 & Linux & x86-64 & 1.6GHz & 12 & 19\\
@@ -91,21 +90,21 @@ defining the header as a \cl{} \texttt{struct} and by using a
 \emph{simple vector} for the rack.  The definition of the header looks
 like this:
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defstruct s class rack)
-\end{verbatim}
+\end{verbatim}}
 
 We create a simulated general instance as follows:
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defparameter *j* 
   (let ((rack (make-array 2 :initial-contents '(10 1))))
     (make-s :class nil :rack rack)))
-\end{verbatim}
+\end{verbatim}}
 
 Our simulated slot reader is defined like this:
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defun y (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
@@ -116,18 +115,18 @@ Our simulated slot reader is defined like this:
         (error "1"))))
 
 (proclaim '(notinline y))
-\end{verbatim}
+\end{verbatim}}
 
 Finally, we define a function containing a loop that calls our
 simulated slot reader:
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defun g ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
         do (y j)))
-\end{verbatim}
+\end{verbatim}}
 
 On our computer (x86-64 running at 1.6GHz) executing this function
 takes less than $3$ seconds, which represents a significant
@@ -139,7 +138,7 @@ not be sure that a single test will suffice in order to determine the
 correct method to invoke.  For that reason, we devised the following
 test: 
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defun yy (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
@@ -163,7 +162,7 @@ test:
         repeat 1000000000
         do (yy j)))
         maximize (yy (car l))))
-\end{verbatim}
+\end{verbatim}}
 
 This test simulates a situation where the generic dispatch needs $8$
 tests to determine what method to call, which can be thought of as a
@@ -180,7 +179,7 @@ required.
 The following test is meant to show the impact of a very large number
 of classes, so that constants are no longer very small:
 
-\begin{verbatim}
+{\small\begin{verbatim}
 (defun yyy (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
@@ -203,7 +202,7 @@ of classes, so that constants are no longer very small:
   (loop with j = *j*
         repeat 1000000000
         do (yyy j)))
-\end{verbatim}
+\end{verbatim}}
 
 On our computer executing this function takes exactly the same time to
 execute as the previous one, which seems to suggest that the size of
