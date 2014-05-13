@@ -6,22 +6,22 @@ of all generic functions, including accessors.  It is therefore of
 utmost importance that generic function dispatch be as efficient as
 possible. 
 
-The efficiency of the generic dispatch method may have consequences on
-the programming style, as programmers may be dissuaded from using
+The efficiency of the generic dispatch technique may have consequences
+on the programming style, as programmers may be dissuaded from using
 generic functions on standard instances for reasons of performance,
 and instead opt in favor of ordinary functions on other types of data
 structures such as structure instances, arrays, or lists, even though
 standard instances have better behavior in the context of interactive
-and incremental development.  
+and incremental development.
 
-Conversely, with a high-performance generic dispatch method, better
+Conversely, with a high-performance generic dispatch technique, better
 data structures can be used, including in the implementation itself,
 with less special-purpose code and therefore improved maintainability
 as a result.
 
-While it may seem like methods for efficient generic dispatch exist,
-and indeed are part of most high-performance \cl{} implementations,
-many of those methods and implementations date back a few decades, and
-the parameters that determine efficiency have changed radically as a
-result of the increasing gap between processor speed and memory-access
-time.
+While it may seem like techniques for efficient generic dispatch
+exist, and indeed are part of most high-performance \cl{}
+implementations, many of those techniques and implementations date
+back a few decades, and the parameters that determine efficiency have
+changed radically as a result of the increasing gap between processor
+speed and memory-access time.
