@@ -37,7 +37,7 @@ object, they use a single word of forwarding information of around
 $256$ bytes, which amounts to no more than a few bits per word.
 Although reported to be fast, unfortunately, their algorithm does not
 preserve the allocation order of objects.  Their paper mentions that
-benchmarks have verify the importance of doing so.  They report that
+benchmarks have verified the importance of doing so.  They report that
 compaction algorithms may cause significant pauses, and their
 algorithm reduces these pauses.  The reason for these pauses is no
 doubt that the context of their work is a large global heap (they
