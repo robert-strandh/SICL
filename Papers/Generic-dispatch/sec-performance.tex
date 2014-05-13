@@ -174,7 +174,9 @@ On our computer executing this function takes less than $4.5$ seconds,
 which seems to suggest that the number of comparisons has only a
 modest impact on the performance.  In fact, the numbers suggest that
 less that one additional clock cycle per additional comparison is
-required.
+required.%
+\footnote{In this case, however, the \emph{branch prediction} circuits
+  of the processor always guess the right thing}
 
 The following test is meant to show the impact of a very large number
 of classes, so that constants are no longer very small:
