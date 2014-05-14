@@ -27,8 +27,18 @@ required for their technique to work.
 
 \subsection{Other work}
 
-Cohen and Nicolau \cite{Cohen:1983:CCA:69575.357226} compared several
-compacting collection techniques.
+Of the traditional compacting algorithms, three types of algorithms
+preserve allocation order; the one by Haddon and Waite
+\cite{Haddon:1967}, the so called Lisp2 algorithm, and the
+\emph{threading} algorithms.  The Lisp2 algorithm requires an
+additional field the size of a pointer in each object in order to hold
+forwarding information.  This field is set after the marking phase.
+Pointers are then updated according to this information.  Finally, the
+heap is compacted.  Threading algorithms by Fisher \cite{fish74},
+Morris \cite{morr78}, and Jonkers \cite{jonk79} work by reversing
+pointers.  In their survey of different compacting algorithms, Cohen
+and Nicolau \cite{Cohen:1983:CCA:69575.357226} conclude that the Lisp2
+algorithm is the fastest.  Threading algorithms perform the worst.
 
 Abuaiadh et al \cite{Abuaiadh:2004:EPH:1028976.1028995} designed a
 compaction algorithm that uses forwarding information much like the
