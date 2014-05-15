@@ -45,4 +45,20 @@ history) will always handle invocations where classes of required
 arguments are specified classes, including the function
 \texttt{compute-discriminating-function}. 
 
+Our technique, called \emph{satiation} makes sure that that the
+conditions are met by trying every combination of existing classes as
+the required arguments of every existing generic function in order to
+see whether this combination corresponds to an applicable primary
+method of the generic function.  If that is the case, then a
+corresponding effective method is computed, and an entry is added to
+the call history.  Finally, the resulting discriminating function is
+computed.  Clearly, these computations require a fully-functional
+machinery for precisely the functions that are being processed. 
+
+Now, in a system where \clos{} must be bootstrapped from a pre-\clos{}
+implementation, satiation would require specialized code in the form
+of ordinary functions (as opposed to generic functions) that do the
+same work as the specified generic functions on arguments that are
+instances of specified classes, with much duplicated code as a result.
+
 %%  LocalWords:  metastability specializer specializers
