@@ -32,7 +32,27 @@ families:
   AMOP is that the class \texttt{standard-class} is its own metaclass,
   so it must exist before it is created.  
 \item Metastability issues.  Here, the canonical example is the
-  function \texttt{slot-value} which must invoke \texttt{slot-value}
-  on the metaclass in order to find the slot containing the slot
-  descriptors of the instance. 
+  function \texttt{compute-discriminating-function} being invoked on
+  itself as a result of a method being added to it.
 \end{itemize}
+
+As mentioned in the AMOP, bootstrapping issues are relatively easy to
+resolve, because there is only a relatively small number of them, and
+they can be handled by writing special-case code.  So for instance,
+the class \texttt{standard-class} can be defined ``by hand'' without
+using \texttt{defclass}. 
+
+Metastability issues are more difficult to handle because they may
+require special cases to be handled at runtime so as to avoid infinite
+computation.  
+
+Notice, however, that the canonical example for the
+metastability family issues is not a problem \emph{per se}.  Calling
+\texttt{compute-discriminating-function} on itself is a problem only
+if the \emph{existing} discriminating function of
+\texttt{compute-discriminating-function} is unable to compute the
+discriminating function of a standard generic function%
+\footnote{\texttt{compute-discriminating-function} is a standard
+  generic function}, and whether it can do so depends on the structure
+of the code.
+
