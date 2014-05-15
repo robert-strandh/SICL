@@ -7,13 +7,42 @@ The technique described in this paper was developed as part of
 written entirely in \cl{} and it was designed to be bootstrapped 
 from a conforming \cl{} implementation including \clos{}.  
 
-A generic function in \sicl{} contains a \emph{call history} which
-associates classes of required arguments with corresponding effective
-methods, and specifically allowed by the AMOP.  The discriminating
-function of every standard generic function contains two parts: one
-part computed from the call history and a second \emph{default} part,
-invoked when the first part fails.  This second part of the
-discriminating function invokes the complete machinery defined by
+A generic function in \sicl{} contains a \emph{cache} (a \emph{call
+  history} in \sicl{} terminology) which associates classes of
+required arguments with corresponding effective methods, and
+specifically allowed by the AMOP.  The discriminating function of
+every standard generic function contains two parts: one part computed
+from the call history and a second \emph{default} part, invoked when
+the first part fails.  This second part of the discriminating function
+invokes the complete machinery defined by
 \texttt{compute-applicable-methods-using-classes},
 \texttt{compute-applicable-methods}, and
 \texttt{compute-effective-method}.
+
+Metastability issues can be handled automatically, provided that:
+
+\begin{itemize}
+\item The call history contains entries for every combination of
+  classes of required arguments such that:
+  \begin{enumerate}
+  \item the classes are specified by the AMOP, and 
+  \item there is at least one primary applicable method for the
+    combination.
+  \end{enumerate}
+\item When the class hierarchy changes, an entry in the call history
+  is removed only if it involves a modified class.
+\item When a method is removed a generic function (possibly because it
+  was replaced with a new one with the same specializers), an entry in
+  the call history is removed only if it involves the method that was
+  removed.
+\end{itemize}
+
+The reason that the these conditions automatically handle
+metastability issues is that the AMOP specifically disallows
+modifications to specified classes.  Then the first part of the
+discriminating function (i.e., the part computed from the call
+history) will always handle invocations where classes of required
+arguments are specified classes, including the function
+\texttt{compute-discriminating-function}. 
+
+%%  LocalWords:  metastability specializer specializers
