@@ -61,4 +61,29 @@ of ordinary functions (as opposed to generic functions) that do the
 same work as the specified generic functions on arguments that are
 instances of specified classes, with much duplicated code as a result.
 
-%%  LocalWords:  metastability specializer specializers
+In \sicl{}, we bootstrap \clos{} on an existing conforming \cl{}
+implementation (the host) as follows:
+
+\begin{enumerate}
+\item First we use the definitions of the MOP classes to create
+  ordinary host classes, albeit with names in a separate package.
+  Slots with associated accessors will generate ordinary host generic
+  functions. 
+\item Next, we create \emph{bridge classes} and \emph{bridge generic
+  functions}.  A bridge class is a host instance of one of the host
+  classes created in phase 1.  A bridge generic function is an
+  instance of the host class \texttt{standard-generic-function}
+  created in phase 1, but also of the host class named
+  \texttt{funcallable-standard-object}.
+\item Third, we use bridge classes and bridge generic functions to
+  create \emph{ersatz classes} and \emph{ersatz generic functions}.
+  These are target instances represented as a combination of a host
+  \emph{structure} for the header, and a host \emph{simple vector} for
+  the rack. 
+\item Finally, we traverse the graph of ersatz instances in order to
+  create an isomorphic graph as sequence of bytes to become the memory
+  image of the target system.
+\end{enumerate}
+
+%%  LocalWords:  metastability specializer specializers accessor
+%%  LocalWords:  accessors funcallable
