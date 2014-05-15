@@ -1,2 +1,19 @@
 \section{Our technique}
 
+The technique described in this paper was developed as part of
+\sicl{}.%
+\footnote{The \sicl{} repository is public, and it is currently
+  located at https://github.com/robert-strandh/SICL.}  The system is
+written entirely in \cl{} and it was designed to be bootstrapped 
+from a conforming \cl{} implementation including \clos{}.  
+
+A generic function in \sicl{} contains a \emph{call history} which
+associates classes of required arguments with corresponding effective
+methods, and specifically allowed by the AMOP.  The discriminating
+function of every standard generic function contains two parts: one
+part computed from the call history and a second \emph{default} part,
+invoked when the first part fails.  This second part of the
+discriminating function invokes the complete machinery defined by
+\texttt{compute-applicable-methods-using-classes},
+\texttt{compute-applicable-methods}, and
+\texttt{compute-effective-method}.
