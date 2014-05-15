@@ -1,11 +1,13 @@
 \section{Introduction}
 
-PCL \cite{Bobrow:1986:CML:28697.28700} is a common system to include
-in a \cl{} implementation.  PCL was written so that \clos{} could be
-added to a pre-\clos{} Common Lisp implementation such as the one
-defined in CLtL \cite{Steele:1984:CLL} without too much effort.  Even
-\cl{} implementations that do not use PCL (such as ECL) include
-\clos{} late in the process of building a complete system.
+While most \cl{} implementations have their own native \clos{}
+implementation, PCL \cite{Bobrow:1986:CML:28697.28700} is still used
+in some high-performance implementations, notably \sbcl{}.  PCL was
+written so that \clos{} could be added to a pre-\clos{} Common Lisp
+implementation such as the one defined in CLtL \cite{Steele:1984:CLL}
+without too much effort.  Even \cl{} implementations that do not use
+PCL (such as ECL) include \clos{} late in the process of building a
+complete system.
 
 \sicl{}\footnote{https://github.com/robert-strandh/SICL} takes a
 different approach.  With very few exceptions, \sicl{} is written in
@@ -20,5 +22,17 @@ The \sicl{} implementation of \clos{} is a truly metacircular
 implementation in that very few compromises are necessary because of
 bootstrapping or metastability issues.
 
-AMOP \cite{Kiczales:1991:AMP:574212}
+Since \clos{} is defined as a \clos{} program, there are necessarily
+metacircular issues that need to be resolved.  The AMOP
+\cite{Kiczales:1991:AMP:574212} divides these issues into two
+families:
 
+\begin{itemize}
+\item Bootstrapping issues.  The canonical example mentioned in the
+  AMOP is that the class \texttt{standard-class} is its own metaclass,
+  so it must exist before it is created.  
+\item Metastability issues.  Here, the canonical example is the
+  function \texttt{slot-value} which must invoke \texttt{slot-value}
+  on the metaclass in order to find the slot containing the slot
+  descriptors of the instance. 
+\end{itemize}
