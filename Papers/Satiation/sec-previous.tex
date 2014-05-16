@@ -64,8 +64,27 @@ happens when \texttt{F} happens to be the function
 \texttt{compute-discriminating-function}.  In that case,
 \texttt{compute-discriminating-function} would be called with itself
 as an argument, in which case, according to the AMOP, ``the game would
-of course be over.''
+of course be over.''  Even in a naive implementation without
+effective-method caching, the scenario would be more complicated that
+that.  In such an implementation,
+\texttt{compute-discriminating-function} would call 
+\texttt{compute-applicable-methods-using-classes}%
+\footnote{We omit the possibility of the presence of \texttt{eql}
+  specializers in order to keep the description manageable.}
+and then the function \texttt{compute-effective-method}.  In an
+implementation without caching, the real metastability issue occurs in
+these last two functions.  When one of these functions is called, the
+discriminating function will be invoked and therefore they will be
+called recursively.  
+
+In a high-performance implementation, on the other hand, what really
+happens depends on the contents of the cache.  If the cache contains
+an entry that applies to instances of the class
+\texttt{standard-generic-function}, then no metastability issue is
+present.  In such an implementation, the issue occurs only in the
+initial stages where the cache is empty, and after the cache has been
+flushed, should the implementation use this technique. 
 
 
 %%  LocalWords:  metastability metaclass accessors specializer
-%%  LocalWords:  metaobject subclasses
+%%  LocalWords:  metaobject subclasses specializers
