@@ -1,1 +1,38 @@
 \section{Previous work}
+
+The AMOP \cite{Kiczales:1991:AMP:574212} contains a section entitled
+``Living with Circularity'', which describes the essential nature of
+the two kinds of issues discussed here, namely \emph{bootstrapping
+  issues} and \emph{metastability issues}.  This section does not
+contain a complete list of all possible issues in any implementation
+of \clos{}, and probably could not contain such a list, since it would
+depend on the exact organization of each particular implementation.
+
+The section in the AMOP has two subsections, one for bootstrapping
+issues and one for metastability issues.  The subsection on
+bootstrapping issues is more complete.  
+
+\subsection{Bootstrapping issues}
+
+The section on bootstrapping issues contains two explicit issues.
+
+The first one involves the class \texttt{standard-class} which is the
+metaclass of all standard classes, including itself.  The authors
+simply suggest creating this class manually.
+
+The second issue involves the fact that generic function are required
+in order to create classes, but during bootstrapping, there are no
+generic functions since generic functions are instances of classes.
+The technique used to handle such issues is to define ordinary
+functions to contain code for essential methods, so that such
+functions can be called during bootstrapping.  To avoid code
+duplication, the methods defined later in the bootstrapping process
+simply call those functions.  
+
+\subsection{Metastability issues} 
+
+The section on metastability issues also contains two issues.
+
+The first issue involves the function \texttt{slot-value}.
+
+%%  LocalWords:  metastability metaclass
