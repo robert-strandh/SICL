@@ -33,6 +33,39 @@ simply call those functions.
 
 The section on metastability issues also contains two issues.
 
-The first issue involves the function \texttt{slot-value}.
+The first issue involves the function \texttt{slot-value}.  As
+described, the scenario does not correspond to the specification,
+because the signature of the function \texttt{slot-value-using-class}
+used in the scenario is different from its definition in the
+specification.  Either way, the basis of the scenario is that
+\texttt{slot-value} on some instance would need to access the list of
+slot descriptions of the class of the instance, and that list is
+contained in a slot, so that a recursive use of \texttt{slot-value}
+would be required on the class of the instance.  However in a
+high-performance implementation, a slot reader would not call
+\texttt{slot-value}.  The reason is that \texttt{slot-value} is much
+too general, so that unnecessary work would be done.  In particular, 
+\texttt{slot-value} must find a slot description metaobject with a
+particular name, whereas this name is already known in the slot
+reader function.  Instead, in a high-performance implementation, the
+slot reader would access the slot directly by location.%
+\footnote{The situation is a bit more complicated due to the fact that
+  the location may vary according to the exact subclass of the
+  specializer of the reader method.  In fact, it can even be the case
+  that the slot has different allocation in different subclasses.}
 
-%%  LocalWords:  metastability metaclass
+As described in the introduction, the second issue has to do with
+\texttt{compute-discriminating-function}.  Again, the scenario
+described is an approximation of that of a real high-performance
+implementation.  Their example involves adding a method to some
+generic function \texttt{F}, which would trigger the computation of a
+new discriminating function for \texttt{F}.  The metastability issue
+happens when \texttt{F} happens to be the function
+\texttt{compute-discriminating-function}.  In that case,
+\texttt{compute-discriminating-function} would be called with itself
+as an argument, in which case, according to the AMOP, ``the game would
+of course be over.''
+
+
+%%  LocalWords:  metastability metaclass accessors specializer
+%%  LocalWords:  metaobject subclasses
