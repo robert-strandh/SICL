@@ -91,7 +91,15 @@ implementation (the host) as follows:%
   classes created in phase 1.  A bridge generic function is an
   instance of the host class \texttt{standard-generic-function}
   created in phase 1, but also of the host class named
-  \texttt{funcallable-standard-object}.
+  \texttt{funcallable-standard-object}.%
+  \footnote{The class \texttt{funcallable-standard-object} is not part
+    of the \cl{} standard.  This is one of the few situations where
+    bootstrapping \sicl{} requires some functionality that is not part
+    of the standard.  We attempted to use the class
+    \texttt{standard-generic-function} instead, but a major problem
+    with that solution is the conflicting use of specified
+    initialization arguments which are interpreted both by the host
+    class and the bridge class.}
 \item Third, we use bridge classes and bridge generic functions to
   create \emph{ersatz classes} and \emph{ersatz generic functions} as
   instances of the bridge classes previously created.  These are
