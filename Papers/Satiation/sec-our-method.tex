@@ -6,6 +6,10 @@ The technique described in this paper was developed as part of
   located at https://github.com/robert-strandh/SICL.}  The system is
 written entirely in \cl{} and it was designed to be bootstrapped 
 from a conforming \cl{} implementation including \clos{}.  
+According to Rhodes \cite{Rhodes:2008:SSC:1482373.1482380}, few \cl{}
+implementations are designed to be bootstrapped this way.  Instead,
+most implementations evolve by incremental modifications to an
+existing binary image.
 
 A generic function in \sicl{} contains a \emph{cache} (a \emph{call
   history} in \sicl{} terminology) which associates classes of
