@@ -774,8 +774,13 @@
 ;;;
 ;;; Instruction PHI-INSTRUCTION.
 ;;; 
-;;; This is an instruction used in SSA form.  It has an arbitrary
-;;; number of inputs, a single output and a single successor. 
+;;; This is an instruction used in SSA form.  It has at least two
+;;; inputs, a single output and a single successor.
+;;;
+;;; Let A be some PHI-INSTRUCTION with N inputs.  A can have one or
+;;; more predecessors.  If A has a single predecessor B, then B is
+;;; also a PHI-INSTRUCTION with N inputs.  If A has more than one
+;;; predecessor, then it has N predecessors.
 
 (defclass phi-instruction (instruction one-successors-mixin)
   ())
