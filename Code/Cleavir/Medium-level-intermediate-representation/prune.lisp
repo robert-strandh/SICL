@@ -33,3 +33,32 @@
 ;;;;      instruction.
 ;;;;
 ;;;;   2. Remove X from the list of inputs Y0.
+
+(defun delete-predecessor (instruction predecessor)
+  (let ((pos (position predecessor (predecessors instruction) :test #'eq)))
+    (setf (predecessors instruction)
+	  (remove predecessor (predecessors instruction) :test #'eq))
+    (when (typep instruction 'phi-instruction)
+      (setf (inputs instruction)
+	    (remove-if (constantly t) (inputs instruction)
+		       :start pos :count 1))
+      (loop for inst = instruction then succ
+	    for succ = (first (successors inst))
+	    while (and (typep succ 'phi-instruction)
+		       (= (length (predecessors succ)) 1))
+	    do (setf (inputs inst)
+		     (remove-if (constantly t) (inputs inst)
+				:start pos :count 1))))))
+
+(defun prune-graph (initial-instruction)
+  (let ((table (make-hash-table :test #'eq)))
+    (labels ((traverse (instruction)
+	       (unless (gethash instruction table)
+		 (setf (gethash instruction table) t)
+		 (loop for succ in (successors instruction)
+		       do (traverse succ)))))
+      (traverse initial-instruction))
+    (loop for instruction being each hash-key of table
+	  do (loop for pred in (predecessors instruction)
+		   do (unless (gethash pred table)
+			(delete-predecessor instruction pred))))))
