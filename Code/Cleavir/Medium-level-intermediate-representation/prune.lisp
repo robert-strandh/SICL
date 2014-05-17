@@ -42,13 +42,17 @@
       (setf (inputs instruction)
 	    (remove-if (constantly t) (inputs instruction)
 		       :start pos :count 1))
+      (when (= (length (inputs instruction)) 1)
+	(change-class instruction 'assignment-instruction))
       (loop for inst = instruction then succ
 	    for succ = (first (successors inst))
 	    while (and (typep succ 'phi-instruction)
 		       (= (length (predecessors succ)) 1))
 	    do (setf (inputs inst)
 		     (remove-if (constantly t) (inputs inst)
-				:start pos :count 1))))))
+				:start pos :count 1))
+	       (when (= (length (inputs inst)) 1)
+		 (change-class inst 'assignment-instruction))))))
 
 (defun prune-graph (initial-instruction)
   (let ((table (make-hash-table :test #'eq)))
