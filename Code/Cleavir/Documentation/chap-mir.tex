@@ -63,25 +63,37 @@ A MIR program is said to be \emph{reduced} if and only if it is
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
-Unless explicitly mentioned in the description of an instruction, it
-can have an arbitrary number of predecessors, including none.  An
-instruction with no predecessors if obviously \emph{unreachable}, but
-an instruction can be unreachable even if it has at least one
-predecessor, because of the presence of \emph{loops}. 
-
 \subsection{Instruction \texttt{nop}}
 \label{mir-instruction-NOP}
 
-This instruction has a single successor.  It has no inputs and no
-outputs.
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 0\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
 
 Executing this instruction has no effect. 
 
 \subsection{Instruction \texttt{assignment}}
 \label{mir-instruction-assignment}
 
-This instruction has a single successor.  It has a single input and a
-single output. 
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
 
 The execution of this instruction results in the input being copied to
 the output without any modification. 
