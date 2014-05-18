@@ -30,6 +30,14 @@ A MIR program is said to be \emph{well formed} if and only if the
 restrictions on each of the instructions are respected, as defined in
 \refSec{sec-mir-instructions}.
 
+It is possible for a well-formed MIR program to contain instructions
+that are not \emph{reachable} in that there is no execution path from
+the initial instruction to such an instruction.  This situation can
+arise as a result of certain optimizations that determine that a
+particular successor arc of some instruction can never be chosen, and
+so removes that arc.  In certain cases, the instruction at the head of
+that arc may then not be reachable from the initial instruction.  
+
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
@@ -95,3 +103,5 @@ value, but instead the root of an instruction graph.
 The instruction takes the instruction graph and creates a
 \emph{closure}.  The closure contains the current lexical runtime
 environment and the code resulting from the input instruction graph.
+
+%%  LocalWords:  optimizations
