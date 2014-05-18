@@ -48,6 +48,15 @@ reachable if and only if:
 \item it has a reachable predecessor.
 \end{itemize}
 
+By stating that every \texttt{enter-instruction} is reachable a
+priori, we implicitly assume that the closure generated as the output
+of every \texttt{enclose-instruction} is actually \emph{used}.
+Whether this is the case or not is of course \emph{undecidable}, but
+the translation from an abstract syntax tree to MIR eliminates some of
+the cases where the closure may not be used, in that it does not
+generate output for anonymous functions that are evaluated in a
+context where the resulting closure is obviously not needed.
+
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
