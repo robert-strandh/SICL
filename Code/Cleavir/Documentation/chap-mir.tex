@@ -38,6 +38,16 @@ particular successor arc of some instruction can never be chosen, and
 so removes that arc.  In certain cases, the instruction at the head of
 that arc may then not be reachable from the initial instruction.  
 
+Because of the existence of \texttt{enclose-instruction}s, the concept
+of reachability is actually a bit more complicated than what was
+hinted in the previous paragraph.  More formally, an instruction is
+reachable if and only if:
+
+\begin{itemize}
+\item it is an \texttt{enter-instruction}, or
+\item it has a reachable predecessor.
+\end{itemize}
+
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
@@ -104,4 +114,4 @@ The instruction takes the instruction graph and creates a
 \emph{closure}.  The closure contains the current lexical runtime
 environment and the code resulting from the input instruction graph.
 
-%%  LocalWords:  optimizations
+%%  LocalWords:  optimizations reachability
