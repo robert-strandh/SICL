@@ -2,8 +2,10 @@
 \label{chap-mir}
 
 The compiler translates an abstract syntax tree into a \emph{graph} of
-\emph{instructions} in a language named \textbf{MIR}.  This graph is a
-variation on a \emph{control flow graph}.  
+\emph{instructions} in a language named \emph{MIR}.  This graph is a
+variation on a \emph{control flow graph}.  As such, it has a unique
+instruction called the \emph{initial instruction} which is the
+instruction where the exectution of the MIR program starts. 
 
 In general an instruction can have zero, one, or more
 \emph{successors}, and zero, one, or more \emph{predecessors}.
@@ -19,10 +21,10 @@ The execution of a a MIR instruction consists of generating the
 outputs as a function of the inputs, and also of choosing a successor
 based on the inputs.
 
-An execution of a MIR program consists of executing a sequence of
-instructions where an instruction in the sequence is the successor
-chosen during the execution of the preceding instruction in the
-sequence.
+The execution of a MIR program consists of starting execution at the
+\emph{initial instruction} and executing a sequence of instructions
+where an instruction in the sequence is the successor chosen during
+the execution of the preceding instruction in the sequence.
 
 \section{Definition of MIR instructions}
 
