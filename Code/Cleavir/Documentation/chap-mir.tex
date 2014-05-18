@@ -106,7 +106,6 @@ This instruction has an accessor named \texttt{lambda-list}.
 \texttt{enter-instruction}.}
 \end{figure}
 
-
 \subsection{Instruction \texttt{nop}}
 \label{mir-instruction-nop}
 
@@ -123,6 +122,17 @@ Number of successors & 1\\
 \end{tabular}
 
 Executing this instruction has no effect. 
+
+\refFig{fig-nop-instruction} shows the Graphviz illustration of the
+\texttt{nop-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-nop-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-nop-instruction}
+\texttt{nop-instruction}.}
+\end{figure}
 
 \subsection{Instruction \texttt{assignment}}
 \label{mir-instruction-assignment}
