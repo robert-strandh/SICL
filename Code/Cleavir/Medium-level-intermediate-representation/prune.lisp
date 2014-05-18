@@ -1,6 +1,6 @@
 (in-package #:cleavir-mir)
 
-;;;; Prune an instruction graph.  The input is the initial instruction
+;;;; Reduce an instruction graph.  The input is the initial instruction
 ;;;; of a valid instruction graph.  Pruning it consists of removing
 ;;;; instructions that can not be reached from the initial
 ;;;; instruction.
@@ -56,7 +56,7 @@
 			 (= (length (predecessors succ)) 1))
 	      do (remove-input inst))))))
   
-(defun prune-graph (initial-instruction)
+(defun reduce-graph (initial-instruction)
   (let ((table (make-hash-table :test #'eq)))
     (labels ((traverse (instruction)
 	       (unless (gethash instruction table)
