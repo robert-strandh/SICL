@@ -2,19 +2,22 @@
 \label{chap-mir}
 
 The compiler translates an abstract syntax tree into a \emph{graph} of
-\emph{instructions} in a language named \textbf{MIR}.  It is a general
-graph because an instruction can have zero, one, or more
-\emph{successors}, and zero, one, or more \emph{predecessors}.  The
-graph can also contain \emph{cycles}.  
+\emph{instructions} in a language named \textbf{MIR}.  This graph is a
+variation on a \emph{control flow graph}.  
+
+In general an instruction can have zero, one, or more
+\emph{successors}, and zero, one, or more \emph{predecessors}.
 
 An instruction can also have zero, one, or several \emph{inputs} and
-zero, one, or more \emph{outputs}.  An input may be an
-\emph{immediate} value, a \emph{lexical variable}, or an \emph{entry
-  in the linkage vector}.  An output may only be a lexical variable.
+zero, one, or more \emph{outputs}.  An input may be an \emph{constant}
+value or a \emph{lexical variable}.%
+\footnote{The only exception to this rule is that an
+  \texttt{enclose-instruction} has an \texttt{enter-instruction} as
+  its input.}  An output may only be a lexical variable.
 
-Executing a MIR instruction consists of generating the outputs as a
-function of the inputs, and also of choosing a successor based on the
-inputs.
+The execution of a a MIR instruction consists of generating the
+outputs as a function of the inputs, and also of choosing a successor
+based on the inputs.
 
 An execution of a MIR program consists of executing a sequence of
 instructions where an instruction in the sequence is the successor
