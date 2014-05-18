@@ -5,7 +5,7 @@ The compiler translates an abstract syntax tree into a \emph{graph} of
 \emph{instructions} in a language named \emph{MIR}.  This graph is a
 variation on a \emph{control flow graph}.  As such, it has a unique
 instruction called the \emph{initial instruction} which is the
-instruction where the exectution of the MIR program starts. 
+instruction where the execution of the MIR program starts. 
 
 In general an instruction can have zero, one, or more
 \emph{successors}, and zero, one, or more \emph{predecessors}.
@@ -26,7 +26,12 @@ The execution of a MIR program consists of starting execution at the
 where an instruction in the sequence is the successor chosen during
 the execution of the preceding instruction in the sequence.
 
+A MIR program is said to be \emph{well formed} if and only if the
+restrictions on each of the instructions are respected, as defined in
+\refSec{sec-mir-instructions}.
+
 \section{Definition of MIR instructions}
+\label{sec-mir-instructions}
 
 \subsection{Instruction \texttt{NOP}}
 \label{mir-instruction-NOP}
