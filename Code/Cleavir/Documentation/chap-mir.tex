@@ -60,7 +60,13 @@ context where the resulting closure is obviously not needed.
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
-\subsection{Instruction \texttt{NOP}}
+Unless explicitly mentioned in the description of an instruction, it
+can have an arbitrary number of predecessors, including none.  An
+instruction with no predecessors if obviously \emph{unreachable}, but
+an instruction can be unreachable even if it has at least one
+predecessor, because of the presence of \emph{loops}. 
+
+\subsection{Instruction \texttt{nop}}
 \label{mir-instruction-NOP}
 
 This instruction has a single successor.  It has no inputs and no
