@@ -57,6 +57,9 @@ the cases where the closure may not be used, in that it does not
 generate output for anonymous functions that are evaluated in a
 context where the resulting closure is obviously not needed.
 
+A MIR program is said to be \emph{reduced} if and only if it is
+\emph{well formed} and every instruction is \emph{reachable}. 
+
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
