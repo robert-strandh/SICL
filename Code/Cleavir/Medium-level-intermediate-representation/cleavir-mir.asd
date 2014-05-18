@@ -7,5 +7,5 @@
    (:file "general")
    (:file "fixnum")
    (:file "accessors")
-   (:file "prune")
+   (:file "reduce")
    (:file "graphviz-drawing")))
