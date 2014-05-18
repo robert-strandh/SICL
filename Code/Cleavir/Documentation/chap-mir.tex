@@ -93,7 +93,43 @@ follows:
 The execution of this instruction involves parsing the arguments given
 to the function, and setting the outputs accordingly.  
 
-This instruction has an accessor named \texttt{lambda-list}. 
+This instruction has an accessor named \texttt{lambda-list}.  The
+lambda list of the \texttt{enter-instruction} resembles an ordinary
+lambda list in that it has a number of required parameters, possibly a
+\texttt{\&rest} parameter and some \texttt{\&optional} and
+\texttt{\&key} parameters.  It differs from an ordinary lambda list in
+the following way:
+
+\begin{itemize}
+\item Each required parameter is a \texttt{lexical-location} which is
+  also one of the outputs of the instruction.
+\item If the \texttt{\&rest} lambda list keyword is present, it is
+  followed by a \texttt{lexical-location} which is also one of the
+  outputs of the instruction.
+\item If the \texttt{\&optional} lambda list keyword is present, it is
+  followed by any number of two-element lists.  Each element of each
+  such lists is a \texttt{lexical-location} which is also one of the
+  outputs of the instruction.  The first element represents the
+  argument if it was given and the second element represents a
+  \texttt{supplied-p} argument containing either \texttt{nil} or
+  \texttt{t}.
+\item If the \texttt{\&key} lambda list keyword is present, it is
+  followed by any number of three-element lists.  The first element of
+  each such list is a \emph{symbol} (typically a symbol in the
+  \texttt{keyword} package) used to recognize whether the
+  corresponding argument has been given.  The second element and the
+  third element of each list is a \texttt{lexical-location} which is
+  also one of the outputs of the instruction.  The second element
+  represents the argument if it was given and the third element
+  represents a \texttt{supplied-p} argument containing either
+  \texttt{nil} or \texttt{t}.
+\end{itemize}
+
+Notice that the outputs are lexical locations independently of whether
+the parameters to the function are special variables.  The MIR
+instructions following the \texttt{enter-instruction} are responsible
+for binding special variables and assigning default values to
+unsupplied \texttt{\&optional} and \texttt{\&key} parameters.
 
 \refFig{fig-enter-instruction} shows the Graphviz illustration of the
 \texttt{enter-instruction}
@@ -189,4 +225,4 @@ The instruction takes the instruction graph and creates a
 \emph{closure}.  The closure contains the current lexical runtime
 environment and the code resulting from the input instruction graph.
 
-%%  LocalWords:  optimizations reachability
+%%  LocalWords:  optimizations reachability unsupplied
