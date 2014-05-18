@@ -63,8 +63,40 @@ A MIR program is said to be \emph{reduced} if and only if it is
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
+\subsection{Instruction \texttt{enter-instruction}}
+\label{mir-instruction-enter}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 0\\
+\hline
+Number of outputs & any\\
+\hline
+Number of predecessors & 0\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+An instruction of this type is either the initial instruction of a MIR
+program, or an input to an \texttt{enclose-instruction}.  The outputs
+of this instruction corresponds to the parameters the function as
+follows: 
+
+\begin{itemize}
+\item There is an output for every required parameter.
+\item For each optional parameter and for each keyword parameter,
+  there are two outputs, one for the parameter itself and one for the
+  \texttt{supplied-p} parameter.
+\end{itemize}
+
+The execution of this instruction involves parsing the arguments given
+to the function, and setting the outputs accordingly.  
+
+This instruction has an accessor named \texttt{lambda-list}. 
+
 \subsection{Instruction \texttt{nop}}
-\label{mir-instruction-NOP}
+\label{mir-instruction-nop}
 
 \begin{tabular}{|l|l|}
 \hline
