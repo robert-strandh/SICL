@@ -1,2 +1,87 @@
 \chapter{Medium-level intermediate representation}
+\label{chap-mir}
 
+The compiler translates an abstract syntax tree into a \emph{graph} of
+\emph{instructions} in a language named \textbf{MIR}.  It is a general
+graph because an instruction can have zero, one, or more
+\emph{successors}, and zero, one, or more \emph{predecessors}.  The
+graph can also contain \emph{cycles}.  
+
+An instruction can also have zero, one, or several \emph{inputs} and
+zero, one, or more \emph{outputs}.  An input may be an
+\emph{immediate} value, a \emph{lexical variable}, or an \emph{entry
+  in the linkage vector}.  An output may only be a lexical variable.
+
+Executing a MIR instruction consists of generating the outputs as a
+function of the inputs, and also of choosing a successor based on the
+inputs.
+
+An execution of a MIR program consists of executing a sequence of
+instructions where an instruction in the sequence is the successor
+chosen during the execution of the preceding instruction in the
+sequence.
+
+\section{Definition of MIR instructions}
+
+\subsection{Instruction \texttt{NOP}}
+\label{mir-instruction-NOP}
+
+This instruction has a single successor.  It has no inputs and no
+outputs.
+
+Executing this instruction has no effect. 
+
+\subsection{Instruction \texttt{assignment}}
+\label{mir-instruction-assignment}
+
+This instruction has a single successor.  It has a single input and a
+single output. 
+
+The execution of this instruction results in the input being copied to
+the output without any modification. 
+
+\subsection{Instruction \texttt{test}}
+\label{mir-instruction-test}
+
+This instruction has two successors.  It has a single input. 
+
+The first successor is chosen if the input is \emph{true} and the
+second input is chosen if the input is \emph{false}.%
+\fixme{Check that this statement is true.}
+
+\subsection{Instruction \texttt{funcall}}
+\label{mir-instruction-funcall}
+
+This instruction has a single successor.  It can have any number of
+inputs, and it has no outputs.  The inputs correspond to the function
+to call and to the arguments of that function.
+
+\subsection{Instruction \texttt{get-values}}
+\label{mir-instruction-get-values}
+
+This instruction has a single successor.  It has no inputs and it can
+have any number of outputs.
+
+The effect of this instruction is to assign the values of a preceding
+function call to a set of lexical variables. 
+
+\subsection{Instruction \texttt{return}}
+\label{mir-instruction-return}
+
+This instruction has no successors.  It can have any number of
+inputs, and it has no outputs.  The inputs correspond to the values
+transmitted to the caller
+
+It terminates execution of the current function and returns to the
+caller. 
+
+\subsection{Instruction \texttt{enclose}}
+\label{mir-instruction-enclose}
+
+This instruction has a single successor.  It has a single output. 
+It does have an input, but it is a special one because it is not a
+value, but instead the root of an instruction graph.  
+
+The instruction takes the instruction graph and creates a
+\emph{closure}.  The closure contains the current lexical runtime
+environment and the code resulting from the input instruction graph.
