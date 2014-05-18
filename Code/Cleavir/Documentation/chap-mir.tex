@@ -215,12 +215,23 @@ have any number of outputs.
 The effect of this instruction is to assign the values of a preceding
 function call to a set of lexical variables. 
 
-\subsection{Instruction \texttt{return}}
+\subsection{Instruction \texttt{return-instruction}}
 \label{mir-instruction-return}
 
-This instruction has no successors.  It can have any number of
-inputs, and it has no outputs.  The inputs correspond to the values
-transmitted to the caller
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & any\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 0\\
+\hline
+\end{tabular}
+
+The inputs of this instruction correspond to the values transmitted to
+the caller
 
 It terminates execution of the current function and returns to the
 caller. 
