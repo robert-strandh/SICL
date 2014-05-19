@@ -489,4 +489,36 @@ input.
 \texttt{rplacd-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{slot-read-instruction}}
+\label{mir-instruction-slot-read}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a \emph{standard object}.
+If the MIR program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The second input is
+a non-negative fixnum indicating the \emph{index} of the slot in the
+instance.  The output is the contents of the corresponding slot.
+
+\refFig{fig-slot-read-instruction} shows the Graphviz illustration of the
+\texttt{slot-read-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-slot-read-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-slot-read-instruction}
+\texttt{slot-read-instruction}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
