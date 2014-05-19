@@ -521,4 +521,37 @@ instance.  The output is the contents of the corresponding slot.
 \texttt{slot-read-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{slot-write-instruction}}
+\label{mir-instruction-slot-write}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a \emph{standard object}.
+If the MIR program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The second input is
+a fixnum indicating the \emph{index} of the slot in the instance.  The
+third input can be any object.  The effect of the instruction is to
+replace the contents of the corresponding slot by the third input.
+
+\refFig{fig-slot-write-instruction} shows the Graphviz illustration of the
+\texttt{slot-write-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-slot-write-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-slot-write-instruction}
+\texttt{slot-write-instruction}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
