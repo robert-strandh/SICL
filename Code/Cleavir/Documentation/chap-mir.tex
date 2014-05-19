@@ -300,12 +300,24 @@ caller.
 \subsection{Instruction \texttt{enclose}}
 \label{mir-instruction-enclose}
 
-This instruction has a single successor.  It has a single output. 
-It does have an input, but it is a special one because it is not a
-value, but instead the root of an instruction graph.  
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
 
-The instruction takes the instruction graph and creates a
+The input of this instruction is different from those of other
+instructions because it is another instruction, namely an
+\texttt{enter-instruction}.
+
+The instruction takes the instruction graph of the input and creates a
 \emph{closure}.  The closure contains the current lexical runtime
 environment and the code resulting from the input instruction graph.
 
-%%  LocalWords:  optimizations reachability unsupplied callee
+%%  LocalWords:  optimizations reachability unsupplied callee runtime
