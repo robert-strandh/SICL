@@ -423,4 +423,37 @@ the \texttt{cdr} of the \texttt{cons} cell.
 \texttt{cdr-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{rplaca-instruction}}
+\label{mir-instruction-rplaca}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a \texttt{cons} cell.  If
+the MIR program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The second input
+can be any object.  The effect of the instruction is to replace the
+contents of the \texttt{car} of the \texttt{cons} cell by the second
+input.
+
+\refFig{fig-rplaca-instruction} shows the Graphviz illustration of the
+\texttt{rplaca-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-rplaca-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-rplaca-instruction}
+\texttt{rplaca-instruction}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
