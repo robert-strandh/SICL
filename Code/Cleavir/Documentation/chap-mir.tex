@@ -214,6 +214,15 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
+The first input of this instruction corresponds to the function being
+called.  It can be either a lexical location or a global-input.  
+The remaining inputs correspond to the arguments to be passed to the
+callee. 
+
+The outputs of this instruction correspond to the values that the
+caller requests from the callee.  The number of outputs can therefore
+be different from the actual number of values produced by the caller.
+
 \subsection{Instruction \texttt{tailcall-instruction}}
 \label{mir-instruction-tailcall}
 
@@ -272,4 +281,4 @@ The instruction takes the instruction graph and creates a
 \emph{closure}.  The closure contains the current lexical runtime
 environment and the code resulting from the input instruction graph.
 
-%%  LocalWords:  optimizations reachability unsupplied
+%%  LocalWords:  optimizations reachability unsupplied callee
