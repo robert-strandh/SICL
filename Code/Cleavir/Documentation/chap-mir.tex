@@ -297,7 +297,7 @@ caller.
 \texttt{return-instruction}.}
 \end{figure}
 
-\subsection{Instruction \texttt{enclose}}
+\subsection{Instruction \texttt{enclose-instruction}}
 \label{mir-instruction-enclose}
 
 \begin{tabular}{|l|l|}
@@ -329,6 +329,36 @@ environment and the code resulting from the input instruction graph.
 \end{center}
 \caption{\label{fig-enclose-instruction}
 \texttt{enclose-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{test-instruction}}
+\label{mir-instruction-test}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The input of this instruction is a generalized Boolean.  The first
+successor is chosen if the value of the input is \emph{true} and the
+second successor is chosen of the value of the input is \emph{false}.
+
+\refFig{fig-test-instruction} shows the Graphviz illustration of the
+\texttt{test-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-test-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-test-instruction}
+\texttt{test-instruction}.}
 \end{figure}
 
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
