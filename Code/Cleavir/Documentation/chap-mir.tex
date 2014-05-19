@@ -199,21 +199,8 @@ the output without any modification.
 \texttt{assignment-instruction}.}
 \end{figure}
 
-\subsection{Instruction \texttt{funcall}}
+\subsection{Instruction \texttt{funcall-instruction}}
 \label{mir-instruction-funcall}
-
-This instruction has a single successor.  It can have any number of
-inputs, and it has no outputs.  The inputs correspond to the function
-to call and to the arguments of that function.
-
-\subsection{Instruction \texttt{get-values}}
-\label{mir-instruction-get-values}
-
-This instruction has a single successor.  It has no inputs and it can
-have any number of outputs.
-
-The effect of this instruction is to assign the values of a preceding
-function call to a set of lexical variables. 
 
 \subsection{Instruction \texttt{return-instruction}}
 \label{mir-instruction-return}
