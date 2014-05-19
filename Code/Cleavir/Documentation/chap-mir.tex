@@ -526,7 +526,7 @@ instance.  The output is the contents of the corresponding slot.
 
 \begin{tabular}{|l|l|}
 \hline
-Number of inputs & 2\\
+Number of inputs & 3\\
 \hline
 Number of outputs & 0\\
 \hline
@@ -572,9 +572,9 @@ Number of successors & 1\\
 The first input to this instruction must be an \emph{array}.  If the
 MIR program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.  The second input is a
-non-negative fixnum indicating the \emph{row-major index} into the
-array.  The output is the contents of the corresponding element of the
-array.
+non-negative fixnum indicating the \emph{row-major index} of an
+element of the array.  The output is the contents of the corresponding
+element of the array.
 
 \refFig{fig-aref-instruction} shows the Graphviz illustration of the
 \texttt{aref-instruction}
@@ -585,6 +585,39 @@ array.
 \end{center}
 \caption{\label{fig-aref-instruction}
 \texttt{aref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{aset-instruction}}
+\label{mir-instruction-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be an \emph{array}.  If the
+MIR program is \emph{safe}, then control must reach this instruction
+only if this restriction is verified.  The second input is a fixnum
+indicating the \emph{row-major index} of an element of the array.
+The third input can be any object.  The effect of the instruction is
+to replace the contents of the corresponding element by the third input.
+
+\refFig{fig-aset-instruction} shows the Graphviz illustration of the
+\texttt{aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-aset-instruction}
+\texttt{aset-instruction}.}
 \end{figure}
 
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
