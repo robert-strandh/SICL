@@ -361,4 +361,35 @@ second successor is chosen of the value of the input is \emph{false}.
 \texttt{test-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{car-instruction}}
+\label{mir-instruction-car}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a \texttt{cons} cell.  If the
+MIR program is \emph{safe}, then control must reach this instruction
+only if this restriction is verified.  The output is the contents of
+the \texttt{car} of the \texttt{cons} cell.
+
+\refFig{fig-car-instruction} shows the Graphviz illustration of the
+\texttt{car-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-car-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-car-instruction}
+\texttt{car-instruction}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
