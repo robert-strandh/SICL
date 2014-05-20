@@ -1,6 +1,7 @@
 \chapter{Optimizations on intermediate representation}
 
 \section{Static single assignment form}
+\label{mir-optimizations-ssa-form}
 
 While not an optimization in itself, static single assignment (SSA)
 form is a prerequisite for many optimization techniques, which is why
@@ -134,3 +135,10 @@ in the flow graph, $n$ is the number of nodes, and $\alpha$ is the
 inverse of Ackermann's function.  A more complicated algorithm that
 runs in linear time was discovered by Harel
 \cite{Harel:1985:LAF:22145.22166}.
+
+\section{Type inference}
+
+Type inference is accomplished by formulating it as a \emph{forward
+  data flow} problem.  The best result is obtained for variables that
+respect the \emph{static single assignment} property as describe in
+\refSec{mir-optimizations-ssa-form}. 
