@@ -1057,5 +1057,14 @@ type can be allocated in a register or on the stack.  A temporary
 variable introduced by the compiler will always turn into a datum of
 this type.
 
+\subsection{Location \texttt{captured-location}}
+
+This data type corresponds is a subtype of \texttt{lexical-location}.
+It is used for lexical locations that are referred to from several
+function, i.e., for \emph{captured} variables.  A location of this
+type can \emph{not} be allocated in a register or on the stack.
+Instead, it has to be allocated in the \emph{static runtime
+  environment}. 
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
 %%  LocalWords:  subtype
