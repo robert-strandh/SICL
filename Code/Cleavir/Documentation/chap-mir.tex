@@ -1048,4 +1048,14 @@ lexical locations may have the same name, due to shadowing.
 \texttt{lexical-location}.}
 \end{figure}
 
+\subsection{Location \texttt{simple-location}}
+
+This data type corresponds is a subtype of \texttt{lexical-location}.
+It is used for lexical locations that are referred to within a single
+function, so that there is no possible capture.  A location of this
+type can be allocated in a register or on the stack.  A temporary
+variable introduced by the compiler will always turn into a datum of
+this type.
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
+%%  LocalWords:  subtype
