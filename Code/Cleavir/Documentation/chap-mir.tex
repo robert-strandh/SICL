@@ -910,4 +910,33 @@ type specifier can also be retrieved using the slot reader
 \texttt{typeq-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{sref-instruction}}
+\label{mir-instruction-sref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a constant symbol naming a
+special variable.  The output is the value of that special varible.
+
+\refFig{fig-sref-instruction} shows the Graphviz illustration of the
+\texttt{sref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-sref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-sref-instruction}
+\texttt{sref-instruction}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
