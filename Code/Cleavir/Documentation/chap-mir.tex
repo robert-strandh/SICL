@@ -855,4 +855,59 @@ restriction is respected.
 \texttt{phi-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{typeq-instruction}}
+\label{mir-instruction-typeq}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The first input of this instruction is an object of which the type
+is be tested.  The second input is a \emph{type specifier}.
+Initially, the second input is a \texttt{constant-input}, but that
+might change as a result of transformations of the graph.  
+
+The first successor is chosen if and only if the first input is of the
+type denoted by the second input. 
+
+This instruction is used in a variety of situations:
+
+\begin{itemize}
+\item When the source code contains a call to \texttt{typep} with a
+  constant type argument, a compiler macro might transform the call to
+  a special form that generates this instruction.
+\item Some implementations might generate this instruction from the
+  special operator \texttt{the}, where the second successor contains a
+  call to \texttt{error}.
+\item Since type declarations can be seen as implicit use of the
+  special operator \texttt{the}, this instruction can be used for type
+  declarations as well.
+\item The macro \texttt{check-type} might result in this instruction
+  being generated, in which case the second successor would contain
+  instructions to signal a correctable error.
+\end{itemize}
+
+Because the second input may not be a \texttt{constant-input}, the
+type specifier can also be retrieved using the slot reader
+\texttt{value-type}. 
+
+\refFig{fig-typeq-instruction} shows the Graphviz illustration of the
+\texttt{typeq-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-typeq-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-typeq-instruction}
+\texttt{typeq-instruction}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
