@@ -1,5 +1,8 @@
 \chapter{Optimizations on intermediate representation}
 
+\section{Reducing an instruction graph}
+\label{mir-optimizations-reduction}
+
 \section{Static single assignment form}
 \label{mir-optimizations-ssa-form}
 
@@ -162,8 +165,14 @@ specifier of its second input to the first successor arc, and the
 
 When a \texttt{typeq-instruction} has an outgoing arc containing the
 type \texttt{nil} for some variable, this means that control can not
-pass through that arc.  Then that arc becomes the outgoing arc of a
+pass through that arc.  We say that such an arc is \emph{dead}. 
+The dead arc becomes the outgoing arc of a
 \texttt{nop-instruction} without a predecessor, and the
 \texttt{typeq-instruction} itself is replaced by a
 \texttt{nop-instruction}.%
 \fixme{This explanation is not great.  Improve it!}
+Notice that dead arcs can not simply be removed, because the result
+would then be an instruction graph that is not \emph{well formed} as
+described in \refChap{chap-mir}.  After this type of transformation,
+the instruction graph should be
+\emph{reduced}. \seesec{mir-optimizations-reduction} 
