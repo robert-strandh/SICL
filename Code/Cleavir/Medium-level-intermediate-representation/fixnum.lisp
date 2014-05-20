@@ -54,7 +54,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM-<=-INSTRUCTION.
+;;; Instruction FIXNUM-=-INSTRUCTION.
 
 (defclass fixnum-=-instruction (instruction two-successors-mixin)
   ())
