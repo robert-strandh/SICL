@@ -1006,4 +1006,24 @@ not be able to reach a \texttt{tailcall-instruction}.
 \texttt{sbind-instruction}.}
 \end{figure}
 
+\section{Data}
+
+\subsection{Input \texttt{constant-input}}
+
+This data type corresponds to constants in source code.  It can only
+be used as an \emph{input}.
+
+The slot reader \texttt{value} can be used to access the constant. 
+
+\refFig{fig-constant-input} shows the Graphviz illustration of the
+\texttt{constant-input}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-constant-input.pdf_t}
+\end{center}
+\caption{\label{fig-constant-input}
+\texttt{constant-input}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
