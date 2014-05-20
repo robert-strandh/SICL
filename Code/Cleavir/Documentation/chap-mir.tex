@@ -970,4 +970,35 @@ variable the second input.
 \texttt{sset-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{sbind-instruction}}
+\label{mir-instruction-sbind}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a constant symbol naming a
+special variable.  The second input can be any object.  The effect of
+the instruction is to create a new binding for the special variable,
+where the initial value is that of the second input.
+
+\refFig{fig-sbind-instruction} shows the Graphviz illustration of the
+\texttt{sbind-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-sbind-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-sbind-instruction}
+\texttt{sbind-instruction}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
