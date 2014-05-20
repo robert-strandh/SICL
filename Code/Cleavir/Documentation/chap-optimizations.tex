@@ -140,5 +140,30 @@ runs in linear time was discovered by Harel
 
 Type inference is accomplished by formulating it as a \emph{forward
   data flow} problem.  The best result is obtained for variables that
-respect the \emph{static single assignment} property as describe in
+respect the \emph{static single assignment} property as described in
 \refSec{mir-optimizations-ssa-form}. 
+
+Every \emph{arc} of the flow graph is associated with a \empty{type
+  map} for each lexical variable that is \emph{live} at that arc.  The
+type map describes all possible types for the variable at that arc.
+In many cases, the type map can not be precise.  If so, then it must
+contain a \emph{superset} of the possible types.  The exact
+representation of the type map is implementation-dependent. 
+
+Initially a fictive arc occurring before the initial
+\texttt{enter-instruction} of the program is considered to have no
+type maps associated with it, since no variables are live there.  
+
+The propagation of type maps depends on the type of each instruction.
+In particular, the \texttt{typeq-instruction} propagates the
+\emph{and} of the existing type map for a variable and the type
+specifier of its second input to the first successor arc, and the
+\emph{difference} to the second successor arc.  
+
+When a \texttt{typeq-instruction} has an outgoing arc containing the
+type \texttt{nil} for some variable, this means that control can not
+pass through that arc.  Then that arc becomes the outgoing arc of a
+\texttt{nop-instruction} without a predecessor, and the
+\texttt{typeq-instruction} itself is replaced by a
+\texttt{nop-instruction}.%
+\fixme{This explanation is not great.  Improve it!}
