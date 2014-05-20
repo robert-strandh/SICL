@@ -926,7 +926,7 @@ Number of successors & 1\\
 \end{tabular}
 
 The input to this instruction must be a constant symbol naming a
-special variable.  The output is the value of that special varible.
+special variable.  The output is the value of that special variable.
 
 \refFig{fig-sref-instruction} shows the Graphviz illustration of the
 \texttt{sref-instruction}
@@ -937,6 +937,37 @@ special variable.  The output is the value of that special varible.
 \end{center}
 \caption{\label{fig-sref-instruction}
 \texttt{sref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{sset-instruction}}
+\label{mir-instruction-sset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a constant symbol naming a
+special variable.  The second input can be any object.  The effect of
+the instruction is to replace the current value of the special
+variable the second input.
+
+\refFig{fig-sset-instruction} shows the Graphviz illustration of the
+\texttt{sset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-sset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-sset-instruction}
+\texttt{sset-instruction}.}
 \end{figure}
 
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
