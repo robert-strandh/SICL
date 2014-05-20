@@ -990,6 +990,11 @@ special variable.  The second input can be any object.  The effect of
 the instruction is to create a new binding for the special variable,
 where the initial value is that of the second input.
 
+The binding is automatically destroyed when the current function
+invocation terminates by executing a \texttt{return-instruction}.
+After an instruction of this type has been executed, control flow must
+not be able to reach a \texttt{tailcall-instruction}. 
+
 \refFig{fig-sbind-instruction} shows the Graphviz illustration of the
 \texttt{sbind-instruction}
 
