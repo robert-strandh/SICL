@@ -809,4 +809,50 @@ to the second input.
 \texttt{fixnum-=-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{phi-instruction}}
+\label{mir-instruction-phi}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & > 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction is used for variables respecting the \emph{static
+  single assignment} (SSA) property.  
+
+One of the following must hold for any \texttt{phi-instruction} A:
+
+\begin{itemize}
+\item The number of predecessors of A is equal to the number of inputs
+  to A, or
+\item A has a single predecessor B, and B is also a
+  \texttt{phi-instruction} with the same number of inputs as A.
+\end{itemize}
+
+In other words, \texttt{phi-instruction}s occur in \emph{clusters}
+with the same number of inputs $n$.  The first instruction of such a
+cluster has $n$ predecessors, and the others have a single
+predecessor. 
+
+Special care must be taken when the graph is modified so that this
+restriction is respected. 
+
+\refFig{fig-phi-instruction} shows the Graphviz illustration of the
+\texttt{phi-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-phi-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-phi-instruction}
+\texttt{phi-instruction}.}
+\end{figure}
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
