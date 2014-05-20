@@ -744,7 +744,7 @@ strictly less than the second input.
 \end{figure}
 
 \subsection{Instruction \texttt{fixnum-<=-instruction}}
-\label{mir-instruction-fixnum-less}
+\label{mir-instruction-fixnum-le}
 
 \begin{tabular}{|l|l|}
 \hline
@@ -774,6 +774,39 @@ less than or equal to the second input.
 \end{center}
 \caption{\label{fig-fixnum-le-instruction}
 \texttt{fixnum-<=-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{fixnum-=-instruction}}
+\label{mir-instruction-fixnum-equal}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \texttt{fixnum}.  If the
+MIR program is \emph{safe}, then control must reach this instruction
+only if this restriction is verified.
+
+The first successor is chosen if and only if the first input is equal
+to the second input.
+
+\refFig{fig-fixnum-equal-instruction} shows the Graphviz illustration of the
+\texttt{fixnum-=-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-fixnum-equal-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-fixnum-equal-instruction}
+\texttt{fixnum-=-instruction}.}
 \end{figure}
 
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
