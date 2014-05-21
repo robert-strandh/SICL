@@ -83,7 +83,9 @@ integers, floating-point numbers, and characters.
 
 Argument parsing is not exposed, and is instead hidden in a single
 \texttt{enter-instruction}.  Similarly, the details of how functions
-are called and how values are returned is hidden. 
+are called and how values are returned is hidden.  A single
+instruction is used to access the fields of a \texttt{cons} cell, the
+element of an array, and the slot of a standard instance. 
 
 At this level, all lexical locations are treated the same way. 
 
@@ -119,6 +121,10 @@ A priori, every simple location is translated this way, but
 implementations can leave out some or all simple locations from this
 conversion.  However, some optimizations apply only to simple
 locations. 
+
+The representation at this level is used for \emph{type inference}.
+The result of this operation is that some parts of the instruction
+graph may be removed.
 
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
