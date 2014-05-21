@@ -1186,9 +1186,6 @@ this instruction only if this restriction is verified.
 The output is a boxed \texttt{single-float} value corresponding to the
 input.
 
-This instruction can be used by implementations that support the
-\texttt{single-float} data type.   
-
 \refFig{fig-single-float-box-instruction} shows the Graphviz illustration of the
 \texttt{single-float-box-instruction}
 
@@ -1198,6 +1195,39 @@ This instruction can be used by implementations that support the
 \end{center}
 \caption{\label{fig-single-float-box-instruction}
 \texttt{single-float-box-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-unbox-instruction}}
+\label{mir-instruction-single-float-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{single-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is an unboxed \texttt{single-float} value corresponding to
+the input.
+
+\refFig{fig-single-float-unbox-instruction} shows the Graphviz illustration of the
+\texttt{single-float-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-unbox-instruction}
+\texttt{single-float-unbox-instruction}.}
 \end{figure}
 
 \section{Data}
