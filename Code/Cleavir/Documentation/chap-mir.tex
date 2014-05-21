@@ -1148,5 +1148,11 @@ predecessors.  \textit{existing1} becomes the sole predecessor of
 of \textit{existing1}, and \textit{existing1} as a predecessor of
 \textit{existing2}.
 
+\Defun {insert-instruction-after} {new existing}
+
+Insert \textit{new} after \textit{existing}.  \textit{existing} must
+have a single successor.  The effect is to insert \textit{new} between
+\textit{existing} and its sole successor.
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
 %%  LocalWords:  subtype
