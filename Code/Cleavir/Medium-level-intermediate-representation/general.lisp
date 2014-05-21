@@ -474,7 +474,7 @@
 ;;; E2, where E2 is a successor of E1.  E1 can have any number of
 ;;; successors and E2 can have any number of predecessors.  E1 becomes
 ;;; the sole predecessor of N, and E2 becomes the sole successor of N.
-;;; N replaces E as a successor of E1, and as a predecessor of E2.
+;;; N replaces E2 as a successor of E1, and E1 as a predecessor of E2.
 (defun insert-instruction-between (new existing1 existing2)
   (setf (predecessors new) (list existing1))
   (setf (successors new) (list existing2))
