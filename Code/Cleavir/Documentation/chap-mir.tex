@@ -1136,5 +1136,17 @@ executed, after the operation $p$ will be a predecessor of
 \textit{new} and \textit{new} will have replaced \textit{existing} as
 a successor of $p$.
 
+\Defun {insert-instruction-between} {new existing1 existing2}
+
+Insert the instruction \textit{new} between the instructions
+\textit{existing1} and \textit{existing2}, where \textit{existing2} is
+a successor of \textit{existing1}.  \textit{existing1} can have any
+number of successors and \textit{existing2} can have any number of
+predecessors.  \textit{existing1} becomes the sole predecessor of
+\textit{new} and \textit{existing2} becomes the sole successor of
+\textit{new}.  \textit{new} replaces \textit{existing2} as a successor
+of \textit{existing1}, and \textit{existing1} as a predecessor of
+\textit{existing2}.
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
 %%  LocalWords:  subtype
