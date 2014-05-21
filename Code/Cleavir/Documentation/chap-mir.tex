@@ -1128,6 +1128,42 @@ This instruction can be used by implementations that support the
 \texttt{short-float-box-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{short-float-unbox-instruction}}
+\label{mir-instruction-short-float-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{short-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is an unboxed \texttt{short-float} value corresponding to
+the input.
+
+This instruction can be used by implementations that support the
+\texttt{short-float} data type.   
+
+\refFig{fig-short-float-unbox-instruction} shows the Graphviz illustration of the
+\texttt{short-float-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-unbox-instruction}
+\texttt{short-float-unbox-instruction}.}
+\end{figure}
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
