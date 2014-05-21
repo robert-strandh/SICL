@@ -1164,6 +1164,42 @@ This instruction can be used by implementations that support the
 \texttt{short-float-unbox-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{single-float-box-instruction}}
+\label{mir-instruction-single-float-box}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be an unboxed \texttt{single-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is a boxed \texttt{single-float} value corresponding to the
+input.
+
+This instruction can be used by implementations that support the
+\texttt{single-float} data type.   
+
+\refFig{fig-single-float-box-instruction} shows the Graphviz illustration of the
+\texttt{single-float-box-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-box-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-box-instruction}
+\texttt{single-float-box-instruction}.}
+\end{figure}
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
