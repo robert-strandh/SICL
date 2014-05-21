@@ -1154,5 +1154,13 @@ Insert \textit{new} after \textit{existing}.  \textit{existing} must
 have a single successor.  The effect is to insert \textit{new} between
 \textit{existing} and its sole successor.
 
+\Defun {delete-instruction} {instruction}
+
+Delete \textit{instruction}.  \textit{instruction} must have a single
+successor.  The sole successor of \textit{instruction} replaces
+\textit{instruction} as the successor of every predecessor of
+\textit{instruction}.  The predecessors of \textit{instruction} become
+the predecessors of the sole successor of \textit{instruction}.
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
 %%  LocalWords:  subtype
