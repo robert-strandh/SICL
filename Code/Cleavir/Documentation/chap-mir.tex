@@ -1108,5 +1108,22 @@ Instead, it has to be allocated in the \emph{static runtime
 \texttt{captured-location}.}
 \end{figure}
 
+\section{Operations on MIR programs}
+
+\subsection{Cloning an instruction}
+
+\Defgeneric {clone-instruction} {instruction}
+
+This function creates a copy of \textit{instruction}.
+
+\Defmethod {clone-instruction} {(instruction {\tt instruction})}
+
+The primary method creates an instance of the class of
+\textit{instruction}, with the same inputs, outputs and successors
+(the lists are not copied). 
+
+Client code must create \texttt{:after} methods to fill in additional
+slots. 
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
 %%  LocalWords:  subtype
