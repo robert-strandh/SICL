@@ -126,6 +126,18 @@ The representation at this level is used for \emph{type inference}.
 The result of this operation is that some parts of the instruction
 graph may be removed.
 
+\subsection{Level 3}
+
+This is the first level where real implementation-specific and
+backend-specific details is introduced.  The instructions to access
+fields of a \texttt{cons} cell, elements of an array, or slots of a
+standard object, are expanded to expose tagging and address
+calculations.
+
+This is the level where most traditional optimizations are
+accomplished, such as \emph{value numbering}, \emph{redundancy
+  elimination}, \emph{common subexpression elimination}, etc.
+
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
