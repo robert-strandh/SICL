@@ -1125,5 +1125,16 @@ The primary method creates an instance of the class of
 Client code must create \texttt{:after} methods to fill in additional
 slots. 
 
+\Defun {insert-instruction-before} {new existing}
+
+Insert the instruction \textit{new} before the instruction
+\textit{existing}.  After this operation \textit{new} will have
+\textit{existing} as its sole successor, and \textit{existing} will
+have \textit{new} as its sole predecessor.  For every instruction $p$
+that was a predecessor of \textit{existing} before this operation was
+executed, after the operation $p$ will be a predecessor of
+\textit{new} and \textit{new} will have replaced \textit{existing} as
+a successor of $p$.
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
 %%  LocalWords:  subtype
