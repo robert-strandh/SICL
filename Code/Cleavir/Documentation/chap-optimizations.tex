@@ -3,6 +3,32 @@
 \section{Reducing an instruction graph}
 \label{mir-optimizations-reduction}
 
+As a result of certain local optimizations, it is possible that a well
+formed instruction graph nevertheless has instructions that are not
+reachable from the initial instruction.  Removing such unreachable
+instructions is done by \emph{reducing} it.
+
+To reduce an instruction graph, first the set of all reachable
+instructions is computed.  Then, for each reachable instruction $i$,
+its predecessors are examined.  If $i$ has a predecessor $p$ that is
+not a member of the set of reachable instructions, then $p$ is removed
+as described below.  Notice that $i$ must have at least one reachable
+predecessor, so $i$ must have at least two predecessors, one of which
+is $p$.  We remove $p$ as follows:
+
+\begin{itemize}
+\item If $i$ is a \texttt{phi-instruction}, then determine the
+  position $k$ of $p$ among the predecessors of $i$.  Remove the
+  $k$:th input from $i$ and the following \texttt{phi-instruction}s
+  belonging to the same \emph{cluster}.  If this operation results in
+  the \texttt{phi-instruction}s in the cluster having a single input,
+  then replace each \texttt{phi-instruction} in the cluster by an
+  \texttt{assignment-instruction}.  Finally remove the $k$:th
+  predecessor of $i$.
+\item If $i$ is not a \texttt{phi-instruction}, simply remove $p$ from
+  the list of predecessors of $i$.
+\end{itemize}
+
 \section{Static single assignment form}
 \label{mir-optimizations-ssa-form}
 
