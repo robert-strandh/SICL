@@ -488,6 +488,9 @@
   (assert (= (length (successors existing)) 1))
   (insert-instruction-between new existing (car (successors existing))))
 
+;;; Delete and instruction I.  I must have a single successor S.  S
+;;; replaces I as the successor of every predecessor P of I.  The
+;;; predecessors of I become the predecessors of S.
 (defun delete-instruction (instruction)
   (assert (= (length (successors instruction)) 1))
   (setf (inputs instruction) '())
