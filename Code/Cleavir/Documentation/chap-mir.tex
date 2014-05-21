@@ -108,6 +108,18 @@ At this level, we also introduce explicit instructions for
 \texttt{return-from} or \texttt{go} special form where the origin is
 in one function and the destination is in a different function.
 
+\subsection{Level 2}
+
+The distinction between simple locations and captured locations is
+necessary because only simple locations are subject to conversion to
+\emph{static single assignment} (SSA) form, which is what this level is
+about.  
+
+A priori, every simple location is translated this way, but
+implementations can leave out some or all simple locations from this
+conversion.  However, some optimizations apply only to simple
+locations. 
+
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
 
