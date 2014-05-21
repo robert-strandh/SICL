@@ -1092,6 +1092,42 @@ not be able to reach a \texttt{tailcall-instruction}.
 \texttt{sbind-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{short-float-box-instruction}}
+\label{mir-instruction-short-float-box}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be an unboxed \texttt{short-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is a boxed \texttt{short-float} value corresponding to the
+input.
+
+This instruction can be used by implementations that support the
+\texttt{short-float} data type.   
+
+\refFig{fig-short-float-box-instruction} shows the Graphviz illustration of the
+\texttt{short-float-box-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-box-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-box-instruction}
+\texttt{short-float-box-instruction}.}
+\end{figure}
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
