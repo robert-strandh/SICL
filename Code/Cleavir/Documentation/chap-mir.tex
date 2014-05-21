@@ -1266,6 +1266,42 @@ This instruction can be used by implementations that support the
 \texttt{double-float-box-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{double-float-unbox-instruction}}
+\label{mir-instruction-double-float-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{double-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is an unboxed \texttt{double-float} value corresponding to
+the input.
+
+This instruction can be used by implementations that support the
+\texttt{double-float} data type.   
+
+\refFig{fig-double-float-unbox-instruction} shows the Graphviz illustration of the
+\texttt{double-float-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-unbox-instruction}
+\texttt{double-float-unbox-instruction}.}
+\end{figure}
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
