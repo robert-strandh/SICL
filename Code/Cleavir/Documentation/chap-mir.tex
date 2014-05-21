@@ -1,6 +1,8 @@
 \chapter{Medium-level intermediate representation}
 \label{chap-mir}
 
+\section{Instruction graph}
+
 The compiler translates an abstract syntax tree into a \emph{graph} of
 \emph{instructions} in a language named \emph{MIR}.  This graph is a
 variation on a \emph{control flow graph}.  As such, it has a unique
@@ -59,6 +61,29 @@ context where the resulting closure is obviously not needed.
 
 A MIR program is said to be \emph{reduced} if and only if it is
 \emph{well formed} and every instruction is \emph{reachable}. 
+
+\section{Succession of levels of detail}
+
+MIR is not a single representation.  Rather, it is a succession of
+different representations, according to the \emph{level of detail}
+that is required.  The levels are distinguished by what types of
+instructions and what types of data are present. 
+
+\subsection{Level 0}
+
+The first level is \emph{backend independent} and mostly
+implementation independent.  The dependence on the implementation
+consists of what floating-point operations might be present, depending
+on the different floating-point types supported.
+
+At this level, no address calculations are exposed.  All variables
+contain \cl{} objects, except that some variables may contain
+\emph{unboxed} or \emph{raw} versions of such objects, in particular
+integers, floating-point numbers, and characters.
+
+Argument parsing is not exposed, and is instead hidden in a single
+\texttt{enter-instruction}.  Similarly, the details of how functions
+are called and how values are returned is hidden. 
 
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
@@ -1163,4 +1188,4 @@ successor.  The sole successor of \textit{instruction} replaces
 the predecessors of the sole successor of \textit{instruction}.
 
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
-%%  LocalWords:  subtype
+%%  LocalWords:  subtype backend unboxed
