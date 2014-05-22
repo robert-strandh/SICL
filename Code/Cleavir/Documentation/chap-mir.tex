@@ -1929,6 +1929,43 @@ overflow occurred.
 \texttt{lf-*-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{lf-/-instruction}}
+\label{mir-instruction-lf-/}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+If the first successor is chosen, then the output is
+the quotient of the two inputs.  
+
+If the second successor is chosen, then the output is undefined and an
+overflow occurred. 
+
+\refFig{fig-lf-/-instruction} shows the Graphviz illustration of the
+\texttt{lf-/-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-lf-div-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-lf-/-instruction}
+\texttt{lf-/-instruction}.}
+\end{figure}
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
