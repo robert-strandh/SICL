@@ -329,8 +329,12 @@ used to represent a fixnum, and $r$ is the value of the lexical
 variable.  If the result is \emph{positive}, then the sum of the two
 operands is $r - 2^n$.
 
-\subsection{\texttt{fixnum---ast}}
-\label{fixnum---ast}
+\subsection{\texttt{fixnum-sub-ast}}
+\label{fixnum-sub-ast}
+
+This AST can be used by implementations that represent fixnums in a
+way that allows them to be subtracted directly without first unboxing
+them.
 
 This AST can only occur as the first child of an \texttt{if-ast}
 \seesec{if-ast}.  It has three children.
