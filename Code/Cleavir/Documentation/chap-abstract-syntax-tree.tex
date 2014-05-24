@@ -442,3 +442,12 @@ translates to a test and a branch.
 
 \section{Abstract syntax trees for floating-point arithmetic}
 \label{sec-ast-floating-point-arithmetic}
+
+The ASTs in this section can be used by implementation that want to
+inline floating-point arithmetic.  There are four families of ASTs,
+one for each type of floating-point precision defined by the \hs{}.
+
+Some of the ASTs defined in this section evaluate to \emph{unboxed}
+floating-point values.  Such ASTs can only occur in a context where
+such values are required.  In particular, they can not occur as the
+root of an AST representing an entire function.  
