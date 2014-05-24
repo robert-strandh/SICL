@@ -405,3 +405,20 @@ argument is strictly greater than the second (and \emph{false}
 otherwise), except that since this AST can only occur in the test
 position of an \texttt{if-ast}, no value will ever be returned.
 Instead this AST translates to a test and a branch. 
+
+\subsection{\texttt{fixnum-not-greater-ast}}
+\label{fixnum-not-greater-ast}
+
+This AST can be used by implementations that represent fixnums in a
+way that allows them to be compared directly without first unboxing
+them.
+
+This AST can only occur as the first child (i.e., the \emph{test}) of
+an \texttt{if-ast} \seesec{if-ast}.  It has two children that
+represent the arguments to the comparison.  
+
+Semantically, this AST returns \emph{true} if an only if the first
+argument is not strictly greater than the second (and \emph{false}
+otherwise), except that since this AST can only occur in the test
+position of an \texttt{if-ast}, no value will ever be returned.
+Instead this AST translates to a test and a branch. 
