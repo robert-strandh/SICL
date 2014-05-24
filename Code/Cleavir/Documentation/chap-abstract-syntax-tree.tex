@@ -163,7 +163,8 @@ Initarg & Reader & Description\\
 The \texttt{block-ast} is used to represent the \cl{} special operator
 \texttt{block}.  The \texttt{block-ast} does not contain the name of
 the block because the \texttt{return-from-ast} contains a reference to
-the corresponding \texttt{block-ast}.
+the corresponding \texttt{block-ast}.%
+\fixme{Why are the initargs plural if there is only one body-ast?}
 
 \subsection{\texttt{function-ast}}
 \label{function-ast}
@@ -293,6 +294,9 @@ Initarg & Reader & Description\\
 
 \subsection{\texttt{the-ast}}
 \label{the-ast}
+
+\subsection{\texttt{typeq-ast}}
+\label{typeq-ast}
 
 \section{Abstract syntax trees for fixnum arithmetic}
 
