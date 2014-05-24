@@ -304,8 +304,12 @@ particular type, without checking this fact.
 
 \section{Abstract syntax trees for fixnum arithmetic}
 
-\subsection{\texttt{fixnum-+-ast}}
-\label{fixnum-+-ast}
+\subsection{\texttt{fixnum-add-ast}}
+\label{fixnum-add-ast}
+
+This AST can be used by implementations that represent fixnums in a
+way that allows them to be added directly without first unboxing
+them.  
 
 This AST can only occur as the first child of an \texttt{if-ast}
 \seesec{if-ast}.  It has three children.
