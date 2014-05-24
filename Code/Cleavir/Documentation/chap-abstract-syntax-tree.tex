@@ -451,3 +451,19 @@ Some of the ASTs defined in this section evaluate to \emph{unboxed}
 floating-point values.  Such ASTs can only occur in a context where
 such values are required.  In particular, they can not occur as the
 root of an AST representing an entire function.  
+
+\subsection{\texttt{short-float-unbox-ast}}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
+\hline
+\end{tabular}
+
+This AST can be used by implementation that support the short-float
+floating-point data type.  
+
+The argument of this AST must evaluate to a boxed short-float value.
+The value of this AST is the corresponding unboxed short-float value.
