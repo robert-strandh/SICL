@@ -156,15 +156,14 @@ any AST that produces a function as a value.
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:body-asts} & \texttt{body-asts} & The AST of the body.\\
+\texttt{:body-ast} & \texttt{body-ast} & The AST of the body.\\
 \hline
 \end{tabular}
 
 The \texttt{block-ast} is used to represent the \cl{} special operator
 \texttt{block}.  The \texttt{block-ast} does not contain the name of
 the block because the \texttt{return-from-ast} contains a reference to
-the corresponding \texttt{block-ast}.%
-\fixme{Why are the initargs plural if there is only one body-ast?}
+the corresponding \texttt{block-ast}.
 
 \subsection{\texttt{function-ast}}
 \label{function-ast}
