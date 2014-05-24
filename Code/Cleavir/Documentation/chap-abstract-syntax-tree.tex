@@ -355,8 +355,12 @@ $r$ is the value of the lexical variable.  If the result is
 \emph{positive}, then the difference between the two operands is $r -
 2^n$.
 
-\subsection{\texttt{fixnum-<-ast}}
-\label{fixnum-less-than-ast}
+\subsection{\texttt{fixnum-less-ast}}
+\label{fixnum-less-ast}
+
+This AST can be used by implementations that represent fixnums in a
+way that allows them to be compared directly without first unboxing
+them.
 
 This AST can only occur as the first child (i.e., the \emph{test}) of
 an \texttt{if-ast} \seesec{if-ast}.  It has two children that
