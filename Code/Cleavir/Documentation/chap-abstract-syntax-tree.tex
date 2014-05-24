@@ -484,3 +484,24 @@ floating-point data type.
 The argument of this AST must evaluate to an unboxed short-float
 value.  The value of this AST is the corresponding boxed short-float
 value.
+
+\subsection{\texttt{short-float-add-ast}}
+\label{sec-ast-short-float-add}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\hline
+\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\hline
+\end{tabular}
+
+This AST can be used by implementation that support the short-float
+floating-point data type.  
+
+The arguments of this AST must evaluate to unboxed short-float
+values.  The value of this AST is the unboxed short-float value
+representing the sum of the two arguments.
+
