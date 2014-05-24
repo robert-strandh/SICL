@@ -584,3 +584,21 @@ floating-point data type.
 The argument of this AST must evaluate to a boxed single-float value.
 The value of this AST is the corresponding unboxed single-float value.
 
+\subsection{\texttt{single-float-box-ast}}
+\label{sec-ast-single-float-box}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
+\hline
+\end{tabular}
+
+This AST can be used by implementation that support the single-float
+floating-point data type.  
+
+The argument of this AST must evaluate to an unboxed single-float
+value.  The value of this AST is the corresponding boxed single-float
+value.
+
