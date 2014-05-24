@@ -662,3 +662,23 @@ The arguments of this AST must evaluate to unboxed single-float
 values.  The value of this AST is the unboxed single-float value
 representing the product of the two arguments.
 
+\subsection{\texttt{single-float-div-ast}}
+\label{sec-ast-single-float-div}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\hline
+\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\hline
+\end{tabular}
+
+This AST can be used by implementation that support the single-float
+floating-point data type.  
+
+The arguments of this AST must evaluate to unboxed single-float
+values.  The value of this AST is the unboxed single-float value
+representing the quotient of the two arguments.
+
