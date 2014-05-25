@@ -716,3 +716,23 @@ floating-point data type.
 The argument of this AST must evaluate to an unboxed double-float
 value.  The value of this AST is the corresponding boxed double-float
 value.
+
+\subsection{\texttt{double-float-add-ast}}
+\label{sec-ast-double-float-add}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\hline
+\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\hline
+\end{tabular}
+
+This AST can be used by implementation that support the double-float
+floating-point data type.  
+
+The arguments of this AST must evaluate to unboxed double-float
+values.  The value of this AST is the unboxed double-float value
+representing the sum of the two arguments.
