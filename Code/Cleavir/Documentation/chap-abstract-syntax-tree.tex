@@ -813,3 +813,21 @@ floating-point data type.
 
 The argument of this AST must evaluate to a boxed long-float value.
 The value of this AST is the corresponding unboxed long-float value.
+
+\subsection{\texttt{long-float-box-ast}}
+\label{sec-ast-long-float-box}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
+\hline
+\end{tabular}
+
+This AST can be used by implementation that support the long-float
+floating-point data type.  
+
+The argument of this AST must evaluate to an unboxed long-float
+value.  The value of this AST is the corresponding boxed long-float
+value.
