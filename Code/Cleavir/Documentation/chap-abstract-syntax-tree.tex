@@ -307,6 +307,18 @@ particular type, without checking this fact.
 \subsection{\texttt{fixnum-add-ast}}
 \label{fixnum-add-ast}
 
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\hline
+\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\hline
+\texttt{:result} & \texttt{result} & The result of the operation.\\
+\hline
+\end{tabular}
+
 This AST can be used by implementations that represent fixnums in a
 way that allows them to be added directly without first unboxing
 them.  
