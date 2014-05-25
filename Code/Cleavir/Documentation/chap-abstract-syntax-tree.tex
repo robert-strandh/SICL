@@ -294,11 +294,26 @@ Initarg & Reader & Description\\
 \subsection{\texttt{the-ast}}
 \label{the-ast}
 
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:type-ast} & \texttt{type-ast} & The second argument.\\
+\hline
+\texttt{:variable-ast} & \texttt{variable-ast} & The first argument.\\
+\hline
+\end{tabular}
+
 This AST should only be used in unsafe code, or in situations where
 the compiler needs to be informed that a variable has a particular
 type.  In safe code, the \texttt{typeq-ast} \seesec{typeq-ast} should
 be used instead.  The effect of this AST is to promise that the value
 of its child has a particular type, without checking this fact.
+
+The \texttt{:type-ast} must be a \texttt{constant-ast} indicating the
+type of the variable.
+
+The \texttt{:variable-ast} must be a \texttt{variable-ast}.
 
 \subsection{\texttt{typeq-ast}}
 \label{typeq-ast}
