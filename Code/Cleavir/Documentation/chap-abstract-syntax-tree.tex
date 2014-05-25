@@ -382,6 +382,16 @@ $r$ is the value of the lexical variable.  If the result is
 \subsection{\texttt{fixnum-less-ast}}
 \label{fixnum-less-ast}
 
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\hline
+\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\hline
+\end{tabular}
+
 This AST can be used by implementations that represent fixnums in a
 way that allows them to be compared directly without first unboxing
 them.
