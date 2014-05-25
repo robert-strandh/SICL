@@ -698,3 +698,21 @@ floating-point data type.
 
 The argument of this AST must evaluate to a boxed double-float value.
 The value of this AST is the corresponding unboxed double-float value.
+
+\subsection{\texttt{double-float-box-ast}}
+\label{sec-ast-double-float-box}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
+\hline
+\end{tabular}
+
+This AST can be used by implementation that support the double-float
+floating-point data type.  
+
+The argument of this AST must evaluate to an unboxed double-float
+value.  The value of this AST is the corresponding boxed double-float
+value.
