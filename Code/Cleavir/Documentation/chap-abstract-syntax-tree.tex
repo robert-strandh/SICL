@@ -213,6 +213,14 @@ The \texttt{if-ast} corresponds directly to the \cl{} special operator
 \subsection{\texttt{load-time-value-ast}}
 \label{load-time-value-ast}
 
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:form-ast} & \texttt{form-ast} & AST for the form.\\
+\hline
+\end{tabular}
+
 A \texttt{load-time-value-ast} is produced whenever the compiler sees
 a \texttt{load-time-value} special form, but also when it sees a
 \emph{constant} and processing is done by \texttt{compile-file},
