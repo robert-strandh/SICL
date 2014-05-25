@@ -344,6 +344,18 @@ operands is $r - 2^n$.
 \subsection{\texttt{fixnum-sub-ast}}
 \label{fixnum-sub-ast}
 
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\hline
+\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\hline
+\texttt{:result} & \texttt{result} & The result of the operation.\\
+\hline
+\end{tabular}
+
 This AST can be used by implementations that represent fixnums in a
 way that allows them to be subtracted directly without first unboxing
 them.
