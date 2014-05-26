@@ -726,8 +726,7 @@ MIR program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.  The output is a
 \texttt{fixnum}.  
 
-If the first successor is chosen, then the output is
-the sum of the two inputs.  
+The output is the sum of the two inputs.
 
 If the second successor is chosen, then in order to obtain the sum of the
 two inputs, the following adjustment has to be made:
@@ -771,8 +770,7 @@ MIR program is \emph{safe}, then control must reach this instruction
 only if this restriction is verified.  The output is a
 \texttt{fixnum}.  
 
-If the first successor is chosen, then the output is
-the difference between the two inputs.  
+The output is the difference between the two inputs.
 
 If the second successor is chosen, then in order to obtain the difference
 between the two inputs, the following adjustment has to be made:
@@ -1385,7 +1383,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1394,11 +1392,7 @@ The inputs to this instruction must be of type \emph{unboxed short
 this instruction only if this restriction is verified.  The output is
 also of type unboxed short float.
 
-If the first successor is chosen, then the output is
-the sum of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the sum of the two inputs.
 
 \refFig{fig-short-float-add-instruction} shows the Graphviz illustration of the
 \texttt{short-float-add-instruction}
@@ -1422,7 +1416,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1431,11 +1425,7 @@ The inputs to this instruction must be of type \emph{unboxed short
 this instruction only if this restriction is verified.  The output is
 also of type unboxed short float.
 
-If the first successor is chosen, then the output is
-the difference of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the difference between the two inputs.
 
 \refFig{fig-short-float-sub-instruction} shows the Graphviz illustration of the
 \texttt{short-float-sub-instruction}
@@ -1459,7 +1449,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1468,11 +1458,7 @@ The inputs to this instruction must be of type \emph{unboxed short
 this instruction only if this restriction is verified.  The output is
 also of type unboxed short float.
 
-If the first successor is chosen, then the output is
-the product of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the product of the two inputs.
 
 \refFig{fig-short-float-mul-instruction} shows the Graphviz illustration of the
 \texttt{short-float-mul-instruction}
@@ -1496,7 +1482,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1505,11 +1491,7 @@ The inputs to this instruction must be of type \emph{unboxed short
 this instruction only if this restriction is verified.  The output is
 also of type unboxed short float.
 
-If the first successor is chosen, then the output is
-the quotient of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the quotient of the two inputs.
 
 \refFig{fig-short-float-div-instruction} shows the Graphviz illustration of the
 \texttt{short-float-div-instruction}
@@ -1533,7 +1515,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1542,11 +1524,7 @@ The inputs to this instruction must be of type \emph{unboxed single
 this instruction only if this restriction is verified.  The output is
 also of type unboxed single float.
 
-If the first successor is chosen, then the output is
-the sum of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the sum of the two inputs.
 
 \refFig{fig-single-float-add-instruction} shows the Graphviz illustration of the
 \texttt{single-float-add-instruction}
@@ -1570,7 +1548,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1579,11 +1557,7 @@ The inputs to this instruction must be of type \emph{unboxed single
 this instruction only if this restriction is verified.  The output is
 also of type unboxed single float.
 
-If the first successor is chosen, then the output is
-the difference of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the difference between the two inputs.
 
 \refFig{fig-single-float-sub-instruction} shows the Graphviz illustration of the
 \texttt{single-float-sub-instruction}
@@ -1607,7 +1581,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1616,11 +1590,7 @@ The inputs to this instruction must be of type \emph{unboxed single
 this instruction only if this restriction is verified.  The output is
 also of type unboxed single float.
 
-If the first successor is chosen, then the output is
-the product of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the product of the two inputs.
 
 \refFig{fig-sf-*-instruction} shows the Graphviz illustration of the
 \texttt{sf-*-instruction}
@@ -1644,7 +1614,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1653,11 +1623,7 @@ The inputs to this instruction must be of type \emph{unboxed single
 this instruction only if this restriction is verified.  The output is
 also of type unboxed single float.
 
-If the first successor is chosen, then the output is
-the quotient of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the quotient of the two inputs.
 
 \refFig{fig-sf-/-instruction} shows the Graphviz illustration of the
 \texttt{sf-/-instruction}
@@ -1681,7 +1647,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1690,11 +1656,7 @@ The inputs to this instruction must be of type \emph{unboxed double
 this instruction only if this restriction is verified.  The output is
 also of type unboxed double float.
 
-If the first successor is chosen, then the output is
-the sum of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the sum of the two inputs.
 
 \refFig{fig-double-float-add-instruction} shows the Graphviz illustration of the
 \texttt{double-float-add-instruction}
@@ -1718,7 +1680,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1727,11 +1689,7 @@ The inputs to this instruction must be of type \emph{unboxed double
 this instruction only if this restriction is verified.  The output is
 also of type unboxed double float.
 
-If the first successor is chosen, then the output is
-the difference of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the difference between the two inputs.
 
 \refFig{fig-double-float-sub-instruction} shows the Graphviz illustration of the
 \texttt{double-float-sub-instruction}
@@ -1755,7 +1713,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1764,11 +1722,7 @@ The inputs to this instruction must be of type \emph{unboxed double
 this instruction only if this restriction is verified.  The output is
 also of type unboxed double float.
 
-If the first successor is chosen, then the output is
-the product of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the product of the two inputs.
 
 \refFig{fig-double-float-mul-instruction} shows the Graphviz illustration of the
 \texttt{double-float-mul-instruction}
@@ -1792,7 +1746,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1801,11 +1755,7 @@ The inputs to this instruction must be of type \emph{unboxed double
 this instruction only if this restriction is verified.  The output is
 also of type unboxed double float.
 
-If the first successor is chosen, then the output is
-the quotient of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the quotient of the two inputs.
 
 \refFig{fig-double-float-div-instruction} shows the Graphviz illustration of the
 \texttt{double-float-div-instruction}
@@ -1829,7 +1779,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1838,11 +1788,7 @@ The inputs to this instruction must be of type \emph{unboxed long
 this instruction only if this restriction is verified.  The output is
 also of type unboxed long float.
 
-If the first successor is chosen, then the output is
-the sum of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the sum of the two inputs.
 
 \refFig{fig-long-float-add-instruction} shows the Graphviz illustration of the
 \texttt{long-float-add-instruction}
@@ -1866,7 +1812,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1875,11 +1821,7 @@ The inputs to this instruction must be of type \emph{unboxed long
 this instruction only if this restriction is verified.  The output is
 also of type unboxed long float.
 
-If the first successor is chosen, then the output is
-the difference of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the difference between the two inputs.
 
 \refFig{fig-long-float-sub-instruction} shows the Graphviz illustration of the
 \texttt{long-float-sub-instruction}
@@ -1903,7 +1845,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1912,11 +1854,7 @@ The inputs to this instruction must be of type \emph{unboxed long
 this instruction only if this restriction is verified.  The output is
 also of type unboxed long float.
 
-If the first successor is chosen, then the output is
-the product of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the product of the two inputs.
 
 \refFig{fig-long-float-mul-instruction} shows the Graphviz illustration of the
 \texttt{long-float-mul-instruction}
@@ -1940,7 +1878,7 @@ Number of outputs & 1\\
 \hline
 Number of predecessors & any\\
 \hline
-Number of successors & 2\\
+Number of successors & 1\\
 \hline
 \end{tabular}
 
@@ -1949,11 +1887,7 @@ The inputs to this instruction must be of type \emph{unboxed long
 this instruction only if this restriction is verified.  The output is
 also of type unboxed long float.
 
-If the first successor is chosen, then the output is
-the quotient of the two inputs.  
-
-If the second successor is chosen, then the output is undefined and an
-overflow occurred. 
+The output is the quotient of the two inputs.
 
 \refFig{fig-long-float-div-instruction} shows the Graphviz illustration of the
 \texttt{long-float-div-instruction}
