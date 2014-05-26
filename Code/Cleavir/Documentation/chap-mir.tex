@@ -710,6 +710,43 @@ output is an unboxed \texttt{short-float} number.
 \texttt{short-float-aref-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{single-float-aref-instruction}}
+\label{mir-instruction-single-float-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{single-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{single-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  The
+output is the contents of the corresponding element of the array.  The
+output is an unboxed \texttt{single-float} number.
+
+\refFig{fig-single-float-aref-instruction} shows the Graphviz illustration of the
+\texttt{single-float-aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-aref-instruction}
+\texttt{single-float-aref-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{aset-instruction}}
 \label{mir-instruction-aset}
 
