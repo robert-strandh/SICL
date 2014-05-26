@@ -55,7 +55,8 @@
    #:rplacd-instruction #:make-rplacd-instruction
    #:slot-read-instruction #:make-slot-read-instruction
    #:slot-write-instruction #:make-slot-write-instruction
-   #:aref-instruction #:make-aref-instruction))
+   #:aref-instruction #:make-aref-instruction
+   #:short-float-aref-instruction #:make-short-float-aref-instruction))
 
 (defpackage #:cleavir-mir-graphviz
   (:use #:common-lisp #:cleavir-mir)
