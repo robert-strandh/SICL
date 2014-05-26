@@ -933,6 +933,45 @@ corresponding element by the third input.
 \texttt{single-float-aset-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{double-float-aset-instruction}}
+\label{mir-instruction-double-float-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{double-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{double-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  
+The third input is an unboxed \texttt{double-float} number.
+
+The effect of the instruction is to replace the contents of the
+corresponding element by the third input.
+
+\refFig{fig-double-float-aset-instruction} shows the Graphviz illustration of the
+\texttt{double-float-aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-aset-instruction}
+\texttt{double-float-aset-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{fixnum-add-instruction}}
 \label{mir-instruction-fixnum-add}
 
