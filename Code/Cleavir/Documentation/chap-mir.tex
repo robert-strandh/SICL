@@ -688,12 +688,16 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-The first input to this instruction must be a \emph{general array}.
-If the MIR program is \emph{safe}, then control must reach this
-instruction only if this restriction is verified.  The second input is
-a non-negative fixnum indicating the \emph{row-major index} of an
-element of the array.  The output is the contents of the corresponding
-element of the array.
+This instruction can be used by implementations that support arrays
+specialized to \texttt{short-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{short-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  The
+output is the contents of the corresponding element of the array.  The
+output is an unboxed \texttt{short-float} number.
 
 \refFig{fig-short-float-aref-instruction} shows the Graphviz illustration of the
 \texttt{short-float-aref-instruction}
