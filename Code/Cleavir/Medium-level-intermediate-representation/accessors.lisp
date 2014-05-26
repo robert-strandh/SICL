@@ -182,3 +182,22 @@
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LONG-FLOAT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes a two inputs.  The first input is assumed
+;;; to be an array specialized to LONG-FLOAT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  This instruction produces a single output,
+;;; the element read, which is an unboxed LONG-FLOAT.
+
+(defclass long-float-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-long-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'long-float-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
