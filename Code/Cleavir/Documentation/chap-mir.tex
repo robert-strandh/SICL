@@ -1753,6 +1753,40 @@ This instruction can be used by implementations that support the
 \texttt{long-float-unbox-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{bit-unbox-instruction}}
+\label{mir-instruction-bit-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{bit} value,
+i.e., a \texttt{fixnum} with a value of either $0$ or $1$.  If the MIR
+program is \emph{safe}, then control must reach this instruction only
+if this restriction is verified.
+
+The output is an unboxed \texttt{bit} value corresponding to
+the input.
+
+\refFig{fig-bit-unbox-instruction} shows the Graphviz illustration of the
+\texttt{bit-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-bit-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-bit-unbox-instruction}
+\texttt{bit-unbox-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{short-float-add-instruction}}
 \label{mir-instruction-short-float-add}
 
