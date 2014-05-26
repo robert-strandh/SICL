@@ -1048,6 +1048,45 @@ corresponding element by the third input.
 \texttt{long-float-aset-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{bit-aset-instruction}}
+\label{mir-instruction-bit-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction is used by for setting an element of an array
+specialized to \texttt{bit}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{bit}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  
+The third input is an unboxed \texttt{bit}.
+
+The effect of the instruction is to replace the contents of the
+corresponding element by the third input.
+
+\refFig{fig-bit-aset-instruction} shows the Graphviz illustration of the
+\texttt{bit-aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-bit-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-bit-aset-instruction}
+\texttt{bit-aset-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{fixnum-add-instruction}}
 \label{mir-instruction-fixnum-add}
 
