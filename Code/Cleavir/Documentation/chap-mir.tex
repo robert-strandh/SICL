@@ -821,6 +821,43 @@ output is an unboxed \texttt{long-float} number.
 \texttt{long-float-aref-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{bit-aref-instruction}}
+\label{mir-instruction-bit-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction is used by for accessing an element of an array
+specialized to \texttt{bit}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{bit}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  The
+output is the contents of the corresponding element of the array.  The
+output is an unboxed \texttt{bit}.
+
+\refFig{fig-bit-aref-instruction} shows the Graphviz illustration of the
+\texttt{bit-aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-bit-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-bit-aref-instruction}
+\texttt{bit-aref-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{aset-instruction}}
 \label{mir-instruction-aset}
 
