@@ -136,11 +136,30 @@
 ;;; element to be read.  This instruction produces a single output,
 ;;; the element read, which is an unboxed SHORT-FLOAT.
 
-(defclass aref-instruction (instruction one-successor-mixin)
+(defclass short-float-aref-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-aref-instruction (input1 input2 output successor)
-  (make-instance 'aref-instruction
+(defun make-short-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'short-float-aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction SINGLE-FLOAT-AREF-INSTRUCTION.
+;;;
+;;; This instruction takes a two inputs.  The first input is assumed
+;;; to be an array specialized to SINGLE-FLOAT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  This instruction produces a single output,
+;;; the element read, which is an unboxed SINGLE-FLOAT.
+
+(defclass single-float-aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-single-float-aref-instruction (input1 input2 output successor)
+  (make-instance 'single-float-aref-instruction
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (list successor)))
