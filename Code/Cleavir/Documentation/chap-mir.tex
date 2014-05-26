@@ -655,10 +655,10 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-The first input to this instruction must be an \emph{array}.  If the
-MIR program is \emph{safe}, then control must reach this instruction
-only if this restriction is verified.  The second input is a
-non-negative fixnum indicating the \emph{row-major index} of an
+The first input to this instruction must be a \emph{general array}.
+If the MIR program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The second input is
+a non-negative fixnum indicating the \emph{row-major index} of an
 element of the array.  The output is the contents of the corresponding
 element of the array.
 
@@ -688,12 +688,13 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-The first input to this instruction must be an \emph{array}.  If the
-MIR program is \emph{safe}, then control must reach this instruction
-only if this restriction is verified.  The second input is a fixnum
-indicating the \emph{row-major index} of an element of the array.
-The third input can be any object.  The effect of the instruction is
-to replace the contents of the corresponding element by the third input.
+The first input to this instruction must be a \emph{general array}.
+If the MIR program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The second input is
+a fixnum indicating the \emph{row-major index} of an element of the
+array.  The third input can be any object.  The effect of the
+instruction is to replace the contents of the corresponding element by
+the third input.
 
 \refFig{fig-aset-instruction} shows the Graphviz illustration of the
 \texttt{aset-instruction}
