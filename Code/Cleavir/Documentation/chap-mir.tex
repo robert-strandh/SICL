@@ -673,6 +673,39 @@ element of the array.
 \texttt{aref-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{short-float-aref-instruction}}
+\label{mir-instruction-short-float-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a \emph{general array}.
+If the MIR program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The second input is
+a non-negative fixnum indicating the \emph{row-major index} of an
+element of the array.  The output is the contents of the corresponding
+element of the array.
+
+\refFig{fig-short-float-aref-instruction} shows the Graphviz illustration of the
+\texttt{short-float-aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-aref-instruction}
+\texttt{short-float-aref-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{aset-instruction}}
 \label{mir-instruction-aset}
 
