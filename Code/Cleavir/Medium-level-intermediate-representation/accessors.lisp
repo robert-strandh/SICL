@@ -107,3 +107,23 @@
     :inputs (list input1 input2 input3)
     :outputs '()
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction AREF-INSTRUCTION.
+;;;
+;;; This instruction takes a two inputs.  The first input is assumed
+;;; to be a general array.  The second is assumed to be a FIXNUM
+;;; and represents the index in the instance of the element to be read.
+;;; This instruction produces a single output, the element read.
+
+(defclass aref-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-aref-instruction (input1 input2 output successor)
+  (make-instance 'aref-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+
