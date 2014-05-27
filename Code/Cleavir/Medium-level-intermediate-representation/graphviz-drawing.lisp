@@ -260,6 +260,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Floating-point arithmetic instructions.
+
+(defmethod label ((instruction short-float-unbox-instruction)) "shf unbox")
+
+(defmethod label ((instruction short-float-box-instruction)) "shf box")
+
+(defmethod label ((instruction single-float-unbox-instruction)) "sf unbox")
+
+(defmethod label ((instruction single-float-box-instruction)) "sf box")
+
+(defmethod label ((instruction double-float-unbox-instruction)) "df unbox")
+
+(defmethod label ((instruction double-float-box-instruction)) "df box")
+
+(defmethod label ((instruction long-float-unbox-instruction)) "df unbox")
+
+(defmethod label ((instruction long-float-box-instruction)) "df box")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; General accessors.
 
 (defmethod label ((instruction car-instruction)) "car")
@@ -280,7 +300,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Floating-point instructions.
+;;; Floating-point array accessors.
 
 (defmethod label ((instruction short-float-aref-instruction)) "shf aref")
 
