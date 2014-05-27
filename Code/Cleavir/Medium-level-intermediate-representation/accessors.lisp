@@ -219,3 +219,22 @@
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction SHORT-FLOAT-ASET-INSTRUCTION.
+;;;
+;;; This instruction takes three inputs.  The first input is assumed
+;;; to be an array specialized to SHORT-FLOAT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  The third input is assumed to be an unboxed
+;;; SHORT-FLOAT to be stored as an element in the array.
+
+(defclass short-float-aset-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-short-float-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'short-float-aset-instruction
+    :inputs (list input1 input2 input3)
+    :outputs ()
+    :successors (list successor)))
