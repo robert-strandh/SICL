@@ -74,7 +74,7 @@
 ;;;
 ;;; Instruction SLOT-READ-INSTRUCTION.
 ;;;
-;;; This instruction takes a two inputs.  The first input is assumed
+;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be a standard instance.  The second is assumed to be a FIXNUM
 ;;; and represents the index in the instance of the slot to be read.
 ;;; This instruction produces a single output, which is the contents
@@ -112,7 +112,7 @@
 ;;;
 ;;; Instruction AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes a two inputs.  The first input is assumed
+;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be a general array.  The second is assumed to be a FIXNUM
 ;;; and represents the index in the instance of the element to be read.
 ;;; This instruction produces a single output, the element read.
@@ -130,7 +130,7 @@
 ;;;
 ;;; Instruction SHORT-FLOAT-AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes a two inputs.  The first input is assumed
+;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be an array specialized to SHORT-FLOAT.  The second is assumed
 ;;; to be a FIXNUM and represents the index in the instance of the
 ;;; element to be read.  This instruction produces a single output,
@@ -149,7 +149,7 @@
 ;;;
 ;;; Instruction SINGLE-FLOAT-AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes a two inputs.  The first input is assumed
+;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be an array specialized to SINGLE-FLOAT.  The second is assumed
 ;;; to be a FIXNUM and represents the index in the instance of the
 ;;; element to be read.  This instruction produces a single output,
@@ -168,7 +168,7 @@
 ;;;
 ;;; Instruction DOUBLE-FLOAT-AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes a two inputs.  The first input is assumed
+;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be an array specialized to DOUBLE-FLOAT.  The second is assumed
 ;;; to be a FIXNUM and represents the index in the instance of the
 ;;; element to be read.  This instruction produces a single output,
@@ -187,7 +187,7 @@
 ;;;
 ;;; Instruction LONG-FLOAT-AREF-INSTRUCTION.
 ;;;
-;;; This instruction takes a two inputs.  The first input is assumed
+;;; This instruction takes two inputs.  The first input is assumed
 ;;; to be an array specialized to LONG-FLOAT.  The second is assumed
 ;;; to be a FIXNUM and represents the index in the instance of the
 ;;; element to be read.  This instruction produces a single output,
@@ -206,7 +206,7 @@
 ;;;
 ;;; Instruction ASET-INSTRUCTION.
 ;;;
-;;; This instruction takes a three inputs.  The first input is assumed
+;;; This instruction takes three inputs.  The first input is assumed
 ;;; to be a general array.  The second is assumed to be a FIXNUM
 ;;; and represents the index in the instance of the element to be read.
 ;;; The third input is the element to be stored in the array.
@@ -219,4 +219,3 @@
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))
-
