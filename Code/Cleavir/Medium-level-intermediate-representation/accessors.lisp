@@ -276,3 +276,22 @@
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LONG-FLOAT-ASET-INSTRUCTION.
+;;;
+;;; This instruction takes three inputs.  The first input is assumed
+;;; to be an array specialized to LONG-FLOAT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  The third input is assumed to be an unboxed
+;;; LONG-FLOAT to be stored as an element in the array.
+
+(defclass long-float-aset-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-long-float-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'long-float-aset-instruction
+    :inputs (list input1 input2 input3)
+    :outputs ()
+    :successors (list successor)))
