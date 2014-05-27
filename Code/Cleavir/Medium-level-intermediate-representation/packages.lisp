@@ -59,7 +59,7 @@
    #:single-float-aref-instruction #:make-single-float-aref-instruction
    #:double-float-aref-instruction #:make-double-float-aref-instruction
    #:long-float-aref-instruction #:make-long-float-aref-instruction
-   #:aref-instruction #:make-aref-instruction
+   #:aset-instruction #:make-aset-instruction
    #:short-float-aset-instruction #:make-short-float-aset-instruction
    #:single-float-aset-instruction #:make-single-float-aset-instruction
    #:double-float-aset-instruction #:make-double-float-aset-instruction
