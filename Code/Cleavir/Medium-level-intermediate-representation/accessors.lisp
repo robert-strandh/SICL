@@ -201,3 +201,22 @@
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction ASET-INSTRUCTION.
+;;;
+;;; This instruction takes a three inputs.  The first input is assumed
+;;; to be a general array.  The second is assumed to be a FIXNUM
+;;; and represents the index in the instance of the element to be read.
+;;; The third input is the element to be stored in the array.
+
+(defclass aset-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'aset-instruction
+    :inputs (list input1 input2 input3)
+    :outputs ()
+    :successors (list successor)))
+
