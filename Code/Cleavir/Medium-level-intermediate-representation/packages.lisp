@@ -36,7 +36,6 @@
    #:assignment-instruction #:make-assignment-instruction
    #:funcall-instruction #:make-funcall-instruction
    #:tailcall-instruction #:make-tailcall-instruction
-   #:get-values-instruction #:make-get-values-instruction
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type

@@ -627,19 +627,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction GET-VALUES-INSTRUCTION.
-
-(defclass get-values-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-get-values-instruction
-    (outputs &optional (successor nil successor-p))
-  (make-instance 'get-values-instruction
-    :outputs outputs
-    :successors (if successor-p (list successor) '())))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction RETURN-INSTRUCTION.
 
 (defclass return-instruction (instruction no-successors-mixin)
