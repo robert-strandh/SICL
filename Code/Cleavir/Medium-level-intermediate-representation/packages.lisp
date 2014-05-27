@@ -59,7 +59,8 @@
    #:double-float-aref-instruction #:make-double-float-aref-instruction
    #:long-float-aref-instruction #:make-long-float-aref-instruction
    #:aref-instruction #:make-aref-instruction
-   #:short-float-aset-instruction #:make-short-float-aset-instruction))
+   #:short-float-aset-instruction #:make-short-float-aset-instruction
+   #:single-float-aset-instruction #:make-single-float-aset-instruction))
 
 (defpackage #:cleavir-mir-graphviz
   (:use #:common-lisp #:cleavir-mir)
