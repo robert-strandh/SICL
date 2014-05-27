@@ -1,6 +1,6 @@
 (in-package #:cleavir-mir-graphviz)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing a datum on a stream.
 
@@ -140,7 +140,7 @@
   (format stream "   ~a [fillcolor = darkorchid, label = \"~a\"]~%"
 	  (datum-id datum) (index datum)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing instructions.
 
@@ -207,6 +207,10 @@
 	(draw-instruction start stream)
 	(format stream "}~%"))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; General-purpose instructions.
+
 (defmethod draw-instruction ((instruction typeq-instruction) stream)
   (format stream "   ~a [label = \"typeq ~a\"];~%"
 	  (instruction-id instruction)
@@ -239,6 +243,10 @@
 (defmethod label ((instruction eq-instruction)) "eq")
 
 (defmethod label ((instruction phi-instruction)) "phi")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; General accessors.
 
 (defmethod label ((instruction car-instruction)) "car")
 
