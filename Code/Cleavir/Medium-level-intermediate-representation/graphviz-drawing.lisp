@@ -246,6 +246,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Fixnum instructions.
+
+(defmethod label ((instruction fixnum-add-instruction)) "fixnum +")
+
+(defmethod label ((instruction fixnum-sub-instruction)) "fixnum -")
+
+(defmethod label ((instruction fixnum-less-instruction)) "fixnum <")
+
+(defmethod label ((instruction fixnum-not-greater-instruction)) "fixnum <=")
+
+(defmethod label ((instruction fixnum-equal-instruction)) "fixnum =")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; General accessors.
 
 (defmethod label ((instruction car-instruction)) "car")
