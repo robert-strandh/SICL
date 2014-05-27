@@ -151,11 +151,6 @@
 
 (defgeneric draw-instruction (instruction stream))
   
-(defmethod draw-instruction ((instruction typeq-instruction) stream)
-  (format stream "   ~a [label = \"typeq ~a\"];~%"
-	  (instruction-id instruction)
-	  (value-type instruction)))
-
 (defmethod draw-instruction :around (instruction stream)
   (when (null (instruction-id instruction))
     (setf (gethash instruction *instruction-table*) (gensym))
@@ -174,11 +169,6 @@
 		   (gethash next *instruction-table*)
 		   i)))
   
-(defmethod draw-instruction (instruction stream)
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (instruction-id instruction)
-	  (class-name (class-of instruction))))
-
 (defmethod draw-instruction :after (instruction stream)
   (loop for datum in (inputs instruction)
 	for i from 1
@@ -197,6 +187,16 @@
 		   (datum-id datum)
 		   i)))
 
+(defgeneric label (instruction))
+
+(defmethod label (instruction)
+  (class-name (class-of instruction)))
+
+(defmethod draw-instruction (instruction stream)
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (instruction-id instruction)
+	  (label instruction)))
+
 (defun draw-flowchart (start filename)
   (with-open-file (stream filename
 			  :direction :output
@@ -207,66 +207,22 @@
 	(draw-instruction start stream)
 	(format stream "}~%"))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction ENTER-INSTRUCTION.
+(defmethod draw-instruction ((instruction typeq-instruction) stream)
+  (format stream "   ~a [label = \"typeq ~a\"];~%"
+	  (instruction-id instruction)
+	  (value-type instruction)))
 
-(defmethod draw-instruction ((instruction enter-instruction) stream)
-  (format stream "   ~a [label = \"enter\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction enter-instruction)) "enter")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction NOP-INSTRUCTION.
+(defmethod label ((instruction nop-instruction)) "nop")
 
-(defmethod draw-instruction ((instruction nop-instruction) stream)
-  (format stream "   ~a [label = \"nop\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction assignment-instruction)) "<-")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction ASSIGNMENT-INSTRUCTION.
+(defmethod label ((instruction funcall-instruction)) "funcall")
 
-(defmethod draw-instruction
-    ((instruction assignment-instruction) stream)
-  (format stream "   ~a [label = \"<-\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction tailcall-instruction)) "tailcall")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction FUNCALL-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction funcall-instruction) stream)
-  (format stream "   ~a [label = \"funcall\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction TAILCALL-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction tailcall-instruction) stream)
-  (format stream "   ~a [label = \"tailcall\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction GET-VALUES-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction get-values-instruction) stream)
-  (format stream "   ~a [label = \"get-values\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction RETURN-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction return-instruction) stream)
-  (format stream "   ~a [label = \"ret\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction ENCLOSE-INSTRUCTION.
+(defmethod label ((instruction return-instruction)) "ret")
 
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
   (format stream "   ~a [label = \"enclose\"];~%"
@@ -276,66 +232,18 @@
 	  (gethash (code instruction) *instruction-table*)
 	  (instruction-id instruction)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction CATCH-INSTRUCTION.
+(defmethod label ((instruction catch-instruction)) "catch")
 
-(defmethod draw-instruction ((instruction catch-instruction) stream)
-  (format stream "   ~a [label = \"catch\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction unwind-instruction)) "unwind")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction UNWIND-INSTRUCTION.
+(defmethod label ((instruction eq-instruction)) "eq")
 
-(defmethod draw-instruction ((instruction unwind-instruction) stream)
-  (format stream "   ~a [label = \"unwind\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction phi-instruction)) "phi")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction EQ-INSTRUCTION.
+(defmethod label ((instruction car-instruction)) "car")
 
-(defmethod draw-instruction ((instruction eq-instruction) stream)
-  (format stream "   ~a [label = \"eq\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction cdr-instruction)) "cdr")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction PHI-INSTRUCTION.
+(defmethod label ((instruction rplaca-instruction)) "rplaca")
 
-(defmethod draw-instruction ((instruction phi-instruction) stream)
-  (format stream "   ~a [label = \"phi\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction CAR-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction car-instruction) stream)
-  (format stream "   ~a [label = \"CAR\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction CDR-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction cdr-instruction) stream)
-  (format stream "   ~a [label = \"CDR\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction RPLACA-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction rplaca-instruction) stream)
-  (format stream "   ~a [label = \"RPLACA\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction RPLACD-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction rplacd-instruction) stream)
-  (format stream "   ~a [label = \"RPLACD\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction rplacd-instruction)) "rplacd")
