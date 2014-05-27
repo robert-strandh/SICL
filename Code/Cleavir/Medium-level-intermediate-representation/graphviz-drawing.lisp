@@ -255,3 +255,15 @@
 (defmethod label ((instruction rplaca-instruction)) "rplaca")
 
 (defmethod label ((instruction rplacd-instruction)) "rplacd")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Floating-point instructions.
+
+(defmethod label ((instruction short-float-aref-instruction)) "shf aref")
+
+(defmethod label ((instruction single-float-aref-instruction)) "sf aref")
+
+(defmethod label ((instruction double-float-aref-instruction)) "df aref")
+
+(defmethod label ((instruction long-float-aref-instruction)) "lf aref")
