@@ -113,3 +113,43 @@
     :inputs (list input)
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LONG-FLOAT-UNBOX-INSTRUCTION.
+;;;
+;;; This instruction takes a single input, which must be a boxed
+;;; LONG-FLOAT.  It has a single output which is the corresponding
+;;; unboxed LONG-FLOAT value.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; LONG-FLOAT data type.
+
+(defclass long-float-unbox-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-long-float-unbox-instruction (input output successor)
+  (make-instance 'long-float-unbox-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction LONG-FLOAT-BOX-INSTRUCTION.
+;;;
+;;; This instruction takes a single input, which must be an unboxed
+;;; LONG-FLOAT.  It has a single output which is the corresponding
+;;; boxed LONG-FLOAT value.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; LONG-FLOAT data type.
+
+(defclass long-float-box-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-long-float-box-instruction (input output successor)
+  (make-instance 'long-float-box-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
