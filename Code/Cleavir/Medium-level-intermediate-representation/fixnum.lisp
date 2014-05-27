@@ -28,7 +28,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM-less-INSTRUCTION.
+;;; Instruction FIXNUM-LESS-INSTRUCTION.
 
 (defclass fixnum-less-instruction (instruction two-successors-mixin)
   ())
@@ -41,7 +41,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM-not-greater-INSTRUCTION.
+;;; Instruction FIXNUM-NOT-GREATER-INSTRUCTION.
 
 (defclass fixnum-not-greater-instruction (instruction two-successors-mixin)
   ())
@@ -54,7 +54,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM-equal-INSTRUCTION.
+;;; Instruction FIXNUM-EQUAL-INSTRUCTION.
 
 (defclass fixnum-equal-instruction (instruction two-successors-mixin)
   ())
