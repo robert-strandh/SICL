@@ -257,3 +257,22 @@
     :inputs (list input1 input2 input3)
     :outputs ()
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction DOUBLE-FLOAT-ASET-INSTRUCTION.
+;;;
+;;; This instruction takes three inputs.  The first input is assumed
+;;; to be an array specialized to DOUBLE-FLOAT.  The second is assumed
+;;; to be a FIXNUM and represents the index in the instance of the
+;;; element to be read.  The third input is assumed to be an unboxed
+;;; DOUBLE-FLOAT to be stored as an element in the array.
+
+(defclass double-float-aset-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-double-float-aset-instruction (input1 input2 input3 successor)
+  (make-instance 'double-float-aset-instruction
+    :inputs (list input1 input2 input3)
+    :outputs ()
+    :successors (list successor)))
