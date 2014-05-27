@@ -256,6 +256,10 @@
 
 (defmethod label ((instruction rplacd-instruction)) "rplacd")
 
+(defmethod label ((instruction slot-read-instruction)) "rplacd")
+
+(defmethod label ((instruction slot-write-instruction)) "rplacd")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Floating-point instructions.
