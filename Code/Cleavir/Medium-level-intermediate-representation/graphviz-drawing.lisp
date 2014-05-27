@@ -275,3 +275,11 @@
 (defmethod label ((instruction double-float-aref-instruction)) "df aref")
 
 (defmethod label ((instruction long-float-aref-instruction)) "lf aref")
+
+(defmethod label ((instruction short-float-aset-instruction)) "shf aset")
+
+(defmethod label ((instruction single-float-aset-instruction)) "sf aset")
+
+(defmethod label ((instruction double-float-aset-instruction)) "df aset")
+
+(defmethod label ((instruction long-float-aset-instruction)) "lf aset")
