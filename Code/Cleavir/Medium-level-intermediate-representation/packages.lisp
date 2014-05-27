@@ -50,6 +50,8 @@
    #:fixnum-equal-instruction #:make-fixnum-equal-instruction
    #:short-float-unbox-instruction #:make-short-float-unbox-instruction 
    #:short-float-box-instruction #:make-short-float-box-instruction 
+   #:single-float-unbox-instruction #:make-single-float-unbox-instruction 
+   #:single-float-box-instruction #:make-single-float-box-instruction 
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
