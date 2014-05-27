@@ -2,65 +2,65 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM-+-INSTRUCTION.
+;;; Instruction FIXNUM-ADD-INSTRUCTION.
 
-(defclass fixnum-+-instruction (instruction two-successors-mixin)
+(defclass fixnum-add-instruction (instruction two-successors-mixin)
   ())
 
-(defun make-fixnum-+-instruction (inputs output successors)
-  (make-instance 'fixnum-+-instruction
+(defun make-fixnum-add-instruction (inputs output successors)
+  (make-instance 'fixnum-add-instruction
     :inputs inputs
     :outputs (list output)
     :successors successors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM---INSTRUCTION.
+;;; Instruction FIXNUM-SUB-INSTRUCTION.
 
-(defclass fixnum---instruction (instruction two-successors-mixin)
+(defclass fixnum-sub-instruction (instruction two-successors-mixin)
   ())
 
-(defun make-fixnum---instruction (inputs output successors)
-  (make-instance 'fixnum---instruction
+(defun make-fixnum-sub-instruction (inputs output successors)
+  (make-instance 'fixnum-sub-instruction
     :inputs inputs
     :outputs (list output)
     :successors successors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM-<-INSTRUCTION.
+;;; Instruction FIXNUM-less-INSTRUCTION.
 
-(defclass fixnum-<-instruction (instruction two-successors-mixin)
+(defclass fixnum-less-instruction (instruction two-successors-mixin)
   ())
 
-(defun make-fixnum-<-instruction (inputs successors)
-  (make-instance 'fixnum-<-instruction
+(defun make-fixnum-less-instruction (inputs successors)
+  (make-instance 'fixnum-less-instruction
     :inputs inputs
     :outputs '()
     :successors successors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM-<=-INSTRUCTION.
+;;; Instruction FIXNUM-not-greater-INSTRUCTION.
 
-(defclass fixnum-<=-instruction (instruction two-successors-mixin)
+(defclass fixnum-not-greater-instruction (instruction two-successors-mixin)
   ())
 
-(defun make-fixnum-<=-instruction (inputs successors)
-  (make-instance 'fixnum-<=-instruction
+(defun make-fixnum-not-greater-instruction (inputs successors)
+  (make-instance 'fixnum-not-greater-instruction
     :inputs inputs
     :outputs '()
     :successors successors))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction FIXNUM-=-INSTRUCTION.
+;;; Instruction FIXNUM-equal-INSTRUCTION.
 
-(defclass fixnum-=-instruction (instruction two-successors-mixin)
+(defclass fixnum-equal-instruction (instruction two-successors-mixin)
   ())
 
-(defun make-fixnum-=-instruction (inputs successors)
-  (make-instance 'fixnum-=-instruction
+(defun make-fixnum-equal-instruction (inputs successors)
+  (make-instance 'fixnum-equal-instruction
     :inputs inputs
     :outputs '()
     :successors successors))

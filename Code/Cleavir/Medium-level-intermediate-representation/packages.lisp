@@ -43,11 +43,11 @@
    #:unwind-instruction #:make-unwind-instruction
    #:eq-instruction #:make-eq-instruction
    #:phi-instruction #:make-phi-instruction
-   #:fixnum-+-instruction #:make-fixnum-+-instruction
-   #:fixnum---instruction #:make-fixnum---instruction
-   #:fixnum-<-instruction #:make-fixnum-<-instruction
-   #:fixnum-<=-instruction #:make-fixnum-<=-instruction
-   #:fixnum-=-instruction #:make-fixnum-=-instruction
+   #:fixnum-add-instruction #:make-fixnum-add-instruction
+   #:fixnum-sub-instruction #:make-fixnum-sub-instruction
+   #:fixnum-less-instruction #:make-fixnum-less-instruction
+   #:fixnum-not-greater-instruction #:make-fixnum-not-greater-instruction
+   #:fixnum-equal-instruction #:make-fixnum-equal-instruction
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
