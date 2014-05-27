@@ -52,6 +52,8 @@
    #:short-float-box-instruction #:make-short-float-box-instruction 
    #:single-float-unbox-instruction #:make-single-float-unbox-instruction 
    #:single-float-box-instruction #:make-single-float-box-instruction 
+   #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
+   #:double-float-box-instruction #:make-double-float-box-instruction 
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
