@@ -213,3 +213,24 @@
     :inputs (list input)
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INSTRUCTION LONG-FLOAT-ADD-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs which must be values of type
+;;; unboxed LONG-FLOAT.  It has a single output which is the
+;;; unbox sum of the two inputs.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; LONG-FLOAT data type.
+
+(defclass long-float-add-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-long-float-add-instruction (input1 input2 output successor)
+  (make-instance 'long-float-add-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+

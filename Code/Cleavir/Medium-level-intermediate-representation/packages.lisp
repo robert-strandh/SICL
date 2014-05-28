@@ -59,6 +59,7 @@
    #:short-float-add-instruction #:make-short-float-add-instruction 
    #:long-float-unbox-instruction #:make-long-float-unbox-instruction 
    #:long-float-box-instruction #:make-long-float-box-instruction 
+   #:long-float-add-instruction #:make-long-float-add-instruction 
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
