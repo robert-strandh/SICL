@@ -384,6 +384,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION DOUBLE-FLOAT-SIN-INSTRUCTION.
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed DOUBLE-FLOAT.  It has a single output which is the
+;;; unboxed DOUBLE-FLOAT sine of the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; DOUBLE-FLOAT data type.
+
+(defclass double-float-sin-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-double-float-sin-instruction (input output successor)
+  (make-instance 'double-float-sin-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction LONG-FLOAT-UNBOX-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single input, which must be a boxed

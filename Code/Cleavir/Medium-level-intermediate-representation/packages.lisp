@@ -64,10 +64,11 @@
    #:single-float-div-instruction #:make-single-float-div-instruction 
    #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
    #:double-float-box-instruction #:make-double-float-box-instruction 
+   #:double-float-add-instruction #:make-double-float-add-instruction 
    #:double-float-sub-instruction #:make-double-float-sub-instruction 
    #:double-float-mul-instruction #:make-double-float-mul-instruction 
    #:double-float-div-instruction #:make-double-float-div-instruction 
-   #:short-float-add-instruction #:make-short-float-add-instruction 
+   #:double-float-sin-instruction #:make-double-float-sin-instruction 
    #:long-float-unbox-instruction #:make-long-float-unbox-instruction 
    #:long-float-box-instruction #:make-long-float-box-instruction 
    #:long-float-add-instruction #:make-long-float-add-instruction 
