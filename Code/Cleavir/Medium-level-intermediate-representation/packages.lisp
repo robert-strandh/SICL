@@ -53,6 +53,7 @@
    #:short-float-add-instruction #:make-short-float-add-instruction 
    #:single-float-unbox-instruction #:make-single-float-unbox-instruction 
    #:single-float-box-instruction #:make-single-float-box-instruction 
+   #:single-float-add-instruction #:make-single-float-add-instruction 
    #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
    #:double-float-box-instruction #:make-double-float-box-instruction 
    #:long-float-unbox-instruction #:make-long-float-unbox-instruction 

@@ -96,6 +96,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION SINGLE-FLOAT-ADD-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs which must be values of type
+;;; unboxed SINGLE-FLOAT.  It has a single output which is the
+;;; unbox sum of the two inputs.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; SINGLE-FLOAT data type.
+
+(defclass single-float-add-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-single-float-add-instruction (input1 input2 output successor)
+  (make-instance 'single-float-add-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction DOUBLE-FLOAT-UNBOX-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single input, which must be a boxed
