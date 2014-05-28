@@ -55,6 +55,7 @@
    #:single-float-unbox-instruction #:make-single-float-unbox-instruction 
    #:single-float-box-instruction #:make-single-float-box-instruction 
    #:single-float-add-instruction #:make-single-float-add-instruction 
+   #:single-float-sub-instruction #:make-single-float-sub-instruction 
    #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
    #:double-float-box-instruction #:make-double-float-box-instruction 
    #:short-float-add-instruction #:make-short-float-add-instruction 
