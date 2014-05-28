@@ -67,6 +67,7 @@
    #:long-float-box-instruction #:make-long-float-box-instruction 
    #:long-float-add-instruction #:make-long-float-add-instruction 
    #:long-float-sub-instruction #:make-long-float-sub-instruction 
+   #:short-float-mul-instruction #:make-short-float-mul-instruction 
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
