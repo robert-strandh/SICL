@@ -454,3 +454,23 @@
     :outputs (list output)
     :successors (list successor)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INSTRUCTION LONG-FLOAT-DIV-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs which must be values of type
+;;; unboxed LONG-FLOAT.  It has a single output which is the
+;;; unbox quotient of the two inputs.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; LONG-FLOAT data type.
+
+(defclass long-float-div-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-long-float-div-instruction (input1 input2 output successor)
+  (make-instance 'long-float-div-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
