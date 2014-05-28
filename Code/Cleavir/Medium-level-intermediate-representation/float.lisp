@@ -602,3 +602,23 @@
     :outputs (list output)
     :successors (list successor)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INSTRUCTION LONG-FLOAT-COS-INSTRUCTION.
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed LONG-FLOAT.  It has a single output which is the
+;;; unboxed LONG-FLOAT cosine of the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; LONG-FLOAT data type.
+
+(defclass long-float-cos-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-long-float-cos-instruction (input output successor)
+  (make-instance 'long-float-cos-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+

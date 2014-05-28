@@ -79,6 +79,7 @@
    #:long-float-mul-instruction #:make-long-float-mul-instruction 
    #:long-float-div-instruction #:make-long-float-div-instruction 
    #:long-float-sin-instruction #:make-long-float-sin-instruction 
+   #:long-float-cos-instruction #:make-long-float-cos-instruction 
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
