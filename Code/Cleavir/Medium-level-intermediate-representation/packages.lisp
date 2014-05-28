@@ -56,6 +56,7 @@
    #:single-float-add-instruction #:make-single-float-add-instruction 
    #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
    #:double-float-box-instruction #:make-double-float-box-instruction 
+   #:short-float-add-instruction #:make-short-float-add-instruction 
    #:long-float-unbox-instruction #:make-long-float-unbox-instruction 
    #:long-float-box-instruction #:make-long-float-box-instruction 
    #:car-instruction #:make-car-instruction
