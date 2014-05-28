@@ -53,6 +53,7 @@
    #:short-float-add-instruction #:make-short-float-add-instruction 
    #:short-float-sub-instruction #:make-short-float-sub-instruction 
    #:short-float-mul-instruction #:make-short-float-mul-instruction 
+   #:short-float-div-instruction #:make-short-float-div-instruction 
    #:single-float-unbox-instruction #:make-single-float-unbox-instruction 
    #:single-float-box-instruction #:make-single-float-box-instruction 
    #:single-float-add-instruction #:make-single-float-add-instruction 
