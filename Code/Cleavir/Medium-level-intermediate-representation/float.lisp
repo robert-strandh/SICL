@@ -42,6 +42,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION SHORT-FLOAT-ADD-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs which must be values of type
+;;; unboxed SHORT-FLOAT.  It has a single output which is the
+;;; unbox sum of the two inputs.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; SHORT-FLOAT data type.
+
+(defclass short-float-add-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-short-float-add-instruction (input1 input2 output successor)
+  (make-instance 'short-float-add-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction SINGLE-FLOAT-UNBOX-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single input, which must be a boxed

@@ -50,6 +50,7 @@
    #:fixnum-equal-instruction #:make-fixnum-equal-instruction
    #:short-float-unbox-instruction #:make-short-float-unbox-instruction 
    #:short-float-box-instruction #:make-short-float-box-instruction 
+   #:short-float-add-instruction #:make-short-float-add-instruction 
    #:single-float-unbox-instruction #:make-single-float-unbox-instruction 
    #:single-float-box-instruction #:make-single-float-box-instruction 
    #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
