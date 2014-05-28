@@ -444,6 +444,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION DOUBLE-FLOAT-COS-INSTRUCTION.
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed DOUBLE-FLOAT.  It has a single output which is the
+;;; unboxed DOUBLE-FLOAT cosine of the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; DOUBLE-FLOAT data type.
+
+(defclass double-float-cos-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-double-float-cos-instruction (input output successor)
+  (make-instance 'double-float-cos-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction LONG-FLOAT-UNBOX-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single input, which must be a boxed
