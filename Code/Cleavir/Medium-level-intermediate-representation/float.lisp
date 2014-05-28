@@ -46,7 +46,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SHORT-FLOAT.  It has a single output which is the
-;;; unboxed sum of the two inputs.
+;;; unboxed SHORT-FLOAT sum of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
@@ -66,7 +66,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SHORT-FLOAT.  It has a single output which is the
-;;; unboxed difference between the two inputs.
+;;; unboxed SHORT-FLOAT difference between the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
@@ -86,7 +86,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SHORT-FLOAT.  It has a single output which is the
-;;; unboxed product of the two inputs.
+;;; unboxed SHORT-FLOAT product of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
@@ -106,7 +106,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SHORT-FLOAT.  It has a single output which is the
-;;; unboxed quotient of the two inputs.
+;;; unboxed SHORT-FLOAT quotient of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; SHORT-FLOAT data type.
@@ -160,7 +160,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
-;;; unboxed sum of the two inputs.
+;;; unboxed SINGLE-FLOAT sum of the two inputs.
 
 (defclass single-float-add-instruction (instruction one-successors-mixin)
   ())
@@ -177,7 +177,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
-;;; unboxed difference between the two inputs.
+;;; unboxed SINGLE-FLOAT difference between the two inputs.
 
 (defclass single-float-sub-instruction (instruction one-successors-mixin)
   ())
@@ -194,7 +194,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
-;;; unboxed product of the two inputs.
+;;; unboxed SINGLE-FLOAT product of the two inputs.
 
 (defclass single-float-mul-instruction (instruction one-successors-mixin)
   ())
@@ -211,7 +211,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
-;;; unboxed quotient of the two inputs.
+;;; unboxed SINGLE-FLOAT quotient of the two inputs.
 
 (defclass single-float-div-instruction (instruction one-successors-mixin)
   ())
@@ -268,7 +268,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed DOUBLE-FLOAT.  It has a single output which is the
-;;; unboxed sum of the two inputs.
+;;; unboxed DOUBLE-FLOAT sum of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
@@ -288,7 +288,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed DOUBLE-FLOAT.  It has a single output which is the
-;;; unboxed difference between the two inputs.
+;;; unboxed DOUBLE-FLOAT difference between the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
@@ -308,7 +308,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed DOUBLE-FLOAT.  It has a single output which is the
-;;; unboxed product of the two inputs.
+;;; unboxed DOUBLE-FLOAT product of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
@@ -328,7 +328,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed DOUBLE-FLOAT.  It has a single output which is the
-;;; unboxed quotient of the two inputs.
+;;; unboxed DOUBLE-FLOAT quotient of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; DOUBLE-FLOAT data type.
@@ -388,7 +388,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed LONG-FLOAT.  It has a single output which is the
-;;; unboxed sum of the two inputs.
+;;; unboxed LONG-FLOAT sum of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
@@ -408,7 +408,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed LONG-FLOAT.  It has a single output which is the
-;;; unboxed difference between the two inputs.
+;;; unboxed LONG-FLOAT difference between the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
@@ -428,7 +428,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed LONG-FLOAT.  It has a single output which is the
-;;; unboxed product of the two inputs.
+;;; unboxed LONG-FLOAT product of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
@@ -448,7 +448,7 @@
 ;;;
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed LONG-FLOAT.  It has a single output which is the
-;;; unboxed quotient of the two inputs.
+;;; unboxed LONG-FLOAT quotient of the two inputs.
 ;;;
 ;;; This instruction can be used by implementations that support the
 ;;; LONG-FLOAT data type.
