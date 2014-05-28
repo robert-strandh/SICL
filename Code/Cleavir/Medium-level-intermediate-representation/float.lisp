@@ -122,6 +122,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION SHORT-FLOAT-SIN-INSTRUCTION.
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed SHORT-FLOAT.  It has a single output which is the
+;;; unboxed SHORT-FLOAT sine of the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; SHORT-FLOAT data type.
+
+(defclass short-float-sin-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-short-float-sin-instruction (input output successor)
+  (make-instance 'short-float-sin-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction SINGLE-FLOAT-UNBOX-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single input, which must be a boxed
