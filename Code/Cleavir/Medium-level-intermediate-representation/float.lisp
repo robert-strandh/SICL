@@ -142,6 +142,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION SHORT-FLOAT-COS-INSTRUCTION.
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed SHORT-FLOAT.  It has a single output which is the
+;;; unboxed SHORT-FLOAT cosine of the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; SHORT-FLOAT data type.
+
+(defclass short-float-cos-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-short-float-cos-instruction (input output successor)
+  (make-instance 'short-float-cos-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction SINGLE-FLOAT-UNBOX-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single input, which must be a boxed
