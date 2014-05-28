@@ -522,3 +522,23 @@
     :outputs (list output)
     :successors (list successor)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INSTRUCTION LONG-FLOAT-SIN-INSTRUCTION.
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed LONG-FLOAT.  It has a single output which is the
+;;; unboxed LONG-FLOAT sine of the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; LONG-FLOAT data type.
+
+(defclass long-float-sin-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-long-float-sin-instruction (input output successor)
+  (make-instance 'long-float-sin-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
