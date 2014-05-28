@@ -336,6 +336,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION DOUBLE-FLOAT-DIV-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs which must be values of type
+;;; unboxed DOUBLE-FLOAT.  It has a single output which is the
+;;; unbox quotient of the two inputs.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; DOUBLE-FLOAT data type.
+
+(defclass double-float-div-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-double-float-div-instruction (input1 input2 output successor)
+  (make-instance 'double-float-div-instruction
+    :inputs (list input1 input2)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction LONG-FLOAT-UNBOX-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single input, which must be a boxed
