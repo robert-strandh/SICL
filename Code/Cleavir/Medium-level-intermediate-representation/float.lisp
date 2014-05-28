@@ -161,9 +161,6 @@
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
 ;;; unbox sum of the two inputs.
-;;;
-;;; This instruction can be used by implementations that support the
-;;; SINGLE-FLOAT data type.
 
 (defclass single-float-add-instruction (instruction one-successors-mixin)
   ())
@@ -181,9 +178,6 @@
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
 ;;; unbox difference between the two inputs.
-;;;
-;;; This instruction can be used by implementations that support the
-;;; SINGLE-FLOAT data type.
 
 (defclass single-float-sub-instruction (instruction one-successors-mixin)
   ())
@@ -201,9 +195,6 @@
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
 ;;; unbox product of the two inputs.
-;;;
-;;; This instruction can be used by implementations that support the
-;;; SINGLE-FLOAT data type.
 
 (defclass single-float-mul-instruction (instruction one-successors-mixin)
   ())
@@ -221,9 +212,6 @@
 ;;; This instruction takes two inputs which must be values of type
 ;;; unboxed SINGLE-FLOAT.  It has a single output which is the
 ;;; unbox quotient of the two inputs.
-;;;
-;;; This instruction can be used by implementations that support the
-;;; SINGLE-FLOAT data type.
 
 (defclass single-float-div-instruction (instruction one-successors-mixin)
   ())
