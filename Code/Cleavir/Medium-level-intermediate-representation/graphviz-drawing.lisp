@@ -266,6 +266,18 @@
 
 (defmethod label ((instruction short-float-box-instruction)) "shf box")
 
+(defmethod label ((instruction short-float-add-instruction)) "shf +")
+
+(defmethod label ((instruction short-float-sub-instruction)) "shf -")
+
+(defmethod label ((instruction short-float-mul-instruction)) "shf *")
+
+(defmethod label ((instruction short-float-div-instruction)) "shf /")
+
+(defmethod label ((instruction short-float-sin-instruction)) "shf sin")
+
+(defmethod label ((instruction short-float-cos-instruction)) "shf cos")
+
 (defmethod label ((instruction single-float-unbox-instruction)) "sf unbox")
 
 (defmethod label ((instruction single-float-box-instruction)) "sf box")
