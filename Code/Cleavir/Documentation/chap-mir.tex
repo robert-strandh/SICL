@@ -2711,6 +2711,39 @@ The output is the cosine of the input.
 \texttt{long-float-cos-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{long-float-sqrt-instruction}}
+\label{mir-instruction-long-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+The output is the square root of the input.
+
+\refFig{fig-long-float-sqrt-instruction} shows the Graphviz illustration of the
+\texttt{long-float-sqrt-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-sqrt-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-sqrt-instruction}
+\texttt{long-float-sqrt-instruction}.}
+\end{figure}
+
 \section{Data}
 
 \subsection{Input \texttt{constant-input}}
