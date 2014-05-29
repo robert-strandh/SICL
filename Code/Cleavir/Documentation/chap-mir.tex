@@ -2183,6 +2183,39 @@ The output is the sine of the input.
 \texttt{single-float-sin-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{single-float-cos-instruction}}
+\label{mir-instruction-single-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the cosine of the input.
+
+\refFig{fig-single-float-cos-instruction} shows the Graphviz illustration of the
+\texttt{single-float-cos-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-cos-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-cos-instruction}
+\texttt{single-float-cos-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{double-float-add-instruction}}
 \label{mir-instruction-double-float-add}
 
