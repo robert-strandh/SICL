@@ -2381,6 +2381,39 @@ The output is the sine of the input.
 \texttt{double-float-sin-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{double-float-cos-instruction}}
+\label{mir-instruction-double-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed double float.
+
+The output is the cosine of the input.
+
+\refFig{fig-double-float-cos-instruction} shows the Graphviz illustration of the
+\texttt{double-float-cos-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-cos-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-cos-instruction}
+\texttt{double-float-cos-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{long-float-add-instruction}}
 \label{mir-instruction-long-float-add}
 
