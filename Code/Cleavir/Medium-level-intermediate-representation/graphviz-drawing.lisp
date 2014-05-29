@@ -314,6 +314,18 @@
 
 (defmethod label ((instruction long-float-box-instruction)) "df box")
 
+(defmethod label ((instruction long-float-add-instruction)) "shf +")
+
+(defmethod label ((instruction long-float-sub-instruction)) "shf -")
+
+(defmethod label ((instruction long-float-mul-instruction)) "shf *")
+
+(defmethod label ((instruction long-float-div-instruction)) "shf /")
+
+(defmethod label ((instruction long-float-sin-instruction)) "shf sin")
+
+(defmethod label ((instruction long-float-cos-instruction)) "shf cos")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; General accessors.
