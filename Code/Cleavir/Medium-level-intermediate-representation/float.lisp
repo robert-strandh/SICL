@@ -682,3 +682,22 @@
     :outputs (list output)
     :successors (list successor)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INSTRUCTION LONG-FLOAT-SQRT-INSTRUCTION.
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed LONG-FLOAT.  It has a single output which is the
+;;; unboxed LONG-FLOAT square root of the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; LONG-FLOAT data type.
+
+(defclass long-float-sqrt-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-long-float-sqrt-instruction (input output successor)
+  (make-instance 'long-float-sqrt-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
