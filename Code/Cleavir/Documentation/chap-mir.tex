@@ -1952,6 +1952,39 @@ The output is the quotient of the two inputs.
 \texttt{short-float-div-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{short-float-sin-instruction}}
+\label{mir-instruction-short-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed short float.
+
+The output is the sine of the inputs.
+
+\refFig{fig-short-float-sin-instruction} shows the Graphviz illustration of the
+\texttt{short-float-sin-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-sin-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-sin-instruction}
+\texttt{short-float-sin-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{single-float-add-instruction}}
 \label{mir-instruction-single-float-add}
 
