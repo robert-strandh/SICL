@@ -74,6 +74,7 @@
    #:double-float-div-instruction #:make-double-float-div-instruction 
    #:double-float-sin-instruction #:make-double-float-sin-instruction 
    #:double-float-cos-instruction #:make-double-float-cos-instruction 
+   #:double-float-sqrt-instruction #:make-double-float-sqrt-instruction 
    #:long-float-unbox-instruction #:make-long-float-unbox-instruction 
    #:long-float-box-instruction #:make-long-float-box-instruction 
    #:long-float-add-instruction #:make-long-float-add-instruction 
