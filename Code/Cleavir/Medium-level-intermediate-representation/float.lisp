@@ -324,6 +324,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION SINGLE-FLOAT-SQRT-INSTRUCTION.
+;;;
+;;; This instruction takes a single inputs which must be a value of
+;;; type unboxed SINGLE-FLOAT.  It has a single output which is the
+;;; unboxed SINGLE-FLOAT square root of the input.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; SINGLE-FLOAT data type.
+
+(defclass single-float-sqrt-instruction (instruction one-successors-mixin)
+  ())
+
+(defun make-single-float-sqrt-instruction (input output successor)
+  (make-instance 'single-float-sqrt-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction DOUBLE-FLOAT-UNBOX-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single input, which must be a boxed

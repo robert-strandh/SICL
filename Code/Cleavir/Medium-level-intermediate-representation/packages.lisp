@@ -62,9 +62,10 @@
    #:single-float-add-instruction #:make-single-float-add-instruction 
    #:single-float-sub-instruction #:make-single-float-sub-instruction 
    #:single-float-mul-instruction #:make-single-float-mul-instruction 
-   #:single-float-sin-instruction #:make-single-float-sin-instruction 
    #:single-float-div-instruction #:make-single-float-div-instruction 
+   #:single-float-sin-instruction #:make-single-float-sin-instruction 
    #:single-float-cos-instruction #:make-single-float-cos-instruction 
+   #:single-float-sqrt-instruction #:make-single-float-sqrt-instruction 
    #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
    #:double-float-box-instruction #:make-double-float-box-instruction 
    #:double-float-add-instruction #:make-double-float-add-instruction 
