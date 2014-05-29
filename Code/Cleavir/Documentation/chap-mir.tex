@@ -1972,7 +1972,7 @@ The input to this instruction must be of type \emph{unboxed short
 this instruction only if this restriction is verified.  The output is
 also of type unboxed short float.
 
-The output is the sine of the inputs.
+The output is the sine of the input.
 
 \refFig{fig-short-float-sin-instruction} shows the Graphviz illustration of the
 \texttt{short-float-sin-instruction}
@@ -2115,6 +2115,39 @@ The output is the quotient of the two inputs.
 \end{center}
 \caption{\label{fig-single-float-div-instruction}
 \texttt{single-float-div-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-sin-instruction}}
+\label{mir-instruction-single-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the sine of the input.
+
+\refFig{fig-single-float-sin-instruction} shows the Graphviz illustration of the
+\texttt{single-float-sin-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-sin-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-sin-instruction}
+\texttt{single-float-sin-instruction}.}
 \end{figure}
 
 \subsection{Instruction \texttt{double-float-add-instruction}}
