@@ -506,6 +506,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; INSTRUCTION DOUBLE-FLOAT-LESS-INSTRUCTION.
+;;;
+;;; This instruction takes two inputs which must be values of type
+;;; unboxed DOUBLE-FLOAT.  It has no outputs.  It has two successors;
+;;; the first one is chosen when the first input is strictly less than
+;;; the second one, otherwise the second successor is chosen.
+;;;
+;;; This instruction can be used by implementations that support the
+;;; DOUBLE-FLOAT data type.
+
+(defclass double-float-less-instruction (instruction two-successors-mixin)
+  ())
+
+(defun make-double-float-less-instruction (input1 input2 successor1 successor2)
+  (make-instance 'double-float-less-instruction
+    :inputs (list input1 input2)
+    :outputs '()
+    :successors (list successor1 successor2)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; INSTRUCTION DOUBLE-FLOAT-SIN-INSTRUCTION.
 ;;;
 ;;; This instruction takes a single inputs which must be a value of
