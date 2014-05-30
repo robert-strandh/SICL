@@ -1985,6 +1985,39 @@ the second one; otherwise the second successor is chosen.
 \texttt{short-float-less-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{short-float-not-greater-instruction}}
+\label{mir-instruction-short-float-not-greater}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is less than or equal
+to the second one; otherwise the second successor is chosen.
+
+\refFig{fig-short-float-not-greater-instruction} shows the Graphviz illustration of the
+\texttt{short-float-not-greater-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-not-greater-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-not-greater-instruction}
+\texttt{short-float-not-greater-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{short-float-sin-instruction}}
 \label{mir-instruction-short-float-div}
 
