@@ -2480,6 +2480,39 @@ The output is the quotient of the two inputs.
 \texttt{double-float-div-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{double-float-less-instruction}}
+\label{mir-instruction-double-float-less}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is strictly less than
+the second one; otherwise the second successor is chosen. 
+
+\refFig{fig-double-float-less-instruction} shows the Graphviz illustration of the
+\texttt{double-float-less-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-less-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-less-instruction}
+\texttt{double-float-less-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{double-float-sin-instruction}}
 \label{mir-instruction-double-float-div}
 
