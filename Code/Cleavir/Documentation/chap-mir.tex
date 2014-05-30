@@ -2744,6 +2744,39 @@ The output is the quotient of the two inputs.
 \texttt{long-float-div-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{long-float-less-instruction}}
+\label{mir-instruction-long-float-less}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is strictly less than
+the second one; otherwise the second successor is chosen. 
+
+\refFig{fig-long-float-less-instruction} shows the Graphviz illustration of the
+\texttt{long-float-less-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-less-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-less-instruction}
+\texttt{long-float-less-instruction}.}
+\end{figure}
+
 \subsection{Instruction \texttt{long-float-sin-instruction}}
 \label{mir-instruction-long-float-div}
 
