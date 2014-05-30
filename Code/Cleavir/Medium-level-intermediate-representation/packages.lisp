@@ -29,6 +29,8 @@
    #:no-successors-mixin
    #:one-successor-mixin
    #:two-successors-mixin
+   #:box-instruction-mixin
+   #:unbox-instruction-mixin
    #:inputs #:outputs
    #:successors #:predecessors
    #:enter-instruction #:make-enter-instruction #:lambda-list

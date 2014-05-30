@@ -548,13 +548,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instructions for Common Lisp operators.
+;;; Mixin classes
 
+;;; Mixin class for instructions with no successors. 
 (defclass no-successors-mixin () ())
 
+;;; Mixin class for instructions with a single successor.
 (defclass one-successor-mixin () ())
 
+;;; Mixin class for instructions with tow successors.
 (defclass two-successors-mixin () ())
+
+;;; Mixin class for instructions that box unboxed data. 
+(defclass box-instruction-mixin () ())
+
+;;; Mixin class for instructions that ubox boxed data. 
+(defclass unbox-instruction-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instructions for Common Lisp operators.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
