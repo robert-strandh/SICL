@@ -389,8 +389,7 @@
   (make-instance 'the-ast
     :form-ast form-ast
     :type-asts type-asts
-    :children (list* form-ast types)
-    :value-type (mapcar #'value types)))
+    :value-type (mapcar #'value type-asts)))
 
 (cleavir-io:define-save-info the-ast
   (:form-ast form-ast)
