@@ -196,3 +196,30 @@
 (defmethod children ((ast long-float-add-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LONG-FLOAT-SUB-AST.
+;;;
+;;; This AST is used for subtracting two values of type LONG-FLOAT.
+;;;
+;;; It can be used by an implementation that supports the LONG-FLOAT
+;;; data type.  
+;;;
+;;; Both inputs must be of type LONG-FLOAT, so in safe code this
+;;; restriction has to be checked before this AST is evaluated. 
+
+(defclass long-float-sub-ast (ast)
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+
+(defun make-long-float-sub-ast (arg1-ast arg2-ast)
+  (make-instance 'long-float-sub-ast
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
+
+(cleavir-io:define-save-info long-float-sub-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
+
+(defmethod children ((ast long-float-sub-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))

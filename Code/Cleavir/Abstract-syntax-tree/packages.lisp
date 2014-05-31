@@ -45,6 +45,7 @@
    #:double-float-add-ast
    #:double-float-sub-ast
    #:long-float-add-ast
+   #:long-float-sub-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast
