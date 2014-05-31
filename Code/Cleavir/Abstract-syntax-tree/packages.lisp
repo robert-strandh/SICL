@@ -43,6 +43,7 @@
    #:short-float-mul-ast
    #:single-float-add-ast
    #:single-float-sub-ast
+   #:single-float-mul-ast
    #:double-float-add-ast
    #:double-float-sub-ast
    #:long-float-add-ast
