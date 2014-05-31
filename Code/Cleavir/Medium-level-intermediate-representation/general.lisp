@@ -573,6 +573,12 @@
 ;;; Mixin class for instructions that ubox boxed data. 
 (defclass unbox-instruction-mixin () ())
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class for instructions that have no side effects.
+
+(defclass side-effect-free-mixin () ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions for Common Lisp operators.
