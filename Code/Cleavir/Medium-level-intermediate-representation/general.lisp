@@ -550,6 +550,10 @@
 ;;;
 ;;; Mixin classes
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin classes for successor count.
+
 ;;; Mixin class for instructions with no successors. 
 (defclass no-successors-mixin () ())
 
@@ -558,6 +562,10 @@
 
 ;;; Mixin class for instructions with tow successors.
 (defclass two-successors-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin classes for boxing instructions.
 
 ;;; Mixin class for instructions that box unboxed data. 
 (defclass box-instruction-mixin () ())
