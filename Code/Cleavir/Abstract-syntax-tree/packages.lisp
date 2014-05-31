@@ -39,6 +39,7 @@
    #:fixnum-not-less-ast #:make-fixnum-not-less-ast
    #:fixnum-equal-ast #:make-fixnum-equal-ast
    #:short-float-add-ast
+   #:short-float-sub-ast
    #:single-float-add-ast
    #:double-float-add-ast
    #:long-float-add-ast
