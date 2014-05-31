@@ -46,6 +46,7 @@
    #:single-float-mul-ast
    #:double-float-add-ast
    #:double-float-sub-ast
+   #:double-float-mul-ast
    #:long-float-add-ast
    #:long-float-sub-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
