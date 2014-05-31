@@ -5,7 +5,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-add-AST.
+;;; Class FIXNUM-ADD-AST.
 ;;;
 ;;; This AST can be used to implement a binary addition function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
@@ -39,7 +39,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM---AST.
+;;; Class FIXNUM-SUB-AST.
 ;;;
 ;;; This AST can be used to implement a binary subtraction function.
 ;;; It requires both its arguments to be of type FIXNUM.  It can only
@@ -52,28 +52,28 @@
 ;;; non-negative, then a BIGNUM with the value VARIABLE - 2^n should
 ;;; be created.
 
-(defclass fixnum-subast (ast)
+(defclass fixnum-sub-ast (ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
-(defun make-fixnum-subast (arg1-ast arg2-ast variable-ast)
-  (make-instance 'fixnum-subast
+(defun make-fixnum-sub-ast (arg1-ast arg2-ast variable-ast)
+  (make-instance 'fixnum-sub-ast
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast
     :variable-ast variable-ast))
 
-(cleavir-io:define-save-info fixnum-subast
+(cleavir-io:define-save-info fixnum-sub-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast)
   (:variable-ast variable-ast))
 
-(defmethod children ((ast fixnum-subast))
+(defmethod children ((ast fixnum-sub-ast))
   (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-less-AST.
+;;; Class FIXNUM-LESS-AST.
 ;;;
 ;;; This class can be used to implement a binary LESS-THAN function.
 ;;; It requires both its arguments to be of type FIXNUM.  It can only
@@ -98,7 +98,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-not-greater-AST.
+;;; Class FIXNUM-NOT-GREATER-AST.
 ;;;
 ;;; This class can be used to implement a binary <= function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
@@ -123,7 +123,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-greater-AST.
+;;; Class FIXNUM-GREATER-AST.
 ;;;
 ;;; This class can be used to implement a binary GREATER-THAN
 ;;; function.  It requires both its arguments to be of type FIXNUM.
@@ -149,7 +149,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-not-less-AST.
+;;; Class FIXNUM-NOT-LESS-AST.
 ;;;
 ;;; This class can be used to implement a binary >= function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
@@ -174,7 +174,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-equal-AST.
+;;; Class FIXNUM-EQUAL-AST.
 ;;;
 ;;; This class can be used to implement a binary = function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
