@@ -40,6 +40,7 @@
    #:fixnum-equal-ast #:make-fixnum-equal-ast
    #:short-float-add-ast
    #:short-float-sub-ast
+   #:short-float-mul-ast
    #:single-float-add-ast
    #:single-float-sub-ast
    #:double-float-add-ast
