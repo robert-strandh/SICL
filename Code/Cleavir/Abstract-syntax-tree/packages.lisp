@@ -40,6 +40,7 @@
    #:fixnum-equal-ast #:make-fixnum-equal-ast
    #:short-float-add-ast
    #:single-float-add-ast
+   #:double-float-add-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast
