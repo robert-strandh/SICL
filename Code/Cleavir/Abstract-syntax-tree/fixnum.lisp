@@ -5,7 +5,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-+-AST.
+;;; Class FIXNUM-add-AST.
 ;;;
 ;;; This AST can be used to implement a binary addition function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
@@ -18,23 +18,23 @@
 ;;; non-negative, then a BIGNUM with the value VARIABLE - 2^n should
 ;;; be created.
 
-(defclass fixnum-+-ast (ast)
+(defclass fixnum-add-ast (ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
-(defun make-fixnum-+-ast (arg1-ast arg2-ast variable-ast)
-  (make-instance 'fixnum-+-ast
+(defun make-fixnum-add-ast (arg1-ast arg2-ast variable-ast)
+  (make-instance 'fixnum-add-ast
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast
     :variable-ast variable-ast))
 
-(cleavir-io:define-save-info fixnum-+-ast
+(cleavir-io:define-save-info fixnum-add-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast)
   (:variable-ast variable-ast))
 
-(defmethod children ((ast fixnum-+-ast))
+(defmethod children ((ast fixnum-add-ast))
   (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -52,78 +52,78 @@
 ;;; non-negative, then a BIGNUM with the value VARIABLE - 2^n should
 ;;; be created.
 
-(defclass fixnum---ast (ast)
+(defclass fixnum-subast (ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
    (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
-(defun make-fixnum---ast (arg1-ast arg2-ast variable-ast)
-  (make-instance 'fixnum---ast
+(defun make-fixnum-subast (arg1-ast arg2-ast variable-ast)
+  (make-instance 'fixnum-subast
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast
     :variable-ast variable-ast))
 
-(cleavir-io:define-save-info fixnum---ast
+(cleavir-io:define-save-info fixnum-subast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast)
   (:variable-ast variable-ast))
 
-(defmethod children ((ast fixnum---ast))
+(defmethod children ((ast fixnum-subast))
   (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-<-AST.
+;;; Class FIXNUM-less-AST.
 ;;;
 ;;; This class can be used to implement a binary LESS-THAN function.
 ;;; It requires both its arguments to be of type FIXNUM.  It can only
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(defclass fixnum-<-ast (ast)
+(defclass fixnum-less-ast (ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(defun make-fixnum-<-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-<-ast
+(defun make-fixnum-less-ast (arg1-ast arg2-ast)
+  (make-instance 'fixnum-less-ast
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast))
 
-(cleavir-io:define-save-info fixnum-<-ast
+(cleavir-io:define-save-info fixnum-less-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
-(defmethod children ((ast fixnum-<-ast))
+(defmethod children ((ast fixnum-less-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-<=-AST.
+;;; Class FIXNUM-not-greater-AST.
 ;;;
 ;;; This class can be used to implement a binary <= function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(defclass fixnum-<=-ast (ast)
+(defclass fixnum-not-greater-ast (ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(defun make-fixnum-<=-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-<=-ast
+(defun make-fixnum-not-greater-ast (arg1-ast arg2-ast)
+  (make-instance 'fixnum-not-greater-ast
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast))
 
-(cleavir-io:define-save-info fixnum-<=-ast
+(cleavir-io:define-save-info fixnum-not-greater-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
-(defmethod children ((ast fixnum-<=-ast))
+(defmethod children ((ast fixnum-not-greater-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM->-AST.
+;;; Class FIXNUM-greater-AST.
 ;;;
 ;;; This class can be used to implement a binary GREATER-THAN
 ;;; function.  It requires both its arguments to be of type FIXNUM.
@@ -131,69 +131,69 @@
 ;;; occurs in a position where a value is required, an error is
 ;;; signaled.
 
-(defclass fixnum->-ast (ast)
+(defclass fixnum-greater-ast (ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(defun make-fixnum->-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum->-ast
+(defun make-fixnum-greater-ast (arg1-ast arg2-ast)
+  (make-instance 'fixnum-greater-ast
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast))
 
-(cleavir-io:define-save-info fixnum->-ast
+(cleavir-io:define-save-info fixnum-greater-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
-(defmethod children ((ast fixnum->-ast))
+(defmethod children ((ast fixnum-greater-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM->=-AST.
+;;; Class FIXNUM-not-less-AST.
 ;;;
 ;;; This class can be used to implement a binary >= function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(defclass fixnum->=-ast (ast)
+(defclass fixnum-not-less-ast (ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(defun make-fixnum->=-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum->=-ast
+(defun make-fixnum-not-less-ast (arg1-ast arg2-ast)
+  (make-instance 'fixnum-not-less-ast
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast))
 
-(cleavir-io:define-save-info fixnum->=-ast
+(cleavir-io:define-save-info fixnum-not-less-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
-(defmethod children ((ast fixnum->=-ast))
+(defmethod children ((ast fixnum-not-less-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class FIXNUM-=-AST.
+;;; Class FIXNUM-equal-AST.
 ;;;
 ;;; This class can be used to implement a binary = function.  It
 ;;; requires both its arguments to be of type FIXNUM.  It can only
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(defclass fixnum-=-ast (ast)
+(defclass fixnum-equal-ast (ast)
   ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
    (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
-(defun make-fixnum-=-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-=-ast
+(defun make-fixnum-equal-ast (arg1-ast arg2-ast)
+  (make-instance 'fixnum-equal-ast
     :arg1-ast arg1-ast
     :arg2-ast arg2-ast))
 
-(cleavir-io:define-save-info fixnum-=-ast
+(cleavir-io:define-save-info fixnum-equal-ast
   (:arg1-ast arg1-ast)
   (:arg2-ast arg2-ast))
 
-(defmethod children ((ast fixnum-=-ast))
+(defmethod children ((ast fixnum-equal-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
 

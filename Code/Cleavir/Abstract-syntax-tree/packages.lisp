@@ -30,14 +30,14 @@
    #:rplaca-ast #:make-rplaca-ast #:object-ast
    #:rplacd-ast #:make-rplacd-ast
    #:variable-ast #:operation-ast #:normal-ast #:overflow-ast
-   #:fixnum-+-ast #:make-fixnum-+-ast
-   #:fixnum---ast #:make-fixnum---ast
+   #:fixnum-add-ast #:make-fixnum-add-ast
+   #:fixnum-sub-ast #:make-fixnum-sub-ast
    #:arg1-ast #:arg2-ast #:variable-ast
-   #:fixnum-<-ast #:make-fixnum-<-ast
-   #:fixnum-<=-ast #:make-fixnum-<=-ast
-   #:fixnum->-ast #:make-fixnum->-ast
-   #:fixnum->=-ast #:make-fixnum->=-ast
-   #:fixnum-=-ast #:make-fixnum-=-ast
+   #:fixnum-less-ast #:make-fixnum-less-ast
+   #:fixnum-not-greater-ast #:make-fixnum-not-greater-ast
+   #:fixnum-greater-ast #:make-fixnum-greater-ast
+   #:fixnum-not-less-ast #:make-fixnum-not-less-ast
+   #:fixnum-equal-ast #:make-fixnum-equal-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast
