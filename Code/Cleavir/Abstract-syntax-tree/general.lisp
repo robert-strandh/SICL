@@ -21,10 +21,7 @@
 ;;;
 ;;; Class AST.  The base class for all AST classes.
 
-(defclass ast ()
-  ((%children :initform '() :initarg :children :accessor children)))
-
-(cleavir-io:define-save-info ast (:children children))
+(defclass ast () ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -79,7 +76,12 @@
 (defun make-immediate-ast (value)
   (make-instance 'immediate-ast :value value))
 
-(cleavir-io:define-save-info immediate-ast (:value value))
+(cleavir-io:define-save-info immediate-ast
+  (:value value))
+
+(defmethod children ((ast immediate-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -100,7 +102,12 @@
 (defun make-constant-ast (value)
   (make-instance 'constant-ast :value value))
 
-(cleavir-io:define-save-info constant-ast (:value value))
+(cleavir-io:define-save-info constant-ast
+  (:value value))
+
+(defmethod children ((ast constant-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -120,7 +127,12 @@
   (make-instance 'global-ast :name name))
 
 (cleavir-io:define-save-info global-ast
-  (:name name) (:function-type function-type))
+  (:name name)
+  (:function-type function-type))
+
+(defmethod children ((ast global-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -130,13 +142,17 @@
 ;;; a reference contains the name of the variable.
 
 (defclass special-ast (ast)
-  ((%name :initarg :name :reader name)
-   (%children :initform '() :allocation :class)))
+  ((%name :initarg :name :reader name)))
 
 (defun make-special-ast (name)
   (make-instance 'special-ast :name name))
 
-(cleavir-io:define-save-info special-ast (:name name))
+(cleavir-io:define-save-info special-ast
+  (:name name))
+
+(defmethod children ((ast special-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -152,7 +168,12 @@
 (defun make-lexical-ast (name)
   (make-instance 'lexical-ast :name name))
 
-(cleavir-io:define-save-info lexical-ast (:name name))
+(cleavir-io:define-save-info lexical-ast
+  (:name name))
+
+(defmethod children ((ast lexical-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -161,17 +182,20 @@
 ;;; A CALL-AST represents a function call.  
 
 (defclass call-ast (ast)
-  ())
+  ((%callee-ast :initarg :callee-ast :reader callee-ast)
+   (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
 (defun make-call-ast (callee-ast argument-asts)
   (make-instance 'call-ast
-    :children (cons callee-ast argument-asts)))
+    :callee-ast callee-ast
+    :argument-asts argument-asts))
 
-(defmethod callee-ast ((ast call-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info call-ast
+  (:callee-ast callee-ast)
+  (:argument-asts argument-asts))
 
-(defmethod argument-asts ((ast call-ast))
-  (rest (children ast)))
+(defmethod children ((ast special-ast))
+  (cons (callee-ast ast) (argument-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -214,82 +238,94 @@
 ;;; correctly (conceptually, they all have the value FALSE then).
 
 (defclass function-ast (ast)
-  ((%lambda-list :initarg :lambda-list :reader lambda-list)))
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%body-ast :initarg :body-ast :reader body-ast)))
 
 (defun make-function-ast (body-ast lambda-list)
   (make-instance 'function-ast
-    :children (list body-ast)
+    :body-ast body-ast
     :lambda-list lambda-list))
 
-(defmethod body-ast ((ast function-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info function-ast
+  (:lambda-list lambda-list)
+  (:body-ast body-ast))
 
-(cleavir-io:define-save-info function-ast (:lambda-list lambda-list))
+(defmethod children ((ast function-ast))
+  (list (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class PROGN-AST.
 
 (defclass progn-ast (ast)
-  ())
+  ((%form-asts :initarg :form-asts :reader form-asts)))
 
 (defun make-progn-ast (form-asts)
   (make-instance 'progn-ast
-    :children form-asts))
+    :form-asts form-asts))
 
-(defmethod form-asts ((ast progn-ast))
-  (children ast))
+(cleavir-io:define-save-info function-ast
+  (:form-asts form-asts))
+
+(defmethod children ((ast progn-ast))
+  (form-asts ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class BLOCK-AST.
 
 (defclass block-ast (ast)
-  ())
+  ((%body-ast :initarg :body-ast :accessor body-ast)))
 
 (defun make-block-ast (body-ast)
   (make-instance 'block-ast
-    :children (list body-ast)))
+    :body-ast body-ast))
   
-(defmethod body-ast ((ast block-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info block-ast
+  (:body-ast body-ast))
 
-(defmethod (setf body-ast) (new-body (ast block-ast))
-  (setf (first (children ast)) new-body))
+(defmethod children ((ast block-ast))
+  (list (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class RETURN-FROM-AST.
 
 (defclass return-from-ast (ast)
-  ())
+  ((%block-ast :initarg :block-ast :reader block-ast)
+   (%form-ast :initarg :form-ast :reader form-ast)))
 
 (defun make-return-from-ast (block-ast form-ast)
   (make-instance 'return-from-ast
-    :children (list block-ast form-ast)))
+    :block-ast block-ast
+    :form-ast form-ast))
   
-(defmethod block-ast ((ast return-from-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info return-from-ast
+  (:block-ast block-ast)
+  (:form-ast form-ast))
 
-(defmethod form-ast ((ast return-from-ast))
-  (second (children ast)))
+(defmethod children ((ast return-from-ast))
+  (list (block-ast ast) (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SETQ-AST.
 
 (defclass setq-ast (ast)
-  ())
+  ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
 
 (defun make-setq-ast (lhs-ast value-ast)
   (make-instance 'setq-ast
-    :children (list lhs-ast value-ast)))
+    :lhs-ast lhs-ast
+    :value-ast value-ast))
 
-(defmethod lhs-ast ((ast setq-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info setq-ast
+  (:lhs-ast lhs-ast)
+  (:value-ast value-ast))
 
-(defmethod value-ast ((ast setq-ast))
-  (second (children ast)))
+(defmethod children ((ast setq-ast))
+  (list (lhs-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -302,7 +338,12 @@
   (make-instance 'tag-ast
     :name name))
 
-(cleavir-io:define-save-info tag-ast (:name name))
+(cleavir-io:define-save-info tag-ast
+  (:name name))
+
+(defmethod children ((ast tag-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -323,31 +364,41 @@
 ;;; Class GO-AST.
 
 (defclass go-ast (ast)
-  ())
+  ((%tag-ast :initarg :tag-ast :reader tag-ast)))
 
 (defun make-go-ast (tag-ast)
   (make-instance 'go-ast
-    :children  (list tag-ast)))
+    :tag-ast tag-ast))
 
-(defmethod tag-ast ((ast go-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info go-ast
+  (:tag-ast tag-ast))
+
+(defmethod children ((ast go-ast))
+  (list (tag-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class THE-AST.
 
 (defclass the-ast (ast)
-  ((%value-type :initarg :value-type :reader value-type)))
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%type-asts :initarg :type-asts :reader type-asts)
+   (%value-type :initarg :value-type :reader value-type)))
 
-(defun make-the-ast (form-ast &rest types)
+(defun make-the-ast (form-ast &rest type-asts)
   (make-instance 'the-ast
+    :form-ast form-ast
+    :type-asts type-asts
     :children (list* form-ast types)
     :value-type (mapcar #'value types)))
 
-(defmethod form-ast ((ast the-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info the-ast
+  (:form-ast form-ast)
+  (:type-asts type-asts)
+  (:value-type value-type))
 
-(cleavir-io:define-save-info the-ast (:value-type value-type))
+(defmethod children ((ast the-ast))
+  (list* (form-ast ast) (type-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -389,22 +440,26 @@
 ;;; then a call to TYPEP is generated instead. 
 
 (defclass typeq-ast (ast)
-  ((%type-specifier :initarg :type-specifier :reader type-specifier)))
+  ((%type-specifier :initarg :type-specifier :reader type-specifier)
+   (%type-specifier-ast :initarg :type-specifier-ast :reader type-specifier-ast)
+   (%form-ast :initarg :form-ast :reader form-ast)))
 
 (defun make-typeq-ast (form-ast type-specifier-ast)
   (make-instance 'typeq-ast
-    :children (list form-ast type-specifier-ast)))
-
-(defmethod form-ast ((ast typeq-ast))
-  (first (children ast)))
-
-(defmethod type-specifier-ast ((ast typeq-ast))
-  (second (children ast)))
+    :form-ast form-ast
+    :type-specifier-ast type-specifier-ast))
 
 (defmethod initialize-instance :after ((ast typeq-ast) &key &allow-other-keys)
   (reinitialize-instance
    ast
    :type-specifier (value (type-specifier-ast ast))))
+
+(cleavir-io:define-save-info typeq-ast
+  (:type-specifier-ast type-specifier-ast)
+  (:form-ast form-ast))
+
+(defmethod children ((ast typeq-ast))
+  (list (form-ast ast) (type-specifier-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -418,19 +473,21 @@
 ;;; know at AST creation time whether it is true or false. 
 
 (defclass load-time-value-ast (ast)
-  ((%read-only-p :initarg :read-only-p :reader read-only-p)))
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
 (defun make-load-time-value-ast (form-ast &optional read-only-p)
   (make-instance 'load-time-value-ast
-    :children  (list form-ast)
+    :form-ast form-ast
     :read-only-p read-only-p))
-
-(defmethod form-ast ((ast load-time-value-ast))
-  (first (children ast)))
 
 ;;; Even though READ-ONLY-P is not a child of the AST, it needs to be
 ;;; saved when the AST is saved. 
-(cleavir-io:define-save-info load-time-value-ast (:read-only-p read-only-p))
+(cleavir-io:define-save-info load-time-value-ast
+  (:read-only-p read-only-p))
+
+(defmethod children ((ast load-time-value-ast))
+  (list (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -441,20 +498,23 @@
 ;;; produces, according to the value of the TEST AST.
 
 (defclass if-ast (ast)
-  ())
+  ((%test-ast :initarg :test-ast :reader test-ast)
+   (%then-ast :initarg :then-ast :reader then-ast)
+   (%else-ast :initarg :else-ast :reader else-ast)))
 
 (defun make-if-ast (test-ast then-ast else-ast)
   (make-instance 'if-ast
-    :children (list test-ast then-ast else-ast)))
+    :test-ast test-ast
+    :then-ast then-ast
+    :else-ast else-ast))
 
-(defmethod test-ast ((ast if-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info if-ast
+  (:test-ast test-ast)
+  (:then-ast then-ast)
+  (:else-ast else-ast))
 
-(defmethod then-ast ((ast if-ast))
-  (second (children ast)))
-
-(defmethod else-ast ((ast if-ast))
-  (third (children ast)))
+(defmethod children ((ast if-ast))
+  (list (test-ast ast) (then-ast ast) (else-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -465,8 +525,17 @@
 ;;; position of an IF-AST.
 
 (defclass eq-ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
 (defun make-eq-ast (arg1-ast arg2-ast)
   (make-instance 'eq-ast
-    :children (list arg1-ast arg2-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
+
+(cleavir-io:define-save-info eq-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
+
+(defmethod children ((ast eq-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))

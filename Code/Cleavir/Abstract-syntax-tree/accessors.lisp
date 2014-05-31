@@ -9,14 +9,17 @@
 ;;; of the single child must be a CONS cell. 
 
 (defclass car-ast (ast)
-  ())
+  ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
 (defun make-car-ast (cons-ast)
   (make-instance 'car-ast
-    :children (list cons-ast)))
+    :cons-ast cons-ast))
 
-(defmethod cons-ast ((ast car-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info car-ast
+  (:cons-ast cons-ast))
+
+(defmethod children ((ast car-ast))
+  (list (cons-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -27,14 +30,17 @@
 ;;; of the single child must be a CONS cell. 
 
 (defclass cdr-ast (ast)
-  ())
+  ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
 (defun make-cdr-ast (cons-ast)
   (make-instance 'cdr-ast
-    :children (list cons-ast)))
+    :cons-ast cons-ast))
 
-(defmethod cons-ast ((ast cdr-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info cdr-ast
+  (:cons-ast cons-ast))
+
+(defmethod children ((ast cdr-ast))
+  (list (cons-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -47,17 +53,20 @@
 ;;; where a value is needed will result in an error being signaled.
 
 (defclass rplaca-ast (ast)
-  ())
+  ((%cons-ast :initarg :cons-ast :reader cons-ast)
+   (%object-ast :initarg :object-ast :reader object-ast)))
 
 (defun make-rplaca-ast (cons-ast object-ast)
   (make-instance 'rplaca-ast
-    :children (list cons-ast object-ast)))
+    :cons-ast cons-ast
+    :object-ast object-ast))
 
-(defmethod cons-ast ((ast rplaca-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info rplaca-ast
+  (:cons-ast cons-ast)
+  (:object-ast object-ast))
 
-(defmethod object-ast ((ast rplaca-ast))
-  (second (children ast)))
+(defmethod children ((ast rplaca-ast))
+  (list (cons-ast ast) (object-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -70,17 +79,20 @@
 ;;; where a value is needed will result in an error being signaled.
 
 (defclass rplacd-ast (ast)
-  ())
+  ((%cons-ast :initarg :cons-ast :reader cons-ast)
+   (%object-ast :initarg :object-ast :reader object-ast)))
 
 (defun make-rplacd-ast (cons-ast object-ast)
   (make-instance 'rplacd-ast
-    :children (list cons-ast object-ast)))
+    :cons-ast cons-ast
+    :object-ast object-ast))
 
-(defmethod cons-ast ((ast rplacd-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info rplacd-ast
+  (:cons-ast cons-ast)
+  (:object-ast object-ast))
 
-(defmethod object-ast ((ast rplacd-ast))
-  (second (children ast)))
+(defmethod children ((ast rplacd-ast))
+  (list (cons-ast ast) (object-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -93,17 +105,20 @@
 ;;; single value, namely the contents of the slot with the number given.
 
 (defclass slot-read-ast (ast)
-  ())
+  ((%object-ast :initarg :object-ast :reader object-ast)
+   (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)))
 
 (defun make-slot-read-ast (object-ast slot-number-ast)
   (make-instance 'slot-read-ast
-    :children (list object-ast slot-number-ast)))
+    :object-ast object-ast
+    :slot-number-ast slot-number-ast))
 
-(defmethod object-ast ((ast slot-read-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info slot-read-ast
+  (:object-ast object-ast)
+  (:slot-number-ast slot-number-ast))
 
-(defmethod slot-number-ast ((ast slot-read-ast))
-  (second (children ast)))
+(defmethod children ((ast slot-read-ast))
+  (list (object-ast ast) (slot-number-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -118,20 +133,23 @@
 ;;; value is needed will result in an error being signaled.
 
 (defclass slot-write-ast (ast)
-  ())
+  ((%object-ast :initarg :object-ast :reader object-ast)
+   (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
 
 (defun make-slot-write-ast (object-ast slot-number-ast value-ast)
   (make-instance 'slot-write-ast
-    :children (list object-ast slot-number-ast value-ast)))
+    :object-ast object-ast
+    :slot-number-ast slot-number-ast
+    :value-ast value-ast))
 
-(defmethod object-ast ((ast slot-write-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info slot-write-ast
+  (:object-ast object-ast)
+  (:slot-number-ast slot-number-ast)
+  (:value-ast value-ast))
 
-(defmethod slot-number-ast ((ast slot-write-ast))
-  (second (children ast)))
-
-(defmethod value-ast ((ast slot-write-ast))
-  (third (children ast)))
+(defmethod children ((ast slot-write-ast))
+  (list (object-ast ast) (slot-number-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -141,17 +159,20 @@
 ;;; corresponds roughly to the standard function ROW-MAJOR-AREF. 
 
 (defclass aref-ast (ast)
-  ())
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)))
 
 (defun make-aref-ast (array-ast index-ast)
   (make-instance 'aref-ast
-    :children (list array-ast index-ast)))
+    :array-ast array-ast
+    :index-ast index-ast))
 
-(defmethod array-ast ((ast aref-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info aref-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast))
 
-(defmethod index-ast ((ast aref-ast))
-  (second (children ast)))
+(defmethod children ((ast aref-ast))
+  (list (array-ast ast) (index-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -163,17 +184,20 @@
 ;;; will result in an error being signaled.
 
 (defclass aset-ast (ast)
-  ())
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
 
 (defun make-aset-ast (array-ast index-ast value-ast)
   (make-instance 'aset-ast
-    :children (list array-ast index-ast value-ast)))
+    :array-ast array-ast
+    :index-ast index-ast
+    :value-ast value-ast))
 
-(defmethod array-ast ((ast aset-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info aset-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast)
+  (:value-ast value-ast))
 
-(defmethod index-ast ((ast aset-ast))
-  (second (children ast)))
-
-(defmethod value-ast ((ast aset-ast))
-  (third (children ast)))
+(defmethod children ((ast aset-ast))
+  (list (array-ast ast) (index-ast ast) (value-ast ast)))

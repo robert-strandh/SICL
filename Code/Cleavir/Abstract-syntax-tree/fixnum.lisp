@@ -19,20 +19,23 @@
 ;;; be created.
 
 (defclass fixnum-+-ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
+   (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
 (defun make-fixnum-+-ast (arg1-ast arg2-ast variable-ast)
   (make-instance 'fixnum-+-ast
-    :children (list arg1-ast arg2-ast variable-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast
+    :variable-ast variable-ast))
 
-(defmethod arg1-ast ((ast fixnum-+-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info fixnum-+-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast)
+  (:variable-ast variable-ast))
 
-(defmethod arg2-ast ((ast fixnum-+-ast))
-  (second (children ast)))
-
-(defmethod variable-ast ((ast fixnum-+-ast))
-  (third (children ast)))
+(defmethod children ((ast fixnum-+-ast))
+  (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -50,20 +53,23 @@
 ;;; be created.
 
 (defclass fixnum---ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)
+   (%variable-ast :initarg :variable-ast :reader variable-ast)))
 
 (defun make-fixnum---ast (arg1-ast arg2-ast variable-ast)
   (make-instance 'fixnum---ast
-    :children (list arg1-ast arg2-ast variable-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast
+    :variable-ast variable-ast))
 
-(defmethod arg1-ast ((ast fixnum---ast))
-  (first (children ast)))
+(cleavir-io:define-save-info fixnum---ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast)
+  (:variable-ast variable-ast))
 
-(defmethod arg2-ast ((ast fixnum---ast))
-  (second (children ast)))
-
-(defmethod variable-ast ((ast fixnum---ast))
-  (third (children ast)))
+(defmethod children ((ast fixnum---ast))
+  (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -75,17 +81,20 @@
 ;;; position where a value is required, an error is signaled.
 
 (defclass fixnum-<-ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
 (defun make-fixnum-<-ast (arg1-ast arg2-ast)
   (make-instance 'fixnum-<-ast
-    :children (list arg1-ast arg2-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
 
-(defmethod arg1-ast ((ast fixnum-<-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info fixnum-<-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
 
-(defmethod arg2-ast ((ast fixnum-<-ast))
-  (second (children ast)))
+(defmethod children ((ast fixnum-<-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -97,17 +106,20 @@
 ;;; position where a value is required, an error is signaled.
 
 (defclass fixnum-<=-ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
 (defun make-fixnum-<=-ast (arg1-ast arg2-ast)
   (make-instance 'fixnum-<=-ast
-    :children (list arg1-ast arg2-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
 
-(defmethod arg1-ast ((ast fixnum-<=-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info fixnum-<=-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
 
-(defmethod arg2-ast ((ast fixnum-<=-ast))
-  (second (children ast)))
+(defmethod children ((ast fixnum-<=-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -120,17 +132,20 @@
 ;;; signaled.
 
 (defclass fixnum->-ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
 (defun make-fixnum->-ast (arg1-ast arg2-ast)
   (make-instance 'fixnum->-ast
-    :children (list arg1-ast arg2-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
 
-(defmethod arg1-ast ((ast fixnum->-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info fixnum->-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
 
-(defmethod arg2-ast ((ast fixnum->-ast))
-  (second (children ast)))
+(defmethod children ((ast fixnum->-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -142,17 +157,20 @@
 ;;; position where a value is required, an error is signaled.
 
 (defclass fixnum->=-ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
 (defun make-fixnum->=-ast (arg1-ast arg2-ast)
   (make-instance 'fixnum->=-ast
-    :children (list arg1-ast arg2-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
 
-(defmethod arg1-ast ((ast fixnum->=-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info fixnum->=-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
 
-(defmethod arg2-ast ((ast fixnum->=-ast))
-  (second (children ast)))
+(defmethod children ((ast fixnum->=-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -164,14 +182,18 @@
 ;;; position where a value is required, an error is signaled.
 
 (defclass fixnum-=-ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
 (defun make-fixnum-=-ast (arg1-ast arg2-ast)
   (make-instance 'fixnum-=-ast
-    :children (list arg1-ast arg2-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
 
-(defmethod arg1-ast ((ast fixnum-=-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info fixnum-=-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
 
-(defmethod arg2-ast ((ast fixnum-=-ast))
-  (second (children ast)))
+(defmethod children ((ast fixnum-=-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
+
