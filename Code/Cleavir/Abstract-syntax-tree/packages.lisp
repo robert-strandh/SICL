@@ -45,6 +45,7 @@
    #:single-float-add-ast
    #:single-float-sub-ast
    #:single-float-mul-ast
+   #:single-float-div-ast
    #:double-float-add-ast
    #:double-float-sub-ast
    #:double-float-mul-ast
