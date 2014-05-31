@@ -31,6 +31,7 @@
    #:two-successors-mixin
    #:box-instruction-mixin #:box-instruction-p
    #:unbox-instruction-mixin #:unbox-instruction-p
+   #:side-effect-free-mixin #:side-effect-free-p
    #:inputs #:outputs
    #:successors #:predecessors
    #:enter-instruction #:make-enter-instruction #:lambda-list
