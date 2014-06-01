@@ -101,21 +101,7 @@
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(defclass fixnum-less-ast (ast)
-  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
-   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
-
-(defun make-fixnum-less-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-less-ast
-    :arg1-ast arg1-ast
-    :arg2-ast arg2-ast))
-
-(cleavir-io:define-save-info fixnum-less-ast
-  (:arg1-ast arg1-ast)
-  (:arg2-ast arg2-ast))
-
-(defmethod children ((ast fixnum-less-ast))
-  (list (arg1-ast ast) (arg2-ast ast)))
+(make-fixnum-comparison-ast fixnum-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -126,21 +112,7 @@
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(defclass fixnum-not-greater-ast (ast)
-  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
-   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
-
-(defun make-fixnum-not-greater-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-not-greater-ast
-    :arg1-ast arg1-ast
-    :arg2-ast arg2-ast))
-
-(cleavir-io:define-save-info fixnum-not-greater-ast
-  (:arg1-ast arg1-ast)
-  (:arg2-ast arg2-ast))
-
-(defmethod children ((ast fixnum-not-greater-ast))
-  (list (arg1-ast ast) (arg2-ast ast)))
+(make-fixnum-comparison-ast fixnum-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -152,21 +124,7 @@
 ;;; occurs in a position where a value is required, an error is
 ;;; signaled.
 
-(defclass fixnum-greater-ast (ast)
-  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
-   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
-
-(defun make-fixnum-greater-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-greater-ast
-    :arg1-ast arg1-ast
-    :arg2-ast arg2-ast))
-
-(cleavir-io:define-save-info fixnum-greater-ast
-  (:arg1-ast arg1-ast)
-  (:arg2-ast arg2-ast))
-
-(defmethod children ((ast fixnum-greater-ast))
-  (list (arg1-ast ast) (arg2-ast ast)))
+(make-fixnum-comparison-ast fixnum-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -177,21 +135,7 @@
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(defclass fixnum-not-less-ast (ast)
-  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
-   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
-
-(defun make-fixnum-not-less-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-not-less-ast
-    :arg1-ast arg1-ast
-    :arg2-ast arg2-ast))
-
-(cleavir-io:define-save-info fixnum-not-less-ast
-  (:arg1-ast arg1-ast)
-  (:arg2-ast arg2-ast))
-
-(defmethod children ((ast fixnum-not-less-ast))
-  (list (arg1-ast ast) (arg2-ast ast)))
+(make-fixnum-comparison-ast fixnum-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -202,19 +146,5 @@
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(defclass fixnum-equal-ast (ast)
-  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
-   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
-
-(defun make-fixnum-equal-ast (arg1-ast arg2-ast)
-  (make-instance 'fixnum-equal-ast
-    :arg1-ast arg1-ast
-    :arg2-ast arg2-ast))
-
-(cleavir-io:define-save-info fixnum-equal-ast
-  (:arg1-ast arg1-ast)
-  (:arg2-ast arg2-ast))
-
-(defmethod children ((ast fixnum-equal-ast))
-  (list (arg1-ast ast) (arg2-ast ast)))
+(make-fixnum-comparison-ast fixnum-equal-ast)
 
