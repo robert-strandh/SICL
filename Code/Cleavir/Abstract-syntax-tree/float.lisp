@@ -131,9 +131,6 @@
 ;;;
 ;;; This AST is used for adding two values of type SINGLE-FLOAT.
 ;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.
-;;;
 ;;; Both inputs must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
@@ -144,9 +141,6 @@
 ;;; Class SINGLE-FLOAT-SUB-AST.
 ;;;
 ;;; This AST is used for subtracting two values of type SINGLE-FLOAT.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.  
 ;;;
 ;;; Both inputs must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
@@ -159,9 +153,6 @@
 ;;;
 ;;; This AST is used for multiplying two values of type SINGLE-FLOAT.
 ;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.  
-;;;
 ;;; Both inputs must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
@@ -172,9 +163,6 @@
 ;;; Class SINGLE-FLOAT-DIV-AST.
 ;;;
 ;;; This AST is used for dividing two values of type SINGLE-FLOAT.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.  
 ;;;
 ;;; Both inputs must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
@@ -189,9 +177,6 @@
 ;;; requires both its arguments to be of type SINGLE-FLOAT.  It can
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.
 
 (make-float-ast single-float-less-ast)
 
@@ -203,9 +188,6 @@
 ;;; requires both its arguments to be of type SINGLE-FLOAT.  It can
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.
 
 (make-float-ast single-float-not-greater-ast)
 
@@ -217,9 +199,6 @@
 ;;; requires both its arguments to be of type SINGLE-FLOAT.  It can
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.
 
 (make-float-ast single-float-greater-ast)
 
@@ -231,9 +210,6 @@
 ;;; requires both its arguments to be of type SINGLE-FLOAT.  It can
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.
 
 (make-float-ast single-float-not-less-ast)
 
