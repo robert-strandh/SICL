@@ -3,6 +3,10 @@
 ;;;; This file contains definitions of AST classes that have to do
 ;;;; with fixnum arithmetic and comparison. 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Classes for fixnum arithmetic.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class FIXNUM-ADD-AST.
@@ -70,6 +74,23 @@
 
 (defmethod children ((ast fixnum-sub-ast))
   (list (arg1-ast ast) (arg2-ast ast) (variable-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Classes for fixnum comparison.
+
+(defmacro make-fixnum-comparison-ast (name)
+  `(progn 
+     (defclass ,name (ast)
+       ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+	(%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+
+     (cleavir-io:define-save-info ,name
+       (:arg1-ast arg1-ast)
+       (:arg2-ast arg2-ast))
+
+     (defmethod children ((ast ,name))
+       (list (arg1-ast ast) (arg2-ast ast)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
