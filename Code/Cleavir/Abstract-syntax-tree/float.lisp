@@ -355,6 +355,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class DOUBLE-FLOAT-EQUAL-AST.
+;;;
+;;; This class can be used to implement a binary = function.  It
+;;; requires both its arguments to be of type DOUBLE-FLOAT.  It can
+;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
+;;; position where a value is required, an error is signaled.
+;;;
+;;; It can be used by an implementation that supports the DOUBLE-FLOAT
+;;; data type.
+
+(make-float-ast double-float-equal-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LONG-FLOAT-ADD-AST.
 ;;;
 ;;; This AST is used for adding two values of type LONG-FLOAT.

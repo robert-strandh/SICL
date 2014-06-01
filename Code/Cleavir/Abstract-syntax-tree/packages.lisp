@@ -64,6 +64,7 @@
    #:double-float-not-greater-ast
    #:double-float-greater-ast
    #:double-float-not-less-ast
+   #:double-float-equal-ast
    #:long-float-add-ast
    #:long-float-sub-ast
    #:long-float-mul-ast
