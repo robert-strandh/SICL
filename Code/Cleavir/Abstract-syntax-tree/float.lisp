@@ -394,6 +394,34 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class DOUBLE-FLOAT-LESS-AST.
+;;;
+;;; This class can be used to implement a binary LESS-THAN function.
+;;; It requires both its arguments to be of type DOUBLE-FLOAT.  It can
+;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
+;;; position where a value is required, an error is signaled.
+;;;
+;;; It can be used by an implementation that supports the DOUBLE-FLOAT
+;;; data type.
+
+(defclass double-float-less-ast (ast)
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+
+(defun make-double-float-less-ast (arg1-ast arg2-ast)
+  (make-instance 'double-float-less-ast
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
+
+(cleavir-io:define-save-info double-float-less-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
+
+(defmethod children ((ast double-float-less-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LONG-FLOAT-ADD-AST.
 ;;;
 ;;; This AST is used for adding two values of type LONG-FLOAT.

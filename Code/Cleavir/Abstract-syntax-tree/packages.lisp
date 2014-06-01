@@ -52,6 +52,7 @@
    #:double-float-sub-ast
    #:double-float-mul-ast
    #:double-float-div-ast
+   #:double-float-less-ast
    #:long-float-add-ast
    #:long-float-sub-ast
    #:long-float-mul-ast
