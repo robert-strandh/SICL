@@ -69,6 +69,7 @@
    #:long-float-less-ast
    #:long-float-not-greater-ast
    #:long-float-greater-ast
+   #:long-float-not-less-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast
