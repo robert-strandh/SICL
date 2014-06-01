@@ -229,6 +229,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class SINGLE-FLOAT-EQUAL-AST.
+;;;
+;;; This class can be used to implement a binary = function.  It
+;;; requires both its arguments to be of type SINGLE-FLOAT.  It can
+;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
+;;; position where a value is required, an error is signaled.
+;;;
+;;; It can be used by an implementation that supports the SINGLE-FLOAT
+;;; data type.
+
+(make-float-ast single-float-equal-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class DOUBLE-FLOAT-ADD-AST.
 ;;;
 ;;; This AST is used for adding two values of type DOUBLE-FLOAT.

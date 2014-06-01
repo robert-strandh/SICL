@@ -55,6 +55,7 @@
    #:single-float-not-greater-ast
    #:single-float-greater-ast
    #:single-float-not-less-ast
+   #:single-float-equal-ast
    #:double-float-add-ast
    #:double-float-sub-ast
    #:double-float-mul-ast
