@@ -73,8 +73,8 @@
 ;;;
 ;;; Class SHORT-FLOAT-LESS-AST.
 ;;;
-;;; This class can be used to implement a binary LESS-THAN function.
-;;; It requires both its arguments to be of type SHORT-FLOAT.  It can
+;;; This class can be used to implement a binary < function.  It
+;;; requires both its arguments to be of type SHORT-FLOAT.  It can
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 ;;;
@@ -157,8 +157,8 @@
 ;;;
 ;;; Class SINGLE-FLOAT-LESS-AST.
 ;;;
-;;; This class can be used to implement a binary LESS-THAN function.
-;;; It requires both its arguments to be of type SINGLE-FLOAT.  It can
+;;; This class can be used to implement a binary < function.  It
+;;; requires both its arguments to be of type SINGLE-FLOAT.  It can
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 ;;;
@@ -241,8 +241,8 @@
 ;;;
 ;;; Class DOUBLE-FLOAT-LESS-AST.
 ;;;
-;;; This class can be used to implement a binary LESS-THAN function.
-;;; It requires both its arguments to be of type DOUBLE-FLOAT.  It can
+;;; This class can be used to implement a binary < function.  It
+;;; requires both its arguments to be of type DOUBLE-FLOAT.  It can
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 ;;;
@@ -325,9 +325,9 @@
 ;;;
 ;;; Class LONG-FLOAT-LESS-AST.
 ;;;
-;;; This class can be used to implement a binary LESS-THAN function.
-;;; It requires both its arguments to be of type LONG-FLOAT.  It can
-;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
+;;; This class can be used to implement a binary < function.  It
+;;; requires both its arguments to be of type LONG-FLOAT.  It can only
+;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 ;;;
 ;;; It can be used by an implementation that supports the LONG-FLOAT
