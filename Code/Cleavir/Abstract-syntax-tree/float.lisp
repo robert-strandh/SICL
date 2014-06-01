@@ -127,6 +127,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class SHORT-FLOAT-EQUAL-AST.
+;;;
+;;; This class can be used to implement a binary = function.  It
+;;; requires both its arguments to be of type SHORT-FLOAT.  It can
+;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
+;;; position where a value is required, an error is signaled.
+;;;
+;;; It can be used by an implementation that supports the SHORT-FLOAT
+;;; data type.
+
+(make-float-ast short-float-equal-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class SINGLE-FLOAT-ADD-AST.
 ;;;
 ;;; This AST is used for adding two values of type SINGLE-FLOAT.

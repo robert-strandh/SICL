@@ -46,6 +46,7 @@
    #:short-float-not-greater-ast
    #:short-float-greater-ast
    #:short-float-not-less-ast
+   #:short-float-equal-ast
    #:single-float-add-ast
    #:single-float-sub-ast
    #:single-float-mul-ast
