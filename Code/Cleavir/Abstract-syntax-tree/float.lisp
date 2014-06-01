@@ -390,3 +390,17 @@
 ;;; data type.
 
 (make-float-ast long-float-not-greater-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LONG-FLOAT-GREATER-AST.
+;;;
+;;; This class can be used to implement a binary > function.  It
+;;; requires both its arguments to be of type LONG-FLOAT.  It can
+;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
+;;; position where a value is required, an error is signaled.
+;;;
+;;; It can be used by an implementation that supports the LONG-FLOAT
+;;; data type.
+
+(make-float-ast long-float-greater-ast)
