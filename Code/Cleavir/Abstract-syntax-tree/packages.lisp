@@ -50,6 +50,7 @@
    #:single-float-mul-ast
    #:single-float-div-ast
    #:single-float-less-ast
+   #:single-float-greater-ast
    #:single-float-not-greater-ast
    #:double-float-add-ast
    #:double-float-sub-ast
