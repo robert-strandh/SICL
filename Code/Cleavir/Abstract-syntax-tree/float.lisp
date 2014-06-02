@@ -1,6 +1,6 @@
 (in-package #:cleavir-ast)
 
-(defmacro make-float-ast (name)
+(defmacro define-two-arg-float-ast (name)
   `(progn 
      (defclass ,name (ast)
        ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
@@ -25,7 +25,7 @@
 ;;; Both inputs must be of type SHORT-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast short-float-add-ast)
+(define-two-arg-float-ast short-float-add-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -39,7 +39,7 @@
 ;;; Both inputs must be of type SHORT-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast short-float-sub-ast)
+(define-two-arg-float-ast short-float-sub-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -53,7 +53,7 @@
 ;;; Both inputs must be of type SHORT-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast short-float-mul-ast)
+(define-two-arg-float-ast short-float-mul-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -67,7 +67,7 @@
 ;;; Both inputs must be of type SHORT-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast short-float-div-ast)
+(define-two-arg-float-ast short-float-div-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -81,7 +81,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(make-float-ast short-float-less-ast)
+(define-two-arg-float-ast short-float-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -95,7 +95,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(make-float-ast short-float-not-greater-ast)
+(define-two-arg-float-ast short-float-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -109,7 +109,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(make-float-ast short-float-greater-ast)
+(define-two-arg-float-ast short-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -123,7 +123,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(make-float-ast short-float-not-less-ast)
+(define-two-arg-float-ast short-float-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -137,7 +137,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(make-float-ast short-float-equal-ast)
+(define-two-arg-float-ast short-float-equal-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -148,7 +148,7 @@
 ;;; Both inputs must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast single-float-add-ast)
+(define-two-arg-float-ast single-float-add-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -159,7 +159,7 @@
 ;;; Both inputs must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast single-float-sub-ast)
+(define-two-arg-float-ast single-float-sub-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -170,7 +170,7 @@
 ;;; Both inputs must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast single-float-mul-ast)
+(define-two-arg-float-ast single-float-mul-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -181,7 +181,7 @@
 ;;; Both inputs must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast single-float-div-ast)
+(define-two-arg-float-ast single-float-div-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -192,7 +192,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(make-float-ast single-float-less-ast)
+(define-two-arg-float-ast single-float-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -203,7 +203,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(make-float-ast single-float-not-greater-ast)
+(define-two-arg-float-ast single-float-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -214,7 +214,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(make-float-ast single-float-greater-ast)
+(define-two-arg-float-ast single-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -225,7 +225,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(make-float-ast single-float-not-less-ast)
+(define-two-arg-float-ast single-float-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -239,7 +239,7 @@
 ;;; It can be used by an implementation that supports the SINGLE-FLOAT
 ;;; data type.
 
-(make-float-ast single-float-equal-ast)
+(define-two-arg-float-ast single-float-equal-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -253,7 +253,7 @@
 ;;; Both inputs must be of type DOUBLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast double-float-add-ast)
+(define-two-arg-float-ast double-float-add-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -267,7 +267,7 @@
 ;;; Both inputs must be of type DOUBLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast double-float-sub-ast)
+(define-two-arg-float-ast double-float-sub-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -281,7 +281,7 @@
 ;;; Both inputs must be of type DOUBLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast double-float-mul-ast)
+(define-two-arg-float-ast double-float-mul-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -295,7 +295,7 @@
 ;;; Both inputs must be of type DOUBLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast double-float-div-ast)
+(define-two-arg-float-ast double-float-div-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -309,7 +309,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(make-float-ast double-float-less-ast)
+(define-two-arg-float-ast double-float-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -323,7 +323,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(make-float-ast double-float-not-greater-ast)
+(define-two-arg-float-ast double-float-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -337,7 +337,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(make-float-ast double-float-greater-ast)
+(define-two-arg-float-ast double-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -351,7 +351,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(make-float-ast double-float-not-less-ast)
+(define-two-arg-float-ast double-float-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -365,7 +365,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(make-float-ast double-float-equal-ast)
+(define-two-arg-float-ast double-float-equal-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -379,7 +379,7 @@
 ;;; Both inputs must be of type LONG-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast long-float-add-ast)
+(define-two-arg-float-ast long-float-add-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -393,7 +393,7 @@
 ;;; Both inputs must be of type LONG-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast long-float-sub-ast)
+(define-two-arg-float-ast long-float-sub-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -407,7 +407,7 @@
 ;;; Both inputs must be of type LONG-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast long-float-mul-ast)
+(define-two-arg-float-ast long-float-mul-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -421,7 +421,7 @@
 ;;; Both inputs must be of type LONG-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated. 
 
-(make-float-ast long-float-div-ast)
+(define-two-arg-float-ast long-float-div-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -435,7 +435,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(make-float-ast long-float-less-ast)
+(define-two-arg-float-ast long-float-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -449,7 +449,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(make-float-ast long-float-not-greater-ast)
+(define-two-arg-float-ast long-float-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -463,7 +463,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(make-float-ast long-float-greater-ast)
+(define-two-arg-float-ast long-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -477,7 +477,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(make-float-ast long-float-not-less-ast)
+(define-two-arg-float-ast long-float-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -491,4 +491,4 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(make-float-ast long-float-equal-ast)
+(define-two-arg-float-ast long-float-equal-ast)
