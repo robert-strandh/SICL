@@ -105,7 +105,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast short-float-less-ast)
+(define-float-comparison-ast short-float-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -119,7 +119,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast short-float-not-greater-ast)
+(define-float-comparison-ast short-float-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -133,7 +133,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast short-float-greater-ast)
+(define-float-comparison-ast short-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -147,7 +147,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast short-float-not-less-ast)
+(define-float-comparison-ast short-float-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -161,7 +161,7 @@
 ;;; It can be used by an implementation that supports the SHORT-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast short-float-equal-ast)
+(define-float-comparison-ast short-float-equal-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -261,7 +261,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(define-two-arg-float-ast single-float-less-ast)
+(define-float-comparison-ast single-float-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -272,7 +272,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(define-two-arg-float-ast single-float-not-greater-ast)
+(define-float-comparison-ast single-float-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -283,7 +283,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(define-two-arg-float-ast single-float-greater-ast)
+(define-float-comparison-ast single-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -294,7 +294,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(define-two-arg-float-ast single-float-not-less-ast)
+(define-float-comparison-ast single-float-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -305,7 +305,7 @@
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(define-two-arg-float-ast single-float-equal-ast)
+(define-float-comparison-ast single-float-equal-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -411,7 +411,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast double-float-less-ast)
+(define-float-comparison-ast double-float-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -425,7 +425,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast double-float-not-greater-ast)
+(define-float-comparison-ast double-float-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -439,7 +439,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast double-float-greater-ast)
+(define-float-comparison-ast double-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -453,7 +453,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast double-float-not-less-ast)
+(define-float-comparison-ast double-float-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -467,7 +467,7 @@
 ;;; It can be used by an implementation that supports the DOUBLE-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast double-float-equal-ast)
+(define-float-comparison-ast double-float-equal-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -582,7 +582,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast long-float-less-ast)
+(define-float-comparison-ast long-float-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -596,7 +596,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast long-float-not-greater-ast)
+(define-float-comparison-ast long-float-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -610,7 +610,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast long-float-greater-ast)
+(define-float-comparison-ast long-float-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -624,7 +624,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast long-float-not-less-ast)
+(define-float-comparison-ast long-float-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -638,7 +638,7 @@
 ;;; It can be used by an implementation that supports the LONG-FLOAT
 ;;; data type.
 
-(define-two-arg-float-ast long-float-equal-ast)
+(define-float-comparison-ast long-float-equal-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
