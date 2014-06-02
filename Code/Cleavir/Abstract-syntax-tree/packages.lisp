@@ -73,6 +73,7 @@
    #:double-float-equal-ast
    #:double-float-sin-ast
    #:double-float-cos-ast
+   #:double-float-sqrt-ast
    #:long-float-add-ast
    #:long-float-sub-ast
    #:long-float-mul-ast
