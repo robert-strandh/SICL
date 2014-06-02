@@ -1,5 +1,16 @@
 (in-package #:cleavir-ast)
 
+(defmacro define-one-arg-float-ast (name)
+  `(progn 
+     (defclass ,name (ast)
+       ((%arg-ast :initarg :arg-ast :reader arg-ast)))
+
+     (cleavir-io:define-save-info ,name
+       (:arg-ast arg-ast))
+
+     (defmethod children ((ast ,name))
+       (list (arg-ast ast)))))
+
 (defmacro define-two-arg-float-ast (name)
   `(progn 
      (defclass ,name (ast)
