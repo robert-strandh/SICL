@@ -455,6 +455,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class DOUBLE-FLOAT-COS-AST.
+;;;
+;;; This AST is used for computing the cosine of a value of type
+;;; DOUBLE-FLOAT.
+;;;
+;;; It can be used by an implementation that supports the DOUBLE-FLOAT
+;;; data type.  
+;;;
+;;; The input must be of type DOUBLE-FLOAT, so in safe code this
+;;; restriction has to be checked before this AST is evaluated.
+
+(define-one-arg-float-ast double-float-cos-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class LONG-FLOAT-ADD-AST.
 ;;;
 ;;; This AST is used for adding two values of type LONG-FLOAT.

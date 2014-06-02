@@ -70,6 +70,7 @@
    #:double-float-not-less-ast
    #:double-float-equal-ast
    #:double-float-sin-ast
+   #:double-float-cos-ast
    #:long-float-add-ast
    #:long-float-sub-ast
    #:long-float-mul-ast
