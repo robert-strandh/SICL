@@ -7,4 +7,5 @@
   ((:file "packages")
    (:file "general")
    (:file "fixnum")
+   (:file "float")
    (:file "accessors")))
