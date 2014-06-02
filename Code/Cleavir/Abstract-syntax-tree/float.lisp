@@ -24,6 +24,19 @@
      (defmethod children ((ast ,name))
        (list (arg1-ast ast) (arg2-ast ast)))))
 
+(defmacro define-float-comparison-ast (name)
+  `(progn 
+     (defclass ,name (ast boolean-ast-mixin)
+       ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+	(%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
+
+     (cleavir-io:define-save-info ,name
+       (:arg1-ast arg1-ast)
+       (:arg2-ast arg2-ast))
+
+     (defmethod children ((ast ,name))
+       (list (arg1-ast ast) (arg2-ast ast)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SHORT-FLOAT-ADD-AST.
