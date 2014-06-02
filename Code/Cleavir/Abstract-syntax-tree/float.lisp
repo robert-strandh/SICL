@@ -269,6 +269,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class SINGLE-FLOAT-SIN-AST.
+;;;
+;;; This AST is used for computing the sine of a value of type
+;;; SINGLE-FLOAT.
+;;;
+;;; It can be used by an implementation that supports the SINGLE-FLOAT
+;;; data type.  
+;;;
+;;; The input must be of type SINGLE-FLOAT, so in safe code this
+;;; restriction has to be checked before this AST is evaluated.
+
+(define-one-arg-float-ast single-float-sin-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class DOUBLE-FLOAT-ADD-AST.
 ;;;
 ;;; This AST is used for adding two values of type DOUBLE-FLOAT.

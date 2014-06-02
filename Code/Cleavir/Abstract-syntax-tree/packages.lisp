@@ -46,8 +46,8 @@
    #:short-float-not-greater-ast
    #:short-float-greater-ast
    #:short-float-not-less-ast
-   #:short-float-sin-ast
    #:short-float-equal-ast
+   #:short-float-sin-ast
    #:single-float-add-ast
    #:single-float-sub-ast
    #:single-float-mul-ast
@@ -57,6 +57,7 @@
    #:single-float-greater-ast
    #:single-float-not-less-ast
    #:single-float-equal-ast
+   #:single-float-sin-ast
    #:double-float-add-ast
    #:double-float-sub-ast
    #:double-float-mul-ast
