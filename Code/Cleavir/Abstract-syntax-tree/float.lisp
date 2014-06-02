@@ -608,3 +608,18 @@
 ;;; restriction has to be checked before this AST is evaluated.
 
 (define-one-arg-float-ast long-float-sin-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LONG-FLOAT-COS-AST.
+;;;
+;;; This AST is used for computing the cosine of a value of type
+;;; LONG-FLOAT.
+;;;
+;;; It can be used by an implementation that supports the LONG-FLOAT
+;;; data type.  
+;;;
+;;; The input must be of type LONG-FLOAT, so in safe code this
+;;; restriction has to be checked before this AST is evaluated.
+
+(define-one-arg-float-ast long-float-cos-ast)

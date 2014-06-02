@@ -81,6 +81,7 @@
    #:long-float-not-less-ast
    #:long-float-equal-ast
    #:long-float-sin-ast
+   #:long-float-cos-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast
