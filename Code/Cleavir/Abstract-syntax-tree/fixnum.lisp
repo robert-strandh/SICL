@@ -79,7 +79,7 @@
 ;;;
 ;;; Classes for fixnum comparison.
 
-(defmacro make-fixnum-comparison-ast (name)
+(defmacro define-fixnum-comparison-ast (name)
   `(progn 
      (defclass ,name (ast)
        ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
@@ -101,7 +101,7 @@
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(make-fixnum-comparison-ast fixnum-less-ast)
+(define-fixnum-comparison-ast fixnum-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -112,7 +112,7 @@
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(make-fixnum-comparison-ast fixnum-not-greater-ast)
+(define-fixnum-comparison-ast fixnum-not-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -124,7 +124,7 @@
 ;;; occurs in a position where a value is required, an error is
 ;;; signaled.
 
-(make-fixnum-comparison-ast fixnum-greater-ast)
+(define-fixnum-comparison-ast fixnum-greater-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -135,7 +135,7 @@
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(make-fixnum-comparison-ast fixnum-not-less-ast)
+(define-fixnum-comparison-ast fixnum-not-less-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -146,5 +146,5 @@
 ;;; occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
 
-(make-fixnum-comparison-ast fixnum-equal-ast)
+(define-fixnum-comparison-ast fixnum-equal-ast)
 
