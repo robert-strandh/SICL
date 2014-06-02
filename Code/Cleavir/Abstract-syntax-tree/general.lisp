@@ -25,6 +25,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Mixin classes.
+
+;;; This class is used as a superclass for ASTs that produce Boolean
+;;; results, so are mainly used as the TEST-AST of an IF-AST.
+(defclass boolean-ast-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; AST classes for standard common lisp features. 
 ;;;
 ;;; There is mostly a different type of AST for each Common Lisp
