@@ -61,6 +61,7 @@
    #:single-float-equal-ast
    #:single-float-sin-ast
    #:single-float-cos-ast
+   #:single-float-sqrt-ast
    #:double-float-add-ast
    #:double-float-sub-ast
    #:double-float-mul-ast
