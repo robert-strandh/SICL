@@ -291,9 +291,6 @@
 ;;; requires both its arguments to be of type SINGLE-FLOAT.  It can
 ;;; only occur as the TEST-AST of an IF-AST.  If this AST occurs in a
 ;;; position where a value is required, an error is signaled.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.
 
 (define-two-arg-float-ast single-float-equal-ast)
 
@@ -303,9 +300,6 @@
 ;;;
 ;;; This AST is used for computing the sine of a value of type
 ;;; SINGLE-FLOAT.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.  
 ;;;
 ;;; The input must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated.
@@ -319,9 +313,6 @@
 ;;; This AST is used for computing the cosine of a value of type
 ;;; SINGLE-FLOAT.
 ;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.  
-;;;
 ;;; The input must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated.
 
@@ -333,9 +324,6 @@
 ;;;
 ;;; This AST is used for computing the square root of a value of type
 ;;; SINGLE-FLOAT.
-;;;
-;;; It can be used by an implementation that supports the SINGLE-FLOAT
-;;; data type.  
 ;;;
 ;;; The input must be of type SINGLE-FLOAT, so in safe code this
 ;;; restriction has to be checked before this AST is evaluated.
