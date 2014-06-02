@@ -81,7 +81,7 @@
 
 (defmacro define-fixnum-comparison-ast (name)
   `(progn 
-     (defclass ,name (ast)
+     (defclass ,name (ast boolean-ast-mixin)
        ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
 	(%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
