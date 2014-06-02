@@ -48,6 +48,7 @@
    #:short-float-not-less-ast
    #:short-float-equal-ast
    #:short-float-sin-ast
+   #:short-float-cos-ast
    #:single-float-add-ast
    #:single-float-sub-ast
    #:single-float-mul-ast

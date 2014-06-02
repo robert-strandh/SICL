@@ -167,6 +167,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class SHORT-FLOAT-COS-AST.
+;;;
+;;; This AST is used for computing the cosine of a value of type
+;;; SHORT-FLOAT.
+;;;
+;;; It can be used by an implementation that supports the SHORT-FLOAT
+;;; data type.  
+;;;
+;;; The input must be of type SHORT-FLOAT, so in safe code this
+;;; restriction has to be checked before this AST is evaluated.
+
+(define-one-arg-float-ast short-float-cos-ast)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class SINGLE-FLOAT-ADD-AST.
 ;;;
 ;;; This AST is used for adding two values of type SINGLE-FLOAT.
