@@ -147,3 +147,16 @@
        :inputs (reverse temps)
        :outputs '()
        :successors (successors context)))))
+
+(defmethod compile-ast ((ast cleavir-ast:double-float-less-ast) context)
+  (check-context-for-boolean-ast context)
+  (let* ((arguments (cleavir-ast:children ast))
+	 (temps (make-temps arguments)))
+    (compile-and-unbox-arguments
+     arguments
+     temps
+     'cleavir-mir:double-float-unbox-instruction
+     (make-instance 'cleavir-mir:double-float-less-instruction
+       :inputs temps
+       :outputs '()
+       :successors (successors context)))))
