@@ -74,7 +74,7 @@
    #:single-float-sqrt-instruction #:make-single-float-sqrt-instruction 
    #:single-float-less-instruction
    #:single-float-not-greater-instruction
-   #:single -float-equal-instruction
+   #:single-float-equal-instruction
    #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
    #:double-float-box-instruction #:make-double-float-box-instruction 
    #:double-float-add-instruction #:make-double-float-add-instruction 
