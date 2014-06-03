@@ -225,3 +225,16 @@
        :inputs temps
        :outputs '()
        :successors (successors context)))))
+     
+(defmethod compile-ast ((ast cleavir-ast:long-float-not-greater-ast) context)
+  (check-context-for-boolean-ast context)
+  (let* ((arguments (cleavir-ast:children ast))
+	 (temps (make-temps arguments)))
+    (compile-and-unbox-arguments
+     arguments
+     temps
+     'cleavir-mir:long-float-unbox-instruction
+     (make-instance 'cleavir-mir:long-float-not-greater-instruction
+       :inputs temps
+       :outputs '()
+       :successors (successors context)))))
