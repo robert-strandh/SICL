@@ -134,3 +134,16 @@
        :inputs (reverse temps)
        :outputs '()
        :successors (successors context)))))
+     
+(defmethod compile-ast ((ast cleavir-ast:single-float-equal-ast) context)
+  (check-context-for-boolean-ast context)
+  (let* ((arguments (cleavir-ast:children ast))
+	 (temps (make-temps arguments)))
+    (compile-and-unbox-arguments
+     arguments
+     temps
+     'cleavir-mir:single-float-unbox-instruction
+     (make-instance 'cleavir-mir:single-float-equal-instruction
+       :inputs (reverse temps)
+       :outputs '()
+       :successors (successors context)))))
