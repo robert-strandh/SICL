@@ -134,6 +134,34 @@
 
 (defgeneric compile-ast (ast context))
 
+;;; When an AST that is meant for a test (as indicated by it being an
+;;; instance of BOOLEAN-AST-MIXIN) is compiled in a context where one
+;;; or more values are needed, we generate two branches; one where NIL
+;;; is assigned to the first result and one where T is assigned to it
+;;; (remaining results are filled with NIL).  Then we compile the AST
+;;; in a context with the two branches and no result.
+(defmethod compile-ast :around ((ast cleavir-ast:boolean-ast-mixin) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (ecase (length successors)
+      (1
+       (let* ((result (car results))
+	      (successor (nil-fill (cdr results) (car successors)))
+	      (true (cleavir-mir:make-constant-input T))
+	      (false (cleavir-mir:make-constant-input NIL))
+	      (true-branch (make-instance 'cleavir-mir:assignment-instruction
+			     :inputs (list true)
+			     :outputs (list result)
+			     :successors (list successor)))
+	      (false-branch (make-instance 'cleavir-mir:assignment-instruction
+			      :inputs (list false)
+			      :outputs (list result)
+			      :successors (list successor))))
+	 (call-next-method ast (context '() (list true-branch false-branch)))))
+      (2
+       (call-next-method)))))
+
 ;;; This function is used by compile methods that need a single
 ;;; successor and that produce a single result.  It takes an arbitrary
 ;;; context as an argument and returns two values, the successor and a
