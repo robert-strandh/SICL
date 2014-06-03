@@ -13,3 +13,7 @@
 		   :successors (list succ)))
 	   (setf succ (compile-ast arg (context `(,inter) `(,succ))))
 	finally (return succ)))
+
+(defun check-context-for-boolean-ast (context)
+  (assert (and (zerop (length (results context)))
+	       (= (length (successors context)) 2))))
