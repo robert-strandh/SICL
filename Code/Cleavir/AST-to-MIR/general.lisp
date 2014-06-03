@@ -331,18 +331,20 @@
 	   (cleavir-mir:make-funcall-instruction temps)
 	   (ecase (length successors)
 	     (0 (cleavir-mir:make-tailcall-instruction temps))
-	     (1 (cleavir-mir:make-funcall-instruction
-		 temps
-		 (cleavir-mir:make-get-values-instruction
-		  results (car successors))))
-	     (2 (let ((temp (cleavir-mir:new-temporary)))
-		  (cleavir-mir:make-funcall-instruction
-		   temps
-		   (cleavir-mir:make-get-values-instruction
-		    (list temp)
-		    (cleavir-mir:make-eq-instruction
-		     (list temp (cleavir-mir:make-constant-input nil))
-		     successors)))))))))))
+	     (1 (make-instance 'cleavir-mir:funcall-instruction
+		  :inputs temps
+		  :outputs results
+		  :successors successors))
+	     (2 (let* ((temp (cleavir-mir:new-temporary))
+		       (false (cleavir-mir:make-constant-input nil))
+		       (successor (make-instance 'cleavir-mir:eq-instruction
+				    :inputs (list temp false)
+				    :outputs '()
+				    :successors (reverse successors))))
+		  (make-instance 'cleavir-mir:funcall-instruction
+		    :inputs temps
+		    :outputs (list temp)
+		    :successors (list successor))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
