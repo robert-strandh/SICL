@@ -60,6 +60,9 @@
    #:short-float-sin-instruction #:make-short-float-sin-instruction 
    #:short-float-cos-instruction #:make-short-float-cos-instruction 
    #:short-float-sqrt-instruction #:make-short-float-sqrt-instruction 
+   #:short-float-less-instruction
+   #:short-float-not-greater-instruction
+   #:short-float-equal-instruction
    #:single-float-unbox-instruction #:make-single-float-unbox-instruction 
    #:single-float-box-instruction #:make-single-float-box-instruction 
    #:single-float-add-instruction #:make-single-float-add-instruction 
@@ -69,6 +72,9 @@
    #:single-float-sin-instruction #:make-single-float-sin-instruction 
    #:single-float-cos-instruction #:make-single-float-cos-instruction 
    #:single-float-sqrt-instruction #:make-single-float-sqrt-instruction 
+   #:single-float-less-instruction
+   #:single-float-not-greater-instruction
+   #:single -float-equal-instruction
    #:double-float-unbox-instruction #:make-double-float-unbox-instruction 
    #:double-float-box-instruction #:make-double-float-box-instruction 
    #:double-float-add-instruction #:make-double-float-add-instruction 
@@ -78,6 +84,9 @@
    #:double-float-sin-instruction #:make-double-float-sin-instruction 
    #:double-float-cos-instruction #:make-double-float-cos-instruction 
    #:double-float-sqrt-instruction #:make-double-float-sqrt-instruction 
+   #:double-float-less-instruction
+   #:double-float-not-greater-instruction
+   #:double-float-equal-instruction
    #:long-float-unbox-instruction #:make-long-float-unbox-instruction 
    #:long-float-box-instruction #:make-long-float-box-instruction 
    #:long-float-add-instruction #:make-long-float-add-instruction 
@@ -87,6 +96,9 @@
    #:long-float-sin-instruction #:make-long-float-sin-instruction 
    #:long-float-cos-instruction #:make-long-float-cos-instruction 
    #:long-float-sqrt-instruction #:make-long-float-sqrt-instruction 
+   #:long-float-less-instruction
+   #:long-float-not-greater-instruction
+   #:long-float-equal-instruction
    #:car-instruction #:make-car-instruction
    #:cdr-instruction #:make-cdr-instruction
    #:rplaca-instruction #:make-rplaca-instruction
