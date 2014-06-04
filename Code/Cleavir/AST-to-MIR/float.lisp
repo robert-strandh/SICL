@@ -22,6 +22,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Method on COMPILE-AST for all floating-point arithmetic ASTs. 
+
+(defmacro compile-float-arithmetic-ast
+    (ast-class instruction-class unbox-instruction-class box-instruction-class)
+  `(defmethod compile-ast ((ast ,ast-class) context)
+     (check-context-for-one-value-ast context)
+     (let* ((arguments (cleavir-ast:children ast))
+	    (temps (make-temps arguments))
+	    (temp (cleavir-mir:new-temporary))
+	    (successor (make-instance ',box-instruction-class
+			 :inputs (list temp)
+			 :outputs (results context))))
+       (compile-and-unbox-arguments
+	arguments
+	temps
+	',unbox-instruction-class
+	(make-instance ',instruction-class
+	  :inputs temps
+	  :outputs (car (results context))
+	  :successors (list successor))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Method on COMPILE-AST for all floating-point comparison ASTs. 
 
 (defmethod compile-ast ((ast cleavir-ast:short-float-less-ast) context)
