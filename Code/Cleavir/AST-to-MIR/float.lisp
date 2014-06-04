@@ -14,10 +14,6 @@
 	   (setf succ (compile-ast arg (context `(,inter) `(,succ))))
 	finally (return succ)))
 
-(defun check-context-for-boolean-ast (context)
-  (assert (and (zerop (length (results context)))
-	       (= (length (successors context)) 2))))
-
 (defmethod compile-ast ((ast cleavir-ast:short-float-less-ast) context)
   (check-context-for-boolean-ast context)
   (let* ((arguments (cleavir-ast:children ast))

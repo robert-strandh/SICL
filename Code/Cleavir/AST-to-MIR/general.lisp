@@ -162,6 +162,10 @@
       (2
        (call-next-method)))))
 
+(defun check-context-for-boolean-ast (context)
+  (assert (and (zerop (length (results context)))
+	       (= (length (successors context)) 2))))
+
 (defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
   (with-accessors ((results results)
 		   (successors successors))
