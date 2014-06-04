@@ -348,3 +348,52 @@
 
 (defmethod children ((ast double-float-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LONG-FLOAT-AREF-AST
+;;;
+;;; This AST can be used to read an element of an array specialized to
+;;; LONG-FLOAT.
+
+(defclass long-float-aref-ast (ast one-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)))
+
+(defun make-long-float-aref-ast (array-ast index-ast)
+  (make-instance 'long-float-aref-ast
+    :array-ast array-ast
+    :index-ast index-ast))
+
+(cleavir-io:define-save-info long-float-aref-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast))
+
+(defmethod children ((ast long-float-aref-ast))
+  (list (array-ast ast) (index-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class LONG-FLOAT-ASET-AST
+;;;
+;;; This AST can be used to write an element of an array specialized
+;;; to LONG-FLOAT.
+
+(defclass long-float-aset-ast (ast no-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-long-float-aset-ast (array-ast index-ast value-ast)
+  (make-instance 'long-float-aset-ast
+    :array-ast array-ast
+    :index-ast index-ast
+    :value-ast value-ast))
+
+(cleavir-io:define-save-info long-float-aset-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast)
+  (:value-ast value-ast))
+
+(defmethod children ((ast long-float-aset-ast))
+  (list (array-ast ast) (index-ast ast) (value-ast ast)))
