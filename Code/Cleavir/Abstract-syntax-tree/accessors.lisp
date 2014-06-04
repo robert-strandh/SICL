@@ -52,7 +52,7 @@
 ;;; generate any value.  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass rplaca-ast (ast)
+(defclass rplaca-ast (ast no-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
 
@@ -78,7 +78,7 @@
 ;;; generate any value.  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass rplacd-ast (ast)
+(defclass rplacd-ast (ast no-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)
    (%object-ast :initarg :object-ast :reader object-ast)))
 
@@ -132,7 +132,7 @@
 ;;; no values.  An attempt to compile this AST in a context where a
 ;;; value is needed will result in an error being signaled.
 
-(defclass slot-write-ast (ast)
+(defclass slot-write-ast (ast no-value-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)
    (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
@@ -183,7 +183,7 @@
 ;;; attempt to compile this AST in a context where a value is needed
 ;;; will result in an error being signaled.
 
-(defclass aset-ast (ast)
+(defclass aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
