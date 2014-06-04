@@ -69,3 +69,25 @@
 			      :inputs (list temp1 temp2)
 			      :outputs '()
 			      :successors (successors context))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compile a SLOT-READ-AST
+
+(defmethod compile-ast ((ast cleavir-ast:slot-read-ast) context)
+  (check-context-for-one-value-ast context)
+  (let ((temp1 (make-temp nil))
+	(temp2 (make-temp nil)))
+    (compile-ast
+     (cleavir-ast:object-ast ast)
+     (context
+      (list temp1)
+      (list (compile-ast
+	     (cleavir-ast:slot-number-ast ast)
+	     (context (list temp2)
+		      (list (make-instance 'cleavir-mir:slot-read-instruction
+			      :inputs (list temp1 temp2)
+			      :outputs (results context)
+			      :successors (successors context))))))))))
+  
+
