@@ -2,7 +2,7 @@
 
 (defmacro define-one-arg-float-ast (name)
   `(progn 
-     (defclass ,name (ast)
+     (defclass ,name (ast one-value-ast-mixin)
        ((%arg-ast :initarg :arg-ast :reader arg-ast)))
 
      (cleavir-io:define-save-info ,name
@@ -13,7 +13,7 @@
 
 (defmacro define-two-arg-float-ast (name)
   `(progn 
-     (defclass ,name (ast)
+     (defclass ,name (ast one-value-ast-mixin)
        ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
 	(%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
