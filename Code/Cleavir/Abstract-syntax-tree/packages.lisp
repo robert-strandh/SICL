@@ -91,6 +91,8 @@
    #:slot-write-ast #:make-slot-write-ast
    #:aref-ast #:make-aref-ast #:array-ast #:index-ast
    #:aset-ast #:make-aset-ast 
+   #:short-float-aref-ast #:make-short-float-aref-ast
+   #:short-float-aset-ast #:make-short-float-aset-ast 
    ))
 
 (defpackage #:cleavir-ast-graphviz
