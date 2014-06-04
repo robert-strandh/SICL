@@ -78,6 +78,41 @@
 			      cleavir-mir:short-float-unbox-instruction
 			      cleavir-mir:short-float-box-instruction)
 
+(compile-float-arithmetic-ast cleavir-ast:single-float-add-ast
+			      cleavir-mir:single-float-add-instruction
+			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-mir:single-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:single-float-sub-ast
+			      cleavir-mir:single-float-sub-instruction
+			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-mir:single-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:single-float-mul-ast
+			      cleavir-mir:single-float-mul-instruction
+			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-mir:single-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:single-float-div-ast
+			      cleavir-mir:single-float-div-instruction
+			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-mir:single-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:single-float-sin-ast
+			      cleavir-mir:single-float-sin-instruction
+			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-mir:single-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:single-float-cos-ast
+			      cleavir-mir:single-float-cos-instruction
+			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-mir:single-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:single-float-sqrt-ast
+			      cleavir-mir:single-float-sqrt-instruction
+			      cleavir-mir:single-float-unbox-instruction
+			      cleavir-mir:single-float-box-instruction)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Method on COMPILE-AST for all floating-point comparison ASTs. 
