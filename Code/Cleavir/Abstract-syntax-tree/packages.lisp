@@ -95,6 +95,8 @@
    #:short-float-aset-ast #:make-short-float-aset-ast 
    #:single-float-aref-ast #:make-single-float-aref-ast
    #:single-float-aset-ast #:make-single-float-aset-ast 
+   #:double-float-aref-ast #:make-double-float-aref-ast
+   #:double-float-aset-ast #:make-double-float-aset-ast 
    ))
 
 (defpackage #:cleavir-ast-graphviz
