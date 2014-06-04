@@ -148,6 +148,41 @@
 			      cleavir-mir:double-float-unbox-instruction
 			      cleavir-mir:double-float-box-instruction)
 
+(compile-float-arithmetic-ast cleavir-ast:long-float-add-ast
+			      cleavir-mir:long-float-add-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-mir:long-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:long-float-sub-ast
+			      cleavir-mir:long-float-sub-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-mir:long-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:long-float-mul-ast
+			      cleavir-mir:long-float-mul-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-mir:long-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:long-float-div-ast
+			      cleavir-mir:long-float-div-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-mir:long-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:long-float-sin-ast
+			      cleavir-mir:long-float-sin-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-mir:long-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:long-float-cos-ast
+			      cleavir-mir:long-float-cos-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-mir:long-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:long-float-sqrt-ast
+			      cleavir-mir:long-float-sqrt-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      cleavir-mir:long-float-box-instruction)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Method on COMPILE-AST for all floating-point comparison ASTs. 
