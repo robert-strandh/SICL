@@ -212,6 +212,10 @@
   (assert (and (= (length (results context)) 1)
 	       (= (length (successors context)) 1))))
 
+(defun check-context-for-no-value-ast (context)
+  (assert (and (zerop (length (results context)))
+	       (= (length (successors context)) 1))))
+
 ;;; This function is used by compile methods that need a single
 ;;; successor and that produce a single result.  It takes an arbitrary
 ;;; context as an argument and returns two values, the successor and a
