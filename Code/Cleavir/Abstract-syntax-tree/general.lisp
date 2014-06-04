@@ -31,6 +31,10 @@
 ;;; results, so are mainly used as the TEST-AST of an IF-AST.
 (defclass boolean-ast-mixin () ())
 
+;;; This class is used as a superclass for ASTs that produce no value
+;;; and that must be compiled in a context where no value is required.
+(defclass no-value-ast-mixin () ())
+
 ;;; This class is used as a superclass for ASTs that produce a single
 ;;; value that is not typically not just a Boolean value.
 (defclass one-value-ast-mixin () ())
