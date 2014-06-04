@@ -8,7 +8,7 @@
 ;;; does not correspond exactly to the function CAR, because the value
 ;;; of the single child must be a CONS cell. 
 
-(defclass car-ast (ast)
+(defclass car-ast (ast one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
 (defun make-car-ast (cons-ast)
@@ -29,7 +29,7 @@
 ;;; does not correspond exactly to the function CDR, because the value
 ;;; of the single child must be a CONS cell. 
 
-(defclass cdr-ast (ast)
+(defclass cdr-ast (ast one-value-ast-mixin)
   ((%cons-ast :initarg :cons-ast :reader cons-ast)))
 
 (defun make-cdr-ast (cons-ast)
@@ -104,7 +104,7 @@
 ;;; indicates a slot number (starting from 0).  This AST generates a
 ;;; single value, namely the contents of the slot with the number given.
 
-(defclass slot-read-ast (ast)
+(defclass slot-read-ast (ast one-value-ast-mixin)
   ((%object-ast :initarg :object-ast :reader object-ast)
    (%slot-number-ast :initarg :slot-number-ast :reader slot-number-ast)))
 
@@ -158,7 +158,7 @@
 ;;; This AST can be used to read an element of an array.  It
 ;;; corresponds roughly to the standard function ROW-MAJOR-AREF. 
 
-(defclass aref-ast (ast)
+(defclass aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
