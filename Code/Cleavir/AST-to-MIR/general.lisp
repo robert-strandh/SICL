@@ -208,6 +208,9 @@
 			   :successors (reverse successors))))
 	 (call-next-method ast (context (list temp) (list successor))))))))
 
+(defun check-context-for-one-value-ast (context)
+  (assert (and (= (length (results context)) 1)
+	       (= (length (successors context)) 1))))
 
 ;;; This function is used by compile methods that need a single
 ;;; successor and that produce a single result.  It takes an arbitrary
