@@ -155,8 +155,8 @@
 ;;;
 ;;; Class AREF-AST
 ;;;
-;;; This AST can be used to read an element of an array.  It
-;;; corresponds roughly to the standard function ROW-MAJOR-AREF. 
+;;; This AST can be used to read an element of an unspecialized array.
+;;; It corresponds roughly to the standard function ROW-MAJOR-AREF.
 
 (defclass aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
@@ -178,10 +178,10 @@
 ;;;
 ;;; Class ASET-AST
 ;;;
-;;; This AST can be used to write an element of an array.  It
-;;; corresponds roughly to a function (SETF ROW-MAJOR-ASET).  An
-;;; attempt to compile this AST in a context where a value is needed
-;;; will result in an error being signaled.
+;;; This AST can be used to write an element of an unspecialized
+;;; array.  It corresponds roughly to a function (SETF
+;;; ROW-MAJOR-ASET).  An attempt to compile this AST in a context
+;;; where a value is needed will result in an error being signaled.
 
 (defclass aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
