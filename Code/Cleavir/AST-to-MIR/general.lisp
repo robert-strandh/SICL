@@ -162,6 +162,49 @@
       (2
        (call-next-method)))))
 
+(defmethod compile-ast :around ((ast cleavir-ast:one-value-ast-mixin) context)
+  (with-accessors ((results results)
+		   (successors successors))
+      context
+    (ecase (length successors)
+      (0
+       ;; There are no successors, which means that this AST is
+       ;; compiled in a context where the value(s) should be returned
+       ;; to the caller.  We deal with this situation by creating a
+       ;; context that has a RETURN-INSTRUCTION in it, and we compile
+       ;; the AST in that context instead.
+       (let* ((temp (cleavir-mir:new-temporary))
+	      (successor (cleavir-mir:make-return-instruction (list temp))))
+	 (call-next-method ast (context (list temp) (list successor)))))
+      (1
+       ;; We have a context with one successor, so the list of results
+       ;; can have any length.
+       (if (null results)
+	   ;; We don't need the result.  This situation typically
+	   ;; happens when we compile a form other than the last of a
+	   ;; PROGN-AST.  We allocate a temporary variable to receive
+	   ;; the result, and that variable will not be used.
+	   (call-next-method ast (context (list (make-temp nil)) successors))
+	   ;; We have at least one result.  In case there is more than
+	   ;; one, we generate a successor where all but the first one
+	   ;; are filled with NIL. 
+	   (let ((successor (nil-fill (cdr results) (car successors))))
+	     (call-next-method ast (context (list (car results))
+					    (list successor))))))
+      (2
+       ;; We have a context where a test of a Boolean is required.  We
+       ;; create a new context where the result is compared to NIL
+       ;; using EQ-INSTRUCTION, and compile the AST in that context
+       ;; instead. 
+       (let* ((false (cleavir-mir:make-constant-input NIL))
+	      (temp (cleavir-mir:new-temporary))
+	      (successor (make-instance 'cleavir-mir:eq-instruction
+			   :inputs (list temp false)
+			   :outputs '()
+			   :successors (reverse successors))))
+	 (call-next-method ast (context (list temp) (list successor))))))))
+
+
 ;;; This function is used by compile methods that need a single
 ;;; successor and that produce a single result.  It takes an arbitrary
 ;;; context as an argument and returns two values, the successor and a
