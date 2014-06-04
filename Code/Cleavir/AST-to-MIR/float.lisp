@@ -187,6 +187,21 @@
 ;;;
 ;;; Method on COMPILE-AST for all floating-point comparison ASTs. 
 
+(defmacro compile-float-comparison-ast
+    (ast-class instruction-class unbox-instruction-class input-transformer)
+  `(defmethod compile-ast ((ast ,ast-class) context)
+     (check-context-for-boolean-ast context)
+     (let* ((arguments (cleavir-ast:children ast))
+	    (temps (make-temps arguments)))
+       (compile-and-unbox-arguments
+	arguments
+	temps
+	',unbox-instruction-class
+	(make-instance ',instruction-class
+	  :inputs (,input-transformer temps)
+	  :outputs '()
+	  :successors (successors context))))))
+
 (defmethod compile-ast ((ast cleavir-ast:short-float-less-ast) context)
   (check-context-for-boolean-ast context)
   (let* ((arguments (cleavir-ast:children ast))
