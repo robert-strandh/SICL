@@ -250,3 +250,52 @@
 
 (defmethod children ((ast short-float-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SINGLE-FLOAT-AREF-AST
+;;;
+;;; This AST can be used to read an element of an array specialized to
+;;; SINGLE-FLOAT.
+
+(defclass single-float-aref-ast (ast one-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)))
+
+(defun make-single-float-aref-ast (array-ast index-ast)
+  (make-instance 'single-float-aref-ast
+    :array-ast array-ast
+    :index-ast index-ast))
+
+(cleavir-io:define-save-info single-float-aref-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast))
+
+(defmethod children ((ast single-float-aref-ast))
+  (list (array-ast ast) (index-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SINGLE-FLOAT-ASET-AST
+;;;
+;;; This AST can be used to write an element of an array specialized
+;;; to SINGLE-FLOAT.
+
+(defclass single-float-aset-ast (ast no-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-single-float-aset-ast (array-ast index-ast value-ast)
+  (make-instance 'single-float-aset-ast
+    :array-ast array-ast
+    :index-ast index-ast
+    :value-ast value-ast))
+
+(cleavir-io:define-save-info single-float-aset-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast)
+  (:value-ast value-ast))
+
+(defmethod children ((ast single-float-aset-ast))
+  (list (array-ast ast) (index-ast ast) (value-ast ast)))
