@@ -1,5 +1,11 @@
 (cl:in-package #:cleavir-ast-to-mir)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Utility function for compiling a list of ASTs that are arguments
+;;; to some operation, and that need to be unboxed.  They will all be
+;;; compiled in a context with a single successor and a single result.
+
 (defun compile-and-unbox-arguments
     (arguments temps unbox-instruction-class successor)
   (loop with succ = successor
@@ -13,6 +19,10 @@
 		   :successors (list succ)))
 	   (setf succ (compile-ast arg (context `(,inter) `(,succ))))
 	finally (return succ)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Method on COMPILE-AST for all floating-point comparison ASTs. 
 
 (defmethod compile-ast ((ast cleavir-ast:short-float-less-ast) context)
   (check-context-for-boolean-ast context)
