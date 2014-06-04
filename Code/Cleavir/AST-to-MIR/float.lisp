@@ -43,6 +43,41 @@
 	  :outputs (car (results context))
 	  :successors (list successor))))))
 
+(compile-float-arithmetic-ast cleavir-ast:short-float-add-ast
+			      cleavir-mir:short-float-add-instruction
+			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-mir:short-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:short-float-sub-ast
+			      cleavir-mir:short-float-sub-instruction
+			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-mir:short-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:short-float-mul-ast
+			      cleavir-mir:short-float-mul-instruction
+			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-mir:short-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:short-float-div-ast
+			      cleavir-mir:short-float-div-instruction
+			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-mir:short-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:short-float-sin-ast
+			      cleavir-mir:short-float-sin-instruction
+			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-mir:short-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:short-float-cos-ast
+			      cleavir-mir:short-float-cos-instruction
+			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-mir:short-float-box-instruction)
+
+(compile-float-arithmetic-ast cleavir-ast:short-float-sqrt-ast
+			      cleavir-mir:short-float-sqrt-instruction
+			      cleavir-mir:short-float-unbox-instruction
+			      cleavir-mir:short-float-box-instruction)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Method on COMPILE-AST for all floating-point comparison ASTs. 
