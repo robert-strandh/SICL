@@ -277,67 +277,28 @@
 			      cleavir-mir:double-float-unbox-instruction
 			      identity)
 
-(defmethod compile-ast ((ast cleavir-ast:long-float-less-ast) context)
-  (check-context-for-boolean-ast context)
-  (let* ((arguments (cleavir-ast:children ast))
-	 (temps (make-temps arguments)))
-    (compile-and-unbox-arguments
-     arguments
-     temps
-     'cleavir-mir:long-float-unbox-instruction
-     (make-instance 'cleavir-mir:long-float-less-instruction
-       :inputs temps
-       :outputs '()
-       :successors (successors context)))))
+(compile-float-comparison-ast cleavir-ast:long-float-less-ast
+			      cleavir-mir:long-float-less-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      identity)
      
-(defmethod compile-ast ((ast cleavir-ast:long-float-not-greater-ast) context)
-  (check-context-for-boolean-ast context)
-  (let* ((arguments (cleavir-ast:children ast))
-	 (temps (make-temps arguments)))
-    (compile-and-unbox-arguments
-     arguments
-     temps
-     'cleavir-mir:long-float-unbox-instruction
-     (make-instance 'cleavir-mir:long-float-not-greater-instruction
-       :inputs temps
-       :outputs '()
-       :successors (successors context)))))
+(compile-float-comparison-ast cleavir-ast:long-float-not-greater-ast
+			      cleavir-mir:long-float-not-greater-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      identity)
 
-(defmethod compile-ast ((ast cleavir-ast:long-float-greater-ast) context)
-  (check-context-for-boolean-ast context)
-  (let* ((arguments (cleavir-ast:children ast))
-	 (temps (make-temps arguments)))
-    (compile-and-unbox-arguments
-     arguments
-     temps
-     'cleavir-mir:long-float-unbox-instruction
-     (make-instance 'cleavir-mir:long-float-less-instruction
-       :inputs (reverse temps)
-       :outputs '()
-       :successors (successors context)))))
+(compile-float-comparison-ast cleavir-ast:long-float-greater-ast
+			      cleavir-mir:long-float-less-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      reverse)
      
-(defmethod compile-ast ((ast cleavir-ast:long-float-not-less-ast) context)
-  (check-context-for-boolean-ast context)
-  (let* ((arguments (cleavir-ast:children ast))
-	 (temps (make-temps arguments)))
-    (compile-and-unbox-arguments
-     arguments
-     temps
-     'cleavir-mir:long-float-unbox-instruction
-     (make-instance 'cleavir-mir:long-float-not-greater-instruction
-       :inputs (reverse temps)
-       :outputs '()
-       :successors (successors context)))))
-     
-(defmethod compile-ast ((ast cleavir-ast:long-float-equal-ast) context)
-  (check-context-for-boolean-ast context)
-  (let* ((arguments (cleavir-ast:children ast))
-	 (temps (make-temps arguments)))
-    (compile-and-unbox-arguments
-     arguments
-     temps
-     'cleavir-mir:long-float-unbox-instruction
-     (make-instance 'cleavir-mir:long-float-equal-instruction
-       :inputs (reverse temps)
-       :outputs '()
-       :successors (successors context)))))
+(compile-float-comparison-ast cleavir-ast:long-float-not-less-ast
+			      cleavir-mir:long-float-not-greater-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      reverse)
+
+(compile-float-comparison-ast cleavir-ast:long-float-equal-ast
+			      cleavir-mir:long-float-equal-instruction
+			      cleavir-mir:long-float-unbox-instruction
+			      identity)
+
