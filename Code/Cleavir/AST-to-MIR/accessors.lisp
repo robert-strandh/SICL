@@ -5,24 +5,30 @@
 ;;; Compile a CAR-AST
 
 (defmethod compile-ast ((ast cleavir-ast:car-ast) context)
-  (multiple-value-bind (successor result)
-      (adapt-context-1-1 context)
-    (let* ((temp (make-temp nil))
-	   (succ (cleavir-mir:make-car-instruction temp result successor))
-	   (new-context (context (list temp) (list succ))))
-      (compile-ast (cleavir-ast:cons-ast ast) new-context))))
+  (check-context-for-one-value-ast context)
+  (let ((temp (make-temp nil)))
+    (compile-ast
+     (cleavir-ast:cons-ast ast)
+     (context (list temp)
+	      (list (make-instance 'cleavir-mir:car-instruction
+		      :inputs (list temp)
+		      :outputs (results context)
+		      :successors (successors context)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a CDR-AST
 
 (defmethod compile-ast ((ast cleavir-ast:cdr-ast) context)
-  (multiple-value-bind (successor result)
-      (adapt-context-1-1 context)
-    (let* ((temp (make-temp nil))
-	   (succ (cleavir-mir:make-cdr-instruction temp result successor))
-	   (new-context (context (list temp) (list succ))))
-      (compile-ast (cleavir-ast:cons-ast ast) new-context))))
+  (check-context-for-one-value-ast context)
+  (let ((temp (make-temp nil)))
+    (compile-ast
+     (cleavir-ast:cons-ast ast)
+     (context (list temp)
+	      (list (make-instance 'cleavir-mir:cdr-instruction
+		      :inputs (list temp)
+		      :outputs (results context)
+		      :successors (successors context)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
