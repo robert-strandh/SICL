@@ -138,3 +138,18 @@
 (deflabel short-float-aref-ast "shf aref")
 (deflabel short-float-aset-ast "shf aset")
 
+(deflabel single-float-add-ast "shf +")
+(deflabel single-float-sub-ast "shf -")
+(deflabel single-float-mul-ast "shf *")
+(deflabel single-float-div-ast "shf /")
+(deflabel single-float-less-ast "shf <")
+(deflabel single-float-not-greater-ast "shf <=")
+(deflabel single-float-greater-ast "shf >")
+(deflabel single-float-not-less-ast "shf >=")
+(deflabel single-float-equal-ast "shf =")
+(deflabel single-float-sin-ast "shf sin")
+(deflabel single-float-cos-ast "shf cos")
+(deflabel single-float-sqrt-ast "shf sqrt")
+(deflabel single-float-aref-ast "shf aref")
+(deflabel single-float-aset-ast "shf aset")
+
