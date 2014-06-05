@@ -9,4 +9,5 @@
    (:file "fixnum")
    (:file "float")
    (:file "cons")
+   (:file "standard-object")
    (:file "accessors")))
