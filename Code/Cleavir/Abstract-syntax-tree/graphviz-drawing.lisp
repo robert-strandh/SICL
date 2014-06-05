@@ -118,3 +118,23 @@
 	  (id ast) (form-ast ast))
   (format stream "   ~a [style = filled, fillcolor = pink];~%"
 	  (id ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Labels for floating-point ASTs
+
+(deflabel short-float-add-ast "shf +")
+(deflabel short-float-sub-ast "shf -")
+(deflabel short-float-mul-ast "shf *")
+(deflabel short-float-div-ast "shf /")
+(deflabel short-float-less-ast "shf <")
+(deflabel short-float-not-greater-ast "shf <=")
+(deflabel short-float-greater-ast "shf >")
+(deflabel short-float-not-less-ast "shf >=")
+(deflabel short-float-equal-ast "shf =")
+(deflabel short-float-sin-ast "shf sin")
+(deflabel short-float-cos-ast "shf cos")
+(deflabel short-float-sqrt-ast "shf sqrt")
+(deflabel short-float-aref-ast "shf aref")
+(deflabel short-float-aset-ast "shf aset")
+
