@@ -118,3 +118,19 @@
 				   :inputs (list temp1 temp2 temp4)
 				   :outputs '()
 				   :successors (successors context)))))))))))))))
+
+(compile-specialized-aset-ast cleavir-ast:short-float-aset-ast
+			      cleavir-mir:short-float-aset-instruction
+			      cleavir-mir:short-float-unbox-instruction)
+
+(compile-specialized-aset-ast cleavir-ast:single-float-aset-ast
+			      cleavir-mir:single-float-aset-instruction
+			      cleavir-mir:single-float-unbox-instruction)
+
+(compile-specialized-aset-ast cleavir-ast:double-float-aset-ast
+			      cleavir-mir:double-float-aset-instruction
+			      cleavir-mir:double-float-unbox-instruction)
+
+(compile-specialized-aset-ast cleavir-ast:long-float-aset-ast
+			      cleavir-mir:long-float-aset-instruction
+			      cleavir-mir:long-float-unbox-instruction)
