@@ -9,6 +9,6 @@
    (:file "float")
    (:file "cons")
    (:file "standard-object")
-   (:file "accessors")
+   (:file "array")
    (:file "reduce")
    (:file "graphviz-drawing")))
