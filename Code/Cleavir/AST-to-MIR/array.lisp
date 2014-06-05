@@ -73,3 +73,20 @@
 				 :inputs (list temp3)
 				 :outputs (results context)
 				 :successors (successors context)))))))))))))
+
+(compile-specialized-aref-ast cleavir-ast:short-float-aref-ast
+			      cleavir-mir:short-float-aref-instruction
+			      cleavir-mir:short-float-box-instruction)
+
+(compile-specialized-aref-ast cleavir-ast:single-float-aref-ast
+			      cleavir-mir:single-float-aref-instruction
+			      cleavir-mir:single-float-box-instruction)
+
+(compile-specialized-aref-ast cleavir-ast:double-float-aref-ast
+			      cleavir-mir:double-float-aref-instruction
+			      cleavir-mir:double-float-box-instruction)
+
+(compile-specialized-aref-ast cleavir-ast:long-float-aref-ast
+			      cleavir-mir:long-float-aref-instruction
+			      cleavir-mir:long-float-box-instruction)
+
