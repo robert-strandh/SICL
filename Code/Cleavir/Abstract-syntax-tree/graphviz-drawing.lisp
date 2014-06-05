@@ -33,8 +33,16 @@
 
 (defgeneric label (ast))
 
+;;; The default label is the lower-case version of the name of the
+;;; class (as a string) with suffix -ast stripped off. 
 (defmethod label (ast)
-  (class-name (class-of ast)))
+  (let ((name (string (class-name (class-of ast)))))
+    (string-downcase (subseq name 0 (- (length name) 4)))))
+
+(defmacro deflabel (ast label)
+  `(defmethod label ((ast ,ast))
+     (declare (ignorable ast))
+     ,label))
 
 ;;; Default method on STREAM-DRAW-AST.  This method simply calls the
 ;;; generic function LABEL in order to draw a label for the box.
@@ -94,54 +102,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing a CALL-AST.
-
-(defmethod stream-draw-ast ((ast call-ast) stream)
-  (format stream "   ~a [label = \"call\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a FUNCTION-AST.
-
-(defmethod stream-draw-ast ((ast function-ast) stream)
-  (format stream "   ~a [label = \"function\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a PROGN-AST.
-
-(defmethod stream-draw-ast ((ast progn-ast) stream)
-  (format stream "   ~a [label = \"progn\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a BLOCK-AST.
-
-(defmethod stream-draw-ast ((ast block-ast) stream)
-  (format stream "   ~a [label = \"block\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a RETURN-FROM-AST.
-
-(defmethod stream-draw-ast ((ast return-from-ast) stream)
-  (format stream "   ~a [label = \"return-from\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a SETQ-AST.
-
-(defmethod stream-draw-ast ((ast setq-ast) stream)
-  (format stream "   ~a [label = \"setq\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing a TAG-AST.
 
 (defmethod stream-draw-ast ((ast tag-ast) stream)
@@ -151,42 +111,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing a TAGBODY-AST.
-
-(defmethod stream-draw-ast ((ast tagbody-ast) stream)
-  (format stream "   ~a [label = \"tagbody\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a GO-AST.
-
-(defmethod stream-draw-ast ((ast go-ast) stream)
-  (format stream "   ~a [label = \"go\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a THE-AST.
-     
-(defmethod stream-draw-ast ((ast the-ast) stream)
-  (format stream "   ~a [label = \"the\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing a LOAD-TIME-VALUE-AST.
 
 (defmethod stream-draw-ast ((ast load-time-value-ast) stream)
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast) (form-ast ast))
   (format stream "   ~a [style = filled, fillcolor = pink];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a IF-AST.
-
-(defmethod stream-draw-ast ((ast if-ast) stream)
-  (format stream "   ~a [label = \"if\"];~%"
 	  (id ast)))
