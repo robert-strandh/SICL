@@ -90,3 +90,31 @@
 			      cleavir-mir:long-float-aref-instruction
 			      cleavir-mir:long-float-box-instruction)
 
+(defmacro compile-specialized-aset-ast
+    (ast-class aset-instruction-class unbox-instruction-class)
+  `(defmethod compile-ast ((ast ,ast-class) context)
+     (check-context-for-no-value-ast context)
+     (let ((temp1 (make-temp nil))
+	   (temp2 (make-temp nil))
+	   (temp3 (make-temp nil))
+	   (temp4 (make-temp nil)))
+       (compile-ast
+	(cleavir-ast:array-ast ast)
+	(context
+	 (list temp1)
+	 (list (compile-ast
+		(cleavir-ast:index-ast ast)
+		(context
+		 (list temp2)
+		 (compile-ast
+		  (cleavir-ast:value-ast ast)
+		  (context
+		   (list temp3)
+		   (list (make-instance ',unbox-instruction-class
+			   :inputs (list temp3)
+			   :outputs (list temp4)
+			   :successors
+			   (list (make-instance ',aset-instruction-class
+				   :inputs (list temp1 temp2 temp4)
+				   :outputs '()
+				   :successors (successors context)))))))))))))))
