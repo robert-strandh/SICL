@@ -7,6 +7,7 @@
    (:file "general")
    (:file "fixnum")
    (:file "float")
+   (:file "cons")
    (:file "accessors")
    (:file "reduce")
    (:file "graphviz-drawing")))
