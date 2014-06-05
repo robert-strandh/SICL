@@ -31,6 +31,17 @@
 	     (format stream "   ~a -> ~a [label = \"~d\"];~%"
 		     (id ast) (id child) i))))
 
+(defgeneric label (ast))
+
+(defmethod label (ast)
+  (class-name (class-of ast)))
+
+;;; Default method on STREAM-DRAW-AST.  This method simply calls the
+;;; generic function LABEL in order to draw a label for the box.
+(defmethod stream-draw-ast (ast stream)
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast) (label ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing an IMMEDIATE-AST. 
@@ -40,7 +51,6 @@
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (value ast)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
