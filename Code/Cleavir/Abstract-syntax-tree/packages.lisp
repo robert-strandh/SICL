@@ -102,6 +102,7 @@
    #:bit-aref-ast #:make-bit-aref-ast
    #:bit-aset-ast #:make-bit-aset-ast
    #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast
+   #:unsigned-byte-8-aset-ast #:make-unsigned-byte-8-aset-ast
    ))
 
 (defpackage #:cleavir-ast-graphviz
