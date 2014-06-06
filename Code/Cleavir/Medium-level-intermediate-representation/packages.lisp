@@ -52,6 +52,7 @@
    #:fixnum-not-greater-instruction #:make-fixnum-not-greater-instruction
    #:fixnum-equal-instruction #:make-fixnum-equal-instruction
    #:bit-unbox-instruction #:make-bit-unbox-instruction
+   #:bit-box-instruction #:make-bit-box-instruction
    #:short-float-unbox-instruction #:make-short-float-unbox-instruction 
    #:short-float-box-instruction #:make-short-float-box-instruction 
    #:short-float-add-instruction #:make-short-float-add-instruction 
