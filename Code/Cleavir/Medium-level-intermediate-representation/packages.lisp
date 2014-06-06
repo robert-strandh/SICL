@@ -118,6 +118,7 @@
    #:long-float-aref-instruction #:make-long-float-aref-instruction
    #:t-aset-instruction #:make-t-aset-instruction
    #:bit-aset-instruction #:make-bit-aset-instruction
+   #:unsigned-byte-8-aset-instruction #:make-unsigned-byte-8-aset-instruction
    #:short-float-aset-instruction #:make-short-float-aset-instruction
    #:single-float-aset-instruction #:make-single-float-aset-instruction
    #:double-float-aset-instruction #:make-double-float-aset-instruction
