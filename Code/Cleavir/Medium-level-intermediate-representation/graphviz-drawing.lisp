@@ -356,6 +356,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Integer array accessors.
+
+(defmethod label ((instruction bit-aref-instruction)) "bit aref")
+
+(defmethod label ((instruction bit-aset-instruction)) "bit aset")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Floating-point array accessors.
 
 (defmethod label ((instruction short-float-aref-instruction)) "shf aref")
