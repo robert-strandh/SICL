@@ -101,6 +101,7 @@
    #:long-float-aset-ast #:make-long-float-aset-ast 
    #:bit-aref-ast #:make-bit-aref-ast
    #:bit-aset-ast #:make-bit-aset-ast
+   #:unsigned-byte-8-aref-ast #:make-unsigned-byte-8-aref-ast
    ))
 
 (defpackage #:cleavir-ast-graphviz

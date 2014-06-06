@@ -295,3 +295,26 @@
 
 (defmethod children ((ast bit-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class UNSIGNED-BYTE-8-AREF-AST
+;;;
+;;; This AST can be used to read an element of an array specialized to
+;;; (UNSIGNED-BYTE 8)
+
+(defclass unsigned-byte-8-aref-ast (ast one-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)))
+
+(defun make-unsigned-byte-8-aref-ast (array-ast index-ast)
+  (make-instance 'unsigned-byte-8-aref-ast
+    :array-ast array-ast
+    :index-ast index-ast))
+
+(cleavir-io:define-save-info unsigned-byte-8-aref-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast))
+
+(defmethod children ((ast unsigned-byte-8-aref-ast))
+  (list (array-ast ast) (index-ast ast)))
