@@ -260,6 +260,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Integer instructions.
+
+(defmethod label ((instruction bit-unbox-instruction)) "bit unbox")
+
+(defmethod label ((instruction bit-box-instruction)) "bit box")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Floating-point arithmetic instructions.
 
 (defmethod label ((instruction short-float-unbox-instruction)) "shf unbox")
