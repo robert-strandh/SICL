@@ -2,9 +2,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a AREF-AST
+;;; Compile a T-AREF-AST
 
-(defmethod compile-ast ((ast cleavir-ast:aref-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:t-aref-ast) context)
   (check-context-for-one-value-ast context)
   (let ((temp1 (make-temp nil))
 	(temp2 (make-temp nil)))
@@ -15,16 +15,16 @@
       (list (compile-ast
 	     (cleavir-ast:index-ast ast)
 	     (context (list temp2)
-		      (list (make-instance 'cleavir-mir:aref-instruction
+		      (list (make-instance 'cleavir-mir:t-aref-instruction
 			      :inputs (list temp1 temp2)
 			      :outputs (results context)
 			      :successors (successors context))))))))))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a ASET-AST
+;;; Compile a T-ASET-AST
 
-(defmethod compile-ast ((ast cleavir-ast:aset-ast) context)
+(defmethod compile-ast ((ast cleavir-ast:t-aset-ast) context)
   (check-context-for-no-value-ast context)
   (let ((temp1 (make-temp nil))
 	(temp2 (make-temp nil))
@@ -41,7 +41,7 @@
 	       (cleavir-ast:value-ast ast)
 	       (context
 		(list temp3)
-		(list (make-instance 'cleavir-mir:aset-instruction
+		(list (make-instance 'cleavir-mir:t-aset-instruction
 			:inputs (list temp1 temp2 temp3)
 			:outputs '()
 			:successors (successors context))))))))))))
