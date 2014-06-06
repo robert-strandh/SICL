@@ -105,12 +105,12 @@
    #:rplacd-instruction #:make-rplacd-instruction
    #:slot-read-instruction #:make-slot-read-instruction
    #:slot-write-instruction #:make-slot-write-instruction
-   #:aref-instruction #:make-aref-instruction
+   #:t-aref-instruction #:make-t-aref-instruction
    #:short-float-aref-instruction #:make-short-float-aref-instruction
    #:single-float-aref-instruction #:make-single-float-aref-instruction
    #:double-float-aref-instruction #:make-double-float-aref-instruction
    #:long-float-aref-instruction #:make-long-float-aref-instruction
-   #:aset-instruction #:make-aset-instruction
+   #:t-aset-instruction #:make-t-aset-instruction
    #:short-float-aset-instruction #:make-short-float-aset-instruction
    #:single-float-aset-instruction #:make-single-float-aset-instruction
    #:double-float-aset-instruction #:make-double-float-aset-instruction
