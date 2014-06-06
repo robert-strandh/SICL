@@ -6,6 +6,7 @@
   ((:file "packages")
    (:file "general")
    (:file "fixnum")
+   (:file "integer")
    (:file "float")
    (:file "cons")
    (:file "standard-object")
