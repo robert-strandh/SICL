@@ -246,3 +246,26 @@
 
 (defmethod children ((ast long-float-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class BIT-AREF-AST
+;;;
+;;; This AST can be used to read an element of an array specialized to
+;;; BIT.
+
+(defclass bit-aref-ast (ast one-value-ast-mixin)
+  ((%array-ast :initarg :array-ast :reader array-ast)
+   (%index-ast :initarg :index-ast :reader index-ast)))
+
+(defun make-bit-aref-ast (array-ast index-ast)
+  (make-instance 'bit-aref-ast
+    :array-ast array-ast
+    :index-ast index-ast))
+
+(cleavir-io:define-save-info bit-aref-ast
+  (:array-ast array-ast)
+  (:index-ast index-ast))
+
+(defmethod children ((ast bit-aref-ast))
+  (list (array-ast ast) (index-ast ast)))

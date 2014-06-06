@@ -99,6 +99,7 @@
    #:double-float-aset-ast #:make-double-float-aset-ast 
    #:long-float-aref-ast #:make-long-float-aref-ast
    #:long-float-aset-ast #:make-long-float-aset-ast 
+   #:bit-aref-ast #:make-bit-aref-ast
    ))
 
 (defpackage #:cleavir-ast-graphviz
