@@ -121,6 +121,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Labels for unspecialized array ASTs
+
+(deflabel t-aref-ast "t aref")
+(deflabel t-aset-ast "t aset")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Labels for floating-point ASTs
 
 (deflabel short-float-add-ast "shf +")
