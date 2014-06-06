@@ -1185,6 +1185,26 @@ The arguments of this AST must evaluate to unboxed double-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
+\subsection{\texttt{double-float-equal-ast}}
+\label{sec-ast-double-float-equal}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:argument1-ast} & \texttt{argument1-ast} & The first argument.\\
+\hline
+\texttt{:argument2-ast} & \texttt{argument2-ast} & The second argument.\\
+\hline
+\end{tabular}
+
+This AST can be used by implementation that support the double-float
+floating-point data type.  
+
+The arguments of this AST must evaluate to unboxed double-float
+values.  The value is a Boolean indicating whether the first argument
+is equal to the second argument.
+
 \subsection{\texttt{long-float-unbox-ast}}
 \label{sec-ast-long-float-unbox}
 
