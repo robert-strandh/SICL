@@ -2,53 +2,53 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class AREF-AST
+;;; Class T-AREF-AST
 ;;;
 ;;; This AST can be used to read an element of an unspecialized array.
 ;;; It corresponds roughly to the standard function ROW-MAJOR-AREF.
 
-(defclass aref-ast (ast one-value-ast-mixin)
+(defclass t-aref-ast (ast one-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)))
 
-(defun make-aref-ast (array-ast index-ast)
-  (make-instance 'aref-ast
+(defun make-t-aref-ast (array-ast index-ast)
+  (make-instance 't-aref-ast
     :array-ast array-ast
     :index-ast index-ast))
 
-(cleavir-io:define-save-info aref-ast
+(cleavir-io:define-save-info t-aref-ast
   (:array-ast array-ast)
   (:index-ast index-ast))
 
-(defmethod children ((ast aref-ast))
+(defmethod children ((ast t-aref-ast))
   (list (array-ast ast) (index-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class ASET-AST
+;;; Class T-ASET-AST
 ;;;
 ;;; This AST can be used to write an element of an unspecialized
 ;;; array.  It corresponds roughly to a function (SETF
 ;;; ROW-MAJOR-ASET).  An attempt to compile this AST in a context
 ;;; where a value is needed will result in an error being signaled.
 
-(defclass aset-ast (ast no-value-ast-mixin)
+(defclass t-aset-ast (ast no-value-ast-mixin)
   ((%array-ast :initarg :array-ast :reader array-ast)
    (%index-ast :initarg :index-ast :reader index-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-aset-ast (array-ast index-ast value-ast)
-  (make-instance 'aset-ast
+(defun make-t-aset-ast (array-ast index-ast value-ast)
+  (make-instance 't-aset-ast
     :array-ast array-ast
     :index-ast index-ast
     :value-ast value-ast))
 
-(cleavir-io:define-save-info aset-ast
+(cleavir-io:define-save-info t-aset-ast
   (:array-ast array-ast)
   (:index-ast index-ast)
   (:value-ast value-ast))
 
-(defmethod children ((ast aset-ast))
+(defmethod children ((ast t-aset-ast))
   (list (array-ast ast) (index-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

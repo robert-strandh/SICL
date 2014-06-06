@@ -89,8 +89,8 @@
    #:long-float-sqrt-ast
    #:slot-read-ast #:make-slot-read-ast #:slot-number-ast #:object-ast
    #:slot-write-ast #:make-slot-write-ast
-   #:aref-ast #:make-aref-ast #:array-ast #:index-ast
-   #:aset-ast #:make-aset-ast 
+   #:t-aref-ast #:make-t-aref-ast #:array-ast #:index-ast
+   #:t-aset-ast #:make-t-aset-ast 
    #:short-float-aref-ast #:make-short-float-aref-ast
    #:short-float-aset-ast #:make-short-float-aset-ast 
    #:single-float-aref-ast #:make-single-float-aref-ast
