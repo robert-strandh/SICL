@@ -108,6 +108,7 @@
    #:slot-read-instruction #:make-slot-read-instruction
    #:slot-write-instruction #:make-slot-write-instruction
    #:t-aref-instruction #:make-t-aref-instruction
+   #:bit-aref-instruction #:make-bit-aref-instruction
    #:short-float-aref-instruction #:make-short-float-aref-instruction
    #:single-float-aref-instruction #:make-single-float-aref-instruction
    #:double-float-aref-instruction #:make-double-float-aref-instruction
