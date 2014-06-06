@@ -54,3 +54,22 @@
     :inputs (list input)
     :outputs (list output)
     :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction UNSIGNED-BYTE-8-BOX-INSTRUCTION.
+;;;
+;;; This instruction takes a single input, which must be an unboxed
+;;; (UNSIGNED-BYTE 8) value.  It has a single output which is the
+;;; corresponding boxed (UNSIGNED-BYTE 8) value, i.e., FIXNUM with a
+;;; value between 0 and 255.
+
+(defclass unsigned-byte-8-box-instruction
+    (instruction one-successors-mixin box-instruction-mixin)
+  ())
+
+(defun make-unsigned-byte-8-box-instruction (input output successor)
+  (make-instance 'unsigned-byte-8-box-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
