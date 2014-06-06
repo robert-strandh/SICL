@@ -123,6 +123,10 @@
 				   :outputs '()
 				   :successors (successors context)))))))))))))))
 
+(compile-specialized-aset-ast cleavir-ast:bit-aset-ast
+			      cleavir-mir:bit-aset-instruction
+			      cleavir-mir:bit-unbox-instruction)
+
 (compile-specialized-aset-ast cleavir-ast:short-float-aset-ast
 			      cleavir-mir:short-float-aset-instruction
 			      cleavir-mir:short-float-unbox-instruction)
