@@ -74,6 +74,10 @@
 				 :outputs (results context)
 				 :successors (successors context)))))))))))))
 
+(compile-specialized-aref-ast cleavir-ast:bit-aref-ast
+			      cleavir-mir:bit-aref-instruction
+			      cleavir-mir:bit-box-instruction)
+
 (compile-specialized-aref-ast cleavir-ast:short-float-aref-ast
 			      cleavir-mir:short-float-aref-instruction
 			      cleavir-mir:short-float-box-instruction)
