@@ -266,6 +266,10 @@
 
 (defmethod label ((instruction bit-box-instruction)) "bit box")
 
+(defmethod label ((instruction unsigned-byte-8-unbox-instruction)) "ub8 unbox")
+
+(defmethod label ((instruction unsigned-byte-8-box-instruction)) "ub8 box")
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Floating-point arithmetic instructions.
