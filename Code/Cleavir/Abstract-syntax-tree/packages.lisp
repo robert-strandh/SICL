@@ -13,7 +13,7 @@
    #:constant-ast #:make-constant-ast #:value
    #:global-ast #:make-global-ast #:storage #:function-type
    #:lexical-ast #:make-lexical-ast
-   #:symbol-value-ast #:symbol-ast
+   #:symbol-value-ast #:make-symbol-value-ast #:symbol-ast
    #:set-symbol-value-ast #:make-set-symbol-value-ast #:symbol-ast
    #:fdefinition-ast #:make-fdefinition-ast #:name-ast
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
