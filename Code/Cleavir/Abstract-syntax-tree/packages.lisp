@@ -5,6 +5,7 @@
   (:export
    #:ast #:children
    #:boolean-ast-mixin
+   #:no-value-ast-mixin
    #:one-value-ast-mixin
    #:side-effect-free-ast-mixin
    #:immediate-ast #:make-immediate-ast
