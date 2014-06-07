@@ -277,7 +277,7 @@
 ;;; LEXICAL-ASTs of any of the ki because they may not be set
 ;;; correctly (conceptually, they all have the value FALSE then).
 
-(defclass function-ast (ast)
+(defclass function-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
