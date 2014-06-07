@@ -136,7 +136,7 @@
 ;;; value here represents the value of that constant variable at
 ;;; compile time.
 
-(defclass constant-ast (ast)
+(defclass constant-ast (ast side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
 (defun make-constant-ast (value)
@@ -159,7 +159,7 @@
 ;;; and the TYPE of the function as it was declared in the context
 ;;; where the AST was created.
 
-(defclass global-ast (ast one-value-ast-mixin)
+(defclass global-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)
    (%function-type :initform t :initarg :function-type :accessor function-type)))
 
@@ -181,7 +181,7 @@
 ;;; A SPECIAL-AST represents a reference to a special variable.  Such
 ;;; a reference contains the name of the variable.
 
-(defclass special-ast (ast one-value-ast-mixin)
+(defclass special-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
 
 (defun make-special-ast (name)
@@ -202,7 +202,7 @@
 ;;; a reference contains the name of the variable, but it is used only
 ;;; for debugging purposes and for the purpose of error reporting.
 
-(defclass lexical-ast (ast one-value-ast-mixin)
+(defclass lexical-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
 
 (defun make-lexical-ast (name)
