@@ -186,9 +186,15 @@
        (if (null results)
 	   ;; We don't need the result.  This situation typically
 	   ;; happens when we compile a form other than the last of a
-	   ;; PROGN-AST.  We allocate a temporary variable to receive
-	   ;; the result, and that variable will not be used.
-	   (call-next-method ast (context (list (make-temp nil)) successors))
+	   ;; PROGN-AST.
+	   (if (cleavir-ast:side-effect-free-p ast)
+	       (progn
+		 ;; Warn an generate no code.
+		 (warn "Form compiled in a context requiring no value.")
+		 (car successors))
+	       ;; We allocate a temporary variable to receive the
+	       ;; result, and that variable will not be used.
+	       (call-next-method ast (context (list (make-temp nil)) successors)))
 	   ;; We have at least one result.  In case there is more than
 	   ;; one, we generate a successor where all but the first one
 	   ;; are filled with NIL. 
