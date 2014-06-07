@@ -45,6 +45,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Predicate to test whether an AST is side-effect free.
+;;;
+;;; For instances of SIDE-EFFECT-FREE-AST-MIXIN, this predicate always
+;;; returns true.  For others, it has a default method that returns
+;;; false.  Implementations may add a method on some ASTs such as
+;;; CALL-AST that return true only if a particular call is side-effect
+;;; free.
+
+(defgeneric side-effect-free-p (ast))
+
+(defmethod side-effect-free-p (ast)
+  (declare (ignore ast))
+  nil)
+
+(defmethod side-effect-free-p ((ast side-effect-free-ast-mixin))
+  (declare (ignorable ast))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; AST classes for standard common lisp features. 
 ;;;
 ;;; There is mostly a different type of AST for each Common Lisp

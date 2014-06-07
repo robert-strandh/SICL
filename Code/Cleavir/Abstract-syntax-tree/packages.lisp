@@ -8,6 +8,7 @@
    #:no-value-ast-mixin
    #:one-value-ast-mixin
    #:side-effect-free-ast-mixin
+   #:side-effect-free-p
    #:immediate-ast #:make-immediate-ast
    #:constant-ast #:make-constant-ast #:value
    #:global-ast #:make-global-ast #:storage #:function-type
