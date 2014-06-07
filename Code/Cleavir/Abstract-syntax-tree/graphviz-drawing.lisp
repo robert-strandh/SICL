@@ -72,16 +72,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing a GLOBAL-AST.
-
-(defmethod stream-draw-ast ((ast global-ast) stream)
-  (format stream "   ~a [style = filled, fillcolor = cyan];~%" (id ast))
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (name ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing a LEXICAL-AST.
 
 (defmethod stream-draw-ast ((ast lexical-ast) stream)

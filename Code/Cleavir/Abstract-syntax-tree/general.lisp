@@ -151,31 +151,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class GLOBAL-AST. 
-;;; 
-;;; A GLOBAL-AST represents a reference to a global FUNCTION, i.e., a
-;;; name that is known to be associated with a function in the global
-;;; environment.  Such a reference contains the name of the function
-;;; and the TYPE of the function as it was declared in the context
-;;; where the AST was created.
-
-(defclass global-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%name :initarg :name :reader name)
-   (%function-type :initform t :initarg :function-type :accessor function-type)))
-
-(defun make-global-ast (name)
-  (make-instance 'global-ast :name name))
-
-(cleavir-io:define-save-info global-ast
-  (:name name)
-  (:function-type function-type))
-
-(defmethod children ((ast global-ast))
-  (declare (ignorable ast))
-  '())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class LEXICAL-AST.
 ;;; 
 ;;; A LEXICAL-AST represents a reference to a lexical variable.  Such

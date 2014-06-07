@@ -11,7 +11,6 @@
    #:side-effect-free-p
    #:immediate-ast #:make-immediate-ast
    #:constant-ast #:make-constant-ast #:value
-   #:global-ast #:make-global-ast #:storage #:function-type
    #:lexical-ast #:make-lexical-ast
    #:symbol-value-ast #:make-symbol-value-ast #:symbol-ast
    #:set-symbol-value-ast #:make-set-symbol-value-ast #:symbol-ast
