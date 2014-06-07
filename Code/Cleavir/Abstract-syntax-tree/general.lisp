@@ -239,6 +239,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class FDEFINITION-AST.
+;;;
+;;; This AST can be generated from a call to FDEFINITION or a
+;;; reference to a global function.
+
+(defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
+
+(defun make-fdefinition-ast (symbol-ast)
+  (make-instance 'fdefinition-ast :symbol-ast symbol-ast))
+
+(cleavir-io:define-save-info fdefinition-ast
+  (:symbol-ast symbol-ast))
+
+(defmethod children ((ast fdefinition-ast))
+  (list (symbol-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CALL-AST. 
 ;;;
 ;;; A CALL-AST represents a function call.  
