@@ -135,7 +135,7 @@
 ;;; and the TYPE of the function as it was declared in the context
 ;;; where the AST was created.
 
-(defclass global-ast (ast)
+(defclass global-ast (ast one-value-ast-mixin)
   ((%name :initarg :name :reader name)
    (%function-type :initform t :initarg :function-type :accessor function-type)))
 
