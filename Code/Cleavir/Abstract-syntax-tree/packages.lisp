@@ -4,7 +4,9 @@
   (:use #:common-lisp)
   (:export
    #:ast #:children
-   #:boolean-ast-mixin #:one-value-ast-mixin
+   #:boolean-ast-mixin
+   #:one-value-ast-mixin
+   #:side-effect-free-ast-mixin
    #:immediate-ast #:make-immediate-ast
    #:constant-ast #:make-constant-ast #:value
    #:global-ast #:make-global-ast #:storage #:function-type

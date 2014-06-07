@@ -39,6 +39,10 @@
 ;;; value that is not typically not just a Boolean value.
 (defclass one-value-ast-mixin () ())
 
+;;; This class is used as a superclass for ASTs that have no side
+;;; effect.
+(defclass side-effect-free-ast-mixin () ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; AST classes for standard common lisp features. 
