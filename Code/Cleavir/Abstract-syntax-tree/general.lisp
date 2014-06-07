@@ -233,7 +233,7 @@
   (:callee-ast callee-ast)
   (:argument-asts argument-asts))
 
-(defmethod children ((ast special-ast))
+(defmethod children ((ast call-ast))
   (cons (callee-ast ast) (argument-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
