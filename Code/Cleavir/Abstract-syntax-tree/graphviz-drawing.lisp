@@ -82,16 +82,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing a SPECIAL-AST.
-
-(defmethod stream-draw-ast ((ast special-ast) stream)
-  (format stream "   ~a [style = filled, fillcolor = magenta];~%" (id ast))
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (name ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing a LEXICAL-AST.
 
 (defmethod stream-draw-ast ((ast lexical-ast) stream)

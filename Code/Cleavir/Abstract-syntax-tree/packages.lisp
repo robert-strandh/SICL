@@ -12,7 +12,6 @@
    #:immediate-ast #:make-immediate-ast
    #:constant-ast #:make-constant-ast #:value
    #:global-ast #:make-global-ast #:storage #:function-type
-   #:special-ast #:make-special-ast
    #:lexical-ast #:make-lexical-ast
    #:symbol-value-ast #:symbol-ast
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts

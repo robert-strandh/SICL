@@ -176,26 +176,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class SPECIAL-AST.
-;;; 
-;;; A SPECIAL-AST represents a reference to a special variable.  Such
-;;; a reference contains the name of the variable.
-
-(defclass special-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%name :initarg :name :reader name)))
-
-(defun make-special-ast (name)
-  (make-instance 'special-ast :name name))
-
-(cleavir-io:define-save-info special-ast
-  (:name name))
-
-(defmethod children ((ast special-ast))
-  (declare (ignorable ast))
-  '())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class LEXICAL-AST.
 ;;; 
 ;;; A LEXICAL-AST represents a reference to a lexical variable.  Such
