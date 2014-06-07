@@ -216,6 +216,29 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class SET-SYMBOL-VALUE-AST.
+;;;
+;;; This AST can be generated from a call to (SETF SYMBOL-VALUE) or an
+;;; assignment to a special variable.
+
+(defclass set-symbol-value-ast (ast no-value-ast-mixin)
+  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-set-symbol-value-ast (symbol-ast value-ast)
+  (make-instance 'symbol-value-ast
+    :symbol-ast symbol-ast
+    :value-ast value-ast))
+
+(cleavir-io:define-save-info symbol-value-ast
+  (:symbol-ast symbol-ast)
+  (:value-ast value-ast))
+
+(defmethod children ((ast symbol-value-ast))
+  (list (symbol-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CALL-AST. 
 ;;;
 ;;; A CALL-AST represents a function call.  
