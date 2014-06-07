@@ -263,19 +263,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum class SPECIAL-LOCATION.
-;;;
-;;; This datum corresponds to a reference to a special variable.
-
-(defclass special-location (datum)
-  ((%name :initarg :name :reader name)))
-
-(defun make-special-location (name)
-  (make-instance 'special-location
-    :name name))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Datum class GLOBAL-INPUT.
 ;;;
 ;;; This datum corresponds to a reference to a global FUNCTION,

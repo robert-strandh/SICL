@@ -80,16 +80,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum SPECIAL-LOCATION.
-
-(defmethod draw-datum ((datum special-location) stream)
-  (format stream "  ~a [shape = ellipse, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = cyan4, label = \"~a\"]~%"
-	  (datum-id datum) (name datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing datum GLOBAL-INPUT.
 
 (defmethod draw-datum ((datum global-input) stream)
