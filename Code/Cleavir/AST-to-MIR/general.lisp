@@ -677,45 +677,14 @@
 ;;;
 ;;; Compile a GLOBAL-AST.
 ;;;
-;;; If there are no successors, then we generate a RETURN-INSTRUCTION.
-;;; If there is a single successor and the RESULTS is the empty list,
-;;; then a global reference occurs in a context where its value is not
-;;; required, so we warn, and generate no additional code.  If there
-;;; is a single successor and the RESULTS contains a single element,
-;;; we generate an ASSIGNMENT-INSTRUCTION.
-;;;
-;;; If there are two successors, we must generate an EQ-INSTRUCTION
-;;; with those two successor.  If in addition the RESULTS is not the
-;;; empty list, we must also generate an ASSIGNMENT-INSTRUCTION.
+;;; This AST has ONE-VALUE-AST-MIXIN as a superclass. 
 
 (defmethod compile-ast ((ast cleavir-ast:global-ast) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (let ((location (find-or-create-location ast)))
-      (ecase (length successors)
-	(0 (cleavir-mir:make-return-instruction
-	    (list location)))
-	(1 (if (null results)
-	       (progn 
-		 (warn "form compiled in a context with no values")
-		 (car successors))
-	       (cleavir-mir:make-assignment-instruction
-		location
-		(car results) 
-		(nil-fill (cdr results) (car successors)))))
-	(2 (if (null results)
-	       (cleavir-mir:make-eq-instruction
-		(list location (cleavir-mir:make-constant-input nil))
-		successors)
-	       (cleavir-mir:make-assignment-instruction
-		location
-		(car results)
-		(nil-fill
-		 (cdr results)
-		 (cleavir-mir:make-eq-instruction
-		  (list location (cleavir-mir:make-constant-input nil))
-		  successors)))))))))
+  (check-context-for-one-value-ast context)
+  (cleavir-mir:make-assignment-instruction
+   (find-or-create-location ast)
+   (first (results context))
+   (first (successors context))))
 
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
