@@ -442,12 +442,6 @@
 ;;; compiling its LAMBDA-LIST and BODY-AST into some code, represented
 ;;; by the first instruction in the body.  We then generate an
 ;;; ENCLOSE-INSTRUCTION that takes this code as input.
-;;;
-;;; The value computed by the FUNCTION-AST is always a function, so it
-;;; is always a single non-NIL value.  If there are no successors, we
-;;; also generate a RETURN-INSTRUCTION with the single value as input.
-;;; If there is more than one successor, chose the second one for the
-;;; true value.
 
 (defun translate-lambda-list (lambda-list)
   (loop for item in lambda-list
@@ -464,31 +458,14 @@
 		       (find-or-create-location item)))))
 
 (defmethod compile-ast ((ast cleavir-ast:function-ast) context)
-  (with-accessors ((results results)
-		   (successors successors))
-      context
-    (let* ((body (compile-ast (cleavir-ast:body-ast ast) (context '() '())))
-	   (ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
-	   (function (cleavir-mir:make-enter-instruction ll body)))
-      (ecase (length successors)
-	(0 (let ((temp (cleavir-mir:new-temporary)))
-	     (cleavir-mir:make-enclose-instruction
-	      temp
-	      (cleavir-mir:make-return-instruction (list temp))
-	      function)))
-	(1 (if (null results)
-	       (progn (warn "closure compiled in a context with no values")
-		      (car successors))
-	       (cleavir-mir:make-enclose-instruction
-		(car results)
-		(nil-fill (cdr results) (car successors))
-		function)))
-	(2 (if (null results)
-	       (car successors)
-	       (cleavir-mir:make-enclose-instruction
-		(car results)
-		(nil-fill (cdr results) (cadr successors))
-		function)))))))
+  (check-context-for-one-value-ast context)
+  (let* ((body (compile-ast (cleavir-ast:body-ast ast) (context '() '())))
+	 (ll (translate-lambda-list (cleavir-ast:lambda-list ast)))
+	 (function (cleavir-mir:make-enter-instruction ll body)))
+    (cleavir-mir:make-enclose-instruction
+     (first (results context))
+     (first (successors context))
+     function)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
