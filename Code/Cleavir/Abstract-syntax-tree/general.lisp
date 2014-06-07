@@ -350,8 +350,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SETQ-AST.
+;;; 
+;;; This AST does not correspond exactly to the SETQ special operator,
+;;; because the AST does not return a value.
 
-(defclass setq-ast (ast)
+(defclass setq-ast (ast no-value-ast-mixin)
   ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
