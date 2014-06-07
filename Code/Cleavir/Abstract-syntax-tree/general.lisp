@@ -178,7 +178,7 @@
 ;;; a reference contains the name of the variable, but it is used only
 ;;; for debugging purposes and for the purpose of error reporting.
 
-(defclass lexical-ast (ast)
+(defclass lexical-ast (ast one-value-ast-mixin)
   ((%name :initarg :name :reader name)))
 
 (defun make-lexical-ast (name)
