@@ -217,6 +217,25 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class SYMBOL-VALUE-AST.
+;;;
+;;; This AST can be generated from a call to SYMBOL-VALUE or a
+;;; reference to a special variable.
+
+(defclass symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
+
+(defun make-symbol-value-ast (symbol-ast)
+  (make-instance 'symbol-value-ast :symbol-ast symbol-ast))
+
+(cleavir-io:define-save-info symbol-value-ast
+  (:symbol-ast symbol-ast))
+
+(defmethod children ((ast symbol-value-ast))
+  (list (symbol-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class CALL-AST. 
 ;;;
 ;;; A CALL-AST represents a function call.  
