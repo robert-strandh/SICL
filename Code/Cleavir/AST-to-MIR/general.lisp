@@ -102,9 +102,6 @@
 		  (cleavir-ast:name ast)))
 		(cleavir-ast:global-ast
 		 (cleavir-mir:make-global-input
-		  (cleavir-ast:name ast)))
-		(cleavir-ast:special-ast
-		 (cleavir-mir:make-special-location
 		  (cleavir-ast:name ast))))))
 	(setf (gethash ast *location-info*) location))))
 
@@ -470,26 +467,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a SETQ-AST.
-;;;
-;;; FIXME: I am not sure whether a SETQ-AST can have a left-hand side
-;;; which is something other than a LEXICAL-AST (such as a
-;;; SPECIAL-AST), so for now be on the safe side and generate an
-;;; ASSIGNMENT-INSTRUCTION.  If it turns out that only a LEXICAL-AST
-;;; can be the left-hand side, just compile the right-hand side in a
-;;; context where the left-hand side is the result.
 
 (defmethod compile-ast ((ast cleavir-ast:setq-ast) context)
   (check-context-for-no-value-ast context)
-  (let ((location (find-or-create-location (cleavir-ast:lhs-ast ast)))
-	(temp (make-temp nil)))
+  (let ((location (find-or-create-location (cleavir-ast:lhs-ast ast))))
     (compile-ast
      (cleavir-ast:value-ast ast)
      (context
-      (list temp)
-      (list (cleavir-mir:make-assignment-instruction
-	     temp
-	     location 
-	     (first (successors context))))))))
+      (list location)
+      (successors context)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
