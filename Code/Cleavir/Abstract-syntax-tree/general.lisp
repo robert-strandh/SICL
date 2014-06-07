@@ -157,7 +157,7 @@
 ;;; A SPECIAL-AST represents a reference to a special variable.  Such
 ;;; a reference contains the name of the variable.
 
-(defclass special-ast (ast)
+(defclass special-ast (ast one-value-ast-mixin)
   ((%name :initarg :name :reader name)))
 
 (defun make-special-ast (name)
