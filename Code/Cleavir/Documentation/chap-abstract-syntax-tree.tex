@@ -82,21 +82,29 @@ of constant, nor between integers of different magnitude.  Later on
 in the compilation process, some backend may replace small integer
 constants by immediate values. 
 
-\subsection{\texttt{global-ast}}
-\label{global-ast}
+\subsection{\texttt{fdefinition-ast}}
+\label{fdefinition-ast}
 
 \begin{tabular}{|l|l|l|}
 \hline
 Initarg & Reader & Description\\
 \hline\hline
-\texttt{:name} & \texttt{name} & The name of the function.\\  
+\texttt{:name-ast} & \texttt{name-ast} & The name of the function.\\  
 \hline
 \end{tabular}
 
-A \texttt{global-ast} is produced whenever the compiler sees a
+The \texttt{fdefinition-ast} is produced whenever the compiler sees a
 reference to a \emph{global function}, i.e., a name in a functional
 position that is not defined as a local function, as a special
-operator, nor as a macro.
+operator, nor as a macro.  It can also be produced as an inline
+version of the function \texttt{fdefinition}.
+
+The \texttt{name-ast} is an AST that produces the name of function.
+It can be either a \texttt{constant-ast}, in which case the constant
+is a function name, or it can be some other AST that evaluates to the
+name of a function.  When the \texttt{fdefinition-ast} is produced as
+a result of a name in the functional position of a form, then the
+\texttt{name-ast} is always a \texttt{constant-ast}.
 
 \subsection{\texttt{special-ast}}
 \label{special-ast}
