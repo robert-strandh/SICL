@@ -555,6 +555,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a SET-SYMBOL-VALUE-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:set-symbol-value-ast) context)
+  (check-context-for-no-value-ast context)
+  (let ((temp1 (make-temp nil))
+	(temp2 (make-temp nil)))
+    (compile-ast
+     (cleavir-ast:symbol-ast ast)
+     (context 
+      (list temp1) 
+      (list (compile-ast
+	     (cleavir-ast:value-ast ast)
+	     (context
+	      (list temp2)
+	      (list (make-instance 'cleavir-mir:set-symbol-value-instruction
+		      :inputs (list temp1 temp2)
+		      :outputs ()
+		      :successors (successors context))))))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a TYPEQ-AST.
 
 (defun make-boolean (boolean result successor)
