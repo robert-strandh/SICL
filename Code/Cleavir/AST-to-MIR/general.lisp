@@ -99,9 +99,6 @@
 	      (etypecase ast
 		(cleavir-ast:lexical-ast
 		 (cleavir-mir:make-lexical-location
-		  (cleavir-ast:name ast)))
-		(cleavir-ast:global-ast
-		 (cleavir-mir:make-global-input
 		  (cleavir-ast:name ast))))))
 	(setf (gethash ast *location-info*) location))))
 
@@ -407,29 +404,22 @@
       (compile-arguments
        all-args
        temps
-       ;; This is a temporary kludge to take advantage of the fact
-       ;; that the function ERROR never returns.  A more systematic
-       ;; approach would be to check that the function is system
-       ;; supplied and that its return type is NIL.
-       (if (and (typep (cleavir-ast:callee-ast ast) 'cleavir-ast:global-ast)
-		(eq (cleavir-ast:name (cleavir-ast:callee-ast ast)) 'error))
-	   (cleavir-mir:make-funcall-instruction temps)
-	   (ecase (length successors)
-	     (0 (cleavir-mir:make-tailcall-instruction temps))
-	     (1 (make-instance 'cleavir-mir:funcall-instruction
-		  :inputs temps
-		  :outputs results
-		  :successors successors))
-	     (2 (let* ((temp (cleavir-mir:new-temporary))
-		       (false (cleavir-mir:make-constant-input nil))
-		       (successor (make-instance 'cleavir-mir:eq-instruction
-				    :inputs (list temp false)
-				    :outputs '()
-				    :successors (reverse successors))))
-		  (make-instance 'cleavir-mir:funcall-instruction
-		    :inputs temps
-		    :outputs (list temp)
-		    :successors (list successor))))))))))
+       (ecase (length successors)
+	 (0 (cleavir-mir:make-tailcall-instruction temps))
+	 (1 (make-instance 'cleavir-mir:funcall-instruction
+	      :inputs temps
+	      :outputs results
+	      :successors successors))
+	 (2 (let* ((temp (cleavir-mir:new-temporary))
+		   (false (cleavir-mir:make-constant-input nil))
+		   (successor (make-instance 'cleavir-mir:eq-instruction
+				:inputs (list temp false)
+				:outputs '()
+				:successors (reverse successors))))
+	      (make-instance 'cleavir-mir:funcall-instruction
+		:inputs temps
+		:outputs (list temp)
+		:successors (list successor)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -637,16 +627,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compile a GLOBAL-AST.
-;;;
-;;; This AST has ONE-VALUE-AST-MIXIN as a superclass. 
-
-(defmethod compile-ast ((ast cleavir-ast:global-ast) context)
-  (check-context-for-one-value-ast context)
-  (cleavir-mir:make-assignment-instruction
-   (find-or-create-location ast)
-   (first (results context))
-   (first (successors context))))
+;;; COMPILE-TOPLEVEL
 
 (defun compile-toplevel (ast)
   (let ((*block-info* (make-hash-table :test #'eq))
