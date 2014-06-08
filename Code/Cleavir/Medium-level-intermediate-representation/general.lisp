@@ -805,6 +805,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction SET-SYMBOL-VALUE-INSTRUCTION.
+
+(defclass set-symbol-value-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-set-symbol-value-instruction (inputs successor)
+  (make-instance 'symbol-value-instruction
+    :inputs inputs
+    :outputs '()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction PHI-INSTRUCTION.
 ;;; 
 ;;; This is an instruction used in SSA form.  It has at least two
