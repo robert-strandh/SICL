@@ -818,6 +818,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Instruction FDEFINITION-INSTRUCTION.
+
+(defclass fdefinition-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-fdefinition-instruction (input output successor)
+  (make-instance 'fdefinition-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Instruction PHI-INSTRUCTION.
 ;;; 
 ;;; This is an instruction used in SSA form.  It has at least two
