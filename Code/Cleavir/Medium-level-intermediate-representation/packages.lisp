@@ -43,6 +43,7 @@
    #:return-instruction #:make-return-instruction
    #:enclose-instruction #:make-enclose-instruction #:code
    #:typeq-instruction #:make-typeq-instruction #:value-type
+   #:the-instruction #:make-the-instruction
    #:catch-instruction #:make-catch-instruction
    #:unwind-instruction #:make-unwind-instruction
    #:eq-instruction #:make-eq-instruction

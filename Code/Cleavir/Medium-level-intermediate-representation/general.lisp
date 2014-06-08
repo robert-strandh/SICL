@@ -706,7 +706,7 @@
 ;;; type specifier around in a separate slot.  This is the purpose of
 ;;; the VALUE-TYPE slot.
 
-(defclass typeq-instruction (instruction two-successor-mixin)
+(defclass typeq-instruction (instruction two-successors-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-typeq-instruction (inputs successors)
@@ -715,6 +715,24 @@
     :inputs inputs
     :successors successors
     :value-type (value (second inputs))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction THE-INSTRUCTION.
+;;;
+;;; This instruction is similar to the TYPEQ-INSTRUCTION.  It is
+;;; different in that it has only a single successor and no error
+;;; branch.  Operationally, it has no effect.  But it informs the type
+;;; inference machinery that the input is of a particular type. 
+
+(defclass the-instruction (instruction one-successor-mixin)
+  ((%value-type :initarg :value-type :reader value-type)))
+
+(defun make-the-instruction (input successor)
+  (make-instance 'the-instruction
+    :inputs (list input)
+    :outputs '()
+    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
