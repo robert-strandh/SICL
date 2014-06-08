@@ -576,6 +576,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compile a FDEFINITION-AST.
+
+(defmethod compile-ast ((ast cleavir-ast:fdefinition-ast) context)
+  (check-context-for-one-value-ast context)
+  (let ((temp (make-temp nil)))
+    (compile-ast
+     (cleavir-ast:name-ast ast)
+     (context 
+      (list temp) 
+      (list (make-instance 'cleavir-mir:fdefinition-instruction
+	      :inputs (list temp)
+	      :outputs (results context)
+	      :successors (successors context)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compile a TYPEQ-AST.
 
 (defun make-boolean (boolean result successor)
