@@ -130,6 +130,36 @@ symbol.  When the \texttt{symbol-value-ast} is produced as a result of
 a reference to a special variable, then the \texttt{symbol-ast} is
 always a \texttt{constant-ast}.
 
+\subsection{\texttt{set-symbol-value-ast}}
+\label{set-symbol-value-ast}
+
+\begin{tabular}{|l|l|l|}
+\hline
+Initarg & Reader & Description\\
+\hline\hline
+\texttt{:symbol-ast} & \texttt{symbol-ast} & The name of the variable.\\  
+\hline
+\texttt{:value-ast} & \texttt{value-ast} & The value to be assigned.\\  
+\hline
+\end{tabular}
+
+A \texttt{set-symbol-value-ast} is produced whenever the compiler sees
+an assignment to a \emph{special variable}.  It can also be produced
+as an inline version of the function \texttt{(setf symbol-value)}.
+
+The \texttt{symbol-ast} is an AST that produces the name of the
+variable.  It can be either a \texttt{constant-ast}, in which case the
+constant is a symbol, or it can be some other AST that evaluates to a
+symbol.  When the \texttt{symbol-value-ast} is produced as a result of
+an assignment to a special variable, then the \texttt{symbol-ast} is
+always a \texttt{constant-ast}.
+
+The \texttt{value-ast} is an AST that evaluates to the value to be
+assigned to the variable.
+
+This AST does not produce any value.  It must appear in a context
+where no value is required, such as one of the forms preceding the
+last form of a \texttt{progn-ast} \seesec{progn-ast}.
 
 \subsection{\texttt{lexical-ast}}
 \label{lexical-ast}
