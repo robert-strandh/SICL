@@ -263,20 +263,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum class GLOBAL-INPUT.
-;;;
-;;; This datum corresponds to a reference to a global FUNCTION,
-;;; i.e., a function defined in the global environment.  
-
-(defclass global-input (datum)
-  ((%name :initarg :name :reader name)))
-
-(defun make-global-input (name)
-  (make-instance 'global-input
-    :name name))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Datum class LOAD-TIME-INPUT.
 ;;;
 ;;; This datum typically corresponds to a LOAD-TIME-VALUE in source
@@ -303,10 +289,10 @@
 ;;;
 ;;; Datum class EXTERNAL-INPUT.
 ;;;
-;;; This datum corresponds to an index in the linkage vector of a
-;;; code object.  Later compilation stages typically replace a
-;;; CONSTANT-INPUT that can not be an IMMEDIATE-INPUT, or a
-;;; GLOBAL-INPUT or a by an EXTERNAL-INPUT. 
+;;; This datum corresponds to an index in the linkage vector of a code
+;;; object.  Later compilation stages typically replace a
+;;; CONSTANT-INPUT that can not be an IMMEDIATE-INPUT by an
+;;; EXTERNAL-INPUT.
 
 (defclass external-input (datum)
   ((%value :initarg :value :reader value)))

@@ -12,7 +12,6 @@
    #:simple-location #:make-simple-location #:new-temporary
    #:captured-location #:make-captured-location
    #:name
-   #:global-input #:make-global-input
    #:load-time-input
    #:external-input #:make-external-input
    #:register-location

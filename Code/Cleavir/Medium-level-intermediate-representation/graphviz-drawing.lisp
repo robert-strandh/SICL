@@ -80,16 +80,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum GLOBAL-INPUT.
-
-(defmethod draw-datum ((datum global-input) stream)
-  (format stream "  ~a [shape = ellipse, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = cyan, label = \"~a\"]~%"
-	  (datum-id datum) (name datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing datum EXTERNAL-INPUT.
 
 (defmethod draw-datum ((datum external-input) stream)
