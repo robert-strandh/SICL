@@ -684,7 +684,6 @@
     (setf (code new) (code instruction))
     new))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TYPEQ-INSTRUCTION.
@@ -707,7 +706,7 @@
 ;;; type specifier around in a separate slot.  This is the purpose of
 ;;; the VALUE-TYPE slot.
 
-(defclass typeq-instruction (instruction one-successor-mixin)
+(defclass typeq-instruction (instruction two-successor-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-typeq-instruction (inputs successors)
