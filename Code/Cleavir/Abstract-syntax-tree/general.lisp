@@ -220,16 +220,16 @@
 ;;; reference to a global function.
 
 (defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
+  ((%name-ast :initarg :name-ast :reader name-ast)))
 
-(defun make-fdefinition-ast (symbol-ast)
-  (make-instance 'fdefinition-ast :symbol-ast symbol-ast))
+(defun make-fdefinition-ast (name-ast)
+  (make-instance 'fdefinition-ast :name-ast name-ast))
 
 (cleavir-io:define-save-info fdefinition-ast
-  (:symbol-ast symbol-ast))
+  (:name-ast name-ast))
 
 (defmethod children ((ast fdefinition-ast))
-  (list (symbol-ast ast)))
+  (list (name-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
