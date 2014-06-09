@@ -248,7 +248,11 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-Executing this instruction has no effect. 
+Executing this instruction has no effect.  This instruction may be
+introduced by certain transformations as a replacement for existing
+instructions.  This way, these transformations do not have to be
+concerned with complex updates of the graph.  Instead a dedicated
+transformation for removing all \texttt{nop-instruction}s is provided.
 
 \refFig{fig-nop-instruction} shows the Graphviz illustration of the
 \texttt{nop-instruction}
