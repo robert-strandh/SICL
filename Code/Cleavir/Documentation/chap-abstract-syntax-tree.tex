@@ -605,46 +605,6 @@ The ASTs in this section can be used by implementation that want to
 inline floating-point arithmetic.  There are four families of ASTs,
 one for each type of floating-point precision defined by the \hs{}.
 
-Some of the ASTs defined in this section evaluate to \emph{unboxed}
-floating-point values.  Such ASTs can only occur in a context where
-such values are required.  In particular, they can not occur as the
-root of an AST representing an entire function.  
-
-\subsection{\texttt{short-float-unbox-ast}}
-\label{sec-ast-short-float-unbox}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the short-float
-floating-point data type.  
-
-The argument of this AST must evaluate to a boxed short-float value.
-The value of this AST is the corresponding unboxed short-float value.
-
-\subsection{\texttt{short-float-box-ast}}
-\label{sec-ast-short-float-box}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the short-float
-floating-point data type.  
-
-The argument of this AST must evaluate to an unboxed short-float
-value.  The value of this AST is the corresponding boxed short-float
-value.
-
 \subsection{\texttt{short-float-add-ast}}
 \label{sec-ast-short-float-add}
 
@@ -661,8 +621,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
-values.  The value of this AST is the unboxed short-float value
+The arguments of this AST must evaluate to short-float
+values.  The value of this AST is the short-float value
 representing the sum of the two arguments.
 
 \subsection{\texttt{short-float-sub-ast}}
@@ -681,8 +641,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
-values.  The value of this AST is the unboxed short-float value
+The arguments of this AST must evaluate to short-float
+values.  The value of this AST is the short-float value
 representing the difference of the two arguments.
 
 \subsection{\texttt{short-float-mul-ast}}
@@ -701,8 +661,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
-values.  The value of this AST is the unboxed short-float value
+The arguments of this AST must evaluate to short-float
+values.  The value of this AST is the short-float value
 representing the product of the two arguments.
 
 \subsection{\texttt{short-float-div-ast}}
@@ -721,8 +681,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
-values.  The value of this AST is the unboxed short-float value
+The arguments of this AST must evaluate to short-float
+values.  The value of this AST is the short-float value
 representing the quotient of the two arguments.
 
 \subsection{\texttt{short-float-less-ast}}
@@ -741,7 +701,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
+The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
@@ -761,7 +721,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
+The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
@@ -781,7 +741,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
+The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
@@ -801,7 +761,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
+The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
@@ -821,38 +781,9 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the short-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed short-float
+The arguments of this AST must evaluate to short-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
-
-\subsection{\texttt{single-float-unbox-ast}}
-\label{sec-ast-single-float-unbox}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
-\hline
-\end{tabular}
-
-The argument of this AST must evaluate to a boxed single-float value.
-The value of this AST is the corresponding unboxed single-float value.
-
-\subsection{\texttt{single-float-box-ast}}
-\label{sec-ast-single-float-box}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
-\hline
-\end{tabular}
-
-The argument of this AST must evaluate to an unboxed single-float
-value.  The value of this AST is the corresponding boxed single-float
-value.
 
 \subsection{\texttt{single-float-add-ast}}
 \label{sec-ast-single-float-add}
@@ -867,8 +798,8 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
-values.  The value of this AST is the unboxed single-float value
+The arguments of this AST must evaluate to single-float
+values.  The value of this AST is the single-float value
 representing the sum of the two arguments.
 
 \subsection{\texttt{single-float-sub-ast}}
@@ -884,8 +815,8 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
-values.  The value of this AST is the unboxed single-float value
+The arguments of this AST must evaluate to single-float
+values.  The value of this AST is the single-float value
 representing the difference of the two arguments.
 
 \subsection{\texttt{single-float-mul-ast}}
@@ -901,8 +832,8 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
-values.  The value of this AST is the unboxed single-float value
+The arguments of this AST must evaluate to single-float
+values.  The value of this AST is the single-float value
 representing the product of the two arguments.
 
 \subsection{\texttt{single-float-div-ast}}
@@ -918,8 +849,8 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
-values.  The value of this AST is the unboxed single-float value
+The arguments of this AST must evaluate to single-float
+values.  The value of this AST is the single-float value
 representing the quotient of the two arguments.
 
 \subsection{\texttt{single-float-less-ast}}
@@ -935,7 +866,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
+The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
@@ -952,7 +883,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
+The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
@@ -969,7 +900,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
+The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
@@ -986,7 +917,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
+The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
@@ -1003,44 +934,9 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The arguments of this AST must evaluate to unboxed single-float
+The arguments of this AST must evaluate to single-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
-
-\subsection{\texttt{double-float-unbox-ast}}
-\label{sec-ast-double-float-unbox}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The argument of this AST must evaluate to a boxed double-float value.
-The value of this AST is the corresponding unboxed double-float value.
-
-\subsection{\texttt{double-float-box-ast}}
-\label{sec-ast-double-float-box}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the double-float
-floating-point data type.  
-
-The argument of this AST must evaluate to an unboxed double-float
-value.  The value of this AST is the corresponding boxed double-float
-value.
 
 \subsection{\texttt{double-float-add-ast}}
 \label{sec-ast-double-float-add}
@@ -1058,8 +954,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
-values.  The value of this AST is the unboxed double-float value
+The arguments of this AST must evaluate to double-float
+values.  The value of this AST is the double-float value
 representing the sum of the two arguments.
 
 \subsection{\texttt{double-float-sub-ast}}
@@ -1078,8 +974,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
-values.  The value of this AST is the unboxed double-float value
+The arguments of this AST must evaluate to double-float
+values.  The value of this AST is the double-float value
 representing the difference of the two arguments.
 
 \subsection{\texttt{double-float-mul-ast}}
@@ -1098,8 +994,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
-values.  The value of this AST is the unboxed double-float value
+The arguments of this AST must evaluate to double-float
+values.  The value of this AST is the double-float value
 representing the product of the two arguments.
 
 \subsection{\texttt{double-float-div-ast}}
@@ -1118,8 +1014,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
-values.  The value of this AST is the unboxed double-float value
+The arguments of this AST must evaluate to double-float
+values.  The value of this AST is the double-float value
 representing the quotient of the two arguments.
 
 \subsection{\texttt{double-float-less-ast}}
@@ -1138,7 +1034,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
+The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
@@ -1158,7 +1054,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
+The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
@@ -1178,7 +1074,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
+The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
@@ -1198,7 +1094,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
+The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
@@ -1218,44 +1114,9 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the double-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed double-float
+The arguments of this AST must evaluate to double-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
-
-\subsection{\texttt{long-float-unbox-ast}}
-\label{sec-ast-long-float-unbox}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The argument of this AST must evaluate to a boxed long-float value.
-The value of this AST is the corresponding unboxed long-float value.
-
-\subsection{\texttt{long-float-box-ast}}
-\label{sec-ast-long-float-box}
-
-\begin{tabular}{|l|l|l|}
-\hline
-Initarg & Reader & Description\\
-\hline\hline
-\texttt{:argument-ast} & \texttt{argument-ast} & The argument.\\
-\hline
-\end{tabular}
-
-This AST can be used by implementation that support the long-float
-floating-point data type.  
-
-The argument of this AST must evaluate to an unboxed long-float
-value.  The value of this AST is the corresponding boxed long-float
-value.
 
 \subsection{\texttt{long-float-add-ast}}
 \label{sec-ast-long-float-add}
@@ -1273,8 +1134,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
-values.  The value of this AST is the unboxed long-float value
+The arguments of this AST must evaluate to long-float
+values.  The value of this AST is the long-float value
 representing the sum of the two arguments.
 
 \subsection{\texttt{long-float-sub-ast}}
@@ -1293,8 +1154,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
-values.  The value of this AST is the unboxed long-float value
+The arguments of this AST must evaluate to long-float
+values.  The value of this AST is the long-float value
 representing the difference of the two arguments.
 
 \subsection{\texttt{long-float-mul-ast}}
@@ -1313,8 +1174,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
-values.  The value of this AST is the unboxed long-float value
+The arguments of this AST must evaluate to long-float
+values.  The value of this AST is the long-float value
 representing the product of the two arguments.
 
 \subsection{\texttt{long-float-div-ast}}
@@ -1333,8 +1194,8 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
-values.  The value of this AST is the unboxed long-float value
+The arguments of this AST must evaluate to long-float
+values.  The value of this AST is the long-float value
 representing the quotient of the two arguments.
 
 \subsection{\texttt{long-float-less-ast}}
@@ -1353,7 +1214,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
+The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly less than the second argument.
 
@@ -1373,7 +1234,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
+The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is less than or equal to the second argument.
 
@@ -1393,7 +1254,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
+The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is strictly greater than the second argument.
 
@@ -1413,7 +1274,7 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
+The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is greater than or equal to the second argument.
 
@@ -1433,6 +1294,6 @@ Initarg & Reader & Description\\
 This AST can be used by implementation that support the long-float
 floating-point data type.  
 
-The arguments of this AST must evaluate to unboxed long-float
+The arguments of this AST must evaluate to long-float
 values.  The value is a Boolean indicating whether the first argument
 is equal to the second argument.
