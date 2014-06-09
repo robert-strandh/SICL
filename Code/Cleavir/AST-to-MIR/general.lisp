@@ -474,13 +474,18 @@
 (defun make-type-check (type-ast var successor)
   (check-type type-ast cleavir-ast:constant-ast)
   (let* ((type-input (cleavir-mir:make-constant-input (cleavir-ast:value type-ast)))
+	 (temp (make-temp nil))
 	 (error-branch
-	   (cleavir-mir:make-funcall-instruction
-	    (list (cleavir-mir:make-global-input 'error)
-		  (cleavir-mir:make-constant-input :datum)
-		  var
-		  (cleavir-mir:make-constant-input :expected-type)
-		  type-input))))
+	   (make-instance 'cleavir-mir:fdefinition-instruction
+	     :inputs (list (cleavir-mir:make-constant-input 'error))
+	     :outputs (list temp)
+	     :successors
+	     (list (cleavir-mir:make-funcall-instruction
+		    (list temp
+			  (cleavir-mir:make-constant-input :datum)
+			  var
+			  (cleavir-mir:make-constant-input :expected-type)
+			  type-input))))))
     (cleavir-mir:make-typeq-instruction
      (list var type-input)
      (list error-branch successor))))
