@@ -126,6 +126,11 @@ The representation at this level is used for \emph{type inference}.
 The result of this operation is that some parts of the instruction
 graph may be removed.
 
+Since parts of the instruction graph may be removed, it could be the
+case that variables that were previously considered captured no longer
+are.  Therefore, additional variables may be converted to SSA form
+here. 
+
 \subsection{Level 3}
 
 This is the first level where real implementation-specific and
