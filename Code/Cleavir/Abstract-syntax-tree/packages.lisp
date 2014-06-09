@@ -28,7 +28,7 @@
    #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
    #:tagbody-ast #:make-tagbody-ast #:items
    #:tag-ast #:make-tag-ast #:name
-   #:the-ast #:make-the-ast #:type-specifiers #:value-type
+   #:the-ast #:make-the-ast #:type-specifiers #:value-type #:check-p
    #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
    #:eq-ast #:make-eq-ast
    #:car-ast #:make-car-ast #:cons-ast
