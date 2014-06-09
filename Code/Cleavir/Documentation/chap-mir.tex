@@ -1323,6 +1323,12 @@ restriction is respected.
 \texttt{phi-instruction}.}
 \end{figure}
 
+Some transformations may be easier to accomplish if there is a single
+\texttt{phi-instruction} as opposed to a cluster of several such
+instructions.  We may propose a \emph{cluster/uncluster}
+transformation on the entire program so that both representations are
+accessible. 
+
 \subsection{Instruction \texttt{typeq-instruction}}
 \label{mir-instruction-typeq}
 
