@@ -1,4 +1,4 @@
-(in-package #:sicl-compiler-phase-1)
+(in-package #:sicl-generate-ast)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
