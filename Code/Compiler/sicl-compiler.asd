@@ -15,6 +15,7 @@
 	       :sicl-type
 	       :cleavir-ast
 	       :cleavir-primop)
+  :serial t
   :components
   ((:file "packages" :depends-on ())
    (:file "abstract-syntax-tree"
