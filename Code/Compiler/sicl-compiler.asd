@@ -17,39 +17,17 @@
 	       :cleavir-primop)
   :serial t
   :components
-  ((:file "packages" :depends-on ())
-   (:file "abstract-syntax-tree"
-    :depends-on ("packages"))
-   (:file "mir"
-    :depends-on ("packages"))
-   (:file "new-phase1"
-    :depends-on ("packages" "abstract-syntax-tree"))
-   (:file "ast-transformations"
-    :depends-on ("packages"))
-   (:file "phase2"
-    :depends-on ("packages" "abstract-syntax-tree" "mir"))
-   (:file "graph-coloring" :depends-on ("packages"))
-   (:file "make"
-    :depends-on ("packages"))
-   (:file "program"
-    :depends-on ("packages" "mir" "make"))
-   (:file "type-map"
-    :depends-on ("packages"))
-   (:file "type-inference"
-    :depends-on ("packages" "type-map" "mir"))
-   (:file "compile-file"
-    :depends-on ("program"
-		 "ast-transformations"
-		 "type-map"
-		 "graph-coloring"
-		 "new-phase1"
-		 "phase2"))
-   (:file "compile-lambda-expression"
-    :depends-on ("program"
-		 "ast-transformations"
-		 "type-map"
-		 "graph-coloring"
-		 "new-phase1"
-		 "phase2"))
-   (:file "compile-time-compile"
-    :depends-on ("new-phase1"))))
+  ((:file "packages")
+   (:file "abstract-syntax-tree")
+   (:file "mir")
+   (:file "new-phase1")
+   (:file "ast-transformations")
+   (:file "phase2")
+   (:file "graph-coloring")
+   (:file "make")
+   (:file "program")
+   (:file "type-map")
+   (:file "type-inference")
+   (:file "compile-file")
+   (:file "compile-lambda-expression")
+   (:file "compile-time-compile")))
