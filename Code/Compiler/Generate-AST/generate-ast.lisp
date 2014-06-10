@@ -17,31 +17,6 @@
 ;;;
 ;;; Converting code to an abstract syntax tree.
 
-;;; When this variable is false, we are invoked by EVAL or COMPILE.
-;;; When it is true, we are invoked by COMPILE-FILE.
-(defparameter *compile-file* nil)
-
-;;; This variable holds the processing mode for top-level forms
-;;; processed by COMPILE-FILE.
-(defparameter *compile-time-too* nil)
-
-;;; This variable is TRUE as long as a form is considered to be a
-;;; top-level form.  It is bound to the value of *TOP-LEVEL-SUBFORM-P*
-;;; before a subform is processed.
-(defparameter *top-level-form-p* t)
-
-;;; The value of this variable is normally FALSE.  It is bound to the
-;;; value of *TOP-LEVEL-FORM-P* by certain converters that need to
-;;; process subforms the same way as the form itself.
-(defparameter *top-level-subform-p* t)
-
-;;; When this variable is false, non-immediate constants will be
-;;; converted into a LOAD-TIME-VALUE ast, which means that the machine
-;;; code generated will be an access to an element in the vector of
-;;; externals.  When it is true, such constants will instead be turned
-;;; into code for creating them.
-(defparameter *compile-for-linker* nil)
-
 ;;; During conversion, this variable contains a hash table that maps
 ;;; from instance of environment locations to ASTs.
 (defparameter *location-asts* nil)
@@ -337,33 +312,10 @@
 	     ;; FIXME: perhaps we should warn about the deprecated situations
 	     (error 'invalid-eval-when-situation
 		    :expr situation)))
-  (let* ((situations (cadr form))
-	 (c (not (null (intersection '(:compile-toplevel compile) situations))))
-	 (l (not (null (intersection '(:load-toplevel load) situations))))
-	 (e (not (null (intersection '(:execute eval) situations)))))
-    (let ((new-form (cons 'progn (cddr form))))
-      (if (and *compile-file* *top-level-form-p*)
-	  (let ((*top-level-subform-p* *top-level-form-p*))
-	    ;; This test tree corresponds to figure 3-7 of the
-	    ;; HyperSpec.
-	    (if c
-		(if l
-		    (let ((*compile-time-too* t))
-		      (convert new-form environment))
-		    (progn (eval new-form)
-			   (convert ''nil environment)))
-		(if l
-		    (if e
-			(convert new-form environment)
-			(let ((*compile-time-too* nil))
-			  (convert new-form environment)))
-		    (if (and e *compile-time-too*)
-			(progn (eval new-form)
-			       (convert ''nil environment))
-			(convert ''nil environment)))))
-	  (if e
-	      (convert new-form environment)
-	      (convert ''nil environment))))))
+  (if (not (null (intersection '(:execute eval) situations)))
+      (cleavir-ast:make-progn-ast
+       (convert-sequence (cddr form) environment))
+      (convert 'nil environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -673,11 +625,8 @@
       (sicl-code-utilities:separate-ordinary-body (cdr form))
     (let ((new-env (sicl-env:augment-environment-with-declarations
 		    env declarations)))
-      ;; According to section 3.2.3.1 of the HyperSpec, LOCALLY
-      ;; processes its subforms the same way as the form itself.
-      (let ((*top-level-subform-p* *top-level-form-p*))
-	(cleavir-ast:make-progn-ast
-	 (convert-sequence forms new-env))))))
+      (cleavir-ast:make-progn-ast
+       (convert-sequence forms new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -693,11 +642,8 @@
 (defmethod convert-compound
     ((head (eql 'progn)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
-  ;; According to section 3.2.3.1 of the HyperSpec, PROGN
-  ;; processes its subforms the same way as the form itself.
-  (let ((*top-level-subform-p* *top-level-form-p*))
-    (cleavir-ast:make-progn-ast
-     (convert-sequence (cdr form) environment))))
+  (cleavir-ast:make-progn-ast
+   (convert-sequence (cdr form) environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -778,10 +724,7 @@
     (loop for (name expansion) in (cadr form)
 	  do (setf new-env
 		   (sicl-env:add-symbol-macro-entry new-env name expansion)))
-    ;; According to section 3.2.3.1 of the HyperSpec, SYMBOL-MACROLET
-    ;; processes its subforms the same way as the form itself.
-    (let ((*top-level-subform-p* *top-level-form-p*))
-      (convert `(progn ,@(cddr form)) new-env))))
+    (convert `(progn ,@(cddr form)) new-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -986,32 +929,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; CONVERT is the function that must be called by every conversion
-;;; attempt.  
-;;;
-;;; This function has an unusual control structure.  The reason is the
-;;; complication that arises because of the way top-level forms are
-;;; handled.  Whether a form is a top-level form or not is indicated
-;;; by the variable *TOP-LEVEL-FORM-P*.  This variable is initially
-;;; TRUE, and we want it to become FALSE by default whenever CONVERT
-;;; is called recursively.  In some cases, however, subforms of some
-;;; form F should be processed the same way as F is processed (see
-;;; section 3.2.3.1 in the HyperSpec).  The simplest control structure
-;;; would be for all indivudual converters to set *TOP-LEVEL-FORM-P*
-;;; to FALSE, EXCEPT those that process subforms the same way.
-;;; However, that would require us to take special action whenever we
-;;; add a converter for a new special form, and we would like to avoid
-;;; that.  We would like the special action to be visible only in the
-;;; converters that treat subforms as top-level forms.
-;;;
-;;; The way we solve this problem is as follows: We use a second
-;;; variable *TOP-LEVEL-SUBFORM-P*, which is normally FALSE.  An
-;;; :AROUND method on CONVERT binds *TOP-LEVEL-FORM-P* to the value of
-;;; *TOP-LEVEL-SUBFORM-P*, and binds *TOP-LEVEL-SUBFORM-P* to FALSE.
-;;; Individual converters that need to process subforms the same way
-;;; bind *TOP-LEVEL-SUBFORM-P* to the value of *TOP-LEVEL-FORM-P*
-;;; before calling CONVERT.
-
+;;; CONVERT is responsible for converting a form to an abstract syntax
+;;; tree.  It is only called when it is known that the form to be
+;;; converted is not a top-level form.
 
 (defmethod convert (form environment)
   (setf form (sicl-env:fully-expand-form form environment))
@@ -1028,10 +948,3 @@
 	 (convert-variable form environment))
 	(t
 	 (convert-compound (car form) form environment))))
-	 
-(defmethod convert :around (form environment)
-  (let ((*top-level-form-p* *top-level-subform-p*)
-	(*top-level-subform-p* nil))
-    (when (and *compile-time-too* *top-level-form-p*)
-      (eval form))
-    (call-next-method)))
