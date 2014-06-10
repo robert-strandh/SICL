@@ -1,8 +1,8 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :sicl-arithmetic
+  :serial t
   :components
   ((:file "packages")
-   (:file "support"
-    :depends-on ("packages"))))
+   (:file "support")))
 
