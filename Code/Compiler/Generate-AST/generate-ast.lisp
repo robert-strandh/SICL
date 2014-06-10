@@ -39,49 +39,6 @@
 ;;;
 ;;; Converting ordinary Common Lisp code.
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting a constant.
-;;;
-
-(defun convert-string (string)
-  (let ((contents-var (gensym))
-	(string-var (gensym)))
-    (convert
-     `(let ((,contents-var
-	      (sicl-word:memalloc
-	       (sicl-word:word ,(* 4 (1+ (length string)))))))
-	(sicl-word:memset ,contents-var ,(length string))
-	,@(loop for char across string
-		for i from 4 by 4
-		collect `(sicl-word:memset
-			  (sicl-word:u+ ,contents-var
-					(sicl-word:word ,i))
-			  ,char))
-	(let ((,string-var
-		(sicl-word:memalloc (sicl-word:word 8))))
-	  (sicl-word:memset
-	   ,string-var
-	   (sicl-word:memref
-	    (sicl-word:word ,(+ (ash 1 30) 20))))
-	  (sicl-word:memset
-	   (sicl-word:u+ ,string-var (sicl-word:word 4))
-	   ,contents-var)
-	  (sicl-word:u+ ,string-var (sicl-word:word 3))))
-     nil)))
-
-;;; This function is only called for constants that can not
-;;; be represented as immediates. 
-(defun convert-constant-for-linker (constant)
-  (cond ((stringp constant)
-	 (convert-string constant))
-	((symbolp constant)
-	 (convert `(find-symbol
-		    ,(symbol-name constant)
-		    (find-package
-		     ,(package-name (symbol-package constant))))
-		  nil))))	 
-
 ;;; When the constant is quoted, this function is called with the 
 ;;; surrounding QUOTE form stripped off. 
 (defun convert-constant (constant)
