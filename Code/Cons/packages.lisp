@@ -1,13 +1,7 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:sicl-common-lisp
-  (:nicknames #:sicl-cl #:scl)
-  (:export 
-   . #.(loop for symbol being each external-symbol of '#:common-lisp
-	     collect (symbol-name symbol))))
-
 (defpackage #:sicl-cons
-  (:use #:sicl-common-lisp)
+  (:use #:common-lisp)
   (:export
    ;; The symbols LOAD-CAR, LOAD-CDR, STORE-CAR, and STORE-CDR name
    ;; special operators.  The operators LOAD-CAR and LOAD-CDR are
