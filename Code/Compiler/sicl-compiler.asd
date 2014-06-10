@@ -18,7 +18,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "mir")
    (:file "new-phase1")
    (:file "ast-transformations")
    (:file "phase2")
