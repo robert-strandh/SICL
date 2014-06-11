@@ -18,6 +18,14 @@
     (when (consp expanded-form)
       (skim-compound-form (car expanded-form) expanded-form environment))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on SKIM-COMPOUND-FORM.
+
+;;; Default method.  This method is invoked when we see a form that is
+;;; not one of the ones mentioned in CLHS 3.2.3.1 that are treated
+;;; specially when encountered as top-level forms, i.e. PROGN,
+;;; LOCALLY, MACROLET, SYMBOL-MACROLET, or EVAL-WHEN.
 (defmethod skim-compound-form (head form environment)
   (declare (ignore head form environment))
   nil)
@@ -68,5 +76,3 @@
 (defmethod skim-compund-form ((head (eql 'macrolet)) form environment)
   (declare (ignorable head) (ignore form environment))
   (error "MACROLET encountered by SKIM-FILE."))
-      
-
