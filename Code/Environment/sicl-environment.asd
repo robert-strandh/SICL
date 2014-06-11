@@ -2,36 +2,22 @@
 
 (asdf:defsystem :sicl-environment
   :depends-on (:sicl-code-utilities)
+  :serial t
   :components
   ((:file "packages")
-   (:file "type-proclamations"
-    :depends-on ("packages"))
-   (:file "environment-classes"
-    :depends-on ("packages" "type-proclamations"))
-   (:file "create-environment"
-    :depends-on ("environment-classes"))
-   (:file "environment-constructors"
-    :depends-on ("environment-classes"))
-   (:file "environment-query"
-    :depends-on ("environment-constructors"))
-   (:file "macroexpand"
-    :depends-on ("environment-query"))
-   (:file "type-expand"
-    :depends-on ("environment-query"))
-   (:file "fdefinition"
-    :depends-on ("environment-query"))
-   (:file "special-operator-p"
-    :depends-on ("environment-query"))
-   (:file "macro-function"
-    :depends-on ("environment-query"))
-   (:file "compiler-macros"
-    :depends-on ("environment-query"))
-   (:file "fully-expand-form"
-    :depends-on ("environment-query" "macro-function"))
-   (:file "symbol-value"
-    :depends-on ("environment-query"))
-   (:file "constantp"
-    :depends-on ("environment-query"))
-   (:file "proclaim"
-    :depends-on ("environment-query"))))
+   (:file "type-proclamations"))
+   (:file "environment-classes"))
+   (:file "create-environment")
+   (:file "environment-constructors")
+   (:file "environment-query")
+   (:file "macroexpand")
+   (:file "type-expand")
+   (:file "fdefinition")
+   (:file "special-operator-p")
+   (:file "macro-function")
+   (:file "compiler-macros"))
+   (:file "fully-expand-form")
+   (:file "symbol-value")
+   (:file "constantp")
+   (:file "proclaim")))
 
