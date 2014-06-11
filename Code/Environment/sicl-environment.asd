@@ -19,5 +19,5 @@
    (:file "fully-expand-form")
    (:file "symbol-value")
    (:file "constantp")
-   (:file "proclaim")))
-
+   (:file "proclaim")
+   (:file "skim-file")))
