@@ -27,3 +27,14 @@
 (defmethod skim-compound-from ((head (eql 'progn)) form environment)
   (loop for subform in (rest form)
 	do (skim-form subform environment)))
+
+;;; The subforms of a LOCALLY form are considered to be top-level
+;;; forms so they should be processed just like the form itself.  We
+;;; cheat a bit here because we treat the declarations of the LOCALLY
+;;; form as if they were forms as well.  We can get away with that
+;;; because when a declaration is processed as a form (with DECLARE as
+;;; the head symbol), then we will invoke the default method which
+;;; does nothing. 
+(defmethod skim-compound-from ((head (eql 'locally)) form environment)
+  (loop for subform in (rest form)
+	do (skim-form subform environment)))
