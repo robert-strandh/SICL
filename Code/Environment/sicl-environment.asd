@@ -5,8 +5,8 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "type-proclamations"))
-   (:file "environment-classes"))
+   (:file "type-proclamations")
+   (:file "environment-classes")
    (:file "create-environment")
    (:file "environment-constructors")
    (:file "environment-query")
@@ -15,7 +15,7 @@
    (:file "fdefinition")
    (:file "special-operator-p")
    (:file "macro-function")
-   (:file "compiler-macros"))
+   (:file "compiler-macros")
    (:file "fully-expand-form")
    (:file "symbol-value")
    (:file "constantp")
