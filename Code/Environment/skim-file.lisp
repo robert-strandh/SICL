@@ -58,6 +58,15 @@
     (destructuring-bind (definitions . forms) (rest form)
       (loop for (name expansion) in definitions
 	    do (setf new-env
-		     (sicl-env:add-symbol-macro-entry new-env name expansion)))
+		     (add-symbol-macro-entry new-env name expansion)))
       (loop for form in forms
 	    do (skim-form form new-env)))))
+
+;;; Handling macrolet is a bit complicated, and we don't think we need
+;;; it during bootstrapping.  To make sure it is not silently ignored,
+;;; we call ERROR if we encounter it.
+(defmethod skim-compund-form ((head (eql 'macrolet)) form environment)
+  (declare (ignorable head) (ignore form environment))
+  (error "MACROLET encountered by SKIM-FILE."))
+      
+
