@@ -1,5 +1,13 @@
 (cl:in-package #:sicl-global-environment)
 
+;;;; Skimming a file means processing the top-level forms the way
+;;;; COMPILE-FILE does in terms of compile-time side effects on the
+;;;; environment.  No code is generated. 
+;;;;
+;;;; This file is part of the bootstrapping process, so we can assume
+;;;; that the files that are processed are well formed.  For that
+;;;; reason, no sophisticated error handling is required. 
+
 ;;; Skim a compound form with respect to ENVIRONMENT, where HEAD is
 ;;; the CAR of the form, FORM is the entire form. 
 (defgeneric skim-compound-form (head form environment))
