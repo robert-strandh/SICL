@@ -21,3 +21,9 @@
 (defmethod skim-compound-form (head form environment)
   (declare (ignore head form environment))
   nil)
+
+;;; The subforms of a PROGN form are considered to be top-level forms
+;;; so they should be processed just like the form itself.
+(defmethod skim-compound-from ((head (eql 'progn)) form environment)
+  (loop for subform in (rest form)
+	do (skim-form subform environment)))
