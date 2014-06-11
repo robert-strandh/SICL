@@ -1,2 +1,2 @@
-(cl:in-package #:sicl-environment)
+(cl:in-package #:sicl-global-environment)
 
