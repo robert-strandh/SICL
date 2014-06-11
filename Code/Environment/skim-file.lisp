@@ -81,9 +81,10 @@
 ;;;
 ;;; Main entry point.
 
-(defun skim-file (filename environment)
-  (with-open-file (stream filename :direction :input)
-    (loop with eof-value = (list nil)
-	  for form = (read stream nil eof-value)
-	  until (eq form eof-value)
-	  do (skim-form form environment))))
+(defun skim-file (filename global-environment)
+  (let ((*global-environment* global-environment))
+    (with-open-file (stream filename :direction :input)
+      (loop with eof-value = (list nil)
+	    for form = (read stream nil eof-value)
+	    until (eq form eof-value)
+	    do (skim-form form nil)))))
