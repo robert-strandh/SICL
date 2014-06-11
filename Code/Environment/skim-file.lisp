@@ -38,3 +38,10 @@
 (defmethod skim-compound-from ((head (eql 'locally)) form environment)
   (loop for subform in (rest form)
 	do (skim-form subform environment)))
+
+;;; The main action happens when we see an EVAL-WHEN form with
+;;; :COMPILE-TOPLEVEL or COMPILE being one of the situations.
+(defmethod skim-compound-form ((head (eql 'eval-when)) form environment)
+  (destructuring-bind (situations . forms) (rest form)
+    (unless (null (intersection '(:compile-toplevel compile) situations))
+      (mapc #'eval forms))))
