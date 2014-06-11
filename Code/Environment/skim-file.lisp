@@ -45,3 +45,19 @@
   (destructuring-bind (situations . forms) (rest form)
     (unless (null (intersection '(:compile-toplevel compile) situations))
       (mapc #'eval forms))))
+
+;;; The subforms of SYMBOL-MACROLET are considered to be top-level
+;;; forms so they should be processed just like the form itself.  Just
+;;; as with LOCALLY, we cheat a bit because we treat the declarations
+;;; of the SYMBOL-MACROLET form as if they were forms as well.  Again,
+;;; We can get away with that because when a declaration is processed
+;;; as a form (with DECLARE as the head symbol), then we will invoke
+;;; the default method which does nothing.
+(defmethod skim-compound-form ((head (eql 'symbol-macrolet)) form environment)
+  (let ((new-env environment))
+    (destructuring-bind (definitions . forms) (rest form)
+      (loop for (name expansion) in definitions
+	    do (setf new-env
+		     (sicl-env:add-symbol-macro-entry new-env name expansion)))
+      (loop for form in forms
+	    do (skim-form form new-env)))))
