@@ -677,6 +677,7 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   ;; FIXME: syntax check bindings
+  ;; FIXME: separate declarations from forms.
   (let ((new-env env))
     (loop for (name expansion) in (cadr form)
 	  do (setf new-env
