@@ -97,10 +97,32 @@
 ;;;
 ;;; FIXME: implement this method.  It is tricky because it can not be
 ;;; defined in the cross compiler (as far as I can tell). 
+;;; Consider the following example of a top-level form:
+;;;
+;;; (macrolet ((m (x) `(+ ,x 2)))
+;;;   (eval-when (:compile-toplevel)
+;;;     (let ((y 10))
+;;;       (print (m y)))))
+;;;
+;;; The evaluator that evaluates the LET form must be aware of the
+;;; augmented environment introduced by the MACROLET.  However, when
+;;; we are cross compiling, the evaluator is the host EVAL function,
+;;; and the augmented environment belongs to the target.  
+;;;
+;;; However, the augmented part of the environment contains only
+;;; MACROLETs, SYMBOL-MACROLETs, and declarations introduced by
+;;; LOCALLY.  It might be possible to construct a new form for the
+;;; host EVAL function to evaluate, namely the form surrounded by the
+;;; MACROLETs, the SYMBOL-MACROLETs, and the declarations of the
+;;; augmented part of the environment.  In the example above, one
+;;; could construct:
+;;;
+;;; (macrolet ((m (x) `(+ ,x 2)))
+;;;   (let ((y 10))
+;;;     (print (m y))))
 
 (defmethod process-compound-form ((head (eql 'macrolet)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   (declare (ignore environment))
   (error "MACROLET not implemented yet."))
-
