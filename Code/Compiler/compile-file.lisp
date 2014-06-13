@@ -92,6 +92,26 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; This :BEFORE method handles compile-time evaluation.
+
+;; This function takes care of testing the conditions for evaluation
+;; in the cross compiler.
+(defun maybe-evaluate (form environment)
+  (if *cross-compiling-p*
+      (if (null environment)
+	  (eval form)
+	  (error "Attempt to evaluate in a ~@
+                             non-null lexical environment."))
+      ;; FIXME: Once the native EVAL is written, use it here.
+      nil))
+
+(defmethod process-compound-form :before (head form environment)
+  (declare (ignore head))
+  (when *compile-time-too*
+    (maybe-evaluate form environment)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Process PROGN.
 ;;;
 ;;; The subforms of a top-level PROGN form are considered to be
