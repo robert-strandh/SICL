@@ -39,10 +39,27 @@
 ;;;
 ;;; Process PROGN.
 ;;;
-;;; The subforms of a PROGN form are considered to be top-level forms
-;;; so they should be processed just like the form itself.
+;;; The subforms of a top-level PROGN form are considered to be
+;;; top-level forms so they should be processed just like the form
+;;; itself.
 
 (defmethod process-compound-form ((head (eql 'progn)) form environment)
   (loop for subform in (rest form)
 	do (process-compound-form subform environment)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Process LOCALLY.
+;;;
+;;; The subforms of a top-level LOCALLY form are considered to be
+;;; top-level forms so they should be processed as top-level forms in
+;;; an environment that has been augmented by the declarations.
+
+(defmethod process-compound-form ((head (eql 'locally)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (multiple-value-bind (declarations forms)
+      (sicl-code-utilities:separate-ordinary-body (cdr form))
+    (let ((new-env (sicl-env:augment-environment-with-declarations
+		    environment declarations)))
+      (loop for subform in forms
+	    do (process-top-level-form subform new-env)))))
