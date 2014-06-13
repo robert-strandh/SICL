@@ -77,6 +77,7 @@
 	   (*compile-file-truename* (truename *compile-file-pathname*))
 	   (*package* *package*)
 	   (*readtable* *readtable*)
+	   (*cross-compiling-p* nil)
 	   (sicl-compiler-phase-1:*compile-file* t))
       (sicl-ast:make-progn-ast 
        (loop with eof-value = (list nil)
