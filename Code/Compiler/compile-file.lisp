@@ -1,5 +1,52 @@
 (in-package #:sicl-compiler)
 
+;;;; This file contains the logic that is specific to COMPILE-FILE and
+;;;; CROSS-COMPILE-FILE, i.e., the foreign file compiler.
+;;;;
+;;;; The cross compiler has some restrictions related to the fact that
+;;;; top-level forms do not necessarily appear in a null lexical
+;;;; environment as discussed in CLHS 3.2.3.1.  When an EVAL-WHEN with
+;;;; a :COMPILE-TOPLEVEL appears in a non-null lexical environment, we
+;;;; can not take the augmented part of the environment into account.
+;;;; Consider the following example of a top-level form:
+;;;;
+;;;; (macrolet ((m (x) `(+ ,x 2)))
+;;;;   (eval-when (:compile-toplevel)
+;;;;     (let ((y 10))
+;;;;       (print (m y)))))
+;;;;
+;;;; The evaluator that evaluates the LET form must be aware of the
+;;;; augmented environment introduced by the MACROLET.  However, when
+;;;; we are cross compiling, the evaluator is the host EVAL function,
+;;;; but the augmented environment belongs to the target.  
+;;;;
+;;;; Though, since the augmented part of the environment contains only
+;;;; MACROLETs, SYMBOL-MACROLETs, and declarations introduced by
+;;;; LOCALLY.  It might be possible to construct a new form for the
+;;;; host EVAL function to evaluate, namely the form surrounded by the
+;;;; MACROLETs, the SYMBOL-MACROLETs, and the declarations of the
+;;;; augmented part of the environment.  In the example above, one
+;;;; could construct:
+;;;;
+;;;; (macrolet ((m (x) `(+ ,x 2)))
+;;;;   (let ((y 10))
+;;;;     (print (m y))))
+;;;;
+;;;; This method is not QUITE correct though, because macros may
+;;;; contain side effects (they shouldn't, but they may) in which case
+;;;; those side effects would be evaluated multiple times. 
+;;;;
+;;;; Instead of attempting to implement the method mentioned above, we
+;;;; simply assume that when we are cross compiling, and an EVAL-WHEN
+;;;; with a :COMPILE-TOPLEVEL situation appears, then it is in a null
+;;;; lexical environment, and we signal an error if this is not the
+;;;; case.  This restriction is not terribly severe, because we can
+;;;; control what files are cross compiled and how they look. 
+;;;;
+;;;; In the native compiler things are easy, of course.  Just compile
+;;;; the form in the augmented environment, and then execute the
+;;;; result.
+
 ;;; The value of this variable is the PROCESSING MODE for top-level
 ;;; forms as indicated in CLHS 3.2.3.1.  
 (defparameter *compile-time-too* nil)
@@ -101,43 +148,7 @@
 ;;; top-level forms so they should be processed as top-level forms in
 ;;; an environment that has been augmented by the macro definitions.
 ;;;
-;;; FIXME: implement this method.  It is tricky because it can not be
-;;; defined in the cross compiler (as far as I can tell). 
-;;; Consider the following example of a top-level form:
-;;;
-;;; (macrolet ((m (x) `(+ ,x 2)))
-;;;   (eval-when (:compile-toplevel)
-;;;     (let ((y 10))
-;;;       (print (m y)))))
-;;;
-;;; The evaluator that evaluates the LET form must be aware of the
-;;; augmented environment introduced by the MACROLET.  However, when
-;;; we are cross compiling, the evaluator is the host EVAL function,
-;;; and the augmented environment belongs to the target.  
-;;;
-;;; However, the augmented part of the environment contains only
-;;; MACROLETs, SYMBOL-MACROLETs, and declarations introduced by
-;;; LOCALLY.  It might be possible to construct a new form for the
-;;; host EVAL function to evaluate, namely the form surrounded by the
-;;; MACROLETs, the SYMBOL-MACROLETs, and the declarations of the
-;;; augmented part of the environment.  In the example above, one
-;;; could construct:
-;;;
-;;; (macrolet ((m (x) `(+ ,x 2)))
-;;;   (let ((y 10))
-;;;     (print (m y))))
-;;;
-;;; This method is not QUITE correct though, because macros may
-;;; contain side effects (they shouldn't, but they may) in which case
-;;; those side effects would be evaluated multiple times. 
-;;;
-;;; It is probably simpler to assume that the cross compiler is never
-;;; used on forms that contain MACROLET, SYMBOL-MACROLET or LOCALLY as
-;;; top-level forms, and just signal an error for those cases.
-;;;
-;;; In the native compiler things are easy, of course.  Just compile
-;;; the form in the augmented environment, and then execute the
-;;; result.
+;;; FIXME: implement this method.
 
 (defmethod process-compound-form ((head (eql 'macrolet)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
