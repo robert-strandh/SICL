@@ -84,3 +84,21 @@
 		     (sicl-env:add-symbol-macro-entry new-env name expansion)))
       (loop for subform in forms
 	    do (process-top-level-form subform new-env)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Process MACROLET.
+;;;
+;;; The subforms of a top-level MACROLET form are considered to be
+;;; top-level forms so they should be processed as top-level forms in
+;;; an environment that has been augmented by the macro definitions.
+;;;
+;;; FIXME: implement this method.  It is tricky because it can not be
+;;; defined in the cross compiler (as far as I can tell). 
+
+(defmethod process-compound-form ((head (eql 'macrolet)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 nil)
+  (declare (ignore environment))
+  (error "MACROLET not implemented yet."))
+
