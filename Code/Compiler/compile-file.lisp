@@ -2,10 +2,10 @@
 
 (defgeneric process-compound-form (head form environment))
 
-(defun process-top-level-form (form)
-  (setf form (sicl-env:fully-expand-form form nil))
+(defun process-top-level-form (form environment)
+  (setf form (sicl-env:fully-expand-form form environment))
   (if (and (consp form) (not (eq (car form) 'quote)))
-      (process-compound-form (car form) form nil)
+      (process-compound-form (car form) form environment)
       nil))
 
 (defun compile-file (input-file &key
