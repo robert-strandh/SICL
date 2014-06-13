@@ -1,5 +1,7 @@
 (in-package #:sicl-compiler)
 
+(defparameter *compile-time-too* nil)
+
 (defgeneric process-compound-form (head form environment))
 
 (defun process-top-level-form (form environment)
