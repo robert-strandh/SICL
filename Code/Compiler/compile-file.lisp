@@ -155,3 +155,51 @@
   (sicl-code-utilities:check-argcount form 1 nil)
   (declare (ignore environment))
   (error "MACROLET not implemented yet."))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Process EVAL-WHEN.
+
+(defmethod process-compound-form ((head (eql 'eval-when)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 nil)
+  (destructuring-bind (situations . forms) (rest form)
+    (unless (sicl-code-utilities:proper-list-p situations)
+      (error 'situations-must-be-proper-list
+	     :expr situations))
+    ;; Check each situation
+    (loop for situation in situations
+	  do (unless (and (symbolp situation)
+			  (member situation
+				  '(:compile-toplevel :load-toplevel :execute
+				    compile load eval)))
+	       ;; FIXME: perhaps we should warn about the deprecated
+	       ;; situations
+	       (error 'invalid-eval-when-situation
+		      :expr situation)))
+    (let ((ct (intersection '(:compile-toplevel compile) situations))
+	  (lt (intersection '(:load-toplevel load) situations))
+	  (e (intersection '(:execute eval) situations)))
+      ;; The following COND form exactly mimics the table in
+      ;; CLHS 3.2.3.1.
+      (cond ((or (and ct lt)
+		 (and (not ct) lt e *compile-time-too*))
+	     (let ((*compile-time-too* t))
+	       (loop for subform in forms
+		     do (process-top-level-form subform environment))))
+	    ((or (and (not ct) lt e (not *compile-time-too*))
+		 (and (not ct) lt (not e)))
+	     (let ((*compile-time-too* nil))
+	       (loop for subform in forms
+		     do (process-top-level-form subform environment))))
+	    ((or (and ct (not lt))
+		 (and (not ct) (not lt) e *compile-time-too*))
+	     (if *cross-compiling-p*
+		 (if (null environment)
+		     (mapc #'eval forms)
+		     (error "Attempt to evaluate in a ~@
+                             non-null lexical environment."))
+		 ;; FIXME: Once the native EVAL is written, use it
+		 ;; here.
+		 nil))
+	    (t nil)))))
