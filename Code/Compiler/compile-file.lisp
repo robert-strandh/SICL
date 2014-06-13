@@ -59,8 +59,28 @@
 (defmethod process-compound-form ((head (eql 'locally)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (multiple-value-bind (declarations forms)
-      (sicl-code-utilities:separate-ordinary-body (cdr form))
+      (sicl-code-utilities:separate-ordinary-body (rest form))
     (let ((new-env (sicl-env:augment-environment-with-declarations
 		    environment declarations)))
+      (loop for subform in forms
+	    do (process-top-level-form subform new-env)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Process SYMBOL-MACROLET.
+;;;
+;;; The subforms of a top-level SYMBOL-MACROLET form are considered to
+;;; be top-level forms so they should be processed as top-level forms
+;;; in an environment that has been augmented by the macro definitions. 
+
+(defmethod process-compound-form ((head (eql 'symbol-macrolet)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
+  (sicl-code-utilities:check-argcount form 1 nil)
+  (destructuring-bind (definitions . forms) (rest form)
+    ;; FIXME check that each definition is a proper list of 2 elements.
+    (let ((new-env env))
+      (loop for (name expansion) in definitions
+	    do (setf new-env
+		     (sicl-env:add-symbol-macro-entry new-env name expansion)))
       (loop for subform in forms
 	    do (process-top-level-form subform new-env)))))
