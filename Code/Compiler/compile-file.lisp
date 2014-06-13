@@ -120,6 +120,18 @@
 ;;; (macrolet ((m (x) `(+ ,x 2)))
 ;;;   (let ((y 10))
 ;;;     (print (m y))))
+;;;
+;;; This method is not QUITE correct though, because macros may
+;;; contain side effects (they shouldn't, but they may) in which case
+;;; those side effects would be evaluated multiple times. 
+;;;
+;;; It is probably simpler to assume that the cross compiler is never
+;;; used on forms that contain MACROLET, SYMBOL-MACROLET or LOCALLY,
+;;; and just signal an error for those cases.
+;;;
+;;; In the native compiler things are easy, of course.  Just compile
+;;; the form in the augmented environment, and then execute the
+;;; result.
 
 (defmethod process-compound-form ((head (eql 'macrolet)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
