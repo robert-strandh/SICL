@@ -45,7 +45,7 @@
 
 (defmethod process-compound-form ((head (eql 'progn)) form environment)
   (loop for subform in (rest form)
-	do (process-compound-form subform environment)))
+	do (process-top-level-form subform environment)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
