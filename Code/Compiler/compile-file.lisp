@@ -1,5 +1,13 @@
 (in-package #:sicl-compiler)
 
+(defgeneric process-top-level-compound-form (head form environment))
+
+(defun process-top-level-form (form)
+  (setf form (sicl-env:fully-expand-form form nil))
+  (if (and (consp form) (not (eq (car form) 'quote)))
+      (process-top-level-compound-form (car form) form nil)
+      nil))
+
 (defun compile-file (input-file &key
 				(output-file nil output-file-p)
 				(verbose *compile-verbose*)
