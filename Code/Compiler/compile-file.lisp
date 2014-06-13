@@ -44,6 +44,7 @@
 ;;; itself.
 
 (defmethod process-compound-form ((head (eql 'progn)) form environment)
+  (sicl-code-utilities:check-form-proper-list form)
   (loop for subform in (rest form)
 	do (process-top-level-form subform environment)))
 
