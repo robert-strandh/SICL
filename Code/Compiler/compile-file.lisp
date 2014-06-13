@@ -1,5 +1,7 @@
 (in-package #:sicl-compiler)
 
+;;; The value of this variable is the PROCESSING MODE for top-level
+;;; forms as indicated in CLHS 3.2.3.1.  
 (defparameter *compile-time-too* nil)
 
 (defgeneric process-compound-form (head form environment))
