@@ -214,12 +214,6 @@
 		     do (process-top-level-form subform environment))))
 	    ((or (and ct (not lt))
 		 (and (not ct) (not lt) e *compile-time-too*))
-	     (if *cross-compiling-p*
-		 (if (null environment)
-		     (mapc #'eval forms)
-		     (error "Attempt to evaluate in a ~@
-                             non-null lexical environment."))
-		 ;; FIXME: Once the native EVAL is written, use it
-		 ;; here.
-		 nil))
+	     (loop for subform in forms
+		   do (maybe-evaluate subform environment)))
 	    (t nil)))))
