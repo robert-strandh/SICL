@@ -4,6 +4,10 @@
 ;;; forms as indicated in CLHS 3.2.3.1.  
 (defparameter *compile-time-too* nil)
 
+;;; This variable is set to true when the file compiler is used as a
+;;; cross compiler, and to false when it is used as a native compiler.
+(defvar *cross-compiling-p*)
+
 (defgeneric process-compound-form (head form environment))
 
 (defun process-top-level-form (form environment)
