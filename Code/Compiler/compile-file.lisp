@@ -1,11 +1,11 @@
 (in-package #:sicl-compiler)
 
-(defgeneric process-top-level-compound-form (head form environment))
+(defgeneric process-compound-form (head form environment))
 
 (defun process-top-level-form (form)
   (setf form (sicl-env:fully-expand-form form nil))
   (if (and (consp form) (not (eq (car form) 'quote)))
-      (process-top-level-compound-form (car form) form nil)
+      (process-compound-form (car form) form nil)
       nil))
 
 (defun compile-file (input-file &key
@@ -30,4 +30,19 @@
 	     for result = (sicl-compiler-phase-1:convert-initial form)
 	     unless (null result)
 	       collect result)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on PROCESS-COMPOUND-FORM.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Process PROGN.
+;;;
+;;; The subforms of a PROGN form are considered to be top-level forms
+;;; so they should be processed just like the form itself.
+
+(defmethod process-compound-form ((head (eql 'progn)) form environment)
+  (loop for subform in (rest form)
+	do (process-compound-form subform environment)))
 
