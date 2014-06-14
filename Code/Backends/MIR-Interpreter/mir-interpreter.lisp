@@ -98,7 +98,7 @@
 
 ;;; This variable is used to hold the list of return values from a
 ;;; function.  It is used by the return instruction in the callee
-;;; and by the get-values instruction in the caller. 
+;;; and by the funcall instruction in the caller. 
 (defparameter *values* '())
 
 ;;; The currently executing MIR instruction.
@@ -207,19 +207,6 @@
   (setf *program-counter*
 	(return-address (car *stack*)))
   (pop *stack*))
-
-(defmethod execute-instruction
-    ((instruction sicl-mir:get-values-instruction))
-  (let ((outputs (sicl-mir:outputs instruction)))
-    ;; Initialize all the outputs to NIL in case there are fewer
-    ;; return values than outputs.
-    (loop for output in outputs
-	  do (write-output output nil))
-    ;; Write return values to outputs.
-    (loop for value in *values*
-	  for output in outputs
-	  do (write-output output value)))
-  (setf *program-counter* (car (sicl-mir:successors instruction))))
 
 (defmethod execute-instruction
     ((instruction sicl-mir:nop-instruction))
