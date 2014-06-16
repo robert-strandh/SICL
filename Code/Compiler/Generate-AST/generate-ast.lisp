@@ -113,8 +113,6 @@
 		 (list (sicl-env:ast info))))
 	(let* ((global-ast (find-or-create-ast (sicl-env:location info)))
 	       (ast (cleavir-ast:make-call-ast global-ast arguments)))
-	  (setf (cleavir-ast:function-type global-ast)
-		(sicl-env:type info))
 	  ast))))
 
 ;;; Method to be used when the head of a compound form is a
