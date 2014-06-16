@@ -218,8 +218,7 @@
 	   (*package* *package*)
 	   (*readtable* *readtable*)
 	   (*cross-compiling-p* nil)
-	   (*top-level-asts* '())
-	   (sicl-compiler-phase-1:*compile-file* t))
+	   (*top-level-asts* '()))
       (sicl-ast:make-progn-ast 
        (loop with eof-value = (list nil)
 	     for form = (sicl-reader:read stream nil eof-value)
@@ -246,8 +245,7 @@
 	   (*package* *package*)
 	   (*readtable* *readtable*)
 	   (*cross-compiling-p* t)
-	   (*top-level-asts* '())
-	   (sicl-compiler-phase-1:*compile-file* t))
+	   (*top-level-asts* '()))
       (sicl-ast:make-progn-ast 
        (loop with eof-value = (list nil)
 	     for form = (sicl-reader:read stream nil eof-value)
