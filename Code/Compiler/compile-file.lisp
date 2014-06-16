@@ -55,6 +55,11 @@
 ;;; cross compiler, and to false when it is used as a native compiler.
 (defvar *cross-compiling-p*)
 
+;;; This variable holds a list of the top-level ASTs.  While these
+;;; ASTs are accumulated, the list is in reverse order with respect to
+;;; occurrence in the file.
+(defvar *top-level-asts*)
+
 (defgeneric process-compound-form (head form environment))
 
 (defun process-top-level-form (form environment)
@@ -213,6 +218,7 @@
 	   (*package* *package*)
 	   (*readtable* *readtable*)
 	   (*cross-compiling-p* nil)
+	   (*top-level-asts* '())
 	   (sicl-compiler-phase-1:*compile-file* t))
       (sicl-ast:make-progn-ast 
        (loop with eof-value = (list nil)
@@ -240,6 +246,7 @@
 	   (*package* *package*)
 	   (*readtable* *readtable*)
 	   (*cross-compiling-p* t)
+	   (*top-level-asts* '())
 	   (sicl-compiler-phase-1:*compile-file* t))
       (sicl-ast:make-progn-ast 
        (loop with eof-value = (list nil)
