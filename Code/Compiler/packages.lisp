@@ -280,7 +280,6 @@
   (:export
    #:*backend*
    #:compile-file
-   #:compile-time-compile
    #:type-inference
    #:trim-instruction-graph
    ))
