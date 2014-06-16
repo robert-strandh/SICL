@@ -11,7 +11,6 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "new-phase1")
    (:file "ast-transformations")
    (:file "phase2")
    (:file "graph-coloring")
