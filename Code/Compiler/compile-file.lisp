@@ -205,10 +205,10 @@
 ;;; Function COMPILE-FILE.
 
 (defun compile-file (input-file &key
-				(output-file nil output-file-p)
-				(verbose *compile-verbose*)
-				(print *compile-print*)
-				(external-format :default))
+				  (output-file nil output-file-p)
+				  (verbose *compile-verbose*)
+				  (print *compile-print*)
+				  (external-format :default))
   (declare (ignore output-file output-file-p verbose print))
   (with-open-file (stream input-file
 			  :direction :input
