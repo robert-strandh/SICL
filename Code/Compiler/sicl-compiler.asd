@@ -12,11 +12,4 @@
   :components
   ((:file "packages")
    (:file "ast-transformations")
-   (:file "graph-coloring")
-   (:file "make")
-   (:file "program")
-   (:file "type-map")
-   (:file "type-inference")
-   (:file "compile-file")
-   (:file "compile-lambda-expression")
-   (:file "compile-time-compile")))
+   (:file "compile-file")))
