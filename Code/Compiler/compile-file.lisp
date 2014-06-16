@@ -153,9 +153,9 @@
 ;;; FIXME: implement this method.
 
 (defmethod process-compound-form ((head (eql 'macrolet)) form environment)
+  (declare (ignore environment))
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
-  (declare (ignore environment))
   (error "MACROLET not implemented yet."))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
