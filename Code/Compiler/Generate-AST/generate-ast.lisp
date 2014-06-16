@@ -807,9 +807,9 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 3 3)
   (destructuring-bind (arg1 arg2 variable) (cdr form)
-    (cleavir-ast:make-fixnum-+-ast (convert arg1 environment)
-				   (convert arg2 environment)
-				   (convert variable environment))))
+    (cleavir-ast:make-fixnum-add-ast (convert arg1 environment)
+				     (convert arg2 environment)
+				     (convert variable environment))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -821,9 +821,9 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 3 3)
   (destructuring-bind (arg1 arg2 variable) (cdr form)
-    (cleavir-ast:make-fixnum---ast (convert arg1 environment)
-				   (convert arg2 environment)
-				   (convert variable environment))))
+    (cleavir-ast:make-fixnum-sub-ast (convert arg1 environment)
+				     (convert arg2 environment)
+				     (convert variable environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -834,8 +834,8 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (destructuring-bind (arg1 arg2) (cdr form)
-    (cleavir-ast:make-fixnum-<-ast (convert arg1 environment)
-				   (convert arg2 environment))))
+    (cleavir-ast:make-fixnum-less-ast (convert arg1 environment)
+				      (convert arg2 environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -846,8 +846,8 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (destructuring-bind (arg1 arg2) (cdr form)
-    (cleavir-ast:make-fixnum-<=-ast (convert arg1 environment)
-				    (convert arg2 environment))))
+    (cleavir-ast:make-fixnum-not-greater-ast (convert arg1 environment)
+					     (convert arg2 environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -858,8 +858,8 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (destructuring-bind (arg1 arg2) (cdr form)
-    (cleavir-ast:make-fixnum->-ast (convert arg1 environment)
-				   (convert arg2 environment))))
+    (cleavir-ast:make-fixnum-greater-ast (convert arg1 environment)
+					 (convert arg2 environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -870,8 +870,8 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (destructuring-bind (arg1 arg2) (cdr form)
-    (cleavir-ast:make-fixnum->=-ast (convert arg1 environment)
-				    (convert arg2 environment))))
+    (cleavir-ast:make-fixnum-not-less-ast (convert arg1 environment)
+					  (convert arg2 environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -882,8 +882,8 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (destructuring-bind (arg1 arg2) (cdr form)
-    (cleavir-ast:make-fixnum-=-ast (convert arg1 environment)
-				   (convert arg2 environment))))
+    (cleavir-ast:make-fixnum-equal-ast (convert arg1 environment)
+				       (convert arg2 environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
