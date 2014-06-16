@@ -223,9 +223,7 @@
        (loop with eof-value = (list nil)
 	     for form = (sicl-reader:read stream nil eof-value)
 	     until (eq form eof-value)
-	     for result = (sicl-compiler-phase-1:convert-initial form)
-	     unless (null result)
-	       collect result)))))
+	     do (process-top-level-form form nil))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -250,6 +248,4 @@
        (loop with eof-value = (list nil)
 	     for form = (sicl-reader:read stream nil eof-value)
 	     until (eq form eof-value)
-	     for result = (sicl-compiler-phase-1:convert-initial form)
-	     unless (null result)
-	       collect result)))))
+	     do (process-top-level-form form nil))))))
