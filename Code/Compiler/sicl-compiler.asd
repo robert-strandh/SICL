@@ -2,14 +2,6 @@
 
 (asdf:defsystem :sicl-compiler
   :depends-on (:sicl-code-utilities
-	       :sicl-compiler-utilities
-	       :sicl-compiler-basic-blocks
-	       :sicl-compiler-dominance
-	       :sicl-compiler-liveness
-	       :sicl-compiler-reaching-definitions
-	       :sicl-compiler-def-use-chains
-	       :sicl-compiler-ssa-form
-	       :sicl-compiler-loops
 	       :sicl-environment
 	       :sicl-reader-simple
 	       :sicl-type
