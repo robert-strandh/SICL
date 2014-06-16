@@ -26,12 +26,6 @@
       (let ((ast (etypecase location
 		   (sicl-env:lexical-location
 		    (cleavir-ast:make-lexical-ast
-		     (sicl-env:name location)))
-		   (sicl-env:global-location
-		    (cleavir-ast:make-global-ast
-		     (sicl-env:name location)))
-		   (sicl-env:special-location
-		    (cleavir-ast:make-special-ast
 		     (sicl-env:name location))))))
 	(setf (gethash location *location-asts*) ast))))
 
