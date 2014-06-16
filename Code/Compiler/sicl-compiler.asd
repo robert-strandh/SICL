@@ -12,7 +12,6 @@
   :components
   ((:file "packages")
    (:file "ast-transformations")
-   (:file "phase2")
    (:file "graph-coloring")
    (:file "make")
    (:file "program")
