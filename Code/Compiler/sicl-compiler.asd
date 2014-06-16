@@ -4,6 +4,7 @@
   :depends-on (:sicl-code-utilities
 	       :sicl-environment
 	       :sicl-reader-simple
+	       :sicl-generate-ast
 	       :sicl-type
 	       :cleavir-ast
 	       :cleavir-primop)
