@@ -219,11 +219,10 @@
 	   (*readtable* *readtable*)
 	   (*cross-compiling-p* nil)
 	   (*top-level-asts* '()))
-      (sicl-ast:make-progn-ast 
-       (loop with eof-value = (list nil)
-	     for form = (sicl-reader:read stream nil eof-value)
-	     until (eq form eof-value)
-	     do (process-top-level-form form nil))))))
+      (loop with eof-value = (list nil)
+	    for form = (sicl-reader:read stream nil eof-value)
+	    until (eq form eof-value)
+	    do (process-top-level-form form nil)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -244,8 +243,7 @@
 	   (*readtable* *readtable*)
 	   (*cross-compiling-p* t)
 	   (*top-level-asts* '()))
-      (sicl-ast:make-progn-ast 
-       (loop with eof-value = (list nil)
-	     for form = (sicl-reader:read stream nil eof-value)
-	     until (eq form eof-value)
-	     do (process-top-level-form form nil))))))
+      (loop with eof-value = (list nil)
+	    for form = (sicl-reader:read stream nil eof-value)
+	    until (eq form eof-value)
+	    do (process-top-level-form form nil)))))
