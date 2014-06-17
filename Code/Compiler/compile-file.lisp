@@ -135,7 +135,7 @@
   (sicl-code-utilities:check-argcount form 1 nil)
   (destructuring-bind (definitions . forms) (rest form)
     ;; FIXME check that each definition is a proper list of 2 elements.
-    (let ((new-env env))
+    (let ((new-env environment))
       (loop for (name expansion) in definitions
 	    do (setf new-env
 		     (sicl-env:add-symbol-macro-entry new-env name expansion)))
