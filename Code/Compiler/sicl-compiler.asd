@@ -11,5 +11,4 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "ast-transformations")
    (:file "compile-file")))
