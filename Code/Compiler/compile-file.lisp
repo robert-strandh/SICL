@@ -74,6 +74,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Default method.  Convert to AST and accumulate.
+
+(defmethod process-compound-form (head form environment)
+  (declare (ignore head))
+  (push (sicl-generate-ast:generate-ast form environment)
+	*top-level-asts*))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; This :BEFORE method handles compile-time evaluation.
 
 ;; This function takes care of testing the conditions for evaluation
