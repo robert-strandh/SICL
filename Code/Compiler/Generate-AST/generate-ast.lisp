@@ -898,3 +898,6 @@
 	 (convert-variable form environment))
 	(t
 	 (convert-compound (car form) form environment))))
+
+(defun generate-ast (form environment)
+  (convert form environment))
