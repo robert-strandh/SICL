@@ -249,11 +249,11 @@
     ((symbol (eql 'eval-when)) form environment)
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
-  (unless (sicl-code-utilities:proper-list-p (cadr form))
+  (unless (sicl-code-utilities:proper-list-p (second form))
     (error 'situations-must-be-proper-list
-	   :expr (cadr form)))
+	   :expr (second form)))
   ;; Check each situation
-  (loop for situation in (cadr form)
+  (loop for situation in (second form)
 	do (unless (and (symbolp situation)
 			(member situation
 				'(:compile-toplevel :load-toplevel :execute
