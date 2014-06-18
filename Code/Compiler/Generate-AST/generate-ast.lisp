@@ -878,8 +878,9 @@
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 2 2)
   (destructuring-bind (arg1 arg2) (cdr form)
-    (cleavir-ast:make-fixnum-equal-ast (convert arg1 environment)
-				       (convert arg2 environment))))
+    (make-instance 'cleavir-ast:fixnum-equal-ast
+      :arg1-ast (convert arg1 environment)
+      :arg2-ast (convert arg2 environment))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
