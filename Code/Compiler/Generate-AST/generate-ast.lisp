@@ -261,7 +261,7 @@
 	     ;; FIXME: perhaps we should warn about the deprecated situations
 	     (error 'invalid-eval-when-situation
 		    :expr situation)))
-  (if (not (null (intersection '(:execute eval) situations)))
+  (if (not (null (intersection '(:execute eval) (second form))))
       (cleavir-ast:make-progn-ast
        (convert-sequence (cddr form) environment))
       (convert 'nil environment)))
