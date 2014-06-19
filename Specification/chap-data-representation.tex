@@ -3,36 +3,57 @@
 
 \section{Low-level tag bits}
 
-The two least significant bits of a machine word are used to represent
-four different \emph{tags} as follows:
+On 32-bit backends, the two least significant bits of a machine word
+are used to represent four different \emph{tags} as follows:
 
 \begin{itemize}
 \item \texttt{00}.  This tag is used for fixnums.  The remaining bits
   represent a signed integer in two's complement representation.  On a
   32-bit machine, a fixnum is thus in the interval $[2^{-29}, 2^{29} -
-    1]$.  On a 64-bit machine, a fixnum is in the interval $[2^{-61}, 2^{61} -
-    1]$.  
+    1]$.
 \item \texttt{01}.  This tag is used for \texttt{cons} cells.  A
   pointer to a \texttt{cons} cell is thus a pointer aligned to a
-  double word to which the machine integer $1$ has been added.  On a
-  32-bit machine, the bit representing $2^2$ will always have the
-  value $0$.  On a 64-bit machine, the bits representing $2^2$ and
-  $2^3$ will always have the value $0$.
+  double word to which the machine integer $1$ has been added.  The
+  bit representing $2^2$ will always have the value $0$.
 \item \texttt{10}.  This tag is used for various \emph{immediate}
   objects.  In particular for \emph{characters}, but also a
   distinguished bit pattern that is used to initialize \emph{unbound}
-  variables and slots.  On 64-bit platforms \emph{single-floats} are
+  variables and slots.  Floats of type \texttt{short-float} are
   represented as immediate values. 
 \item \texttt{11}.  This tag is used for all heap-allocated objects
   other than \texttt{cons} cells.  A heap allocated object like this
   is called a \emph{general instance}.
 \end{itemize}
 
+On 64-bit backends, the three least significant bits are used as tag
+bits as follows:
+
+\begin{itemize}
+\item \texttt{000}, \texttt{010}, \texttt{100}, \texttt{110}.  These
+  tags are used for fixnums.  The bits except the last one represent
+  integer in two's complement representation.  On a 64-bit machine, a
+  fixnum is thus in the interval $[2^{-62}, 2^{62} - 1]$.
+\item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
+  pointer to a \texttt{cons} cell is thus a pointer aligned to a
+  double word to which the machine integer $1$ has been added.  The
+  bit representing will always have the value $0$.
+\item \texttt{011}, \texttt{101}.  These tags are used for various
+  \emph{immediate} objects.  In particular for \emph{characters}, but
+  also a distinguished bit pattern that is used to initialize
+  \emph{unbound} variables and slots.  Floats of type
+  \texttt{short-float} and \texttt{single-float} are represented as
+  immediate values.
+\item \texttt{111}.  This tag is used for all heap-allocated objects
+  other than \texttt{cons} cells.  A heap allocated object like this
+  is called a \emph{general instance}.
+\end{itemize}
+
 \section{Immediate objects}
 
-Immediate objects are all objects with \texttt{10} in the lower two
-bits.  Two more bits are used to distinguish between different kinds
-of immediate objects, giving the following four low bits:
+On 32-bit backends, immediate objects are all objects with \texttt{10}
+in the lower two bits.  Two more bits are used to distinguish between
+different kinds of immediate objects, giving the following four low
+bits:
 
 \begin{itemize}
 \item \texttt{0010}.  This tag is used for Unicode characters.  When
