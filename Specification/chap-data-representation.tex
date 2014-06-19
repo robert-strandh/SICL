@@ -463,25 +463,20 @@ slots.
 
 \begin{enumerate}
 \item The obligatory \emph{stamp}.
-\item One ore more slots representing \emph{entry points}.  Each entry
-  point is a \emph{raw address} of an aligned word in the byte vector
+\item The \emph{entry point}.  The each entry
+  point is a \emph{raw address} of an aligned word in the vector
   containing the instructions of the function.  The garbage collector
   must update the value of this slot if it decides to move the
-  rack of the code vector.  Each backend determines the number
-  of entry points and their significance, but they typically have to
-  do with the number of arguments and whether the call is an ordinary
-  call or a tail call.
-\item The \emph{linkage rack} for this function, which is a raw
-  disembodied rack pointer pointing to the rack
-  of the linkage vector for this function.  The ordinary \cl{}
-  object containing this rack is referred to from the code
-  object in the slot described previously.  The garbage collector must
-  update the value of this slot if it decides to move the rack
-  of the linkage vector.  The first word of the linkage
-  rack contains the \emph{code object} for this function (see below).
+  rack of the code vector.
 \item An \emph{environment}, which is the local environment in which
-  the function was defined. If the function does not close over any
-  variables, then the value of this slot is \texttt{NIL}.
+  the function was defined.  The local environment is represented as a
+  proper list of simple vectors, one for each \emph{level} of the
+  environment according to the nesting depth of the function.  The
+  last element of the list contains the \emph{linkage vector} which
+  contains \emph{constants} and \emph{storage cells of global
+    functions} that are referenced by the function.  The first element
+  of the linkage vector is the \emph{code object} of the function (see
+  below).  Several functions may share the same linkage vector. 
 \end{enumerate}
 
 Since raw addresses are word aligned, they show up as \texttt{fixnum}s
@@ -506,12 +501,12 @@ and a rack containing (in addition to inherited slots):
 \end{enumerate}
 
 By having several functions share the same linkage vector, we can
-simplify calls between functions in the same compilation unit, because
-the caller and the callee would then share the same linkage vector.
-In contrast, a call from a function in one compilation unit to a
-function in a different compilation unit involves (in the most general
-case) accessing the linkage rack of the callee and storing it in a
-register.
+simplify calls between top-level functions in the same compilation
+unit, because the caller and the callee would then share the
+same static environment.  In contrast, a call from a function in one
+compilation unit to a function in a different compilation unit
+involves accessing the static environment of the callee and storing it
+in a register.
 
 For a \emph{generic function}, the description of the slots above
 applies both to the generic function object itself and to the
