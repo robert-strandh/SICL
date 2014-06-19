@@ -263,11 +263,10 @@ itself a subclass of the class \texttt{standard-object}
 
 To make function invocation fast, we want every subclass of the class
 \texttt{function} to be invoked in the same way, i.e. by loading the
-\emph{static environment} and the \emph{code vector} into registers
-and then transferring control to the \emph{entry point} of the
-function. The static environment, the code vector, and the entry point
-are all stored in the function object and are loaded into registers as
-part of the function-call protocol.
+\emph{static environment} into a register and then transferring
+control to the \emph{entry point} of the function. The static
+environment and the entry point are stored in the function object
+and are loaded into registers as part of the function-call protocol.
 
 When the funcallable standard object is a generic function, invoking
 it amounts to transferring control to the \emph{discriminating
@@ -280,9 +279,9 @@ a slot of the generic function, because once it is computed and
 installed, it is no longer needed.  In order for the generic function
 itself to behave in exactly the same way as its discriminating
 function, whenever a new discriminating function is \emph{installed},
-the \emph{entry point}, the \emph{linkage rack}, and the
-\emph{static environment} are copied from the discriminating function
-to the corresponding slots of the generic function itself.
+the \emph{entry point} and the \emph{static environment} are copied
+from the discriminating function to the corresponding slots of the
+generic function itself.
 
 \section{Rigid instances}
 \label{sec-data-representation-rigid-instances}
