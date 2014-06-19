@@ -528,38 +528,39 @@ can occur:
   function (i.e. its class is a subclass of the class
   \texttt{function}), but nothing else is know about it, then an
   \emph{external call} is made.  Such a call consists of copying the
-  contents of the \emph{static environment} slot and the \emph{linkage
-    rack} slot to the predetermined place specific to the backend,
-  and then to issue a \emph{call} instruction (or equivalent) to the
-  address indicated by the most general \emph{entry point} slot of the
-  function object.  When the call is to a \emph{global function}, then
-  the linkage rack contains a \texttt{cons} cell whose \texttt{car}
-  is guaranteed to contain a function object, so this situation is
-  applicable in this case. 
+  contents of the \emph{static environment} slot to the predetermined
+  place specific to the backend, and then to issue a \emph{call}
+  instruction (or equivalent) to the address indicated by the
+  \emph{entry point} slot of the function object.  When the
+  call is to a \emph{global function}, then the linkage vector contains
+  a \texttt{cons} cell whose \texttt{car} is guaranteed to contain a
+  function object, so this situation is applicable in this case.
 \item When it can not only be determined statically that the object
   being called is a function, but also that the number of arguments
   that will be passed to it is acceptable, then the alternative entry
   point can be used.  This is often the case when the function being
-  called is a \emph{global system function}. 
+  called is a \emph{global system function}.  Then the alternative
+  entry point is computed as a constant offset from the normal entry
+  point.
 \item When it can be determined statically that the object being
   called is a function object in the \emph{same compilation unit} as
   the caller, then we can make an \emph{internal call}.  If both the
   caller and the callee are \emph{global functions} (so that the
-  static environment is NIL for both), then it suffices to issue a
-  \texttt{call} instruction (or equivalent) to a relative address that
-  can be determined statically.  The linkage rack does not need to
-  be passed because it is shared between the caller and the callee.
-  The relative address can be chosen so as to avoid type checking of
-  arguments with known types. 
+  static environment contain only the linkage vector for both), then
+  it suffices to issue a \texttt{call} instruction (or equivalent) to
+  a relative address that can be determined statically.  The static
+  environment does not need to be passed because it is shared between
+  the caller and the callee.  The relative address can be chosen so as
+  to avoid type checking of arguments with known types.
 \item Even when it can not be determined statically that the object
   being called is a function, there are some situations that can be
   optimized.  For instance, when it is likely that the object is going
   to be called multiple times with the same number of arguments, then
   it may pay off to start by checking that the object is a function,
   then accessing its \emph{lambda list} to determine that the number
-  of arguments is acceptable, and then cache the static environment,
-  the linkage rack, and the alternative entry point in \emph{local
-    registers}.   A typical use for this situation is in the
-  \emph{sequence functions} for the keyword arguments \texttt{:test},
-  \texttt{:test-not}, and \texttt{:key}.  
+  of arguments is acceptable, and then cache the static environment
+  and the alternative entry point in \emph{local registers}.  A
+  typical use for this situation is in the \emph{sequence functions}
+  for the keyword arguments \texttt{:test}, \texttt{:test-not}, and
+  \texttt{:key}.
 \end{itemize}
