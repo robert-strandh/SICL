@@ -457,17 +457,15 @@ somewhat complex way, as illustrated by
 Representation of functions.}
 \end{figure}
 
+\refFig{fig-function-representation} shows two functions.  The two
+functions were created from the same compilation unit, because they
+share the last \texttt{cons} cell of the static environment.
+
 A function is represented as a two-word header (as usual) and a
-rack with at least four slots in addition to the inherited
-slots.
+rack with three slots:
 
 \begin{enumerate}
 \item The obligatory \emph{stamp}.
-\item The \emph{entry point}.  The each entry
-  point is a \emph{raw address} of an aligned word in the vector
-  containing the instructions of the function.  The garbage collector
-  must update the value of this slot if it decides to move the
-  rack of the code vector.
 \item An \emph{environment}, which is the local environment in which
   the function was defined.  The local environment is represented as a
   proper list of simple vectors, one for each \emph{level} of the
@@ -477,7 +475,19 @@ slots.
     functions} that are referenced by the function.  The first element
   of the linkage vector is the \emph{code object} of the function (see
   below).  Several functions may share the same linkage vector. 
+\item The \emph{entry point}.  The each entry
+  point is a \emph{raw address} of an aligned word in the vector
+  containing the instructions of the function.  The garbage collector
+  must update the value of this slot if it decides to move the
+  rack of the code vector.
 \end{enumerate}
+
+As indicated above, the \emph{linkage vector} of a function is a
+simple vector, and it is the last element of the proper list that
+makes up the \emph{static environment} of the function.  The most
+important purpose of the linkage vector is to contain \emph{constants}
+and \emph{storage cells} for global functions that are referenced by
+the function.  
 
 Since raw addresses are word aligned, they show up as \texttt{fixnum}s
 when inspected by tools that are unaware of their special
