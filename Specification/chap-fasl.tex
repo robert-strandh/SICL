@@ -25,9 +25,12 @@ file.  Starting immediately after the first word is \emph{executable
 
 The executable code in the \emph{fasl} file can be seen as a \cl{}
 function that takes 3 functions as arguments, namely
-\texttt{copy-string}, \texttt{intern}, and \texttt{fdefinition}, where
+\texttt{copy-string}, \texttt{intern}, and \texttt{fstorage}, where
 \texttt{copy-string} is a function of a single argument that returns a
-copy of a string passed as an argument. 
+copy of a string passed as an argument, and \texttt{fstorage} is a
+function of a single argument (a function name) that returns a
+\texttt{cons} cell containing the global definition of the function
+with that name.
 
 In order to create objects and modify the environment, the code in the
 \emph{fasl} file executes the following steps:
@@ -40,8 +43,10 @@ In order to create objects and modify the environment, the code in the
   the name of a symbol.
 \item Call \texttt{intern} with the name of the symbol and the name of
   the package in order to obtain a symbol.
-\item Call \texttt{fdefinition} with the symbol to obtain the desired
-  function. 
+\item Call \texttt{fstorage} with the symbol to obtain the storage
+  cell for the desired function.
+\item Take the \texttt{car} of that cell to get the desired function.
+\item Use the function to create the desired object.
 \end{enumerate}
 
 If the name of the function that is wanted is of the form
@@ -50,4 +55,4 @@ first has to be found with the method indicated above.  Then the
 symbols \texttt{setf}, and \texttt{NIL}, must also be found using the
 same method as above.  The function \texttt{cons} must then be called
 in order to build the list that gives the name of the desired
-function.  Finally, \texttt{fdefinition} is called with that list. 
+function.  Finally, \texttt{fstorage} is called with that list. 
