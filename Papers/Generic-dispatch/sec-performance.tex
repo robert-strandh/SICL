@@ -135,7 +135,10 @@ simulated slot reader:
 On our computer (x86-64 running at 1.6GHz) executing this function
 takes less than $3$ seconds, which represents a significant
 improvement.  Comparing to the table above, $3$ seconds represent $5$
-clock cycles.  
+clock cycles.  Even though the test for the correct stamp in the
+simulated reader always succeeds, we claim that this situation is the
+usual one for this type of slot reader, since the test will fail only
+in an error situation. 
 
 The comparison above is somewhat biased in our favor, because we can
 not be sure that a single test will suffice in order to determine the
