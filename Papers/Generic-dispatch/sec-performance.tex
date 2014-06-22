@@ -6,7 +6,11 @@ constructed a few simulations that give us some indications of the
 performance of our technique compared to the technique used by PCL.
 
 In our first test, we decided to measure the time it takes for the
-generic dispatch of a simple slot reader. 
+generic dispatch of a simple slot reader.  This simple slot reader is
+characterized by the fact that that it has a single method specialized
+to a single class, and that class has no subclasses.  This situation
+is valid for a large number of cases, and it is therefore important to
+test for.
 
 First, we created a class with a single slot and a reader for that
 slot like this:
@@ -130,8 +134,8 @@ simulated slot reader:
 
 On our computer (x86-64 running at 1.6GHz) executing this function
 takes less than $3$ seconds, which represents a significant
-improvement.  Comparing to the table above, $3$ seconds represents $5$
-clock cycles. 
+improvement.  Comparing to the table above, $3$ seconds represent $5$
+clock cycles.  
 
 The comparison above is somewhat biased in our favor, because we can
 not be sure that a single test will suffice in order to determine the
