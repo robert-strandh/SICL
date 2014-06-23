@@ -109,7 +109,7 @@ We create a simulated general instance as follows:
 Our simulated slot reader is defined like this:
 
 {\small\begin{verbatim}
-(defun y (instance)
+(defun y1 (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
@@ -118,23 +118,23 @@ Our simulated slot reader is defined like this:
         (svref rack 1)
         (error "1"))))
 
-(proclaim '(notinline y))
+(proclaim '(notinline y1))
 \end{verbatim}}
 
 Finally, we define a function containing a loop that calls our
 simulated slot reader:
 
 {\small\begin{verbatim}
-(defun g ()
+(defun g1 ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
-        do (y j)))
+        do (y1 j)))
 \end{verbatim}}
 
-On our computer (x86-64 running at 1.6GHz) executing this function
-takes less than $3$ seconds, which represents a significant
-improvement.  Comparing to the table above, $3$ seconds represent $5$
+On our computer (x86-64 running at 1.6GHz), executing this function
+takes less than $3.2$ seconds, which represents a significant
+improvement.  Comparing to the table above, $3.2$ seconds represent $5$
 clock cycles.  Even though the test for the correct stamp in the
 simulated reader always succeeds, we claim that this situation is the
 usual one for this type of slot reader, since the test will fail only
@@ -146,7 +146,7 @@ correct method to invoke.  For that reason, we devised the following
 test: 
 
 {\small\begin{verbatim}
-(defun yy (instance)
+(defun y2 (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
@@ -161,14 +161,13 @@ test:
           ((> stamp 10)   (error "8"))
           (t (svref rack 1)))))
 
-(proclaim '(notinline yy))
+(proclaim '(notinline y2))
 
-(defun gg ()
+(defun g2 ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
-        do (yy j)))
-        maximize (yy (car l))))
+        do (y2 j)))
 \end{verbatim}}
 
 This test simulates a situation where the generic dispatch needs $8$
@@ -177,7 +176,7 @@ generic function with $256$ methods, or alternatively a single method
 but where the call history contains $256$ classes with sparse unique
 numbers. 
 
-On our computer executing this function takes less than $4.5$ seconds,
+On our computer, executing this function takes less than $4.7$ seconds,
 which seems to suggest that the number of comparisons has only a
 modest impact on the performance.  In fact, the numbers suggest that
 less that one additional clock cycle per additional comparison is
@@ -189,7 +188,7 @@ The following test is meant to show the impact of a very large number
 of classes, so that constants are no longer very small:
 
 {\small\begin{verbatim}
-(defun yyy (instance)
+(defun y3 (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
@@ -204,19 +203,66 @@ of classes, so that constants are no longer very small:
           ((> stamp 100000)   (error "8"))
           (t (svref rack 1)))))
 
-(proclaim '(notinline yyy))
+(proclaim '(notinline y3))
 
-(defun ggg ()
+(defun g3 ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
-        do (yyy j)))
+        do (y3 j)))
 \end{verbatim}}
 
-On our computer executing this function takes exactly the same time to
+On our computer, executing this function takes exactly the same time to
 execute as the previous one, which seems to suggest that the size of
 the constants has very little impact on performance, at least on our
 platform.
+
+The final test we conducted is meant to exercise the branch-prediction
+logic of the processor.  It simulates a (highly unusual) situation
+where a slot reader is specialized to a class, but that class has
+several subclasses, and the slot is in a different location in each
+subclass.  Furthermore, the test is designed so that the branch taken
+alternates for each test:
+
+{\small\begin{verbatim}
+(defun y4 (instance)
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (let* ((rack (s-rack instance))
+         (stamp (svref rack 0)))
+    (declare (type fixnum stamp))
+    (if (< stamp 2)
+        (if (< stamp 1)
+            (svref rack 1)
+            (svref rack 2))
+        (if (< stamp 3)
+            (svref rack 3)
+            (svref rack 4)))))
+
+(proclaim '(notinline y4))
+
+(defun make (stamp)
+  (let ((rack (make-array 5
+                          :initial-contents
+                          (cons stamp '(1 1 1 1)))))
+    (make-s :class nil :rack rack)))
+
+(defun g4 ()
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (loop with j0 = (make 0)
+        with j1 = (make 1)
+        with j2 = (make 2)
+        with j3 = (make 3)
+        repeat 250000000
+        do (y4 j0) (y4 j2) (y4 j1) (y4 j3)))
+\end{verbatim}}
+
+On our computer, executing this function takes less than $3.4$ seconds
+which represents a performance penalty of less than 10\% compared to
+the best case where a single test with a single outcome is performed.
+It should be noted, however, that this test represents an unusually
+great disadvantage for our technique, and that it is not clear that
+the times indicated for existing techniques in the table above would
+be as low for this situation.
 
 The tests include loop overhead that should be subtracted from the
 timing results, but this overhead is probably very small, so we can
