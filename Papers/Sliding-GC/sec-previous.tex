@@ -43,7 +43,7 @@ algorithm is the fastest.  Threading algorithms perform the worst.
 Abuaiadh et al \cite{Abuaiadh:2004:EPH:1028976.1028995} designed a
 compaction algorithm that uses forwarding information much like the
 Lisp2 algorithm.  However, to avoid the cost of an entire pointer per
-object, they use a single word of forwarding information of around
+object, they use a single word of forwarding information for around
 $256$ bytes, which amounts to no more than a few bits per word.
 Although reported to be fast, unfortunately, their algorithm does not
 preserve the allocation order of objects.  Their paper mentions that
