@@ -89,7 +89,7 @@ The hypothesis above seems confirmed where scanning the bitmap seems
 to take around $0.8$ms and moving an element seems to take around
 $1$ns per element.  
 
-Now, in a typical collection cycle at least around half of the
+Now, in a typical collection cycle, at least around half of the
 elements of the heap would be dead (if not, objects would be
 \emph{promoted}).  Furthermore, since objects that are allocated
 together die together, the bitmap will contain long runs of $0$s and
@@ -102,7 +102,7 @@ negligible.  In a typical collection cycle, significantly fewer than
 half of the elements would have to be moved.  The expected compaction
 time would therefore be closer to $0.3$ms. 
 
-\subsection{Phase 3, building table}
+\subsection{Phase 3, building the table}
 
 In order to test the performance of building the table, we used the
 following function:
@@ -310,3 +310,15 @@ sliding collector in the first place:
 All these factor contribute to decreasing the total cost of garbage
 collection, although measuring the exact impact is of course very
 hard. 
+
+It is not advisable to use our algorithm on the global heap, say a
+heap that is three orders of magnitude larger than the one used in
+our tests.  Even multiplying our timing results by a thousand would
+imply a significant pause, but since the break table requires a
+binary search, the time to search it would be proportional to the
+logarithm of the size of the heap, penalizing performance even more.
+To manage a global heap, we would recommend the technique by 
+Kermany et al \cite{Kermany:2006:CCI:1133981.1134023}, which has a
+greater overhead, but has the advantage of being incremental,
+concurrent, and parallel, thus effectively eliminating significant
+pauses. 
