@@ -41,3 +41,14 @@ The main reason that sliding techniques have largely been abandoned,
 is that they incur a much higher cost than both mark-and-sweep
 collectors and copying collectors, either in terms of additional
 computations or additional memory requirements, or both. 
+
+The method presented in this paper decreases the cost of compaction by
+avoiding the need to move the so-called \emph{break table} used in the
+traditional sliding collector.  Furthermore, we suggest using our
+method for collecting a per-thread \emph{nursery} that fits in the
+processor cache.  While a copying collector can only use half the
+available space, a sliding collector can use the entire available
+space.  Compared to a copying collector for the nursery, because of
+the increased size our method will allow more objects to die between
+two invocations, further contributing to the overall cost of garbage
+collection. 
