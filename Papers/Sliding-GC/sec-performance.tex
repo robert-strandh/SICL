@@ -186,7 +186,9 @@ $2^{17}$ & $1.2$\\
 It appears that the time to build the table is entirely dominated by
 the time to traverse the bitmap.  We have no explanation as to why the
 time does not increase monotonically with the table size, but we have
-run this test numerous times and we still get this surprising result.  
+run this test numerous times and we still get this surprising result.
+It appears that this anomaly does not manifest itself on computers
+other than ours.
 
 With improved bitmap management code, we believe that building the
 table will typically take about the same as compacting the heap, i.e.,
@@ -202,7 +204,7 @@ for the break table.  In the worst case, the number of words required
 for the break table is as small as possible which is $2^{n+1}$, so
 that the number of live pointers is $2^N - 2^{n+1}$.  The total amount
 of work required can therefore be expressed as $n \cdot (2^N -
-2^{n+1})$.  When $N = 19$, this function has a maximum for $n = 15$
+2^{n+1})$.  When $N = 19$, this function has a maximum for $n = 15$.
 
 We can get an upper bound on the time to adjust the pointers by
 creating a heap with roughly $2^{19} - 2^{16}$ words containing random
@@ -322,3 +324,23 @@ Kermany et al \cite{Kermany:2006:CCI:1133981.1134023}, which has a
 greater overhead, but has the advantage of being incremental,
 concurrent, and parallel, thus effectively eliminating significant
 pauses. 
+
+One might want to speculate about the performance of our algorithm
+when the size of the heap is significantly larger than the size of the
+cache, but much smaller than the global heap.  Such a situation might
+be desirable if it turns out that the cost of cache misses is
+compensated by the fact that more time between collections will allow
+more objects to die.  For that reason, we reran our tests with a heap
+that is $4$ times the size of the heap used for the tests above.  We
+observed a factor $10$ slowdown compared to the tests reported in this
+section.  In order for this configuration to be advantageous, the
+number of objects that die between two garbage-collection cycles has
+to increase substantially, and whether this is the case depends on the
+type of application being executed.  Only benchmarks in a final system
+or simulations with real allocation traces can determine whether this
+is the case.  Note, however, that even though overall throughput
+\emph{might} improve with a larger heap, the time for an invocation of
+the garbage collector becomes closer to what is tolerable for many
+so-called \emph{soft real time} applications such as generation of
+sound or images in real time. 
+
