@@ -1,13 +1,13 @@
 \section{Performance of our technique}
 
-Unfortunately, our system (called SICL) is not yet in sufficiently
+Unfortunately, our system (called SICL) is not yet sufficiently
 finalized to allow us to make any tests of performance.  However, we
 constructed a few simulations that give us some indications of the
 performance of our technique compared to the technique used by PCL.
 
 In our first test, we decided to measure the time it takes for the
 generic dispatch of a simple slot reader.  This simple slot reader is
-characterized by the fact that that it has a single method specialized
+characterized by the fact that it has a single method specialized
 to a single class, and that class has no subclasses.  This situation
 is valid for a large number of cases, and it is therefore important to
 test for.
@@ -35,7 +35,7 @@ called in each iteration:
         repeat 10000
         do (loop repeat 100000
                  do (x i))))}
-\end{verbatim}
+\end{verbatim}}
 
 In order to minimize overhead due to looping, we set the
 \texttt{optimize} flags as shown.
@@ -134,13 +134,13 @@ simulated slot reader:
 
 On our computer (x86-64 running at 1.6GHz), executing this function
 takes less than $3.2$ seconds, which represents a significant
-improvement.  Comparing to the table above, $3.2$ seconds represent $5$
+improvement.  Comparing to our performance table, $3.2$ seconds represent $5$
 clock cycles.  Even though the test for the correct stamp in the
 simulated reader always succeeds, we claim that this situation is the
 usual one for this type of slot reader, since the test will fail only
 in an error situation. 
 
-The comparison above is somewhat biased in our favor, because we can
+The comparison above is somewhat biased in our favor because we can
 not be sure that a single test will suffice in order to determine the
 correct method to invoke.  For that reason, we devised the following
 test: 
@@ -171,14 +171,14 @@ test:
 \end{verbatim}}
 
 This test simulates a situation where the generic dispatch needs $8$
-tests to determine what method to call, which can be thought of as a
-generic function with $256$ methods, or alternatively a single method
-but where the call history contains $256$ classes with sparse unique
-numbers. 
+tests to determine what method to call, a situation which can be
+thought of as a generic function with $256$ methods, or alternatively
+a single method but where the call history contains $256$ classes with
+sparse unique numbers.
 
 On our computer, executing this function takes less than $4.7$ seconds,
 which seems to suggest that the number of comparisons has only a
-modest impact on the performance.  In fact, the numbers suggest that
+modest impact on performance.  In fact, the numbers suggest that
 less that one additional clock cycle per additional comparison is
 required.%
 \footnote{In this case, however, the \emph{branch prediction} circuits
@@ -261,7 +261,7 @@ which represents a performance penalty of less than 10\% compared to
 the best case where a single test with a single outcome is performed.
 It should be noted, however, that this test represents an unusually
 great disadvantage for our technique, and that it is not clear that
-the times indicated for existing techniques in the table above would
+the times indicated for existing techniques in our performance table would
 be as low for this situation.
 
 The tests include loop overhead that should be subtracted from the
@@ -271,7 +271,7 @@ that the code is very close to what we expect the SICL compiler to
 emit, so there is very little overhead there as well.  
 
 Notice, however, that the results all include the overhead of a
-function call.  This function call can not be avoided, which suggests
+function call.  This function call can not be avoided, suggesting
 that our results reflect the real observable improvement.  However,
 in order to appreciate the performance improvement of dispatch
 mechanism itself, the overhead of the function call should not be
