@@ -36,13 +36,13 @@ automatically, provided that:
   \end{enumerate}
 \item When the class hierarchy changes, an entry in the call history
   is removed only if it involves a modified class.
-\item When a method is removed a generic function (possibly because it
-  was replaced with a new one with the same specializers), an entry in
-  the call history is removed only if it involves the method that was
-  removed.
+\item When a method is removed from a generic function (possibly
+  because it was replaced with a new one with the same specializers),
+  an entry in the call history is removed only if it involves the
+  method that was removed.
 \end{itemize}
 
-The reason that the these conditions automatically handle
+The reason that these conditions automatically handle
 metastability issues is that the AMOP specifically disallows
 modifications to specified classes.  Then the first part of the
 discriminating function (i.e., the part computed from the call
@@ -50,7 +50,7 @@ history) will always handle invocations where classes of required
 arguments are specified classes, including the function
 \texttt{compute-discriminating-function}. 
 
-Our technique, called \emph{satiation} makes sure that that the
+Our technique, called \emph{satiation} makes sure that the
 conditions are met by trying every combination of existing classes as
 the required arguments of every existing generic function in order to
 see whether this combination corresponds to an applicable primary
