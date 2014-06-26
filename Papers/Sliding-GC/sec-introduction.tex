@@ -3,7 +3,7 @@
 As is evident from the books by Jones et al
 \cite{Jones:2011:GCH:2025255} \cite{Jones:1996:GCA:236254}, garbage
 collection is a rich and much researched field.  With the evolution of
-processor technology, advantages and inconveniences of different
+processor technology, advantages and incon-veniences of different
 techniques change.  Current technology requires techniques that take
 into account the big difference in performance between the processor
 and the memory, as well as the existence of several \emph{cores} and
@@ -46,9 +46,9 @@ The method presented in this paper decreases the cost of compaction by
 avoiding the need to move the so-called \emph{break table} used in the
 traditional sliding collector.  Furthermore, we suggest using our
 method for collecting a per-thread \emph{nursery} that fits in the
-processor cache.  While a copying collector can only use half the
+processor cache.  While a copying collector can use only half the
 available space, a sliding collector can use the entire available
-space.  Compared to a copying collector for the nursery, because of
-the increased size our method will allow more objects to die between
-two invocations, further contributing to the overall cost of garbage
-collection. 
+space.  Because of the increased size, compared to a copying collector
+for the nursery, our method will allow more objects to die
+between two invocations, further reducing the overall cost of
+garbage collection.
