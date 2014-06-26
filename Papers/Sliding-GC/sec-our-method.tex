@@ -4,7 +4,7 @@ Our method uses a \emph{break table} just like the method by Haddon
 and Waite \cite{Haddon:1967}, but instead of building, moving, and
 sorting the table while objects are moved, we first move the objects
 and then construct the table.  For that, additional space in the form
-of a bit vector is required.  The bit vector has one bit per word of
+of a bitmap is required.  The bitmap has one bit per word of
 memory in the heap, which amounts to less than $2$\% additional memory
 on a $64$-bit machine.  The bits in the bitmap are set by the
 \emph{mark} phase of the garbage collector.
@@ -73,7 +73,7 @@ Break table.}
 \end{figure}
 
 Notice that if both the bottom zone and the top zone of the heap
-contain live objects, then our break table may require $3$ additional
+contain live objects, then our break table may require three additional
 words of storage compared to the total number of free words available.
 The reason for this additional requirement is that our table contains
 \emph{sentinels} (the first two words and the last word) that are not
