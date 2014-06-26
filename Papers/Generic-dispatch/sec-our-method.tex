@@ -8,7 +8,7 @@ A \sicl{} object is either an \emph{immediate object} or a \emph{heap
   represent not only \emph{standard objects}, but also structure
   instances, instances of built-in classes such as \texttt{symbol} and
   \texttt{package}, arrays, bignums, complex numbers, etc.}
-General instances and cons cells have
+General instances and \texttt{cons} cells have
 distinct unique \emph{tags}.  Every general instance is represented by
 its \emph{header}.  The header contains two pointers, one to the
 \emph{class} of the instance and one to the \emph{rack} of the
@@ -103,7 +103,7 @@ of the generic function.  The call history is a simple list of
 entries, where each entry contains a list of classes for each
 specialized parameter and a corresponding effective method to call. 
 
-As can be seen from the example above, in this case, a maximum of
+As can be seen from this example, in this case, a maximum of
 three tests will be performed for six different classes.  The number
 of tests required is logarithmic in the number of entries of the call
 history.
@@ -127,8 +127,8 @@ requires the following steps for a simple slot reader:
 As we can see, only 3 memory accesses are required.  The number of
 comparisons is not constant, of course, but it is very small for the
 vast majority of generic functions, and quite reasonable (compared to
-the cost of a memory access) even when a very large number cases need
-to be handled. 
+the cost of a memory access) even when a very large number of cases
+needs to be handled.
 
 Like the technique used by PCL, our technique automatically detects
 obsolete instances.  When a class is updated, every generic function
@@ -138,18 +138,18 @@ that dispatches on this class%
   generic functions that have a method using the class as a specializer.}
 is determined, and the \emph{call history} of each such generic
 function is searched for entries using the class.  These entries are
-removed and then the discriminating function is either recomputed from
+removed, and then the discriminating function is either recomputed from
 the call history, or is set to a function that, when invoked,
 recomputes the discriminating function from the call history.   The
 result is that, if an obsolete instance is used in dispatch, its stamp
 will not be valid for dispatch, so the discriminating function will
-fail to recognize the instance, forcing an update of the instance, and
+fail to recognize the instance, forcing an update of the instance and
 a new dispatch attempt. 
 
 In contrast to the technique used by PCL, our technique makes it more
 costly to update classes.  In PCL, invalidating a class wrapper is a
 simple matter of setting the hash seed to $0$.  Our technique requires
-that the call history be updated and the discriminating function to be
+that the call history be updated and the discriminating function be
 recomputed for every generic function with a method that specializes
 on the class being updated.  While this cost is unbounded, it is
 acceptable in practice. 
@@ -158,8 +158,8 @@ While not directly related to dispatch performance, an important
 consequence of the split between the header and the rack for every
 general instance is that generic functions can be updated without
 requiring locking, by using a simple version of software transactional
-memory.  When a generic function needs to be updated, for instance as
-a result of one of the classes it specializes on being updated, the
+memory.  When a generic function needs to be updated (for instance as
+a result of one of the classes it specializes on being updated), the
 rack and the call history can be copied, and then modifications can be
 made to the copy, and finally, the copied rack can replace the
 original rack by the use of a \texttt{compare-and-swap} instruction.
