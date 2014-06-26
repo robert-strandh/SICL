@@ -21,7 +21,11 @@ the first part fails.  This second part of the discriminating function
 invokes the complete machinery defined by
 \texttt{compute-applicable-methods-using-classes},
 \texttt{compute-applicable-methods}, and
-\texttt{compute-effective-method}.
+\texttt{compute-effective-method}.  Crucially, the first part is a
+relatively simple mechanical translation from a set of call-history
+entries to an \emph{automaton} that implements the dispatch.  This
+translation requires none of the machinery for computing effective
+methods. 
 
 As hinted in the previous section, metastability issues can be handled
 automatically, provided that:
@@ -68,8 +72,8 @@ is justified because:
 \item The satiation machinery is invoked only during bootstrapping, so
   it does not affect performance at runtime. 
 \item When the machinery is invoked, only a handful of classes and
-  generic functions exist.  Therefore the amount of work is fairly
-  small. 
+  generic functions exist.  Therefore the total amount of work is
+  fairly small.
 \end{itemize}
 
 While it may be possible to invoke the satiation machinery
@@ -151,6 +155,32 @@ history of each bridge generic function is completely pre-computed.
 Similarly, the discriminating function of each ersatz generic function
 is computed using the full machinery executing as a set of bridge
 generic functions.  
+
+The end result is a memory image containing all the generic functions
+specified by the AMOP, and each of these generic functions has the following
+characteristics:
+
+\begin{itemize}
+\item The call history contains pre-computed effective methods for all
+  combinations of specified classes that result in at least one primary
+  applicable method.
+\item When a specified generic function \texttt{F} is invoked with
+  itself or some other specified generic function as an argument, then
+  the effective method for handling the call already exists in the
+  call history of \texttt{F}. 
+\item Since the AMOP specifically disallows modifications to specified
+  classes after their initial definitions, call-history entries
+  involving specified classes will always be valid.
+\item Call-history entries involving specified classes are not removed
+  as a result of methods being added or removed in conformance with
+  the AMOP, nor as a result of valid modifications of existing
+  classes. 
+\item The call history is translated into a discriminating function
+  without invoking the machinery for computing effective methods. 
+\end{itemize}
+
+This combination of characteristics guarantees the absence of
+metastability issues at runtime.
 
 %%  LocalWords:  metastability specializer specializers accessor
 %%  LocalWords:  accessors funcallable
