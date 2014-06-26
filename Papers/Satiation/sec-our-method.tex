@@ -13,7 +13,7 @@ existing binary image.
 
 A generic function in \sicl{} contains a \emph{cache} (a \emph{call
   history} in \sicl{} terminology) which associates classes of
-required arguments with corresponding effective methods, and
+required arguments with corresponding effective methods, as
 specifically allowed by the AMOP.  The discriminating function of
 every standard generic function contains two parts: one part computed
 from the call history and a second \emph{default} part, invoked when
@@ -59,6 +59,29 @@ corresponding effective method is computed, and an entry is added to
 the call history.  Finally, the resulting discriminating function is
 computed.  Clearly, these computations require a fully-functional
 machinery for precisely the functions that are being processed. 
+
+While it may seem like overkill and an excessive amount of work to
+compute call history entries for all possible combinations, this work
+is justified because:
+
+\begin{itemize}
+\item The satiation machinery is invoked only during bootstrapping, so
+  it does not affect performance at runtime. 
+\item When the machinery is invoked, only a handful of classes and
+  generic functions exist.  Therefore the amount of work is fairly
+  small. 
+\end{itemize}
+
+While it may be possible to invoke the satiation machinery
+\emph{lazily} during bootstrapping,%
+\footnote{It can not be invoked lazily at runtime, because then we
+  would be back in a situation with metastability issues.}
+there is not much to gain by doing that due to the limited amount of
+work involved.  Furthermore, it would still be necessary to make sure
+that the call history of each specified generic function contains all
+entries required to avoid metastability issues at runtime, and that
+work is identical to what the full machinery is designed to
+accomplish. 
 
 Now, in a system where \clos{} must be bootstrapped from a pre-\clos{}
 implementation, satiation would require specialized code in the form
