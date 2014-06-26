@@ -29,7 +29,7 @@ required for their technique to work.
 
 Of the traditional compacting algorithms, three types of algorithms
 preserve allocation order; the one by Haddon and Waite
-\cite{Haddon:1967}, the so called Lisp2 algorithm, and the
+\cite{Haddon:1967}, the so-called Lisp2 algorithm, and the
 \emph{threading} algorithms.  The Lisp2 algorithm requires an
 additional field the size of a pointer in each object in order to hold
 forwarding information.  This field is set after the marking phase.
@@ -60,8 +60,9 @@ compact the heap.  Their algorithm is parallel, concurrent, and
 incremental.  However, in addition to the cost of marking, moving
 objects, and updating pointers, compared to the method described in
 this paper, there is an additional cost associated with the
-memory-mapping operations which is non-negligible.  Forwarding
-information is handled the same way as in the method used by Abuaiadh
-et al.  Like the method described by Haddon and Waite, and the method
-presented in this paper, relative allocation order between the objects
-is preserved.
+memory-mapping operations, and this cost is is non-negligible.
+Forwarding information is handled the same way as in the method used
+by Abuaiadh et al.  Like the method described by Haddon and Waite, and
+the method presented in this paper, relative allocation order between
+the objects is preserved.
+\vfill\eject
