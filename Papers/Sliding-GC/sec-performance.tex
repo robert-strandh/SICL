@@ -131,7 +131,7 @@ following function:
                   (return end))))
 \end{verbatim}}
 
-In the program above, the parameter \texttt{start} contains the total
+In that program, the parameter \texttt{start} contains the total
 number of live words in the heap, which is the same as the start index
 into the heap where the table should be built. 
 
@@ -201,7 +201,7 @@ pointer requires $n$ iterations to search the break table, where $n$
 is the depth of that table.  The number of live pointers is the
 difference of the size of the heap and the number of words required
 for the break table.  In the worst case, the number of words required
-for the break table is as small as possible which is $2^{n+1}$, so
+for the break table is as small as possible (which is $2^{n+1}$), so
 that the number of live pointers is $2^N - 2^{n+1}$.  The total amount
 of work required can therefore be expressed as $n \cdot (2^N -
 2^{n+1})$.  When $N = 19$, this function has a maximum for $n = 15$.
@@ -257,7 +257,8 @@ different ways:
   typical number should be significantly less than $50\%$.
 \item It assumes that there are $2^{15}$ dead zones, which would make
   each zone very small.  A more typical situation is that dead zones
-  are significantly larger, so that there are significantly fewer. 
+  are significantly larger, so that there are significantly fewer dead
+  zones. 
 \item It assumes that every live word in the heap contains a pointer
   that needs to be adjusted.  More typically, many words contain
   immediate data, or pointers to older generations, and these pointers
@@ -272,7 +273,7 @@ cases we will get a hit, simply because it is likely that two
 consecutive pointers belong to the same live zone and refer to objects
 in that zone.  
 
-An educated guess, then is that a typical value for this phase would
+An educated guess, then, is that a typical value for this phase would
 be closer to $5$ms. 
 
 \subsection{Overall performance}
@@ -300,9 +301,9 @@ sliding collector in the first place:
 \item Compared to a copying collector, only half the space is
   required, or, alternatively, the space available in the nursery is
   twice as big.  When this is the case, the number of required
-  collections decreases, which gives more time for short-lived objects
-  to die, thereby decreasing the total amount of work spent in garbage
-  collection. 
+  collections decreases, a situation which gives more time for
+  short-lived objects to die, thereby decreasing the total amount of
+  work spent in garbage collection.
 \item Also compared to a copying collector, the relative ages of
   objects are kept intact, which decreases the risk of promoting
   objects that will die soon after a collection. 
@@ -330,8 +331,8 @@ when the size of the heap is significantly larger than the size of the
 cache, but much smaller than the global heap.  Such a situation might
 be desirable if it turns out that the cost of cache misses is
 compensated by the fact that more time between collections will allow
-more objects to die.  For that reason, we reran our tests with a heap
-that is $4$ times the size of the heap used for the tests above.  We
+more objects to die.  For that reason, we re-ran our tests with a heap
+that is $4$ times the size of the heap used for the previous tests.  We
 observed a factor $10$ slowdown compared to the tests reported in this
 section.  In order for this configuration to be advantageous, the
 number of objects that die between two garbage-collection cycles has
