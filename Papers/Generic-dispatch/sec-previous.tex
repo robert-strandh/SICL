@@ -26,21 +26,21 @@ algorithm.
 
 Many existing techniques are based on the complete program being
 available in order to compute dispatch tables.  The interactive nature
-of \cl{} makes it more difficult to use such techniques, because every
+of \cl{} makes it more difficult to use such techniques because every
 table may have to be recomputed whenever a small modification is made
-to a class.  Though, some techniques may amortize this cost by
+to a class.  However, some techniques may amortize this cost by
 \emph{invalidating} some tables and recomputing them when required.
 
-The fact that \cl{} is interactive also makes it possible for the
+The fact that \cl{} is interactive also makes possible the
 existence of \emph{obsolete instances}, i.e., instances where the
-slots no longer correspond to the definition of the class, so they
-have to be \emph{updated} before they are inspected.  
+slots no longer correspond to the definition of the class, so the
+instances have to be \emph{updated} before they are inspected.  
 
 \subsection{PCL}
 
 In PCL\footnote{PCL stands for Portable Common Loops.}
 \cite{Kiczales:1990:EMD:91556.91600} a standard object is represented
-as a two-word header object where the first words is a pointer to a
+as a two-word header object where the first word is a pointer to a
 \emph{class wrapper} and the second word is a pointer to the
 \emph{slot vector} of the instance.  The class wrapper is also a
 two-word structure that contains a \emph{hash seed} and a pointer to
@@ -54,11 +54,11 @@ the hash seed of the class wrapper of the argument is reduced modulo
 the size of the memoization table in order to find the corresponding
 entry.  The class wrapper in the entry is compared using \texttt{eq}
 to the class wrapper of the argument, and if they are the same, the
-corresponding effective method is called.  When there is no hit, it
-could be that there is a hash collision, or it could be that no entry
-exists in the table for the class of the argument.  Thus, if there is
-no initial hit, the table is searched sequentially until an entry is
-found or all the entries have been examined. 
+corresponding effective method is called.  When there is no hit, the
+reason could be that there is a hash collision, or it could be that no
+entry exists in the table for the class of the argument.  Thus, if
+there is no initial hit, the table is searched sequentially until an
+entry is found or all the entries have been examined.
 
 In the best case then, the following operations are required for a
 simple slot reader generic function:
@@ -109,10 +109,10 @@ reduced to the following steps:
   memory access.
 \end{enumerate}
 
-The minimum number of memory access is reduced to $4$ if the generic
+The minimum number of memory accesses is reduced to $4$ if the generic
 function is called with instances of a single class.  
 
-The technique used by PCL automatically catches obsolete instances.
+The technique used by PCL automatically detects obsolete instances.
 When a class is modified, the current wrapper is eliminated from all
 existing memoization tables, forcing the lookup to fail, and thus
 triggering the update of the obsolete instance.  
@@ -175,9 +175,9 @@ lookup table altogether.  They propose the alternative name
 Their technique is applicable only to \emph{single inheritance} systems. 
 
 The technical report of Bachrach and Burke \cite{Bachrach:2000} is
-concerned with the language Dylan which is similar to \cl{} in many
+concerned with the language Dylan, which is similar to \cl{} in many
 respects, although in terms of generic dispatch, it allows for
-specializers other than classes and singletons, and features such as
+specializers other than classes and singletons; and features such as
 \emph{sealing} of classes and methods allow for further optimizations
 of generic dispatch.  Their approach is similar to ours, in that they
 construct a \emph{decision tree} for each generic function.  It is
@@ -189,7 +189,7 @@ in that it allows for each call site to exploit the decision tree and
 optimize according to locally available information, sometimes
 resulting in particular call sites not requiring any dispatch code at
 all.  Unfortunately, this technical report is in an unfinished state,
-making it hard to determine the work and the results behind it.
+making it hard to evaluate the work and the results behind it.
 
 Dujardin et al \cite{Dujardin:1998:FAC:271510.271521} give a fast
 algorithm for creating compressed tables for multiple dispatch.  While
@@ -200,7 +200,7 @@ to index a per-argument table in order to obtain indices in the
 compressed table.  And of course the element in the compressed table
 must then be accessed (requiring index arithmetic and a memory access)
 before the relevant method can be invoked.  Merging the per-argument
-tables using standard table-compression techniques add yet more
+tables using standard table-compression techniques adds yet more
 comparisons and memory accesses. 
 
 Like Bachrach and Burke, Hölze and Ungar
@@ -211,5 +211,5 @@ more efficient dispatch code simply because for a given call site it
 is common that only a small subset of all possible argument types are
 actually used.  We have not addressed this possibility, because it
 would require a way to recompile the caller, or at least a single call
-site whenever a change to the callee or to the class hierarchy is
+site, whenever a change to the callee or to the class hierarchy is
 made.  
