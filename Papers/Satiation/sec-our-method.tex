@@ -4,7 +4,7 @@ The technique described in this paper was developed as part of
 \sicl{}.%
 \footnote{The \sicl{} repository is public, and it is currently
   located at https://github.com/robert-strandh/SICL.}  The system is
-written entirely in \cl{} and it was designed to be bootstrapped 
+written entirely in \cl{}, and it was designed to be bootstrapped 
 from a conforming \cl{} implementation including \clos{}.  
 According to Rhodes \cite{Rhodes:2008:SSC:1482373.1482380}, few \cl{}
 implementations are designed to be bootstrapped this way.  Instead,
@@ -54,7 +54,7 @@ history) will always handle invocations where classes of required
 arguments are specified classes, including the function
 \texttt{compute-discriminating-function}. 
 
-Our technique, called \emph{satiation} makes sure that the
+Our technique, called \emph{satiation}, makes sure that the
 conditions are met by trying every combination of existing classes as
 the required arguments of every existing generic function in order to
 see whether this combination corresponds to an applicable primary
@@ -72,7 +72,7 @@ is justified because:
 \item The satiation machinery is invoked only during bootstrapping, so
   it does not affect performance at runtime. 
 \item When the machinery is invoked, only a handful of classes and
-  generic functions exist.  Therefore the total amount of work is
+  generic functions exist.  Therefore, the total amount of work is
   fairly small.
 \end{itemize}
 
@@ -95,12 +95,12 @@ instances of specified classes, with much duplicated code as a result.
 
 An object in \sicl{} is either an \emph{immediate object}, a
 \emph{\texttt{cons} cell}, or a \emph{general instance}.  A general
-instance is represented as a two-word header where the first work
+instance is represented as a two-word header where the first word
 contains the \emph{class} of the instance, and the second word
 contains the \emph{rack}.  When the instance is a standard object, the
 rack holds the values of the \emph{slots} of the instance.  But
 general instances are also used for instances of built-in classes, so
-for instance an instance of an array would have a rack that contains
+(for example) an instance of an array would have a rack that contains
 storage for the elements of the array. 
 
 In \sicl{}, we bootstrap \clos{} on an existing conforming \cl{}
