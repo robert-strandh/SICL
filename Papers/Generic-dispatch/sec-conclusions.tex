@@ -4,9 +4,9 @@ We have presented a fast technique for generic dispatch in \cl{}.
 Clearly, our tests do not represent any scientifically convincing
 argument that our technique is faster than existing
 techniques. Rather, the presentation of the technique itself should be
-considered essence of the paper, and the performance simulations
+considered the essence of the paper, and the performance simulations
 should only be viewed as indications that our technique is worth
-pursuing as the bases of the generic dispatch mechanism in SICL.
+pursuing as the basis of the generic dispatch mechanism in SICL.
 
 Having said that, we can still speculate about the impact of our
 technique, should the results be confirmed in a more realistic setting. 
@@ -20,7 +20,7 @@ what we do in SICL.  We use the same \clos{} mechanisms (i.e., class
 initialization, class finalization, etc.) for built-in classes as
 those used for standard classes, even though built-in classes can not
 be redefined.  By using the same mechanism, we remove a number of
-special cases and we are able to simplify the overall structure of the
+special cases, and we are able to simplify the overall structure of the
 system. 
 
 It is even possible to go one step further.  The amount of work
@@ -50,5 +50,6 @@ finished state that more elaborate tests can be designed.  In
 particular, we then need to test situations where cache misses might
 significantly impact performance.  Furthermore, we need to gather
 information about techniques used in existing high-performance
-implementations, which may not be easy since several of the existing
-high-performance implementations are commercial and closed source.
+implementations, a task which may not be easy since several of the
+existing high-performance implementations are commercial and closed
+source.
