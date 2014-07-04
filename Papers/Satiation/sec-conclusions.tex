@@ -5,8 +5,8 @@ issues in the implementation of \clos{} in our system \sicl{} by
 replacing those issues by simpler bootstrapping issues.  Furthermore,
 our technique also simplifies bootstrapping by avoiding special cases
 due to the non-existence of generic functions when the system is
-bootstrapped, by using the \emph{host} generic function machinery
-in early stages of bootstrapping. 
+bootstrapped. To avoid these issues, we use the \emph{host} generic
+function machinery in early stages of bootstrapping.
 
 Currently, nothing prevents a specified method on a specified generic
 function, specializing on specified classes to be modified or removed,
@@ -14,12 +14,12 @@ and nothing prevents a specified class from being redefined.  Should
 this happen, ``the game would of course be over.''  We imagine a
 mechanism that protects the user from inadvertently invoking such
 operations.  It should probably be possible to \emph{toggle} the
-mechanism so that system code can make modifications know to be safe.
+mechanism so that system code can make modifications known to be safe.
 
-When this article is written, \sicl{} is not yet finished, nor even in
+When this article was written, \sicl{} was not yet finished, nor even in
 a state to be executed standalone.  However, most of the difficult
 components (such as the compiler, the garbage collector, and of course
-\clos{}) are in a fairly advanced stage of development.  The final
+\clos{}) were in a fairly advanced stage of development.  The final
 verdict on the technique for bootstrapping the system can not be
 determined until the system is able to run standalone.
 

@@ -1,37 +1,39 @@
 \section{Previous work}
 
-The AMOP \cite{Kiczales:1991:AMP:574212} contains a section entitled
+The AMOP \cite{Kiczales:1991:AMP:574212} contains a section titled
 ``Living with Circularity'', which describes the essential nature of
 the two kinds of issues discussed here, namely \emph{bootstrapping
-  issues} and \emph{metastability issues}.  This section does not
+  issues} and \emph{metastability issues}.  That section does not
 contain a complete list of all possible issues in any implementation
 of \clos{}, and probably could not contain such a list, since it would
 depend on the exact organization of each particular implementation.
 
 The section in the AMOP has two subsections, one for bootstrapping
 issues and one for metastability issues.  The subsection on
-bootstrapping issues is more complete.  
+bootstrapping issues is more comprehensive.
 
 \subsection{Bootstrapping issues}
 
-The section on bootstrapping issues contains two explicit issues.
+The subsection in the AMOP on bootstrapping issues contains two explicit
+issues.
 
-The first one involves the class \texttt{standard-class} which is the
+The first one involves the class \texttt{standard-class}, which is the
 metaclass of all standard classes, including itself.  The authors
 simply suggest creating this class manually.
 
-The second issue involves the fact that generic function are required
+The second issue involves the fact that generic functions are required
 in order to create classes, but during bootstrapping, there are no
 generic functions since generic functions are instances of classes.
 The technique used to handle such issues is to define ordinary
 functions to contain code for essential methods, so that such
 functions can be called during bootstrapping.  To avoid code
 duplication, the methods defined later in the bootstrapping process
-simply call those functions.  
+simply call those functions.
 
 \subsection{Metastability issues} 
 
-The section on metastability issues also contains two issues.
+The subsection in the AMOP on metastability issues also contains two
+issues.
 
 The first issue involves the function \texttt{slot-value}.  As
 described, the scenario does not correspond to the specification,
@@ -41,7 +43,7 @@ specification.  Either way, the basis of the scenario is that
 \texttt{slot-value} on some instance would need to access the list of
 slot descriptions of the class of the instance, and that list is
 contained in a slot, so that a recursive use of \texttt{slot-value}
-would be required on the class of the instance.  However in a
+would be required on the class of the instance.  However, in a
 high-performance implementation, a slot reader would not call
 \texttt{slot-value}.  The reason is that \texttt{slot-value} is much
 too general, so that unnecessary work would be done.  In particular, 
@@ -52,29 +54,29 @@ slot reader would access the slot directly by location.%
 \footnote{The situation is a bit more complicated due to the fact that
   the location may vary according to the exact subclass of the
   specializer of the reader method.  In fact, it can even be the case
-  that the slot has different allocation in different subclasses.}
+  that the slot has a different allocation in different subclasses.}
 
-As described in the introduction, the second issue has to do with
-\texttt{compute-discriminating-function}.  Again, the scenario
-described is an approximation of that of a real high-performance
-implementation.  Their example involves adding a method to some
-generic function \texttt{F}, which would trigger the computation of a
-new discriminating function for \texttt{F}.  The metastability issue
-happens when \texttt{F} happens to be the function
+As described in the introduction of this paper, the second issue has
+to do with \texttt{compute-discriminating-function}.  Again, the
+scenario described is an approximation of that of a real
+high-performance implementation.  Their example involves adding a
+method to some generic function \texttt{F}, which would trigger the
+computation of a new discriminating function for \texttt{F}.  The
+metastability issue occurs when \texttt{F} happens to be the function
 \texttt{compute-discriminating-function}.  In that case,
 \texttt{compute-discriminating-function} would be called with itself
 as an argument, in which case, according to the AMOP, ``the game would
 of course be over.''  Even in a naive implementation without
-effective-method caching, the scenario would be more complicated that
+effective-method caching, the scenario would be more complicated than
 that.  In such an implementation,
-\texttt{compute-discriminating-function} would call 
+\texttt{compute-discriminating-function} would call
 \texttt{compute-applicable-methods-using-classes}%
 \footnote{We omit the possibility of the presence of \texttt{eql}
   specializers in order to keep the description manageable.}
 and then the function \texttt{compute-effective-method}.  In an
 implementation without caching, the real metastability issue occurs in
 these last two functions.  When one of these functions is called, the
-discriminating function will be invoked and therefore they will be
+discriminating function will be invoked, and therefore they will be
 called recursively.  
 
 In a high-performance implementation, on the other hand, what really

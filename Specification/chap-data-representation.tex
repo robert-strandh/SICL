@@ -3,36 +3,57 @@
 
 \section{Low-level tag bits}
 
-The two least significant bits of a machine word are used to represent
-four different \emph{tags} as follows:
+On 32-bit backends, the two least significant bits of a machine word
+are used to represent four different \emph{tags} as follows:
 
 \begin{itemize}
 \item \texttt{00}.  This tag is used for fixnums.  The remaining bits
   represent a signed integer in two's complement representation.  On a
   32-bit machine, a fixnum is thus in the interval $[2^{-29}, 2^{29} -
-    1]$.  On a 64-bit machine, a fixnum is in the interval $[2^{-61}, 2^{61} -
-    1]$.  
+    1]$.
 \item \texttt{01}.  This tag is used for \texttt{cons} cells.  A
   pointer to a \texttt{cons} cell is thus a pointer aligned to a
-  double word to which the machine integer $1$ has been added.  On a
-  32-bit machine, the bit representing $2^2$ will always have the
-  value $0$.  On a 64-bit machine, the bits representing $2^2$ and
-  $2^3$ will always have the value $0$.
+  double word to which the machine integer $1$ has been added.  The
+  bit representing $2^2$ will always have the value $0$.
 \item \texttt{10}.  This tag is used for various \emph{immediate}
   objects.  In particular for \emph{characters}, but also a
   distinguished bit pattern that is used to initialize \emph{unbound}
-  variables and slots.  On 64-bit platforms \emph{single-floats} are
+  variables and slots.  Floats of type \texttt{short-float} are
   represented as immediate values. 
 \item \texttt{11}.  This tag is used for all heap-allocated objects
   other than \texttt{cons} cells.  A heap allocated object like this
   is called a \emph{general instance}.
 \end{itemize}
 
+On 64-bit backends, the three least significant bits are used as tag
+bits as follows:
+
+\begin{itemize}
+\item \texttt{000}, \texttt{010}, \texttt{100}, \texttt{110}.  These
+  tags are used for fixnums.  The bits except the last one represent
+  integer in two's complement representation.  On a 64-bit machine, a
+  fixnum is thus in the interval $[2^{-62}, 2^{62} - 1]$.
+\item \texttt{001}.  This tag is used for \texttt{cons} cells.  A
+  pointer to a \texttt{cons} cell is thus a pointer aligned to a
+  double word to which the machine integer $1$ has been added.  The
+  bit representing will always have the value $0$.
+\item \texttt{011}, \texttt{101}.  These tags are used for various
+  \emph{immediate} objects.  In particular for \emph{characters}, but
+  also a distinguished bit pattern that is used to initialize
+  \emph{unbound} variables and slots.  Floats of type
+  \texttt{short-float} and \texttt{single-float} are represented as
+  immediate values.
+\item \texttt{111}.  This tag is used for all heap-allocated objects
+  other than \texttt{cons} cells.  A heap allocated object like this
+  is called a \emph{general instance}.
+\end{itemize}
+
 \section{Immediate objects}
 
-Immediate objects are all objects with \texttt{10} in the lower two
-bits.  Two more bits are used to distinguish between different kinds
-of immediate objects, giving the following four low bits:
+On 32-bit backends, immediate objects are all objects with \texttt{10}
+in the lower two bits.  Two more bits are used to distinguish between
+different kinds of immediate objects, giving the following four low
+bits:
 
 \begin{itemize}
 \item \texttt{0010}.  This tag is used for Unicode characters.  When
@@ -242,11 +263,10 @@ itself a subclass of the class \texttt{standard-object}
 
 To make function invocation fast, we want every subclass of the class
 \texttt{function} to be invoked in the same way, i.e. by loading the
-\emph{static environment} and the \emph{code vector} into registers
-and then transferring control to the \emph{entry point} of the
-function. The static environment, the code vector, and the entry point
-are all stored in the function object and are loaded into registers as
-part of the function-call protocol.
+\emph{static environment} into a register and then transferring
+control to the \emph{entry point} of the function. The static
+environment and the entry point are stored in the function object
+and are loaded into registers as part of the function-call protocol.
 
 When the funcallable standard object is a generic function, invoking
 it amounts to transferring control to the \emph{discriminating
@@ -259,9 +279,9 @@ a slot of the generic function, because once it is computed and
 installed, it is no longer needed.  In order for the generic function
 itself to behave in exactly the same way as its discriminating
 function, whenever a new discriminating function is \emph{installed},
-the \emph{entry point}, the \emph{linkage rack}, and the
-\emph{static environment} are copied from the discriminating function
-to the corresponding slots of the generic function itself.
+the \emph{entry point} and the \emph{static environment} are copied
+from the discriminating function to the corresponding slots of the
+generic function itself.
 
 \section{Rigid instances}
 \label{sec-data-representation-rigid-instances}
@@ -437,32 +457,37 @@ somewhat complex way, as illustrated by
 Representation of functions.}
 \end{figure}
 
+\refFig{fig-function-representation} shows two functions.  The two
+functions were created from the same compilation unit, because they
+share the last \texttt{cons} cell of the static environment.
+
 A function is represented as a two-word header (as usual) and a
-rack with at least four slots in addition to the inherited
-slots.
+rack with three slots:
 
 \begin{enumerate}
 \item The obligatory \emph{stamp}.
-\item One ore more slots representing \emph{entry points}.  Each entry
-  point is a \emph{raw address} of an aligned word in the byte vector
+\item An \emph{environment}, which is the local environment in which
+  the function was defined.  The local environment is represented as a
+  proper list of simple vectors, one for each \emph{level} of the
+  environment according to the nesting depth of the function.  The
+  last element of the list contains the \emph{linkage vector} which
+  contains \emph{constants} and \emph{storage cells of global
+    functions} that are referenced by the function.  The first element
+  of the linkage vector is the \emph{code object} of the function (see
+  below).  Several functions may share the same linkage vector. 
+\item The \emph{entry point}.  The each entry
+  point is a \emph{raw address} of an aligned word in the vector
   containing the instructions of the function.  The garbage collector
   must update the value of this slot if it decides to move the
-  rack of the code vector.  Each backend determines the number
-  of entry points and their significance, but they typically have to
-  do with the number of arguments and whether the call is an ordinary
-  call or a tail call.
-\item The \emph{linkage rack} for this function, which is a raw
-  disembodied rack pointer pointing to the rack
-  of the linkage vector for this function.  The ordinary \cl{}
-  object containing this rack is referred to from the code
-  object in the slot described previously.  The garbage collector must
-  update the value of this slot if it decides to move the rack
-  of the linkage vector.  The first word of the linkage
-  rack contains the \emph{code object} for this function (see below).
-\item An \emph{environment}, which is the local environment in which
-  the function was defined. If the function does not close over any
-  variables, then the value of this slot is \texttt{NIL}.
+  rack of the code vector.
 \end{enumerate}
+
+As indicated above, the \emph{linkage vector} of a function is a
+simple vector, and it is the last element of the proper list that
+makes up the \emph{static environment} of the function.  The most
+important purpose of the linkage vector is to contain \emph{constants}
+and \emph{storage cells} for global functions that are referenced by
+the function.  
 
 Since raw addresses are word aligned, they show up as \texttt{fixnum}s
 when inspected by tools that are unaware of their special
@@ -486,12 +511,12 @@ and a rack containing (in addition to inherited slots):
 \end{enumerate}
 
 By having several functions share the same linkage vector, we can
-simplify calls between functions in the same compilation unit, because
-the caller and the callee would then share the same linkage vector.
-In contrast, a call from a function in one compilation unit to a
-function in a different compilation unit involves (in the most general
-case) accessing the linkage rack of the callee and storing it in a
-register.
+simplify calls between top-level functions in the same compilation
+unit, because the caller and the callee would then share the
+same static environment.  In contrast, a call from a function in one
+compilation unit to a function in a different compilation unit
+involves accessing the static environment of the callee and storing it
+in a register.
 
 For a \emph{generic function}, the description of the slots above
 applies both to the generic function object itself and to the
@@ -513,38 +538,39 @@ can occur:
   function (i.e. its class is a subclass of the class
   \texttt{function}), but nothing else is know about it, then an
   \emph{external call} is made.  Such a call consists of copying the
-  contents of the \emph{static environment} slot and the \emph{linkage
-    rack} slot to the predetermined place specific to the backend,
-  and then to issue a \emph{call} instruction (or equivalent) to the
-  address indicated by the most general \emph{entry point} slot of the
-  function object.  When the call is to a \emph{global function}, then
-  the linkage rack contains a \texttt{cons} cell whose \texttt{car}
-  is guaranteed to contain a function object, so this situation is
-  applicable in this case. 
+  contents of the \emph{static environment} slot to the predetermined
+  place specific to the backend, and then to issue a \emph{call}
+  instruction (or equivalent) to the address indicated by the
+  \emph{entry point} slot of the function object.  When the
+  call is to a \emph{global function}, then the linkage vector contains
+  a \texttt{cons} cell whose \texttt{car} is guaranteed to contain a
+  function object, so this situation is applicable in this case.
 \item When it can not only be determined statically that the object
   being called is a function, but also that the number of arguments
   that will be passed to it is acceptable, then the alternative entry
   point can be used.  This is often the case when the function being
-  called is a \emph{global system function}. 
+  called is a \emph{global system function}.  Then the alternative
+  entry point is computed as a constant offset from the normal entry
+  point.
 \item When it can be determined statically that the object being
   called is a function object in the \emph{same compilation unit} as
   the caller, then we can make an \emph{internal call}.  If both the
   caller and the callee are \emph{global functions} (so that the
-  static environment is NIL for both), then it suffices to issue a
-  \texttt{call} instruction (or equivalent) to a relative address that
-  can be determined statically.  The linkage rack does not need to
-  be passed because it is shared between the caller and the callee.
-  The relative address can be chosen so as to avoid type checking of
-  arguments with known types. 
+  static environment contain only the linkage vector for both), then
+  it suffices to issue a \texttt{call} instruction (or equivalent) to
+  a relative address that can be determined statically.  The static
+  environment does not need to be passed because it is shared between
+  the caller and the callee.  The relative address can be chosen so as
+  to avoid type checking of arguments with known types.
 \item Even when it can not be determined statically that the object
   being called is a function, there are some situations that can be
   optimized.  For instance, when it is likely that the object is going
   to be called multiple times with the same number of arguments, then
   it may pay off to start by checking that the object is a function,
   then accessing its \emph{lambda list} to determine that the number
-  of arguments is acceptable, and then cache the static environment,
-  the linkage rack, and the alternative entry point in \emph{local
-    registers}.   A typical use for this situation is in the
-  \emph{sequence functions} for the keyword arguments \texttt{:test},
-  \texttt{:test-not}, and \texttt{:key}.  
+  of arguments is acceptable, and then cache the static environment
+  and the alternative entry point in \emph{local registers}.  A
+  typical use for this situation is in the \emph{sequence functions}
+  for the keyword arguments \texttt{:test}, \texttt{:test-not}, and
+  \texttt{:key}.
 \end{itemize}

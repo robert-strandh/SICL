@@ -1,6 +1,8 @@
 \chapter{Medium-level intermediate representation}
 \label{chap-mir}
 
+\section{Instruction graph}
+
 The compiler translates an abstract syntax tree into a \emph{graph} of
 \emph{instructions} in a language named \emph{MIR}.  This graph is a
 variation on a \emph{control flow graph}.  As such, it has a unique
@@ -59,6 +61,95 @@ context where the resulting closure is obviously not needed.
 
 A MIR program is said to be \emph{reduced} if and only if it is
 \emph{well formed} and every instruction is \emph{reachable}. 
+
+\section{Succession of levels of detail}
+
+MIR is not a single representation.  Rather, it is a succession of
+different representations, according to the \emph{level of detail}
+that is required.  The levels are distinguished by what types of
+instructions and what types of data are present. 
+
+\subsection{Level 0}
+
+The first level is \emph{backend independent} and mostly
+implementation independent.  The dependence on the implementation
+consists of what floating-point operations might be present, depending
+on the different floating-point types supported.
+
+At this level, no address calculations are exposed.  All variables
+contain \cl{} objects, except that some variables may contain
+\emph{unboxed} or \emph{raw} versions of such objects, in particular
+integers, floating-point numbers, and characters.
+
+Argument parsing is not exposed, and is instead hidden in a single
+\texttt{enter-instruction}.  Similarly, the details of how functions
+are called and how values are returned is hidden.  A single
+instruction is used to access the fields of a \texttt{cons} cell, the
+element of an array, and the slot of a standard instance. 
+
+At this level, all lexical locations are treated the same way. 
+
+\subsection{Level 1}
+
+The transformation from the previous level to this level consists of a
+\emph{closure analysis}.  Lexical locations are divided into two
+sub-categories, namely \emph{simple locations} and \emph{captured
+  locations}.  
+
+A simple location is a lexical location that is assigned and used
+within a single \emph{function}, which makes it possible to allocate
+it in a register or in the stack frame belonging to that function.
+
+A captured location, on the other hand, is a location that is assigned
+and/or used in more than one function.  Such a variable can not be
+allocated in a register or in the stack frame, and must instead be
+allocated in the \emph{static runtime environment}. 
+
+At this level, we also introduce explicit instructions for
+\emph{non-local control transfers}, resulting from a
+\texttt{return-from} or \texttt{go} special form where the origin is
+in one function and the destination is in a different function.
+
+\subsection{Level 2}
+
+The distinction between simple locations and captured locations is
+necessary because only simple locations are subject to conversion to
+\emph{static single assignment} (SSA) form, which is what this level is
+about.  
+
+A priori, every simple location is translated this way, but
+implementations can leave out some or all simple locations from this
+conversion.  However, some optimizations apply only to simple
+locations. 
+
+The representation at this level is used for \emph{type inference}.
+The result of this operation is that some parts of the instruction
+graph may be removed.
+
+Since parts of the instruction graph may be removed, it could be the
+case that variables that were previously considered captured no longer
+are.  Therefore, additional variables may be converted to SSA form
+here. 
+
+\subsection{Level 3}
+
+This is the first level where real implementation-specific and
+backend-specific details is introduced.  The instructions to access
+fields of a \texttt{cons} cell, elements of an array, or slots of a
+standard object, are expanded to expose tagging and address
+calculations.
+
+This is the level where most traditional optimizations are
+accomplished, such as \emph{value numbering}, \emph{redundancy
+  elimination}, \emph{common subexpression elimination}, etc.
+
+\subsection{Level 4}
+
+At this level, \emph{registers} and \emph{stack locations} are
+introduced according to the conventions for the implementation and the
+backend. 
+
+This is the level where \emph{register allocation} is accomplished.
 
 \section{Definition of MIR instructions}
 \label{sec-mir-instructions}
@@ -157,7 +248,11 @@ Number of successors & 1\\
 \hline
 \end{tabular}
 
-Executing this instruction has no effect. 
+Executing this instruction has no effect.  This instruction may be
+introduced by certain transformations as a replacement for existing
+instructions.  This way, these transformations do not have to be
+concerned with complex updates of the graph.  Instead a dedicated
+transformation for removing all \texttt{nop-instruction}s is provided.
 
 \refFig{fig-nop-instruction} shows the Graphviz illustration of the
 \texttt{nop-instruction}
@@ -215,9 +310,8 @@ Number of successors & 1\\
 \end{tabular}
 
 The first input of this instruction corresponds to the function being
-called.  It can be either a lexical location or a global-input.  
-The remaining inputs correspond to the arguments to be passed to the
-callee. 
+called.  The remaining inputs correspond to the arguments to be passed
+to the callee.
 
 The outputs of this instruction correspond to the values that the
 caller requests from the callee.  The number of outputs can therefore
@@ -250,9 +344,8 @@ Number of successors & 0\\
 \end{tabular}
 
 The first input of this instruction corresponds to the function being
-called.  It can be either a lexical location or a global-input.  
-The remaining inputs correspond to the arguments to be passed to the
-callee. 
+called.  The remaining inputs correspond to the arguments to be passed
+to the callee.
 
 \refFig{fig-tailcall-instruction} shows the Graphviz illustration of the
 \texttt{tailcall-instruction}
@@ -526,7 +619,7 @@ instance.  The output is the contents of the corresponding slot.
 
 \begin{tabular}{|l|l|}
 \hline
-Number of inputs & 2\\
+Number of inputs & 3\\
 \hline
 Number of outputs & 0\\
 \hline
@@ -554,4 +647,2515 @@ replace the contents of the corresponding slot by the third input.
 \texttt{slot-write-instruction}.}
 \end{figure}
 
+\subsection{Instruction \texttt{aref-instruction}}
+\label{mir-instruction-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a \emph{general array}.
+If the MIR program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The second input is
+a non-negative fixnum indicating the \emph{row-major index} of an
+element of the array.  The output is the contents of the corresponding
+element of the array.
+
+\refFig{fig-aref-instruction} shows the Graphviz illustration of the
+\texttt{aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-aref-instruction}
+\texttt{aref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-aref-instruction}}
+\label{mir-instruction-short-float-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{short-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{short-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  The
+output is the contents of the corresponding element of the array.  The
+output is an unboxed \texttt{short-float} number.
+
+\refFig{fig-short-float-aref-instruction} shows the Graphviz illustration of the
+\texttt{short-float-aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-aref-instruction}
+\texttt{short-float-aref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-aref-instruction}}
+\label{mir-instruction-single-float-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{single-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{single-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  The
+output is the contents of the corresponding element of the array.  The
+output is an unboxed \texttt{single-float} number.
+
+\refFig{fig-single-float-aref-instruction} shows the Graphviz illustration of the
+\texttt{single-float-aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-aref-instruction}
+\texttt{single-float-aref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-aref-instruction}}
+\label{mir-instruction-double-float-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{double-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{double-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  The
+output is the contents of the corresponding element of the array.  The
+output is an unboxed \texttt{double-float} number.
+
+\refFig{fig-double-float-aref-instruction} shows the Graphviz illustration of the
+\texttt{double-float-aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-aref-instruction}
+\texttt{double-float-aref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-aref-instruction}}
+\label{mir-instruction-long-float-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{long-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{long-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  The
+output is the contents of the corresponding element of the array.  The
+output is an unboxed \texttt{long-float} number.
+
+\refFig{fig-long-float-aref-instruction} shows the Graphviz illustration of the
+\texttt{long-float-aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-aref-instruction}
+\texttt{long-float-aref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{bit-aref-instruction}}
+\label{mir-instruction-bit-aref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction is used by for accessing an element of an array
+specialized to \texttt{bit}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{bit}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  The
+output is the contents of the corresponding element of the array.  The
+output is an unboxed \texttt{bit}.
+
+\refFig{fig-bit-aref-instruction} shows the Graphviz illustration of the
+\texttt{bit-aref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-bit-aref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-bit-aref-instruction}
+\texttt{bit-aref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{aset-instruction}}
+\label{mir-instruction-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a \emph{general array}.
+If the MIR program is \emph{safe}, then control must reach this
+instruction only if this restriction is verified.  The second input is
+a fixnum indicating the \emph{row-major index} of an element of the
+array.  The third input can be any object.  The effect of the
+instruction is to replace the contents of the corresponding element by
+the third input.
+
+\refFig{fig-aset-instruction} shows the Graphviz illustration of the
+\texttt{aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-aset-instruction}
+\texttt{aset-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-aset-instruction}}
+\label{mir-instruction-short-float-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{short-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{short-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  
+The third input is an unboxed \texttt{short-float} number.
+
+The effect of the instruction is to replace the contents of the
+corresponding element by the third input.
+
+\refFig{fig-short-float-aset-instruction} shows the Graphviz illustration of the
+\texttt{short-float-aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-aset-instruction}
+\texttt{short-float-aset-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-aset-instruction}}
+\label{mir-instruction-single-float-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{single-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{single-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  
+The third input is an unboxed \texttt{single-float} number.
+
+The effect of the instruction is to replace the contents of the
+corresponding element by the third input.
+
+\refFig{fig-single-float-aset-instruction} shows the Graphviz illustration of the
+\texttt{single-float-aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-aset-instruction}
+\texttt{single-float-aset-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-aset-instruction}}
+\label{mir-instruction-double-float-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{double-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{double-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  
+The third input is an unboxed \texttt{double-float} number.
+
+The effect of the instruction is to replace the contents of the
+corresponding element by the third input.
+
+\refFig{fig-double-float-aset-instruction} shows the Graphviz illustration of the
+\texttt{double-float-aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-aset-instruction}
+\texttt{double-float-aset-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-aset-instruction}}
+\label{mir-instruction-long-float-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction can be used by implementations that support arrays
+specialized to \texttt{long-float}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{long-float}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  
+The third input is an unboxed \texttt{long-float} number.
+
+The effect of the instruction is to replace the contents of the
+corresponding element by the third input.
+
+\refFig{fig-long-float-aset-instruction} shows the Graphviz illustration of the
+\texttt{long-float-aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-aset-instruction}
+\texttt{long-float-aset-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{bit-aset-instruction}}
+\label{mir-instruction-bit-aset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 3\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction is used by for setting an element of an array
+specialized to \texttt{bit}.
+
+The first input to this instruction must be an \emph{array}
+specialized to \texttt{bit}.  If the MIR program is
+\emph{safe}, then control must reach this instruction only if this
+restriction is verified.  The second input is a non-negative fixnum
+indicating the \emph{row-major index} of an element of the array.  
+The third input is an unboxed \texttt{bit}.
+
+The effect of the instruction is to replace the contents of the
+corresponding element by the third input.
+
+\refFig{fig-bit-aset-instruction} shows the Graphviz illustration of the
+\texttt{bit-aset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-bit-aset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-bit-aset-instruction}
+\texttt{bit-aset-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{fixnum-add-instruction}}
+\label{mir-instruction-fixnum-add}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \texttt{fixnum}.  If the
+MIR program is \emph{safe}, then control must reach this instruction
+only if this restriction is verified.  The output is a
+\texttt{fixnum}.  
+
+The output is the sum of the two inputs.
+
+If the second successor is chosen, then in order to obtain the sum of the
+two inputs, the following adjustment has to be made:
+
+\begin{itemize}
+\item If the output is negative, then $2^n$ must be added to the
+  output, where $n$ is the number of bits used to represent a fixnum. 
+\item If the output is positive, then $2^n$ must be subtracted from
+  the output, where $n$ is the number of bits used to represent a
+  fixnum.
+\end{itemize}
+
+\refFig{fig-fixnum-add-instruction} shows the Graphviz illustration of the
+\texttt{fixnum-add-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-fixnum-add-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-fixnum-add-instruction}
+\texttt{fixnum-add-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{fixnum-sub-instruction}}
+\label{mir-instruction-fixnum-sub}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \texttt{fixnum}.  If the
+MIR program is \emph{safe}, then control must reach this instruction
+only if this restriction is verified.  The output is a
+\texttt{fixnum}.  
+
+The output is the difference between the two inputs.
+
+If the second successor is chosen, then in order to obtain the difference
+between the two inputs, the following adjustment has to be made:
+
+\begin{itemize}
+\item If the output is negative, then $2^n$ must be added to the
+  output, where $n$ is the number of bits used to represent a fixnum. 
+\item If the output is positive, then $2^n$ must be subtracted from
+  the output, where $n$ is the number of bits used to represent a
+  fixnum.
+\end{itemize}
+
+\refFig{fig-fixnum-sub-instruction} shows the Graphviz illustration of the
+\texttt{fixnum-sub-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-fixnum-sub-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-fixnum-sub-instruction}
+\texttt{fixnum-sub-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{fixnum-<-instruction}}
+\label{mir-instruction-fixnum-less}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \texttt{fixnum}.  If the
+MIR program is \emph{safe}, then control must reach this instruction
+only if this restriction is verified.
+
+The first successor is chosen if and only if the first input is
+strictly less than the second input.
+
+\refFig{fig-fixnum-less-instruction} shows the Graphviz illustration of the
+\texttt{fixnum-<-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-fixnum-less-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-fixnum-less-instruction}
+\texttt{fixnum-<-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{fixnum-<=-instruction}}
+\label{mir-instruction-fixnum-le}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \texttt{fixnum}.  If the
+MIR program is \emph{safe}, then control must reach this instruction
+only if this restriction is verified.
+
+The first successor is chosen if and only if the first input is
+less than or equal to the second input.
+
+\refFig{fig-fixnum-le-instruction} shows the Graphviz illustration of the
+\texttt{fixnum-<=-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-fixnum-le-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-fixnum-le-instruction}
+\texttt{fixnum-<=-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{fixnum-=-instruction}}
+\label{mir-instruction-fixnum-equal}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \texttt{fixnum}.  If the
+MIR program is \emph{safe}, then control must reach this instruction
+only if this restriction is verified.
+
+The first successor is chosen if and only if the first input is equal
+to the second input.
+
+\refFig{fig-fixnum-equal-instruction} shows the Graphviz illustration of the
+\texttt{fixnum-=-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-fixnum-equal-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-fixnum-equal-instruction}
+\texttt{fixnum-=-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{phi-instruction}}
+\label{mir-instruction-phi}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & > 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+This instruction is used for variables respecting the \emph{static
+  single assignment} (SSA) property.  
+
+One of the following must hold for any \texttt{phi-instruction} A:
+
+\begin{itemize}
+\item The number of predecessors of A is equal to the number of inputs
+  to A, or
+\item A has a single predecessor B, and B is also a
+  \texttt{phi-instruction} with the same number of inputs as A.
+\end{itemize}
+
+In other words, \texttt{phi-instruction}s occur in \emph{clusters}
+with the same number of inputs $n$.  The first instruction of such a
+cluster has $n$ predecessors, and the others have a single
+predecessor. 
+
+Special care must be taken when the graph is modified so that this
+restriction is respected. 
+
+\refFig{fig-phi-instruction} shows the Graphviz illustration of the
+\texttt{phi-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-phi-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-phi-instruction}
+\texttt{phi-instruction}.}
+\end{figure}
+
+Some transformations may be easier to accomplish if there is a single
+\texttt{phi-instruction} as opposed to a cluster of several such
+instructions.  We may propose a \emph{cluster/uncluster}
+transformation on the entire program so that both representations are
+accessible. 
+
+\subsection{Instruction \texttt{typeq-instruction}}
+\label{mir-instruction-typeq}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The first input of this instruction is an object of which the type
+is be tested.  The second input is a \emph{type specifier}.
+Initially, the second input is a \texttt{constant-input}, but that
+might change as a result of transformations of the graph.  
+
+The first successor is chosen if and only if the first input is of the
+type denoted by the second input. 
+
+This instruction is used in a variety of situations:
+
+\begin{itemize}
+\item When the source code contains a call to \texttt{typep} with a
+  constant type argument, a compiler macro might transform the call to
+  a special form that generates this instruction.
+\item Some implementations might generate this instruction from the
+  special operator \texttt{the}, where the second successor contains a
+  call to \texttt{error}.
+\item Since type declarations can be seen as implicit use of the
+  special operator \texttt{the}, this instruction can be used for type
+  declarations as well.
+\item The macro \texttt{check-type} might result in this instruction
+  being generated, in which case the second successor would contain
+  instructions to signal a correctable error.
+\end{itemize}
+
+Because the second input may not be a \texttt{constant-input}, the
+type specifier can also be retrieved using the slot reader
+\texttt{value-type}. 
+
+\refFig{fig-typeq-instruction} shows the Graphviz illustration of the
+\texttt{typeq-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-typeq-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-typeq-instruction}
+\texttt{typeq-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{sref-instruction}}
+\label{mir-instruction-sref}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a constant symbol naming a
+special variable.  The output is the value of that special variable.
+
+\refFig{fig-sref-instruction} shows the Graphviz illustration of the
+\texttt{sref-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-sref-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-sref-instruction}
+\texttt{sref-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{sset-instruction}}
+\label{mir-instruction-sset}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a constant symbol naming a
+special variable.  The second input can be any object.  The effect of
+the instruction is to replace the current value of the special
+variable the second input.
+
+\refFig{fig-sset-instruction} shows the Graphviz illustration of the
+\texttt{sset-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-sset-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-sset-instruction}
+\texttt{sset-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{sbind-instruction}}
+\label{mir-instruction-sbind}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The first input to this instruction must be a constant symbol naming a
+special variable.  The second input can be any object.  The effect of
+the instruction is to create a new binding for the special variable,
+where the initial value is that of the second input.
+
+The binding is automatically destroyed when the current function
+invocation terminates by executing a \texttt{return-instruction}.
+After an instruction of this type has been executed, control flow must
+not be able to reach a \texttt{tailcall-instruction}. 
+
+\refFig{fig-sbind-instruction} shows the Graphviz illustration of the
+\texttt{sbind-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-sbind-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-sbind-instruction}
+\texttt{sbind-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-box-instruction}}
+\label{mir-instruction-short-float-box}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be an unboxed \texttt{short-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is a boxed \texttt{short-float} value corresponding to the
+input.
+
+This instruction can be used by implementations that support the
+\texttt{short-float} data type.   
+
+\refFig{fig-short-float-box-instruction} shows the Graphviz illustration of the
+\texttt{short-float-box-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-box-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-box-instruction}
+\texttt{short-float-box-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-unbox-instruction}}
+\label{mir-instruction-short-float-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{short-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is an unboxed \texttt{short-float} value corresponding to
+the input.
+
+This instruction can be used by implementations that support the
+\texttt{short-float} data type.   
+
+\refFig{fig-short-float-unbox-instruction} shows the Graphviz illustration of the
+\texttt{short-float-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-unbox-instruction}
+\texttt{short-float-unbox-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-box-instruction}}
+\label{mir-instruction-single-float-box}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be an unboxed \texttt{single-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is a boxed \texttt{single-float} value corresponding to the
+input.
+
+\refFig{fig-single-float-box-instruction} shows the Graphviz illustration of the
+\texttt{single-float-box-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-box-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-box-instruction}
+\texttt{single-float-box-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-unbox-instruction}}
+\label{mir-instruction-single-float-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{single-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is an unboxed \texttt{single-float} value corresponding to
+the input.
+
+\refFig{fig-single-float-unbox-instruction} shows the Graphviz illustration of the
+\texttt{single-float-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-unbox-instruction}
+\texttt{single-float-unbox-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-box-instruction}}
+\label{mir-instruction-double-float-box}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be an unboxed \texttt{double-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is a boxed \texttt{double-float} value corresponding to the
+input.
+
+This instruction can be used by implementations that support the
+\texttt{double-float} data type.   
+
+\refFig{fig-double-float-box-instruction} shows the Graphviz illustration of the
+\texttt{double-float-box-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-box-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-box-instruction}
+\texttt{double-float-box-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-unbox-instruction}}
+\label{mir-instruction-double-float-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{double-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is an unboxed \texttt{double-float} value corresponding to
+the input.
+
+This instruction can be used by implementations that support the
+\texttt{double-float} data type.   
+
+\refFig{fig-double-float-unbox-instruction} shows the Graphviz illustration of the
+\texttt{double-float-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-unbox-instruction}
+\texttt{double-float-unbox-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-box-instruction}}
+\label{mir-instruction-long-float-box}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be an unboxed \texttt{long-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is a boxed \texttt{long-float} value corresponding to the
+input.
+
+This instruction can be used by implementations that support the
+\texttt{long-float} data type.   
+
+\refFig{fig-long-float-box-instruction} shows the Graphviz illustration of the
+\texttt{long-float-box-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-box-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-box-instruction}
+\texttt{long-float-box-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-unbox-instruction}}
+\label{mir-instruction-long-float-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{long-float}
+value.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is an unboxed \texttt{long-float} value corresponding to
+the input.
+
+This instruction can be used by implementations that support the
+\texttt{long-float} data type.   
+
+\refFig{fig-long-float-unbox-instruction} shows the Graphviz illustration of the
+\texttt{long-float-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-unbox-instruction}
+\texttt{long-float-unbox-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{bit-box-instruction}}
+\label{mir-instruction-bit-box}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be an unboxed \texttt{bit}.
+If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The output is a boxed \texttt{bit} value corresponding to the
+input, i.e., a fixnum with the value of $0$ or $1$. 
+
+\refFig{fig-bit-box-instruction} shows the Graphviz illustration of the
+\texttt{bit-box-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-bit-box-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-bit-box-instruction}
+\texttt{bit-box-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{bit-unbox-instruction}}
+\label{mir-instruction-bit-unbox}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be a boxed \texttt{bit} value,
+i.e., a \texttt{fixnum} with a value of either $0$ or $1$.  If the MIR
+program is \emph{safe}, then control must reach this instruction only
+if this restriction is verified.
+
+The output is an unboxed \texttt{bit} value corresponding to
+the input.
+
+\refFig{fig-bit-unbox-instruction} shows the Graphviz illustration of the
+\texttt{bit-unbox-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-bit-unbox-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-bit-unbox-instruction}
+\texttt{bit-unbox-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-add-instruction}}
+\label{mir-instruction-short-float-add}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed short float.
+
+The output is the sum of the two inputs.
+
+\refFig{fig-short-float-add-instruction} shows the Graphviz illustration of the
+\texttt{short-float-add-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-add-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-add-instruction}
+\texttt{short-float-add-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-sub-instruction}}
+\label{mir-instruction-short-float-sub}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed short float.
+
+The output is the difference between the two inputs.
+
+\refFig{fig-short-float-sub-instruction} shows the Graphviz illustration of the
+\texttt{short-float-sub-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-sub-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-sub-instruction}
+\texttt{short-float-sub-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-mul-instruction}}
+\label{mir-instruction-short-float-mul}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed short float.
+
+The output is the product of the two inputs.
+
+\refFig{fig-short-float-mul-instruction} shows the Graphviz illustration of the
+\texttt{short-float-mul-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-mul-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-mul-instruction}
+\texttt{short-float-mul-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-div-instruction}}
+\label{mir-instruction-short-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed short float.
+
+The output is the quotient of the two inputs.
+
+\refFig{fig-short-float-div-instruction} shows the Graphviz illustration of the
+\texttt{short-float-div-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-div-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-div-instruction}
+\texttt{short-float-div-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-less-instruction}}
+\label{mir-instruction-short-float-less}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is strictly less than
+the second one; otherwise the second successor is chosen. 
+
+\refFig{fig-short-float-less-instruction} shows the Graphviz illustration of the
+\texttt{short-float-less-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-less-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-less-instruction}
+\texttt{short-float-less-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-not-greater-instruction}}
+\label{mir-instruction-short-float-not-greater}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is less than or equal
+to the second one; otherwise the second successor is chosen.
+
+\refFig{fig-short-float-not-greater-instruction} shows the Graphviz illustration of the
+\texttt{short-float-not-greater-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-not-greater-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-not-greater-instruction}
+\texttt{short-float-not-greater-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-sin-instruction}}
+\label{mir-instruction-short-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed short float.
+
+The output is the sine of the input.
+
+\refFig{fig-short-float-sin-instruction} shows the Graphviz illustration of the
+\texttt{short-float-sin-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-sin-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-sin-instruction}
+\texttt{short-float-sin-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-cos-instruction}}
+\label{mir-instruction-short-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed short float.
+
+The output is the cosine of the input.
+
+\refFig{fig-short-float-cos-instruction} shows the Graphviz illustration of the
+\texttt{short-float-cos-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-cos-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-cos-instruction}
+\texttt{short-float-cos-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{short-float-sqrt-instruction}}
+\label{mir-instruction-short-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed short
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed short float.
+
+The output is the square root of the input.
+
+\refFig{fig-short-float-sqrt-instruction} shows the Graphviz illustration of the
+\texttt{short-float-sqrt-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-short-float-sqrt-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-short-float-sqrt-instruction}
+\texttt{short-float-sqrt-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-add-instruction}}
+\label{mir-instruction-single-float-add}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the sum of the two inputs.
+
+\refFig{fig-single-float-add-instruction} shows the Graphviz illustration of the
+\texttt{single-float-add-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-add-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-add-instruction}
+\texttt{single-float-add-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-sub-instruction}}
+\label{mir-instruction-single-float-sub}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the difference between the two inputs.
+
+\refFig{fig-single-float-sub-instruction} shows the Graphviz illustration of the
+\texttt{single-float-sub-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-sub-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-sub-instruction}
+\texttt{single-float-sub-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-mul-instruction}}
+\label{mir-instruction-single-float-mul}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the product of the two inputs.
+
+\refFig{fig-single-float-mul-instruction} shows the Graphviz illustration of the
+\texttt{single-float-mul-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-mul-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-mul-instruction}
+\texttt{single-float-mul-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-div-instruction}}
+\label{mir-instruction-single-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the quotient of the two inputs.
+
+\refFig{fig-single-float-div-instruction} shows the Graphviz illustration of the
+\texttt{single-float-div-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-div-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-div-instruction}
+\texttt{single-float-div-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-less-instruction}}
+\label{mir-instruction-single-float-less}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is strictly less than
+the second one; otherwise the second successor is chosen. 
+
+\refFig{fig-single-float-less-instruction} shows the Graphviz illustration of the
+\texttt{single-float-less-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-less-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-less-instruction}
+\texttt{single-float-less-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-not-greater-instruction}}
+\label{mir-instruction-single-float-not-greater}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is less than or equal
+to the second one; otherwise the second successor is chosen.
+
+\refFig{fig-single-float-not-greater-instruction} shows the Graphviz illustration of the
+\texttt{single-float-not-greater-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-not-greater-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-not-greater-instruction}
+\texttt{single-float-not-greater-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-sin-instruction}}
+\label{mir-instruction-single-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the sine of the input.
+
+\refFig{fig-single-float-sin-instruction} shows the Graphviz illustration of the
+\texttt{single-float-sin-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-sin-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-sin-instruction}
+\texttt{single-float-sin-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-cos-instruction}}
+\label{mir-instruction-single-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the cosine of the input.
+
+\refFig{fig-single-float-cos-instruction} shows the Graphviz illustration of the
+\texttt{single-float-cos-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-cos-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-cos-instruction}
+\texttt{single-float-cos-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{single-float-sqrt-instruction}}
+\label{mir-instruction-single-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed single
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed single float.
+
+The output is the square root of the input.
+
+\refFig{fig-single-float-sqrt-instruction} shows the Graphviz illustration of the
+\texttt{single-float-sqrt-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-single-float-sqrt-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-single-float-sqrt-instruction}
+\texttt{single-float-sqrt-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-add-instruction}}
+\label{mir-instruction-double-float-add}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed double float.
+
+The output is the sum of the two inputs.
+
+\refFig{fig-double-float-add-instruction} shows the Graphviz illustration of the
+\texttt{double-float-add-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-add-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-add-instruction}
+\texttt{double-float-add-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-sub-instruction}}
+\label{mir-instruction-double-float-sub}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed double float.
+
+The output is the difference between the two inputs.
+
+\refFig{fig-double-float-sub-instruction} shows the Graphviz illustration of the
+\texttt{double-float-sub-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-sub-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-sub-instruction}
+\texttt{double-float-sub-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-mul-instruction}}
+\label{mir-instruction-double-float-mul}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed double float.
+
+The output is the product of the two inputs.
+
+\refFig{fig-double-float-mul-instruction} shows the Graphviz illustration of the
+\texttt{double-float-mul-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-mul-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-mul-instruction}
+\texttt{double-float-mul-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-div-instruction}}
+\label{mir-instruction-double-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed double float.
+
+The output is the quotient of the two inputs.
+
+\refFig{fig-double-float-div-instruction} shows the Graphviz illustration of the
+\texttt{double-float-div-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-div-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-div-instruction}
+\texttt{double-float-div-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-less-instruction}}
+\label{mir-instruction-double-float-less}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is strictly less than
+the second one; otherwise the second successor is chosen. 
+
+\refFig{fig-double-float-less-instruction} shows the Graphviz illustration of the
+\texttt{double-float-less-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-less-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-less-instruction}
+\texttt{double-float-less-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-not-greater-instruction}}
+\label{mir-instruction-double-float-not-greater}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is less than or equal
+to the second one; otherwise the second successor is chosen.
+
+\refFig{fig-double-float-not-greater-instruction} shows the Graphviz illustration of the
+\texttt{double-float-not-greater-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-not-greater-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-not-greater-instruction}
+\texttt{double-float-not-greater-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-sin-instruction}}
+\label{mir-instruction-double-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed double float.
+
+The output is the sine of the input.
+
+\refFig{fig-double-float-sin-instruction} shows the Graphviz illustration of the
+\texttt{double-float-sin-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-sin-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-sin-instruction}
+\texttt{double-float-sin-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-cos-instruction}}
+\label{mir-instruction-double-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed double float.
+
+The output is the cosine of the input.
+
+\refFig{fig-double-float-cos-instruction} shows the Graphviz illustration of the
+\texttt{double-float-cos-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-cos-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-cos-instruction}
+\texttt{double-float-cos-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{double-float-sqrt-instruction}}
+\label{mir-instruction-double-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed double
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed double float.
+
+The output is the square root of the input.
+
+\refFig{fig-double-float-sqrt-instruction} shows the Graphviz illustration of the
+\texttt{double-float-sqrt-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-double-float-sqrt-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-double-float-sqrt-instruction}
+\texttt{double-float-sqrt-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-add-instruction}}
+\label{mir-instruction-long-float-add}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+The output is the sum of the two inputs.
+
+\refFig{fig-long-float-add-instruction} shows the Graphviz illustration of the
+\texttt{long-float-add-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-add-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-add-instruction}
+\texttt{long-float-add-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-sub-instruction}}
+\label{mir-instruction-long-float-sub}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+The output is the difference between the two inputs.
+
+\refFig{fig-long-float-sub-instruction} shows the Graphviz illustration of the
+\texttt{long-float-sub-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-sub-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-sub-instruction}
+\texttt{long-float-sub-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-mul-instruction}}
+\label{mir-instruction-long-float-mul}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+The output is the product of the two inputs.
+
+\refFig{fig-long-float-mul-instruction} shows the Graphviz illustration of the
+\texttt{long-float-mul-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-mul-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-mul-instruction}
+\texttt{long-float-mul-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-div-instruction}}
+\label{mir-instruction-long-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+The output is the quotient of the two inputs.
+
+\refFig{fig-long-float-div-instruction} shows the Graphviz illustration of the
+\texttt{long-float-div-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-div-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-div-instruction}
+\texttt{long-float-div-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-less-instruction}}
+\label{mir-instruction-long-float-less}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is strictly less than
+the second one; otherwise the second successor is chosen. 
+
+\refFig{fig-long-float-less-instruction} shows the Graphviz illustration of the
+\texttt{long-float-less-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-less-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-less-instruction}
+\texttt{long-float-less-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-not-greater-instruction}}
+\label{mir-instruction-long-float-not-greater}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 2\\
+\hline
+Number of outputs & 0\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 2\\
+\hline
+\end{tabular}
+
+The inputs to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.
+
+The first successor is chosen if the first input is less than or equal
+to the second one; otherwise the second successor is chosen.
+
+\refFig{fig-long-float-not-greater-instruction} shows the Graphviz illustration of the
+\texttt{long-float-not-greater-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-not-greater-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-not-greater-instruction}
+\texttt{long-float-not-greater-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-sin-instruction}}
+\label{mir-instruction-long-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+The output is the sine of the input.
+
+\refFig{fig-long-float-sin-instruction} shows the Graphviz illustration of the
+\texttt{long-float-sin-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-sin-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-sin-instruction}
+\texttt{long-float-sin-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-cos-instruction}}
+\label{mir-instruction-long-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+The output is the cosine of the input.
+
+\refFig{fig-long-float-cos-instruction} shows the Graphviz illustration of the
+\texttt{long-float-cos-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-cos-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-cos-instruction}
+\texttt{long-float-cos-instruction}.}
+\end{figure}
+
+\subsection{Instruction \texttt{long-float-sqrt-instruction}}
+\label{mir-instruction-long-float-div}
+
+\begin{tabular}{|l|l|}
+\hline
+Number of inputs & 1\\
+\hline
+Number of outputs & 1\\
+\hline
+Number of predecessors & any\\
+\hline
+Number of successors & 1\\
+\hline
+\end{tabular}
+
+The input to this instruction must be of type \emph{unboxed long
+  float}.  If the MIR program is \emph{safe}, then control must reach
+this instruction only if this restriction is verified.  The output is
+also of type unboxed long float.
+
+The output is the square root of the input.
+
+\refFig{fig-long-float-sqrt-instruction} shows the Graphviz illustration of the
+\texttt{long-float-sqrt-instruction}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-long-float-sqrt-instruction.pdf_t}
+\end{center}
+\caption{\label{fig-long-float-sqrt-instruction}
+\texttt{long-float-sqrt-instruction}.}
+\end{figure}
+
+\section{Data}
+
+\subsection{Input \texttt{constant-input}}
+
+This data type corresponds to constants in source code.  It can only
+be used as an \emph{input}.
+
+The slot reader \texttt{value} can be used to access the constant. 
+
+\refFig{fig-constant-input} shows the Graphviz illustration of the
+\texttt{constant-input}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-constant-input.pdf_t}
+\end{center}
+\caption{\label{fig-constant-input}
+\texttt{constant-input}.}
+\end{figure}
+
+\subsection{Location \texttt{lexical-location}}
+
+This data type corresponds to lexical variable in the source code, and
+to temporary variables introduced by the compiler.  It can be used
+both as an input and as an output.
+
+The slot reader \texttt{name} can be used to access the name of the
+variables.  Notice that different lexical locations have different
+\emph{identity} (i.e, they are not \texttt{eq}), but several different
+lexical locations may have the same name, due to shadowing.
+
+\refFig{fig-lexical-location} shows the Graphviz illustration of the
+\texttt{lexical-location}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-lexical-location.pdf_t}
+\end{center}
+\caption{\label{fig-lexical-location}
+\texttt{lexical-location}.}
+\end{figure}
+
+\subsection{Location \texttt{simple-location}}
+
+This data type corresponds is a subtype of \texttt{lexical-location}.
+It is used for lexical locations that are referred to within a single
+function, so that there is no possible capture.  A location of this
+type can be allocated in a register or on the stack.  A temporary
+variable introduced by the compiler will always turn into a datum of
+this type.
+
+\refFig{fig-simple-location} shows the Graphviz illustration of the
+\texttt{simple-location}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-simple-location.pdf_t}
+\end{center}
+\caption{\label{fig-simple-location}
+\texttt{simple-location}.}
+\end{figure}
+
+\subsection{Location \texttt{captured-location}}
+
+This data type corresponds is a subtype of \texttt{lexical-location}.
+It is used for lexical locations that are referred to from several
+function, i.e., for \emph{captured} variables.  A location of this
+type can \emph{not} be allocated in a register or on the stack.
+Instead, it has to be allocated in the \emph{static runtime
+  environment}. 
+
+\refFig{fig-captured-location} shows the Graphviz illustration of the
+\texttt{captured-location}
+
+\begin{figure}
+\begin{center}
+\inputfig{fig-captured-location.pdf_t}
+\end{center}
+\caption{\label{fig-captured-location}
+\texttt{captured-location}.}
+\end{figure}
+
+\section{Operations on MIR programs}
+
+\subsection{Cloning an instruction}
+
+\Defgeneric {clone-instruction} {instruction}
+
+This function creates a copy of \textit{instruction}.
+
+\Defmethod {clone-instruction} {(instruction {\tt instruction})}
+
+The primary method creates an instance of the class of
+\textit{instruction}, with the same inputs, outputs and successors
+(the lists are not copied). 
+
+Client code must create \texttt{:after} methods to fill in additional
+slots. 
+
+\Defun {insert-instruction-before} {new existing}
+
+Insert the instruction \textit{new} before the instruction
+\textit{existing}.  After this operation \textit{new} will have
+\textit{existing} as its sole successor, and \textit{existing} will
+have \textit{new} as its sole predecessor.  For every instruction $p$
+that was a predecessor of \textit{existing} before this operation was
+executed, after the operation $p$ will be a predecessor of
+\textit{new} and \textit{new} will have replaced \textit{existing} as
+a successor of $p$.
+
+\Defun {insert-instruction-between} {new existing1 existing2}
+
+Insert the instruction \textit{new} between the instructions
+\textit{existing1} and \textit{existing2}, where \textit{existing2} is
+a successor of \textit{existing1}.  \textit{existing1} can have any
+number of successors and \textit{existing2} can have any number of
+predecessors.  \textit{existing1} becomes the sole predecessor of
+\textit{new} and \textit{existing2} becomes the sole successor of
+\textit{new}.  \textit{new} replaces \textit{existing2} as a successor
+of \textit{existing1}, and \textit{existing1} as a predecessor of
+\textit{existing2}.
+
+\Defun {insert-instruction-after} {new existing}
+
+Insert \textit{new} after \textit{existing}.  \textit{existing} must
+have a single successor.  The effect is to insert \textit{new} between
+\textit{existing} and its sole successor.
+
+\Defun {delete-instruction} {instruction}
+
+Delete \textit{instruction}.  \textit{instruction} must have a single
+successor.  The sole successor of \textit{instruction} replaces
+\textit{instruction} as the successor of every predecessor of
+\textit{instruction}.  The predecessors of \textit{instruction} become
+the predecessors of the sole successor of \textit{instruction}.
+
 %%  LocalWords:  optimizations reachability unsupplied callee runtime
+%%  LocalWords:  subtype backend unboxed

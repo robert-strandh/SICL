@@ -21,10 +21,47 @@
 ;;;
 ;;; Class AST.  The base class for all AST classes.
 
-(defclass ast ()
-  ((%children :initform '() :initarg :children :accessor children)))
+(defclass ast () ())
 
-(cleavir-io:define-save-info ast (:children children))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin classes.
+
+;;; This class is used as a superclass for ASTs that produce Boolean
+;;; results, so are mainly used as the TEST-AST of an IF-AST.
+(defclass boolean-ast-mixin () ())
+
+;;; This class is used as a superclass for ASTs that produce no value
+;;; and that must be compiled in a context where no value is required.
+(defclass no-value-ast-mixin () ())
+
+;;; This class is used as a superclass for ASTs that produce a single
+;;; value that is not typically not just a Boolean value.
+(defclass one-value-ast-mixin () ())
+
+;;; This class is used as a superclass for ASTs that have no side
+;;; effect.
+(defclass side-effect-free-ast-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Predicate to test whether an AST is side-effect free.
+;;;
+;;; For instances of SIDE-EFFECT-FREE-AST-MIXIN, this predicate always
+;;; returns true.  For others, it has a default method that returns
+;;; false.  Implementations may add a method on some ASTs such as
+;;; CALL-AST that return true only if a particular call is side-effect
+;;; free.
+
+(defgeneric side-effect-free-p (ast))
+
+(defmethod side-effect-free-p (ast)
+  (declare (ignore ast))
+  nil)
+
+(defmethod side-effect-free-p ((ast side-effect-free-ast-mixin))
+  (declare (ignorable ast))
+  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -79,7 +116,12 @@
 (defun make-immediate-ast (value)
   (make-instance 'immediate-ast :value value))
 
-(cleavir-io:define-save-info immediate-ast (:value value))
+(cleavir-io:define-save-info immediate-ast
+  (:value value))
+
+(defmethod children ((ast immediate-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -94,49 +136,18 @@
 ;;; value here represents the value of that constant variable at
 ;;; compile time.
 
-(defclass constant-ast (ast)
+(defclass constant-ast (ast side-effect-free-ast-mixin)
   ((%value :initarg :value :reader value)))
 
 (defun make-constant-ast (value)
   (make-instance 'constant-ast :value value))
 
-(cleavir-io:define-save-info constant-ast (:value value))
+(cleavir-io:define-save-info constant-ast
+  (:value value))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class GLOBAL-AST. 
-;;; 
-;;; A GLOBAL-AST represents a reference to a global FUNCTION, i.e., a
-;;; name that is known to be associated with a function in the global
-;;; environment.  Such a reference contains the name of the function
-;;; and the TYPE of the function as it was declared in the context
-;;; where the AST was created.
-
-(defclass global-ast (ast)
-  ((%name :initarg :name :reader name)
-   (%function-type :initform t :initarg :function-type :accessor function-type)))
-
-(defun make-global-ast (name)
-  (make-instance 'global-ast :name name))
-
-(cleavir-io:define-save-info global-ast
-  (:name name) (:function-type function-type))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class SPECIAL-AST.
-;;; 
-;;; A SPECIAL-AST represents a reference to a special variable.  Such
-;;; a reference contains the name of the variable.
-
-(defclass special-ast (ast)
-  ((%name :initarg :name :reader name)
-   (%children :initform '() :allocation :class)))
-
-(defun make-special-ast (name)
-  (make-instance 'special-ast :name name))
-
-(cleavir-io:define-save-info special-ast (:name name))
+(defmethod children ((ast constant-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -146,13 +157,79 @@
 ;;; a reference contains the name of the variable, but it is used only
 ;;; for debugging purposes and for the purpose of error reporting.
 
-(defclass lexical-ast (ast)
+(defclass lexical-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
   ((%name :initarg :name :reader name)))
 
 (defun make-lexical-ast (name)
   (make-instance 'lexical-ast :name name))
 
-(cleavir-io:define-save-info lexical-ast (:name name))
+(cleavir-io:define-save-info lexical-ast
+  (:name name))
+
+(defmethod children ((ast lexical-ast))
+  (declare (ignorable ast))
+  '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SYMBOL-VALUE-AST.
+;;;
+;;; This AST can be generated from a call to SYMBOL-VALUE or a
+;;; reference to a special variable.
+
+(defclass symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
+
+(defun make-symbol-value-ast (symbol-ast)
+  (make-instance 'symbol-value-ast :symbol-ast symbol-ast))
+
+(cleavir-io:define-save-info symbol-value-ast
+  (:symbol-ast symbol-ast))
+
+(defmethod children ((ast symbol-value-ast))
+  (list (symbol-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class SET-SYMBOL-VALUE-AST.
+;;;
+;;; This AST can be generated from a call to (SETF SYMBOL-VALUE) or an
+;;; assignment to a special variable.
+
+(defclass set-symbol-value-ast (ast no-value-ast-mixin)
+  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
+
+(defun make-set-symbol-value-ast (symbol-ast value-ast)
+  (make-instance 'symbol-value-ast
+    :symbol-ast symbol-ast
+    :value-ast value-ast))
+
+(cleavir-io:define-save-info symbol-value-ast
+  (:symbol-ast symbol-ast)
+  (:value-ast value-ast))
+
+(defmethod children ((ast symbol-value-ast))
+  (list (symbol-ast ast) (value-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class FDEFINITION-AST.
+;;;
+;;; This AST can be generated from a call to FDEFINITION or a
+;;; reference to a global function.
+
+(defclass fdefinition-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  ((%name-ast :initarg :name-ast :reader name-ast)))
+
+(defun make-fdefinition-ast (name-ast)
+  (make-instance 'fdefinition-ast :name-ast name-ast))
+
+(cleavir-io:define-save-info fdefinition-ast
+  (:name-ast name-ast))
+
+(defmethod children ((ast fdefinition-ast))
+  (list (name-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -161,17 +238,20 @@
 ;;; A CALL-AST represents a function call.  
 
 (defclass call-ast (ast)
-  ())
+  ((%callee-ast :initarg :callee-ast :reader callee-ast)
+   (%argument-asts :initarg :argument-asts :reader argument-asts)))
 
 (defun make-call-ast (callee-ast argument-asts)
   (make-instance 'call-ast
-    :children (cons callee-ast argument-asts)))
+    :callee-ast callee-ast
+    :argument-asts argument-asts))
 
-(defmethod callee-ast ((ast call-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info call-ast
+  (:callee-ast callee-ast)
+  (:argument-asts argument-asts))
 
-(defmethod argument-asts ((ast call-ast))
-  (rest (children ast)))
+(defmethod children ((ast call-ast))
+  (cons (callee-ast ast) (argument-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -213,83 +293,98 @@
 ;;; LEXICAL-ASTs of any of the ki because they may not be set
 ;;; correctly (conceptually, they all have the value FALSE then).
 
-(defclass function-ast (ast)
-  ((%lambda-list :initarg :lambda-list :reader lambda-list)))
+(defclass function-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
+  ((%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%body-ast :initarg :body-ast :reader body-ast)))
 
 (defun make-function-ast (body-ast lambda-list)
   (make-instance 'function-ast
-    :children (list body-ast)
+    :body-ast body-ast
     :lambda-list lambda-list))
 
-(defmethod body-ast ((ast function-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info function-ast
+  (:lambda-list lambda-list)
+  (:body-ast body-ast))
 
-(cleavir-io:define-save-info function-ast (:lambda-list lambda-list))
+(defmethod children ((ast function-ast))
+  (list (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class PROGN-AST.
 
 (defclass progn-ast (ast)
-  ())
+  ((%form-asts :initarg :form-asts :reader form-asts)))
 
 (defun make-progn-ast (form-asts)
   (make-instance 'progn-ast
-    :children form-asts))
+    :form-asts form-asts))
 
-(defmethod form-asts ((ast progn-ast))
-  (children ast))
+(cleavir-io:define-save-info function-ast
+  (:form-asts form-asts))
+
+(defmethod children ((ast progn-ast))
+  (form-asts ast))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class BLOCK-AST.
 
 (defclass block-ast (ast)
-  ())
+  ((%body-ast :initarg :body-ast :accessor body-ast)))
 
 (defun make-block-ast (body-ast)
   (make-instance 'block-ast
-    :children (list body-ast)))
+    :body-ast body-ast))
   
-(defmethod body-ast ((ast block-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info block-ast
+  (:body-ast body-ast))
 
-(defmethod (setf body-ast) (new-body (ast block-ast))
-  (setf (first (children ast)) new-body))
+(defmethod children ((ast block-ast))
+  (list (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class RETURN-FROM-AST.
 
 (defclass return-from-ast (ast)
-  ())
+  ((%block-ast :initarg :block-ast :reader block-ast)
+   (%form-ast :initarg :form-ast :reader form-ast)))
 
 (defun make-return-from-ast (block-ast form-ast)
   (make-instance 'return-from-ast
-    :children (list block-ast form-ast)))
+    :block-ast block-ast
+    :form-ast form-ast))
   
-(defmethod block-ast ((ast return-from-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info return-from-ast
+  (:block-ast block-ast)
+  (:form-ast form-ast))
 
-(defmethod form-ast ((ast return-from-ast))
-  (second (children ast)))
+(defmethod children ((ast return-from-ast))
+  (list (block-ast ast) (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class SETQ-AST.
+;;; 
+;;; This AST does not correspond exactly to the SETQ special operator,
+;;; because the AST does not return a value.
 
-(defclass setq-ast (ast)
-  ())
+(defclass setq-ast (ast no-value-ast-mixin)
+  ((%lhs-ast :initarg :lhs-ast :reader lhs-ast)
+   (%value-ast :initarg :value-ast :reader value-ast)))
 
 (defun make-setq-ast (lhs-ast value-ast)
   (make-instance 'setq-ast
-    :children (list lhs-ast value-ast)))
+    :lhs-ast lhs-ast
+    :value-ast value-ast))
 
-(defmethod lhs-ast ((ast setq-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info setq-ast
+  (:lhs-ast lhs-ast)
+  (:value-ast value-ast))
 
-(defmethod value-ast ((ast setq-ast))
-  (second (children ast)))
+(defmethod children ((ast setq-ast))
+  (list (lhs-ast ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -302,7 +397,12 @@
   (make-instance 'tag-ast
     :name name))
 
-(cleavir-io:define-save-info tag-ast (:name name))
+(cleavir-io:define-save-info tag-ast
+  (:name name))
+
+(defmethod children ((ast tag-ast))
+  (declare (ignorable ast))
+  '())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -323,31 +423,50 @@
 ;;; Class GO-AST.
 
 (defclass go-ast (ast)
-  ())
+  ((%tag-ast :initarg :tag-ast :reader tag-ast)))
 
 (defun make-go-ast (tag-ast)
   (make-instance 'go-ast
-    :children  (list tag-ast)))
+    :tag-ast tag-ast))
 
-(defmethod tag-ast ((ast go-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info go-ast
+  (:tag-ast tag-ast))
+
+(defmethod children ((ast go-ast))
+  (list (tag-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Class THE-AST.
+;;;
+;;; This AST can be generated by from the THE special operator, but
+;;; also implicitly from type declarations and assignments to
+;;; variables with type declarations.  
+;;;
+;;; When the slot CHECK-P is true, code is generated to check that the
+;;; type is correct.  When it is false, no code is generated, but the
+;;; type inference machinery uses the type to optimize the code. 
 
 (defclass the-ast (ast)
-  ((%value-type :initarg :value-type :reader value-type)))
+  ((%check-p :initarg :check-p :initform t :reader check-p)
+   (%form-ast :initarg :form-ast :reader form-ast)
+   (%type-asts :initarg :type-asts :reader type-asts)
+   (%value-type :initarg :value-type :reader value-type)))
 
-(defun make-the-ast (form-ast &rest types)
+(defun make-the-ast (form-ast &rest type-asts)
   (make-instance 'the-ast
-    :children (list* form-ast types)
-    :value-type (mapcar #'value types)))
+    :form-ast form-ast
+    :type-asts type-asts
+    :value-type (mapcar #'value type-asts)))
 
-(defmethod form-ast ((ast the-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info the-ast
+  (:check-p check-p)
+  (:form-ast form-ast)
+  (:type-asts type-asts)
+  (:value-type value-type))
 
-(cleavir-io:define-save-info the-ast (:value-type value-type))
+(defmethod children ((ast the-ast))
+  (list* (form-ast ast) (type-asts ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -389,22 +508,26 @@
 ;;; then a call to TYPEP is generated instead. 
 
 (defclass typeq-ast (ast)
-  ((%type-specifier :initarg :type-specifier :reader type-specifier)))
+  ((%type-specifier :initarg :type-specifier :reader type-specifier)
+   (%type-specifier-ast :initarg :type-specifier-ast :reader type-specifier-ast)
+   (%form-ast :initarg :form-ast :reader form-ast)))
 
 (defun make-typeq-ast (form-ast type-specifier-ast)
   (make-instance 'typeq-ast
-    :children (list form-ast type-specifier-ast)))
-
-(defmethod form-ast ((ast typeq-ast))
-  (first (children ast)))
-
-(defmethod type-specifier-ast ((ast typeq-ast))
-  (second (children ast)))
+    :form-ast form-ast
+    :type-specifier-ast type-specifier-ast))
 
 (defmethod initialize-instance :after ((ast typeq-ast) &key &allow-other-keys)
   (reinitialize-instance
    ast
    :type-specifier (value (type-specifier-ast ast))))
+
+(cleavir-io:define-save-info typeq-ast
+  (:type-specifier-ast type-specifier-ast)
+  (:form-ast form-ast))
+
+(defmethod children ((ast typeq-ast))
+  (list (form-ast ast) (type-specifier-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -418,19 +541,21 @@
 ;;; know at AST creation time whether it is true or false. 
 
 (defclass load-time-value-ast (ast)
-  ((%read-only-p :initarg :read-only-p :reader read-only-p)))
+  ((%form-ast :initarg :form-ast :reader form-ast)
+   (%read-only-p :initarg :read-only-p :reader read-only-p)))
 
 (defun make-load-time-value-ast (form-ast &optional read-only-p)
   (make-instance 'load-time-value-ast
-    :children  (list form-ast)
+    :form-ast form-ast
     :read-only-p read-only-p))
-
-(defmethod form-ast ((ast load-time-value-ast))
-  (first (children ast)))
 
 ;;; Even though READ-ONLY-P is not a child of the AST, it needs to be
 ;;; saved when the AST is saved. 
-(cleavir-io:define-save-info load-time-value-ast (:read-only-p read-only-p))
+(cleavir-io:define-save-info load-time-value-ast
+  (:read-only-p read-only-p))
+
+(defmethod children ((ast load-time-value-ast))
+  (list (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -441,20 +566,23 @@
 ;;; produces, according to the value of the TEST AST.
 
 (defclass if-ast (ast)
-  ())
+  ((%test-ast :initarg :test-ast :reader test-ast)
+   (%then-ast :initarg :then-ast :reader then-ast)
+   (%else-ast :initarg :else-ast :reader else-ast)))
 
 (defun make-if-ast (test-ast then-ast else-ast)
   (make-instance 'if-ast
-    :children (list test-ast then-ast else-ast)))
+    :test-ast test-ast
+    :then-ast then-ast
+    :else-ast else-ast))
 
-(defmethod test-ast ((ast if-ast))
-  (first (children ast)))
+(cleavir-io:define-save-info if-ast
+  (:test-ast test-ast)
+  (:then-ast then-ast)
+  (:else-ast else-ast))
 
-(defmethod then-ast ((ast if-ast))
-  (second (children ast)))
-
-(defmethod else-ast ((ast if-ast))
-  (third (children ast)))
+(defmethod children ((ast if-ast))
+  (list (test-ast ast) (then-ast ast) (else-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -465,8 +593,17 @@
 ;;; position of an IF-AST.
 
 (defclass eq-ast (ast)
-  ())
+  ((%arg1-ast :initarg :arg1-ast :reader arg1-ast)
+   (%arg2-ast :initarg :arg2-ast :reader arg2-ast)))
 
 (defun make-eq-ast (arg1-ast arg2-ast)
   (make-instance 'eq-ast
-    :children (list arg1-ast arg2-ast)))
+    :arg1-ast arg1-ast
+    :arg2-ast arg2-ast))
+
+(cleavir-io:define-save-info eq-ast
+  (:arg1-ast arg1-ast)
+  (:arg2-ast arg2-ast))
+
+(defmethod children ((ast eq-ast))
+  (list (arg1-ast ast) (arg2-ast ast)))

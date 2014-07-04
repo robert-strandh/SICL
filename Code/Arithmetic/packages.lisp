@@ -12,4 +12,13 @@
    #:binary->
    #:binary->=
    #:binary-=
+   #:fixnum-+
+   #:fixnum--
+   #:fixnum-*
+   #:fixnum-/
+   #:fixnum-<
+   #:fixnum-<=
+   #:fixnum->
+   #:fixnum->=
+   #:fixnum-=
    ))

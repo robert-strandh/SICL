@@ -11,7 +11,7 @@
 \inputtex{other-macros.tex}
 
 \begin{document}
-\title{Resolving metastability issues during bootstrapping}
+\title{Resolving Metastability Issues During Bootstrapping}
 \numberofauthors{1}
 \author{\alignauthor
 Robert Strandh\\
@@ -20,15 +20,31 @@ Robert Strandh\\
 \affaddr{Talence, France}\\
 \email{robert.strandh@u-bordeaux1.fr}}
 
+\toappear{Permission to make digital or hard copies of all or part of
+  this work for personal or classroom use is granted without fee
+  provided that copies are not made or distributed for profit or
+  commercial advantage and that copies bear this notice and the full
+  citation on the first page. Copyrights for components of this work
+  owned by others than the author(s) must be honored. Abstracting with
+  credit is permitted. To copy otherwise, or republish, to post on
+  servers or to redistribute to lists, requires prior specific
+  permission and/or a fee. Request permissions from
+  Permissions@acm.org.
+
+  ILC '14, August 14 - 17 2014, Montreal, QC, Canada
+  Copyright is held by the owner/author(s). Publication rights licensed to ACM.
+  ACM 978-1-4503-2931-6/14/08\$15.00.
+  http://dx.doi.org/10.1145/2635648.2635656}
+
 \maketitle
 
 \begin{abstract}
 The fact that \clos{} is defined as a \clos{} program introduces two
 categories of issues that must be addressed, namely
 \emph{bootstrapping issues} and \emph{metastability issues}
-\cite{Kiczales:1991:AMP:574212}.  Of the two, the latter is the most
+\cite{Kiczales:1991:AMP:574212}.  Of the two, the latter is the more
 difficult one, and also the one that has the most negative impact on
-the \emph{elegance} of the code, in that it requires base cases to be
+the \emph{elegance} of the code in that it requires base cases to be
 handled specially.
 
 We describe \emph{satiation}, a technique by which metastability
@@ -41,6 +57,10 @@ the full protocol for computing the effective methods at runtime.
 
 \category{D.3.4}{Programming Languages}{Processors}
 [Code generation, Run-time environments]
+
+\terms{Algorithms, Languages}
+
+\keywords{\clos{}, \cl{}, Bootstrapping, Metastability}
 
 \inputtex{sec-introduction.tex}
 \inputtex{sec-previous.tex}

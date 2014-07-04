@@ -4,7 +4,7 @@ The technique described in this paper was developed as part of
 \sicl{}.%
 \footnote{The \sicl{} repository is public, and it is currently
   located at https://github.com/robert-strandh/SICL.}  The system is
-written entirely in \cl{} and it was designed to be bootstrapped 
+written entirely in \cl{}, and it was designed to be bootstrapped 
 from a conforming \cl{} implementation including \clos{}.  
 According to Rhodes \cite{Rhodes:2008:SSC:1482373.1482380}, few \cl{}
 implementations are designed to be bootstrapped this way.  Instead,
@@ -13,7 +13,7 @@ existing binary image.
 
 A generic function in \sicl{} contains a \emph{cache} (a \emph{call
   history} in \sicl{} terminology) which associates classes of
-required arguments with corresponding effective methods, and
+required arguments with corresponding effective methods, as
 specifically allowed by the AMOP.  The discriminating function of
 every standard generic function contains two parts: one part computed
 from the call history and a second \emph{default} part, invoked when
@@ -21,7 +21,11 @@ the first part fails.  This second part of the discriminating function
 invokes the complete machinery defined by
 \texttt{compute-applicable-methods-using-classes},
 \texttt{compute-applicable-methods}, and
-\texttt{compute-effective-method}.
+\texttt{compute-effective-method}.  Crucially, the first part is a
+relatively simple mechanical translation from a set of call-history
+entries to an \emph{automaton} that implements the dispatch.  This
+translation requires none of the machinery for computing effective
+methods. 
 
 As hinted in the previous section, metastability issues can be handled
 automatically, provided that:
@@ -36,13 +40,13 @@ automatically, provided that:
   \end{enumerate}
 \item When the class hierarchy changes, an entry in the call history
   is removed only if it involves a modified class.
-\item When a method is removed a generic function (possibly because it
-  was replaced with a new one with the same specializers), an entry in
-  the call history is removed only if it involves the method that was
-  removed.
+\item When a method is removed from a generic function (possibly
+  because it was replaced with a new one with the same specializers),
+  an entry in the call history is removed only if it involves the
+  method that was removed.
 \end{itemize}
 
-The reason that the these conditions automatically handle
+The reason that these conditions automatically handle
 metastability issues is that the AMOP specifically disallows
 modifications to specified classes.  Then the first part of the
 discriminating function (i.e., the part computed from the call
@@ -50,7 +54,7 @@ history) will always handle invocations where classes of required
 arguments are specified classes, including the function
 \texttt{compute-discriminating-function}. 
 
-Our technique, called \emph{satiation} makes sure that that the
+Our technique, called \emph{satiation}, makes sure that the
 conditions are met by trying every combination of existing classes as
 the required arguments of every existing generic function in order to
 see whether this combination corresponds to an applicable primary
@@ -60,6 +64,29 @@ the call history.  Finally, the resulting discriminating function is
 computed.  Clearly, these computations require a fully-functional
 machinery for precisely the functions that are being processed. 
 
+While it may seem like overkill and an excessive amount of work to
+compute call history entries for all possible combinations, this work
+is justified because:
+
+\begin{itemize}
+\item The satiation machinery is invoked only during bootstrapping, so
+  it does not affect performance at runtime. 
+\item When the machinery is invoked, only a handful of classes and
+  generic functions exist.  Therefore, the total amount of work is
+  fairly small.
+\end{itemize}
+
+While it may be possible to invoke the satiation machinery
+\emph{lazily} during bootstrapping,%
+\footnote{It can not be invoked lazily at runtime, because then we
+  would be back in a situation with metastability issues.}
+there is not much to gain by doing that due to the limited amount of
+work involved.  Furthermore, it would still be necessary to make sure
+that the call history of each specified generic function contains all
+entries required to avoid metastability issues at runtime, and that
+work is identical to what the full machinery is designed to
+accomplish. 
+
 Now, in a system where \clos{} must be bootstrapped from a pre-\clos{}
 implementation, satiation would require specialized code in the form
 of ordinary functions (as opposed to generic functions) that do the
@@ -68,12 +95,12 @@ instances of specified classes, with much duplicated code as a result.
 
 An object in \sicl{} is either an \emph{immediate object}, a
 \emph{\texttt{cons} cell}, or a \emph{general instance}.  A general
-instance is represented as a two-word header where the first work
+instance is represented as a two-word header where the first word
 contains the \emph{class} of the instance, and the second word
 contains the \emph{rack}.  When the instance is a standard object, the
 rack holds the values of the \emph{slots} of the instance.  But
 general instances are also used for instances of built-in classes, so
-for instance an instance of an array would have a rack that contains
+(for example) an instance of an array would have a rack that contains
 storage for the elements of the array. 
 
 In \sicl{}, we bootstrap \clos{} on an existing conforming \cl{}
@@ -128,6 +155,32 @@ history of each bridge generic function is completely pre-computed.
 Similarly, the discriminating function of each ersatz generic function
 is computed using the full machinery executing as a set of bridge
 generic functions.  
+
+The end result is a memory image containing all the generic functions
+specified by the AMOP, and each of these generic functions has the following
+characteristics:
+
+\begin{itemize}
+\item The call history contains pre-computed effective methods for all
+  combinations of specified classes that result in at least one primary
+  applicable method.
+\item When a specified generic function \texttt{F} is invoked with
+  itself or some other specified generic function as an argument, then
+  the effective method for handling the call already exists in the
+  call history of \texttt{F}. 
+\item Since the AMOP specifically disallows modifications to specified
+  classes after their initial definitions, call-history entries
+  involving specified classes will always be valid.
+\item Call-history entries involving specified classes are not removed
+  as a result of methods being added or removed in conformance with
+  the AMOP, nor as a result of valid modifications of existing
+  classes. 
+\item The call history is translated into a discriminating function
+  without invoking the machinery for computing effective methods. 
+\end{itemize}
+
+This combination of characteristics guarantees the absence of
+metastability issues at runtime.
 
 %%  LocalWords:  metastability specializer specializers accessor
 %%  LocalWords:  accessors funcallable

@@ -263,33 +263,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum class SPECIAL-LOCATION.
-;;;
-;;; This datum corresponds to a reference to a special variable.
-
-(defclass special-location (datum)
-  ((%name :initarg :name :reader name)))
-
-(defun make-special-location (name)
-  (make-instance 'special-location
-    :name name))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class GLOBAL-INPUT.
-;;;
-;;; This datum corresponds to a reference to a global FUNCTION,
-;;; i.e., a function defined in the global environment.  
-
-(defclass global-input (datum)
-  ((%name :initarg :name :reader name)))
-
-(defun make-global-input (name)
-  (make-instance 'global-input
-    :name name))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Datum class LOAD-TIME-INPUT.
 ;;;
 ;;; This datum typically corresponds to a LOAD-TIME-VALUE in source
@@ -316,10 +289,10 @@
 ;;;
 ;;; Datum class EXTERNAL-INPUT.
 ;;;
-;;; This datum corresponds to an index in the linkage vector of a
-;;; code object.  Later compilation stages typically replace a
-;;; CONSTANT-INPUT that can not be an IMMEDIATE-INPUT, or a
-;;; GLOBAL-INPUT or a by an EXTERNAL-INPUT. 
+;;; This datum corresponds to an index in the linkage vector of a code
+;;; object.  Later compilation stages typically replace a
+;;; CONSTANT-INPUT that can not be an IMMEDIATE-INPUT by an
+;;; EXTERNAL-INPUT.
 
 (defclass external-input (datum)
   ((%value :initarg :value :reader value)))
@@ -474,7 +447,7 @@
 ;;; E2, where E2 is a successor of E1.  E1 can have any number of
 ;;; successors and E2 can have any number of predecessors.  E1 becomes
 ;;; the sole predecessor of N, and E2 becomes the sole successor of N.
-;;; N replaces E as a successor of E1, and as a predecessor of E2.
+;;; N replaces E2 as a successor of E1, and E1 as a predecessor of E2.
 (defun insert-instruction-between (new existing1 existing2)
   (setf (predecessors new) (list existing1))
   (setf (successors new) (list existing2))
@@ -488,6 +461,9 @@
   (assert (= (length (successors existing)) 1))
   (insert-instruction-between new existing (car (successors existing))))
 
+;;; Delete and instruction I.  I must have a single successor S.  S
+;;; replaces I as the successor of every predecessor P of I.  The
+;;; predecessors of I become the predecessors of S.
 (defun delete-instruction (instruction)
   (assert (= (length (successors instruction)) 1))
   (setf (inputs instruction) '())
@@ -545,13 +521,70 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instructions for Common Lisp operators.
+;;; Mixin classes
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin classes for successor count.
+
+;;; Mixin class for instructions with no successors. 
 (defclass no-successors-mixin () ())
 
+;;; Mixin class for instructions with a single successor.
 (defclass one-successor-mixin () ())
 
+;;; Mixin class for instructions with tow successors.
 (defclass two-successors-mixin () ())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin classes for boxing instructions.
+
+;;; Mixin class for instructions that box unboxed data. 
+(defclass box-instruction-mixin () ())
+
+(defgeneric box-instruction-p (instruction))
+
+(defmethod box-instruction-p (instruction)
+  (declare (ignore instruction))
+  nil)
+
+(defmethod box-instruction-p ((instruction box-instruction-mixin))
+  (declare (ignorable instruction))
+  t)
+
+;;; Mixin class for instructions that ubox boxed data. 
+(defclass unbox-instruction-mixin () ())
+
+(defgeneric unbox-instruction-p (instruction))
+
+(defmethod unbox-instruction-p (instruction)
+  (declare (ignore instruction))
+  nil)
+
+(defmethod unbox-instruction-p ((instruction unbox-instruction-mixin))
+  (declare (ignorable instruction))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Mixin class for instructions that have no side effects.
+
+(defclass side-effect-free-mixin () ())
+
+(defgeneric side-effect-free-p (instruction))
+
+(defmethod side-effect-free-p (instruction)
+  (declare (ignore instruction))
+  nil)
+
+(defmethod side-effect-free-p ((instruction side-effect-free-mixin))
+  (declare (ignorable instruction))
+  t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instructions for Common Lisp operators.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -624,19 +657,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Instruction GET-VALUES-INSTRUCTION.
-
-(defclass get-values-instruction (instruction one-successor-mixin)
-  ())
-
-(defun make-get-values-instruction
-    (outputs &optional (successor nil successor-p))
-  (make-instance 'get-values-instruction
-    :outputs outputs
-    :successors (if successor-p (list successor) '())))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Instruction RETURN-INSTRUCTION.
 
 (defclass return-instruction (instruction no-successors-mixin)
@@ -664,7 +684,6 @@
     (setf (code new) (code instruction))
     new))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instruction TYPEQ-INSTRUCTION.
@@ -687,7 +706,7 @@
 ;;; type specifier around in a separate slot.  This is the purpose of
 ;;; the VALUE-TYPE slot.
 
-(defclass typeq-instruction (instruction one-successor-mixin)
+(defclass typeq-instruction (instruction two-successors-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-typeq-instruction (inputs successors)
@@ -696,6 +715,24 @@
     :inputs inputs
     :successors successors
     :value-type (value (second inputs))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction THE-INSTRUCTION.
+;;;
+;;; This instruction is similar to the TYPEQ-INSTRUCTION.  It is
+;;; different in that it has only a single successor and no error
+;;; branch.  Operationally, it has no effect.  But it informs the type
+;;; inference machinery that the input is of a particular type. 
+
+(defclass the-instruction (instruction one-successor-mixin)
+  ((%value-type :initarg :value-type :reader value-type)))
+
+(defun make-the-instruction (input successor)
+  (make-instance 'the-instruction
+    :inputs (list input)
+    :outputs '()
+    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -769,6 +806,45 @@
   (make-instance 'eq-instruction
     :inputs inputs
     :successors successors))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction SYMBOL-VALUE-INSTRUCTION.
+
+(defclass symbol-value-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-symbol-value-instruction (input output successor)
+  (make-instance 'symbol-value-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction SET-SYMBOL-VALUE-INSTRUCTION.
+
+(defclass set-symbol-value-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-set-symbol-value-instruction (inputs successor)
+  (make-instance 'symbol-value-instruction
+    :inputs inputs
+    :outputs '()
+    :successors (list successor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Instruction FDEFINITION-INSTRUCTION.
+
+(defclass fdefinition-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-fdefinition-instruction (input output successor)
+  (make-instance 'fdefinition-instruction
+    :inputs (list input)
+    :outputs (list output)
+    :successors (list successor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

@@ -15,7 +15,7 @@ Rather than invoking a marking procedure to determine live data, they
 imagined using the existing free list to determine areas of available
 storage. 
 
-An entry in their break table indicates a start address of a zones of
+An entry in their break table indicates a start address of a zone of
 live data and the total amount of free space below that address.
 There are many different possible variations on the exact contents of
 the break table, but they are all equivalent.
@@ -29,7 +29,7 @@ required for their technique to work.
 
 Of the traditional compacting algorithms, three types of algorithms
 preserve allocation order; the one by Haddon and Waite
-\cite{Haddon:1967}, the so called Lisp2 algorithm, and the
+\cite{Haddon:1967}, the so-called Lisp2 algorithm, and the
 \emph{threading} algorithms.  The Lisp2 algorithm requires an
 additional field the size of a pointer in each object in order to hold
 forwarding information.  This field is set after the marking phase.
@@ -43,7 +43,7 @@ algorithm is the fastest.  Threading algorithms perform the worst.
 Abuaiadh et al \cite{Abuaiadh:2004:EPH:1028976.1028995} designed a
 compaction algorithm that uses forwarding information much like the
 Lisp2 algorithm.  However, to avoid the cost of an entire pointer per
-object, they use a single word of forwarding information of around
+object, they use a single word of forwarding information for around
 $256$ bytes, which amounts to no more than a few bits per word.
 Although reported to be fast, unfortunately, their algorithm does not
 preserve the allocation order of objects.  Their paper mentions that
@@ -60,8 +60,8 @@ compact the heap.  Their algorithm is parallel, concurrent, and
 incremental.  However, in addition to the cost of marking, moving
 objects, and updating pointers, compared to the method described in
 this paper, there is an additional cost associated with the
-memory-mapping operations which is non-negligible.  Forwarding
-information is handled the same way as in the method used by Abuaiadh
-et al.  Like the method described by Haddon and Waite, and the method
-presented in this paper, relative allocation order between the objects
-is preserved.
+memory-mapping operations, and this cost is is non-negligible.
+Forwarding information is handled the same way as in the method used
+by Abuaiadh et al.  Like the method described by Haddon and Waite, and
+the method presented in this paper, relative allocation order between
+the objects is preserved.

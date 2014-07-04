@@ -31,6 +31,25 @@
 	     (format stream "   ~a -> ~a [label = \"~d\"];~%"
 		     (id ast) (id child) i))))
 
+(defgeneric label (ast))
+
+;;; The default label is the lower-case version of the name of the
+;;; class (as a string) with suffix -ast stripped off. 
+(defmethod label (ast)
+  (let ((name (string (class-name (class-of ast)))))
+    (string-downcase (subseq name 0 (- (length name) 4)))))
+
+(defmacro deflabel (ast label)
+  `(defmethod label ((ast ,ast))
+     (declare (ignorable ast))
+     ,label))
+
+;;; Default method on STREAM-DRAW-AST.  This method simply calls the
+;;; generic function LABEL in order to draw a label for the box.
+(defmethod stream-draw-ast (ast stream)
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (id ast) (label ast)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing an IMMEDIATE-AST. 
@@ -40,7 +59,6 @@
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (value ast)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -54,26 +72,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing a GLOBAL-AST.
-
-(defmethod stream-draw-ast ((ast global-ast) stream)
-  (format stream "   ~a [style = filled, fillcolor = cyan];~%" (id ast))
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (name ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a SPECIAL-AST.
-
-(defmethod stream-draw-ast ((ast special-ast) stream)
-  (format stream "   ~a [style = filled, fillcolor = magenta];~%" (id ast))
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (id ast)
-	  (name ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing a LEXICAL-AST.
 
 (defmethod stream-draw-ast ((ast lexical-ast) stream)
@@ -84,84 +82,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing a CALL-AST.
-
-(defmethod stream-draw-ast ((ast call-ast) stream)
-  (format stream "   ~a [label = \"call\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a FUNCTION-AST.
-
-(defmethod stream-draw-ast ((ast function-ast) stream)
-  (format stream "   ~a [label = \"function\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a PROGN-AST.
-
-(defmethod stream-draw-ast ((ast progn-ast) stream)
-  (format stream "   ~a [label = \"progn\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a BLOCK-AST.
-
-(defmethod stream-draw-ast ((ast block-ast) stream)
-  (format stream "   ~a [label = \"block\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a RETURN-FROM-AST.
-
-(defmethod stream-draw-ast ((ast return-from-ast) stream)
-  (format stream "   ~a [label = \"return-from\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a SETQ-AST.
-
-(defmethod stream-draw-ast ((ast setq-ast) stream)
-  (format stream "   ~a [label = \"setq\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing a TAG-AST.
 
 (defmethod stream-draw-ast ((ast tag-ast) stream)
   (format stream "   ~a [label = \"~a\"];~%"
 	  (id ast)
 	  (name ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a TAGBODY-AST.
-
-(defmethod stream-draw-ast ((ast tagbody-ast) stream)
-  (format stream "   ~a [label = \"tagbody\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a GO-AST.
-
-(defmethod stream-draw-ast ((ast go-ast) stream)
-  (format stream "   ~a [label = \"go\"];~%"
-	  (id ast)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing a THE-AST.
-     
-(defmethod stream-draw-ast ((ast the-ast) stream)
-  (format stream "   ~a [label = \"the\"];~%"
-	  (id ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -175,8 +101,72 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing a IF-AST.
+;;; Labels for unspecialized array ASTs
 
-(defmethod stream-draw-ast ((ast if-ast) stream)
-  (format stream "   ~a [label = \"if\"];~%"
-	  (id ast)))
+(deflabel t-aref-ast "t aref")
+(deflabel t-aset-ast "t aset")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Labels for floating-point ASTs
+
+(deflabel short-float-add-ast "shf +")
+(deflabel short-float-sub-ast "shf -")
+(deflabel short-float-mul-ast "shf *")
+(deflabel short-float-div-ast "shf /")
+(deflabel short-float-less-ast "shf <")
+(deflabel short-float-not-greater-ast "shf <=")
+(deflabel short-float-greater-ast "shf >")
+(deflabel short-float-not-less-ast "shf >=")
+(deflabel short-float-equal-ast "shf =")
+(deflabel short-float-sin-ast "shf sin")
+(deflabel short-float-cos-ast "shf cos")
+(deflabel short-float-sqrt-ast "shf sqrt")
+(deflabel short-float-aref-ast "shf aref")
+(deflabel short-float-aset-ast "shf aset")
+
+(deflabel single-float-add-ast "sf +")
+(deflabel single-float-sub-ast "sf -")
+(deflabel single-float-mul-ast "sf *")
+(deflabel single-float-div-ast "sf /")
+(deflabel single-float-less-ast "sf <")
+(deflabel single-float-not-greater-ast "sf <=")
+(deflabel single-float-greater-ast "sf >")
+(deflabel single-float-not-less-ast "sf >=")
+(deflabel single-float-equal-ast "sf =")
+(deflabel single-float-sin-ast "sf sin")
+(deflabel single-float-cos-ast "sf cos")
+(deflabel single-float-sqrt-ast "sf sqrt")
+(deflabel single-float-aref-ast "sf aref")
+(deflabel single-float-aset-ast "sf aset")
+
+(deflabel double-float-add-ast "df +")
+(deflabel double-float-sub-ast "df -")
+(deflabel double-float-mul-ast "df *")
+(deflabel double-float-div-ast "df /")
+(deflabel double-float-less-ast "df <")
+(deflabel double-float-not-greater-ast "df <=")
+(deflabel double-float-greater-ast "df >")
+(deflabel double-float-not-less-ast "df >=")
+(deflabel double-float-equal-ast "df =")
+(deflabel double-float-sin-ast "df sin")
+(deflabel double-float-cos-ast "df cos")
+(deflabel double-float-sqrt-ast "df sqrt")
+(deflabel double-float-aref-ast "df aref")
+(deflabel double-float-aset-ast "df aset")
+
+(deflabel long-float-add-ast "lf +")
+(deflabel long-float-sub-ast "lf -")
+(deflabel long-float-mul-ast "lf *")
+(deflabel long-float-div-ast "lf /")
+(deflabel long-float-less-ast "lf <")
+(deflabel long-float-not-greater-ast "lf <=")
+(deflabel long-float-greater-ast "lf >")
+(deflabel long-float-not-less-ast "lf >=")
+(deflabel long-float-equal-ast "lf =")
+(deflabel long-float-sin-ast "lf sin")
+(deflabel long-float-cos-ast "lf cos")
+(deflabel long-float-sqrt-ast "lf sqrt")
+(deflabel long-float-aref-ast "lf aref")
+(deflabel long-float-aset-ast "lf aset")
+

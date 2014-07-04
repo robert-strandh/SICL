@@ -1,6 +1,6 @@
 (in-package #:cleavir-mir-graphviz)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing a datum on a stream.
 
@@ -80,26 +80,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum SPECIAL-LOCATION.
-
-(defmethod draw-datum ((datum special-location) stream)
-  (format stream "  ~a [shape = ellipse, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = cyan4, label = \"~a\"]~%"
-	  (datum-id datum) (name datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing datum GLOBAL-INPUT.
-
-(defmethod draw-datum ((datum global-input) stream)
-  (format stream "  ~a [shape = ellipse, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = cyan, label = \"~a\"]~%"
-	  (datum-id datum) (name datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Drawing datum EXTERNAL-INPUT.
 
 (defmethod draw-datum ((datum external-input) stream)
@@ -140,7 +120,7 @@
   (format stream "   ~a [fillcolor = darkorchid, label = \"~a\"]~%"
 	  (datum-id datum) (index datum)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing instructions.
 
@@ -151,11 +131,6 @@
 
 (defgeneric draw-instruction (instruction stream))
   
-(defmethod draw-instruction ((instruction typeq-instruction) stream)
-  (format stream "   ~a [label = \"typeq ~a\"];~%"
-	  (instruction-id instruction)
-	  (value-type instruction)))
-
 (defmethod draw-instruction :around (instruction stream)
   (when (null (instruction-id instruction))
     (setf (gethash instruction *instruction-table*) (gensym))
@@ -174,11 +149,6 @@
 		   (gethash next *instruction-table*)
 		   i)))
   
-(defmethod draw-instruction (instruction stream)
-  (format stream "   ~a [label = \"~a\"];~%"
-	  (instruction-id instruction)
-	  (class-name (class-of instruction))))
-
 (defmethod draw-instruction :after (instruction stream)
   (loop for datum in (inputs instruction)
 	for i from 1
@@ -197,6 +167,16 @@
 		   (datum-id datum)
 		   i)))
 
+(defgeneric label (instruction))
+
+(defmethod label (instruction)
+  (class-name (class-of instruction)))
+
+(defmethod draw-instruction (instruction stream)
+  (format stream "   ~a [label = \"~a\"];~%"
+	  (instruction-id instruction)
+	  (label instruction)))
+
 (defun draw-flowchart (start filename)
   (with-open-file (stream filename
 			  :direction :output
@@ -209,64 +189,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Draw instruction ENTER-INSTRUCTION.
+;;; General-purpose instructions.
 
-(defmethod draw-instruction ((instruction enter-instruction) stream)
-  (format stream "   ~a [label = \"enter\"];~%"
-	  (instruction-id instruction)))
+(defmethod draw-instruction ((instruction typeq-instruction) stream)
+  (format stream "   ~a [label = \"typeq ~a\"];~%"
+	  (instruction-id instruction)
+	  (value-type instruction)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction NOP-INSTRUCTION.
+(defmethod label ((instruction enter-instruction)) "enter")
 
-(defmethod draw-instruction ((instruction nop-instruction) stream)
-  (format stream "   ~a [label = \"nop\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction nop-instruction)) "nop")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction ASSIGNMENT-INSTRUCTION.
+(defmethod label ((instruction assignment-instruction)) "<-")
 
-(defmethod draw-instruction
-    ((instruction assignment-instruction) stream)
-  (format stream "   ~a [label = \"<-\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction funcall-instruction)) "funcall")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction FUNCALL-INSTRUCTION.
+(defmethod label ((instruction tailcall-instruction)) "tailcall")
 
-(defmethod draw-instruction ((instruction funcall-instruction) stream)
-  (format stream "   ~a [label = \"funcall\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction TAILCALL-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction tailcall-instruction) stream)
-  (format stream "   ~a [label = \"tailcall\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction GET-VALUES-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction get-values-instruction) stream)
-  (format stream "   ~a [label = \"get-values\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction RETURN-INSTRUCTION.
-
-(defmethod draw-instruction ((instruction return-instruction) stream)
-  (format stream "   ~a [label = \"ret\"];~%"
-	  (instruction-id instruction)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction ENCLOSE-INSTRUCTION.
+(defmethod label ((instruction return-instruction)) "ret")
 
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
   (format stream "   ~a [label = \"enclose\"];~%"
@@ -276,66 +216,160 @@
 	  (gethash (code instruction) *instruction-table*)
 	  (instruction-id instruction)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction CATCH-INSTRUCTION.
+(defmethod label ((instruction catch-instruction)) "catch")
 
-(defmethod draw-instruction ((instruction catch-instruction) stream)
-  (format stream "   ~a [label = \"catch\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction unwind-instruction)) "unwind")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction UNWIND-INSTRUCTION.
+(defmethod label ((instruction eq-instruction)) "eq")
 
-(defmethod draw-instruction ((instruction unwind-instruction) stream)
-  (format stream "   ~a [label = \"unwind\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction phi-instruction)) "phi")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Draw instruction EQ-INSTRUCTION.
+;;; Fixnum instructions.
 
-(defmethod draw-instruction ((instruction eq-instruction) stream)
-  (format stream "   ~a [label = \"eq\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction fixnum-add-instruction)) "fixnum +")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction PHI-INSTRUCTION.
+(defmethod label ((instruction fixnum-sub-instruction)) "fixnum -")
 
-(defmethod draw-instruction ((instruction phi-instruction) stream)
-  (format stream "   ~a [label = \"phi\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction fixnum-less-instruction)) "fixnum <")
+
+(defmethod label ((instruction fixnum-not-greater-instruction)) "fixnum <=")
+
+(defmethod label ((instruction fixnum-equal-instruction)) "fixnum =")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Draw instruction CAR-INSTRUCTION.
+;;; Integer instructions.
 
-(defmethod draw-instruction ((instruction car-instruction) stream)
-  (format stream "   ~a [label = \"CAR\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction bit-unbox-instruction)) "bit unbox")
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Draw instruction CDR-INSTRUCTION.
+(defmethod label ((instruction bit-box-instruction)) "bit box")
 
-(defmethod draw-instruction ((instruction cdr-instruction) stream)
-  (format stream "   ~a [label = \"CDR\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction unsigned-byte-8-unbox-instruction)) "ub8 unbox")
+
+(defmethod label ((instruction unsigned-byte-8-box-instruction)) "ub8 box")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Draw instruction RPLACA-INSTRUCTION.
+;;; Floating-point arithmetic instructions.
 
-(defmethod draw-instruction ((instruction rplaca-instruction) stream)
-  (format stream "   ~a [label = \"RPLACA\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction short-float-unbox-instruction)) "shf unbox")
+
+(defmethod label ((instruction short-float-box-instruction)) "shf box")
+
+(defmethod label ((instruction short-float-add-instruction)) "shf +")
+
+(defmethod label ((instruction short-float-sub-instruction)) "shf -")
+
+(defmethod label ((instruction short-float-mul-instruction)) "shf *")
+
+(defmethod label ((instruction short-float-div-instruction)) "shf /")
+
+(defmethod label ((instruction short-float-sin-instruction)) "shf sin")
+
+(defmethod label ((instruction short-float-cos-instruction)) "shf cos")
+
+(defmethod label ((instruction short-float-sqrt-instruction)) "shf sqrt")
+
+(defmethod label ((instruction single-float-unbox-instruction)) "sf unbox")
+
+(defmethod label ((instruction single-float-box-instruction)) "sf box")
+
+(defmethod label ((instruction single-float-add-instruction)) "sf +")
+
+(defmethod label ((instruction single-float-sub-instruction)) "sf -")
+
+(defmethod label ((instruction single-float-mul-instruction)) "sf *")
+
+(defmethod label ((instruction single-float-div-instruction)) "sf /")
+
+(defmethod label ((instruction single-float-sin-instruction)) "sf sin")
+
+(defmethod label ((instruction single-float-cos-instruction)) "sf cos")
+
+(defmethod label ((instruction single-float-sqrt-instruction)) "sf sqrt")
+
+(defmethod label ((instruction double-float-unbox-instruction)) "df unbox")
+
+(defmethod label ((instruction double-float-box-instruction)) "df box")
+
+(defmethod label ((instruction double-float-add-instruction)) "df +")
+
+(defmethod label ((instruction double-float-sub-instruction)) "df -")
+
+(defmethod label ((instruction double-float-mul-instruction)) "df *")
+
+(defmethod label ((instruction double-float-div-instruction)) "df /")
+
+(defmethod label ((instruction double-float-sin-instruction)) "df sin")
+
+(defmethod label ((instruction double-float-cos-instruction)) "df cos")
+
+(defmethod label ((instruction double-float-sqrt-instruction)) "df sqrt")
+
+(defmethod label ((instruction long-float-unbox-instruction)) "df unbox")
+
+(defmethod label ((instruction long-float-box-instruction)) "df box")
+
+(defmethod label ((instruction long-float-add-instruction)) "lf +")
+
+(defmethod label ((instruction long-float-sub-instruction)) "lf -")
+
+(defmethod label ((instruction long-float-mul-instruction)) "lf *")
+
+(defmethod label ((instruction long-float-div-instruction)) "lf /")
+
+(defmethod label ((instruction long-float-sin-instruction)) "lf sin")
+
+(defmethod label ((instruction long-float-cos-instruction)) "lf cos")
+
+(defmethod label ((instruction long-float-sqrt-instruction)) "lf sqrt")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Draw instruction RPLACD-INSTRUCTION.
+;;; General accessors.
 
-(defmethod draw-instruction ((instruction rplacd-instruction) stream)
-  (format stream "   ~a [label = \"RPLACD\"];~%"
-	  (instruction-id instruction)))
+(defmethod label ((instruction car-instruction)) "car")
+
+(defmethod label ((instruction cdr-instruction)) "cdr")
+
+(defmethod label ((instruction rplaca-instruction)) "rplaca")
+
+(defmethod label ((instruction rplacd-instruction)) "rplacd")
+
+(defmethod label ((instruction slot-read-instruction)) "rplacd")
+
+(defmethod label ((instruction slot-write-instruction)) "rplacd")
+
+(defmethod label ((instruction t-aref-instruction)) "t aref")
+
+(defmethod label ((instruction t-aset-instruction)) "t aset")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Integer array accessors.
+
+(defmethod label ((instruction bit-aref-instruction)) "bit aref")
+
+(defmethod label ((instruction bit-aset-instruction)) "bit aset")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Floating-point array accessors.
+
+(defmethod label ((instruction short-float-aref-instruction)) "shf aref")
+
+(defmethod label ((instruction single-float-aref-instruction)) "sf aref")
+
+(defmethod label ((instruction double-float-aref-instruction)) "df aref")
+
+(defmethod label ((instruction long-float-aref-instruction)) "lf aref")
+
+(defmethod label ((instruction short-float-aset-instruction)) "shf aset")
+
+(defmethod label ((instruction single-float-aset-instruction)) "sf aset")
+
+(defmethod label ((instruction double-float-aset-instruction)) "df aset")
+
+(defmethod label ((instruction long-float-aset-instruction)) "lf aset")

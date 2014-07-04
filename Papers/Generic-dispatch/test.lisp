@@ -16,7 +16,7 @@
   (let ((rack (make-array 2 :initial-contents '(10 1))))
     (make-s :class nil :rack rack)))
 
-(defun y (instance)
+(defun y1 (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
@@ -25,17 +25,17 @@
         (svref rack 1)
         (error "1"))))
 
-(proclaim '(notinline y))
+(proclaim '(notinline y1))
 
-(defun g ()
+(defun g1 ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
-	do (y j)))
+	do (y1 j)))
 
-(time (g)) ; < 3s
+(time (g1)) ; < 3s
 
-(defun yy (instance)
+(defun y2 (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
@@ -58,17 +58,17 @@
            (error "8"))
           (t (svref rack 1)))))
 
-(proclaim '(notinline yy))
+(proclaim '(notinline y2))
 
-(defun gg ()
+(defun g2 ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
-	do (yy j)))
+	do (y2 j)))
 
-(time (gg)) ; < 4.5s
+(time (g2)) ; < 4.5s
 
-(defun yyy (instance)
+(defun y3 (instance)
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (let* ((rack (s-rack instance))
          (stamp (svref rack 0)))
@@ -91,12 +91,44 @@
            (error "8"))
           (t (svref rack 1)))))
 
-(proclaim '(notinline yyy))
+(proclaim '(notinline y3))
 
-(defun ggg ()
+(defun g3 ()
   (declare (optimize (safety 0) (speed 3) (debug 0)))
   (loop with j = *j*
         repeat 1000000000
-        do (yyy j)))
+        do (y3 j)))
 
-(time (ggg)) ; < 4.5s
+(time (g3)) ; < 4.5s
+
+(defun y4 (instance)
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (let* ((rack (s-rack instance))
+         (stamp (svref rack 0)))
+    (declare (type fixnum stamp))
+    (if (< stamp 2)
+        (if (< stamp 1)
+            (svref rack 1)
+            (svref rack 2))
+        (if (< stamp 3)
+            (svref rack 3)
+            (svref rack 4)))))
+
+(proclaim '(notinline y4))
+
+(defun make (stamp)
+  (let ((rack (make-array 5
+                          :initial-contents
+                          (cons stamp '(1 1 1 1)))))
+    (make-s :class nil :rack rack)))
+
+(defun g4 ()
+  (declare (optimize (safety 0) (speed 3) (debug 0)))
+  (loop with j0 = (make 0)
+        with j1 = (make 1)
+        with j2 = (make 2)
+        with j3 = (make 3)
+        repeat 250000000
+        do (y4 j0) (y4 j2) (y4 j1) (y4 j3)))
+
+(time (g4)) ; 3.3s
