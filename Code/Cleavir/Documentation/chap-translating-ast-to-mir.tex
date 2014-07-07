@@ -1,2 +1,20 @@
 \chapter{Translating AST to MIR}
 \label{chap-translating-ast-to-mir}
+
+The translation of an abstract syntax tree
+\seechap{chap-abstract-syntax-tree} to medium-level intermediate
+representation \seechap{chap-mir} is done by an algorithm that is
+similar to that of CPS-conversion.%
+\footnote{CPS means Continuation Passing Style.}
+
+As with CPS-conversion, translation makes the control structure
+explicit.  Another similarity is that translation is done from the end
+of the program to the beginning.
+
+Translation of a form is accomplished with respect to a
+\emph{compilation context}.  This context contains a \emph{list of
+  lexical variables} to which the values of the translated AST must be
+assigned.  The length of the list corresponds to the number of values
+required by the context.  The context also contains a \emph{list of
+  successors} which represent MIR instructions to which transfer
+control after evaluation of the current AST.
