@@ -17,3 +17,5 @@
 *.ps
 *.dot
 *.out
+*.snm
+*.nav
