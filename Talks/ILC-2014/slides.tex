@@ -1,4 +1,10 @@
 \documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+}
+
 \usepackage[utf8]{inputenc}
 \usepackage{color}
 \usepackage{epsfig}
@@ -12,18 +18,21 @@
 \def\inputfig#1{\input #1}
 \def\inputtex#1{\input #1}
 
+\title{SICL spinoffs}
+\author{Robert Strandh\inst{1}}
+
+\institute{\inst{1}Université de Bordeaux}
+\date[ILC 2014]{International Lisp Conference 2014}
+
+
 \begin{document}
 
+\begin{frame}
+  \titlepage
+\end{frame}
 %-----------------------------------------------------------
 \begin{frame}
-\frametitle{SICL spinoffs}
-
-\begin{center}
-Robert Strandh\\
-Université de Bordeaux
-\end{center}
-
-Three papers:
+\frametitle{Three papers}
 
 \begin{itemize}
 \item Fast generic dispatch for Common Lisp
