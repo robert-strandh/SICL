@@ -83,6 +83,24 @@
   \end{itemize}
 \end{frame}
 %-----------------------------------------------------------
+\begin{frame}
+  \frametitle{Sliding garbage collection} 
+  \framesubtitle{Original idea}
+
+  Original algorithm by Haddon and Waite in 1967.
+  \vskip 0.5cm
+  Basic idea: construct a \emph{break table} that maps intervals of
+  addresses to \emph{deltas} to be added to addresses in order to
+  obtain new location. 
+  \vskip 0.5cm
+  The break table is a sorted vector, so binary search can be used,
+  though Haddon and Waite did not consider this possibility.
+
+\end{frame}
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+%-----------------------------------------------------------
+%-----------------------------------------------------------
 \end{document}
 
 %%  LocalWords:  metastability
