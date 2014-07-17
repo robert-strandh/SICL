@@ -84,6 +84,20 @@
 \end{frame}
 %-----------------------------------------------------------
 \begin{frame}
+  \frametitle{Fast generic dispatch}
+
+  Most of the literature discusses table-based methods, which are not
+  very well adapted to modern architectures.  Compressing the tables
+  increases the number of memory accesses even more.
+  \vskip 0.5cm
+  PCL uses a simple hash table.
+  \vskip 0.5cm
+  Zendra et all use a technique similar to ours, but only for static
+  languages.   
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
   \frametitle{Sliding garbage collection} 
   \framesubtitle{Original idea}
 
