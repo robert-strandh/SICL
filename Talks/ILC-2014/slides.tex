@@ -98,6 +98,22 @@
 \end{frame}
 %-----------------------------------------------------------
 \begin{frame}
+  \frametitle{SICL garbage collection}
+
+  We imagine a collector with two generations:
+
+  \begin{itemize}
+  \item A per-thread \emph{nursery} the size of the cache.
+  \item A global generation common to all threads.
+  \end{itemize}
+
+Global generation: Compactor by Karmany et al.
+\vskip 0.25cm
+Nursery: Our sliding collector algorithm.
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
   \frametitle{Sliding garbage collection} 
   \framesubtitle{Original idea}
 
