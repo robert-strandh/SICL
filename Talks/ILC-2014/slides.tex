@@ -170,6 +170,34 @@ Nursery: Our sliding collector algorithm.
 
 \end{frame}
 %-----------------------------------------------------------
+\begin{frame}
+  \frametitle{Sliding garbage collection}
+  \framesubtitle{Timing}
+
+Nursery size: 4MiB
+\vskip 0.25cm
+Clock speed: 1.6GHz
+\vskip 0.25cm
+Cache size: 6MiB
+\vskip 0.5cm
+\begin{tabular}{|l|r|r|}
+  \hline
+  Phase & Pessimistic (ms) & Educated guess (ms)\\
+  \hline
+  \hline
+  Marking & ? & ?\\
+  \hline
+  Compaction & 1.4 &  0.3\\
+  \hline
+  Table   & 1.4 & 0.3 \\
+  \hline
+  Adjusting & 30 & 5 \\
+  \hline
+\end{tabular}
+
+\end{frame}
+%-----------------------------------------------------------
+%-----------------------------------------------------------
 %-----------------------------------------------------------
 \end{document}
 
