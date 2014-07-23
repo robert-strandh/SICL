@@ -209,6 +209,19 @@ of the function \texttt{compute-discriminating-function}.
 
 \end{frame}
 %-----------------------------------------------------------
+\begin{frame}
+  \frametitle{CLOS Bootstrapping}
+  \framesubtitle{Call history of a generic function}
+
+The call history contains the result of calling
+\texttt{compute-applicable-methods-using-classes} and then
+\texttt{compute-effective-method}.
+\vskip 0.25cm
+The discriminating function is an automaton computed from the call
+history without calling any generic function.
+
+\end{frame}
+%-----------------------------------------------------------
 %-----------------------------------------------------------
 %-----------------------------------------------------------
 %-----------------------------------------------------------
