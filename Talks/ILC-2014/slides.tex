@@ -87,6 +87,7 @@
 %-----------------------------------------------------------
 \begin{frame}
   \frametitle{Fast generic dispatch}
+  \framesubtitle{Existing work}
 
   Most of the literature discusses table-based methods, which are not
   very well adapted to modern architectures.  Compressing the tables
@@ -94,8 +95,35 @@
   \vskip 0.5cm
   PCL uses a simple hash table.
   \vskip 0.5cm
-  Zendra et all use a technique similar to ours, but only for static
-  languages.   
+  Zendra \emph{et al} use a technique similar to ours, but only for
+  static languages.
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
+  \frametitle{Fast generic dispatch}
+  \framesubtitle{Main idea}
+
+  Main idea in work by Zendra \emph{et al}:
+
+  \begin{itemize}
+  \item Number the classes.
+  \item Determine ``effective method'' by a binary search, comparing
+    class number of argument to small integer constants.
+  \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
+  \frametitle{Fast generic dispatch}
+  \framesubtitle{Challenge}
+
+  Main challenge is to make it work for CL, given that:
+
+  \begin{itemize}
+  \item Classes can be dynamically redefined.
+  \item Instances can become obsolete.
+  \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------
@@ -110,7 +138,7 @@
   \item A global generation common to all threads.
   \end{itemize}
 
-Global generation: Compactor by Karmany et al.
+Global generation: Compactor by Karmany \emph{et al}.
 \vskip 0.25cm
 Nursery: Our sliding collector algorithm.
 
