@@ -35,9 +35,9 @@
   \frametitle{Three papers}
 
   \begin{itemize}
-  \item Fast generic dispatch for Common Lisp
-  \item An improvement to sliding garbage collection
-  \item Resolving metastability during bootstrapping
+  \item Fast generic dispatch for Common Lisp.
+  \item An improvement to sliding garbage collection.
+  \item Resolving metastability during bootstrapping.
   \end{itemize}
 \end{frame}
 %-----------------------------------------------------------
@@ -45,11 +45,11 @@
   \frametitle{Contents of talk}
 
   \begin{itemize}
-  \item Reasons for SICL.
+  \item Presentation of the SICL project.
   \item Fast generic dispatch.
   \item Sliding garbage collection.
   \item Resolving metastability.
-  \item Future of SICL.
+  \item SICL, present and future.
   \end{itemize}
 \end{frame}
 %-----------------------------------------------------------
@@ -57,15 +57,16 @@
   \frametitle{SICL}
 
   SICL does not stand for anything.  Pronounce it ``sickle''.
-
-  Reason for SICL:
+  \vskip 0.25cm
+  Reason for SICL: Review design decisions of existing
+  implementations, in order to:
   
   \begin{itemize}
-  \item Review design decisions of existing implementations.
   \item Use more of CLOS.
-  \item Make modules implementation independent if possible.
-  \item Improve algorithms of existing implementations. 
+  \item Make modules implementation independent.
+  \item Improve algorithms.
   \item Prepare for internationalization. 
+  \item Simplify the code. 
   \end{itemize}
 \end{frame}
 %-----------------------------------------------------------
@@ -77,6 +78,7 @@
   \item Implementation of \texttt{:from-end t} on list sequences.
   \item In-place \emph{merge sort} algorithm. 
   \item Representation of heap-allocated objects.
+  \item Using CLOS for built-in classes.
   \item Garbage collection.
   \item CLOS generic dispatch.
   \item CLOS bootstrapping.
