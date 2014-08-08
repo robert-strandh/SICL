@@ -189,9 +189,33 @@ Nursery: Our sliding collector algorithm.
 \begin{frame}
   \frametitle{Sliding garbage collection} 
   \framesubtitle{Build break table from bitmap}
+
+  Building the break table is also straightforward:
+
   \begin{center}
 \inputfig{fig-example-d.pdf_t}
   \end{center}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
+  \frametitle{Sliding garbage collection} 
+  \framesubtitle{Adjusting pointers}
+
+  Adjusting pointers requires a binary search of the break table, but: 
+
+  \begin{itemize}
+  \item Break table has few entries because:
+    \begin{itemize}
+    \item We preserve allocation order.
+    \item Objects that are allocated together, die together.
+    \end{itemize}
+  \item Caching is possible.  Table is not searched randomly, because: 
+    \begin{itemize}
+    \item We preserve allocation order.
+    \item Objects that are allocated together, refer to each other.
+    \end{itemize}
+  \end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------
