@@ -79,8 +79,8 @@
   \item In-place \emph{merge sort} algorithm. 
   \item Representation of heap-allocated objects.
   \item Using CLOS for built-in classes.
-  \item Garbage collection.
   \item CLOS generic dispatch.
+  \item Garbage collection.
   \item CLOS bootstrapping.
   \end{itemize}
 \end{frame}
@@ -100,7 +100,8 @@
 \end{frame}
 %-----------------------------------------------------------
 \begin{frame}
-  \frametitle{SICL garbage collection}
+  \frametitle{Sliding garbage collection}
+  \framesubtitle{Context of work}
 
   We imagine a collector with two generations:
 
@@ -144,7 +145,26 @@ Nursery: Our sliding collector algorithm.
 %-----------------------------------------------------------
 \begin{frame}
   \frametitle{Sliding garbage collection} 
+  \framesubtitle{Problem with original algorithm}
+
+    Building the break table is expensive:
+
+    \begin{itemize}
+    \item Partially built table must be moved several times.
+    \item Final table must be sorted.  
+    \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
+  \frametitle{Sliding garbage collection} 
   \framesubtitle{Bitmap for marking}
+
+  Haddon and Waite did not consider marking (already done).  Existing
+  marking might already use a bitmap.
+  \vskip 1cm
+  Use one bit per word:
+
   \begin{center}
 \inputfig{fig-example-a.pdf_t}
   \end{center}
@@ -153,6 +173,9 @@ Nursery: Our sliding collector algorithm.
 \begin{frame}
   \frametitle{Sliding garbage collection} 
   \framesubtitle{Compaction}
+
+  Compaction is straightforward:
+
   \begin{center}
 \inputfig{fig-example-b.pdf_t}
   \end{center}
