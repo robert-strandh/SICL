@@ -95,6 +95,23 @@
 \end{frame}
 %-----------------------------------------------------------
 \begin{frame}
+  \frametitle{SICL}
+  \framesubtitle{Object representation}
+
+  \begin{itemize}
+  \item Every object is either an \emph{immediate object} or a
+    \emph{heap object}.
+  \item A heap object is either a \emph{cons cell} or a \emph{general
+    instance}.
+  \item A general instance has a \emph{header} and a \emph{rack}.
+  \item The tag of a general instance is the number of its class as it
+    was when the instance was created.  It is stored in the rack of
+    the instance.
+  \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
   \frametitle{Fast generic dispatch}
   \framesubtitle{Existing work}
 
