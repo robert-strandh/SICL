@@ -154,6 +154,21 @@
 \end{frame}
 %-----------------------------------------------------------
 \begin{frame}
+  \frametitle{Fast generic dispatch}
+  \framesubtitle{Our method}
+
+  \begin{itemize}
+  \item Every object has an associated \emph{tag}, which is the class
+    number when the object was created.
+  \item Immediate objects, cons cells, and general instances of
+    built-in classes always have the same tag as the class number.
+  \item The tag of a general instance is stored in the rack of the
+    instance. 
+  \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
   \frametitle{Sliding garbage collection}
   \framesubtitle{Context of work}
 
