@@ -169,6 +169,22 @@
 \end{frame}
 %-----------------------------------------------------------
 \begin{frame}
+  \frametitle{Fast generic dispatch}
+  \framesubtitle{Our method}
+
+  When a class changes:
+
+  \begin{itemize}
+  \item Allocate a new number for it.
+  \item Remove effective methods containing methods that specialize on
+    it from call histories.
+  \item Set the discriminating function to some default that
+    recomputes itself from the cal history.
+  \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
   \frametitle{Sliding garbage collection}
   \framesubtitle{Context of work}
 
