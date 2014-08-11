@@ -199,6 +199,21 @@
 \end{frame}
 %-----------------------------------------------------------
 \begin{frame}
+  \frametitle{Fast generic dispatch}
+  \framesubtitle{Our method}
+
+  When a dispatch on an obsolete instance is attempted:
+
+  \begin{itemize}
+  \item The discriminating function will fail.
+  \item Default action updates the instance. 
+  \item The discriminating function is tried again.
+  \item If it still fails, invoke general machinery.
+  \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
   \frametitle{Sliding garbage collection}
   \framesubtitle{Context of work}
 
