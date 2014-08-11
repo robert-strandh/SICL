@@ -115,6 +115,26 @@
   \frametitle{SICL}
   \framesubtitle{Object representation}
 
+  Our representation has several advantages:
+
+  \begin{itemize}
+  \item Objects are double-word aligned, leaving 3 tag bits on 32-bit
+    machines and 4 tag bits on 64-bit machines.  
+  \item The rack is \emph{internally consistent}, making \emph{lock
+    free updates} possible (using \emph{compare-and-swap}
+    instruction).
+  \item Non-simple arrays can be adjusted. 
+  \item Global garbage collector can be both non-moving and
+    compacting.
+  \item Uniform treatment of standard objects and built-in instances. 
+  \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
+  \frametitle{SICL}
+  \framesubtitle{Object representation}
+
   Representation of a generic function:
   \vskip 0.25cm
   A \emph{call history} that maps class numbers of required arguments
