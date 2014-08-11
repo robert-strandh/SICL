@@ -467,7 +467,25 @@ Almost finished:
   \frametitle{SICL}
   \framesubtitle{Currently being worked on}
 
-A library inspired by LLVM for compilation and optimization. 
+A library inspired by LLVM for compilation and optimization:
+
+\begin{itemize}
+\item Representation of program as a graph of instructions (\emph{flow
+  chart} or \emph{flow graph})
+\item Collection of state-of-the-art transformations and
+  optimizations:
+  \begin{itemize}
+  \item Conversion to static single assignment form.
+  \item Common subexpression elimination.
+  \item Value numbering.
+  \item Loop optimizations.
+  \item Escape analysis.
+  \item Register allocation.
+  \item etc.
+  \end{itemize}
+\item Implementation-specific extensions using CLOS.
+\item Backends for common architectures.
+\end{itemize}
 
 \end{frame}
 %-----------------------------------------------------------
