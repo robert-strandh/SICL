@@ -230,6 +230,21 @@ Result: 3-5 times as fast as existing techniques.
 \end{frame}
 %-----------------------------------------------------------
 \begin{frame}
+  \frametitle{Fast generic dispatch}
+  \framesubtitle{Consequences}
+
+  \begin{itemize}
+  \item With our method, generic dispatch is no slower than
+    a ``manual'' type test.
+  \item Therefore, there generic functions can be used for built-in
+    accessors such as \texttt{symbol-name},
+    \texttt{package-nicknames}, etc.
+  \item Generic dispatch could even be used for general arithmetic.
+  \end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
   \frametitle{Sliding garbage collection}
   \framesubtitle{Context of work}
 
