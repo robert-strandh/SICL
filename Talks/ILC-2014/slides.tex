@@ -459,6 +459,9 @@ We call this technique \emph{satiation}.
   \frametitle{CLOS Bootstrapping}
   \framesubtitle{Call history of a generic function}
 
+Recall:
+\vskip 0.5cm
+
 The call history contains the result of calling
 \texttt{compute-applicable-methods-using-classes} and then
 \texttt{compute-effective-method}.
@@ -487,6 +490,18 @@ history without calling any generic function.
 
 \end{frame}
 %-----------------------------------------------------------
+\begin{frame}
+  \frametitle{CLOS Bootstrapping}
+  \framesubtitle{Satiation}
+
+Given a set of classes, satiating a generic function fills its call
+history with all possible effective methods that can result from calls
+with arguments that are instances of those classes. 
+\vskip 0.5cm
+Satiation does not create metastability problems because the dispatch
+machinery is always executed by the \emph{previous step} in the
+bootstrapping sequence.
+\end{frame}
 %-----------------------------------------------------------
 %-----------------------------------------------------------
 %-----------------------------------------------------------
