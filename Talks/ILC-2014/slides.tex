@@ -468,6 +468,24 @@ history without calling any generic function.
 
 \end{frame}
 %-----------------------------------------------------------
+\begin{frame}
+  \frametitle{CLOS Bootstrapping}
+  \framesubtitle{Bootstrapping method used by SICL}
+
+  \begin{enumerate}
+  \item Use MOP definitions to create \emph{host classes} and \emph{host generic
+    functions} (accessors).
+  \item Use MOP definitions again to create \emph{bridge classes} and
+    \emph{bridge generic functions}.  
+  \item Use MOP definitions again to create \emph{ersatz classes} and
+    \emph{ersatz generic functions}.  
+  \item Replace references to bridge objects in ersatz objects by
+    references to ersatz objects.
+  \item Create target objects as a graph that is \emph{isomorphic} to
+    the graph of ersatz objects.
+  \end{enumerate}
+
+\end{frame}
 %-----------------------------------------------------------
 %-----------------------------------------------------------
 %-----------------------------------------------------------
