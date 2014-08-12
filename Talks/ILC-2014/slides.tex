@@ -416,11 +416,30 @@ Cache size: 6MiB
   \frametitle{CLOS Bootstrapping}
   \framesubtitle{Bootstrapping and metastability issues}
 
-Bootstrapping issue: The class \texttt{standard-class} must exist in
-order to be created.
-\vskip 0.25cm
-Metastability issue: Attempting to compute the discriminating function
-of the function \texttt{compute-discriminating-function}.
+The AMOP distinguishes between two types of \emph{issues}:
+\vskip 0.5cm
+\begin{itemize}
+\item Bootstrapping issues: The class \texttt{standard-class} must exist in
+  order to be created.
+\item Metastability issues: Attempting to compute the discriminating function
+  of the function \texttt{compute-discriminating-function}.
+\end{itemize}
+
+Bootstrapping issues are easy to solve; metastability issues are hard.
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
+  \frametitle{CLOS Bootstrapping}
+  \framesubtitle{Metastability issues}
+
+Observation:
+\vskip 0.5cm
+
+The canonical example of metastability issue is an issue only if the
+\emph{existing} discriminating function of
+\texttt{compute-discriminating-function} is unable to compute the
+discriminating function of a standard generic function.
 
 \end{frame}
 %-----------------------------------------------------------
@@ -467,7 +486,8 @@ Almost finished:
   \frametitle{SICL}
   \framesubtitle{Currently being worked on}
 
-A library inspired by LLVM for compilation and optimization:
+A library inspired by LLVM for compilation and optimization called
+\emph{Cleavir}: 
 
 \begin{itemize}
 \item Representation of program as a graph of instructions (\emph{flow
@@ -504,6 +524,22 @@ A few years:
 \begin{itemize}
 \item The rest of CLHS.
 \item Standard compiler optimizations.
+\end{itemize}
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
+  \frametitle{SICL}
+  \framesubtitle{Future}
+
+Research:
+
+\begin{itemize}
+\item Per-region register allocation.
+\item Selective use of common subexpression elimination and global
+  value numbering so as to decrease demands for registers.
+\item Global garbage collection.
+\item Call-site optimization techniques. 
 \end{itemize}
 
 \end{frame}
