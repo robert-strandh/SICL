@@ -445,6 +445,18 @@ discriminating function of a standard generic function.
 %-----------------------------------------------------------
 \begin{frame}
   \frametitle{CLOS Bootstrapping}
+  \framesubtitle{Our technique}
+
+We make sure that the initial discriminating function of every
+\emph{specified generic function} can handle arguments of every
+\emph{specified class}.
+\vskip 0.5cm
+We call this technique \emph{satiation}.
+
+\end{frame}
+%-----------------------------------------------------------
+\begin{frame}
+  \frametitle{CLOS Bootstrapping}
   \framesubtitle{Call history of a generic function}
 
 The call history contains the result of calling
