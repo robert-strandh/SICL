@@ -62,23 +62,151 @@ inserting $\phi$ functions.  The first one was published in 1989 in
 POPL \cite{Cytron:1989:EMC:75277.75280} and the second one in 1991 in
 TOPLAS \cite{Cytron:1991:ECS:115372.115320}.
 
-SSA form is a per-variable property.  Some optimizations are possible
-even if not every variable has this property, so that some variables
-are assigned multiple times.  In order for a variable $V$ to respect
-the SSA property, a $\phi$ function for $V$ is required in control
-flow node $Z$ whenever there are control flow nodes $X$ and $Y$
-containing assignments to $V$, $X \ne Y$, $X \rightarrow^+ Z$, $Y
-\rightarrow^+ Z$.  The node $Z$ is called a \emph{join point} for $V$.
-Since adding a $\phi$ function in $Z$ introduces an assignment to $V$,
-$Z$ must then recursively be considered in order to find other join
-points requiring additional $\phi$ functions.  The concept of a join
-point is more generally defined for an arbitrary set of control flow
-nodes $S$.  The set of join points $J(S)$ is defined as the set of all
-nodes $Z$ such that there are two non-null paths starting from two
-distinct nodes $X$ and $Y$ in S and converge in $Z$.  The
-\emph{iterated join} $J^+(S)$ is defined as the limit of the
-increasing sets of nodes $J_1(S) = J(S)$, $J_{i+1}(S) = J(S \cup
-J_i(S))$.
+All research we have seen related to SSA form assumes that functions
+can not be nested.  It is not even clear what it would mean to convert
+the following code fragment to SSA:
+
+\begin{verbatim}
+(let ((x ...))
+  (flet ((f ()
+            (incf x)))
+    (f)
+    (f)))
+\end{verbatim}
+
+We can see no direct way to convert the body of the local function
+\texttt{f} to SSA form.%
+\footnote{If the function \texttt{f} is \emph{inlined}, it is not hard
+  of course.}
+
+Until further research proves otherwise, we must consider SSA to be a
+per-variable property, so that some variables can not be considered
+candidates for SSA transformation.
+
+Having said that, we can apply some \emph{tricks} to make it work.  In
+the program previous program fragment, we could alter the signature of
+the local function \texttt{f} as follows:
+
+\begin{verbatim}
+ (let ((x1 ...))
+   (flet ((f (x)
+             (+ x 1)))
+     (let ((x2 (f x1)))
+       (f x2))))
+\end{verbatim}
+
+This trick is called \emph{lambda lifting} and it consists of adding
+extra arguments to a function in order that it can be defined in the
+null lexical environment.  
+
+Since lambda lifting alters the signature of the function, it can not
+be used when the function can be called from an external context that
+assumes the original signature. 
+
+Consider the following program fragment:
+
+\begin{verbatim}
+(let ((x 0))
+   (find-if (lambda (y) (incf x) (> y 10)) some-sequence)
+   ...)
+\end{verbatim}
+
+This program fragment counts the number of occurrences in
+\texttt{some-sequence} that precede the first occurrence greater than
+$10$.  Let's say that following the call to \texttt{find-if}, the
+variable \texttt{x} is used in many complex ways so that it is
+justified to apply SSA conversion to it.  Then we can use the
+following trick:
+
+\begin{verbatim}
+ (let ((x1 0))
+   (flet ((f (z)
+             (find-if (lambda (y) (incf z) (> y 10)) some-sequence)
+             z))
+     (let ((x2 (f x1)))
+       ...)))
+\end{verbatim}
+
+The trick consists of making a local version of \texttt{x}, named
+\texttt{z} and have the closure update that local version instead.
+Now, of course, \texttt{z} can not be SSA converted, but \texttt{x}
+can as the transformed code fragment shows.  The reason this trick
+works is that we know that \texttt{find-if} does not hold on to the
+closure after it returns.  We know that it calls the closure a certain
+number of times, and then it returns without keeping a reference to
+it.%
+\fixme{Find out whether there is a commonly used name for such
+  functions, and if so use it.  Otherwise, invent one.}
+
+We can see this trick as a transformation followed by a lambda
+lifting.  The first transformation consists of introducing the local
+function \texttt{f} as follows:
+
+\begin{verbatim}
+(let ((x 0))
+  (flet ((f ()
+            (find-if (lambda (y) (incf x) (> y 10)) some-sequence)))
+    (f)
+    ...)) 
+\end{verbatim}
+
+Now, lambda-lifting the function \texttt{f} and converting to SSA
+gives the final result. 
+
+However, there are some situations where we can not apply SSA
+transformation to variables:%
+\footnote{We should be more specific here: There are some situations
+  where we can not see how it could be possible to apply SSA
+  transformation.  Future research into new techniques might come up
+  with some version of SSA that has the desired properties and that
+  will lend itself to these situations.}
+
+Consider the following program fragment:
+
+\begin{verbatim}
+(let ((x ...))
+   (f (lambda () (incf x)))
+   (g (lambda () (incf x))))
+\end{verbatim}
+
+In this program fragment, \texttt{f} and \texttt{g} are arbitrary
+user-defined functions that may change after the fragment is compiled,
+so we can not make any assumptions about them.  In particular, it is
+entirely possible that \texttt{f} and \texttt{g} both capture the
+closure in global variables like this:
+
+\begin{verbatim}
+(defun f (closure)
+  (setf *f* closure))
+
+(defun g (closure)
+  (setf *g* closure))
+\end{verbatim}
+
+In order for this program fragment to respect the semantics of \cl{}
+it can be argued that both closures must update a common variable.  It
+follows that both closures must assign to this common variable, and
+thus that this variable can not be assigned to in a single place as
+required by SSA. 
+
+Some optimizations are possible even if not every variable can be
+converted into SSA form, so that some variables are assigned multiple
+times.  
+
+In order for a variable $V$ to respect the SSA property, a $\phi$
+function for $V$ is required in control flow node $Z$ whenever there
+are control flow nodes $X$ and $Y$ containing assignments to $V$, $X
+\ne Y$, $X \rightarrow^+ Z$, $Y \rightarrow^+ Z$.  The node $Z$ is
+called a \emph{join point} for $V$.  Since adding a $\phi$ function in
+$Z$ introduces an assignment to $V$, $Z$ must then recursively be
+considered in order to find other join points requiring additional
+$\phi$ functions.  The concept of a join point is more generally
+defined for an arbitrary set of control flow nodes $S$.  The set of
+join points $J(S)$ is defined as the set of all nodes $Z$ such that
+there are two non-null paths starting from two distinct nodes $X$ and
+$Y$ in S and converge in $Z$.  The \emph{iterated join} $J^+(S)$ is
+defined as the limit of the increasing sets of nodes $J_1(S) = J(S)$,
+$J_{i+1}(S) = J(S \cup J_i(S))$.
 
 Consider the control flow graph in \refFig{fig-ssa-join-1}.  Empty
 boxes contain neither assignments nor references to the variable
