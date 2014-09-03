@@ -97,12 +97,12 @@ lexical variable.
 This initarg supplies the name of the lexical variable.  This initarg
 must be supplied. 
 
-\Definitarg {:location}
+\Definitarg {:identity}
 
 This initarg is used to supply some kind of implementation-defined 
-\emph{location}.  The implementation can supply any object as the
-location, because it is not interpreted by the compiler.  However, the
-\emph{same} location must be supplied each time for a particular
+\emph{identity}.  The implementation can supply any object as the
+identity, because it is not interpreted by the compiler.  However, the
+\emph{same} identity must be supplied each time for a particular
 special variable.  This initarg must be supplied. 
 
 \Definitarg {:type}
@@ -118,11 +118,11 @@ Given an instance of the class \texttt{lexical-variable-info}, this
 method returns the name of the lexical variable as supplied by the
 initarg \texttt{:name}.
 
-\Defmethod {location} {(info {\tt lexical-variable-info})}
+\Defmethod {identity} {(info {\tt lexical-variable-info})}
 
 Given an instance of the class \texttt{lexical-variable-info}, this
-method returns the location of the lexical variable as supplied by the
-initarg \texttt{:location}.
+method returns the identity of the lexical variable as supplied by the
+initarg \texttt{:identity}.
 
 \Defmethod {type} {(info {\tt lexical-variable-info})}
 
@@ -264,12 +264,12 @@ the function name passed as an argument refers to a local function.
 This initarg supplies the name of the local function.  This initarg
 must be supplied.
 
-\Definitarg {:location}
+\Definitarg {:identity}
 
 This initarg is used to supply some kind of implementation-defined 
-\emph{location}.  The implementation can supply any object as the
-location, because it is not interpreted by the compiler.  However, the
-\emph{same} location must be supplied each time for a particular
+\emph{identity}.  The implementation can supply any object as the
+identity, because it is not interpreted by the compiler.  However, the
+\emph{same} identity must be supplied each time for a particular
 local function.  This initarg must be supplied. 
 
 \Definitarg {:type}
@@ -294,11 +294,11 @@ Given an instance of the class \texttt{local-function-info}, this
 method returns the name of the local function as supplied by the
 initarg \texttt{:name}.
 
-\Defmethod {location} {(info {\tt local-function-info})}
+\Defmethod {identity} {(info {\tt local-function-info})}
 
 Given an instance of the class \texttt{local-function-info}, this
-method returns the location of the local function as supplied by the
-initarg \texttt{:location}.
+method returns the identity of the local function as supplied by the
+initarg \texttt{:identity}.
 
 \Defmethod {type} {(info {\tt local-function-info})}
 
@@ -472,12 +472,12 @@ block.
 This initarg supplies the name of the block.  This initarg must be
 supplied.
 
-\Definitarg {:location}
+\Definitarg {:identity}
 
 This initarg is used to supply some kind of implementation-defined 
-\emph{location}.  The implementation can supply any object as the
-location, because it is not interpreted by the compiler.  However, the
-\emph{same} location must be supplied each time for a particular
+\emph{identity}.  The implementation can supply any object as the
+identity, because it is not interpreted by the compiler.  However, the
+\emph{same} identity must be supplied each time for a particular
 block.  This initarg must be supplied. 
 
 \Defmethod {name} {(info {\tt block-info})}
@@ -486,11 +486,11 @@ Given an instance of the class \texttt{block-info}, this method
 returns the name of the block as supplied by the initarg
 \texttt{:name}.
 
-\Defmethod {location} {(info {\tt block-info})}
+\Defmethod {identity} {(info {\tt block-info})}
 
 Given an instance of the class \texttt{block-info}, this method
-returns the location of the block as supplied by the initarg
-\texttt{:location}.
+returns the identity of the block as supplied by the initarg
+\texttt{:identity}.
 
 \subsection{Tag information}
 
