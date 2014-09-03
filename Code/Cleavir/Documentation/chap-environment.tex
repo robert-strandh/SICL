@@ -192,6 +192,12 @@ be supplied.
 This initarg supplies the expansion of the symbol macro.  This initarg
 must be supplied.
 
+\Definitarg {:type}
+
+This initarg is used to supply the \emph{type} of the symbol macro.
+The type can be any type specifier and it may contain user-defined
+types.  If this initarg is omitted, it defaults to \texttt{t}.
+
 \Defmethod {name} {(info {\tt symbol-macro-info})}
 
 Given an instance of the class \texttt{symbol-macro-info}, this method
@@ -203,6 +209,13 @@ returns the name of the symbol macro as supplied by the initarg
 Given an instance of the class \texttt{symbol-macro-info}, this method
 returns the expansion of the symbol macro as supplied by the initarg
 \texttt{:expansion}.
+
+\Defmethod {type} {(info {\tt symbol-macro-info})}
+
+Given an instance of the class \texttt{symbol-macro-info}, this method
+returns the \emph{type} of the symbol macro as supplied by the initarg
+\texttt{:type}.  If that initarg was not supplied, this method returns
+\texttt{t}.
 
 \subsection{Function information}
 
