@@ -410,15 +410,87 @@ Given an instance of the class \texttt{local-macro-info}, this
 method returns the expander of the local macro as supplied by the
 initarg \texttt{:expander}.
 
+\subsubsection{Global macro information}
+
+\Defclass {global-macro-info}
+
+This class represents information about global macros introduced by
+\texttt{macrolet}.  An instance of this class is returned by a call to
+\texttt{function-info} when it turns out that the function name passed
+as an argument refers to a global macro.
+
+\Definitarg {:name}
+
+This initarg supplies the name of the global macro.  This initarg
+must be supplied.
+
+\Definitarg {:expander}
+
+This initarg is used to supply the macro function used to expand macro
+forms that use this macro.  This initarg must be supplied. 
+
+\Definitarg {:compiler-macro}
+
+This initarg is used to supply a \emph{compiler macro function} when
+compiler macro is associated with the global macro.  If this
+initarg is not given, it defaults to \texttt{nil}, meaning that no
+compiler macro is associated with this macro. 
+
+\Defmethod {name} {(info {\tt global-macro-info})}
+
+Given an instance of the class \texttt{global-macro-info}, this
+method returns the name of the global macro as supplied by the
+initarg \texttt{:name}.
+
+\Defmethod {expander} {(info {\tt global-macro-info})}
+
+Given an instance of the class \texttt{global-macro-info}, this
+method returns the expander of the global macro as supplied by the
+initarg \texttt{:expander}.
+
+\Defmethod compiler-macro {(info {\tt global-macro-info})}
+
+Given an instance of the class \texttt{global-macro-info}, this
+method returns the \emph{compiler macro function} information
+associated with the global macro, as supplied by the initarg
+\texttt{:compiler-macro}.  If that initarg was not supplied, this
+method returns \texttt{nil}.
+
 \subsection{Block information}
 
 \Defgeneric {block-info} {environment symbol}
 
 \Defclass {block-info}
 
+This class represents information about blocks introduced by
+\texttt{block}.  An instance of this class is returned by a call to
+\texttt{block-info} when the symbol passed as an argument refers to a
+block.
+
 \Definitarg {:name}
 
+This initarg supplies the name of the block.  This initarg must be
+supplied.
+
+\Definitarg {:location}
+
+This initarg is used to supply some kind of implementation-defined 
+\emph{location}.  The implementation can supply any object as the
+location, because it is not interpreted by the compiler.  However, the
+\emph{same} location must be supplied each time for a particular
+block.  This initarg must be supplied. 
+
 \Defmethod {name} {(info {\tt block-info})}
+
+Given an instance of the class \texttt{block-info}, this method
+returns the name of the block as supplied by the initarg
+\texttt{:name}.
+
+\Defmethod {location} {(info {\tt block-info})}
+
+Given an instance of the class \texttt{block-info}, this method
+returns the location of the block as supplied by the initarg
+\texttt{:location}.
 
 \subsection{Tag information}
 
