@@ -53,66 +53,176 @@ not called on an environment using this default representation.
 
 \subsection{Variable information}
 
-\Defgeneric {variable-info} {environment name}
+\Defgeneric {variable-info} {environment symbol}
 
 This function is called by the compiler whenever a symbol in a
 \emph{variable} position is to be compiled.  It returns an instance of
 one of the classes described below.
 
-\Defclass {variable-info}
-
-This class is the common superclass for lexical and special
-variables. 
-
-\Defmethod {type} {(info {\tt variable-info})}
-
-Given an instance of the class \texttt{variable-info}, this method
-returns the \emph{type} of the variable. 
+\subsubsection{Lexical variable information}
 
 \Defclass {lexical-variable-info}
 
-This class is a subclass of the class \texttt{variable-info}.  It
-represents information about lexical variables. 
+This class represents information about lexical variables.  An
+instance of this class is returned by a call to \texttt{variable-info}
+when it turns out that the symbol passed as an argument refers to a
+lexical variable.
+
+\Definitarg {:name}
+
+This initarg supplies the name of the lexical variable.  This initarg
+must be supplied. 
+
+\Definitarg {:location}
+
+This initarg is used to supply some kind of implementation-defined 
+\emph{location}.  The implementation can supply any object as the
+location, because it is not interpreted by the compiler.  However, the
+\emph{same} location must be supplied each time for a particular
+special variable.  This initarg must be supplied. 
+
+\Definitarg {:type}
+
+This initarg is used to supply the \emph{type} of the lexical
+variable.  The type can be any type specifier and it may contain
+user-defined types.  If this initarg is omitted, it defaults to
+\texttt{t}. 
+
+\Defmethod {name} {(info {\tt lexical-variable-info})}
+
+Given an instance of the class \texttt{lexical-variable-info}, this
+method returns the name of the lexical variable as supplied by the
+initarg \texttt{:name}.
 
 \Defmethod {location} {(info {\tt lexical-variable-info})}
 
-This method returns some kind of implementation-defined
-\emph{location}.  The nature of the object returned is not specified,
-but it must be the \emph{same} object for variables that are the
-same. 
+Given an instance of the class \texttt{lexical-variable-info}, this
+method returns the location of the lexical variable as supplied by the
+initarg \texttt{:location}.
+
+\Defmethod {type} {(info {\tt lexical-variable-info})}
+
+Given an instance of the class \texttt{lexical-variable-info}, this
+method returns the \emph{type} of the variable as supplied by the
+initarg \texttt{:type}.  If that initarg was not supplied, this method
+returns \texttt{t}.
+
+\subsubsection{Special variable information}
 
 \Defclass {special-variable-info}
 
-This class is a subclass of the class \texttt{variable-info}.  It
-represents information about special variables. 
+This class represents information about special variables.   An
+instance of this class is returned by a call to \texttt{variable-info}
+when it turns out that the symbol passed as an argument refers to a
+special variable.
+
+
+\Definitarg {:name}
+
+This initarg supplies the name of the special variable.  This initarg
+must be supplied. 
+
+\Definitarg {:type}
+
+This initarg is used to supply the \emph{type} of the special
+variable.  The type can be any type specifier and it may contain
+user-defined types.  If this initarg is omitted, it defaults to
+\texttt{t}. 
 
 \Defmethod {name} {(info {\tt special-variable-info})}
 
-This method returns the name of the special variable.
+Given an instance of the class \texttt{special-variable-info}, this
+method returns the name of the special variable as supplied by the
+initarg \texttt{:name}.
 
-\Defclass {constant-info}
+\Defmethod {type} {(info {\tt special-variable-info})}
 
-\Defmethod {value} {(info {\tt constant-info})}
+Given an instance of the class \texttt{special-variable-info}, this
+method returns the \emph{type} of the variable as supplied by the
+initarg \texttt{:type}.  If that initarg was not supplied, this method
+returns \texttt{t}.
+
+\subsubsection{Constant variable information}
+
+\Defclass {constant-variable-info}
+
+This class represents information about constant variables.   An
+instance of this class is returned by a call to \texttt{variable-info}
+when it turns out that the symbol passed as an argument refers to a
+constant variable.
+
+\Definitarg {:name}
+
+This initarg supplies the name of the constant variable.  This initarg
+must be supplied. 
+
+\Definitarg {:value}
+
+This initarg supplies the value of the constant variable.  This
+initarg must be supplied.
+
+\Defmethod {name} {(info {\tt constant-variable-info})}
+
+Given an instance of the class \texttt{constant-variable-info}, this
+method returns the name of the constant variable as supplied by the
+initarg \texttt{:name}.
+
+\Defmethod {value} {(info {\tt constant-variable-info})}
+
+Given an instance of the class \texttt{constant-variable-info}, this
+method returns the value of the constant variable as supplied by the
+initarg \texttt{:value}.
+
+\subsubsection{Symbol macro information}
 
 \Defclass {symbol-macro-info}
 
+This class represents information about symbol macros.  An
+instance of this class is returned by a call to \texttt{variable-info}
+when it turns out that the symbol passed as an argument refers to a
+symbol macro.
+
+\Definitarg {:name}
+
+This initarg supplies the name of the symbol macro.  This initarg must
+be supplied.
+
+\Definitarg {:expansion}
+
+This initarg supplies the expansion of the symbol macro.  This initarg
+must be supplied.
+
+\Defmethod {name} {(info {\tt symbol-macro-info})}
+
+Given an instance of the class \texttt{symbol-macro-info}, this method
+returns the name of the symbol macro as supplied by the initarg
+\texttt{:name}.
+
 \Defmethod {expansion} {(info {\tt symbol-macro-info})}
+
+Given an instance of the class \texttt{symbol-macro-info}, this method
+returns the expansion of the symbol macro as supplied by the initarg
+\texttt{:expansion}.
 
 \subsection{Function information}
 
 \subsection{Block information}
 
-\Defgeneric {block-info} {environment name}
+\Defgeneric {block-info} {environment symbol}
 
 \Defclass {block-info}
+
+\Definitarg {:name}
 
 \Defmethod {name} {(info {\tt block-info})}
 
 \subsection{Tag information}
 
-\Defgeneric {tag-info} {environment name}
+\Defgeneric {tag-info} {environment symbol}
 
 \Defclass {tag-info}
+
+\Definitarg {:name}
 
 \Defmethod {name} {(info {\tt tag-info})}
 
