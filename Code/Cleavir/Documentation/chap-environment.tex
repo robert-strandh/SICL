@@ -277,6 +277,71 @@ method returns the \emph{inline} information of the local function as
 supplied by the initarg \texttt{:inline}.  If that initarg was not
 supplied, this method returns \texttt{nil}.
 
+\subsubsection{Global function information}
+
+\Defclass {global-function-info}
+
+This class represents information about global functions.  An instance
+of this class is returned by a call to \texttt{function-info} when it
+turns out that the function name passed as an argument refers to a
+global function.
+
+\Definitarg {:name}
+
+This initarg supplies the name of the global function.  This initarg
+must be supplied.
+
+\Definitarg {:type}
+
+This initarg is used to supply the \emph{type} of the global function.
+The type can be any type specifier and it may contain user-defined
+types.  If this initarg is omitted, it defaults to \texttt{t}.
+
+\Definitarg {:inline}
+
+This initarg is used to supply \emph{inline} information about the
+global function.  The value of this initarg can be either
+\texttt{:inline} meaning that the function is declared
+\texttt{inline}, \texttt{:notinline} meaning that the function is
+declared \texttt{notinline}, or \texttt{nil} meaning that no inline
+declaration for this function is in scope.  If this initarg is not
+supplied, it defaults to \texttt{nil}.
+
+\Definitarg {:compiler-macro}
+
+This initarg is used to supply a \emph{compiler macro function} when
+compiler macro is associated with the global function.  If this
+initarg is not given, it defaults to \texttt{nil}, meaning that no
+compiler macro is associated with this function. 
+
+\Defmethod {name} {(info {\tt global-function-info})}
+
+Given an instance of the class \texttt{global-function-info}, this
+method returns the name of the global function as supplied by the
+initarg \texttt{:name}.
+
+\Defmethod {type} {(info {\tt global-function-info})}
+
+Given an instance of the class \texttt{global-function-info}, this
+method returns the \emph{type} of the global function as supplied by the
+initarg \texttt{:type}.  If that initarg was not supplied, this method
+returns \texttt{t}.
+
+\Defmethod {inline} {(info {\tt global-function-info})}
+
+Given an instance of the class \texttt{global-function-info}, this
+method returns the \emph{inline} information of the global function as
+supplied by the initarg \texttt{:inline}.  If that initarg was not
+supplied, this method returns \texttt{nil}.
+
+\Defmethod compiler-macro {(info {\tt global-function-info})}
+
+Given an instance of the class \texttt{global-function-info}, this
+method returns the \emph{compiler macro function} information
+associated with the global function, as supplied by the initarg
+\texttt{:compiler-macro}.  If that initarg was not supplied, this
+method returns \texttt{nil}.
+
 \subsection{Block information}
 
 \Defgeneric {block-info} {environment symbol}
