@@ -206,6 +206,77 @@ returns the expansion of the symbol macro as supplied by the initarg
 
 \subsection{Function information}
 
+\Defgeneric {function-info} {environment function-name}
+
+This function is called by the compiler whenever a symbol in a
+\emph{function} position is to be compiled or whenever a function name
+is found in a context where it is known to refer to a function.  It
+returns an instance of one of the classes described below.
+
+\subsubsection{Local function information}
+
+\Defclass {local-function-info}
+
+This class represents information about local functions introduced by
+\texttt{flet} or \texttt{labels}.  An instance of this class is
+returned by a call to \texttt{function-info} when it turns out that
+the function name passed as an argument refers to a local function. 
+
+\Definitarg {:name}
+
+This initarg supplies the name of the local function.  This initarg
+must be supplied.
+
+\Definitarg {:location}
+
+This initarg is used to supply some kind of implementation-defined 
+\emph{location}.  The implementation can supply any object as the
+location, because it is not interpreted by the compiler.  However, the
+\emph{same} location must be supplied each time for a particular
+local function.  This initarg must be supplied. 
+
+\Definitarg {:type}
+
+This initarg is used to supply the \emph{type} of the local function.
+The type can be any type specifier and it may contain user-defined
+types.  If this initarg is omitted, it defaults to \texttt{t}.
+
+\Definitarg {:inline}
+
+This initarg is used to supply \emph{inline} information about the
+local function.  The value of this initarg can be either
+\texttt{:inline} meaning that the function is declared
+\texttt{inline}, \texttt{:notinline} meaning that the function is
+declared \texttt{notinline}, or \texttt{nil} meaning that no inline
+declaration for this function is in scope.  If this initarg is not
+supplied, it defaults to \texttt{nil}.
+
+\Defmethod {name} {(info {\tt local-function-info})}
+
+Given an instance of the class \texttt{local-function-info}, this
+method returns the name of the local function as supplied by the
+initarg \texttt{:name}.
+
+\Defmethod {location} {(info {\tt local-function-info})}
+
+Given an instance of the class \texttt{local-function-info}, this
+method returns the location of the local function as supplied by the
+initarg \texttt{:location}.
+
+\Defmethod {type} {(info {\tt local-function-info})}
+
+Given an instance of the class \texttt{local-function-info}, this
+method returns the \emph{type} of the local function as supplied by the
+initarg \texttt{:type}.  If that initarg was not supplied, this method
+returns \texttt{t}.
+
+\Defmethod {inline} {(info {\tt local-function-info})}
+
+Given an instance of the class \texttt{local-function-info}, this
+method returns the \emph{inline} information of the local function as
+supplied by the initarg \texttt{:inline}.  If that initarg was not
+supplied, this method returns \texttt{nil}.
+
 \subsection{Block information}
 
 \Defgeneric {block-info} {environment symbol}
