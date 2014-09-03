@@ -1,6 +1,8 @@
 \chapter{Environment}
 \label{chap-environment}
 
+\section{Introduction}
+
 Compiling a \cl{} program is done in constant interaction with an
 \emph{environment}.  The \hs{} stipulates%
 \footnote{See Section 3.2.1 of the \hs{}.}
@@ -46,5 +48,72 @@ work.  For that reason, \sysname{} proposes a \emph{default
 version can also be used by more complete implementations, provided
 that the implementation-specific version of \texttt{macroexpand} is
 not called on an environment using this default representation. 
+
+\section{Querying the environment}
+
+\subsection{Variable information}
+
+\Defgeneric {variable-info} {environment name}
+
+This function is called by the compiler whenever a symbol in a
+\emph{variable} position is to be compiled.  It returns an instance of
+one of the classes described below.
+
+\Defclass {variable-info}
+
+This class is the common superclass for lexical and special
+variables. 
+
+\Defmethod {type} {(info {\tt variable-info})}
+
+Given an instance of the class \texttt{variable-info}, this method
+returns the \emph{type} of the variable. 
+
+\Defclass {lexical-variable-info}
+
+This class is a subclass of the class \texttt{variable-info}.  It
+represents information about lexical variables. 
+
+\Defmethod {location} {(info {\tt lexical-variable-info})}
+
+This method returns some kind of implementation-defined
+\emph{location}.  The nature of the object returned is not specified,
+but it must be the \emph{same} object for variables that are the
+same. 
+
+\Defclass {special-variable-info}
+
+This class is a subclass of the class \texttt{variable-info}.  It
+represents information about special variables. 
+
+\Defmethod {name} {(info {\tt special-variable-info})}
+
+This method returns the name of the special variable.
+
+\Defclass {constant-info}
+
+\Defmethod {value} {(info {\tt constant-info})}
+
+\Defclass {symbol-macro-info}
+
+\Defmethod {expansion} {(info {\tt symbol-macro-info})}
+
+\subsection{Function information}
+
+\subsection{Block information}
+
+\Defgeneric {block-info} {environment name}
+
+\Defclass {block-info}
+
+\Defmethod {name} {(info {\tt block-info})}
+
+\subsection{Tag information}
+
+\Defgeneric {tag-info} {environment name}
+
+\Defclass {tag-info}
+
+\Defmethod {name} {(info {\tt tag-info})}
 
 %%  LocalWords:  startup expanders expander
