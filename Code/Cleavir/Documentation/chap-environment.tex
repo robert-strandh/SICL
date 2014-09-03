@@ -51,6 +51,30 @@ not called on an environment using this default representation.
 
 \section{Querying the environment}
 
+In this section, we describe classes and functions that are used by
+the compiler to query the environment concerning information about
+program elements that the compiler needs in order to determine how to
+process those program elements. 
+
+When the compiler calls a generic query function, it passes the
+environment as the first argument.  Client code must supply methods
+on these functions, specialized to its particular representation of
+environments. 
+
+These methods should return instances of the classes described in this
+section.  Any such instance contains all available information about
+some program element in that particular environment.  This information
+must typically be assembled from different parts of the environment.
+For that reason, client code typically creates a new instance whenever
+a query function is called, rather than attempting to store such
+instances in the environment. 
+
+Client code is free to define subclasses of the classes described
+here, for instance in order to represent implementation-specific
+information about the program elements.  Client code would then
+typically also provide auxiliary methods or overriding primary methods
+on the compilation functions that handle these classes.
+
 \subsection{Variable information}
 
 \Defgeneric {variable-info} {environment symbol}
@@ -375,4 +399,4 @@ method returns \texttt{nil}.
 
 \Defmethod {name} {(info {\tt tag-info})}
 
-%%  LocalWords:  startup expanders expander
+%%  LocalWords:  startup expanders expander subclasses
