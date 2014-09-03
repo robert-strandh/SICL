@@ -379,6 +379,37 @@ associated with the global function, as supplied by the initarg
 \texttt{:compiler-macro}.  If that initarg was not supplied, this
 method returns \texttt{nil}.
 
+\subsubsection{Local macro information}
+
+\Defclass {local-macro-info}
+
+This class represents information about local macros introduced by
+\texttt{macrolet}.  An instance of this class is returned by a call to
+\texttt{function-info} when it turns out that the function name passed
+as an argument refers to a local macro.
+
+\Definitarg {:name}
+
+This initarg supplies the name of the local macro.  This initarg
+must be supplied.
+
+\Definitarg {:expander}
+
+This initarg is used to supply the macro function used to expand macro
+forms that use this macro.  This initarg must be supplied. 
+
+\Defmethod {name} {(info {\tt local-macro-info})}
+
+Given an instance of the class \texttt{local-macro-info}, this
+method returns the name of the local macro as supplied by the
+initarg \texttt{:name}.
+
+\Defmethod {expander} {(info {\tt local-macro-info})}
+
+Given an instance of the class \texttt{local-macro-info}, this
+method returns the expander of the local macro as supplied by the
+initarg \texttt{:expander}.
+
 \subsection{Block information}
 
 \Defgeneric {block-info} {environment symbol}
