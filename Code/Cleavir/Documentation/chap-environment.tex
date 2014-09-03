@@ -1,4 +1,50 @@
 \chapter{Environment}
 \label{chap-environment}
 
+Compiling a \cl{} program is done in constant interaction with an
+\emph{environment}.  The \hs{} stipulates%
+\footnote{See Section 3.2.1 of the \hs{}.}
+that there are four different environments that are relevant to
+compilation:
 
+\begin{itemize}
+\item The \emph{startup environment}.  This environment is the global
+  environment of the \cl{} system when the compiler was invoked.
+\item The \emph{compilation environment}.  This environment is the
+  local environment in which forms are compiled.  It is also the
+  environment that is passed to macro expanders.
+\item The \emph{evaluation environment}.  According to the \hs{}, this
+  environment is ``a run-time environment in which macro expanders and
+  code specified by \texttt{eval-when} to be evaluated are
+  evaluated''. 
+\item The \emph{run-time environment}.  This environment is used when
+  the resulting compiled program is executed.
+\end{itemize}
+
+The \hs{} does not specify how environments are represented, and there
+is no specified protocol for manipulating environments.  As a result,
+each implementation has its own representation and its own protocols. 
+
+It might seem that \sysname{} could represent the \emph{local part} of
+the environment (i.e., the part of the environment that is temporarily
+introduced when nested forms are compiled) in whatever way it pleases,
+but this is not the case.  The reason is that the full environment
+must be passed as an argument to macro expanders that are defined in
+the startup environment, and those macro expanders are implementation
+specific.  It is also not possible for \sysname{} to define its own
+version of \texttt{macroexpand}, because a globally defined
+implementation-specific macro expander may call the
+implementation-specific version of \texttt{macroexpand} which would
+fail if given an environment other than the one defined by the
+implementation. 
+
+On the other hand, an incomplete implementation for which no
+representation of the local part of the environment has been
+determined might want to use some such representation that is known to
+work.  For that reason, \sysname{} proposes a \emph{default
+  representation} of that local part of the environment.  The default
+version can also be used by more complete implementations, provided
+that the implementation-specific version of \texttt{macroexpand} is
+not called on an environment using this default representation. 
+
+%%  LocalWords:  startup expanders expander
