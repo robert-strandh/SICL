@@ -746,4 +746,15 @@ the symbol \texttt{ignorable}.  The function returns a new environment
 augmented with the new information.  The original environment is not
 affected.
 
+\subsection{Adding dynamic-extent information}
+
+\Defgeneric {add-variable-dynamic-extent} {environment symbol}
+
+This generic function is called by the compiler in order to add
+dynamic-extent information about a variable.  The compiler has already
+verified that there is a lexical variable named \textit{symbol} in
+scope in \textit{environment}.  The function returns a new environment
+augmented with the new information.  The original environment is not
+affected.
+
 %%  LocalWords:  startup expanders expander subclasses
