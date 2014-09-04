@@ -766,4 +766,17 @@ scope in \textit{environment}.  The function returns a new environment
 augmented with the new information.  The original environment is not
 affected.
 
+\subsection{Adding optimize information}
+
+\Defgeneric {add-optimize} {environment quality value}
+
+This generic function is called by the compiler in order to add
+optimize information to the environment.  The value of the
+\textit{quality} parameter is one of the symbols \texttt{speed},
+\texttt{compilation-speed}, \texttt{debug}, \texttt{safety}, and
+\texttt{space}.  The value of the \textit{value} parameter is an
+integer between $0$ and $3$ inclusive.  The function returns a new
+environment augmented with the new information.  The original
+environment is not affected.
+
 %%  LocalWords:  startup expanders expander subclasses
