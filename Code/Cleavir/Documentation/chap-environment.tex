@@ -902,4 +902,96 @@ This function is called by the compiler in order to evaluate forms in
 \textit{environment}.  It is called as a result of top-level forms
 being wrapped in \texttt{eval-when :compile-toplevel}. 
 
+\section{Default augmentation classes}
+
+\Defclass {entry}
+
+This class is the base class of all entries in this section.
+
+\subsection {Lexical variable}
+
+\Defclass {lexical-variable}
+
+This class represents a lexical variable.
+
+\Definitarg {:name}
+
+\Defmethod {name} {(entry {\tt lexical-variable})}
+
+\subsection {Special variable}
+
+\Defclass {special-variable}
+
+\Definitarg {:name}
+
+\Definitarg {:global-p}
+
+This initarg indicates whether the special variable is globally
+proclaimed as special.  If omitted, the default value is
+\texttt{nil}. 
+
+\Defmethod {name} {(entry {\tt special-variable})}
+
+\Defmethod {global-p} {(entry {\tt special-variable})}
+
+\subsection {Symbol macro}
+
+\Defclass {symbol-macro}
+
+\Definitarg {:name}
+
+\Definitarg {:expansion}
+
+\Defmethod {name} {(entry {\tt lexical-variable})}
+
+\Defmethod {expansion} {(entry {\tt lexical-variable})}
+
+\subsection {Function}
+
+\Defclass {function}
+
+\subsection {Macro}
+
+\Defclass {macro}
+
+\subsection {Block}
+
+\Defclass {block}
+
+\subsection {Tag}
+
+\Defclass {tag}
+
+\subsection {Variable type}
+
+\Defclass {variable-type}
+
+\subsection {Function type}
+
+\Defclass {function-type}
+
+\subsection {Variable ignore}
+
+\Defclass {variable-ignore}
+
+\subsection {Function ignore}
+
+\Defclass {function-ignore}
+
+\subsection {Variable dynamic extent}
+
+\Defclass {variable-dynamic-extent}
+
+\subsection {Function dynamic-extent}
+
+\Defclass {function-dynamic-extent}
+
+\subsection {Inline}
+
+\Defclass {inline}
+
+\subsection {Optimize}
+
+\Defclass {optimize}
+
 %%  LocalWords:  startup expanders expander subclasses
