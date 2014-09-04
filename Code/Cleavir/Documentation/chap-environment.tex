@@ -652,39 +652,41 @@ contain any user-defined introduced by \texttt{deftype}.
 
 \subsection{Adding lexical variables}
 
-\Defgeneric {add-lexical-variable} {environment name}
+\Defgeneric {add-lexical-variable} {environment symbol}
 
 This generic function is called by the compiler in order to add
-\textit{name} as a lexical variable to \textit{environment}.  The
-function returns a new environment augmented with the new
-information.  The original environment is not affected.
+\textit{symbol} as the name of a lexical variable to
+\textit{environment}.  The function returns a new environment
+augmented with the new information.  The original environment is not
+affected.
 
 \subsection{Adding special variables}
 
-\Defgeneric {add-special-variable} {environment name}
+\Defgeneric {add-special-variable} {environment symbol}
 
 This generic function is called by the compiler in order to add
-\textit{name} as a special variable to \textit{environment}.  The
-function returns a new environment augmented with the new
-information.  The original environment is not affected.
+\textit{symbol} as the name of a special variable to
+\textit{environment}.  The function returns a new environment
+augmented with the new information.  The original environment is not
+affected.
 
 \subsection{Adding local symbol macros}
 
-\Defgeneric {add-local-symbol-macro} {environment name expansion}
+\Defgeneric {add-local-symbol-macro} {environment symbol expansion}
 
 This generic function is called by the compiler in order to add a
 local symbol macro to \textit{environment}.  The parameter
-\textit{name} is the name of the macro and the parameter
+\textit{symbol} is the name of the macro and the parameter
 \textit{expansion} is the expansion to be associated with the name.
 The function returns a new environment augmented with the new
 information.  The original environment is not affected.
 
 \subsection{Adding local macros}
 
-\Defgeneric {add-local-macro} {environment name expander}
+\Defgeneric {add-local-macro} {environment symbol expander}
 
 This generic function is called by the compiler in order to add a
-local macro to \textit{environment}.  The parameter \textit{name} is
+local macro to \textit{environment}.  The parameter \textit{symbol} is
 the name of the macro and the parameter \textit{expander} is a
 \emph{macro function} to be associated with the name.  The function
 returns a new environment augmented with the new information.  The
