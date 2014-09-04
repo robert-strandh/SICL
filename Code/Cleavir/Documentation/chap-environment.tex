@@ -112,6 +112,18 @@ variable.  The type can be any type specifier and it may contain
 user-defined types.  If this initarg is omitted, it defaults to
 \texttt{t}. 
 
+\Definitarg {:ignore}
+
+This initarg is used to supply \emph{ignore} information about the
+lexical variable.  The value of this initarg can be either
+\texttt{ignore} (i.e., the symbol with that name in the
+\texttt{common-lisp} package) meaning that the variable is declared
+\texttt{ignore}, \texttt{ignorable} (i.e., the symbol with that name
+in the \texttt{common-lisp} package) meaning that the variable is
+declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
+ignorable declaration for this variable is in scope.  If this initarg
+is not supplied, it defaults to \texttt{nil}.
+
 \Defmethod {name} {(info {\tt lexical-variable-info})}
 
 Given an instance of the class \texttt{lexical-variable-info}, this
@@ -130,6 +142,13 @@ Given an instance of the class \texttt{lexical-variable-info}, this
 method returns the \emph{type} of the variable as supplied by the
 initarg \texttt{:type}.  If that initarg was not supplied, this method
 returns \texttt{t}.
+
+\Defmethod {ignore} {(info {\tt lexical-variable-info})}
+
+Given an instance of the class \texttt{lexical-variable-info}, this
+method returns the \emph{ignore} information of the lexical variable as
+supplied by the initarg \texttt{:ignore}.  If that initarg was not
+supplied, this method returns \texttt{nil}.
 
 \subsubsection{Special variable information}
 
@@ -153,6 +172,18 @@ variable.  The type can be any type specifier and it may contain
 user-defined types.  If this initarg is omitted, it defaults to
 \texttt{t}. 
 
+\Definitarg {:ignore}
+
+This initarg is used to supply \emph{ignore} information about the
+special variable.  The value of this initarg can be either
+\texttt{ignore} (i.e., the symbol with that name in the
+\texttt{common-lisp} package) meaning that the variable is declared
+\texttt{ignore}, \texttt{ignorable} (i.e., the symbol with that name
+in the \texttt{common-lisp} package) meaning that the variable is
+declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
+ignorable declaration for this variable is in scope.  If this initarg
+is not supplied, it defaults to \texttt{nil}.
+
 \Defmethod {name} {(info {\tt special-variable-info})}
 
 Given an instance of the class \texttt{special-variable-info}, this
@@ -165,6 +196,13 @@ Given an instance of the class \texttt{special-variable-info}, this
 method returns the \emph{type} of the variable as supplied by the
 initarg \texttt{:type}.  If that initarg was not supplied, this method
 returns \texttt{t}.
+
+\Defmethod {ignore} {(info {\tt special-variable-info})}
+
+Given an instance of the class \texttt{special-variable-info}, this
+method returns the \emph{ignore} information of the special variable as
+supplied by the initarg \texttt{:ignore}.  If that initarg was not
+supplied, this method returns \texttt{nil}.
 
 \subsubsection{Constant variable information}
 
@@ -290,6 +328,18 @@ declared \texttt{notinline}, or \texttt{nil} meaning that no inline
 declaration for this function is in scope.  If this initarg is not
 supplied, it defaults to \texttt{nil}.
 
+\Definitarg {:ignore}
+
+This initarg is used to supply \emph{ignore} information about the
+local function.  The value of this initarg can be either
+\texttt{ignore} (i.e., the symbol with that name in the
+\texttt{common-lisp} package) meaning that the function is declared
+\texttt{ignore}, \texttt{ignorable} (i.e., the symbol with that name
+in the \texttt{common-lisp} package) meaning that the function is
+declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
+ignorable declaration for this function is in scope.  If this initarg
+is not supplied, it defaults to \texttt{nil}.
+
 \Defmethod {name} {(info {\tt local-function-info})}
 
 Given an instance of the class \texttt{local-function-info}, this
@@ -314,6 +364,13 @@ returns \texttt{t}.
 Given an instance of the class \texttt{local-function-info}, this
 method returns the \emph{inline} information of the local function as
 supplied by the initarg \texttt{:inline}.  If that initarg was not
+supplied, this method returns \texttt{nil}.
+
+\Defmethod {ignore} {(info {\tt local-function-info})}
+
+Given an instance of the class \texttt{local-function-info}, this
+method returns the \emph{ignore} information of the local function as
+supplied by the initarg \texttt{:ignore}.  If that initarg was not
 supplied, this method returns \texttt{nil}.
 
 \subsubsection{Global function information}
@@ -348,6 +405,18 @@ declared \texttt{notinline}, or \texttt{nil} meaning that no inline
 declaration for this function is in scope.  If this initarg is not
 supplied, it defaults to \texttt{nil}.
 
+\Definitarg {:ignore}
+
+This initarg is used to supply \emph{ignore} information about the
+global function.  The value of this initarg can be either
+\texttt{ignore} (i.e., the symbol with that name in the
+\texttt{common-lisp} package) meaning that the function is declared
+\texttt{ignore}, \texttt{ignorable} (i.e., the symbol with that name
+in the \texttt{common-lisp} package) meaning that the function is
+declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
+ignorable declaration for this function is in scope.  If this initarg
+is not supplied, it defaults to \texttt{nil}.
+
 \Definitarg {:compiler-macro}
 
 This initarg is used to supply a \emph{compiler macro function} when
@@ -373,6 +442,13 @@ returns \texttt{t}.
 Given an instance of the class \texttt{global-function-info}, this
 method returns the \emph{inline} information of the global function as
 supplied by the initarg \texttt{:inline}.  If that initarg was not
+supplied, this method returns \texttt{nil}.
+
+\Defmethod {ignore} {(info {\tt global-function-info})}
+
+Given an instance of the class \texttt{global-function-info}, this
+method returns the \emph{ignore} information of the global function as
+supplied by the initarg \texttt{:ignore}.  If that initarg was not
 supplied, this method returns \texttt{nil}.
 
 \Defmethod compiler-macro {(info {\tt global-function-info})}
