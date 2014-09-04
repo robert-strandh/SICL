@@ -68,6 +68,17 @@ version can also be used by more complete implementations, provided
 that the implementation-specific version of \texttt{macroexpand} is
 not called on an environment using this default representation. 
 
+\section{Package}
+\label{sec-environment-package}
+
+All symbols documented in this chapter have as their home package the
+package named \texttt{cleavir-environment}.  This package has a single
+nickname which is \texttt{cleavir-env}.  We strongly advice against
+\texttt{:use}-ing this package, because it contains several symbols
+that have the same name as symbols in the package named
+\texttt{common-lisp}.  Instead, we advice that client code use symbols
+in this package with their explicit package prefix.
+
 \section{Querying the environment}
 \label{sec-environment-querying}
 
