@@ -27,6 +27,25 @@ The \hs{} does not specify how environments are represented, and there
 is no specified protocol for manipulating environments.  As a result,
 each implementation has its own representation and its own protocols. 
 
+In this chapter, we define a protocol for accessing the compilation
+environment during compilation.  When \sysname{} is asked to convert a
+form to an abstract syntax tree, client code must supply an object
+that represents the startup environment.  During the conversion
+process, \sysname{} will call the functions documented in
+\refSec{sec-environment-augmenting} to augment the startup environment
+with information introduced by binding forms to form an augmented
+compilation environment.  To determine the meaning of the program
+elements in the form to be converted, \sysname{} will call the
+functions documented in \refSec{sec-environment-querying}.  
+
+Client code must supply methods on the functions in
+\refSec{sec-environment-augmenting} to augment the environment and
+return the resulting environment.  Client code must also supply
+methods on the functions in \refSec{sec-environment-querying} that
+will query the environment (whether the startup environment or the
+augmented environment) and return the relevant information to
+\sysname{}. 
+
 It might seem that \sysname{} could represent the \emph{local part} of
 the environment (i.e., the part of the environment that is temporarily
 introduced when nested forms are compiled) in whatever way it pleases,
@@ -50,6 +69,7 @@ that the implementation-specific version of \texttt{macroexpand} is
 not called on an environment using this default representation. 
 
 \section{Querying the environment}
+\label{sec-environment-querying}
 
 In this section, we describe classes and functions that are used by
 the compiler to query the environment concerning information about
@@ -710,6 +730,7 @@ and the return value is an equivalent type specifier that does not
 contain any user-defined introduced by \texttt{deftype}. 
 
 \section{Augmenting the environment}
+\label{sec-environment-augmenting}
 
 \subsection{Adding lexical variables}
 
@@ -873,6 +894,7 @@ augmented with the new information.  The original environment is not
 affected.
 
 \section{Compile-time evaluation}
+\label{sec-environment-compile-time-evaluation}
 
 \Defgeneric {eval} {environment form}
 
