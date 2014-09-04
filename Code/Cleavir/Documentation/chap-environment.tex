@@ -668,4 +668,15 @@ This generic function is called by the compiler in order to add
 function returns a new environment augmented with the new
 information.  The original environment is not affected.
 
+\subsection{Adding local symbol macros}
+
+\Defgeneric {add-local-symbol-macro} {environment name expansion}
+
+This generic function is called by the compiler in order to add a
+local symbol macro to \textit{environment}.  The parameter
+\textit{name} is the name of the macro and the parameter
+\textit{expansion} is the expansion to be associated with the name.
+The function returns a new environment augmented with the new
+information.  The original environment is not affected.
+
 %%  LocalWords:  startup expanders expander subclasses
