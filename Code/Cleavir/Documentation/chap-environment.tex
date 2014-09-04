@@ -637,29 +637,69 @@ returns the identity of the tag as supplied by the initarg
 
 \subsection{Optimization information}
 
+\Defgeneric {optimize-info} {environment}
+
 \Defclass {optimize-info}
 
 \Definitarg {:speed}
 
+This initarg supplies a value for the \emph{speed} quality.  The
+argument must be an integer between $0$ and $3$ inclusive.  If this
+initarg is omitted, the value defaults to $3$.
+
 \Definitarg {:compilation-speed}
+
+This initarg supplies a value for the \emph{compilation-speed}
+quality.  The argument must be an integer between $0$ and $3$
+inclusive.  If this initarg is omitted, the value defaults to $3$.
 
 \Definitarg {:safety}
 
+This initarg supplies a value for the \emph{safety} quality.  The
+argument must be an integer between $0$ and $3$ inclusive.  If this
+initarg is omitted, the value defaults to $3$.
+
 \Definitarg {:debug}
+
+This initarg supplies a value for the \emph{debug} quality.  The
+argument must be an integer between $0$ and $3$ inclusive.  If this
+initarg is omitted, the value defaults to $3$.
 
 \Definitarg {:space}
 
+This initarg supplies a value for the \emph{space} quality.  The
+argument must be an integer between $0$ and $3$ inclusive.  If this
+initarg is omitted, the value defaults to $3$.
+
 \Defmethod {speed} {(info {\tt optimize-info})}
+
+This method returns the value of the \emph{speed} quality as supplied
+by the initarg \texttt{:speed}.  If that initarg was not supplied the
+value $3$ is returned. 
 
 \Defmethod {compilation-speed} {(info {\tt optimize-info})}
 
+This method returns the value of the \emph{compilation-speed} quality
+as supplied by the initarg \texttt{:compilation-speed}.  If that
+initarg was not supplied the value $3$ is returned.
+
 \Defmethod {safety} {(info {\tt optimize-info})}
+
+This method returns the value of the \emph{safety} quality as supplied
+by the initarg \texttt{:safety}.  If that initarg was not supplied the
+value $3$ is returned. 
 
 \Defmethod {debug} {(info {\tt optimize-info})}
 
+This method returns the value of the \emph{debug} quality as supplied
+by the initarg \texttt{:debug}.  If that initarg was not supplied the
+value $3$ is returned. 
+
 \Defmethod {space} {(info {\tt optimize-info})}
 
-\Defgeneric {optimize-info} {environment}
+This method returns the value of the \emph{space} quality as supplied
+by the initarg \texttt{:space}.  If that initarg was not supplied the
+value $3$ is returned. 
 
 \subsection{Type information}
 
