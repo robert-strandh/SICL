@@ -124,6 +124,15 @@ declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
 ignorable declaration for this variable is in scope.  If this initarg
 is not supplied, it defaults to \texttt{nil}.
 
+\Definitarg {:dynamic-extent}
+
+This initarg is used to supply \emph{dynamic extent} information about
+the lexical variable.  The value of this initarg can be either
+\texttt{t}, meaning that the variable has been declared
+\texttt{dynamic-extent}, or \texttt{nil}, meaning that the variable
+has not been declared \texttt{dynamic-extent}.  The default value when
+this initarg is not supplied is \texttt{nil}. 
+
 \Defmethod {name} {(info {\tt lexical-variable-info})}
 
 Given an instance of the class \texttt{lexical-variable-info}, this
@@ -149,6 +158,13 @@ Given an instance of the class \texttt{lexical-variable-info}, this
 method returns the \emph{ignore} information of the lexical variable as
 supplied by the initarg \texttt{:ignore}.  If that initarg was not
 supplied, this method returns \texttt{nil}.
+
+\Defmethod {dynamic-extent} {(info {\tt lexical-variable-info})}
+
+Given an instance of the class \texttt{lexical-variable-info}, this
+method returns the \emph{dynamic extent} information of the lexical
+variable as supplied by the initarg \texttt{:dynamic-extent}.  If that
+initarg was not supplied, this method returns \texttt{nil}.
 
 \subsubsection{Special variable information}
 
@@ -340,6 +356,15 @@ declared \texttt{ignorable}, or \texttt{nil} meaning that no ignore or
 ignorable declaration for this function is in scope.  If this initarg
 is not supplied, it defaults to \texttt{nil}.
 
+\Definitarg {:dynamic-extent}
+
+This initarg is used to supply \emph{dynamic extent} information about
+the local function.  The value of this initarg can be either
+\texttt{t}, meaning that the function has been declared
+\texttt{dynamic-extent}, or \texttt{nil}, meaning that the function
+has not been declared \texttt{dynamic-extent}.  The default value when
+this initarg is not supplied is \texttt{nil}. 
+
 \Defmethod {name} {(info {\tt local-function-info})}
 
 Given an instance of the class \texttt{local-function-info}, this
@@ -372,6 +397,13 @@ Given an instance of the class \texttt{local-function-info}, this
 method returns the \emph{ignore} information of the local function as
 supplied by the initarg \texttt{:ignore}.  If that initarg was not
 supplied, this method returns \texttt{nil}.
+
+\Defmethod {dynamic-extent} {(info {\tt local-function-info})}
+
+Given an instance of the class \texttt{local-function-info}, this
+method returns the \emph{dynamic extent} information of the local
+function as supplied by the initarg \texttt{:dynamic-extent}.  If that
+initarg was not supplied, this method returns \texttt{nil}.
 
 \subsubsection{Global function information}
 
