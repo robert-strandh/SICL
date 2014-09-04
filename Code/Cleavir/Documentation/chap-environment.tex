@@ -640,4 +640,12 @@ returns the identity of the block as supplied by the initarg
 
 \Defgeneric {optimize-info} {environment}
 
+\subsection{Type information}
+
+\Defgeneric {type-expand} {environment type}
+
+This generic function is called with some arbitrary type specifier,
+and the return value is an equivalent type specifier that does not
+contain any user-defined introduced by \texttt{deftype}. 
+
 %%  LocalWords:  startup expanders expander subclasses
