@@ -722,4 +722,19 @@ there is a function named \textit{function-name} in scope in
 augmented with the new information.  The original environment is not
 affected.
 
+\subsection{Adding ignore information}
+
+\Defgeneric {add-variable-ignore} {environment symbol ignore}
+
+This generic function is called by the compiler in order to add ignore
+information about a variable.  The compiler has already verified that
+there is a lexical variable or a special variable named
+\textit{symbol} in scope in \textit{environment}.  The value of the
+\textit{ignore} parameter is either the symbol \texttt{ignore} or the
+symbol \texttt{ignorable}.  The function returns a new environment
+augmented with the new information.  The original environment is not
+affected.
+
+
+
 %%  LocalWords:  startup expanders expander subclasses
