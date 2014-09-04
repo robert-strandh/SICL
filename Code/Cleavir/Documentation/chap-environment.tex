@@ -648,4 +648,15 @@ This generic function is called with some arbitrary type specifier,
 and the return value is an equivalent type specifier that does not
 contain any user-defined introduced by \texttt{deftype}. 
 
+\section{Augmenting the environment}
+
+\subsection{Adding lexical variables}
+
+\Defgeneric {add-lexical-variable} {environment name}
+
+This generic function is called by the compiler in order to add
+\textit{name} as a lexical variable to \textit{environment}.  The
+function returns a new environment augmented with the new
+information.  The original environment is not affected.
+
 %%  LocalWords:  startup expanders expander subclasses
