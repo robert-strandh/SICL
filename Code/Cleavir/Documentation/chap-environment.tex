@@ -679,4 +679,15 @@ local symbol macro to \textit{environment}.  The parameter
 The function returns a new environment augmented with the new
 information.  The original environment is not affected.
 
+\subsection{Adding local macros}
+
+\Defgeneric {add-local-macro} {environment name expander}
+
+This generic function is called by the compiler in order to add a
+local macro to \textit{environment}.  The parameter \textit{name} is
+the name of the macro and the parameter \textit{expander} is a
+\emph{macro function} to be associated with the name.  The function
+returns a new environment augmented with the new information.  The
+original environment is not affected.
+
 %%  LocalWords:  startup expanders expander subclasses
