@@ -702,4 +702,15 @@ the name of the macro and the parameter \textit{expander} is a
 returns a new environment augmented with the new information.  The
 original environment is not affected.
 
+\subsection{Adding type information}
+
+\Defgeneric {add-variable-type} {environment symbol type}
+
+This generic function is called by the compiler in order to add type
+information about a variable.  The compiler has already verified that
+there is a lexical variable, a special variable, or a symbol macro
+named \textit{symbol} in scope in \textit{environment}.  The function
+returns a new environment augmented with the new information.  The
+original environment is not affected.
+
 %%  LocalWords:  startup expanders expander subclasses
