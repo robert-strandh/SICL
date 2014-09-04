@@ -792,4 +792,12 @@ the symbol \texttt{notinline}.  The function returns a new environment
 augmented with the new information.  The original environment is not
 affected.
 
+\section{Compile-time evaluation}
+
+\Defgeneric {eval} {environment form}
+
+This function is called by the compiler in order to evaluate forms in
+\textit{environment}.  It is called as a result of top-level forms
+being wrapped in \texttt{eval-when :compile-toplevel}. 
+
 %%  LocalWords:  startup expanders expander subclasses
