@@ -282,8 +282,10 @@ types.  If this initarg is omitted, it defaults to \texttt{t}.
 
 This initarg is used to supply \emph{inline} information about the
 local function.  The value of this initarg can be either
-\texttt{:inline} meaning that the function is declared
-\texttt{inline}, \texttt{:notinline} meaning that the function is
+\texttt{inline} (i.e., the symbol with that name in the
+\texttt{common-lisp} package) meaning that the function is declared
+\texttt{inline}, \texttt{notinline} (i.e., the symbol with that name
+in the \texttt{common-lisp} package) meaning that the function is
 declared \texttt{notinline}, or \texttt{nil} meaning that no inline
 declaration for this function is in scope.  If this initarg is not
 supplied, it defaults to \texttt{nil}.
@@ -338,8 +340,10 @@ types.  If this initarg is omitted, it defaults to \texttt{t}.
 
 This initarg is used to supply \emph{inline} information about the
 global function.  The value of this initarg can be either
-\texttt{:inline} meaning that the function is declared
-\texttt{inline}, \texttt{:notinline} meaning that the function is
+\texttt{inline} (i.e., the symbol with that name in the
+\texttt{common-lisp} package) meaning that the function is declared
+\texttt{inline}, \texttt{notinline} (i.e., the symbol with that name
+in the \texttt{common-lisp} package) meaning that the function is
 declared \texttt{notinline}, or \texttt{nil} meaning that no inline
 declaration for this function is in scope.  If this initarg is not
 supplied, it defaults to \texttt{nil}.
