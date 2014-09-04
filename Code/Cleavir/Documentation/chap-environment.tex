@@ -681,6 +681,16 @@ local symbol macro to \textit{environment}.  The parameter
 The function returns a new environment augmented with the new
 information.  The original environment is not affected.
 
+\subsection{Adding local functions}
+
+\Defgeneric {add-local-function} {environment function-name}
+
+This generic function is called by the compiler in order to add
+\textit{function-name} as the name of a local function to
+\textit{environment}.  The function returns a new environment
+augmented with the new information.  The original environment is not
+affected.
+
 \subsection{Adding local macros}
 
 \Defgeneric {add-local-macro} {environment symbol expander}
