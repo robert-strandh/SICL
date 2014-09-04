@@ -711,6 +711,16 @@ This generic function is called by the compiler in order to add
 function returns a new environment augmented with the new information.
 The original environment is not affected.
 
+\subsection{Adding tags}
+
+\Defgeneric {add-tag} {environment tag}
+
+This generic function is called by the compiler in order to add
+\textit{tag} as the name of a tag to \textit{environment}.  The tag is
+either a symbol or an integer.  The function returns a new environment
+augmented with the new information.  The original environment is not
+affected.
+
 \subsection{Adding type information}
 
 \Defgeneric {add-variable-type} {environment symbol type}
