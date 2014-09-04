@@ -713,4 +713,13 @@ named \textit{symbol} in scope in \textit{environment}.  The function
 returns a new environment augmented with the new information.  The
 original environment is not affected.
 
+\Defgeneric {add-function-type} {environment function-name type}
+
+This generic function is called by the compiler in order to add type
+information about a function.  The compiler has already verified that
+there is a function named \textit{function-name} in scope in
+\textit{environment}.  The function returns a new environment
+augmented with the new information.  The original environment is not
+affected.
+
 %%  LocalWords:  startup expanders expander subclasses
