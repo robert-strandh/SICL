@@ -757,4 +757,13 @@ scope in \textit{environment}.  The function returns a new environment
 augmented with the new information.  The original environment is not
 affected.
 
+\Defgeneric {add-function-dynamic-extent} {environment function-name}
+
+This generic function is called by the compiler in order to add
+dynamic-extent information about a function.  The compiler has already
+verified that there is a local function named \textit{symbol-name} in
+scope in \textit{environment}.  The function returns a new environment
+augmented with the new information.  The original environment is not
+affected.
+
 %%  LocalWords:  startup expanders expander subclasses
