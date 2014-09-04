@@ -659,4 +659,13 @@ This generic function is called by the compiler in order to add
 function returns a new environment augmented with the new
 information.  The original environment is not affected.
 
+\subsection{Adding special variables}
+
+\Defgeneric {add-special-variable} {environment name}
+
+This generic function is called by the compiler in order to add
+\textit{name} as a special variable to \textit{environment}.  The
+function returns a new environment augmented with the new
+information.  The original environment is not affected.
+
 %%  LocalWords:  startup expanders expander subclasses
