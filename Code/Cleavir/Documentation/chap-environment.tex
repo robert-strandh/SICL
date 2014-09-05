@@ -714,6 +714,11 @@ returns the identity of the tag as supplied by the initarg
 
 \Defgeneric {optimize-info} {environment}
 
+Client-supplied methods on this function must always return a valid
+instance of the class \texttt{optimize-info}.  For qualities that have
+no explicit entries in the environment, the default values should be
+supplied. 
+
 \Defclass {optimize-info}
 
 \Definitarg {:speed}
