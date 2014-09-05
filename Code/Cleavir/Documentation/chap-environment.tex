@@ -673,6 +673,16 @@ returns the identity of the block as supplied by the initarg
 
 \Defgeneric {tag-info} {environment tag}
 
+\Defcondition {no-tag-info}
+
+This condition is signaled by \sysname{} when a client-supplied method
+on the generic function \texttt{tag-info} returns \texttt{nil}.
+
+\Defmethod {name} {(condition {\tt no-tag-info})}
+
+This method returns the name of the tag for which no info was
+available. 
+
 \Defclass {tag-info}
 
 \Definitarg {:name}
