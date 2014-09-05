@@ -99,7 +99,8 @@ some program element in that particular environment.  This information
 must typically be assembled from different parts of the environment.
 For that reason, client code typically creates a new instance whenever
 a query function is called, rather than attempting to store such
-instances in the environment. 
+instances in the environment.  If any of these client-supplied methods
+fails to accomplish its task, it should return \texttt{nil}.
 
 Client code is free to define subclasses of the classes described
 here, for instance in order to represent implementation-specific
