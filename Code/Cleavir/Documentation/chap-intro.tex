@@ -34,15 +34,11 @@ representation such as:
 
 Once these implementation-independent and backend-independent
 transformations have been accomplished, the MIR notation is gradually
-transformed into an notation that is specific both to the
-implementation and to the backend in that:
-
-\begin{itemize}
-\item it introduces backend-specific features such as registers and
-  stack frames,
-\item it exposes implementation-specific choices such as argument
-  passing.
-\end{itemize}
+transformed into a notation that is specific both to the
+implementation and to the backend.  The notation becomes
+backend-specific in that it introduces features such as registers and
+stack frames.  The notation also becomes implementation specific in
+that it exposes choices such as argument passing.
 
 Finally, the low-level code is translated into machine code.
 
