@@ -627,6 +627,16 @@ method returns \texttt{nil}.
 
 \Defgeneric {block-info} {environment symbol}
 
+\Defcondition {no-block-info}
+
+This condition is signaled by \sysname{} when a client-supplied method
+on the generic function \texttt{block-info} returns \texttt{nil}.
+
+\Defmethod {name} {(condition {\tt no-block-info})}
+
+This method returns the name of the block for which no info was
+available. 
+
 \Defclass {block-info}
 
 This class represents information about blocks introduced by
