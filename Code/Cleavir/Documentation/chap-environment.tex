@@ -347,6 +347,16 @@ This function is called by the compiler whenever a symbol in a
 is found in a context where it is known to refer to a function.  It
 returns an instance of one of the classes described below.
 
+\Defcondition {no-function-info}
+
+This condition is signaled by \sysname{} when a client-supplied method
+on the generic function \texttt{function-info} returns \texttt{nil}.
+
+\Defmethod {name} {(condition {\tt no-function-info})}
+
+This method returns the name of the function for which no info was
+available. 
+
 \subsubsection{Local function information}
 
 \Defclass {local-function-info}
