@@ -116,6 +116,16 @@ This function is called by the compiler whenever a symbol in a
 \emph{variable} position is to be compiled.  It returns an instance of
 one of the classes described below.
 
+\Defcondition {no-variable-info}
+
+This condition is signaled by \sysname{} when a client-supplied method
+on the generic function \texttt{variable-info} returns \texttt{nil}.
+
+\Defmethod {name} {(condition {\tt no-variable-info})}
+
+This method returns the name of the variable for which no info was
+available. 
+
 \subsubsection{Lexical variable information}
 
 \Defclass {lexical-variable-info}
