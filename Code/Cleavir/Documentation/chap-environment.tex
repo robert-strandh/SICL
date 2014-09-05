@@ -59,14 +59,15 @@ implementation-specific version of \texttt{macroexpand} which would
 fail if given an environment other than the one defined by the
 implementation. 
 
-On the other hand, an incomplete implementation for which no
-representation of the local part of the environment has been
-determined might want to use some such representation that is known to
-work.  For that reason, \sysname{} proposes a \emph{default
-  representation} of that local part of the environment.  The default
-version can also be used by more complete implementations, provided
-that the implementation-specific version of \texttt{macroexpand} is
-not called on an environment using this default representation. 
+\sysname{} does, however, provide some features that are useful for an
+incomplete implementation for which no representation of the local
+part of the environment has been determined.  The creator of such an
+implementation may choose to use the \emph{default representation} of
+that local part of the environment supplied by \sysname{}.  The
+default version can also be used for a more complete implementations,
+provided that the implementation-specific version of
+\texttt{macroexpand} is not called on an environment using this
+default representation.
 
 \section{Package}
 \label{sec-environment-package}
