@@ -74,10 +74,10 @@ default representation.
 
 All symbols documented in this chapter have as their home package the
 package named \texttt{cleavir-environment}.  This package has a single
-nickname which is \texttt{cleavir-env}.  We strongly advice against
+nickname which is \texttt{cleavir-env}.  We strongly advise against
 \texttt{:use}-ing this package, because it contains several symbols
 that have the same name as symbols in the package named
-\texttt{common-lisp}.  Instead, we advice that client code use symbols
+\texttt{common-lisp}.  Instead, we advise that client code use symbols
 in this package with their explicit package prefix.
 
 \section{Querying the environment}
@@ -361,8 +361,9 @@ local function.  This initarg must be supplied.
 \Definitarg {:type}
 
 This initarg is used to supply the \emph{type} of the local function.
-The type can be any type specifier and it may contain user-defined
-types.  If this initarg is omitted, it defaults to \texttt{t}.
+The type can be any function type specifier and it may contain
+user-defined types.  If this initarg is omitted, it defaults to
+\texttt{t}.
 
 \Definitarg {:inline}
 
@@ -454,8 +455,9 @@ must be supplied.
 \Definitarg {:type}
 
 This initarg is used to supply the \emph{type} of the global function.
-The type can be any type specifier and it may contain user-defined
-types.  If this initarg is omitted, it defaults to \texttt{t}.
+The type can be any function type specifier and it may contain
+user-defined types.  If this initarg is omitted, it defaults to
+\texttt{t}.
 
 \Definitarg {:inline}
 
