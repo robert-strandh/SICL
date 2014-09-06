@@ -3,4 +3,6 @@
 (asdf:defsystem :cleavir-environment
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "conditions")))
+
