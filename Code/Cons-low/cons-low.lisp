@@ -26,7 +26,7 @@
 
 (defun rplaca (cons object)
   (assert (= (tag-bits cons) +tag-cons+))
-  (store-word (raw-pointer cons) object))
+  (store-word (raw-pointer cons) object)
   cons)
 
 (defun rplacd (cons object)
