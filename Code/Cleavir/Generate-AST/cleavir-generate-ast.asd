@@ -9,4 +9,5 @@
   :components
   ((:file "packages")
    (:file "conditions")
-   (:file "generate-ast")))
+   (:file "generate-ast")
+   (:file "convert-form")))
