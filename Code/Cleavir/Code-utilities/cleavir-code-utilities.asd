@@ -5,6 +5,7 @@
   :components
   ((:file "packages")
    (:file "conditions")
+   (:file "argcount")
    (:file "general")
    (:file "declarations")
    (:file "lambda-lists")))
