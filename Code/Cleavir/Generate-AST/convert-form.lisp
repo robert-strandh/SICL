@@ -127,5 +127,11 @@
 	      ;; This new form must then be converted.
 	      (convert expanded-form env))))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a special form.
+
 (defgeneric convert-special (head form environment))
 
+(defmethod convert-form (form (info cleavir-env:special-operator-info) env)
+  (convert-special (car form) form env))
