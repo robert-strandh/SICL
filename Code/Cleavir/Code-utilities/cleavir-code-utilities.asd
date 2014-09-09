@@ -9,4 +9,5 @@
    (:file "form")
    (:file "general")
    (:file "declarations")
-   (:file "lambda-lists")))
+   (:file "lambda-lists")
+   (:file "destructuring")))
