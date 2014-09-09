@@ -3,4 +3,5 @@
 (asdf:defsystem cleavir-code-utilities
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "general")))
