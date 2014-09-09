@@ -6,6 +6,7 @@
   ((:file "packages")
    (:file "conditions")
    (:file "argcount")
+   (:file "form")
    (:file "general")
    (:file "declarations")
    (:file "lambda-lists")))
