@@ -11,4 +11,5 @@
    (:file "conditions")
    (:file "generate-ast")
    (:file "convert-form")
-   (:file "convert-special")))
+   (:file "convert-special")
+   (:file "convert-primop")))
