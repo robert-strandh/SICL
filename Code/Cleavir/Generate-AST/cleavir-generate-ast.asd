@@ -10,4 +10,5 @@
   ((:file "packages")
    (:file "conditions")
    (:file "generate-ast")
-   (:file "convert-form")))
+   (:file "convert-form")
+   (:file "convert-special")))
