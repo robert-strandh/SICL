@@ -50,6 +50,9 @@
    (%expander :initarg :expander :reader expander)
    (%compiler-macro :initarg :compiler-macro :reader compiler-macro)))
 
+(defclass special-operator-info ()
+  ((%name :initarg :name :reader name)))
+
 (defgeneric block-info (environment symbol))
 
 (defclass block-info ()
