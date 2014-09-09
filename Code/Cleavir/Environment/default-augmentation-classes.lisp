@@ -27,6 +27,7 @@
 
 (defmethod add-local-symbol-macro (environment symbol expansion)
   (make-instance 'symbol-macro
+    :next environment
     :name symbol
     :expansion expansion))
 
@@ -36,6 +37,7 @@
 
 (defmethod add-local-function (environment function-name)
   (make-instance 'function
+    :next environment
     :name function-name
     :identity (gensym)))
 
@@ -45,6 +47,7 @@
 
 (defmethod add-local-macro (environment symbol expander)
   (make-instance 'macro
+    :next environment
     :name symbol
     :expander expander))
 
@@ -54,6 +57,7 @@
 
 (defmethod add-block (environment symbol)
   (make-instance 'block
+    :next environment
     :name symbol
     :identity (gensym)))
 
@@ -63,6 +67,7 @@
 
 (defmethod add-tag (environment symbol)
   (make-instance 'tag
+    :next environment
     :name symbol
     :identity (gensym)))
 
@@ -72,6 +77,7 @@
 
 (defmethod add-variable-type (environment symbol type)
   (make-instance 'variable-type
+    :next environment
     :name symbol
     :type type))
 
@@ -81,6 +87,7 @@
 
 (defmethod add-function-type (environment function-name type)
   (make-instance 'function-type
+    :next environment
     :name function-name
     :type type))
 
@@ -90,6 +97,7 @@
 
 (defmethod add-variable-ignore (environment symbol ignore)
   (make-instance 'variable-ignore
+    :next environment
     :name symbol
     :ignore ignore))
 
@@ -99,6 +107,7 @@
 
 (defmethod add-function-ignore (environment function-name ignore)
   (make-instance 'function-ignore
+    :next environment
     :name function-name
     :ignore ignore))
 
@@ -107,6 +116,7 @@
 
 (defmethod add-variable-dynamic-extent (environment symbol)
   (make-instance 'variable-dynamic-extent
+    :next environment
     :name symbol))
 
 (defclass function-dynamic-extent (entry)
@@ -114,6 +124,7 @@
 
 (defmethod add-function-dynamic-extent (environment function-name)
   (make-instance 'function-dynamic-extent
+    :next environment
     :name function-name))
 
 (defclass optimize (entry)
@@ -122,6 +133,7 @@
 
 (defmethod add-optimize (environment quality value)
   (make-instance 'optimize
+    :next environment
     :quality quality
     :value value))
 
@@ -131,5 +143,6 @@
 
 (defmethod add-inline (environment function-name inline)
   (make-instance 'inline
+    :next environment
     :name function-name
     :inline inline))
