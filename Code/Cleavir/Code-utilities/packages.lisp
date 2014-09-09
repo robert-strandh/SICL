@@ -1,6 +1,7 @@
 (in-package #:common-lisp-user)
 
 (defpackage #:cleavir-code-utilities
+  (:use #:common-lisp)
   (:export #:list-structure
 	   #:proper-list-p
 	   #:proper-list-length
