@@ -901,7 +901,7 @@ affected.
 This generic function is called by the compiler in order to add ignore
 information about a function.  The compiler has already verified that
 there is a local function or a global function named
-\textit{functionname} in scope in \textit{environment}.  The value of
+\textit{function-name} in scope in \textit{environment}.  The value of
 the \textit{ignore} parameter is either the symbol \texttt{ignore} or
 the symbol \texttt{ignorable}.  The function returns a new environment
 augmented with the new information.  The original environment is not
@@ -922,7 +922,7 @@ affected.
 
 This generic function is called by the compiler in order to add
 dynamic-extent information about a function.  The compiler has already
-verified that there is a local function named \textit{functionname} in
+verified that there is a local function named \textit{function-name} in
 scope in \textit{environment}.  The function returns a new environment
 augmented with the new information.  The original environment is not
 affected.
@@ -947,7 +947,7 @@ environment is not affected.
 This generic function is called by the compiler in order to add inline
 information about a function.  The compiler has already verified that
 there is a local function or a global function named
-\textit{functionname} in scope in \textit{environment}.  The value of
+\textit{function-name} in scope in \textit{environment}.  The value of
 the \textit{inline} parameter is either the symbol \texttt{inline} or
 the symbol \texttt{notinline}.  The function returns a new environment
 augmented with the new information.  The original environment is not
