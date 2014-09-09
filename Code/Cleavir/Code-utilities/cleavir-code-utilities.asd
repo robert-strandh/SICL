@@ -4,6 +4,7 @@
   :serial t
   :components
   ((:file "packages")
+   (:file "conditions")
    (:file "general")
    (:file "declarations")
    (:file "lambda-lists")))
