@@ -5,4 +5,5 @@
   :components
   ((:file "packages")
    (:file "general")
-   (:file "declarations")))
+   (:file "declarations")
+   (:file "lambda-lists")))
