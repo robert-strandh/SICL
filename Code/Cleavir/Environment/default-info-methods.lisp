@@ -1,5 +1,7 @@
 (cl:in-package #:cleavir-environment)
 
+(defgeneric auxiliary-info (environment defining-info))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; VARIABLE-INFO
@@ -28,6 +30,10 @@
 ;;; entry is not EQ to the symbol we are passed as an argument, we
 ;;; invoke DEFINING-VARIABLE-INFO recursively with the remaining
 ;;; environment.
+;;;
+;;; The relevant entries for variable info are LEXICAL-VARIABLE,
+;;; SPECIAL-VARIABLE, and SYMBOL-MACRO.  Since constant variables can
+;;; only be global, there is no entry type for constant variables.
 
 (defmethod defining-variable-info ((environment lexical-variable) symbol)
   (if (eq symbol (name environment))
@@ -65,6 +71,220 @@
 (defmethod defining-variable-info (environment symbol)
   (variable-info environment symbol))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function VARIABLE-TYPE.
+;;;
+;;; This function takes an environment and a defining info instance
+;;; and returns the first entry in the environment that contains type
+;;; information for the defining info instance, or NIL if there is not
+;;; such entry.
+
+(defgeneric variable-type (environment defining-info))
+
+;;; This method is called when the environment is the global
+;;; environment.
+(defmethod variable-type (environment defining-info)
+  (declare (cl:ignorable environment defining-info))
+  nil)
+
+;;; This method is called when the entry is not related to the
+;;; defining info instance. 
+(defmethod variable-type ((environment entry) defining-info)
+  (declare (cl:ignorable environment defining-info))
+  (variable-type (next environment) defining-info))
+
+;;; The following three methods are called when the environment entry
+;;; is of the same type as the one that resulted in the creation of
+;;; the defining info instance.  If the name of the environment entry
+;;; is the same as the name of the info instance, then this entry was
+;;; the one that resulted in the creation of the defining info
+;;; instance.  In other words, we have found no variable type entries
+;;; before entry that resulted in the creation of the defining info.
+;;; If the names are not the same, we continue the search. 
+
+(defmethod variable-type ((environment lexical-variable)
+			  (defining-info lexical-variable-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (variable-type (next environment) defining-info)))
+
+(defmethod variable-type ((environment special-variable)
+			  (defining-info special-variable-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (variable-type (next environment) defining-info)))
+
+(defmethod variable-type ((environment symbol-macro)
+			  (defining-info symbol-macro-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (variable-type (next environment) defining-info)))
+
+;;; The following three methods are called when the current entry is a
+;;; candidate for being the entry containing type information for a
+;;; variable info.  We found the right one if the names are the same.
+;;; If not, then we continue the search.
+
+(defmethod variable-type ((environment variable-type)
+			  (defining-info lexical-variable-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (variable-type (next environment) defining-info)))
+
+(defmethod variable-type ((environment variable-type)
+			  (defining-info special-variable-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (variable-type (next environment) defining-info)))
+
+(defmethod variable-type ((environment variable-type)
+			  (defining-info symbol-macro-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (variable-type (next environment) defining-info)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function VARIABLE-IGNORE.
+;;;
+;;; This function takes an environment and a defining info instance
+;;; and returns the first entry in the environment that contains type
+;;; information for the defining info instance, or NIL if there is not
+;;; such entry.
+
+(defgeneric variable-ignore (environment defining-info))
+
+;;; This method is called when the environment is the global
+;;; environment.
+(defmethod variable-ignore (environment defining-info)
+  (declare (cl:ignorable environment defining-info))
+  nil)
+
+;;; This method is called when the entry is not related to the
+;;; defining info instance. 
+(defmethod variable-ignore ((environment entry) defining-info)
+  (declare (cl:ignorable environment defining-info))
+  (variable-ignore (next environment) defining-info))
+
+;;; The following two methods are called when the environment entry
+;;; is of the same type as the one that resulted in the creation of
+;;; the defining info instance.  If the name of the environment entry
+;;; is the same as the name of the info instance, then this entry was
+;;; the one that resulted in the creation of the defining info
+;;; instance.  In other words, we have found no variable type entries
+;;; before entry that resulted in the creation of the defining info.
+;;; If the names are not the same, we continue the search. 
+
+(defmethod variable-ignore ((environment lexical-variable)
+			  (defining-info lexical-variable-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (variable-ignore (next environment) defining-info)))
+
+(defmethod variable-ignore ((environment special-variable)
+			  (defining-info special-variable-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (variable-ignore (next environment) defining-info)))
+
+;;; The following two methods are called when the current entry is a
+;;; candidate for being the entry containing type information for a
+;;; variable info.  We found the right one if the names are the same.
+;;; If not, then we continue the search.
+
+(defmethod variable-ignore ((environment variable-ignore)
+			  (defining-info lexical-variable-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (variable-ignore (next environment) defining-info)))
+
+(defmethod variable-ignore ((environment variable-ignore)
+			  (defining-info special-variable-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (variable-ignore (next environment) defining-info)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function VARIABLE-DYNAMIC-EXTENT.
+;;;
+;;; This function takes an environment and a defining info instance
+;;; and returns the first entry in the environment that contains type
+;;; information for the defining info instance, or NIL if there is not
+;;; such entry.
+
+(defgeneric variable-dynamic-extent (environment defining-info))
+
+;;; This method is called when the environment is the global
+;;; environment.
+(defmethod variable-dynamic-extent (environment defining-info)
+  (declare (cl:ignorable environment defining-info))
+  nil)
+
+;;; This method is called when the entry is not related to the
+;;; defining info instance. 
+(defmethod variable-dynamic-extent ((environment entry) defining-info)
+  (declare (cl:ignorable environment defining-info))
+  (variable-dynamic-extent (next environment) defining-info))
+
+;;; The following method is called when the environment entry is of
+;;; the same type as the one that resulted in the creation of the
+;;; defining info instance.  If the name of the environment entry is
+;;; the same as the name of the info instance, then this entry was the
+;;; one that resulted in the creation of the defining info instance.
+;;; In other words, we have found no variable type entries before
+;;; entry that resulted in the creation of the defining info.  If the
+;;; names are not the same, we continue the search.
+
+(defmethod variable-dynamic-extent ((environment lexical-variable)
+			  (defining-info lexical-variable-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (variable-dynamic-extent (next environment) defining-info)))
+
+;;; The following method is called when the current entry is a
+;;; candidate for being the entry containing type information for a
+;;; variable info.  We found the right one if the names are the same.
+;;; If not, then we continue the search.
+
+(defmethod variable-dynamic-extent ((environment variable-dynamic-extent)
+			  (defining-info lexical-variable-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (variable-dynamic-extent (next environment) defining-info)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on AUXILIARY-INFO specialized to INFO classes returned by
+;;; VARIABLE-INFO.
+
+(defmethod auxiliary-info
+    (environment (defining-info lexical-variable-info))
+  (append (let ((entry (variable-type environment defining-info)))
+	    (if (null entry) '() `(:type ,(type entry))))
+	  (let ((entry (variable-ignore environment defining-info)))
+	    (if (null entry) '() `(:ignore ,(ignore entry))))
+	  (let ((entry (variable-dynamic-extent environment defining-info)))
+	    (if (null entry) '() `(:dynamic-extent t)))))
+
+(defmethod auxiliary-info
+    (environment (defining-info special-variable-info))
+  (append (let ((entry (variable-type environment defining-info)))
+	    (if (null entry) '() `(:type ,(type entry))))
+	  (let ((entry (variable-ignore environment defining-info)))
+	    (if (null entry) '() `(:ignore ,(ignore entry))))))
+
+(defmethod auxiliary-info
+    (environment (defining-info constant-variable-info))
+  (declare (cl:ignorable environment defining-info))
+  '())
+
+(defmethod auxiliary-info
+    (environment (defining-info symbol-macro-info))
+  (let ((entry (variable-type environment defining-info)))
+    (if (null entry) '() `(:type ,(type entry)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; BLOCK-INFO
@@ -99,7 +319,7 @@
 ;;; have any blocks, it is safe to return NIL as the specification
 ;;; stipulates.
 (defmethod block-info (environment symbol)
-  (declare (ignorable environment symbol))
+  (declare (cl:ignorable environment symbol))
   nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -136,5 +356,5 @@
 ;;; have any tags, it is safe to return NIL as the specification
 ;;; stipulates.
 (defmethod tag-info (environment symbol)
-  (declare (ignorable environment symbol))
+  (declare (cl:ignorable environment symbol))
   nil)
