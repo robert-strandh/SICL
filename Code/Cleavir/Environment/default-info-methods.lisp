@@ -2,7 +2,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; VARIABLE-INFO
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; BLOCK-INFO
+;;;
+;;; Finding info about a BLOCK is particularly easy because there can
+;;; be no entries modifying the properties of the block. 
 
 ;;; This method implements the action to take when the argument is a
 ;;; BLOCK entry.
@@ -36,6 +44,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; TAG-INFO
+;;;
+;;; Finding info about a TAG is particularly easy because there can
+;;; be no entries modifying the properties of the tag. 
 
 ;;; This method implements the action to take when the argument is a
 ;;; TAG entry.
