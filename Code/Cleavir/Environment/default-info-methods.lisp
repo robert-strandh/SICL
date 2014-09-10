@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-environment)
 
-(defgeneric auxiliary-info (environment defining-info))
+(defgeneric make-info (environment defining-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -256,34 +256,56 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Methods on AUXILIARY-INFO specialized to INFO classes returned by
+;;; Methods on MAKE-INFO specialized to INFO classes returned by
 ;;; VARIABLE-INFO.
 
-(defmethod auxiliary-info
+(defmethod make-info
     (environment (defining-info lexical-variable-info))
-  (append (let ((entry (variable-type environment defining-info)))
-	    (if (null entry) '() `(:type ,(type entry))))
-	  (let ((entry (variable-ignore environment defining-info)))
-	    (if (null entry) '() `(:ignore ,(ignore entry))))
-	  (let ((entry (variable-dynamic-extent environment defining-info)))
-	    (if (null entry) '() `(:dynamic-extent t)))))
+  (make-instance 'lexical-variable-info
+    :name (name defining-info)
+    :identity (identity defining-info)
+    :type
+    (let ((entry (variable-type environment defining-info)))
+      (type (if (null entry) defining-info entry)))
+    :ignore
+    (let ((entry (variable-ignore environment defining-info)))
+      (ignore (if (null entry) defining-info entry)))
+    :dynamic-extent
+    (let ((entry (variable-dynamic-extent environment defining-info)))
+      (dynamic-extent (if (null entry) (dynamic-extent defining-info) t)))))
 
-(defmethod auxiliary-info
+(defmethod make-info
     (environment (defining-info special-variable-info))
-  (append (let ((entry (variable-type environment defining-info)))
-	    (if (null entry) '() `(:type ,(type entry))))
-	  (let ((entry (variable-ignore environment defining-info)))
-	    (if (null entry) '() `(:ignore ,(ignore entry))))))
+  (make-instance 'special-variable-info
+    :name (name defining-info)
+    :type
+    (let ((entry (variable-type environment defining-info)))
+      (type (if (null entry) defining-info entry)))
+    :ignore
+    (let ((entry (variable-ignore environment defining-info)))
+      (ignore (if (null entry) defining-info entry)))))
 
-(defmethod auxiliary-info
+(defmethod make-info
     (environment (defining-info constant-variable-info))
-  (declare (cl:ignorable environment defining-info))
-  '())
+  (declare (cl:ignorable environment))
+  defining-info)
 
-(defmethod auxiliary-info
+(defmethod make-info
     (environment (defining-info symbol-macro-info))
-  (let ((entry (variable-type environment defining-info)))
-    (if (null entry) '() `(:type ,(type entry)))))
+  (make-instance 'symbol-macro-info
+    :name (name defining-info)
+    :expansion (expansion defining-info)
+    :type
+    (let ((entry (variable-type environment defining-info)))
+      (type (if (null entry) defining-info entry)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The main method on VARIABLE-INFO specialized to ENTRY. 
+
+(defmethod variable-info ((environment entry) symbol)
+  (let ((defining-info (defining-variable-info environment symbol)))
+    (make-info environment defining-info)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
