@@ -29,6 +29,7 @@
    #:global-function-info
    #:local-macro-info
    #:global-macro-info
+   #:special-operator-info
    #:block-info
    #:tag-info
    #:optimize-info

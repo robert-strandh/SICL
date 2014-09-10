@@ -5,4 +5,6 @@
   :components
   ((:file "packages")
    (:file "conditions")
-   (:file "query")))
+   (:file "query")
+   (:file "augmentation-functions")
+   (:file "default-augmentation-classes")))
