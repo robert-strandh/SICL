@@ -7,4 +7,5 @@
    (:file "conditions")
    (:file "query")
    (:file "augmentation-functions")
-   (:file "default-augmentation-classes")))
+   (:file "default-augmentation-classes")
+   (:file "default-info-methods")))
