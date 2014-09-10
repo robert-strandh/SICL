@@ -189,7 +189,7 @@
       (variable-ignore (next environment) defining-info)))
 
 ;;; The following two methods are called when the current entry is a
-;;; candidate for being the entry containing type information for a
+;;; candidate for being the entry containing ignore information for a
 ;;; variable info.  We found the right one if the names are the same.
 ;;; If not, then we continue the search.
 
@@ -244,9 +244,9 @@
       (variable-dynamic-extent (next environment) defining-info)))
 
 ;;; The following method is called when the current entry is a
-;;; candidate for being the entry containing type information for a
-;;; variable info.  We found the right one if the names are the same.
-;;; If not, then we continue the search.
+;;; candidate for being the entry containing dynamic extent
+;;; information for a variable info.  We found the right one if the
+;;; names are the same.  If not, then we continue the search.
 
 (defmethod variable-dynamic-extent ((environment variable-dynamic-extent)
 			  (defining-info lexical-variable-info))
@@ -305,6 +305,301 @@
 
 (defmethod variable-info ((environment entry) symbol)
   (let ((defining-info (defining-variable-info environment symbol)))
+    (make-info environment defining-info)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; FUNCTION-INFO
+;;;
+;;; Finding info about a function almost as tricky as finding info
+;;; about a variable, again because there can be local entries
+;;; modifying the properties of the function.
+;;;
+;;; We proceed by first finding the DEFINING INFO for the function.
+;;; This info might come from the global environment, or it can come
+;;; from an ENTRY that defines the function.
+;;;
+;;; Once we have found the defining info, we traverse the environment
+;;; again in order to find modifying entries.  We do this traversal
+;;; for each type of modifying entry possible.  The traversal stops
+;;; either when we found the first relevant modifying entry, or we
+;;; reach the place where the function was defined, in which case no
+;;; relevant modifying entry was found.
+
+(defgeneric defining-function-info (environment symbol))
+
+;;; For entries with the right type to introduce a function, we check
+;;; whether the name in the entry is EQUAL to the function-name (or EQ
+;;; to the macro name) that we are passed as an argument.  If that is
+;;; the case, we create and return a very basic corresponding INFO
+;;; instance.  If the name in the entry is not EQUAL to the
+;;; function-name (or EQ to the macro name) we are passed as an
+;;; argument, we invoke DEFINING-FUNCTION-INFO recursively with the
+;;; remaining environment.
+;;;
+;;; The relevant entries for function info are FUNCTION, and
+;;; MACRO.
+
+(defmethod defining-function-info ((environment function) function-name)
+  (if (equal function-name (name environment))
+      (make-instance 'local-function-info
+	:name function-name
+	:identity (identity environment))
+      (defining-function-info (next environment) function-name)))
+
+(defmethod defining-function-info ((environment macro) symbol)
+  (if (eq symbol (name environment))
+      (make-instance 'local-macro-info
+	:name symbol)
+      (defining-function-info (next environment) symbol)))
+
+;;; This method implements the action to take when the argument is an
+;;; ENTRY, but it is not an entry defining a function.  We handle this
+;;; situation by just making a recursive call, passing the next entry
+;;; in the environment.
+(defmethod defining-function-info ((environment entry) function-name)
+  (defining-function-info (next environment) function-name))
+
+;;; This method implements the action to take when the argument is the
+;;; global environment.  We detect this situation by the fact that the
+;;; argument is not an ENTRY.  Since we have run out of local
+;;; environment entries, we must now consult the implementation by
+;;; calling FUNCTION-INFO on the global environment.
+(defmethod defining-function-info (environment function-name)
+  (function-info environment function-name))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FUNCTION-TYPE.
+;;;
+;;; This function takes an environment and a defining info instance
+;;; and returns the first entry in the environment that contains type
+;;; information for the defining info instance, or NIL if there is not
+;;; such entry.
+
+(defgeneric function-type (environment defining-info))
+
+;;; This method is called when the environment is the global
+;;; environment.
+(defmethod function-type (environment defining-info)
+  (declare (cl:ignorable environment defining-info))
+  nil)
+
+;;; This method is called when the entry is not related to the
+;;; defining info instance. 
+(defmethod function-type ((environment entry) defining-info)
+  (declare (cl:ignorable environment defining-info))
+  (function-type (next environment) defining-info))
+
+;;; The following two methods are called when the environment entry
+;;; is of the same type as the one that resulted in the creation of
+;;; the defining info instance.  If the name of the environment entry
+;;; is the same as the name of the info instance, then this entry was
+;;; the one that resulted in the creation of the defining info
+;;; instance.  In other words, we have found no function type entries
+;;; before entry that resulted in the creation of the defining info.
+;;; If the names are not the same, we continue the search. 
+
+(defmethod function-type ((environment function)
+			  (defining-info local-function-info))
+  (if (equal (name environment) (name defining-info))
+      nil
+      (function-type (next environment) defining-info)))
+
+(defmethod function-type ((environment macro)
+			  (defining-info local-macro-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (function-type (next environment) defining-info)))
+
+;;; The following four methods are called when the current entry is a
+;;; candidate for being the entry containing type information for a
+;;; function info.  We found the right one if the names are the same.
+;;; If not, then we continue the search.
+
+(defmethod function-type ((environment function-type)
+			  (defining-info local-function-info))
+  (if (equal (name environment) (name defining-info))
+      environment
+      (function-type (next environment) defining-info)))
+
+(defmethod function-type ((environment function-type)
+			  (defining-info global-function-info))
+  (if (equal (name environment) (name defining-info))
+      environment
+      (function-type (next environment) defining-info)))
+
+(defmethod function-type ((environment function-type)
+			  (defining-info local-macro-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (function-type (next environment) defining-info)))
+
+(defmethod function-type ((environment function-type)
+			  (defining-info global-macro-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (function-type (next environment) defining-info)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FUNCTION-IGNORE.
+;;;
+;;; This function takes an environment and a defining info instance
+;;; and returns the first entry in the environment that contains type
+;;; information for the defining info instance, or NIL if there is not
+;;; such entry.
+
+(defgeneric function-ignore (environment defining-info))
+
+;;; This method is called when the environment is the global
+;;; environment.
+(defmethod function-ignore (environment defining-info)
+  (declare (cl:ignorable environment defining-info))
+  nil)
+
+;;; This method is called when the entry is not related to the
+;;; defining info instance. 
+(defmethod function-ignore ((environment entry) defining-info)
+  (declare (cl:ignorable environment defining-info))
+  (function-ignore (next environment) defining-info))
+
+;;; The following two methods are called when the environment entry
+;;; is of the same type as the one that resulted in the creation of
+;;; the defining info instance.  If the name of the environment entry
+;;; is the same as the name of the info instance, then this entry was
+;;; the one that resulted in the creation of the defining info
+;;; instance.  In other words, we have found no function type entries
+;;; before entry that resulted in the creation of the defining info.
+;;; If the names are not the same, we continue the search. 
+
+(defmethod function-ignore ((environment function)
+			  (defining-info local-function-info))
+  (if (equal (name environment) (name defining-info))
+      nil
+      (function-ignore (next environment) defining-info)))
+
+(defmethod function-ignore ((environment macro)
+			  (defining-info local-macro-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (function-ignore (next environment) defining-info)))
+
+;;; The following four methods are called when the current entry is a
+;;; candidate for being the entry containing ignore information for a
+;;; function info.  We found the right one if the names are the same.
+;;; If not, then we continue the search.
+
+(defmethod function-ignore ((environment function-ignore)
+			  (defining-info local-function-info))
+  (if (equal (name environment) (name defining-info))
+      environment
+      (function-ignore (next environment) defining-info)))
+
+(defmethod function-ignore ((environment function-ignore)
+			  (defining-info global-function-info))
+  (if (equal (name environment) (name defining-info))
+      environment
+      (function-ignore (next environment) defining-info)))
+
+(defmethod function-ignore ((environment function-ignore)
+			  (defining-info local-macro-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (function-ignore (next environment) defining-info)))
+
+(defmethod function-ignore ((environment function-ignore)
+			  (defining-info global-macro-info))
+  (if (eq (name environment) (name defining-info))
+      environment
+      (function-ignore (next environment) defining-info)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FUNCTION-DYNAMIC-EXTENT.
+;;;
+;;; This function takes an environment and a defining info instance
+;;; and returns the first entry in the environment that contains type
+;;; information for the defining info instance, or NIL if there is not
+;;; such entry.
+
+(defgeneric function-dynamic-extent (environment defining-info))
+
+;;; This method is called when the environment is the global
+;;; environment.
+(defmethod function-dynamic-extent (environment defining-info)
+  (declare (cl:ignorable environment defining-info))
+  nil)
+
+;;; This method is called when the entry is not related to the
+;;; defining info instance. 
+(defmethod function-dynamic-extent ((environment entry) defining-info)
+  (declare (cl:ignorable environment defining-info))
+  (function-dynamic-extent (next environment) defining-info))
+
+;;; The following method is called when the environment entry is of
+;;; the same type as the one that resulted in the creation of the
+;;; defining info instance.  If the name of the environment entry is
+;;; the same as the name of the info instance, then this entry was the
+;;; one that resulted in the creation of the defining info instance.
+;;; In other words, we have found no function type entries before
+;;; entry that resulted in the creation of the defining info.  If the
+;;; names are not the same, we continue the search.
+
+(defmethod function-dynamic-extent ((environment function)
+				    (defining-info local-function-info))
+  (if (eq (name environment) (name defining-info))
+      nil
+      (function-dynamic-extent (next environment) defining-info)))
+
+;;; The following method is called when the current entry is a
+;;; candidate for being the entry containing dynamic-extent
+;;; information for a function info.  We found the right one if the
+;;; names are the same.  If not, then we continue the search.
+
+(defmethod function-dynamic-extent ((environment function-dynamic-extent)
+				    (defining-info local-function-info))
+  (if (equal (name environment) (name defining-info))
+      environment
+      (function-dynamic-extent (next environment) defining-info)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on MAKE-INFO specialized to INFO classes returned by
+;;; FUNCTION-INFO.
+
+(defmethod make-info
+    (environment (defining-info local-function-info))
+  (make-instance 'local-function-info
+    :name (name defining-info)
+    :identity (identity defining-info)
+    :type
+    (let ((entry (function-type environment defining-info)))
+      (type (if (null entry) defining-info entry)))
+    :ignore
+    (let ((entry (function-ignore environment defining-info)))
+      (ignore (if (null entry) defining-info entry)))
+    :dynamic-extent
+    (let ((entry (function-dynamic-extent environment defining-info)))
+      (dynamic-extent (if (null entry) (dynamic-extent defining-info) t)))))
+
+(defmethod make-info
+    (environment (defining-info local-macro-info))
+  (make-instance 'local-macro-info
+    :name (name defining-info)
+    :type
+    (let ((entry (function-type environment defining-info)))
+      (type (if (null entry) defining-info entry)))
+    :ignore
+    (let ((entry (function-ignore environment defining-info)))
+      (ignore (if (null entry) defining-info entry)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The main method on FUNCTION-INFO specialized to ENTRY. 
+
+(defmethod function-info ((environment entry) symbol)
+  (let ((defining-info (defining-function-info environment symbol)))
     (make-info environment defining-info)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
