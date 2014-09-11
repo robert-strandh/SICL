@@ -23,12 +23,36 @@
 	   :name symbol
 	   :expansion (macroexpand-1 symbol)))
 	(;; If it is neither a constant variable nor a symbol macro,
-	 ;; it might be a special variable.  We can determine whether
-	 ;; this is the case by checking whether the ordinary binding
-	 ;; (using LET) of it is the same as the dynamic binding of
-	 ;; it.
-	 (eval `(let ((,symbol 'a))
-		  (progv '(,symbol) '(b) (eq ,symbol (symbol-value ',symbol)))))
+	 ;; it might be a special variable.  We can start by checking
+	 ;; whether it is bound.
+	 (boundp symbol)
+	 ;; In that case, it is definitely special.
+	 (make-instance 'cleavir-env:special-variable-info
+	   :name symbol))
+	(;; If it is not bound, it could still be special.  If so, it
+	 ;; might have a restricted type on it.  It will then likely
+	 ;; fail to bind it to an object of some type that we
+	 ;; introduced, say our bogus environment.  It is not fool
+	 ;; proof because it could have the type STANDARD-OBJECT.  But
+	 ;; in the worst case, we will just fail to recognize it as a
+	 ;; special variable.
+	 (null (ignore-errors
+		(eval `(let ((,symbol (make-instance 'bogus-environment)))
+			 t))))
+	 ;; It is a special variable.  However, we don't know its
+	 ;; type, so we assume it is T, which is the default.
+	 (make-instance 'cleavir-env:special-variable-info
+	   :name symbol))
+	(;; If the previous test fails, it could still be special
+	 ;; without any type restriction on it.  We can try to
+	 ;; determine whether this is the case by checking whether the
+	 ;; ordinary binding (using LET) of it is the same as the
+	 ;; dynamic binding of it.  This method might fail because the
+	 ;; type of the variable may be restricted to something we
+	 ;; don't know and that we didn't catch before, 
+	 (ignore-errors
+	  (eval `(let ((,symbol 'a))
+		   (progv '(,symbol) '(b) (eq ,symbol (symbol-value ',symbol))))))
 	 ;; It is a special variable.  However, we don't know its
 	 ;; type, so we assume it is T, which is the default.
 	 (make-instance 'cleavir-env:special-variable-info
