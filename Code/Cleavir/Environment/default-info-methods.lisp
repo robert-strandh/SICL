@@ -76,17 +76,17 @@
 ;;; Generic function VARIABLE-TYPE.
 ;;;
 ;;; This function takes an environment and a defining info instance
-;;; and returns the first entry in the environment that contains type
-;;; information for the defining info instance, or NIL if there is not
-;;; such entry.
+;;; and returns a list of type specifiers, one for every entry in the
+;;; environment that contains type information for the defining info
+;;; instance.
 
 (defgeneric variable-type (environment defining-info))
 
 ;;; This method is called when the environment is the global
 ;;; environment.
 (defmethod variable-type (environment defining-info)
-  (declare (cl:ignorable environment defining-info))
-  nil)
+  (declare (cl:ignorable environment))
+  (list (type defining-info)))
 
 ;;; This method is called when the entry is not related to the
 ;;; defining info instance. 
@@ -106,19 +106,19 @@
 (defmethod variable-type ((environment lexical-variable)
 			  (defining-info lexical-variable-info))
   (if (eq (name environment) (name defining-info))
-      nil
+      (list (type defining-info))
       (variable-type (next environment) defining-info)))
 
 (defmethod variable-type ((environment special-variable)
 			  (defining-info special-variable-info))
   (if (eq (name environment) (name defining-info))
-      nil
+      (list (type defining-info))
       (variable-type (next environment) defining-info)))
 
 (defmethod variable-type ((environment symbol-macro)
 			  (defining-info symbol-macro-info))
   (if (eq (name environment) (name defining-info))
-      nil
+      (list (type defining-info))
       (variable-type (next environment) defining-info)))
 
 ;;; The following three methods are called when the current entry is a
@@ -129,19 +129,22 @@
 (defmethod variable-type ((environment variable-type)
 			  (defining-info lexical-variable-info))
   (if (eq (name environment) (name defining-info))
-      environment
+      (cons (type environment)
+	    (variable-type (next environment) defining-info))
       (variable-type (next environment) defining-info)))
 
 (defmethod variable-type ((environment variable-type)
 			  (defining-info special-variable-info))
   (if (eq (name environment) (name defining-info))
-      environment
+      (cons (type environment)
+	    (variable-type (next environment) defining-info))
       (variable-type (next environment) defining-info)))
 
 (defmethod variable-type ((environment variable-type)
 			  (defining-info symbol-macro-info))
   (if (eq (name environment) (name defining-info))
-      environment
+      (cons (type environment)
+	    (variable-type (next environment) defining-info))
       (variable-type (next environment) defining-info)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -264,9 +267,7 @@
   (make-instance 'lexical-variable-info
     :name (name defining-info)
     :identity (identity defining-info)
-    :type
-    (let ((entry (variable-type environment defining-info)))
-      (type (if (null entry) defining-info entry)))
+    :type (cons 'and (variable-type environment defining-info))
     :ignore
     (let ((entry (variable-ignore environment defining-info)))
       (ignore (if (null entry) defining-info entry)))
@@ -373,17 +374,17 @@
 ;;; Generic function FUNCTION-TYPE.
 ;;;
 ;;; This function takes an environment and a defining info instance
-;;; and returns the first entry in the environment that contains type
-;;; information for the defining info instance, or NIL if there is not
-;;; such entry.
+;;; and returns a list of type specifiers, on for each entry in the
+;;; environment that contains type information for the defining info
+;;; instance.
 
 (defgeneric function-type (environment defining-info))
 
 ;;; This method is called when the environment is the global
 ;;; environment.
 (defmethod function-type (environment defining-info)
-  (declare (cl:ignorable environment defining-info))
-  nil)
+  (declare (cl:ignorable environment))
+  (type defining-info))
 
 ;;; This method is called when the entry is not related to the
 ;;; defining info instance. 
@@ -403,13 +404,13 @@
 (defmethod function-type ((environment function)
 			  (defining-info local-function-info))
   (if (equal (name environment) (name defining-info))
-      nil
+      (list (type defining-info))
       (function-type (next environment) defining-info)))
 
 (defmethod function-type ((environment macro)
 			  (defining-info local-macro-info))
   (if (eq (name environment) (name defining-info))
-      nil
+      (list (type defining-info))
       (function-type (next environment) defining-info)))
 
 ;;; The following four methods are called when the current entry is a
@@ -420,25 +421,15 @@
 (defmethod function-type ((environment function-type)
 			  (defining-info local-function-info))
   (if (equal (name environment) (name defining-info))
-      environment
+      (cons (type environment)
+	    (function-type (next environment) defining-info))
       (function-type (next environment) defining-info)))
 
 (defmethod function-type ((environment function-type)
 			  (defining-info global-function-info))
   (if (equal (name environment) (name defining-info))
-      environment
-      (function-type (next environment) defining-info)))
-
-(defmethod function-type ((environment function-type)
-			  (defining-info local-macro-info))
-  (if (eq (name environment) (name defining-info))
-      environment
-      (function-type (next environment) defining-info)))
-
-(defmethod function-type ((environment function-type)
-			  (defining-info global-macro-info))
-  (if (eq (name environment) (name defining-info))
-      environment
+      (cons (type environment)
+	    (function-type (next environment) defining-info))
       (function-type (next environment) defining-info)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -628,9 +619,7 @@
   (make-instance 'local-function-info
     :name (name defining-info)
     :identity (identity defining-info)
-    :type
-    (let ((entry (function-type environment defining-info)))
-      (type (if (null entry) defining-info entry)))
+    :type (cons 'and (function-type environment defining-info))
     :ignore
     (let ((entry (function-ignore environment defining-info)))
       (ignore (if (null entry) defining-info entry)))
