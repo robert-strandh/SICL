@@ -119,7 +119,11 @@
 	      ;; declined.  We are left with function-call form.
 	      ;; Create a CALL-AST, just as if there were no compiler
 	      ;; macro present.
-	      (let ((function-ast (find-or-create-ast (cleavir-env:name info)))
+	      (let ((function-ast
+		      (make-instance 'cleavir-ast:fdefinition-ast
+			:name-ast
+			(make-instance 'cleavir-ast:constant-ast
+			  :value (cleavir-env:name info))))
 		    (argument-asts (convert-sequence (cdr form) env)))
 		(cleavir-ast:make-call-ast function-ast argument-asts))
 	      ;; If the two are not EQ, this means that the compiler
