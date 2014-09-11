@@ -58,8 +58,7 @@
 
 (defun find-or-create-ast (identity)
   (or (gethash identity *identity-asts*)
-      (let ((ast (cleavir-ast:make-lexical-ast
-		  (cleavir-env:name identity))))
+      (let ((ast (cleavir-ast:make-lexical-ast identity)))
 	(setf (gethash identity *identity-asts*) ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -70,7 +69,7 @@
 
 (defun convert-initial (form)
   (let ((*identity-asts* (make-hash-table :test #'eq)))
-    (convert form nil)))
+    (convert form)))
 
 (defun convert-top-level-form (form)
   (let ((*identity-asts* (make-hash-table :test #'eq)))
@@ -239,4 +238,5 @@
 	 (convert-lambda-call form environment))))
 
 (defun generate-ast (form environment)
-  (convert form environment))
+  (let ((*identity-asts* (make-hash-table :test #'eq)))
+    (convert form environment)))
