@@ -737,6 +737,10 @@
 (defmethod quality-value (environment name)
   (funcall name (optimize-info environment)))
 
+;;; This method is called when the entry is unrelated.
+(defmethod quality-value ((environment entry) name)
+  (quality-value (next environment) name))
+
 ;;; This method is called when we have an OPTIMIZE entry.
 (defmethod quality-value ((environment optimize) name)
   (if (eq name (quality environment))
