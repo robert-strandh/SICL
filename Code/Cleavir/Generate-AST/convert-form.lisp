@@ -105,7 +105,11 @@
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)
 	;; There is no compiler macro.  Create a CALL-AST.
-	(let ((function-ast (find-or-create-ast (cleavir-env:identity info)))
+	(let ((function-ast
+		(make-instance 'cleavir-ast:fdefinition-ast
+		  :name-ast
+		  (make-instance 'cleavir-ast:constant-ast
+		    :value (cleavir-env:name info))))
 	      (argument-asts (convert-sequence (cdr form) env)))
 	  (cleavir-ast:make-call-ast function-ast argument-asts))
 	;; There is a compiler macro.  We must see whether it will
