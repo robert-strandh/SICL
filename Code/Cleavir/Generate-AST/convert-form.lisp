@@ -41,6 +41,12 @@
 ;;;
 ;;; Converting a compound form that calls a local macro.
 ;;; A local macro can not have a compiler macro associated with it.
+;;;
+;;; If we found a local macro in ENV, it means that ENV is not the
+;;; global environment.  And it must be the same kind of agumentation
+;;; environment that was used when the local macro was created by the
+;;; use of MACROLET.  Therefore, the expander should be able to handle
+;;; being passed the same kind of environment.
 
 (defmethod convert-form (form (info cleavir-env:local-macro-info) env)
   (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
