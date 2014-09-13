@@ -29,7 +29,7 @@
 ;;; Ultimately, this form should be moved to a central place, such as
 ;;; packages.lisp.
 (defpackage #:sicl-iteration
-    (:use #:common-lisp)
+  (:use #:common-lisp)
   ;; Shadow these for now.  Ultimately, import them with
   ;; the rest of the CL package. 
   (:shadow #:dolist #:dotimes #:do #:do*))
@@ -40,11 +40,32 @@
 ;;;
 ;;; Conditions
 
-(define-condition expected-symbol (program-error)
+(define-condition malformed-binding-var (program-error)
   ((%found :initarg :found :reader found))
   (:report
    (lambda (condition stream)
-     (princ "Expected a symbol but found: " stream)
+     (princ "Expected a binding var in the form of" stream)
+     (terpri stream)
+     (princ "a symbol, but found: " stream)
+     (print (found condition) stream))))
+
+(define-condition malformed-list-form (program-error)
+  ((%found :initarg :found :reader found))
+  (:report
+   (lambda (condition stream)
+     (princ "Expected a list form in the form of" stream)
+     (terpri stream)
+     (princ "a list, but found: " stream)
+     (print (found condition) stream))))
+
+
+(define-condition malformed-count-form (program-error)
+  ((%found :initarg :found :reader found))
+  (:report
+   (lambda (condition stream)
+     (princ "Expected a count form in the form of" stream)
+     (terpri stream)
+     (princ "a number, but found: " stream)
      (print (found condition) stream))))
 
 (define-condition malformed-body (program-error)
@@ -138,7 +159,9 @@
 (defmacro dolist ((var list-form &optional result-form) &body body)
   ;; do some syntax checking
   (unless (symbolp var)
-    (error 'expected-symbol :found var))
+    (error 'malformed-binding-var :found var))
+  (unless (or (listp list-form) (symbolp list-form))
+    (error 'malformed-list-form :found list-form))
   (unless (proper-list-p body)
     (error 'malformed-body :body body))
   (multiple-value-bind (declarations forms)
@@ -169,7 +192,9 @@
 (defmacro dotimes ((var count-form &optional result-form) &body body)
   ;; do some syntax checking
   (unless (symbolp var)
-    (error 'expected-symbol :found var))
+    (error 'malformed-binding-var :found var))
+  (unless (or (numberp count-form) (not (constantp count-form)))
+    (error 'malformed-count-form :found count-form))
   (unless (proper-list-p body)
     (error 'malformed-body :body body))
   (multiple-value-bind (declarations forms)
