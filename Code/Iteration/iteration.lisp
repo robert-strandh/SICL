@@ -204,7 +204,7 @@
 	  (count-var (gensym)))
       `(let ((,count-var ,count-form)
 	     (,var 0))
-	 (declare (type integer ,var))
+	 (declare (type unsigned-byte ,var))
 	 ,@declarations
 	 (block nil
 	   (tagbody
