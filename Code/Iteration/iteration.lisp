@@ -252,50 +252,35 @@
 		   (extract-updates (cdr variable-clauses)))
 	    (extract-updates (cdr variable-clauses))))))
 
-(defmacro do (variable-clauses end-test &body body)
-  ;; do some syntax checking
-  (check-variable-clauses variable-clauses)
-  (unless (proper-list-p body)
-    (error 'malformed-body :body body))
-  (unless (and (proper-list-p end-test)
-	       (not (null end-test)))
-    (error 'malformed-end-test :found end-test))
-  (multiple-value-bind (declarations forms)
-      (split-body body)
-    (let ((start-tag (gensym)))
-      `(block nil
-	 (let ,(extract-bindings variable-clauses)
-	   ,@declarations
-	   (tagbody
-	      ,start-tag
-	      (when ,(car end-test)
-		(return
-		  (progn ,@(cdr end-test))))
-	      ,@forms
-	      (psetq ,@(extract-updates variable-clauses))
-	      (go ,start-tag)))))))
-
-(defmacro do* (variable-clauses end-test &body body)
-  ;; do some syntax checking
-  (check-variable-clauses variable-clauses)
-  (unless (proper-list-p body)
-    (error 'malformed-body :body body))
-  (unless (and (proper-list-p end-test)
-	       (not (null end-test)))
-    (error 'malformed-end-test :found end-test))
-  (multiple-value-bind (declarations forms)
-      (split-body body)
-    (let ((start-tag (gensym)))
-      `(block nil
-	 (let* ,(extract-bindings variable-clauses)
-	   ,@declarations
-	   (tagbody
-	      ,start-tag
-	      (when ,(car end-test)
-		(return
-		  (progn ,@(cdr end-test))))
-	      ,@forms
-	      (setq ,@(extract-updates variable-clauses))
-	      (go ,start-tag)))))))
-
-      
+(macrolet ((define-do (name assignment-type)
+             (multiple-value-bind (let-type setq-type)
+                 (ecase assignment-type
+                   (:sequential (values 'let* 'setq))
+                   (:parallel (values 'let 'psetq)))
+               `(defmacro ,name (variable-clauses end-test
+                                 &body body)
+                  ;; do some syntax checking
+                  (check-variable-clauses variable-clauses)
+                  (unless (proper-list-p body)
+                    (error 'malformed-body :body body))
+                  (unless (and (proper-list-p end-test)
+                               (not (null end-test)))
+                    (error 'malformed-end-test :found end-test))
+                  (multiple-value-bind (declarations forms)
+                      (split-body body)
+                    (let ((start-tag (gensym)))
+                      `(block nil
+                         (,',let-type ,(extract-bindings
+                                        variable-clauses)
+                           ,@declarations
+                           (tagbody
+                              ,start-tag
+                              (when ,(car end-test)
+                                (return
+                                  (progn ,@(cdr end-test))))
+                              ,@forms
+                              (,',setq-type ,@(extract-updates
+                                               variable-clauses))
+                              (go ,start-tag))))))))))
+  (define-do do :parallel)
+  (define-do do* :sequential))
