@@ -204,11 +204,12 @@
                                  &body body)
                   ;; do some syntax checking
                   (check-variable-clauses ',name variable-clauses)
-                  (unless (proper-list-p body)
-                    (error 'malformed-body :body body))
+                  (body-must-be-proper-list ',name body)
                   (unless (and (proper-list-p end-test)
                                (not (null end-test)))
-                    (error 'malformed-end-test :found end-test))
+                    (error 'malformed-end-test
+                           :name ',name
+                           :found end-test))
                   (multiple-value-bind (declarations forms)
                       (split-body body)
                     (let ((start-tag (gensym)))
