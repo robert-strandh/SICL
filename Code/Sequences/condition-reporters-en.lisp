@@ -1,4 +1,4 @@
-(in-package :sicl-sequences)
+(in-package :sicl-sequence)
 
 ;;;; Copyright (c) 2010
 ;;;;
