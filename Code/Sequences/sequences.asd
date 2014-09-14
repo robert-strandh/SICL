@@ -2,17 +2,13 @@
 
 (asdf:defsystem :sicl-sequences
   :depends-on (:lisp-unit)
+  :serial t
   :components
-  ((:file "packages" :depends-on ())
-   (:file "common" :depends-on ("packages"))
-   (:file "sequences" :depends-on ("packages" "common"))
-   (:file "condition-reporters-en" :depends-on ("packages" "common"))
-   (:file "docstrings-en" :depends-on ("packages"))))
-
-(asdf:defsystem :sicl-sequences-test
-  :depends-on (:lisp-unit :sicl-sequences)
-  :components
-  ((:file "test" :depends-on ())))
+  ((:file "packages")
+   (:file "common")
+   (:file "sequences")
+   (:file "condition-reporters-en")
+   (:file "docstrings-en")))
 
 (asdf:defsystem :sicl-sequences-tiny
   :depends-on (:lisp-unit)
