@@ -11,9 +11,8 @@
 (defmethod print-object ((c name-mixin) stream)
   (report-condition c stream *language*))
 
-;;; FIXME:
-;;; Don't use format, as these iteration macros will later be used
-;;; by SICL to define it.
+;;; I used to think that we should not use FORMAT for these condition
+;;; reporters.  I now think it is OK.  RS -- 2014-09-15.
 
 (defmethod report-condition  ((c malformed-binding-var)
 			      stream
