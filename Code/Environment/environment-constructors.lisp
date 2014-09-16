@@ -54,16 +54,6 @@
 		 :base-entry base-entry
 		 :definition expander))
 
-(defun make-block-entry (name block)
-  (make-instance 'block-entry
-		 :name name
-		 :definition block))
-
-(defun make-go-tag-entry (name tag)
-  (make-instance 'go-tag-entry
-		 :name name
-		 :definition tag))
-
 (defun make-type-entry (name expander)
   (make-instance 'type-entry
 		 :name name
