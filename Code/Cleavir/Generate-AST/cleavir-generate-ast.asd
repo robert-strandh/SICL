@@ -9,6 +9,7 @@
   :components
   ((:file "packages")
    (:file "conditions")
+   (:file "check-special-form-syntax")
    (:file "generate-ast")
    (:file "convert-form")
    (:file "convert-special")
