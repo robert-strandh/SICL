@@ -10,9 +10,6 @@
 (defun make-special-location (name)
   (make-instance 'special-location :name name))
 
-(defun make-lexical-location (name)
-  (make-instance 'lexical-location :name name))
-
 (defun make-constant-variable-entry (name definition)
   (make-instance 'constant-variable-entry
 		 :name name

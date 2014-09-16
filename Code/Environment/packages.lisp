@@ -28,7 +28,6 @@
    #:proclaim
    #:definition
    #:location
-   #:lexical-location #:make-lexical-location
    #:global-location #:make-global-location
    #:special-location #:make-special-location
    #:storage

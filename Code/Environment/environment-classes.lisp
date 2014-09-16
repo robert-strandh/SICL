@@ -147,15 +147,6 @@
 (defclass special-location (location)
   ((%storage :initform (list +unbound+) :reader storage)))
 
-;;; A lexical location does not have any storage associated with it.
-;;; The storage for a lexical location is determined by the compiler,
-;;; and it can sometimes be in a local lexical environment, sometimes
-;;; on the stack and sometimes in a register.  The name of a lexical
-;;; location is just used to display it in error messages and for
-;;; debugging purposes.
-(defclass lexical-location (location)
-  ())
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Environment entries.
