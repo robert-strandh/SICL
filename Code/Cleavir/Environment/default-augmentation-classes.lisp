@@ -4,12 +4,14 @@
   ((%next :initarg :next :reader next)))
 
 (defclass lexical-variable (entry)
-  ((%name :initarg :name :reader name)))
+  ((%name :initarg :name :reader name)
+   (%identity :initarg :identity :reader identity)))
 
 (defmethod add-lexical-variable (environment symbol)
   (make-instance 'lexical-variable
     :next environment
-    :name symbol))
+    :name symbol
+    :identity (gensym)))
 
 (defclass special-variable (entry)
   ((%name :initarg :name :reader name)
