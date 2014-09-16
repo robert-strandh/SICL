@@ -24,11 +24,6 @@
 		 :location (make-special-location name)
 		 :defined-p defined-p))
 
-(defun make-lexical-variable-entry (name)
-  (make-instance 'lexical-variable-entry
-		 :name name
-		 :location (make-lexical-location name)))
-
 (defun make-symbol-macro-entry (name expansion)
   (let ((expander (lambda (form environment)
 		    (declare (ignore form environment))
