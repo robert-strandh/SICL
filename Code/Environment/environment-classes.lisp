@@ -1108,21 +1108,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class LEXICAL-LOCATION-INFO.
-
-(defclass lexical-location-info (location-info)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class LEXICAL-FUNCTION-LOCATION-INFO.
-
-(defclass lexical-function-location-info
-    (lexical-location-info function-info-mixin)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class GLOBAL-LOCATION-INFO.
 
 (defclass global-location-info (location-info)

@@ -59,7 +59,6 @@
    #:tag-info
    #:location-info
    #:special-location-info
-   #:lexical-location-info
    #:global-location-info
    #:function-info
    #:inline-info #:ast #:parameters
