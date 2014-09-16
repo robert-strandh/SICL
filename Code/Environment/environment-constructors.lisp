@@ -49,11 +49,6 @@
 		 :name name
 		 :definition expander))
 
-(defun make-local-macro-entry (name expander)
-  (make-instance 'local-macro-entry
-		 :name name
-		 :definition expander))
-
 (defun make-compiler-macro-entry (base-entry expander)
   (make-instance 'compiler-macro-entry
 		 :base-entry base-entry
