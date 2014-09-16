@@ -136,6 +136,9 @@
   (let ((entry (find-function function-name env)))
     (cond ((null entry)
 	   nil)
+	  ((and (symbolp function-name) (special-operator-p function-name))
+	   (make-instance 'cleavir-env:special-operator-info
+	     :name function-name))
 	  ((macro-entry-p entry)
 	   (make-instance 'cleavir-env:global-macro-info 
 	     :name (name entry)
