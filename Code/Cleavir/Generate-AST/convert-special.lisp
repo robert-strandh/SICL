@@ -1,13 +1,15 @@
 (in-package #:cleavir-generate-ast)
 
+(defmethod convert-special :around (symbol form env)
+  (declare (ignore env))
+  (check-special-form-syntax symbol form))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting QUOTE.
 
 (defmethod convert-special
     ((symbol (eql 'quote)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 1)
   (cleavir-ast:make-constant-ast (cadr form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -16,11 +18,6 @@
 
 (defmethod convert-special
     ((symbol (eql 'block)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 nil)
-  (unless (symbolp (cadr form))
-    (error 'block-name-must-be-a-symbol
-	   :expr (cadr form)))
   (let* ((ast (cleavir-ast:make-block-ast nil))
 	 (new-env (cleavir-env:add-block env (cadr form)))
 	 (forms (convert-sequence (cddr form) new-env)))
@@ -34,20 +31,6 @@
 
 (defmethod convert-special
     ((symbol (eql 'eval-when)) form environment)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 nil)
-  (unless (cleavir-code-utilities:proper-list-p (second form))
-    (error 'situations-must-be-proper-list
-	   :expr (second form)))
-  ;; Check each situation
-  (loop for situation in (second form)
-	do (unless (and (symbolp situation)
-			(member situation
-				'(:compile-toplevel :load-toplevel :execute
-				  compile load eval)))
-	     ;; FIXME: perhaps we should warn about the deprecated situations
-	     (error 'invalid-eval-when-situation
-		    :expr situation)))
   (if (not (null (intersection '(:execute eval) (second form))))
       (cleavir-ast:make-progn-ast
        (convert-sequence (cddr form) environment))
@@ -58,11 +41,6 @@
 ;;; Converting FLET.
 
 (defmethod convert-special ((symbol (eql 'flet)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 nil)
-  (unless (cleavir-code-utilities:proper-list-p (cadr form))
-    (error 'flet-functions-must-be-proper-list
-	   :expr form))
   (let ((new-env env))
     ;; Create a new environment with the additional names.
     (loop for def in (cadr form)
@@ -93,26 +71,9 @@
     (find-or-create-ast identity)))
 
 (defun convert-lambda-function (lambda-form env)
-  (unless (cleavir-code-utilities:proper-list-p lambda-form)
-    (error 'lambda-must-be-proper-list
-	   :expr lambda-form))
   (convert-code (cadr lambda-form) (cddr lambda-form) env))
 
-(defun proper-function-name-p (name)
-  (or (symbolp name)
-      (and (cleavir-code-utilities:proper-list-p name)
-	   (= (length name) 2)
-	   (eq (car name) 'setf)
-	   (symbolp (cadr name)))))
-
 (defmethod convert-special ((symbol (eql 'function)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 1)
-  (unless (or (proper-function-name-p (cadr form))
-	      (and (consp (cadr form))
-		   (eq (car (cadr form)) 'lambda)))
-    (error 'function-argument-must-be-function-name-or-lambda-expression
-	   :expr (cadr form)))
   (if (proper-function-name-p (cadr form))
       (convert-named-function (cadr form) env)
       (convert-lambda-function (cadr form) env)))
@@ -122,8 +83,6 @@
 ;;; Converting GO.
 
 (defmethod convert-special ((symbol (eql 'go)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 1)
   (let ((info (cleavir-env:tag-info (cadr form) env)))
     (if (null info)
 	(error "undefined go tag: ~s" form)
@@ -135,8 +94,6 @@
 ;;; Converting IF.
 
 (defmethod convert-special ((symbol (eql 'if)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 2 3)
   (cleavir-ast:make-if-ast
    (convert (cadr form) env)
    (convert (caddr form) env)
@@ -151,23 +108,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LET and LET*
-
-(defun check-binding-forms (binding-forms)
-  (unless (cleavir-code-utilities:proper-list-p binding-forms)
-    (error 'bindings-must-be-proper-list :expr binding-forms))
-  (loop for binding-form in binding-forms
-	do (unless (or (symbolp binding-form) (consp binding-form))
-	     (error 'binding-must-be-symbol-or-list
-		    :expr binding-form))
-	   (when (and (consp binding-form)
-		      (or (not (listp (cdr binding-form)))
-			  (not (null (cddr binding-form)))))
-	     (error 'binding-must-have-length-one-or-two
-		    :expr binding-form))
-	   (when (and (consp binding-form)
-		      (not (symbolp (car binding-form))))
-	     (error 'variable-must-be-a-symbol
-		    :expr (car binding-form)))))
 
 (defun init-form (binding)
   (if (or (symbolp binding) (null (cdr binding)))
@@ -228,10 +168,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'let)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 nil)
   (destructuring-bind (bindings &rest body) (cdr form)
-    (check-binding-forms bindings)
     (if (= (length bindings) 1)
 	(convert-simple-let (car bindings) body env)
 	(let* ((first (car bindings))
@@ -268,10 +205,7 @@
 
 (defmethod convert-special
     ((symbol (eql 'let*)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 nil)
   (destructuring-bind (bindings &rest body) (cdr form)
-    (check-binding-forms bindings)
     (if (= (length bindings) 1)
 	(convert-simple-let (car bindings) body env)
 	(let* ((first (car bindings))
@@ -300,12 +234,6 @@
     ((symbol (eql 'load-time-value)) form environment)
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 1 2)
-  (unless (null (cddr form))
-    ;; The HyperSpec specifically requires a "boolean"
-    ;; and not a "generalized boolean".
-    (unless (member (caddr form) '(nil t))
-      (error 'read-only-p-must-be-boolean
-	     :expr (caddr form))))
   (cleavir-ast:make-load-time-value-ast
    (convert (cadr form) environment)
    (caddr form)))
@@ -316,7 +244,6 @@
 
 (defmethod convert-special
     ((symbol (eql 'locally)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body (cdr form))
     (let ((new-env (augment-environment-with-declarations
@@ -337,7 +264,6 @@
 
 (defmethod convert-special
     ((head (eql 'progn)) form environment)
-  (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-ast:make-progn-ast
    (convert-sequence (cdr form) environment)))
 
@@ -346,11 +272,6 @@
 ;;; Converting RETURN-FROM.
 
 (defmethod convert-special ((symbol (eql 'return-from)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 2)
-  (unless (symbolp (cadr form))
-    (error 'block-name-must-be-a-symbol
-	   :expr (cadr form)))
   (let ((info (cleavir-env:block-info (cadr form) env)))
     (if (null info)
 	(error 'block-name-unknown
@@ -364,9 +285,6 @@
 ;;; Converting SETQ.
 
 (defun convert-elementary-setq (var form env)
-  (unless (symbolp var)
-    (error 'setq-var-must-be-symbol
-	   :expr var))
   (let* ((info (cleavir-env:variable-info var env))
 	 (identity (cleavir-env:identity info)))
     (if (typep info 'cleavir-env:constant-variable-info)
@@ -378,10 +296,6 @@
   
 (defmethod convert-special
     ((symbol (eql 'setq)) form environment)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (unless (oddp (length form))
-    (error 'setq-must-have-even-number-of-arguments
-	   :expr form))
   (let ((form-asts (loop for (var form) on (cdr form) by #'cddr
 			 collect (convert-elementary-setq
 				  var form environment))))
@@ -393,10 +307,6 @@
 
 (defmethod convert-special
     ((head (eql 'symbol-macrolet)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 nil)
-  ;; FIXME: syntax check bindings
-  ;; FIXME: separate declarations from forms.
   (let ((new-env env))
     (loop for (name expansion) in (cadr form)
 	  do (setf new-env
@@ -409,7 +319,6 @@
 
 (defmethod convert-special
     ((symbol (eql 'tagbody)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
   (let ((tag-asts
 	  (loop for item in (cdr form)
 		when (symbolp item)
@@ -430,24 +339,9 @@
 
 (defmethod convert-special
     ((symbol (eql 'the)) form environment)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 2 2)
   (apply #'cleavir-ast:make-the-ast
 	 (convert (caddr form) environment)
 	 (mapcar #'cleavir-ast:make-constant-ast
 		 (if (and (consp (cadr form)) (eq (car (cadr form)) 'values))
 		     (cdr (cadr form))
 		     (list (cadr form))))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting FUNCALL.
-;;;
-;;; While FUNCALL is a function and not a special operator, we convert
-;;; it here anyway.
-
-(defmethod convert-special
-    ((symbol (eql 'funcall)) form environment)
-  (let ((args (convert-sequence (cdr form) environment)))
-    (cleavir-ast:make-call-ast (car args) (cdr args))))
-
