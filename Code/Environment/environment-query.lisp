@@ -156,22 +156,6 @@
 	       :compiler-macro nil
 	       :dynamic-extent dynamic-extent-p))))))
 
-(defun block-info (name env)
-  (let ((entry (find-in-namespace name env #'block-space-p)))
-    (if (null entry)
-	nil
-	(make-instance 'block-info
-		       :name (name entry)
-		       :definition (definition entry)))))
-
-(defun tag-info (name env)
-  (let ((entry (find-in-namespace name env #'tag-space-p)))
-    (if (null entry)
-	nil
-	(make-instance 'tag-info
-		       :name (name entry)
-		       :definition (definition entry)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Create an environment entry from a canonicalized declaration
