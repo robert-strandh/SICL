@@ -137,7 +137,13 @@
 
 (defmethod check-special-form-syntax ((head (eql 'load-time-value)) form)
   (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 2))
+  (cleavir-code-utilities:check-argcount form 1 2)
+  (unless (null (cddr form))
+    ;; The HyperSpec specifically requires a "boolean"
+    ;; and not a "generalized boolean".
+    (unless (member (caddr form) '(nil t))
+      (error 'read-only-p-must-be-boolean
+	     :expr (caddr form)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
