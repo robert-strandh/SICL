@@ -12,6 +12,7 @@
    #:storage
    #:name
    #:type
+   #:global-environment
    #:*global-environment*
    #:add-to-global-environment
    #:make-entry-from-declaration
