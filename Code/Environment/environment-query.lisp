@@ -126,50 +126,35 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function FUNCTION-INFO.
+;;; Method on CLEAVIR-ENV:FUNCTION-INFO.
 ;;;
-;;; This function is called by the compiler whenever there is a symbol
-;;; in a function position of a compound expression.  It is similar to
-;;; the function with the same name, defined in CLtL2, except that we
-;;; return a class instance containing all the information, rather
-;;; than multiple values.  
+;;; Cleavir requires that the implementation define a method on this
+;;; generic function, specialized to the implementation-specific
+;;; global environment type.  
 
-(defun function-info (name env &optional create-if-does-not-exist)
-  (let ((entry (find-function name env)))
+(defmethod cleavir-env:function-info ((env global-environment) function-name)
+  (let ((entry (find-function function-name env)))
     (cond ((null entry)
-	   (if create-if-does-not-exist
-	       (progn (warn "Undefined function: ~a" name)
-		      (setf entry (make-global-function-entry name))
-		      (push entry (functions *global-environment*))
-		      (make-instance 'global-function-location-info
-			:location (location entry)
-			:type t
-			:inline-info nil
-			:ast nil
-			:parameters nil
-			:ignore-info nil
-			:dynamic-extent-p nil))
-	       nil))
+	   nil)
 	  ((macro-entry-p entry)
-	   (make-instance 'macro-info
-			  :name (name entry)
-			  :definition (definition entry)))
+	   (make-instance 'cleavir-env:global-macro-info 
+	     :name (name entry)
+	     ;; FIXME: add compiler-macro infomation
+	     :compiler-macro nil
+	     :expander (definition entry)))
 	  (t
 	   (let ((type (find-type entry env))
 		 (inline-info (find-inline-info entry env))
 		 (ignore-info (find-ignore-info entry env))
 		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
-	     (make-instance (if (global-function-entry-p entry)
-				'global-function-location-info
-				'lexical-function-location-info)
-			    :location (location entry)
-			    :type type
-			    :inline-info inline-info
-			    :lambda-list (lambda-list entry)
-			    :ast (ast entry)
-			    :parameters (parameters entry)
-			    :ignore-info ignore-info
-			    :dynamic-extent-p dynamic-extent-p))))))
+	     (make-instance 'cleavir-env:global-function-info
+	       :name function-name
+	       :type type
+	       :inline inline-info
+	       :ignore ignore-info
+	       ;; FIXME: add compiler-macro infomation
+	       :compiler-macro nil
+	       :dynamic-extent dynamic-extent-p))))))
 
 (defun block-info (name env)
   (let ((entry (find-in-namespace name env #'block-space-p)))
