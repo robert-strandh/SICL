@@ -24,10 +24,6 @@
    #:augment-environment-with-declarations
    #:add-lexical-variable-entry
    #:add-symbol-macro-entry
-   #:add-local-function-entry
-   #:add-local-macro-entry
-   #:add-block-entry
-   #:add-go-tag-entry
    #:constant-variable-info
    #:macro-info
    #:symbol-macro-info
