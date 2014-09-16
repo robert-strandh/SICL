@@ -33,34 +33,28 @@
 	       (setf (parameters entry) parameters)
 	       entry))))
 
-(defun find-in-namespace (name environment predicate)
-  (find-if (lambda (entry)
-	     (and (funcall predicate entry)
-		  (equal (name entry) name)))
-	   environment))
+(defun find-variable (symbol environment)
+  (find symbol
+	(append
+	 ;; The order here doesn't matter because, there can only be
+	 ;; one entry for a particular name in the global environment.
+	 (constant-variables *global-environment*)
+	 (symbol-macros *global-environment*)
+	 (special-variables *global-environment*))
+	:test #'eq
+	:key #'name))
 
-(defun find-variable (name environment)
-  (find-in-namespace name
-		     (append environment
-			     ;; The order here doesn't matter because,
-			     ;; there can only be one entry for a
-			     ;; particular name in the global
-			     ;; environment.
-			     (constant-variables *global-environment*)
-			     (symbol-macros *global-environment*)
-			     (special-variables *global-environment*))
-		     #'variable-space-p))
-
-(defun find-function (name environment)
-  (find-in-namespace name
-		     (append environment
-			     ;; We want to search global macros first,
-			     ;; because if such an entry exists, it
-			     ;; takes precedence over other entries.
-			     (macros *global-environment*)
-			     (functions *global-environment*)
-			     (special-operators *global-environment*))
-		     #'function-space-p))
+(defun find-function (function-name environment)
+  (find function-name
+	(append
+	 ;; We want to search global macros first,
+	 ;; because if such an entry exists, it
+	 ;; takes precedence over other entries.
+	 (macros *global-environment*)
+	 (functions *global-environment*)
+	 (special-operators *global-environment*))
+	:test #'equal
+	:key #'name))
 
 (defun find-type (entry env)
   `(and ,@(loop for e in (append env (proclamations *global-environment*))
