@@ -97,47 +97,32 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function VARIABLE-INFO.
+;;; Method on CLEAVIR-ENV:VARIABLE-INFO.
 ;;;
-;;; This function is called by the compiler whenever there is a symbol
-;;; in a normal value position (as opposed to in a function position).
-;;; It is similar to the function with the same name, defined in
-;;; CLtL2, except that we return a class instance containing all the
-;;; information, rather than multiple values.
+;;; Cleavir requires that the implementation define a method on this
+;;; generic function, specialized to the implementation-specific
+;;; global environment type.  
 
-(defun variable-info (name env &optional create-if-does-not-exist)
-  (let ((entry (find-variable name env)))
+(defmethod cleavir-env:variable-info ((env global-environment) symbol)
+  (let ((entry (find-variable symbol env)))
     (cond ((null entry)
-	   (if create-if-does-not-exist
-	       (progn (warn "Undefined variable: ~a" name)
-		      (setf entry (make-special-variable-entry name))
-		      (push entry (special-variables *global-environment*))
-		      (make-instance 'special-location-info
-			:location (location entry)
-			:type t
-			:ignore-info nil
-			:dynamic-extent-p nil))
-	       nil))
+	   nil)
 	  ((constant-variable-entry-p entry)
-	   (make-instance 'constant-variable-info
-			  :name (name entry)
-			  :definition (definition entry)))
+	   (make-instance 'cleavir-env:constant-variable-info
+	     :name (name entry)
+	     :value (definition entry)))
 	  ((symbol-macro-entry-p entry)
-	   (make-instance 'symbol-macro-info
-			  :name (name entry)
-			  :definition (definition entry)
-			  :type (find-type entry env)))
+	   (make-instance 'cleavir-env:symbol-macro-info 
+	     :name (name entry)
+	     :expansion (definition entry)
+	     :type (find-type entry env)))
 	  (t
 	   (let ((type (find-type entry env))
-		 (ignore-info (find-ignore-info entry env))
-		 (dynamic-extent-p (find-dynamic-extent-info entry env)))
-	     (make-instance (if (special-variable-entry-p entry)
-				'special-location-info
-				'lexical-location-info)
-			    :location (location entry)
-			    :type type
-			    :ignore-info ignore-info
-			    :dynamic-extent-p dynamic-extent-p))))))
+		 (ignore-info (find-ignore-info entry env)))
+	     (make-instance 'cleavir-env:special-variable-info
+	       :name symbol
+	       :type type
+	       :ignore ignore-info))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
