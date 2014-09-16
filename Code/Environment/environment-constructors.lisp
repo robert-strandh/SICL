@@ -44,11 +44,6 @@
 		 :parameters parameters
 		 :location (make-global-location name)))
 
-(defun make-local-function-entry (name)
-  (make-instance 'local-function-entry
-		 :name name
-		 :location (make-lexical-location name)))
-
 (defun make-global-macro-entry (name expander)
   (make-instance 'global-macro-entry
 		 :name name
