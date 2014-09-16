@@ -38,9 +38,9 @@
 	(append
 	 ;; The order here doesn't matter because, there can only be
 	 ;; one entry for a particular name in the global environment.
-	 (constant-variables *global-environment*)
-	 (symbol-macros *global-environment*)
-	 (special-variables *global-environment*))
+	 (constant-variables environment)
+	 (symbol-macros environment)
+	 (special-variables environment))
 	:test #'eq
 	:key #'name))
 
@@ -50,9 +50,9 @@
 	 ;; We want to search global macros first,
 	 ;; because if such an entry exists, it
 	 ;; takes precedence over other entries.
-	 (macros *global-environment*)
-	 (functions *global-environment*)
-	 (special-operators *global-environment*))
+	 (macros environment)
+	 (functions environment)
+	 (special-operators environment))
 	:test #'equal
 	:key #'name))
 
