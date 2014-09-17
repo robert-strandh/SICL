@@ -61,14 +61,23 @@
 		  '(hello)
 		  *e*)
 		 '(hello)))
+  ;; Check that the symbol macro is expanded correctly.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'gsm1
 		  *e*)
 		 '(hello1 hello2)))
+  ;; Check that the symbol macro is expanded in an argument position,
+  ;; but not in a function position.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(gsm1 gsm1)
 		  *e*)
 		 '(gsm1 (hello1 hello2))))
+  ;; Check that a local variable shadows the global symbol macro with
+  ;; the same name.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(let ((gsm1 10)) (gsm1 gsm1))
+		  *e*)
+		 '(let ((gsm1 10)) (gsm1 gsm1))))
   (format t "Tests passed~%"))
 
 (run-tests)
