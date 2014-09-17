@@ -187,7 +187,7 @@
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)
 	;; There is no compiler macro.  Minimally compile the arguments.
-	`(,(first form)
+	`(,(cleavir-env:name info)
 	  ,@(minimally-compile-sequence (rest form) env))
 	;; There is a compiler macro.  We must see whether it will
 	;; accept or decline.
@@ -200,7 +200,7 @@
 	      ;; declined.  We are left with function-call form.
 	      ;; Minimally compile the arguments, just as if there
 	      ;; were no compiler macro present.
-	      `(,(first form)
+	      `(,(cleavir-env:name info)
 		,@(minimally-compile-sequence (rest form) env))
 	      ;; If the two are not EQ, this means that the compiler
 	      ;; macro replaced the original form with a new form.
