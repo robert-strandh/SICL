@@ -30,6 +30,15 @@
     ((environment bogus-environment) (name (eql 'undefined-variable)))
   nil)
 
+;;; When the name GSM1 is used as a global variable, then it is
+;;; considered a global symbol macro that expands to the following
+;;; form: (HELLO1 HELLO2)
+(defmethod cleavir-env:function-info
+    ((environment bogus-environment) (name (eql 'gsm1)))
+  (make-instance 'cleavir-env:symbol-macro-info 
+    :name name
+    :expansion '(hello1 hello2)))
+
 ;;; When the name UNDEFINED-FUNCTION is used as a global function,
 ;;; then return NIL to indicate that there is no such function.
 (defmethod cleavir-env:function-info
