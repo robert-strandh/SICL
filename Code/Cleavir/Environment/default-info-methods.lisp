@@ -273,7 +273,7 @@
       (ignore (if (null entry) defining-info entry)))
     :dynamic-extent
     (let ((entry (variable-dynamic-extent environment defining-info)))
-      (dynamic-extent (if (null entry) (dynamic-extent defining-info) t)))))
+      (if (null entry) (dynamic-extent defining-info) t))))
 
 (defmethod make-info
     (environment (defining-info special-variable-info))
@@ -625,7 +625,19 @@
       (ignore (if (null entry) defining-info entry)))
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
-      (dynamic-extent (if (null entry) (dynamic-extent defining-info) t)))))
+      (if (null entry) (dynamic-extent defining-info) t))))
+
+(defmethod make-info
+    (environment (defining-info global-function-info))
+  (make-instance 'global-function-info
+    :name (name defining-info)
+    :type (cons 'and (function-type environment defining-info))
+    :ignore
+    (let ((entry (function-ignore environment defining-info)))
+      (ignore (if (null entry) defining-info entry)))
+    :dynamic-extent
+    (let ((entry (function-dynamic-extent environment defining-info)))
+      (if (null entry) (dynamic-extent defining-info) t))))
 
 (defmethod make-info
     (environment (defining-info local-macro-info))
