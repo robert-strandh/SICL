@@ -54,6 +54,10 @@
 		  '(hello)
 		  *e*)
 		 '(hello)))
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  'gsm1
+		  *e*)
+		 '(hello1 hello2)))
   (format t "Tests passed~%"))
 
 (run-tests)
