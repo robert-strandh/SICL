@@ -18,39 +18,39 @@
 	  '()
 	  (rest (rest optional-or-key)))))
 
-(defun minimally-compile-lambda-list (lambda-list env)
-  (let ((parsed-lambda-list
-	  (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
-    `(,@(cleavir-code-utilities:required parsed-lambda-list)
-      ,@(let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
-	  (if (eq rest :none)
-	      '()
-	      `(&rest ,rest)))
-      ,@(let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
-	  (if (eq optionals :none)
-	      '()
-	      `(&optional
-		,@(loop for optional in optionals
-			collect (minimally-compile-optional-or-key optional env)))))
-      ,@(let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
-	  (if (eq keys :none)
-	      '()
-	      `(&key
-		,@(loop for key in keys
-			collect (minimally-compile-optional-or-key key env)))))
-      ,@(if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
-	    '(&allow-other-keys)
-	    '()))))
+(defun minimally-compile-lambda-list (parsed-lambda-list env)
+  `(,@(cleavir-code-utilities:required parsed-lambda-list)
+    ,@(let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
+	(if (eq rest :none)
+	    '()
+	    `(&rest ,rest)))
+    ,@(let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
+	(if (eq optionals :none)
+	    '()
+	    `(&optional
+	      ,@(loop for optional in optionals
+		      collect (minimally-compile-optional-or-key optional env)))))
+    ,@(let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
+	(if (eq keys :none)
+	    '()
+	    `(&key
+	      ,@(loop for key in keys
+		      collect (minimally-compile-optional-or-key key env)))))
+    ,@(if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
+	  '(&allow-other-keys)
+	  '())))
 
 (defun minimally-compile-code (lambda-list body env)
   (multiple-value-bind (declarations documentation forms)
       (cleavir-code-utilities:separate-function-body body)
-    `(,(minimally-compile-lambda-list lambda-list env)
-      ,@declarations
-      ,(if (null documentation)
-	   '()
-	   `(,documentation))
-      ,@(minimally-compile-sequence forms env))))
+    (let ((parsed-lambda-list
+	    (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
+      `(,(minimally-compile-lambda-list parsed-lambda-list env)
+	,@declarations
+	,(if (null documentation)
+	     '()
+	     `(,documentation))
+	,@(minimally-compile-sequence forms env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
