@@ -10,6 +10,7 @@
   ((:file "packages")
    (:file "conditions")
    (:file "check-special-form-syntax")
+   (:file "minimal-compilation")
    (:file "generate-ast")
    (:file "convert-form")
    (:file "convert-special")
