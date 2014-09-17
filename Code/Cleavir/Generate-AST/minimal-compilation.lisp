@@ -38,7 +38,14 @@
 		      collect (minimally-compile-optional-or-key key env)))))
     ,@(if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
 	  '(&allow-other-keys)
-	  '())))
+	  '())
+    ,@(let ((aux (cleavir-code-utilities:aux parsed-lambda-list)))
+	(if (eq aux :none)
+	    '()
+	    `(&aux
+	      ,@(loop for entry in aux
+		      collect `(,(first entry)
+				,(minimally-compile (second entry) env))))))))
 
 (defun minimally-compile-code (lambda-list body env)
   (multiple-value-bind (declarations documentation forms)
