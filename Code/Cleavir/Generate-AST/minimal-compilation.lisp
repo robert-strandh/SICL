@@ -1,45 +1,15 @@
 (in-package #:cleavir-generate-ast)
 
-(defgeneric minimally-compile-special-form (symbol form env))
+(defgeneric minimally-compile-form (form info env))
 
-(defmethod minimally-compile-special-form :around (symbol form env)
-  (declare (ignore env))
-  (check-special-form-syntax symbol form))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Utilities for minimally compiling function definitions and lambda
+;;; expressions.
 
 (defun minimally-compile-sequence (sequence env)
   (loop for form in sequence
 	collect (minimally-compile form env)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compiling QUOTE.
-
-(defmethod minimally-compile-special-form
-    ((symbol (eql 'quote)) form env)
-  (declare (ignore env))
-  form)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compiling BLOCK.
-
-(defmethod minimally-compile-special-form
-    ((symbol (eql 'block)) form env)
-  `(block ,(second form)
-     ,@(minimally-compile-sequence (rest (rest form)) env)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compiling EVAL-WHEN.
-
-(defmethod minimally-compile-special-form
-    ((symbol (eql 'eval-when)) form env)
-  `(eval-when ,(second form)
-     ,@(minimally-compile-sequence (rest (rest form)) env)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Compiling FLET and LABELS.
 
 (defun minimally-compile-optional-or-key (optional-or-key env)
   `(,(first optional-or-key)
@@ -77,6 +47,197 @@
 	   '()
 	   `(,documentation))
       ,@(minimally-compile-sequence forms env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function MINIMALLY-COMPILE-LAMBDA-CALL.
+
+(defun minimally-compile-lambda-call (form env)
+  (destructuring-bind ((lambda lambda-list &rest body) &rest args) form
+    (declare (ignore lambda))
+    `((lambda ,@(minimally-compile-code lambda-list body env))
+      ,@(minimally-compile-sequence args env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Function MINIMALLY-COMPILE.  The main entry point.
+
+(defun minimally-compile (form env)
+  (cond ((and (not (consp form)) (not (symbolp form)))
+	 form)
+	((symbolp form)
+	 (let ((info (cleavir-env:variable-info env form)))
+	   (minimally-compile-form form info env)))
+	((symbolp (first form))
+	 (let ((info (cleavir-env:function-info env form)))
+	   (minimally-compile-form form info env)))
+	(t
+	 (minimally-compile-lambda-call form env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on MINIMALLY-COMPILE-FORM.
+
+;;; Minimally compiling a symbol that has a definition as a symbol
+;;; macro.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:symbol-macro-info) env)
+  (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
+			    (lambda (form env)
+			      (declare (ignore form env))
+			      (cleavir-env:expansion info))
+			    form
+			    env)))
+    (minimally-compile expansion env)))
+
+;;; Minimally compiling a symbol that has a definition as a constant
+;;; variable.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:constant-variable-info) env)
+  (declare (ignore env))
+  form)
+	  
+;;; Minimally compiling a symbol that has a definition as a lexical
+;;; variable.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:lexical-variable-info) env)
+  (declare (ignore env))
+  form)
+
+;;; Minimally compiling a symbol that has a definition as a special
+;;; variable.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:special-variable-info) env)
+  (declare (ignore env))
+  form)
+
+;;; Minimally compiling a compound form that calls a local macro.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:local-macro-info) env)
+  (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
+			    (cleavir-env:expander info)
+			    form
+			    env)))
+    (minimally-compile expansion env)))
+
+;;; Minimally compiling a compound form that calls a global macro.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:global-macro-info) env)
+  (let ((compiler-macro (cleavir-env:compiler-macro info)))
+    (if (null compiler-macro)
+	;; There is no compiler macro, so we just apply the macro
+	;; expander, and then minmally compile the resulting form.
+	(minimally-compile (funcall (coerce *macroexpand-hook* 'function)
+				    (cleavir-env:expander info)
+				    form
+				    env)
+			   env)
+	;; There is a compiler macro, so we must see whether it will
+	;; accept or decline.
+	(let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
+				      compiler-macro
+				      form
+				      env)))
+	  (if (eq form expanded-form)
+	      ;; If the two are EQ, this means that the compiler macro
+	      ;; declined.  Then we appply the macro function, and
+	      ;; then minimally compile the resulting form, just like
+	      ;; we did when there was no compiler macro present.
+	      (minimally-compile (funcall (coerce *macroexpand-hook* 'function)
+					  (cleavir-env:expander info)
+					  expanded-form
+					  env)
+				 env)
+	      ;; If the two are not EQ, this means that the compiler
+	      ;; macro replaced the original form with a new form.
+	      ;; This new form must then again be minimally compiled
+	      ;; without taking into account the real macro expander.
+	      (minimally-compile expanded-form env))))))
+
+;;; Minimally compiling a compound form that calls a local function.
+;;; A local function can not have a compiler macro associated with it.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:local-function-info) env)
+  `(,(first form)
+    ,@(minimally-compile-sequence (rest form) env)))
+
+;;; Minimally compiling a compound form that calls a global function.
+;;; A global function can have compiler macro associated with it.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:global-function-info) env)
+  (let ((compiler-macro (cleavir-env:compiler-macro info)))
+    (if (null compiler-macro)
+	;; There is no compiler macro.  Minimally compile the arguments.
+	`(,(first form)
+	  ,@(minimally-compile-sequence (rest form) env))
+	;; There is a compiler macro.  We must see whether it will
+	;; accept or decline.
+	(let ((expanded-form (funcall (coerce *macroexpand-hook* 'function)
+				      compiler-macro
+				      form
+				      env)))
+	  (if (eq form expanded-form)
+	      ;; If the two are EQ, this means that the compiler macro
+	      ;; declined.  We are left with function-call form.
+	      ;; Minimally compile the arguments, just as if there
+	      ;; were no compiler macro present.
+	      `(,(first form)
+		,@(minimally-compile-sequence (rest form) env))
+	      ;; If the two are not EQ, this means that the compiler
+	      ;; macro replaced the original form with a new form.
+	      ;; This new form must then be minimally compiled.
+	      (minimally-compile expanded-form env))))))
+
+(defgeneric minimally-compile-special-form (symbol form env))
+
+;;; Minimally compiling a special form.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:special-operator-info) env)
+  (minimally-compile-special-form (first form) form env))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; :AROUND method on MINIMALLY-COMPILE-SPECIAL-FORM that calls the
+;;; syntax checker for special forms.
+
+(defmethod minimally-compile-special-form :around (symbol form env)
+  (declare (ignore env))
+  (check-special-form-syntax symbol form))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on MINIMALLY-COMPILE-SPECIAL-FORM.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compiling QUOTE.
+
+(defmethod minimally-compile-special-form
+    ((symbol (eql 'quote)) form env)
+  (declare (ignore env))
+  form)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compiling BLOCK.
+
+(defmethod minimally-compile-special-form
+    ((symbol (eql 'block)) form env)
+  `(block ,(second form)
+     ,@(minimally-compile-sequence (rest (rest form)) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compiling EVAL-WHEN.
+
+(defmethod minimally-compile-special-form
+    ((symbol (eql 'eval-when)) form env)
+  `(eval-when ,(second form)
+     ,@(minimally-compile-sequence (rest (rest form)) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compiling FLET and LABELS.
 
 (defun minimally-compile-flet-or-labels (symbol form env)
   (multiple-value-bind (declarations forms)
@@ -169,11 +330,11 @@
 ;;; Compiling LOAD-TIME-VALUE.
 
 (defmethod minimally-compile-special-form
-    ((symbol (eql 'load-time-value)) form environment)
+    ((symbol (eql 'load-time-value)) form env)
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 1 2)
   (cleavir-ast:make-load-time-value-ast
-   (minimally-compile (cadr form) environment)
+   (minimally-compile (cadr form) env)
    (caddr form)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -201,9 +362,9 @@
 ;;; Compiling PROGN.
 
 (defmethod minimally-compile-special-form
-    ((head (eql 'progn)) form environment)
+    ((head (eql 'progn)) form env)
   (cleavir-ast:make-progn-ast
-   (minimally-compile-sequence (cdr form) environment)))
+   (minimally-compile-sequence (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
