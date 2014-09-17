@@ -184,10 +184,19 @@
 ;;; A global function can have compiler macro associated with it.
 (defmethod minimally-compile-form
     (form (info cleavir-env:global-function-info) env)
+  ;; It is possible that the name in the INFO instance is different
+  ;; from the first element of FORM, because if an error occurred
+  ;; because the name was undefined, then a restart may have
+  ;; substituted a different name.  For that reason, we start by
+  ;; updating the form.
+  (setf form (cons (cleavir-env:name info) (rest form)))
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)
 	;; There is no compiler macro.  Minimally compile the arguments.
-	`(,(cleavir-env:name info)
+	`(;; We take the name from the INFO instance rather than from
+	  ;; the form, because in case of an error, a restart might
+	  ;; have replaced the function name by a different one.
+	  ,(first form)
 	  ,@(minimally-compile-sequence (rest form) env))
 	;; There is a compiler macro.  We must see whether it will
 	;; accept or decline.
@@ -200,7 +209,7 @@
 	      ;; declined.  We are left with function-call form.
 	      ;; Minimally compile the arguments, just as if there
 	      ;; were no compiler macro present.
-	      `(,(cleavir-env:name info)
+	      `(,(first form)
 		,@(minimally-compile-sequence (rest form) env))
 	      ;; If the two are not EQ, this means that the compiler
 	      ;; macro replaced the original form with a new form.
