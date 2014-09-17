@@ -39,6 +39,15 @@
     :name name
     :expansion '(hello1 hello2)))
 
+;;; When the name GSM2 is used as a global variable, then it is
+;;; considered a global symbol macro that expands to the following
+;;; form: GSM1
+(defmethod cleavir-env:variable-info
+    ((environment bogus-environment) (name (eql 'gsm2)))
+  (make-instance 'cleavir-env:symbol-macro-info 
+    :name name
+    :expansion 'gsm1))
+
 ;;; When the name UNDEFINED-FUNCTION is used as a global function,
 ;;; then return NIL to indicate that there is no such function.
 (defmethod cleavir-env:function-info
@@ -64,6 +73,12 @@
   ;; Check that the symbol macro is expanded correctly.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'gsm1
+		  *e*)
+		 '(hello1 hello2)))
+  ;; Check that the symbol macro is expanded correctly and that the
+  ;; expansion is then minimally compiled.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  'gsm2
 		  *e*)
 		 '(hello1 hello2)))
   ;; Check that the symbol macro is expanded in an argument position,
