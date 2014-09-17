@@ -1,5 +1,9 @@
 (cl:in-package #:cleavir-environment)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; VARIABLE-INFO.
+
 (defgeneric variable-info (environment symbol))
 
 (defmethod variable-info :around (environment symbol)
@@ -43,7 +47,32 @@
    (%type :initform t :initarg :type :reader type)
    (%expansion :initarg :expansion :reader expansion)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; VARIABLE-INFO.
+
 (defgeneric function-info (environment function-name))
+
+(defmethod function-info :around (environment function-name)
+  (let ((result (call-next-method)))
+    (loop while (null result)
+	  do (restart-case (error 'no-function-info
+				  :name function-name)
+	       (consider-global ()
+		 :report (lambda (stream)
+			   (format stream
+				   "Treat it as the name of a global function."))
+		 (return-from function-info
+		   (make-instance 'global-function-info
+		     :name function-name)))
+	       (substitute (new-function-name)
+		 :report (lambda (stream)
+			   (format stream "Substitute a different name."))
+		 :interactive (lambda ()
+				(format *query-io* "Enter new name: ")
+				(list (read)))
+		 (setq result (function-info environment new-function-name)))))
+    result))
 
 (defclass local-function-info ()
   ((%name :initarg :name :reader name)
