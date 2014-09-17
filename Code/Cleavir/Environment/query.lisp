@@ -4,7 +4,7 @@
 
 (defclass lexical-variable-info ()
   ((%name :initarg :name :reader name)
-   (%identity :initarg identity :reader identity)
+   (%identity :initarg :identity :reader identity)
    (%type :initform t :initarg :type :reader type)
    (%ignore :initform nil :initarg :ignore :reader ignore)
    (%dynamic-extent :initform nil :initarg :dynamic-extent :reader dynamic-extent)))
@@ -27,7 +27,7 @@
 
 (defclass local-function-info ()
   ((%name :initarg :name :reader name)
-   (%identity :initarg identity :reader identity)
+   (%identity :initarg :identity :reader identity)
    (%type :initform t :initarg :type :reader type)
    (%inline :initform nil :initarg :inline :reader inline)
    (%ignore :initform nil :initarg :ignore :reader ignore)
