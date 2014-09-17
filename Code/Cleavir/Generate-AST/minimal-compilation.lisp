@@ -22,18 +22,22 @@
   (let ((parsed-lambda-list
 	  (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
     `(,@(cleavir-code-utilities:required parsed-lambda-list)
+      ,@(let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
+	  (if (eq rest :none)
+	      '()
+	      `(&rest ,rest)))
       ,@(let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
-	  (eq optionals :none)
-	  '()
-	  `(&optional
-	    ,@(loop for optional in optionals
-		    collect (minimally-compile-optional-or-key optional env))))
+	  (if (eq optionals :none)
+	      '()
+	      `(&optional
+		,@(loop for optional in optionals
+			collect (minimally-compile-optional-or-key optional env)))))
       ,@(let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
-	  (eq keys :none)
-	  '()
-	  `(&key
-	    ,@(loop for key in keys
-		    collect (minimally-compile-optional-or-key key env))))
+	  (if (eq keys :none)
+	      '()
+	      `(&key
+		,@(loop for key in keys
+			collect (minimally-compile-optional-or-key key env)))))
       ,@(if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
 	    '(&allow-other-keys)
 	    '()))))
