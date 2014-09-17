@@ -45,6 +45,13 @@
     ((environment bogus-environment) (name (eql 'undefined-function)))
   nil)
 
+;;; When the name LET is used as a global function, then it is
+;;; considered a special operator.
+(defmethod cleavir-env:function-info
+    ((environment bogus-environment) (name (eql 'let)))
+  (make-instance 'cleavir-env:special-operator-info
+     :name name))
+
 (defun run-tests ()
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
