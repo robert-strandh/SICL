@@ -330,19 +330,28 @@
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
       `(let ,(loop for binding in bindings
-		   do (minimally-compile-binding binding env))
+		   collect (minimally-compile-binding binding env))
 	 ,declarations
-	 ,@(minimally-compile-sequence (rest (rest forms)) env)))))
+	 ,@(let ((new-env env))
+	     (loop for binding in bindings
+		   for var = (if (symbolp binding) binding (first binding))
+		   do (setf new-env
+			    (cleavir-env:add-lexical-variable new-env var)))
+	     (minimally-compile-sequence (rest (rest forms)) new-env))))))
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'let*)) form env)
   (destructuring-bind (bindings &rest body) (cdr form)
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
-      `(let* ,(loop for binding in bindings
-		    do (minimally-compile-binding binding env))
-	 ,declarations
-	 ,@(minimally-compile-sequence (rest (rest forms)) env)))))
+      (let ((new-env env))
+	`(let* ,(loop for binding in bindings
+		      for var = (if (symbolp binding) binding (first binding))
+		      collect (minimally-compile-binding binding new-env)
+		      do (setf new-env
+			       (cleavir-env:add-lexical-variable new-env var)))
+	   ,declarations
+	   ,@(minimally-compile-sequence (rest (rest forms)) env))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
