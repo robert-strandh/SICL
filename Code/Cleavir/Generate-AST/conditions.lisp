@@ -112,3 +112,17 @@
 (define-condition setq-constant-variable
     (compilation-program-error)
   ())
+
+;;; This condition is signaled when a symbol in a variable position is
+;;; encountered during compilation, but it does not have a definition
+;;; in the environment in which the symbol is compiled.
+(define-condition variable-name-unknown
+    (compilation-program-error)
+  ())
+
+;;; This condition is signaled when a function name is encountered
+;;; during compilation, but it does not have a definition in the
+;;; environment in which the function name is compiled.
+(define-condition function-name-unknown
+    (compilation-program-error)
+  ())
