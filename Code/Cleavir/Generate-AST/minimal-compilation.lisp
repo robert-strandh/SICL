@@ -221,7 +221,8 @@
 
 (defmethod minimally-compile-special-form :around (symbol form env)
   (declare (ignore env))
-  (check-special-form-syntax symbol form))
+  (check-special-form-syntax symbol form)
+  (call-next-method))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
