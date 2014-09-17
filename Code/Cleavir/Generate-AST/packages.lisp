@@ -2,4 +2,5 @@
 
 (defpackage #:cleavir-generate-ast
   (:use #:common-lisp)
-  (:export #:generate-ast))
+  (:export #:generate-ast
+	   #:minimally-compile))
