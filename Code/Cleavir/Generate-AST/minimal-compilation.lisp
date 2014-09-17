@@ -373,8 +373,42 @@
 ;;;
 ;;; Compiling MACROLET.
 
-;; According to section 3.2.3.1 of the HyperSpec, MACROLET processes
-;; its subforms the same way as the form itself.
+(defun minimally-compile-macro-definition (definition env)
+  (destructuring-bind (name lambda-list &rest body) definition
+    (multiple-value-bind (declarations documentation forms)
+	(cleavir-code-utilities:separate-function-body body)
+      (let* ((parsed-lambda-list
+	       (cleavir-code-utilities:parse-macro-lambda-list lambda-list))
+	     (compiled-lambda-list
+	       (minimally-compile-lambda-list parsed-lambda-list env)))
+	(let ((expander-form
+		(cleavir-code-utilities:parse-macro
+		 name
+		 compiled-lambda-list
+		 `(,@(if (null declarations)
+			 '()
+			 (list declarations))
+		   ,@(if (null documentation)
+			 '()
+			 (list documentation))
+		   ,@(minimally-compile-sequence forms env))
+		 env)))
+	  (compile nil expander-form))))))
+
+(defmethod minimally-compile-special-form
+    ((symbol (eql 'macrolet)) form env)
+  (destructuring-bind (macrolet definitions &rest body) form
+    (declare (ignore macrolet))
+    (let ((new-env env))
+      (loop for definition in definitions
+	    for name = (first definition)
+	    for expander = (minimally-compile-macro-definition definition env)
+	    do (setf new-env
+		     (cleavir-env:add-local-macro new-env name expander)))
+      (multiple-value-bind (declarations forms)
+	  (cleavir-code-utilities:separate-ordinary-body body)
+	`(locally ,@declarations
+	   ,@(minimally-compile-sequence forms new-env))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
