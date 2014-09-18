@@ -2,9 +2,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Converting a symbol that has a definition as a symbol macro.
+;;; Converting a symbol that has a definition as a local symbol macro.
 
-(defmethod convert-form (form (info cleavir-env:symbol-macro-info) env)
+(defmethod convert-form (form (info cleavir-env:local-symbol-macro-info) env)
+  (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
+			    (lambda (form env)
+			      (declare (ignore form env))
+			      (cleavir-env:expansion info))
+			    form
+			    env)))
+    (convert expansion env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting a symbol that has a definition as a global symbol macro.
+
+(defmethod convert-form (form (info cleavir-env:global-symbol-macro-info) env)
   (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
 			    (lambda (form env)
 			      (declare (ignore form env))
