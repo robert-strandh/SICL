@@ -388,8 +388,8 @@
   `(load-time-value
     ,(minimally-compile (second form) env)
     ,@(if (null (rest (rest form)))
-	  ,()
-	  (,(third form)))))
+	  '()
+	  (list (third form)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
