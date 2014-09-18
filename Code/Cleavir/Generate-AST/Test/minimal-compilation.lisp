@@ -54,6 +54,14 @@
     ((environment bogus-environment) (name (eql 'undefined-function)))
   nil)
 
+;;; Add some special operators to the environment.
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (loop for operator in '(let let* load-time-value progn setq)
+	do (eval `(defmethod cleavir-env:function-info
+		      ((environment bogus-environment) (name (eql ',operator)))
+		    (make-instance 'cleavir-env:special-operator-info
+		      :name name)))))
+
 ;;; When the name LET is used as a global function, then it is
 ;;; considered a special operator.
 (defmethod cleavir-env:function-info
