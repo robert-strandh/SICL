@@ -69,7 +69,26 @@
   (make-instance 'cleavir-env:special-operator-info
      :name name))
 
+(defun test-let ()
+  ;; Check that the symbol-macro is not shadowed by the first variable
+  ;; binding.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(let ((gsm1 10)
+			 (var gsm1))
+		    x)
+		  *e*)
+		 '(let ((gsm1 10)) (gsm1 gsm1)))))
+  
+
+  ;; Check that a local variable shadows the global symbol macro with
+  ;; the same name.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(let ((gsm1 10)) (gsm1 gsm1))
+		  *e*)
+		 '(let ((gsm1 10)) (gsm1 gsm1)))))
+
 (defun run-tests ()
+  (test-let)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
@@ -95,12 +114,6 @@
 		  '(gsm1 gsm1)
 		  *e*)
 		 '(gsm1 (hello1 hello2))))
-  ;; Check that a local variable shadows the global symbol macro with
-  ;; the same name.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(let ((gsm1 10)) (gsm1 gsm1))
-		  *e*)
-		 '(let ((gsm1 10)) (gsm1 gsm1))))
   ;; Check that the first argument of LOAD-TIME-VALUE is minimally
   ;; compiled, and that the second argument is preserved intact.
   (assert (equal (cleavir-generate-ast:minimally-compile
