@@ -180,13 +180,13 @@
 ;;; If the names are not the same, we continue the search. 
 
 (defmethod variable-ignore ((environment lexical-variable)
-			  (defining-info lexical-variable-info))
+			    (defining-info lexical-variable-info))
   (if (eq (name environment) (name defining-info))
       nil
       (variable-ignore (next environment) defining-info)))
 
 (defmethod variable-ignore ((environment special-variable)
-			  (defining-info special-variable-info))
+			    (defining-info special-variable-info))
   (if (eq (name environment) (name defining-info))
       nil
       (variable-ignore (next environment) defining-info)))
@@ -197,13 +197,13 @@
 ;;; If not, then we continue the search.
 
 (defmethod variable-ignore ((environment variable-ignore)
-			  (defining-info lexical-variable-info))
+			    (defining-info lexical-variable-info))
   (if (eq (name environment) (name defining-info))
       environment
       (variable-ignore (next environment) defining-info)))
 
 (defmethod variable-ignore ((environment variable-ignore)
-			  (defining-info special-variable-info))
+			    (defining-info special-variable-info))
   (if (eq (name environment) (name defining-info))
       environment
       (variable-ignore (next environment) defining-info)))
