@@ -330,6 +330,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compiling LET and LET*
+;;;
+;;; What we are doing here is not quite correct, because we assume
+;;; that the variables in the bindings are lexical variables.
+;;; However, this is minimal compilation, so the only purpose of
+;;; adding a variable binding to the environment is to shadow a
+;;; possible symbol macro.  For that purpose, the exact nature of the
+;;; variable does not matter. 
 
 (defun minimally-compile-binding (binding env)
   (if (symbolp binding)
