@@ -101,6 +101,12 @@
 		  '(let ((gsm1 10)) (gsm1 gsm1))
 		  *e*)
 		 '(let ((gsm1 10)) (gsm1 gsm1))))
+  ;; Check that the first argument of LOAD-TIME-VALUE is minimally
+  ;; compiled, and that the second argument is preserved intact.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(load-time-value gsm1 t)
+		  *e*)
+		 '(load-time-value (hello1 hello2) t)))
   (format t "Tests passed~%"))
 
 (run-tests)
