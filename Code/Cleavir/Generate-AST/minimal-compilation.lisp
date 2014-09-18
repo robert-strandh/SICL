@@ -97,10 +97,22 @@
 ;;;
 ;;; Methods on MINIMALLY-COMPILE-FORM.
 
-;;; Minimally compiling a symbol that has a definition as a symbol
-;;; macro.
+;;; Minimally compiling a symbol that has a definition as a local
+;;; symbol macro.
 (defmethod minimally-compile-form
-    (form (info cleavir-env:symbol-macro-info) env)
+    (form (info cleavir-env:global-symbol-macro-info) env)
+  (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
+			    (lambda (form env)
+			      (declare (ignore form env))
+			      (cleavir-env:expansion info))
+			    form
+			    env)))
+    (minimally-compile expansion env)))
+
+;;; Minimally compiling a symbol that has a definition as a global
+;;; symbol macro.
+(defmethod minimally-compile-form
+    (form (info cleavir-env:global-symbol-macro-info) env)
   (let ((expansion (funcall (coerce *macroexpand-hook* 'function)
 			    (lambda (form env)
 			      (declare (ignore form env))
@@ -471,11 +483,18 @@
 ;;;
 ;;; Compiling SETQ.
 
+(defun minimally-compile-assignment (var form env)
+  (let ((info (cleavir-env:variable-info env var)))
+    (if (and (typep info 'cleavir-env:local-symbol-macro-info)
+	     (eq var (cleavir-env:name info)))
+	(minimally-compile `(setf ,(cleavir-env:expansion info) ,form) env)
+	`(setq ,var ,(minimally-compile form env)))))
+
 (defmethod minimally-compile-special-form
     ((symbol (eql 'setq)) form env)
-  `(setq
+  `(progn
     ,@(loop for (var form) on (cdr form) by #'cddr
-	    append `(,var ,(minimally-compile form env)))))
+	    collect (minimally-compile-assignment var form env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
