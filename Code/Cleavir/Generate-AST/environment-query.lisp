@@ -41,3 +41,31 @@
 		 (setq result (function-info environment new-function-name)))))
     result))
 
+(defun block-info (environment block-name)
+  (let ((result (cleavir-env:block-info environment block-name)))
+    (loop while (null result)
+	  do (restart-case (error 'cleavir-env:no-block-info
+				  :name block-name)
+	       (substitute (new-block-name)
+		 :report (lambda (stream)
+			   (format stream "Substitute a different name."))
+		 :interactive (lambda ()
+				(format *query-io* "Enter new name: ")
+				(list (read)))
+		 (setq result (block-info environment new-block-name)))))
+    result))
+
+(defun tag-info (environment tag-name)
+  (let ((result (cleavir-env:tag-info environment tag-name)))
+    (loop while (null result)
+	  do (restart-case (error 'cleavir-env:no-tag-info
+				  :name tag-name)
+	       (substitute (new-tag-name)
+		 :report (lambda (stream)
+			   (format stream "Substitute a different name."))
+		 :interactive (lambda ()
+				(format *query-io* "Enter new name: ")
+				(list (read)))
+		 (setq result (tag-info environment new-tag-name)))))
+    result))
+
