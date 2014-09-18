@@ -127,8 +127,13 @@
 ;;; variable.
 (defmethod minimally-compile-form
     (form (info cleavir-env:special-variable-info) env)
-  (declare (ignore env))
-  form)
+  (declare (ignore env form))
+  ;; It is possible that the name in the INFO instance is different
+  ;; from the first element of FORM, because if an error occurred
+  ;; because the name was undefined, then a restart may have
+  ;; substituted a different name.  For that reason, we use the name
+  ;; in the INFO instance rather than the form.
+  (cleavir-env:name info))
 
 ;;; Minimally compiling a compound form that calls a local macro.
 (defmethod minimally-compile-form
