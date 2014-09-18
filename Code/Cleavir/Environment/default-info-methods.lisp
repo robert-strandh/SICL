@@ -279,9 +279,7 @@
     (environment (defining-info special-variable-info))
   (make-instance 'special-variable-info
     :name (name defining-info)
-    :type
-    (let ((entry (variable-type environment defining-info)))
-      (type (if (null entry) defining-info entry)))
+    :type (cons 'and (variable-type environment defining-info))
     :ignore
     (let ((entry (variable-ignore environment defining-info)))
       (ignore (if (null entry) defining-info entry)))))
@@ -296,9 +294,7 @@
   (make-instance 'symbol-macro-info
     :name (name defining-info)
     :expansion (expansion defining-info)
-    :type
-    (let ((entry (variable-type environment defining-info)))
-      (type (if (null entry) defining-info entry)))))
+    :type (cons 'and (variable-type environment defining-info))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
