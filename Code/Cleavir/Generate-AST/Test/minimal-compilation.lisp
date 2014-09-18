@@ -85,8 +85,25 @@
 		  *e*)
 		 '(let ((gsm1 10)) (gsm1 gsm1)))))
 
+(defun test-let* ()
+  ;; Check that the symbol-macro is shadowed by the first variable
+  ;; binding.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(let* ((gsm1 10)
+			 (var gsm1))
+		    x)
+		  *e*)
+		 '(let* ((gsm1 10) (var gsm1)) x)))
+  ;; Check that a local variable shadows the global symbol macro with
+  ;; the same name.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(let* ((gsm1 10)) (gsm1 gsm1))
+		  *e*)
+		 '(let* ((gsm1 10)) (gsm1 gsm1)))))
+
 (defun run-tests ()
   (test-let)
+  (test-let*)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
