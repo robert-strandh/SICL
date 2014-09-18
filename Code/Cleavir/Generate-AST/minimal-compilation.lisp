@@ -378,11 +378,11 @@
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'load-time-value)) form env)
-  (cleavir-code-utilities:check-form-proper-list form)
-  (cleavir-code-utilities:check-argcount form 1 2)
-  (cleavir-ast:make-load-time-value-ast
-   (minimally-compile (cadr form) env)
-   (caddr form)))
+  `(load-time-value
+    ,(minimally-compile (second form) env)
+    ,@(if (null (rest (rest form)))
+	  ,()
+	  (,(third form)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
