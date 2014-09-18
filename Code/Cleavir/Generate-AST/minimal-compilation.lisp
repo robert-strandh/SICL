@@ -377,7 +377,7 @@
 	   ,@(if (null declarations)
 		 '()
 		 declarations)
-	   ,@(minimally-compile-sequence forms env))))))
+	   ,@(minimally-compile-sequence forms new-env))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
