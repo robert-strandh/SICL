@@ -111,11 +111,22 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test PROGN
+
+(defun test-progn ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(progn gsm1 gsm1)
+		  *e*)
+		 '(progn (hello1 hello2) (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global function for running all the tests.
 
 (defun run-tests ()
   (test-let)
   (test-let*)
+  (test-progn)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
