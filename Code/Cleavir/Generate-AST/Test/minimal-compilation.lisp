@@ -121,12 +121,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test SETQ
+
+(defun test-setq ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(setq x gsm1 y gsm1)
+		  *e*)
+		 '(setq x (hello1 hello2) y (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global function for running all the tests.
 
 (defun run-tests ()
   (test-let)
   (test-let*)
   (test-progn)
+  (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
