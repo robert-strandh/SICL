@@ -35,7 +35,7 @@
 ;;; form: (HELLO1 HELLO2)
 (defmethod cleavir-env:variable-info
     ((environment bogus-environment) (name (eql 'gsm1)))
-  (make-instance 'cleavir-env:symbol-macro-info 
+  (make-instance 'cleavir-env:global-symbol-macro-info 
     :name name
     :expansion '(hello1 hello2)))
 
@@ -44,7 +44,7 @@
 ;;; form: GSM1
 (defmethod cleavir-env:variable-info
     ((environment bogus-environment) (name (eql 'gsm2)))
-  (make-instance 'cleavir-env:symbol-macro-info 
+  (make-instance 'cleavir-env:global-symbol-macro-info 
     :name name
     :expansion 'gsm1))
 
@@ -74,7 +74,7 @@
 ;;; Test LET
 
 (defun test-let ()
-  ;; Check that the symbol-macro is not shadowed by the first variable
+  ;; Check that the symbol macro is not shadowed by the first variable
   ;; binding.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(let ((gsm1 10)
@@ -127,7 +127,17 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(setq x gsm1 y gsm1)
 		  *e*)
-		 '(setq x (hello1 hello2) y (hello1 hello2)))))
+		 `(progn (setq x (hello1 hello2))
+			 (setq y (hello1 hello2)))))
+  ;; Check that the second gsm1 is not expanded.  SETQ is handled as
+  ;; SETF only if the variable is defined as a symbol macro introduced
+  ;; by SYMBOL-MACROLET, not if it is introduced globally by
+  ;; DEFINE-SYMBOL-MACRO.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(setq x gsm1 gsm1 z)
+		  *e*)
+		 `(progn (setq x (hello1 hello2))
+			 (setq gsm1 z)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
