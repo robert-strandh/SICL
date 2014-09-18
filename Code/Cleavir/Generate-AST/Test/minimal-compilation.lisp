@@ -69,6 +69,10 @@
   (make-instance 'cleavir-env:special-operator-info
      :name name))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test LET
+
 (defun test-let ()
   ;; Check that the symbol-macro is not shadowed by the first variable
   ;; binding.
@@ -85,6 +89,10 @@
 		  *e*)
 		 '(let ((gsm1 10)) (gsm1 gsm1)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test LET*
+
 (defun test-let* ()
   ;; Check that the symbol-macro is shadowed by the first variable
   ;; binding.
@@ -100,6 +108,10 @@
 		  '(let* ((gsm1 10)) (gsm1 gsm1))
 		  *e*)
 		 '(let* ((gsm1 10)) (gsm1 gsm1)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Global function for running all the tests.
 
 (defun run-tests ()
   (test-let)
