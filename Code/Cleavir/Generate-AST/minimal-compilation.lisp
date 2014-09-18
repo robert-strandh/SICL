@@ -475,7 +475,7 @@
     ((symbol (eql 'setq)) form env)
   `(setq
     ,@(loop for (var form) on (cdr form) by #'cddr
-	    collect `(var (minimally-compile form env)))))
+	    append `(,var ,(minimally-compile form env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
