@@ -453,13 +453,9 @@
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'return-from)) form env)
-  (let ((info (cleavir-env:block-info (cadr form) env)))
-    (if (null info)
-	(error 'block-name-unknown
-	       :expr (cadr form))
-	(cleavir-ast:make-return-from-ast
-	 (cleavir-env:identity info)
-	 (minimally-compile (caddr form) env)))))
+  (destructuring-bind (return-from block-name result) form
+    (declare (ignore return-from))
+    `(return-from ,block-name ,(minimally-compile result env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
