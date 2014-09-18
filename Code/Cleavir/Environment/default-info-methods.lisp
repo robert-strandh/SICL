@@ -270,7 +270,7 @@
     :type (cons 'and (variable-type environment defining-info))
     :ignore
     (let ((entry (variable-ignore environment defining-info)))
-      (ignore (if (null entry) defining-info entry)))
+      (if (null entry) nil (ignore defining-info)))
     :dynamic-extent
     (let ((entry (variable-dynamic-extent environment defining-info)))
       (if (null entry) (dynamic-extent defining-info) t))))
@@ -282,7 +282,7 @@
     :type (cons 'and (variable-type environment defining-info))
     :ignore
     (let ((entry (variable-ignore environment defining-info)))
-      (ignore (if (null entry) defining-info entry)))))
+      (if (null entry) nil (ignore entry)))))
 
 (defmethod make-info
     (environment (defining-info constant-variable-info))
@@ -618,7 +618,7 @@
     :type (cons 'and (function-type environment defining-info))
     :ignore
     (let ((entry (function-ignore environment defining-info)))
-      (ignore (if (null entry) defining-info entry)))
+      (if (null entry) nil (ignore entry)))
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
       (if (null entry) (dynamic-extent defining-info) t))))
@@ -630,21 +630,15 @@
     :type (cons 'and (function-type environment defining-info))
     :ignore
     (let ((entry (function-ignore environment defining-info)))
-      (ignore (if (null entry) defining-info entry)))
+      (if (null entry) nil (ignore entry)))
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
       (if (null entry) (dynamic-extent defining-info) t))))
 
 (defmethod make-info
     (environment (defining-info local-macro-info))
-  (make-instance 'local-macro-info
-    :name (name defining-info)
-    :type
-    (let ((entry (function-type environment defining-info)))
-      (type (if (null entry) defining-info entry)))
-    :ignore
-    (let ((entry (function-ignore environment defining-info)))
-      (ignore (if (null entry) defining-info entry)))))
+  (declare (cl:ignore environment))
+  defining-info)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
