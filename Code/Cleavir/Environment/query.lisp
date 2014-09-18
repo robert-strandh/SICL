@@ -3,6 +3,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; VARIABLE-INFO.
+;;;
+;;; We need to distinguish between local and global symbol macros.
+;;; The reason is that SETQ is handled like SETF only if the variable
+;;; assigned to is defined as a symbol macro using SYMBOL-MACROLET,
+;;; but not if it is defined using DEFINE-SYMBOL-MACRO. 
 
 (defgeneric variable-info (environment symbol))
 
@@ -22,7 +27,12 @@
   ((%name :initarg :name :reader name)
    (%value :initarg :value :reader value)))
 
-(defclass symbol-macro-info ()
+(defclass local-symbol-macro-info ()
+  ((%name :initarg :name :reader name)  
+   (%type :initform t :initarg :type :reader type)
+   (%expansion :initarg :expansion :reader expansion)))
+
+(defclass global-symbol-macro-info ()
   ((%name :initarg :name :reader name)  
    (%type :initform t :initarg :type :reader type)
    (%expansion :initarg :expansion :reader expansion)))
