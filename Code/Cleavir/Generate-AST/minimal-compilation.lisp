@@ -447,8 +447,8 @@
 
 (defmethod minimally-compile-special-form
     ((head (eql 'progn)) form env)
-  (cleavir-ast:make-progn-ast
-   (minimally-compile-sequence (cdr form) env)))
+  `(progn
+     ,@(minimally-compile-sequence (cdr form) env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
