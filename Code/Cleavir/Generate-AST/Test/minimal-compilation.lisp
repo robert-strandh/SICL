@@ -77,9 +77,7 @@
 			 (var gsm1))
 		    x)
 		  *e*)
-		 '(let ((gsm1 10)) (gsm1 gsm1)))))
-  
-
+		 '(let ((gsm1 10) (var (hello1 hello2))) x)))
   ;; Check that a local variable shadows the global symbol macro with
   ;; the same name.
   (assert (equal (cleavir-generate-ast:minimally-compile
