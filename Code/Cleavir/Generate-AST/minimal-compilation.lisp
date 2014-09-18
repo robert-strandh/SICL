@@ -391,11 +391,14 @@
 (defmethod minimally-compile-special-form
     ((symbol (eql 'locally)) form env)
   (multiple-value-bind (declarations forms)
-      (cleavir-code-utilities:separate-ordinary-body (cdr form))
+      (cleavir-code-utilities:separate-ordinary-body (rest form))
     (let ((new-env (augment-environment-with-declarations
 		    env declarations)))
-      (cleavir-ast:make-progn-ast
-       (minimally-compile-sequence forms new-env)))))
+      `(locally
+	   ,@(if (null declarations)
+		 '()
+		 declarations)
+	 ,(minimally-compile-sequence forms new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
