@@ -85,10 +85,10 @@
   (cond ((and (not (consp form)) (not (symbolp form)))
 	 form)
 	((symbolp form)
-	 (let ((info (cleavir-env:variable-info env form)))
+	 (let ((info (variable-info env form)))
 	   (minimally-compile-form form info env)))
 	((symbolp (first form))
-	 (let ((info (cleavir-env:function-info env (first form))))
+	 (let ((info (function-info env (first form))))
 	   (minimally-compile-form form info env)))
 	(t
 	 (minimally-compile-lambda-call form env))))
