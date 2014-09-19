@@ -141,6 +141,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test IF
+
+(defun test-if ()
+  ;; Check that all three arguments of IF are minimally compiled.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(if gsm1 gsm1 gsm1)
+		  *e*)
+		 `(if (hello1 hello2) (hello1 hello2) (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test LET
 
 (defun test-let ()
@@ -216,6 +227,7 @@
   (test-catch)
   (test-eval-when)
   (test-go)
+  (test-if)
   (test-let)
   (test-let*)
   (test-progn)
