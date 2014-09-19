@@ -516,3 +516,11 @@
     ((symbol (eql 'the)) form env)
   `(the ,(second form)
 	,(minimally-compile (third form) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compiling CATCH
+
+(defmethod minimally-compile-special-form
+    ((symbol (eql 'catch)) form env)
+  `(catch ,@(minimally-compile-sequence (rest form) env)))
