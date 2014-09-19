@@ -192,6 +192,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test LOAD-TIME-VALUE
+
+(defun test-load-time-value ()
+  ;; Check that the first argument of LOAD-TIME-VALUE is minimally
+  ;; compiled, and that the second argument is preserved intact.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(load-time-value gsm1 t)
+		  *e*)
+		 '(load-time-value (hello1 hello2) t))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test PROGN
 
 (defun test-progn ()
@@ -230,6 +242,7 @@
   (test-if)
   (test-let)
   (test-let*)
+  (test-load-time-value)
   (test-progn)
   (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
@@ -257,12 +270,6 @@
 		  '(gsm1 gsm1)
 		  *e*)
 		 '(gsm1 (hello1 hello2))))
-  ;; Check that the first argument of LOAD-TIME-VALUE is minimally
-  ;; compiled, and that the second argument is preserved intact.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(load-time-value gsm1 t)
-		  *e*)
-		 '(load-time-value (hello1 hello2) t)))
   (format t "Tests passed~%"))
 
 (run-tests)
