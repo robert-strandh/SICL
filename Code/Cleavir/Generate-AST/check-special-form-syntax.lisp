@@ -213,3 +213,12 @@
 (defmethod check-special-form-syntax ((head (eql 'the)) form)
   (cleavir-code-utilities:check-form-proper-list form)
   (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Checking CATCH.
+
+(defmethod check-special-form-syntax ((head (eql 'catch)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil))
+
