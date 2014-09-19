@@ -77,6 +77,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test BLOCK
+
+(defun test-block ()
+  ;; Check that the name of the block is not expanded, but that the
+  ;; body forms are.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(block gsm1 gsm1 gsm1)
+		  *e*)
+		 '(block gsm1 (hello1 hello2) (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test LET
 
 (defun test-let ()
@@ -148,6 +160,7 @@
 ;;; Global function for running all the tests.
 
 (defun run-tests ()
+  (test-block)
   (test-let)
   (test-let*)
   (test-progn)
