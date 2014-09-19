@@ -67,6 +67,19 @@
 	     `(,documentation))
 	,@(minimally-compile-sequence forms env)))))
 
+(defun minimally-compile-ordinary-body (body env)
+  (multiple-value-bind (declarations forms)
+      (cleavir-code-utilities:separate-ordinary-body body)
+    `(,@declarations
+      ,@(minimally-compile-sequence forms env))))
+
+(defun minimally-compile-function-body (body env)
+  (multiple-value-bind (declarations documentation forms)
+      (cleavir-code-utilities:separate-function-body body)
+    `(,@declarations
+      ,@(if (null documentation) '() (list documentation))
+      ,@(minimally-compile-sequence forms env))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Function MINIMALLY-COMPILE-LAMBDA-CALL.
