@@ -51,7 +51,7 @@
 
 (defmethod defining-variable-info ((environment symbol-macro) symbol)
   (if (eq symbol (name environment))
-      (make-instance 'local-symbol-macro-info
+      (make-instance 'symbol-macro-info
 	:name symbol)
       (defining-variable-info (next environment) symbol)))
 
@@ -115,7 +115,7 @@
       (variable-type (next environment) defining-info)))
 
 (defmethod variable-type ((environment symbol-macro)
-			  (defining-info local-symbol-macro-info))
+			  (defining-info symbol-macro-info))
   (if (eq (name environment) (name defining-info))
       (list (type defining-info))
       (variable-type (next environment) defining-info)))
@@ -140,7 +140,7 @@
       (variable-type (next environment) defining-info)))
 
 (defmethod variable-type ((environment variable-type)
-			  (defining-info local-symbol-macro-info))
+			  (defining-info symbol-macro-info))
   (if (eq (name environment) (name defining-info))
       (cons (type environment)
 	    (variable-type (next environment) defining-info))
@@ -289,15 +289,8 @@
   defining-info)
 
 (defmethod make-info
-    (environment (defining-info local-symbol-macro-info))
-  (make-instance 'local-symbol-macro-info
-    :name (name defining-info)
-    :expansion (expansion defining-info)
-    :type (cons 'and (variable-type environment defining-info))))
-
-(defmethod make-info
-    (environment (defining-info global-symbol-macro-info))
-  (make-instance 'global-symbol-macro-info
+    (environment (defining-info symbol-macro-info))
+  (make-instance 'symbol-macro-info
     :name (name defining-info)
     :expansion (expansion defining-info)
     :type (cons 'and (variable-type environment defining-info))))

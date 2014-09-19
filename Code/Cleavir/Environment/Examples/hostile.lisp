@@ -19,7 +19,7 @@
 	 ;; macroexpanding it alters it.
 	 (not (eq symbol (macroexpand-1 symbol)))
 	 ;; Clearly, the symbol is defined as a symbol macro.
-	 (make-instance 'cleavir-env:global-symbol-macro-info
+	 (make-instance 'cleavir-env:symbol-macro-info
 	   :name symbol
 	   :expansion (macroexpand-1 symbol)))
 	(;; If it is neither a constant variable nor a symbol macro,
