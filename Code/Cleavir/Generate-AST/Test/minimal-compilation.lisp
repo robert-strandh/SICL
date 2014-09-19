@@ -130,6 +130,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test GO
+
+(defun test-go ()
+  ;; Check that that the argument of GO is not compiled.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(go gsm1)
+		  *e*)
+		 '(go gsm1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test LET
 
 (defun test-let ()
@@ -204,6 +215,7 @@
   (test-block)
   (test-catch)
   (test-eval-when)
+  (test-go)
   (test-let)
   (test-let*)
   (test-progn)
