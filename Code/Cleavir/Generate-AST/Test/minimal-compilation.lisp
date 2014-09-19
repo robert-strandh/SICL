@@ -100,6 +100,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test EVAL-WHEN
+
+(defun test-eval-when ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(eval-when (:compile-toplevel)
+		    gsm1 gsm1)
+		  *e*)
+		 '(eval-when (:compile-toplevel)
+		   (hello1 hello2) (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test LET
 
 (defun test-let ()
@@ -173,6 +185,7 @@
 (defun run-tests ()
   (test-block)
   (test-catch)
+  (test-eval-when)
   (test-let)
   (test-let*)
   (test-progn)
