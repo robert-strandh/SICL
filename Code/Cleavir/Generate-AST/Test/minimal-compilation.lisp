@@ -89,6 +89,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test CATCH
+
+(defun test-catch ()
+  ;; Check that the all the arguments are expanded.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(catch gsm1 gsm1)
+		  *e*)
+		 '(catch (hello1 hello2) (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test LET
 
 (defun test-let ()
@@ -161,6 +172,7 @@
 
 (defun run-tests ()
   (test-block)
+  (test-catch)
   (test-let)
   (test-let*)
   (test-progn)
