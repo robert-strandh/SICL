@@ -11,49 +11,66 @@
   (loop for form in sequence
 	collect (minimally-compile form env)))
 
-(defun minimally-compile-optional-or-key (optional-or-key env)
-  `(,(first optional-or-key)
-    ,(minimally-compile (second optional-or-key) env)
-    ,@(if (null (rest (rest optional-or-key)))
-	  '()
-	  (rest (rest optional-or-key)))))
+(defun handle-optional-or-key (item env)
+  (let ((new-env env))
+    (values
+     `(,(first item)
+       ,(prog1 (minimally-compile (second item) env)
+	  (setf new-env
+		(cleavir-env:add-lexical-variable new-env (first item))))
+       ,@(if (null (rest (rest item)))
+	     '()
+	     (prog1 (rest (rest item))
+	       (setf new-env
+		     (cleavir-env:add-lexical-variable new-env (third item))))))
+     new-env)))
 
 (defun minimally-compile-lambda-list (parsed-lambda-list env)
-  `(,@(cleavir-code-utilities:required parsed-lambda-list)
-    ,@(let ((whole (cleavir-code-utilities:whole parsed-lambda-list)))
-	(if (eq whole :none)
-	    '()
-	    `(&whole ,(second whole))))
-    ,@(let ((environment (cleavir-code-utilities:environment parsed-lambda-list)))
-	(if (eq environment :none)
-	    '()
-	    `(&environment ,(second environment))))
-    ,@(let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
-	(if (eq rest :none)
-	    '()
-	    `(&rest ,rest)))
-    ,@(let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
-	(if (eq optionals :none)
-	    '()
-	    `(&optional
-	      ,@(loop for optional in optionals
-		      collect (minimally-compile-optional-or-key optional env)))))
-    ,@(let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
-	(if (eq keys :none)
-	    '()
-	    `(&key
-	      ,@(loop for key in keys
-		      collect (minimally-compile-optional-or-key key env)))))
-    ,@(if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
-	  '(&allow-other-keys)
-	  '())
-    ,@(let ((aux (cleavir-code-utilities:aux parsed-lambda-list)))
-	(if (eq aux :none)
-	    '()
-	    `(&aux
-	      ,@(loop for entry in aux
-		      collect `(,(first entry)
-				,(minimally-compile (second entry) env))))))))
+  (let ((new-env env))
+    (loop for req in (cleavir-code-utilities:required parsed-lambda-list)
+	  do (setf new-env
+		   ;; We don't care whether the variable is lexical or
+		   ;; special, because the purpose of adding it to the
+		   ;; environment is just to mask any symbol macro.
+		   (cleavir-env:add-lexical-variable new-env req)))
+    (values
+     `(,@(cleavir-code-utilities:required parsed-lambda-list)
+       ,@(let ((rest (cleavir-code-utilities:rest-body parsed-lambda-list)))
+	   (if (eq rest :none)
+	       '()
+	       (prog1 `(&rest ,rest)
+		 (setf new-env
+		       (cleavir-env:add-lexical-variable new-env rest)))))
+       ,@(let ((optionals (cleavir-code-utilities:optionals parsed-lambda-list)))
+	   (if (eq optionals :none)
+	       '()
+	       `(&optional
+		 ,@(loop for optional in optionals
+			 collect (multiple-value-bind (binding env)
+				     (handle-optional-or-key optional env)
+				   (prog1 binding (setf new-env env)))))))
+       ,@(let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
+	   (if (eq keys :none)
+	       '()
+	       `(&key
+		 ,@(loop for key in keys
+			 collect (multiple-value-bind (binding env)
+				     (handle-optional-or-key key env)
+				   (prog1 binding (setf new-env env)))))))
+       ,@(if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
+	     '(&allow-other-keys)
+	     '())
+       ,@(let ((aux (cleavir-code-utilities:aux parsed-lambda-list)))
+	   (if (eq aux :none)
+	       '()
+	       `(&aux
+		 ,@(loop for (var form) in aux
+			 collect `(,var
+				   ,(minimally-compile form env))
+			 do (setf new-env
+				  (cleavir-env:add-lexical-variable
+				   new-env var)))))))
+     new-env)))
 
 (defun minimally-compile-code (lambda-list body env)
   (multiple-value-bind (declarations documentation forms)
