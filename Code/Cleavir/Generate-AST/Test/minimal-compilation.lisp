@@ -112,6 +112,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test FLET
+
+(defun test-flet ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(flet ((fun1 (x &optional (y gsm1))
+			   (f x y gsm1))
+			  (fun2 (x &key (y gsm1 gsm1))
+			   (f x y gsm1)))
+		    gsm1)
+		  *e*)
+		 '(flet ((fun1 (x &optional (y (hello1 hello2)))
+			  (f x y (hello1 hello2)))
+			 (fun2 (x &key (y (hello1 hello2) gsm1))
+			  (f x y (hello1 hello2))))
+		   (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test LET
 
 (defun test-let ()
