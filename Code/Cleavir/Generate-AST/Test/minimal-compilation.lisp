@@ -54,9 +54,15 @@
     ((environment bogus-environment) (name (eql 'undefined-function)))
   nil)
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *special-operators*
+    '(block catch eval-when flet function go if labels let let* load-time-value
+      locally macrolet multiple-value-call multiple-value-prog1 progn progv
+      quote return-from setq symbol-macrolet tagbody the throw unwind-protect)))
+
 ;;; Add some special operators to the environment.
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (loop for operator in '(let let* load-time-value progn setq)
+  (loop for operator in *special-operators*
 	do (eval `(defmethod cleavir-env:function-info
 		      ((environment bogus-environment) (name (eql ',operator)))
 		    (make-instance 'cleavir-env:special-operator-info
