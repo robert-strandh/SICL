@@ -630,6 +630,7 @@
     :ignore
     (let ((entry (function-ignore environment defining-info)))
       (if (null entry) nil (ignore entry)))
+    ;; FIXME: add compiler-macro
     :dynamic-extent
     (let ((entry (function-dynamic-extent environment defining-info)))
       (if (null entry) (dynamic-extent defining-info) t))))
@@ -638,6 +639,13 @@
     (environment (defining-info local-macro-info))
   (declare (cl:ignore environment))
   defining-info)
+
+(defmethod make-info
+    (environment (defining-info global-macro-info))
+  (make-instance 'global-macro-info
+    :name (name defining-info)
+    ;; FIXME: add compiler-macro
+    :expander (expander defining-info)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
