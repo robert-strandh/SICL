@@ -66,7 +66,7 @@
 	       `(&aux
 		 ,@(loop for (var form) in aux
 			 collect `(,var
-				   ,(minimally-compile form env))
+				   ,(minimally-compile form new-env))
 			 do (setf new-env
 				  (cleavir-env:add-lexical-variable
 				   new-env var)))))))
