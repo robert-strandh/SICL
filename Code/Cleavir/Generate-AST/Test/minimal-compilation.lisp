@@ -238,6 +238,7 @@
   (test-block)
   (test-catch)
   (test-eval-when)
+  (test-flet)
   (test-go)
   (test-if)
   (test-let)
