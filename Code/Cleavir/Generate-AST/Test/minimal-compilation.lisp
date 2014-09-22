@@ -54,6 +54,18 @@
     ((environment bogus-environment) (name (eql 'undefined-function)))
   nil)
 
+;;; When the name GM1 is used as a global function, then it is
+;;; considered a global macro that expands to the following form:
+;;; (HELLO <arg>) where <arg> is the argument given to the macro
+(defmethod cleavir-env:function-info
+    ((environment bogus-environment) (name (eql 'gm1)))
+  (make-instance 'cleavir-env:global-macro-info 
+    :name name
+    :expander (lambda (form env)
+		(declare (ignore env))
+		`(hello ,(second form)))
+    :compiler-macro nil))
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *special-operators*
     '(block catch eval-when flet function go if labels let let* load-time-value
