@@ -11,13 +11,27 @@
   (loop for form in sequence
 	collect (minimally-compile form env)))
 
-(defun handle-optional-or-key (item env)
+(defun handle-optional (item env)
   (let ((new-env env))
     (values
      `(,(first item)
        ,(prog1 (minimally-compile (second item) env)
 	  (setf new-env
 		(cleavir-env:add-lexical-variable new-env (first item))))
+       ,@(if (null (rest (rest item)))
+	     '()
+	     (prog1 (rest (rest item))
+	       (setf new-env
+		     (cleavir-env:add-lexical-variable new-env (third item))))))
+     new-env)))
+
+(defun handle-key (item env)
+  (let ((new-env env))
+    (values
+     `(,(first item)
+       ,(prog1 (minimally-compile (second item) env)
+	  (setf new-env
+		(cleavir-env:add-lexical-variable new-env (second (first item)))))
        ,@(if (null (rest (rest item)))
 	     '()
 	     (prog1 (rest (rest item))
@@ -47,7 +61,7 @@
 	       `(&optional
 		 ,@(loop for optional in optionals
 			 collect (multiple-value-bind (binding env)
-				     (handle-optional-or-key optional new-env)
+				     (handle-optional optional new-env)
 				   (prog1 binding (setf new-env env)))))))
        ,@(let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
 	   (if (eq keys :none)
@@ -55,7 +69,7 @@
 	       `(&key
 		 ,@(loop for key in keys
 			 collect (multiple-value-bind (binding env)
-				     (handle-optional-or-key key new-env)
+				     (handle-key key new-env)
 				   (prog1 binding (setf new-env env)))))))
        ,@(if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
 	     '(&allow-other-keys)
