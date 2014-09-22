@@ -124,7 +124,7 @@
 		  *e*)
 		 '(flet ((fun1 (x &optional (y (hello1 hello2)))
 			  (f x y (hello1 hello2)))
-			 (fun2 (x &key (y (hello1 hello2) gsm1))
+			 (fun2 (x &key ((:y y) (hello1 hello2) gsm1))
 			  (f x y (hello1 hello2))))
 		   (hello1 hello2)))))
 
