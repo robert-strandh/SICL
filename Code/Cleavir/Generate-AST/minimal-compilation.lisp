@@ -47,7 +47,7 @@
 	       `(&optional
 		 ,@(loop for optional in optionals
 			 collect (multiple-value-bind (binding env)
-				     (handle-optional-or-key optional env)
+				     (handle-optional-or-key optional new-env)
 				   (prog1 binding (setf new-env env)))))))
        ,@(let ((keys (cleavir-code-utilities:keys parsed-lambda-list)))
 	   (if (eq keys :none)
@@ -55,7 +55,7 @@
 	       `(&key
 		 ,@(loop for key in keys
 			 collect (multiple-value-bind (binding env)
-				     (handle-optional-or-key key env)
+				     (handle-optional-or-key key new-env)
 				   (prog1 binding (setf new-env env)))))))
        ,@(if (cleavir-code-utilities:allow-other-keys parsed-lambda-list)
 	     '(&allow-other-keys)
