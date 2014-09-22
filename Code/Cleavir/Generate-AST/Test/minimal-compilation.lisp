@@ -246,6 +246,15 @@
 		  *e*)
 		 `(flet ((fun (&aux (gsm1 12)) gsm1))
 		    (fun (hello1 hello2)))))
+  ;; Test that the name of the local function shadows the global macro
+  ;; in the body of the flet, but not in the body of the local
+  ;; function.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(flet ((gm1 (x) (gm1 x)))
+		    (gm1 x))
+		  *e*)
+		 '(flet ((gm1 (x) (hello x)))
+		   (gm1 x))))
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(flet ((fun1 (x &optional (y gsm1))
 			   (f x y gsm1))
