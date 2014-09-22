@@ -282,7 +282,13 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(function gsm1)
 		  *e*)
-		 '(function gsm1))))
+		 '(function gsm1)))
+  ;;; Test that required parameter of lambda expression shadows global
+  ;;; symbol macro inside the body of the lambda expression.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(function (lambda (gsm1) gsm1))
+		  *e*)
+		 '(function (lambda (gsm1) gsm1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
