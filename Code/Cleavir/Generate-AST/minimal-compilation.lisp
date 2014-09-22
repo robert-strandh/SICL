@@ -326,7 +326,13 @@
 		     collect `(,name ,@(minimally-compile-code
 					lambda-list local-body env)))
 	      ,@declarations
-	      ,@(minimally-compile-sequence forms env))))
+	      ,@(loop with new-env = env
+		      for definition in (second form)
+		      for name = (first definition)
+		      do (setf new-env
+			       (cleavir-env:add-local-function new-env name))
+		      finally
+			 (return (minimally-compile-sequence forms new-env))))))
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'flet)) form env)
