@@ -270,6 +270,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test FUNCTION
+
+(defun test-function ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(function fff)
+		  *e*)
+		 '(function fff))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test GO
 
 (defun test-go ()
@@ -379,6 +389,7 @@
   (test-catch)
   (test-eval-when)
   (test-flet)
+  (test-function)
   (test-go)
   (test-if)
   (test-let)
