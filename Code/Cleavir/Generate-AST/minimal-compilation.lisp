@@ -347,7 +347,7 @@
 ;;; Compiling FUNCTION.
 
 (defun minimally-compile-lambda-function (lambda-form env)
-  (destructuring-bind (lambda-list . body) lambda-form
+  (destructuring-bind (lambda-list . body) (rest lambda-form)
     `(lambda
 	 ,@(minimally-compile-code lambda-list body env))))
 
