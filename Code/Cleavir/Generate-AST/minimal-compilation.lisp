@@ -81,9 +81,9 @@
 	  (minimally-compile-lambda-list parsed-lambda-list env)
 	`(,compiled-lambda-list
 	  ,@declarations
-	  ,(if (null documentation)
-	       '()
-	       `(,documentation))
+	  ,@(if (null documentation)
+		'()
+		`(,documentation))
 	  ,@(minimally-compile-sequence forms new-env))))))
 
 (defun minimally-compile-ordinary-body (body env)
