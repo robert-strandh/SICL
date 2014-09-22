@@ -309,10 +309,10 @@
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body (cddr form))
     `(,symbol ,(loop for (name lambda-list . local-body) in (second form)
-		     collect `(,name ,(minimally-compile-code
-				       lambda-list local-body env)
-				     ,@declarations
-				     ,@(minimally-compile-sequence forms env))))))
+		     collect `(,name ,@(minimally-compile-code
+					lambda-list local-body env)))
+	      ,@declarations
+	      ,@(minimally-compile-sequence forms env))))
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'flet)) form env)
