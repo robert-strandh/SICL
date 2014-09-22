@@ -77,12 +77,14 @@
       (cleavir-code-utilities:separate-function-body body)
     (let ((parsed-lambda-list
 	    (cleavir-code-utilities:parse-ordinary-lambda-list lambda-list)))
-      `(,(minimally-compile-lambda-list parsed-lambda-list env)
-	,@declarations
-	,(if (null documentation)
-	     '()
-	     `(,documentation))
-	,@(minimally-compile-sequence forms env)))))
+      (multiple-value-bind (compiled-lambda-list new-env)
+	  (minimally-compile-lambda-list parsed-lambda-list env)
+	`(,compiled-lambda-list
+	  ,@declarations
+	  ,(if (null documentation)
+	       '()
+	       `(,documentation))
+	  ,@(minimally-compile-sequence forms new-env))))))
 
 (defun minimally-compile-ordinary-body (body env)
   (multiple-value-bind (declarations forms)
@@ -180,7 +182,7 @@
   (let ((compiler-macro (cleavir-env:compiler-macro info)))
     (if (null compiler-macro)
 	;; There is no compiler macro, so we just apply the macro
-	;; expander, and then minmally compile the resulting form.
+	;; expander, and then minimally compile the resulting form.
 	(minimally-compile (funcall (coerce *macroexpand-hook* 'function)
 				    (cleavir-env:expander info)
 				    form
@@ -446,22 +448,22 @@
     (multiple-value-bind (declarations documentation forms)
 	(cleavir-code-utilities:separate-function-body body)
       (let* ((parsed-lambda-list
-	       (cleavir-code-utilities:parse-macro-lambda-list lambda-list))
-	     (compiled-lambda-list
-	       (minimally-compile-lambda-list parsed-lambda-list env)))
-	(let ((expander-form
-		(cleavir-code-utilities:parse-macro
-		 name
-		 compiled-lambda-list
-		 `(,@(if (null declarations)
-			 '()
-			 (list declarations))
-		   ,@(if (null documentation)
-			 '()
-			 (list documentation))
-		   ,@(minimally-compile-sequence forms env))
-		 env)))
-	  (compile nil expander-form))))))
+	       (cleavir-code-utilities:parse-macro-lambda-list lambda-list)))
+	(multiple-value-bind (compiled-lambda-list new-env)
+	    (minimally-compile-lambda-list parsed-lambda-list env)
+	  (let ((expander-form
+		  (cleavir-code-utilities:parse-macro
+		   name
+		   compiled-lambda-list
+		   `(,@(if (null declarations)
+			   '()
+			   (list declarations))
+		     ,@(if (null documentation)
+			   '()
+			   (list documentation))
+		     ,@(minimally-compile-sequence forms new-env))
+		   env)))
+	    (compile nil expander-form)))))))
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'macrolet)) form env)
