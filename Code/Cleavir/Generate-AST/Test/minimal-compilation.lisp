@@ -276,7 +276,13 @@
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(function fff)
 		  *e*)
-		 '(function fff))))
+		 '(function fff)))
+  ;;; Test that the name of the function is not expanded as a symbol
+  ;;; macro.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(function gsm1)
+		  *e*)
+		 '(function gsm1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
