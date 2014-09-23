@@ -17,3 +17,12 @@
 ;;; treated as a PROGN.
 
 (defgeneric walk-sequence (sequence walker environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function WALK-SELF-EVALUATING.  
+;;;
+;;; This generic function is called by the code walker in order to
+;;; process a self-evaluating object.
+
+(defgeneric walk-self-evaluating (form walker environment))
