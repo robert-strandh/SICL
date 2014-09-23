@@ -66,6 +66,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function WALK-LAMBDA-CALL.
+;;;
+;;; This function is called by the code walker in order to process a
+;;; compound form where the first element is a CONS where the CAR is
+;;; the symbol LAMBDA.
+
+(defgeneric walk-lambda-call (form walker env))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Default method on WALK-SEQUENCE.
 
 (defmethod walk-sequence (sequence walker env)
