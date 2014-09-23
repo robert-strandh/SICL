@@ -44,3 +44,11 @@
 ;;; process a compound form.
 
 (defgeneric walk-compound (form walker environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Default method on WALK-SEQUENCE.
+
+(defmethod walk-sequence (sequence walker env)
+  (loop for form in sequence
+	collect (walk-form form walker sequence)))
