@@ -65,6 +65,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Default method on WALK-SYMBOL.
+
+(defmethod walk-symbol (form walker env)
+  (let ((info (cleavir-env:variable-info env form)))
+    (walk-variable-info form info walker env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Default method on WALK-FORM.
 
 (defmethod walk-form (form walker env)
