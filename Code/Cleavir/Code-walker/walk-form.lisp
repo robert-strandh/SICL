@@ -26,3 +26,12 @@
 ;;; process a self-evaluating object.
 
 (defgeneric walk-self-evaluating (form walker environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function WALK-SYMBOL.  
+;;;
+;;; This generic function is called by the code walker in order to
+;;; process a symbol.
+
+(defgeneric walk-symbol (form walker environment))
