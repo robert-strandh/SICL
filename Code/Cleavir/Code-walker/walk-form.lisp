@@ -38,6 +38,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function WALK-VARIABLE-INFO.  
+;;;
+;;; This generic function is called by the code walker in order to
+;;; process a symbol according to the INFO instance describing the
+;;; nature of the symbol as a variable name. 
+
+(defgeneric walk-variable-info (form info walker environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function WALK-COMPOUND.  
 ;;;
 ;;; This generic function is called by the code walker in order to
