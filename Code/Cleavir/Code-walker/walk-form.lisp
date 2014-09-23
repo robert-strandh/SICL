@@ -102,6 +102,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Default method on WALK-COMPOUND.
+
+(defmethod walk-compound (form walker env)
+  (cond ((symbolp (first form))
+	 (let ((info (cleavir-env:function-info env (first form))))
+	   (walk-function-info form info walker env)))
+	((and (consp (first form)) (eq (first (first form)) 'lambda))
+	 (walk-lambda-call form walker env))
+	(t
+	 (walk-abnormal-call form walker env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Default method on WALK-FORM.
 
 (defmethod walk-form (form walker env)
