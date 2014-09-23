@@ -52,3 +52,15 @@
 (defmethod walk-sequence (sequence walker env)
   (loop for form in sequence
 	collect (walk-form form walker sequence)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Default method on WALK-FORM.
+
+(defmethod walk-form (form walker env)
+  (cond ((and (not (consp form)) (not (symbolp form)))
+	 (walk-self-evaluating form walker env))
+	((symbolp form)
+	 (walk-symbol form walker env))
+	(t
+	 (walk-compound form walker env))))
