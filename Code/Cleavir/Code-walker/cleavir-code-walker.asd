@@ -5,4 +5,5 @@
 	       :cleavir-environment)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "walk-form")))
