@@ -76,6 +76,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function WALK-ABNORMAL-CALL.
+;;;
+;;; This function is called by the code walker in order to process a
+;;; compound form where the first element is neither a symbol nor a
+;;; CONS where the CAR is the symbol LAMBDA.  
+
+(defgeneric walk-abnormal-call (form walker env))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Default method on WALK-SEQUENCE.
 
 (defmethod walk-sequence (sequence walker env)
