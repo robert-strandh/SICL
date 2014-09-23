@@ -35,3 +35,12 @@
 ;;; process a symbol.
 
 (defgeneric walk-symbol (form walker environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function WALK-COMPOUND.  
+;;;
+;;; This generic function is called by the code walker in order to
+;;; process a compound form.
+
+(defgeneric walk-compound (form walker environment))
