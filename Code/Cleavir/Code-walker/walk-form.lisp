@@ -57,6 +57,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function WALK-FUNCTION-INFO.  
+;;;
+;;; This generic function is called by the code walker in order to
+;;; process a compound form where the first element is a symbol.
+
+(defgeneric walk-function-info (form info walker environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Default method on WALK-SEQUENCE.
 
 (defmethod walk-sequence (sequence walker env)
