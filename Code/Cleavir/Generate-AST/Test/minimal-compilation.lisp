@@ -501,6 +501,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test MACROLET
+
+(defun test-macrolet ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(macrolet ((gm1 (a b) `(cons ,a ,b)))
+		    (gm1 x y))
+		  *e*)
+		 '(cons x y))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test PROGN
 
 (defun test-progn ()
@@ -544,6 +555,7 @@
   (test-let*)
   (test-load-time-value)
   (test-locally)
+  (test-macrolet)
   (test-progn)
   (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
