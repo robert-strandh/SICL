@@ -627,6 +627,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test THROW.
+
+(defun test-throw ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(throw gsm1 gsm1)
+		  *e*)
+		 '(throw (hello1 hello2) (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global function for running all the tests.
 
 (defun run-tests ()
@@ -653,6 +663,7 @@
   (test-symbol-macrolet)
   (test-tagbody)
   (test-the)
+  (test-throw)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
