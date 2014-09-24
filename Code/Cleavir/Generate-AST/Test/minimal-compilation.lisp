@@ -556,6 +556,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test QUOTE
+
+(defun test-quote ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(quote gsm1)
+		  *e*)
+		 '(quote gsm1))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test SETQ
 
 (defun test-setq ()
@@ -594,6 +604,7 @@
   (test-multiple-value-prog1)
   (test-progn)
   (test-progv)
+  (test-quote)
   (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
