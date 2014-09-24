@@ -647,6 +647,11 @@
     ;; FIXME: add compiler-macro
     :expander (expander defining-info)))
 
+(defmethod make-info
+    (environment (defining-info special-operator-info))
+  (declare (cl:ignore environment))
+  defining-info)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; The main method on FUNCTION-INFO specialized to ENTRY. 
