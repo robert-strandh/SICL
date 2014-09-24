@@ -637,6 +637,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test UNWIND-PROTECT.
+
+(defun test-unwind-protect ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(unwind-protect gsm1 gsm1 gsm1)
+		  *e*)
+		 '(unwind-protect (hello1 hello2)
+		   (hello1 hello2)
+		   (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global function for running all the tests.
 
 (defun run-tests ()
@@ -664,6 +676,7 @@
   (test-tagbody)
   (test-the)
   (test-throw)
+  (test-unwind-protect)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
