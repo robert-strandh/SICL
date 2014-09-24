@@ -594,6 +594,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test SYMBOL-MACROLET
+
+(defun test-symbol-macrolet ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(symbol-macrolet ((gsm1 (bla bla)))
+		    gsm1 gsm2)
+		  *e*)
+		 `(locally (bla bla) (bla bla)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global function for running all the tests.
 
 (defun run-tests ()
@@ -617,6 +628,7 @@
   (test-quote)
   (test-return-from)
   (test-setq)
+  (test-symbol-macrolet)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
