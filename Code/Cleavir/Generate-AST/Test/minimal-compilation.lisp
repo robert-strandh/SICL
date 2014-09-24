@@ -605,6 +605,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test TAGBODY.
+
+(defun test-tagbody ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(tagbody gsm1 (progn gsm1) gsm1 (progn gsm1))
+		  *e*)
+		 `(tagbody
+		   gsm1 (progn (hello1 hello2))
+		   gsm1 (progn (hello1 hello2))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global function for running all the tests.
 
 (defun run-tests ()
@@ -629,6 +641,7 @@
   (test-return-from)
   (test-setq)
   (test-symbol-macrolet)
+  (test-tagbody)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
