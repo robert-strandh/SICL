@@ -254,6 +254,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking THROW
+
+(defmethod check-special-form-syntax ((head (eql 'throw)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 2))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking CATCH.
 
 (defmethod check-special-form-syntax ((head (eql 'catch)) form)
