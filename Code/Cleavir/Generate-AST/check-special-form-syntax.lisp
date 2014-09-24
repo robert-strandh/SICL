@@ -196,6 +196,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking PROGV.
+
+(defmethod check-special-form-syntax ((head (eql 'progv)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 2 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking RETURN-FROM.
 
 (defmethod check-special-form-syntax ((head (eql 'return-from)) form)
