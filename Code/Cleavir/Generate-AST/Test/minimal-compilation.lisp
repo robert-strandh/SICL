@@ -617,6 +617,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test THE.
+
+(defun test-the ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(the gsm1 gsm1)
+		  *e*)
+		 `(the gsm1 (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Global function for running all the tests.
 
 (defun run-tests ()
@@ -642,6 +652,7 @@
   (test-setq)
   (test-symbol-macrolet)
   (test-tagbody)
+  (test-the)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
 		  *e*)
