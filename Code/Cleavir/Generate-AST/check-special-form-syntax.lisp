@@ -173,6 +173,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking MULTIPLE-VALUE-CALL.
+
+(defmethod check-special-form-syntax ((head (eql 'multiple-value-call)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking PROGN.
 
 (defmethod check-special-form-syntax ((head (eql 'progn)) form)
