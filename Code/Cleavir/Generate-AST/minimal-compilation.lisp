@@ -511,6 +511,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compiling MULTIPLE-VALUE-PROG1.
+
+(defmethod minimally-compile-special-form
+    ((head (eql 'multiple-value-prog1)) form env)
+  (destructuring-bind (first-form . body) (rest form)
+    `(multiple-value-prog1
+	 ,(minimally-compile first-form env)
+       ,@(minimally-compile-sequence body env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compiling PROGN.
 
 (defmethod minimally-compile-special-form
