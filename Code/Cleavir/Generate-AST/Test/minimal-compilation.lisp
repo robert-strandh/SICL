@@ -504,6 +504,7 @@
 ;;; Test MACROLET
 
 (defun test-macrolet ()
+  ;; Test that a call to the local macro is expanded.
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  '(macrolet ((gm1 (a b) `(cons ,a ,b)))
 		    (gm1 x y))
