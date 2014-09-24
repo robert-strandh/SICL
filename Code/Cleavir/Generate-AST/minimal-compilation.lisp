@@ -500,6 +500,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compiling MULTIPLE-VALUE-CALL.
+
+(defmethod minimally-compile-special-form
+    ((head (eql 'multiple-value-call)) form env)
+  (destructuring-bind (function-form . body) (rest form)
+    `(multiple-value-call
+	 ,(minimally-compile function-form env)
+       ,@(minimally-compile-sequence body env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compiling PROGN.
 
 (defmethod minimally-compile-special-form
