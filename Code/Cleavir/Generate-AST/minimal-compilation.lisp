@@ -603,6 +603,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compiling THROW.
+
+(defmethod minimally-compile-special-form
+    ((symbol (eql 'throw)) form env)
+  (destructuring-bind (tag result-form) (rest form)
+    `(throw ,(minimally-compile tag env)
+       ,(minimally-compile result-form env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compiling CATCH
 
 (defmethod minimally-compile-special-form
