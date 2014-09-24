@@ -545,6 +545,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test PROGV
+
+(defun test-progv ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(progv gsm1 gsm1 gsm1 gsm1)
+		  *e*)
+		 '(progv (hello1 hello2) (hello1 hello2)
+		   (hello1 hello2) (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test SETQ
 
 (defun test-setq ()
@@ -582,6 +593,7 @@
   (test-multiple-value-call)
   (test-multiple-value-prog1)
   (test-progn)
+  (test-progv)
   (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
