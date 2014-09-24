@@ -262,6 +262,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Checking UNWIND-PROTECT
+
+(defmethod check-special-form-syntax ((head (eql 'unwind-protect)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Checking CATCH.
 
 (defmethod check-special-form-syntax ((head (eql 'catch)) form)
