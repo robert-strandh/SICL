@@ -613,6 +613,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compiling UNWIND-PROTECT.
+
+(defmethod minimally-compile-special-form
+    ((symbol (eql 'unwind-protect)) form env)
+  (destructuring-bind (protected-form . cleanup-forms) (rest form)
+    `(unwind-protect ,(minimally-compile protected-form env)
+       ,@(minimally-compile-sequence cleanup-forms env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compiling CATCH
 
 (defmethod minimally-compile-special-form
