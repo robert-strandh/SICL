@@ -522,7 +522,17 @@
 		 '(multiple-value-call
 		   (hello1 hello2) (hello1 hello2) (hello1 hello2)))))
   
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Test MULTIPLE-VALUE-PROG1.
 
+(defun test-multiple-value-prog1 ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(multiple-value-prog1 gsm1 gsm1 gsm1)
+		  *e*)
+		 '(multiple-value-prog1
+		   (hello1 hello2) (hello1 hello2) (hello1 hello2)))))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test PROGN
@@ -570,6 +580,7 @@
   (test-locally)
   (test-macrolet)
   (test-multiple-value-call)
+  (test-multiple-value-prog1)
   (test-progn)
   (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
