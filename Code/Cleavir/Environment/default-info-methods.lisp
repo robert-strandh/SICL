@@ -346,7 +346,8 @@
 (defmethod defining-function-info ((environment macro) symbol)
   (if (eq symbol (name environment))
       (make-instance 'local-macro-info
-	:name symbol)
+	:name symbol
+	:expander (expander environment))
       (defining-function-info (next environment) symbol)))
 
 ;;; This method implements the action to take when the argument is an
