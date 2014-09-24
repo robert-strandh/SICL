@@ -566,6 +566,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test RETURN-FROM
+
+(defun test-return-from ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(return-from gsm1 gsm1)
+		  *e*)
+		 '(return-from gsm1 (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test SETQ
 
 (defun test-setq ()
@@ -605,6 +615,7 @@
   (test-progn)
   (test-progv)
   (test-quote)
+  (test-return-from)
   (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  'hello
