@@ -578,7 +578,7 @@
     (loop for (name expansion) in (second form)
 	  do (setf new-env
 		   (cleavir-env:add-local-symbol-macro new-env name expansion)))
-    (minimally-compile `(progn ,@(rest (rest form))) new-env)))
+    (minimally-compile `(locally ,@(rest (rest form))) new-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
