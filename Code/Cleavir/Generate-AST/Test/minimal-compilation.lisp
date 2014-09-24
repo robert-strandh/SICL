@@ -513,6 +513,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test MULTIPLE-VALUE-CALL.
+
+(defun test-multiple-value-call ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(multiple-value-call gsm1 gsm1 gsm1)
+		  *e*)
+		 '(multiple-value-call
+		   (hello1 hello2) (hello1 hello2) (hello1 hello2)))))
+  
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test PROGN
 
 (defun test-progn ()
@@ -557,6 +569,7 @@
   (test-load-time-value)
   (test-locally)
   (test-macrolet)
+  (test-multiple-value-call)
   (test-progn)
   (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
