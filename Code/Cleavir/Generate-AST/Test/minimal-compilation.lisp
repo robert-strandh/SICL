@@ -491,6 +491,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test LOCALLY
+
+(defun test-locally ()
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(locally gsm1)
+		  *e*)
+		 '(locally (hello1 hello2)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test PROGN
 
 (defun test-progn ()
@@ -533,6 +543,7 @@
   (test-let)
   (test-let*)
   (test-load-time-value)
+  (test-locally)
   (test-progn)
   (test-setq)
   (assert (equal (cleavir-generate-ast:minimally-compile
