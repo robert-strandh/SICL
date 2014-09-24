@@ -531,6 +531,18 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Compiling PROGV.
+
+(defmethod minimally-compile-special-form
+    ((head (eql 'progv)) form env)
+  (destructuring-bind (symbols values . forms) (rest form)
+    `(progv
+	 ,(minimally-compile symbols env)
+	 ,(minimally-compile values env)
+       ,@(minimally-compile-sequence forms env))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Compiling RETURN-FROM.
 
 (defmethod minimally-compile-special-form
