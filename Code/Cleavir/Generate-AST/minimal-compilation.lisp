@@ -454,10 +454,8 @@
     (let ((new-env (augment-environment-with-declarations
 		    env declarations)))
       `(locally
-	   ,@(if (null declarations)
-		 '()
-		 declarations)
-	 ,(minimally-compile-sequence forms new-env)))))
+	   ,@declarations
+	 ,@(minimally-compile-sequence forms new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
