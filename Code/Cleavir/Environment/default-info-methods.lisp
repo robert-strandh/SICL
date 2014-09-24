@@ -52,7 +52,8 @@
 (defmethod defining-variable-info ((environment symbol-macro) symbol)
   (if (eq symbol (name environment))
       (make-instance 'symbol-macro-info
-	:name symbol)
+	:name symbol
+	:expansion (expansion environment))
       (defining-variable-info (next environment) symbol)))
 
 ;;; This method implements the action to take when the argument is an
