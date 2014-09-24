@@ -314,6 +314,131 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Test LABELS
+
+(defun test-labels ()
+  ;; Test that a required parameter of the local function shadows the
+  ;; global symbol macro in the &OPTIONAL part of the lambda list of
+  ;; the local function, but not in the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (gsm1 &optional (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (gsm1 &optional (x gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that a required parameter of the local function shadows the
+  ;; global symbol macro in the &KEY part of the lambda list of
+  ;; the local function, but not in the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (gsm1 &key (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (gsm1 &key ((:x x) gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that a required parameter of the local function shadows the
+  ;; global symbol macro in the &AUX part of the lambda list of
+  ;; the local function, but not in the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (gsm1 &aux (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (gsm1 &aux (x gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that a required parameter of the local function shadows the
+  ;; global symbol macro in the body of the local function, but not in
+  ;; the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (gsm1) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (gsm1) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &OPTIONAL parameter of the local function shadows
+  ;; the global symbol macro in the &KEY part of the lambda list of
+  ;; the local function, but not in the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&optional (gsm1 12) &key (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&optional (gsm1 12) &key ((:x x) gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &OPTIONAL parameter of the local function shadows
+  ;; the global symbol macro in the remaining &OPTIONAL part of the
+  ;; lambda list of the local function, but not in the body of the
+  ;; LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&optional (gsm1 12) (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&optional (gsm1 12) (x gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &OPTIONAL parameter of the local function shadows
+  ;; the global symbol macro in the &AUX part of the lambda list of
+  ;; the local function, but not in the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&optional (gsm1 12) &aux (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&optional (gsm1 12) &aux (x gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &OPTIONAL parameter of the local function shadows
+  ;; the global symbol macro in body of the local function, but not in
+  ;; the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&optional (gsm1 12)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&optional (gsm1 12)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &KEY parameter of the local function shadows the
+  ;; global symbol macro in the remaining &KEY part of the lambda list
+  ;; of the local function, but not in the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&key (gsm1 12) (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&key ((:gsm1 gsm1) 12) ((:x x) gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &KEY parameter of the local function shadows the
+  ;; global symbol macro in the &AUX part of the lambda list of the
+  ;; local function, but not in the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&key (gsm1 12) &aux (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&key ((:gsm1 gsm1) 12) &aux (x gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &KEY parameter of the local function shadows the
+  ;; global symbol macro in the body of the local function, but not in
+  ;; the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&key (gsm1 12)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&key ((:gsm1 gsm1) 12)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &AUX parameter of the local function shadows
+  ;; the global symbol macro in the remaining &AUX part of the
+  ;; lambda list of the local function, but not in the body of the
+  ;; LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&aux (gsm1 12) (x gsm1)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&aux (gsm1 12) (x gsm1)) gsm1))
+		    (fun (hello1 hello2)))))
+  ;; Test that an &AUX parameter of the local function shadows the
+  ;; global symbol macro in the body of the local function, but not in
+  ;; the body of the LABELS.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  `(labels ((fun (&aux (gsm1 12)) gsm1))
+		     (fun gsm1))
+		  *e*)
+		 `(labels ((fun (&aux (gsm1 12)) gsm1))
+		    (fun (hello1 hello2))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Test LET
 
 (defun test-let ()
@@ -404,6 +529,7 @@
   (test-function)
   (test-go)
   (test-if)
+  (test-labels)
   (test-let)
   (test-let*)
   (test-load-time-value)
