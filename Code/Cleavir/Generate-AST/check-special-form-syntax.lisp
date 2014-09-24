@@ -164,6 +164,13 @@
 ;;;
 ;;; Checking MACROLET.
 
+(defmethod check-special-form-syntax ((head (eql 'macrolet)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil)
+  (unless (cleavir-code-utilities:proper-list-p (cadr form))
+    (error 'macrolet-definitions-must-be-proper-list
+	   :expr form)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Checking PROGN.
