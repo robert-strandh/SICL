@@ -99,6 +99,13 @@
 ;;;
 ;;; Checking LABELS.
 
+(defmethod check-special-form-syntax ((head (eql 'labels)) form)
+  (cleavir-code-utilities:check-form-proper-list form)
+  (cleavir-code-utilities:check-argcount form 1 nil)
+  (unless (cleavir-code-utilities:proper-list-p (cadr form))
+    (error 'labels-functions-must-be-proper-list
+	   :expr form)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Checking LET and LET*
