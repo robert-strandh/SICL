@@ -17,3 +17,6 @@
 	 t)
 	(t
 	 (call-next-method))))
+
+(defmethod same-p ((ast1 cleavir-ast:constant-ast) ast2 table)
+  (equalp (cleavir-ast:value ast1) (cleavir-ast:value ast2)))
