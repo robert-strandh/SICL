@@ -435,7 +435,16 @@
 		     (fun gsm1))
 		  *e*)
 		 `(labels ((fun (&aux (gsm1 12)) gsm1))
-		    (fun (hello1 hello2))))))
+		    (fun (hello1 hello2)))))
+  ;; Test that the name of the local function shadows the global macro
+  ;; both in the body of the LABELS and in the body of the local
+  ;; function.
+  (assert (equal (cleavir-generate-ast:minimally-compile
+		  '(flet ((gm1 (x) (gm1 x)))
+		    (gm1 x))
+		  *e*)
+		 '(flet ((gm1 (x) (gm1 x)))
+		   (gm1 x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
