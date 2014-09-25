@@ -33,3 +33,9 @@
 
 (defmethod same-p ((ast1 cleavir-ast:fdefinition-ast) ast2 table)
   (equal (cleavir-ast:name ast1) (cleavir-ast:name ast2)))
+
+(defmethod same-p ((ast1 cleavir-ast:call-ast) ast2 table)
+  (and (same-p (cleavir-ast:callee-ast ast1) (cleavir-ast:callee-ast ast2))
+       (every (lambda (a1 a2) (same-p a1 a2 table))
+	      (cleavir-ast:argument-asts ast1)
+	      (cleavir-ast:argument-asts ast2))))
