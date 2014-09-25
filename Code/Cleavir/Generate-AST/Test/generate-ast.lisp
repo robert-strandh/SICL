@@ -26,3 +26,7 @@
 
 (defmethod same-p ((ast1 cleavir-ast:symbol-value-ast) ast table)
   (eq (cleavir-ast:symbol ast1) (cleavir-ast:symbol ast2)))
+
+(defmethod same-p ((ast1 cleavir-ast:set-symbol-value-ast) ast table)
+  (and (eq (cleavir-ast:symbol ast1) (cleavir-ast:symbol ast2))
+       (same-p (cleavir-ast:value-ast ast1) (cleavir-ast:value-ast ast2))))
