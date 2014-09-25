@@ -27,7 +27,7 @@
    #:progn-ast #:make-progn-ast #:form-asts
    #:return-from-ast #:make-return-from-ast #:form-ast
    #:setq-ast #:make-setq-ast #:lhs-ast #:value-ast
-   #:tagbody-ast #:make-tagbody-ast #:items
+   #:tagbody-ast #:make-tagbody-ast #:item-asts
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast #:type-specifiers #:value-type #:check-p
    #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
