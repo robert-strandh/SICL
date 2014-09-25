@@ -178,16 +178,16 @@
 ;;; reference to a special variable.
 
 (defclass symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
+  ((%symbol :initarg :symbol :reader symbol)))
 
-(defun make-symbol-value-ast (symbol-ast)
-  (make-instance 'symbol-value-ast :symbol-ast symbol-ast))
+(defun make-symbol-value-ast (symbol)
+  (make-instance 'symbol-value-ast :symbol symbol))
 
 (cleavir-io:define-save-info symbol-value-ast
-  (:symbol-ast symbol-ast))
+  (:symbol symbol))
 
 (defmethod children ((ast symbol-value-ast))
-  (list (symbol-ast ast)))
+  (list (symbol ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -197,20 +197,20 @@
 ;;; assignment to a special variable.
 
 (defclass set-symbol-value-ast (ast no-value-ast-mixin)
-  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)
+  ((%symbol :initarg :symbol :reader symbol)
    (%value-ast :initarg :value-ast :reader value-ast)))
 
-(defun make-set-symbol-value-ast (symbol-ast value-ast)
-  (make-instance 'symbol-value-ast
-    :symbol-ast symbol-ast
+(defun make-set-symbol-value-ast (symbol value-ast)
+  (make-instance 'set-symbol-value-ast
+    :symbol symbol
     :value-ast value-ast))
 
 (cleavir-io:define-save-info symbol-value-ast
-  (:symbol-ast symbol-ast)
+  (:symbol symbol)
   (:value-ast value-ast))
 
 (defmethod children ((ast symbol-value-ast))
-  (list (symbol-ast ast) (value-ast ast)))
+  (list (symbol ast) (value-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
