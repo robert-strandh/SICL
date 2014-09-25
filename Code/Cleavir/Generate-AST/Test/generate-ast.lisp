@@ -22,7 +22,8 @@
   (equalp (cleavir-ast:value ast1) (cleavir-ast:value ast2)))
 
 (defmethod same-p ((ast1 cleavir-ast:lexical-ast) ast2 table)
-  (equal (cleavir-ast:name ast1) (cleavir-ast:name ast2)))
+  (declare (cl:ignorable ast1 ast2 table))
+  t)
 
 (defmethod same-p ((ast1 cleavir-ast:symbol-value-ast) ast2 table)
   (eq (cleavir-ast:symbol ast1) (cleavir-ast:symbol ast2)))
