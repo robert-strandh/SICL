@@ -440,10 +440,10 @@
   ;; both in the body of the LABELS and in the body of the local
   ;; function.
   (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(flet ((gm1 (x) (gm1 x)))
+		  '(labels ((gm1 (x) (gm1 x)))
 		    (gm1 x))
 		  *e*)
-		 '(flet ((gm1 (x) (gm1 x)))
+		 '(labels ((gm1 (x) (gm1 x)))
 		   (gm1 x)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
