@@ -44,3 +44,25 @@
        (every (lambda (a1 a2) (same-p a1 a2 table))
 	      (cleavir-ast:argument-asts ast1)
 	      (cleavir-ast:argument-asts ast2))))
+
+(defmethod same-p ((ast1 cleavir-ast:function-ast) ast2 table)
+  (flet ((same-lambda-list-entry (e1 e2)
+	   (or (and (eq e1 '&optional)
+		    (eq e2 '&optional))
+	       (and (eq e1 '&key)
+		    (eq e2 '&key))
+	       (and (eq e1 '&allow-other-keys)
+		    (eq e2 '&allow-other-keys))
+	       (and (listp e1)
+		    (listp e2)
+		    (= (length e1) (length e2))
+		    (every (lambda (a1 a2) (same-p a1 a2 table)) e1 e2))
+	       (same-p e1 e2 table))))
+    (and (every #'same-lambda-list-entry
+		(cleavir-ast:lambda-list ast1)
+		(cleavir-ast:lambda-list ast2))
+	 (same-p (cleavir-ast:body-ast ast1)
+		 (cleavir-ast:body-ast ast2)))))
+	   
+			   
+		    
