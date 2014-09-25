@@ -76,3 +76,6 @@
   (and (same-p (cleavir-ast:block-ast ast1) (cleavir-ast:block-ast ast2) table)
        (same-p (cleavir-ast:form-ast ast1) (cleavir-ast:form-ast ast1) table)))
 
+(defmethod same-p ((ast1 cleavir-ast:setq-ast) ast2 table)
+  (and (same-p (cleavir-ast:lhs-ast ast1) (cleavir-ast:lhs-ast ast2) table)
+       (same-p (cleavir-ast:value-ast ast1) (cleavir-ast:value-ast ast2) table)))
