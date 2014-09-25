@@ -317,12 +317,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Compiling FLET and LABELS.
+;;; Compiling FLET.
 
-(defun minimally-compile-flet-or-labels (symbol form env)
+(defmethod minimally-compile-special-form
+    ((symbol (eql 'flet)) form env)
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body (cddr form))
-    `(,symbol ,(loop for (name lambda-list . local-body) in (second form)
+    `(flet ,(loop for (name lambda-list . local-body) in (second form)
 		     collect `(,name ,@(minimally-compile-code
 					lambda-list local-body env)))
 	      ,@declarations
@@ -334,13 +335,24 @@
 		      finally
 			 (return (minimally-compile-sequence forms new-env))))))
 
-(defmethod minimally-compile-special-form
-    ((symbol (eql 'flet)) form env)
-  (minimally-compile-flet-or-labels symbol form env))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Compiling LABELS.
 
 (defmethod minimally-compile-special-form
     ((symbol (eql 'labels)) form env)
-  (minimally-compile-flet-or-labels symbol form env))
+  (multiple-value-bind (declarations forms)
+      (cleavir-code-utilities:separate-ordinary-body (cddr form))
+    (let ((new-env env))
+      (loop for definition in (second form)
+	    for name = (first definition)
+	    do (setf new-env
+		     (cleavir-env:add-local-function new-env name)))
+    `(labels ,(loop for (name lambda-list . local-body) in (second form)
+		     collect `(,name ,@(minimally-compile-code
+					lambda-list local-body new-env)))
+	      ,@declarations
+	      ,@(minimally-compile-sequence forms new-env)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
