@@ -20,3 +20,6 @@
 
 (defmethod same-p ((ast1 cleavir-ast:constant-ast) ast2 table)
   (equalp (cleavir-ast:value ast1) (cleavir-ast:value ast2)))
+
+(defmethod same-p ((ast1 cleavir-ast:lexical-ast) ast2 table)
+  (equal (cleavir-ast:name ast1) (cleavir-ast:name ast2)))
