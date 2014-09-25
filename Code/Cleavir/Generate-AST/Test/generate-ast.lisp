@@ -68,4 +68,7 @@
   (every (lambda (a1 a2) (same-p a1 a2 table))
 	 (cleavir-ast:form-asts ast1)
 	 (cleavir-ast:form-asts ast2)))
-		    
+
+(defmethod same-p ((ast1 cleavir-ast:block-ast) ast2 table)
+  (same-p (cleavir-ast:body-ast ast1) (cleavir-ast:body-ast ast2) table))
+
