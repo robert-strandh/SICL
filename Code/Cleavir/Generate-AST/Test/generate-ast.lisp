@@ -19,6 +19,7 @@
 	 (call-next-method ast1 ast2 (cons (cons ast1 ast2) table)))))
 
 (defmethod same-p ((ast1 cleavir-ast:constant-ast) ast2 table)
+  (declare (cl:ignore table))
   (equalp (cleavir-ast:value ast1) (cleavir-ast:value ast2)))
 
 (defmethod same-p ((ast1 cleavir-ast:lexical-ast) ast2 table)
@@ -26,13 +27,16 @@
   t)
 
 (defmethod same-p ((ast1 cleavir-ast:symbol-value-ast) ast2 table)
+  (declare (cl:ignore table))
   (eq (cleavir-ast:symbol ast1) (cleavir-ast:symbol ast2)))
 
 (defmethod same-p ((ast1 cleavir-ast:set-symbol-value-ast) ast2 table)
+  (declare (cl:ignore table))
   (and (eq (cleavir-ast:symbol ast1) (cleavir-ast:symbol ast2))
        (same-p (cleavir-ast:value-ast ast1) (cleavir-ast:value-ast ast2))))
 
 (defmethod same-p ((ast1 cleavir-ast:fdefinition-ast) ast2 table)
+  (declare (cl:ignore table))
   (equal (cleavir-ast:name ast1) (cleavir-ast:name ast2)))
 
 (defmethod same-p ((ast1 cleavir-ast:call-ast) ast2 table)
