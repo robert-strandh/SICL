@@ -16,7 +16,7 @@
 	((member (cons ast1 ast2) table :test #'equal)
 	 t)
 	(t
-	 (call-next-method))))
+	 (call-next-method ast1 ast2 (cons (cons ast1 ast2) table)))))
 
 (defmethod same-p ((ast1 cleavir-ast:constant-ast) ast2 table)
   (equalp (cleavir-ast:value ast1) (cleavir-ast:value ast2)))
