@@ -15,7 +15,7 @@
    #:lexical-ast #:make-lexical-ast
    #:symbol-value-ast #:make-symbol-value-ast #:symbol
    #:set-symbol-value-ast #:make-set-symbol-value-ast #:symbol
-   #:fdefinition-ast #:make-fdefinition-ast #:name-ast
+   #:fdefinition-ast #:make-fdefinition-ast #:name
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
    #:block-ast #:make-block-ast #:body
    #:function-ast #:make-function-ast #:lambda-list
