@@ -4,6 +4,8 @@
   :depends-on (:cleavir-generate-ast)
   :serial t
   :components
-  ((:file "minimal-compilation")
+  ((:file "packages")
+   (:file "environment")
+   (:file "minimal-compilation")
    (:file "generate-ast")))
 
