@@ -113,3 +113,7 @@
   (and (same-p (cleavir-ast:test-ast ast1) (cleavir-ast:test-ast ast2))
        (same-p (cleavir-ast:then-ast ast1) (cleavir-ast:then-ast ast2))
        (same-p (cleavir-ast:else-ast ast1) (cleavir-ast:else-ast ast2))))
+
+(defmethod same-p ((ast1 cleavir-ast:eq-ast) ast2)
+  (and (same-p (cleavir-ast:arg1-ast ast1) (cleavir-ast:arg1-ast ast2))
+       (same-p (cleavir-ast:arg2-ast ast1) (cleavir-ast:arg2-ast ast2))))
