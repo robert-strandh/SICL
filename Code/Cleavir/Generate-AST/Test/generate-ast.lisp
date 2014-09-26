@@ -119,6 +119,9 @@
 
 (defparameter *e* (make-instance 'bogus-environment))
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setf *readtable* cleavir-io:*io-readtable*))
+
 (defmacro test (form ast)
   `(assert (same-ast-p (cleavir-generate-ast:generate-ast ,form *e*)
 		       ,ast)))
