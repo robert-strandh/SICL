@@ -118,3 +118,7 @@
        (same-p (cleavir-ast:arg2-ast ast1) (cleavir-ast:arg2-ast ast2))))
 
 (defparameter *e* (make-instance 'bogus-environment))
+
+(defmacro test (form ast)
+  `(assert (same-ast-p (cleavir-generate-ast:generate-ast ,form *e*)
+		       ,ast)))
