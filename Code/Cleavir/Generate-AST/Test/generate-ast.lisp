@@ -1,13 +1,12 @@
-(cl:in-package #:common-lisp-user)
-
-(defpackage #:cleavir-test-generate-ast
-  (:use #:common-lisp))
-
 (in-package #:cleavir-test-generate-ast)
 
 (defgeneric same-p (ast1 ast2))
 
 (defvar *table*)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Testing framework.
 
 (defun same-ast-p (ast1 ast2)
   (let ((*table* (make-hash-table :test #'equal)))
@@ -117,3 +116,5 @@
 (defmethod same-p ((ast1 cleavir-ast:eq-ast) ast2)
   (and (same-p (cleavir-ast:arg1-ast ast1) (cleavir-ast:arg1-ast ast2))
        (same-p (cleavir-ast:arg2-ast ast1) (cleavir-ast:arg2-ast ast2))))
+
+(defparameter *e* (make-instance 'bogus-environment))
