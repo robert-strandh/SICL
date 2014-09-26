@@ -450,23 +450,20 @@
 (defclass the-ast (ast)
   ((%check-p :initarg :check-p :initform t :reader check-p)
    (%form-ast :initarg :form-ast :reader form-ast)
-   (%type-asts :initarg :type-asts :reader type-asts)
-   (%value-type :initarg :value-type :reader value-type)))
+   (%type-specifiers :initarg :type-specifiers :reader type-specifiers)))
 
-(defun make-the-ast (form-ast &rest type-asts)
+(defun make-the-ast (form-ast &rest type-specifiers)
   (make-instance 'the-ast
     :form-ast form-ast
-    :type-asts type-asts
-    :value-type (mapcar #'value type-asts)))
+    :type-specifiers type-specifiers))
 
 (cleavir-io:define-save-info the-ast
   (:check-p check-p)
   (:form-ast form-ast)
-  (:type-asts type-asts)
-  (:value-type value-type))
+  (:type-specifiers type-specifiers))
 
 (defmethod children ((ast the-ast))
-  (list* (form-ast ast) (type-asts ast)))
+  (list* (form-ast ast) (type-specifiers ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
