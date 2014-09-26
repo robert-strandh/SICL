@@ -108,3 +108,8 @@
 (defmethod same-p ((ast1 cleavir-ast:load-time-value-ast) ast2)
   (and (eq (cleavir-ast:read-only-p ast1) (cleavir-ast:read-only-p ast2))
        (same-p (cleavir-ast:form-ast ast1) (cleavir-ast:form-ast ast2))))
+
+(defmethod same-p ((ast1 cleavir-ast:if-ast) ast2)
+  (and (same-p (cleavir-ast:test-ast ast1) (cleavir-ast:test-ast ast2))
+       (same-p (cleavir-ast:then-ast ast1) (cleavir-ast:then-ast ast2))
+       (same-p (cleavir-ast:else-ast ast1) (cleavir-ast:else-ast ast2))))
