@@ -92,3 +92,10 @@
 
 (defmethod same-p ((ast1 cleavir-ast:go-ast) ast2)
   (same-p (cleavir-ast:tag-ast ast1) (cleavir-ast:tag-ast ast2)))
+
+(defmethod same-p ((ast1 cleavir-ast:the-ast) ast2)
+  (and (eq (cleavir-ast:check-p ast1) (cleavir-ast:check-p ast2))
+       (equal (cleavir-ast:type-specifiers ast1)
+	      (cleavir-ast:type-specifiers ast2))
+       (same-p (cleavir-ast:form-ast ast1)
+	       (cleavir-ast:form-ast ast2))))
