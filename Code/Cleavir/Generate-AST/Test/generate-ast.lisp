@@ -125,3 +125,11 @@
 (defmacro test (form ast)
   `(assert (same-ast-p (cleavir-generate-ast:generate-ast ,form *e*)
 		       ,ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests
+
+(defun test-constant-ast ()
+  (test '234
+	[cleavir-ast:constant-ast :value 234]))
