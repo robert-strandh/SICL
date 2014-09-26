@@ -474,15 +474,6 @@
 ;;; like the function TYPEP, except that the type specifier is not
 ;;; evaluated.  
 ;;;
-;;; Like the hypothetical special form, this AST has two children.
-;;; The first child is an AST corresponding to <form> and the second
-;;; child is a CONSTANT-AST containing <type-specifier> as a constant.
-;;; In addition, this AST has a slot that contains <type-specifier>.
-;;; The reason for this duplication of information is that the child
-;;; containing the CONSTANT-AST might later be replaced by a reference
-;;; to some location where the constant can be found, but we still
-;;; need the type information for the purpose of type inference. 
-;;;
 ;;; Like a call to the function TYPEP, the value of this AST is a
 ;;; generalized Boolean that is TRUE if and only if <form> is of type
 ;;; <type-specifier>.
@@ -506,25 +497,19 @@
 
 (defclass typeq-ast (ast)
   ((%type-specifier :initarg :type-specifier :reader type-specifier)
-   (%type-specifier-ast :initarg :type-specifier-ast :reader type-specifier-ast)
    (%form-ast :initarg :form-ast :reader form-ast)))
 
-(defun make-typeq-ast (form-ast type-specifier-ast)
+(defun make-typeq-ast (form-ast type-specifier)
   (make-instance 'typeq-ast
     :form-ast form-ast
-    :type-specifier-ast type-specifier-ast))
-
-(defmethod initialize-instance :after ((ast typeq-ast) &key &allow-other-keys)
-  (reinitialize-instance
-   ast
-   :type-specifier (value (type-specifier-ast ast))))
+    :type-specifier type-specifier))
 
 (cleavir-io:define-save-info typeq-ast
-  (:type-specifier-ast type-specifier-ast)
+  (:type-specifier type-specifier)
   (:form-ast form-ast))
 
 (defmethod children ((ast typeq-ast))
-  (list (form-ast ast) (type-specifier-ast ast)))
+  (list (form-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

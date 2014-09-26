@@ -30,7 +30,7 @@
    #:tagbody-ast #:make-tagbody-ast #:item-asts
    #:tag-ast #:make-tag-ast #:name
    #:the-ast #:make-the-ast #:type-specifiers #:check-p
-   #:typeq-ast #:make-typeq-ast #:type-specifier #:type-specifier-ast
+   #:typeq-ast #:make-typeq-ast #:type-specifier
    #:eq-ast #:make-eq-ast
    #:car-ast #:make-car-ast #:cons-ast
    #:cdr-ast #:make-cdr-ast
