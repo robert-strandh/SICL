@@ -99,3 +99,8 @@
 	      (cleavir-ast:type-specifiers ast2))
        (same-p (cleavir-ast:form-ast ast1)
 	       (cleavir-ast:form-ast ast2))))
+
+(defmethod same-p ((ast1 cleavir-ast:typeq-ast) ast2)
+  (and (equal (cleavir-ast:type-specifier ast1)
+	      (cleavir-ast:type-specifier ast2))
+       (same-p (cleavir-ast:form-ast ast1) (cleavir-ast:form-ast ast2))))
