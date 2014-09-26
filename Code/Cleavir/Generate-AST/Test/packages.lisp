@@ -12,4 +12,4 @@
   (:use #:common-lisp #:cleavir-bogus-test-environment))
 
 (defpackage #:cleavir-test-generate-ast
-  (:use #:common-lisp))
+  (:use #:common-lisp #:cleavir-bogus-test-environment))
