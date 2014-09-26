@@ -227,7 +227,7 @@
 (defmethod convert (form environment)
   (cond ((and (not (consp form))
 	      (not (symbolp form)))
-	 (convert-constant form))
+	 (cleavir-ast:make-constant-ast form))
 	((symbolp form)
 	 (let ((info (cleavir-env:variable-info environment form)))
 	   (convert-form form info environment)))
