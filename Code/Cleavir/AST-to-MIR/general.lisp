@@ -471,9 +471,8 @@
 ;;;
 ;;; Compile a THE-AST.
 
-(defun make-type-check (type-ast var successor)
-  (check-type type-ast cleavir-ast:constant-ast)
-  (let* ((type-input (cleavir-mir:make-constant-input (cleavir-ast:value type-ast)))
+(defun make-type-check (type-specifier var successor)
+  (let* ((type-input (cleavir-mir:make-constant-input type-specifier))
 	 (temp (make-temp nil))
 	 (error-branch
 	   (make-instance 'cleavir-mir:fdefinition-instruction
@@ -494,8 +493,8 @@
   (with-accessors ((results results)
 		   (successors successors))
       context
-    (destructuring-bind (form-ast . type-asts)
-	(cleavir-ast:children ast)
+    (let ((form-ast (cleavir-ast:form-ast ast))
+	  (type-specifiers (cleavir-ast:type-specifiers ast)))
       (ecase (length successors)
 	(0
 	 ;; This case is a bit hard to handle, because we don't know a
@@ -505,7 +504,7 @@
 	 ;; hope to implement a better solution.
 	 (compile-ast form-ast context))
 	(1
-	 (let* ((temp-count (max (length results) (length type-asts)))
+	 (let* ((temp-count (max (length results) (length type-specifiers)))
 		(temps (make-temps (make-list temp-count))))
 	   (let ((next (car successors)))
 	     ;; The last actions to take are to assign the temps to
@@ -517,9 +516,9 @@
 			     temp result next)))
 	     ;; Before assigning to the results, check the
 	     ;; types of the values.
-	     (loop for type-ast in type-asts
+	     (loop for type-specifier in type-specifiers
 		   for temp in temps
-		   do (setf next (make-type-check type-ast temp next)))
+		   do (setf next (make-type-check type-specifier temp next)))
 	     next)))
 	(2
 	 (if (null results)
