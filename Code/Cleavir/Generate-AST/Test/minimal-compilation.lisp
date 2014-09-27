@@ -234,11 +234,10 @@
 ;;; Test IF
 
 (defun test-if ()
-  ;; Check that all three arguments of IF are minimally compiled.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(if gsm1 gsm1 gsm1)
-		  *e*)
-		 `(if (hello1 hello2) (hello1 hello2) (hello1 hello2)))))
+  (test '(if (numberp gsm3) gsm3 (1+ gsm3))
+	'234)
+  (test '(if (symbolp gsm3) gsm3 (1+ gsm3))
+	'235))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
