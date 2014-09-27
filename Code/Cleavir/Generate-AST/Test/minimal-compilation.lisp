@@ -2,17 +2,31 @@
 
 (defparameter *e* (make-instance 'bogus-environment))
 
+(defmacro test (form equivalent-form)
+  `(assert (equal (eval (cleavir-generate-ast:minimally-compile ,form *e*))
+		  (eval ,equivalent-form))))		 
+
+;;; When the name GSM3 is used as a global variable, then it is
+;;; considered a global symbol macro that expands to the following
+;;; form: 234
+(defmethod cleavir-env:variable-info
+    ((environment bogus-environment) (name (eql 'gsm3)))
+  (make-instance 'cleavir-env:symbol-macro-info 
+    :name name
+    :expansion 234))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Test BLOCK
 
 (defun test-block ()
   ;; Check that the name of the block is not expanded, but that the
-  ;; body forms are.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(block gsm1 gsm1 gsm1)
-		  *e*)
-		 '(block gsm1 (hello1 hello2) (hello1 hello2)))))
+  ;; body forms are.  If the name of the block would be expanded,
+  ;; then an error would be signaled during evaluation, because
+  ;; numbers are not valid block names.  And if the body forms would
+  ;; not be expanded, then an error would result because there is no
+  ;; global variable named GSM3.
+  (test '(block gsm3 gsm3 gsm3) 234))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
