@@ -33,11 +33,11 @@
 ;;; Test CATCH
 
 (defun test-catch ()
-  ;; Check that the all the arguments are expanded.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(catch gsm1 gsm1)
-		  *e*)
-		 '(catch (hello1 hello2) (hello1 hello2)))))
+  ;; Check that the catch tag is minimally compiled. 
+  (test '(catch (if (numberp gsm3) 'a 'b) (throw 'a 10))
+	10)
+  (test '(catch 'a (unless (numberp gsm3) (error "bad")) gsm3)
+	234))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
