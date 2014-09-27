@@ -416,10 +416,8 @@
 ;;; Test LOCALLY
 
 (defun test-locally ()
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(locally gsm1)
-		  *e*)
-		 '(locally (hello1 hello2)))))
+  (test '(locally gsm3)
+	234))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
