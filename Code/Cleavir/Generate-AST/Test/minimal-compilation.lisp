@@ -44,12 +44,11 @@
 ;;; Test EVAL-WHEN
 
 (defun test-eval-when ()
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(eval-when (:compile-toplevel)
-		    gsm1 gsm1)
-		  *e*)
-		 '(eval-when (:compile-toplevel)
-		   (hello1 hello2) (hello1 hello2)))))
+  ;; Test that all body forms are minimally compiled.
+  (test '(eval-when (:execute)
+	  (unless (numberp gsm3) (error "bad"))
+	  gsm3)
+	234))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
