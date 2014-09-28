@@ -2,9 +2,9 @@
 
 (defparameter *e* (make-instance 'bogus-environment))
 
-(defmacro test (form equivalent-form)
-  `(assert (equal (eval ,(cleavir-generate-ast:minimally-compile form *e*))
-		  (eval ,equivalent-form))))		 
+(defun test (form equivalent-form)
+  (assert (equal (eval (cleavir-generate-ast:minimally-compile form *e*))
+		 (eval equivalent-form))))
 
 ;;; When the name GSM3 is used as a global variable, then it is
 ;;; considered a global symbol macro that expands to the following
