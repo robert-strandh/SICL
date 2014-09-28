@@ -58,12 +58,9 @@
   ;; Test that a required parameter of the local function shadows the
   ;; global symbol macro in the &OPTIONAL part of the lambda list of
   ;; the local function, but not in the body of the FLET.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  `(flet ((fun (gsm1 &optional (x gsm1)) gsm1))
-		     (fun gsm1))
-		  *e*)
-		 `(flet ((fun (gsm1 &optional (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+  (test '(flet ((fun (gsm3 &optional (x gsm3)) (+ x gsm3)))
+	  (fun gsm3))
+	468)
   ;; Test that a required parameter of the local function shadows the
   ;; global symbol macro in the &KEY part of the lambda list of
   ;; the local function, but not in the body of the FLET.
