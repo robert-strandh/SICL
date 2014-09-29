@@ -80,21 +80,17 @@
 	  (fun (+ gsm3 2)))
 	236)
   ;; Test that an &OPTIONAL parameter of the local function shadows
+  ;; the global symbol macro in the remaining &OPTIONAL part of the
+  ;; lambda list of the local function.
+  (test '(flet ((fun (&optional (gsm3 12) (x (1+ gsm3))) x))
+	  (fun))
+	13)
+  ;; Test that an &OPTIONAL parameter of the local function shadows
   ;; the global symbol macro in the &KEY part of the lambda list of
   ;; the local function.
   (test '(flet ((fun (&optional (gsm3 12) &key (x (1+ gsm3))) x))
 	  (fun))
 	13)
-  ;; Test that an &OPTIONAL parameter of the local function shadows
-  ;; the global symbol macro in the remaining &OPTIONAL part of the
-  ;; lambda list of the local function, but not in the body of the
-  ;; FLET.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  `(flet ((fun (&optional (gsm1 12) (x gsm1)) gsm1))
-		     (fun gsm1))
-		  *e*)
-		 `(flet ((fun (&optional (gsm1 12) (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
   ;; Test that an &OPTIONAL parameter of the local function shadows
   ;; the global symbol macro in the &AUX part of the lambda list of
   ;; the local function, but not in the body of the FLET.
