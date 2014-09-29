@@ -28,3 +28,10 @@
 (defmethod interpret-ast ((ast cleavir-ast:progn-ast)
 			  static-env dynamic-env)
   (interpret-sequence (cleavir-ast:form-asts ast) static-env dynamic-env))
+
+(defmethod interpret-ast ((ast cleavir-ast:setq-ast)
+			  static-env dynamic-env)
+  (set-lexical
+   (cleavir-ast:lhs-ast ast)
+   (interpret-ast (cleavir-ast:value-ast ast) static-env dynamic-env)
+   static-env))
