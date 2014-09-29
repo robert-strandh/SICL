@@ -76,6 +76,9 @@
   ;; Test that a required parameter of the local function shadows the
   ;; global symbol macro in the body of the local function, but not in
   ;; the body of the FLET.
+  (test '(flet ((fun (gsm3) gsm3))
+	  (fun gsm3))
+	234)
   (assert (equal (cleavir-generate-ast:minimally-compile
 		  `(flet ((fun (gsm1) gsm1))
 		     (fun gsm1))
