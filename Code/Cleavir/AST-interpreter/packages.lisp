@@ -2,4 +2,4 @@
 
 (defpackage #:cleavir-ast-interpreter
   (:use #:common-lisp)
-  (:export))
+  (:export #:interpret))
