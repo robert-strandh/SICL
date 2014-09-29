@@ -126,14 +126,10 @@
 	  (fun))
 	13)
   ;; Test that an &AUX parameter of the local function shadows the
-  ;; global symbol macro in the body of the local function, but not in
-  ;; the body of the FLET.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  `(flet ((fun (&aux (gsm1 12)) gsm1))
-		     (fun gsm1))
-		  *e*)
-		 `(flet ((fun (&aux (gsm1 12)) gsm1))
-		    (fun (hello1 hello2)))))
+  ;; global symbol macro in the body of the local function.
+  (test '(flet ((fun (&aux (gsm3 12)) gsm3))
+	  (fun))
+	12)
   ;; Test that the name of the local function shadows the global macro
   ;; in the body of the flet, but not in the body of the local
   ;; function.
