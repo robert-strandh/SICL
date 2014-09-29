@@ -77,8 +77,8 @@
   ;; global symbol macro in the body of the local function, but not in
   ;; the body of the FLET.
   (test '(flet ((fun (gsm3) gsm3))
-	  (fun gsm3))
-	234)
+	  (fun (+ gsm3 2)))
+	236)
   ;; Test that an &OPTIONAL parameter of the local function shadows
   ;; the global symbol macro in the &KEY part of the lambda list of
   ;; the local function, but not in the body of the FLET.
