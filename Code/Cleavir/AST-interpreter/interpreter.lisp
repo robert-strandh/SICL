@@ -35,3 +35,8 @@
    (cleavir-ast:lhs-ast ast)
    (interpret-ast (cleavir-ast:value-ast ast) static-env dynamic-env)
    static-env))
+
+(defmethod interpret-ast ((ast cleavir-ast:lexical-ast)
+			  static-env dynamic-env)
+  (declare (ignore dynamic-env))
+  (lookup-lexical ast static-env))
