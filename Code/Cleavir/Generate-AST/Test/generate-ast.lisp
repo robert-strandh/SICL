@@ -131,3 +131,5 @@
 ;;;
 ;;; Tests
 
+(defun test-constant-ast ()
+  (test 234 234))
