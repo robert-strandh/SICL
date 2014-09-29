@@ -111,12 +111,9 @@
   ;; Test that an &KEY parameter of the local function shadows the
   ;; global symbol macro in the &AUX part of the lambda list of the
   ;; local function, but not in the body of the FLET.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  `(flet ((fun (&key (gsm1 12) &aux (x gsm1)) gsm1))
-		     (fun gsm1))
-		  *e*)
-		 `(flet ((fun (&key ((:gsm1 gsm1) 12) &aux (x gsm1)) gsm1))
-		    (fun (hello1 hello2)))))
+  (test '(flet ((fun (&key (gsm3 12) &aux (x (1+ gsm3))) x))
+	  (fun))
+	13)
   ;; Test that an &KEY parameter of the local function shadows the
   ;; global symbol macro in the body of the local function, but not in
   ;; the body of the FLET.
