@@ -161,10 +161,9 @@
 	'(function car))
   ;;; Test that the name of the function is not expanded as a symbol
   ;;; macro.
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(function gsm1)
-		  *e*)
-		 '(function gsm1)))
+  (test '(flet ((gsm3 (x) (1+ x)))
+	  (funcall (function gsm3) 10))
+	11)
   ;;; Test that required parameter of lambda expression shadows global
   ;;; symbol macro inside the body of the lambda expression.
   (assert (equal (cleavir-generate-ast:minimally-compile
