@@ -122,9 +122,10 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (setf *readtable* cleavir-io:*io-readtable*))
 
-(defmacro test (form ast)
-  `(assert (same-ast-p (cleavir-generate-ast:generate-ast ,form *e*)
-		       ,ast)))
+(defun test (form value)
+  (let* ((ast (cleavir-generate-ast:generate-ast form *e*))
+	 (v (cleavir-ast-interpreter:interpret ast)))
+    (assert (equalp v value))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
