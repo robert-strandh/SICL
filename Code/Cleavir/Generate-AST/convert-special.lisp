@@ -2,7 +2,8 @@
 
 (defmethod convert-special :around (symbol form env)
   (declare (ignore env))
-  (check-special-form-syntax symbol form))
+  (check-special-form-syntax symbol form)
+  (call-next-method))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
