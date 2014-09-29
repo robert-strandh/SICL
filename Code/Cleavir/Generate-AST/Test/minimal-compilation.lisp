@@ -157,10 +157,8 @@
 ;;; Test FUNCTION
 
 (defun test-function ()
-  (assert (equal (cleavir-generate-ast:minimally-compile
-		  '(function fff)
-		  *e*)
-		 '(function fff)))
+  (test '(function car)
+	'(function car))
   ;;; Test that the name of the function is not expanded as a symbol
   ;;; macro.
   (assert (equal (cleavir-generate-ast:minimally-compile
