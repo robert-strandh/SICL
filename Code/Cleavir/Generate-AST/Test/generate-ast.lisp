@@ -133,3 +133,7 @@
 
 (defun test-constant-ast ()
   (test 234 234))
+
+(defun test-lexical-ast ()
+  (test '(let ((x 10)) x)
+	10))
