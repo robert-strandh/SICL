@@ -130,10 +130,3 @@
 ;;;
 ;;; Tests
 
-(defun test-constant-ast ()
-  (test '234
-	[cleavir-ast:constant-ast :value 234]))
-
-(defun test-symbol-value-ast ()
-  (test 'x
-	[cleavir-ast:symbol-value-ast :symbol x]))
