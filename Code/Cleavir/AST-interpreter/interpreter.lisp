@@ -24,3 +24,7 @@
 			  static-env dynamic-env)
   (declare (ignore static-env dynamic-env))
   (cleavir-ast:value ast))
+
+(defmethod interpret-ast ((ast cleavir-ast:progn-ast)
+			  static-env dynamic-env)
+  (interpret-sequence (cleavir-ast:form-asts ast) static-env dynamic-env))
