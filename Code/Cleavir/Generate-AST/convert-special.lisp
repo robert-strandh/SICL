@@ -51,7 +51,7 @@
 	    (loop for (name lambda-list . body) in (cadr form)
 		  for fun = (convert-code lambda-list body env)
 		  collect (cleavir-ast:make-setq-ast
-			   (let* ((info (cleavir-env:function-info name new-env))
+			   (let* ((info (cleavir-env:function-info new-env name))
 				  (identity (cleavir-env:identity info)))
 			     (find-or-create-ast identity))
 			   fun))))
@@ -67,7 +67,7 @@
 ;;; Converting FUNCTION.
 
 (defun convert-named-function (name environment)
-  (let* ((info (cleavir-env:function-info name environment))
+  (let* ((info (cleavir-env:function-info environment name))
 	 (identity (cleavir-env:identity info)))
     (find-or-create-ast identity)))
 
@@ -84,7 +84,7 @@
 ;;; Converting GO.
 
 (defmethod convert-special ((symbol (eql 'go)) form env)
-  (let ((info (cleavir-env:tag-info (cadr form) env)))
+  (let ((info (cleavir-env:tag-info env (cadr form))))
     (if (null info)
 	(error "undefined go tag: ~s" form)
 	(cleavir-ast:make-go-ast
@@ -119,7 +119,7 @@
   (let* ((var (if (symbolp binding) binding (car binding)))
 	 (init-form (if (symbolp binding) nil (cadr binding)))
 	 (new-env (cleavir-env:add-lexical-variable env var))
-	 (info (cleavir-env:variable-info var new-env))
+	 (info (cleavir-env:variable-info new-env var))
 	 (identity (cleavir-env:identity info)))
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
@@ -285,7 +285,7 @@
 ;;; Converting RETURN-FROM.
 
 (defmethod convert-special ((symbol (eql 'return-from)) form env)
-  (let ((info (cleavir-env:block-info (cadr form) env)))
+  (let ((info (cleavir-env:block-info env (cadr form))))
     (if (null info)
 	(error 'block-name-unknown
 	       :expr (cadr form))
@@ -298,7 +298,7 @@
 ;;; Converting SETQ.
 
 (defun convert-elementary-setq (var form env)
-  (let* ((info (cleavir-env:variable-info var env))
+  (let* ((info (cleavir-env:variable-info env var))
 	 (identity (cleavir-env:identity info)))
     (if (typep info 'cleavir-env:constant-variable-info)
 	(error 'setq-constant-variable
