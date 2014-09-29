@@ -6,3 +6,12 @@
   (let ((static-env (list (make-hash-table :test #'eq)))
 	(dynamic-env '()))
     (interpret-ast ast static-env dynamic-env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on INTERPRET-AST.
+
+(defmethod interpret-ast ((ast cleavir-ast:constant-ast)
+			  static-env dynamic-env)
+  (declare (ignore static-env dynamic-env))
+  (cleavir-ast:value ast))
