@@ -225,9 +225,10 @@
 ;;; converted is not a top-level form.
 
 (defmethod convert (form environment)
-  (cond ((and (not (consp form))
-	      (not (symbolp form)))
+  (cond ((and (not (consp form)) (not (symbolp form)))
 	 (cleavir-ast:make-constant-ast form))
+	((and (symbolp form) (constantp form))
+	 (cleavir-ast:make-constant-ast (symbol-value form)))
 	((symbolp form)
 	 (let ((info (cleavir-env:variable-info environment form)))
 	   (convert-form form info environment)))
