@@ -7,11 +7,12 @@
   ((%name :initarg :name :reader name)
    (%identity :initarg :identity :reader identity)))
 
-(defmethod add-lexical-variable (environment symbol)
+(defmethod add-lexical-variable
+    (environment symbol &optional (identity (gensym)))
   (make-instance 'lexical-variable
     :next environment
     :name symbol
-    :identity (gensym)))
+    :identity identity))
 
 (defclass special-variable (entry)
   ((%name :initarg :name :reader name)

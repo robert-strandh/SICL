@@ -1,6 +1,6 @@
 (cl:in-package #:cleavir-environment)
 
-(defgeneric add-lexical-variable (environment symbol))
+(defgeneric add-lexical-variable (environment symbol &optional identity))
 
 (defgeneric add-special-variable (environment symbol))
 
