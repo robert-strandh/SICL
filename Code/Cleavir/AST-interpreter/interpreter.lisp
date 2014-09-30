@@ -45,3 +45,10 @@
 			  static-env dynamic-env)
   (declare (ignore static-env))
   (lookup-special (cleavir-ast:symbol ast) dynamic-env))
+
+(defmethod interpret-ast ((ast cleavir-ast:block-ast)
+			  static-env dynamic-env)
+  (let ((tag (list nil)))
+    (set-lexical ast tag static-env)
+    (catch tag
+      (interpret-ast (cleavir-ast:body-ast ast) static-env dynamic-env))))
