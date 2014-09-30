@@ -10,7 +10,7 @@
 
 (defgeneric add-local-macro (environment symbol expander))
 
-(defgeneric add-block (environment symbol))
+(defgeneric add-block (environment symbol &optional identity))
 
 (defgeneric add-tag (environment symbol))
 

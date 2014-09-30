@@ -58,11 +58,11 @@
   ((%name :initarg :name :reader name)
    (%identity :initarg :identity :reader identity)))
 
-(defmethod add-block (environment symbol)
+(defmethod add-block (environment symbol &optional (identity (gensym)))
   (make-instance 'block
     :next environment
     :name symbol
-    :identity (gensym)))
+    :identity identity))
 
 (defclass tag (entry)
   ((%name :initarg :name :reader name)
