@@ -20,7 +20,7 @@
 (defmethod convert-special
     ((symbol (eql 'block)) form env)
   (let* ((ast (cleavir-ast:make-block-ast nil))
-	 (new-env (cleavir-env:add-block env (cadr form)))
+	 (new-env (cleavir-env:add-block env (cadr form) ast))
 	 (forms (convert-sequence (cddr form) new-env)))
     (setf (cleavir-ast:body-ast ast)
 	  (cleavir-ast:make-progn-ast forms))
