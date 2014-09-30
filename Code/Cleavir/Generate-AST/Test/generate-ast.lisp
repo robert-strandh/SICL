@@ -137,3 +137,7 @@
 (defun test-lexical-ast ()
   (test '(let ((x 10)) x)
 	10))
+
+(defun test-symbol-value-ast ()
+  (test '*print-base*
+	10))
