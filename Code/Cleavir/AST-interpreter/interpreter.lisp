@@ -40,3 +40,8 @@
 			  static-env dynamic-env)
   (declare (ignore dynamic-env))
   (lookup-lexical ast static-env))
+
+(defmethod interpret-ast ((ast cleavir-ast:symbol-value-ast)
+			  static-env dynamic-env)
+  (declare (ignore static-env))
+  (lookup-special (cleavir-ast:symbol ast) dynamic-env))
