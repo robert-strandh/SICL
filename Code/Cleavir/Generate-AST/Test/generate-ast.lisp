@@ -141,3 +141,7 @@
 (defun test-symbol-value-ast ()
   (test '*print-base*
 	10))
+
+(defun test-block-return-from-ast ()
+  (test '(block x (return-from x 10) 20)
+	10))
