@@ -27,7 +27,7 @@
 (defmethod convert-form (form (info cleavir-env:lexical-variable-info) env)
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn "Reference to a variable declared IGNORE"))
-  (find-or-create-ast (cleavir-env:identity info)))
+  (cleavir-env:identity info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

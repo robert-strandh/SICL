@@ -117,10 +117,10 @@
 
 (defun convert-simple-let (binding body env)
   (let* ((var (if (symbolp binding) binding (car binding)))
+	 (var-ast (cleavir-ast:make-lexical-ast var))
 	 (init-form (if (symbolp binding) nil (cadr binding)))
-	 (new-env (cleavir-env:add-lexical-variable env var))
-	 (info (cleavir-env:variable-info new-env var))
-	 (identity (cleavir-env:identity info)))
+	 (new-env (cleavir-env:add-lexical-variable env var var-ast))
+	 (info (cleavir-env:variable-info new-env var)))
     (multiple-value-bind (declarations forms)
 	(cleavir-code-utilities:separate-ordinary-body body)
       ;; FIXME: handle declarations
@@ -129,7 +129,7 @@
       (declare (ignore declarations))
       (cleavir-ast:make-progn-ast
        (cons (cleavir-ast:make-setq-ast
-	      (find-or-create-ast identity)
+	      var-ast
 	      (convert init-form env))
 	     (convert-sequence forms new-env))))))
 
@@ -304,7 +304,7 @@
 	(error 'setq-constant-variable
 	       :form var)
 	(cleavir-ast:make-setq-ast
-	 (find-or-create-ast identity)
+	 identity
 	 (convert form env)))))
   
 (defmethod convert-special
