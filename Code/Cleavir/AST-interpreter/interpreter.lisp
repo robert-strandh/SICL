@@ -52,3 +52,11 @@
     (set-lexical ast tag static-env)
     (catch tag
       (interpret-ast (cleavir-ast:body-ast ast) static-env dynamic-env))))
+
+(defmethod interpret-ast ((ast cleavir-ast:return-from-ast)
+			  static-env dynamic-env)
+  (let* ((block (cleavir-ast:block-ast ast))
+	 (tag (lookup-lexical block static-env))
+	 (form-ast (cleavir-ast:form-ast ast)))
+    (throw tag
+      (interpret-ast form-ast static-env dynamic-env))))
