@@ -60,3 +60,9 @@
 	 (form-ast (cleavir-ast:form-ast ast)))
     (throw tag
       (interpret-ast form-ast static-env dynamic-env))))
+
+(defmethod interpret-ast ((ast cleavir-ast:if-ast)
+			  static-env dynamic-env)
+  (if (interpret-ast (cleavir-ast:test-ast ast) static-env dynamic-env)
+      (interpret-ast (cleavir-ast:then-ast ast) static-env dynamic-env)
+      (interpret-ast (cleavir-ast:else-ast ast) static-env dynamic-env)))
