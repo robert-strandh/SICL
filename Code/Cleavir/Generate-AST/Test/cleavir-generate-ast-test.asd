@@ -1,7 +1,8 @@
 (cl:in-package #:common-lisp-user)
 
 (asdf:defsystem :cleavir-generate-ast-test
-  :depends-on (:cleavir-generate-ast)
+  :depends-on (:cleavir-generate-ast
+	       :cleavir-ast-interpreter)
   :serial t
   :components
   ((:file "packages")
