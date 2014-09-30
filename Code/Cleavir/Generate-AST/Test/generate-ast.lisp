@@ -145,3 +145,9 @@
 (defun test-block-return-from-ast ()
   (test '(block x (return-from x 10) 20)
 	10))
+
+(defun test-if-ast ()
+  (test '(if t 10 20)
+	10)
+  (test '(if nil 10 20)
+	20))
