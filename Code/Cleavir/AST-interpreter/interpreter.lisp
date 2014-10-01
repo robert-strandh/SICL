@@ -66,3 +66,8 @@
   (if (interpret-ast (cleavir-ast:test-ast ast) static-env dynamic-env)
       (interpret-ast (cleavir-ast:then-ast ast) static-env dynamic-env)
       (interpret-ast (cleavir-ast:else-ast ast) static-env dynamic-env)))
+
+(defmethod interpret-ast ((ast cleavir-ast:tag-ast)
+			  static-env dynamic-env)
+  (declare (ignore static-env dynamic-env))
+  nil)
