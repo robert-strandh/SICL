@@ -151,3 +151,7 @@
 	10)
   (test '(if nil 10 20)
 	20))
+
+(defun test-tagbody-ast ()
+  (test '(let ((x 1)) (tagbody (setq x 2) (go a) (setq x 3) a) x)
+	2))
