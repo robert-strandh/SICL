@@ -158,7 +158,7 @@
     new-env))
 
 (defun var-to-lexical-identity (var env)
-  (let* ((info (cleavir-env:variable-info var env))
+  (let* ((info (cleavir-env:variable-info env var))
 	 (identity (cleavir-env:identity info)))
     (find-or-create-ast identity)))
 
