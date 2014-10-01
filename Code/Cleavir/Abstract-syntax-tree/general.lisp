@@ -409,7 +409,7 @@
 ;;; Class TAGBODY-AST.
 
 (defclass tagbody-ast (ast)
-  ((%item-asts :initarg item-asts :reader item-asts)))
+  ((%item-asts :initarg :item-asts :reader item-asts)))
 
 (defun make-tagbody-ast (item-asts)
   (make-instance 'tagbody-ast
