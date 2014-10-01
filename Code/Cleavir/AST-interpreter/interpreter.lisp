@@ -76,7 +76,7 @@
 			  static-env dynamic-env)
   (declare (ignore dynamic-env))
   (let* ((go-tag-ast (cleavir-ast:tag-ast ast))
-	 (catch-tag (lookup-lexical go-tag static-env)))
+	 (catch-tag (lookup-lexical go-tag-ast static-env)))
     (throw catch-tag go-tag-ast)))
 
 (defmethod interpret-ast ((ast cleavir-ast:tagbody-ast)
