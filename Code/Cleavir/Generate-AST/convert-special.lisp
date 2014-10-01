@@ -339,7 +339,7 @@
 	(new-env env))
     (loop for ast in tag-asts
 	  do (setf new-env (cleavir-env:add-tag
-			    new-env (cleavir-ast:name ast))))
+			    new-env (cleavir-ast:name ast) ast)))
     (let ((items (loop for item in (cdr form)
 		       collect (if (symbolp item)
 				   (pop tag-asts)
