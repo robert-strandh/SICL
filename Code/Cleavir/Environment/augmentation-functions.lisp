@@ -12,7 +12,7 @@
 
 (defgeneric add-block (environment symbol &optional identity))
 
-(defgeneric add-tag (environment symbol))
+(defgeneric add-tag (environment symbol &optional identity))
 
 (defgeneric add-variable-type (environment symbol type))
 
