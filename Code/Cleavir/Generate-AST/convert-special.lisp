@@ -67,9 +67,9 @@
 ;;; Converting FUNCTION.
 
 (defun convert-named-function (name environment)
-  (let* ((info (cleavir-env:function-info environment name))
-	 (identity (cleavir-env:identity info)))
-    (find-or-create-ast identity)))
+  (let ((info (cleavir-env:function-info environment name)))
+    (make-instance 'cleavir-ast:fdefinition-ast
+      :name (cleavir-env:name info))))
 
 (defun convert-lambda-function (lambda-form env)
   (convert-code (cadr lambda-form) (cddr lambda-form) env))
