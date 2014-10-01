@@ -46,3 +46,11 @@
 (defun test-tagbody-ast ()
   (test '(let ((x 1)) (tagbody (setq x 2) (go a) (setq x 3) a) x)
 	2))
+
+(defun run-tests ()
+  (test-constant-ast)
+  (test-lexical-ast)
+  (test-symbol-value-ast)
+  (test-block-return-from-ast)
+  (test-if-ast)
+  (test-tagbody-ast))
