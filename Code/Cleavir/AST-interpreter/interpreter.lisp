@@ -118,3 +118,8 @@
 	  (loop do (let ((go-tag-ast (catch catch-tag (do-items))))
 		     (setf remaining-item-asts
 			   (member go-tag-ast item-asts)))))))))
+
+(defmethod interpret-ast ((ast cleavir-ast:fdefinition-ast)
+			  static-env dynamic-env)
+  (declare (ignore static-env dynamic-env))
+  (fdefinition (cleavir-ast:name ast)))
