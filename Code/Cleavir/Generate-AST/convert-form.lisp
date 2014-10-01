@@ -113,9 +113,7 @@
 	;; There is no compiler macro.  Create a CALL-AST.
 	(let ((function-ast
 		(make-instance 'cleavir-ast:fdefinition-ast
-		  :name-ast
-		  (make-instance 'cleavir-ast:constant-ast
-		    :value (cleavir-env:name info))))
+		  :name (cleavir-env:name info)))
 	      (argument-asts (convert-sequence (cdr form) env)))
 	  (cleavir-ast:make-call-ast function-ast argument-asts))
 	;; There is a compiler macro.  We must see whether it will
