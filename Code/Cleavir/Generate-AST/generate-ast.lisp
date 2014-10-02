@@ -128,39 +128,48 @@
        (cond ((null rest) (go out))
 	     ((eq (car rest) '&optional) (pop rest) (go optional))
 	     ((eq (car rest) '&key) (pop rest) (go key))
-	     (t (setq new-env
-		      (cleavir-env:add-lexical-variable
-		       new-env (pop rest)))
+	     (t (let* ((var (pop rest))
+		       (var-ast (cleavir-ast:make-lexical-ast var)))
+		  (setq new-env
+			(cleavir-env:add-lexical-variable
+			 new-env var var-ast)))
 		(go required)))
      optional
        (cond ((null rest) (go out))
 	     ((eq (car rest) '&key) (pop rest) (go key))
-	     (t (setq new-env
-		      (cleavir-env:add-lexical-variable
-		       new-env (first rest)))
-		(setq new-env
-		      (cleavir-env:add-lexical-variable
-		       new-env (second rest)))
+	     (t (let* ((var1 (first rest))
+		       (var1-ast (cleavir-ast:make-lexical-ast var1))
+		       (var2 (second rest))
+		       (var2-ast (cleavir-ast:make-lexical-ast var2)))
+		  (setq new-env
+			(cleavir-env:add-lexical-variable
+			 new-env var1 var1-ast))
+		  (setq new-env
+			(cleavir-env:add-lexical-variable
+			 new-env var2 var2-ast)))
 		(pop rest)
 		(go optional)))
      key
        (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
 	      (go out))
-	     (t (setq new-env
-		      (cleavir-env:add-lexical-variable
-		       new-env (second rest)))
-		(setq new-env
-		      (cleavir-env:add-lexical-variable
-		       new-env (third rest)))
+	     (t (let* ((var1 (second rest))
+		       (var1-ast (cleavir-ast:make-lexical-ast var1))
+		       (var2 (third rest))
+		       (var2-ast (cleavir-ast:make-lexical-ast var2)))
+		  (setq new-env
+			(cleavir-env:add-lexical-variable
+			 new-env var1 var1-ast))
+		  (setq new-env
+			(cleavir-env:add-lexical-variable
+			 new-env var2 var2-ast)))
 		(pop rest)
 		(go key)))
      out)
     new-env))
 
 (defun var-to-lexical-identity (var env)
-  (let* ((info (cleavir-env:variable-info env var))
-	 (identity (cleavir-env:identity info)))
-    (find-or-create-ast identity)))
+  (let ((info (cleavir-env:variable-info env var)))
+    (cleavir-env:identity info)))
 
 (defun build-ast-lambda-list (lambda-list env)
   (let ((rest lambda-list)
