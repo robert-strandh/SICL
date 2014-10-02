@@ -51,9 +51,8 @@
 	    (loop for (name lambda-list . body) in (cadr form)
 		  for fun = (convert-code lambda-list body env)
 		  collect (cleavir-ast:make-setq-ast
-			   (let* ((info (cleavir-env:function-info new-env name))
-				  (identity (cleavir-env:identity info)))
-			     (find-or-create-ast identity))
+			   (let ((info (cleavir-env:function-info new-env name)))
+			     (cleavir-env:identity info))
 			   fun))))
       (multiple-value-bind (declarations forms)
 	  (cleavir-code-utilities:separate-ordinary-body (cddr form))
