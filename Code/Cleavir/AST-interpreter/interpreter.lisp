@@ -128,3 +128,11 @@
   ((%environment :initarg :environment :reader environment)
    (%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
+
+(defmethod interpret-ast ((ast cleavir-ast:function-ast)
+			  static-env dynamic-env)
+  (declare (ignore dynamic-env))
+  (make-instance 'interpreted-function
+    :environment static-env
+    :lambda-list (cleavir-ast:lambda-list ast)
+    :body-ast (cleavir-ast:body-ast ast)))
