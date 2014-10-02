@@ -123,3 +123,8 @@
 			  static-env dynamic-env)
   (declare (ignore static-env dynamic-env))
   (fdefinition (cleavir-ast:name ast)))
+
+(defclass interpreted-function ()
+  ((%environment :initarg :environment :reader environment)
+   (%lambda-list :initarg :lambda-list :reader lambda-list)
+   (%body-ast :initarg :body-ast :reader body-ast)))
