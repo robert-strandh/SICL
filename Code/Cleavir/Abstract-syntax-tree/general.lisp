@@ -575,17 +575,24 @@
 ;;; result of a binding of a special variable in a LET, LET*, or a
 ;;; lambda list of a function. 
 
-(defun bind-ast (ast)
+(defclass bind-ast (ast)
   ((%symbol :initarg :symbol :reader symbol)
+   (%value-ast :initarg :value-ast :reader value-ast)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(defun make-bind-ast (symbol body-ast)
-  (cleavir-io:define-save-info bind-ast
-    (:symbol symbol)
-    (:body-ast body-ast)))
+(defun make-bind-ast (symbol value-ast body-ast)
+  (make-instance 'bind-at
+    :symbol symbol
+    :value-ast value-ast
+    :body-ast body-ast))
+
+(cleavir-io:define-save-info bind-ast
+  (:symbol symbol)
+  (:value-ast value-ast)
+  (:body-ast body-ast))
 
 (defmethod children ((ast bind-ast))
-  (list (body-ast ast)))
+  (list (value-ast ast) (body-ast ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
