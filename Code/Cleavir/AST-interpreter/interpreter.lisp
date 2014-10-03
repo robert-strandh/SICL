@@ -1,19 +1,19 @@
 (cl:in-package #:cleavir-ast-interpreter)
 
-(defgeneric interpret-ast (ast static-env dynamic-env))
+(defgeneric interpret-ast (ast static-env))
 
 (defun interpret (ast)
   (let ((static-env (list (make-hash-table :test #'eq)))
 	(dynamic-env '()))
-    (interpret-ast ast static-env dynamic-env)))
+    (interpret-ast ast static-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Utility function.
 
-(defun interpret-sequence (sequence static-env dynamic-env)
+(defun interpret-sequence (sequence static-env)
   (loop for ast in sequence
-	for value = (interpret-ast ast static-env dynamic-env)
+	for value = (interpret-ast ast static-env)
 	finally (return value)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -21,66 +21,64 @@
 ;;; Methods on INTERPRET-AST.
 
 (defmethod interpret-ast ((ast cleavir-ast:constant-ast)
-			  static-env dynamic-env)
-  (declare (ignore static-env dynamic-env))
+			  static-env)
+  (declare (ignore static-env))
   (cleavir-ast:value ast))
 
 (defmethod interpret-ast ((ast cleavir-ast:progn-ast)
-			  static-env dynamic-env)
-  (interpret-sequence (cleavir-ast:form-asts ast) static-env dynamic-env))
+			  static-env)
+  (interpret-sequence (cleavir-ast:form-asts ast) static-env))
 
 (defmethod interpret-ast ((ast cleavir-ast:setq-ast)
-			  static-env dynamic-env)
+			  static-env)
   (set-lexical
    (cleavir-ast:lhs-ast ast)
-   (interpret-ast (cleavir-ast:value-ast ast) static-env dynamic-env)
+   (interpret-ast (cleavir-ast:value-ast ast) static-env)
    static-env))
 
 (defmethod interpret-ast ((ast cleavir-ast:lexical-ast)
-			  static-env dynamic-env)
-  (declare (ignore dynamic-env))
+			  static-env)
   (lookup-lexical ast static-env))
 
 (defmethod interpret-ast ((ast cleavir-ast:symbol-value-ast)
-			  static-env dynamic-env)
+			  static-env)
   (declare (ignore static-env))
   (symbol-value (cleavir-ast:symbol ast)))
 
 (defmethod interpret-ast ((ast cleavir-ast:block-ast)
-			  static-env dynamic-env)
+			  static-env)
   (let ((tag (list nil)))
     (set-lexical ast tag static-env)
     (catch tag
-      (interpret-ast (cleavir-ast:body-ast ast) static-env dynamic-env))))
+      (interpret-ast (cleavir-ast:body-ast ast) static-env))))
 
 (defmethod interpret-ast ((ast cleavir-ast:return-from-ast)
-			  static-env dynamic-env)
+			  static-env)
   (let* ((block (cleavir-ast:block-ast ast))
 	 (tag (lookup-lexical block static-env))
 	 (form-ast (cleavir-ast:form-ast ast)))
     (throw tag
-      (interpret-ast form-ast static-env dynamic-env))))
+      (interpret-ast form-ast static-env))))
 
 (defmethod interpret-ast ((ast cleavir-ast:if-ast)
-			  static-env dynamic-env)
-  (if (interpret-ast (cleavir-ast:test-ast ast) static-env dynamic-env)
-      (interpret-ast (cleavir-ast:then-ast ast) static-env dynamic-env)
-      (interpret-ast (cleavir-ast:else-ast ast) static-env dynamic-env)))
+			  static-env)
+  (if (interpret-ast (cleavir-ast:test-ast ast) static-env)
+      (interpret-ast (cleavir-ast:then-ast ast) static-env)
+      (interpret-ast (cleavir-ast:else-ast ast) static-env)))
 
 (defmethod interpret-ast ((ast cleavir-ast:tag-ast)
-			  static-env dynamic-env)
-  (declare (ignore static-env dynamic-env))
+			  static-env)
+  (declare (ignore static-env))
   nil)
 
 (defmethod interpret-ast ((ast cleavir-ast:go-ast)
-			  static-env dynamic-env)
-  (declare (ignore dynamic-env))
+			  static-env)
   (let* ((go-tag-ast (cleavir-ast:tag-ast ast))
 	 (catch-tag (lookup-lexical go-tag-ast static-env)))
     (throw catch-tag go-tag-ast)))
 
 (defmethod interpret-ast ((ast cleavir-ast:tagbody-ast)
-			  static-env dynamic-env)
+			  static-env)
   (let ((catch-tag (list nil))
 	(item-asts (cleavir-ast:item-asts ast)))
     ;; Start by entering the catch tag as the value of each go tags in
@@ -97,7 +95,7 @@
 	       ;; We know there is at least one remaining item-ast to
 	       ;; interpret.
 	       (interpret-ast (pop remaining-item-asts)
-			      static-env dynamic-env)))
+			      static-env)))
 	(flet ((do-items ()
 		 ;; Interpret all remaining items.
 		 (loop when (null remaining-item-asts)
@@ -120,8 +118,8 @@
 			   (member go-tag-ast item-asts)))))))))
 
 (defmethod interpret-ast ((ast cleavir-ast:fdefinition-ast)
-			  static-env dynamic-env)
-  (declare (ignore static-env dynamic-env))
+			  static-env)
+  (declare (ignore static-env))
   (fdefinition (cleavir-ast:name ast)))
 
 (defclass interpreted-function ()
@@ -130,8 +128,7 @@
    (%body-ast :initarg :body-ast :reader body-ast)))
 
 (defmethod interpret-ast ((ast cleavir-ast:function-ast)
-			  static-env dynamic-env)
-  (declare (ignore dynamic-env))
+			  static-env)
   (make-instance 'interpreted-function
     :environment static-env
     :lambda-list (cleavir-ast:lambda-list ast)
@@ -145,11 +142,11 @@
   (error "not yet implemented"))
 
 (defmethod interpret-ast ((ast cleavir-ast:call-ast)
-			  static-env dynamic-env)
+			  static-env)
   (let ((callee (interpret-ast (cleavir-ast:callee-ast ast)
-			       static-env dynamic-env))
+			       static-env))
 	(args (loop for arg-ast in (cleavir-ast:argument-asts ast)
-		    collect (interpret-ast arg-ast static-env dynamic-env))))
+		    collect (interpret-ast arg-ast static-env))))
     (if (typep callee 'function)
 	(interpret-primitive-call callee args)
 	(interpret-interpreted-call callee args))))
