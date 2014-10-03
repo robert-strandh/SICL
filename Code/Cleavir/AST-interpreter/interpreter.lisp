@@ -136,3 +136,9 @@
     (if (typep callee 'function)
 	(interpret-primitive-call callee args)
 	(interpret-interpreted-call callee args))))
+
+(defmethod interpret-ast ((ast cleavir-ast:bind-ast) env)
+  (progv
+      (list (cleavir-ast:symbol ast))
+      (list (interpret-ast (cleavir-ast:value-ast ast) env))
+    (interpret-ast (cleavir-ast:body-ast ast) env)))
