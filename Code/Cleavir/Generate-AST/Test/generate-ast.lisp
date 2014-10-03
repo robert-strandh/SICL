@@ -51,6 +51,10 @@
   (test '(function car)
 	#'car))
 
+(defun test-primitive-call ()
+  (test '(1+ *print-base*)
+	11))
+
 (defun run-tests ()
   (test-constant-ast)
   (test-lexical-ast)
@@ -58,4 +62,5 @@
   (test-block-return-from-ast)
   (test-if-ast)
   (test-tagbody-ast)
-  (test-fdefinition-ast))
+  (test-fdefinition-ast)
+  (test-primitive-call))
