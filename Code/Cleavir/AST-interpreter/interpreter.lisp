@@ -136,3 +136,20 @@
     :environment static-env
     :lambda-list (cleavir-ast:lambda-list ast)
     :body-ast (cleavir-ast:body-ast ast)))
+
+(defun interpret-primitive-call (callee arguments)
+  (apply callee arguments))
+
+(defun interpret-interpreted-call (callee arguments)
+  (declare (ignore callee arguments))
+  (error "not yet implemented"))
+
+(defmethod interpret-ast ((ast cleavir-ast:call-ast)
+			  static-env dynamic-env)
+  (let ((callee (interpret-ast (cleavir-ast:callee-ast ast)
+			       static-env dynamic-env))
+	(args (loop for arg-ast in (cleavir-ast:argument-asts ast)
+		    collect (interpret-ast arg-ast static-env dynamic-env))))
+    (if (typep callee 'function)
+	(interpret-primitive-call callee args)
+	(interpret-interpreted-call callee args))))
