@@ -20,65 +20,54 @@
 ;;;
 ;;; Methods on INTERPRET-AST.
 
-(defmethod interpret-ast ((ast cleavir-ast:constant-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:constant-ast) env)
   (declare (ignore env))
   (cleavir-ast:value ast))
 
-(defmethod interpret-ast ((ast cleavir-ast:progn-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:progn-ast) env)
   (interpret-sequence (cleavir-ast:form-asts ast) env))
 
-(defmethod interpret-ast ((ast cleavir-ast:setq-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:setq-ast) env)
   (set-lexical
    (cleavir-ast:lhs-ast ast)
    (interpret-ast (cleavir-ast:value-ast ast) env)
    env))
 
-(defmethod interpret-ast ((ast cleavir-ast:lexical-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:lexical-ast) env)
   (lookup-lexical ast env))
 
-(defmethod interpret-ast ((ast cleavir-ast:symbol-value-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:symbol-value-ast) env)
   (declare (ignore env))
   (symbol-value (cleavir-ast:symbol ast)))
 
-(defmethod interpret-ast ((ast cleavir-ast:block-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:block-ast) env)
   (let ((tag (list nil)))
     (set-lexical ast tag env)
     (catch tag
       (interpret-ast (cleavir-ast:body-ast ast) env))))
 
-(defmethod interpret-ast ((ast cleavir-ast:return-from-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:return-from-ast) env)
   (let* ((block (cleavir-ast:block-ast ast))
 	 (tag (lookup-lexical block env))
 	 (form-ast (cleavir-ast:form-ast ast)))
     (throw tag
       (interpret-ast form-ast env))))
 
-(defmethod interpret-ast ((ast cleavir-ast:if-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:if-ast) env)
   (if (interpret-ast (cleavir-ast:test-ast ast) env)
       (interpret-ast (cleavir-ast:then-ast ast) env)
       (interpret-ast (cleavir-ast:else-ast ast) env)))
 
-(defmethod interpret-ast ((ast cleavir-ast:tag-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:tag-ast) env)
   (declare (ignore env))
   nil)
 
-(defmethod interpret-ast ((ast cleavir-ast:go-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:go-ast) env)
   (let* ((go-tag-ast (cleavir-ast:tag-ast ast))
 	 (catch-tag (lookup-lexical go-tag-ast env)))
     (throw catch-tag go-tag-ast)))
 
-(defmethod interpret-ast ((ast cleavir-ast:tagbody-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:tagbody-ast) env)
   (let ((catch-tag (list nil))
 	(item-asts (cleavir-ast:item-asts ast)))
     ;; Start by entering the catch tag as the value of each go tags in
@@ -117,8 +106,7 @@
 		     (setf remaining-item-asts
 			   (member go-tag-ast item-asts)))))))))
 
-(defmethod interpret-ast ((ast cleavir-ast:fdefinition-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:fdefinition-ast) env)
   (declare (ignore env))
   (fdefinition (cleavir-ast:name ast)))
 
@@ -127,8 +115,7 @@
    (%lambda-list :initarg :lambda-list :reader lambda-list)
    (%body-ast :initarg :body-ast :reader body-ast)))
 
-(defmethod interpret-ast ((ast cleavir-ast:function-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:function-ast) env)
   (make-instance 'interpreted-function
     :environment env
     :lambda-list (cleavir-ast:lambda-list ast)
@@ -141,8 +128,7 @@
   (declare (ignore callee arguments))
   (error "not yet implemented"))
 
-(defmethod interpret-ast ((ast cleavir-ast:call-ast)
-			  env)
+(defmethod interpret-ast ((ast cleavir-ast:call-ast) env)
   (let ((callee (interpret-ast (cleavir-ast:callee-ast ast)
 			       env))
 	(args (loop for arg-ast in (cleavir-ast:argument-asts ast)
