@@ -568,6 +568,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class BIND-AST.
+;;;
+;;; This AST is used to create a dynamic binding for a symbol for the
+;;; duration of the execution of the body.  It is generated as a
+;;; result of a binding of a special variable in a LET, LET*, or a
+;;; lambda list of a function. 
+
+(defun bind-ast (ast)
+  ((%symbol :initarg :symbol :reader symbol)
+   (%body-ast :initarg :body-ast :reader body-ast)))
+
+(defun make-bind-ast (symbol body-ast)
+  (cleavir-io:define-save-info bind-ast
+    (:symbol symbol)
+    (:body-ast body-ast)))
+
+(defmethod children ((ast bind-ast))
+  (list (body-ast ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class EQ-AST.
 ;;;
 ;;; This AST can be used to to test whether two objects are identical.
