@@ -274,7 +274,7 @@
 			variables canonical-declarations env))
 	     (ast (convert-sequence forms body-env)))
 	(loop for binding in (reverse bindings)
-	      for var = (if (symbolp binding) binding (first binding))
+	      for var in (reverse variables)
 	      for info = (cleavir-env:variable-info body-env var)
 	      for init = (if (symbolp binding) nil (second binding))
 	      for init-ast = (convert init env)
@@ -288,40 +288,41 @@
 				    ast))))))
 	ast))))
 
-;;; We convert a LET* form recursively.  If it has a single binding,
-;;; we convert it into a SETQ.  If it has more than one binding, we
-;;; convert it as follows:
-;;;
-;;; (let* ((<var> <init-form>)
-;;;        <more-bindings>)
-;;;   <body>)
-;;; =>
-;;; (let ((<var> <init-form>))
-;;;   (let (<more-bindings>)
-;;;      <body>)))
-
 (defmethod convert-special
     ((symbol (eql 'let*)) form env)
   (destructuring-bind (bindings &rest body) (cdr form)
-    (if (= (length bindings) 1)
-	(convert-simple-let (car bindings) body env)
-	(let* ((first (car bindings))
-	       (var (if (symbolp first) first (car first)))
-	       (init-form (if (symbolp first) nil (cadr first))))
-	  (multiple-value-bind (declarations forms)
-	      (cleavir-code-utilities:separate-ordinary-body body)
-	    (multiple-value-bind (first remaining)
-		(separate-declarations 
-		 (cleavir-code-utilities:canonicalize-declaration-specifiers 
-		  (mapcar #'cdr declarations))
-		 var)
-	      (convert
-	       `(let ((,var ,init-form))
-		  (declare ,@first)
-		  (let* ,(cdr bindings)
-		    (declare ,@remaining)
-		    ,@forms))
-	       env)))))))
+    (multiple-value-bind (declarations forms)
+	(cleavir-code-utilities:separate-ordinary-body body)
+      (let* ((canonical-declarations
+	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
+		(mapcar #'cdr declarations)))
+	     (variables (loop for binding in bindings
+			      collect (if (symbolp binding)
+					  binding
+					  (first binding))))
+	     (environments
+	       (flet ((augment (env variable)
+			(augment-environment-with-variable
+			 variable canonical-declarations env)))
+		 (loop for variable in variables
+		       for new-env = env then (augment new-env variable)
+		       collect new-env)))
+	     (ast (convert-sequence forms (first (last environments)))))
+	(loop for binding in (reverse bindings)
+	      for var in (reverse variables)
+	      for environment in (rest (reverse (cons env environments)))
+	      for info = (cleavir-env:variable-info environment var)
+	      for init = (if (symbolp binding) nil (second binding))
+	      for init-ast = (convert init environment)
+	      do (setf ast
+		       (if (variable-is-special-p
+			    var canonical-declarations env)
+			   (cleavir-ast:make-bind-ast var init-ast ast)
+			   (let ((lexical (cleavir-env:identity info)))
+			     (cleavir-ast:make-progn-ast 
+			      (list (cleavir-ast:make-setq-ast lexical init-ast)
+				    ast))))))
+	ast))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
