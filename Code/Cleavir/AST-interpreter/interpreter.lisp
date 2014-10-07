@@ -150,7 +150,7 @@
 	      ;; is a required parameter in the form of a lexical
 	      ;; variable.  Add the first of the remaining arguments
 	      ;; to the hash table representing the environment.
-	      (setf (gethash table (pop ll)) (pop remaining))
+	      (setf (gethash (pop ll) table) (pop remaining))
 	      (go required)))
      optional
        (cond ((null remaining)
@@ -175,8 +175,8 @@
 	      ;; one indicating that the argument has been supplied.
 	      ;; Add the first of the remaining arguments to the hash
 	      ;; table representing the environment.
-	      (setf (gethash table (first (first ll))) (pop remaining))
-	      (setf (gethash table (second (pop ll))) t)
+	      (setf (gethash (first (first ll)) table) (pop remaining))
+	      (setf (gethash (second (pop ll)) table) t)
 	      (go optional)))
      key
        (let ((default (list nil))) ; for use with GETF
@@ -210,10 +210,10 @@
 		      ;; We found an argument for this keyword parameter.
 		      (progn 
 			;; Enter the argument into the environment
-			(setf (gethash table (second (first ll)))
+			(setf (gethash (second (first ll)) table)
 			      (pop remaining))
 			;; Set the supplied-p parameter to T.
-			(setf (gethash table (third (pop ll))) t)
+			(setf (gethash (third (pop ll)) table) t)
 			;; Remove any keyword arguments with the same
 			;; key from the remaining argument list.
 			(loop while (remf remaining keyword))
