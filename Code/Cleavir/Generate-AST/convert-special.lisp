@@ -46,7 +46,8 @@
     ;; Create a new environment with the additional names.
     (loop for def in (cadr form)
 	  for name = (car def)
-	  do (setf new-env (cleavir-env:add-local-function new-env name)))
+	  for var-ast = (cleavir-ast:make-lexical-ast name)
+	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
     (let ((init-asts
 	    (loop for (name lambda-list . body) in (cadr form)
 		  for fun = (convert-code lambda-list body env)
