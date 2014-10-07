@@ -614,12 +614,12 @@
 	    '()
 	    (loop for (name init-form supplied-p) in optionals
 		  collect `(unless ,supplied-p
-			     (setf ,name ,init-form))))
+			     (setq ,name ,init-form))))
       ,@(if (eq keys :none)
 	    '()
 	    (loop for ((nil name) init-form supplied-p) in keys
 		  collect `(unless ,supplied-p
-			     (setf ,name ,init-form)))))))
+			     (setq ,name ,init-form)))))))
 
 (defun preprocess-lambda-list (parsed-lambda-list)
   (let ((ll (ensure-supplied-p-parameters parsed-lambda-list)))
