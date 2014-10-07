@@ -52,42 +52,26 @@
 ;;;
 ;;; Converting code to an abstract syntax tree.
 
-;;; During conversion, this variable contains a hash table that maps
-;;; from instance of environment identities to ASTs.
-(defparameter *identity-asts* nil)
-
-(defun find-or-create-ast (identity)
-  (or (gethash identity *identity-asts*)
-      (let ((ast (cleavir-ast:make-lexical-ast identity)))
-	(setf (gethash identity *identity-asts*) ast))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting ordinary Common Lisp code.
 
 (defgeneric convert (form environment))
 
-(defun convert-initial (form)
-  (let ((*identity-asts* (make-hash-table :test #'eq)))
-    (convert form)))
-
 (defun convert-top-level-form (form)
-  (let ((*identity-asts* (make-hash-table :test #'eq)))
-    (convert `(function (lambda () ,form)) nil)))
+  (convert `(function (lambda () ,form)) nil))
 
 (defun convert-top-level-lamda-expression (lambda-expression)
   (unless (and (consp lambda-expression)
 	       (eq (car lambda-expression) 'lambda))
     (error "argument must be a lambda expression"))
-  (let ((*identity-asts* (make-hash-table :test #'eq)))
-    (convert `(function ,lambda-expression) nil)))
+  (convert `(function ,lambda-expression) nil))
 
 (defun convert-for-inlining (lambda-expression)
   (let* ((lambda-list (cadr lambda-expression))
 	 (let-bindings (loop for var in lambda-list
 			     for i from 0
-			     collect `(,var (arg ,i))))
-	 (*identity-asts* (make-hash-table :test #'eq)))
+			     collect `(,var (arg ,i)))))
     (let ((ast (convert `(let ,let-bindings ,@(cddr lambda-expression)) nil)))
       ;; The AST looks like this:
       ;; (progn (setq <a0> (arg 0)) (progn (setq <a1> (arg 1)) ....
@@ -248,5 +232,4 @@
 	 (convert-lambda-call form environment))))
 
 (defun generate-ast (form environment)
-  (let ((*identity-asts* (make-hash-table :test #'eq)))
-    (convert form environment)))
+  (convert form environment))
