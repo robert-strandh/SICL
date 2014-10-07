@@ -305,7 +305,8 @@
 			(augment-environment-with-variable
 			 variable canonical-declarations env)))
 		 (loop for variable in variables
-		       for new-env = env then (augment new-env variable)
+		       for new-env = (augment env variable)
+			 then (augment new-env variable)
 		       collect new-env)))
 	     (ast (convert-sequence forms (first (last environments)))))
 	(loop for binding in (reverse bindings)
