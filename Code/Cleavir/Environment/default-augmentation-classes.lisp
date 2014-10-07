@@ -38,11 +38,12 @@
   ((%name :initarg :name :reader name)
    (%identity :initarg :identity :reader identity)))
 
-(defmethod add-local-function (environment function-name)
+(defmethod add-local-function
+    (environment function-name &optional (identity (gensym)))
   (make-instance 'function
     :next environment
     :name function-name
-    :identity (gensym)))
+    :identity identity))
 
 (defclass macro (entry)
   ((%name :initarg :name :reader name)

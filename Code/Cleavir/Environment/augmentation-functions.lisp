@@ -6,7 +6,7 @@
 
 (defgeneric add-local-symbol-macro (environment symbol expansion))
 
-(defgeneric add-local-function (environment function-name))
+(defgeneric add-local-function (environment function-name &optional identity))
 
 (defgeneric add-local-macro (environment symbol expander))
 
