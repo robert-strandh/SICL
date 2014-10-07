@@ -202,20 +202,26 @@
 ;;; Given a single variable bound by a LET form, a list of
 ;;; canonicalized declaration specifiers, and an environment in which
 ;;; the LET form is compiled, return true if and only if the variable
-;;; to be bound is special.
+;;; to be bound is special.  Return a second value indicating whether
+;;; the variable is globally special.
 ;;;
 ;;; FIXME: also return information indicating whether the variable is
 ;;; globally special.
 (defun variable-is-special-p (variable declarations env)
-  (or
-   ;; Clearly, if it is declared SPECIAL, then it is.
-   (member 'special declarations :key #'car)
-   ;; The variable could still be special, provided that it is
-   ;; globally special in ENV.
-   (let ((existing-var-info (cleavir-env:variable-info env variable)))
-     (and (not (null existing-var-info))
-	  (typep existing-var-info 'cleavir-env:special-variable-info)
-	  (cleavir-env:global-p existing-var-info)))))
+  (let ((existing-var-info (cleavir-env:variable-info env variable)))
+    (cond ((and (and (not (null existing-var-info))
+		     (typep existing-var-info
+			    'cleavir-env:special-variable-info))
+		(cleavir-env:global-p existing-var-info))
+	   ;; If it is globally special, it is special inside the LET
+	   ;; or LET* as well, no matter how it is declared.
+	   (values t t))
+	  ((member 'special declarations :key #'car)
+	   ;; If it is not globally special, it is special only if it
+	   ;; is declared special.
+	   (values t nil))
+	  (t
+	   (values nil nil)))))
 
 ;;; Given a single variable bound by the LET form, and a list of
 ;;; canonicalized declaration specifiers concerning that variable,
@@ -223,12 +229,14 @@
 ;;; variable.  
 (defun augment-environment-with-variable (variable declarations env)
   (let ((new-env env))
-    (if (variable-is-special-p variable declarations env)
-	(setf new-env
-	      (cleavir-env:add-special-variable new-env variable))
-	(let ((var-ast (cleavir-ast:make-lexical-ast variable)))
+    (multiple-value-bind (special-p globally-p)
+	(variable-is-special-p variable declarations env)
+      (if (and special-p (not globally-p))
 	  (setf new-env
-		(cleavir-env:add-lexical-variable new-env variable var-ast))))
+		(cleavir-env:add-special-variable new-env variable))
+	  (let ((var-ast (cleavir-ast:make-lexical-ast variable)))
+	    (setf new-env
+		  (cleavir-env:add-lexical-variable new-env variable var-ast)))))
     (let ((type (declared-type declarations)))
       (unless (equal type '(and))
 	(setf new-env
