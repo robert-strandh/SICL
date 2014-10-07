@@ -59,6 +59,10 @@
 	3)
   (test '(flet ((f (x) x))
 	  (+ (f 1) 2))
+	3)
+  (test '(flet ((f (x) x)
+		(g (x) x))
+	  (+ (f 1) (g 2)))
 	3))
 
 (defun run-tests ()
