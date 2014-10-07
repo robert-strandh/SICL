@@ -51,7 +51,7 @@
   (test '(function car)
 	#'car))
 
-(defun test-primitive-call ()
+(defun test-call ()
   (test '(1+ *print-base*)
 	11))
 
@@ -63,4 +63,4 @@
   (test-if-ast)
   (test-tagbody-ast)
   (test-fdefinition-ast)
-  (test-primitive-call))
+  (test-call))
