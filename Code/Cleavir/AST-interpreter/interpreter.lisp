@@ -121,21 +121,12 @@
     :lambda-list (cleavir-ast:lambda-list ast)
     :body-ast (cleavir-ast:body-ast ast)))
 
-(defun interpret-primitive-call (callee arguments)
-  (apply callee arguments))
-
-(defun interpret-interpreted-call (callee arguments)
-  (declare (ignore callee arguments))
-  (error "not yet implemented"))
-
 (defmethod interpret-ast ((ast cleavir-ast:call-ast) env)
   (let ((callee (interpret-ast (cleavir-ast:callee-ast ast)
 			       env))
 	(args (loop for arg-ast in (cleavir-ast:argument-asts ast)
 		    collect (interpret-ast arg-ast env))))
-    (if (typep callee 'function)
-	(interpret-primitive-call callee args)
-	(interpret-interpreted-call callee args))))
+    (apply callee args)))
 
 (defmethod interpret-ast ((ast cleavir-ast:bind-ast) env)
   (progv
