@@ -191,6 +191,95 @@
 		      ,@forms)))
 	       env)))))))
 
+;;; Given a list of canonicalized declaration specifiers for a single
+;;; varible.  Return a type specifier resulting from all the type
+;;; declarations present in the list.
+(defun declared-type (declarations)
+  `(and ,@(loop for declaration in declarations
+		when (eq (car declaration) 'type)
+		  collect (cadr declaration))))
+
+;;; Given a single variable bound by a LET form, a list of
+;;; canonicalized declaration specifiers, and an environment in which
+;;; the LET form is compiled, return true if and only if the variable
+;;; to be bound is special.
+;;;
+;;; FIXME: also return information indicating whether the variable is
+;;; globally special.
+(defun variable-is-special-p (variable declarations env)
+  (or
+   ;; Clearly, if it is declared SPECIAL, then it is.
+   (member 'special declarations :key #'car)
+   ;; The variable could still be special, provided that it is
+   ;; globally special in ENV.
+   (let ((existing-var-info (cleavir-env:variable-info env variable)))
+     (and (not (null existing-var-info))
+	  (typep existing-var-info 'cleavir-env:special-variable-info)
+	  (cleavir-env:global-p existing-var-info)))))
+
+;;; Given a single variable bound by the LET form, and a list of
+;;; canonicalized declaration specifiers concerning that variable,
+;;; return a new environment that contains information about that
+;;; variable.  
+(defun augment-environment-with-variable (variable declarations env)
+  (let ((new-env env))
+    (if (variable-is-special-p variable declarations env)
+	(setf new-env
+	      (cleavir-env:add-special-variable new-env variable))
+	(let ((var-ast (cleavir-ast:make-lexical-ast variable)))
+	  (setf new-env
+		(cleavir-env:add-lexical-variable new-env variable var-ast))))
+    (let ((type (declared-type declarations)))
+      (unless (equal type '(and))
+	(setf new-env
+	      (cleavir-env:add-variable-type new-env variable type))))
+    (when (member 'dynamic-extent declarations :test #'eq :key #'car)
+      (setf new-env
+	    (cleavir-env:add-variable-dynamic-extent new-env 'variable)))
+    new-env))
+
+;;; Given a list of variables bound by the LET form, and a list of
+;;; canonicalized declarations specifiers, return an environment to be
+;;; used to compile the body.  The ENV parameter is the environment in
+;;; which the LET form is converted.  It is used in order to determine
+;;; whether any variable is globally special. 
+(defun construct-let-body-environment (variables declarations env)
+  (flet ((augment (env variable)
+	   (augment-environment-with-variable variable declarations env)))
+    (loop for variable in variables
+	  for new-env = env then (augment new-env variable)
+	  finally (return new-env))))
+
+(defmethod convert-special
+    ((symbol (eql 'let)) form env)
+  (destructuring-bind (bindings &rest body) (cdr form)
+    (multiple-value-bind (declarations forms)
+	(cleavir-code-utilities:separate-ordinary-body body)
+      (let* ((canonical-declarations
+	       (cleavir-code-utilities:canonicalize-declaration-specifiers 
+		(mapcar #'cdr declarations)))
+	     (variables (loop for binding in bindings
+			      collect (if (symbolp binding)
+					  binding
+					  (first binding))))
+	     (body-env (construct-let-body-environment
+			variables canonical-declarations env))
+	     (ast (convert-sequence forms body-env)))
+	(loop for binding in (reverse bindings)
+	      for var = (if (symbolp binding) binding (first binding))
+	      for info = (cleavir-env:variable-info body-env var)
+	      for init = (if (symbolp binding) nil (second binding))
+	      for init-ast = (convert init env)
+	      do (setf ast
+		       (if (variable-is-special-p
+			    var canonical-declarations env)
+			   (cleavir-ast:make-bind-ast var init-ast ast)
+			   (let ((lexical (cleavir-env:identity info)))
+			     (cleavir-ast:make-progn-ast 
+			      (list (cleavir-ast:make-setq-ast lexical init-ast)
+				    ast))))))
+	ast))))
+
 ;;; We convert a LET* form recursively.  If it has a single binding,
 ;;; we convert it into a SETQ.  If it has more than one binding, we
 ;;; convert it as follows:
