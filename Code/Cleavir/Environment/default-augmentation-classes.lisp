@@ -15,10 +15,8 @@
     :identity identity))
 
 (defclass special-variable (entry)
-  ((%name :initarg :name :reader name)
-   (%global-p :initarg :global-p :reader global-p)))
+  ((%name :initarg :name :reader name)))
 
-;;; FIXME: should this function take a global-p argument?
 (defmethod add-special-variable (environment symbol)
   (make-instance 'special-variable
     :next environment
