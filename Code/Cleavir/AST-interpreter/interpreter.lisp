@@ -110,16 +110,122 @@
   (declare (ignore env))
   (fdefinition (cleavir-ast:name ast)))
 
-(defclass interpreted-function ()
-  ((%environment :initarg :environment :reader environment)
-   (%lambda-list :initarg :lambda-list :reader lambda-list)
-   (%body-ast :initarg :body-ast :reader body-ast)))
+(defun load-environment (environment arguments lambda-list)
+  (let ((table (make-hash-table :test #'eq))
+	(remaining arguments)
+	(ll lambda-list))
+    (tagbody
+     required
+       (cond ((null remaining)
+	      ;; We ran out of arguments. 
+	      (if (or (null ll) (member (first ll) lambda-list-keywords))
+		  ;; The remaining lambda list is either empty, or it
+		  ;; has &optional or &key in it.  In either case we
+		  ;; are done.
+		  (go end)
+		  ;; The remaining lambda list has a required
+		  ;; parameter in it.  Since there are no more
+		  ;; arguments, too few arguments were passed.
+		  (error "Too few arguments")))
+	     ((null ll)
+	      ;; There are more arguments, but the remaining lambda
+	      ;; list is empty, so there are no parameters to match
+	      ;; those arguments to.  
+	      (error "Too many arguments"))
+	     ((eq (first ll) '&optional)
+	      ;; There are more arguments, the lambda list has more
+	      ;; entries in it, and the first entry in the lambda list
+	      ;; is the lambda-list keyword &OPTIONAL.
+	      (pop ll)
+	      (go optional))
+	     ((eq (first ll) '&key)
+	      ;; There are more arguments, the lambda list has more
+	      ;; entries in it, and the first entry in the lambda list
+	      ;; is the lambda-list keyword &KEY.
+	      (pop ll)
+	      (go key))
+	     (t
+	      ;; There are more arguments, the lambda list has more
+	      ;; entries in it, and the first entry in the lambda list
+	      ;; is a required parameter in the form of a lexical
+	      ;; variable.  Add the first of the remaining arguments
+	      ;; to the hash table representing the environment.
+	      (setf (gethash table (pop ll)) (pop remaining))
+	      (go required)))
+     optional
+       (cond ((null remaining)
+	      ;; We ran out of arguments.  We are done.
+	      (go end))
+	     ((null ll)
+	      ;; There are more arguments, but the remaining lambda
+	      ;; list is empty, so there are no parameters to match
+	      ;; those arguments to.  
+	      (error "Too many arguments"))
+	     ((eq (first ll) '&key)
+	      ;; There are more arguments, the lambda list has more
+	      ;; entries in it, and the first entry in the lambda list
+	      ;; is the lambda-list keyword &KEY.
+	      (pop ll)
+	      (go key))
+	     (t
+	      ;; There are more arguments, the lambda list has more
+	      ;; entries in it, and the first entry in the lambda list
+	      ;; is an optional parameter in the form of a list of two
+	      ;; lexical variables, one for the argument itself, and
+	      ;; one indicating that the argument has been supplied.
+	      ;; Add the first of the remaining arguments to the hash
+	      ;; table representing the environment.
+	      (setf (gethash table (first (first ll))) (pop remaining))
+	      (setf (gethash table (second (pop ll))) t)
+	      (go optional)))
+     key
+       (let ((default (list nil))) ; for use with GETF
+	 (cond ((null remaining)
+		;; We ran out of arguments.  We are done.
+		(go end))
+	       ((null ll)
+		;; There are more arguments, but the remaining lambda
+		;; list is empty, so there are no parameters to match
+		;; those arguments to.
+		(if (getf remaining :allow-other-keys)
+		    ;; The caller disabled mandatory keyword matching.
+		    (go end)
+		    (error "Too many arguments")))
+	       ((eq (first ll) '&allow-other-keys)
+		(go end))
+	       (t
+		;; There are more arguments, the lambda list has more
+		;; entries in it, and the first entry in the lambda
+		;; list is a key parameter in the form of a list of a
+		;; keyword and two lexical variables, one for the
+		;; argument itself, and one indicating that the
+		;; argument has been supplied.
+		(let* ((keyword (first (first ll)))
+		       ;; See if there is an argument for this parameter. 
+		       (arg (getf remaining keyword default)))
+		  (if (eq arg default)
+		      ;; No argument was supplied for this keyword parameter
+		      (progn (pop ll)
+			     (go key))
+		      ;; We found an argument for this keyword parameter.
+		      (progn 
+			;; Enter the argument into the environment
+			(setf (gethash table (second (first ll)))
+			      (pop remaining))
+			;; Set the supplied-p parameter to T.
+			(setf (gethash table (third (pop ll))) t)
+			;; Remove any keyword arguments with the same
+			;; key from the remaining argument list.
+			(loop while (remf remaining keyword))
+			(go key)))))))
+     end)
+    (cons table environment)))
 
 (defmethod interpret-ast ((ast cleavir-ast:function-ast) env)
-  (make-instance 'interpreted-function
-    :environment env
-    :lambda-list (cleavir-ast:lambda-list ast)
-    :body-ast (cleavir-ast:body-ast ast)))
+  (lambda (&rest arguments)
+    (let* ((lambda-list (cleavir-ast:lambda-list ast))
+	   (new-env (load-environment env arguments lambda-list)))
+      (interpret-ast (cleavir-ast:body-ast ast) new-env))))
 
 (defmethod interpret-ast ((ast cleavir-ast:call-ast) env)
   (let ((callee (interpret-ast (cleavir-ast:callee-ast ast)
