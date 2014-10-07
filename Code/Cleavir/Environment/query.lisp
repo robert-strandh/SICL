@@ -16,7 +16,8 @@
 (defclass special-variable-info ()
   ((%name :initarg :name :reader name)
    (%type :initform t :initarg :type :reader type)
-   (%ignore :initarg nil :initarg :ignore :reader ignore)))
+   (%ignore :initform nil :initarg :ignore :reader ignore)
+   (%global-p :initform nil :initarg :global-p :reader global-p)))
 
 (defclass constant-variable-info ()
   ((%name :initarg :name :reader name)
