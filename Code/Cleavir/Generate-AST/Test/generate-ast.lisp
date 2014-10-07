@@ -53,7 +53,10 @@
 
 (defun test-call ()
   (test '(1+ *print-base*)
-	11))
+	11)
+  (test '(flet ((f () 1))
+	  (+ (f) 2))
+	3))
 
 (defun run-tests ()
   (test-constant-ast)
