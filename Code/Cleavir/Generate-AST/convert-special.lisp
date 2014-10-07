@@ -256,7 +256,8 @@
   (flet ((augment (env variable)
 	   (augment-environment-with-variable variable declarations env)))
     (loop for variable in variables
-	  for new-env = env then (augment new-env variable)
+	  for new-env = (augment env variable)
+	    then (augment new-env variable)
 	  finally (return new-env))))
 
 (defmethod convert-special
@@ -273,7 +274,8 @@
 					  (first binding))))
 	     (body-env (construct-let-body-environment
 			variables canonical-declarations env))
-	     (ast (convert-sequence forms body-env)))
+	     (ast (cleavir-ast:make-progn-ast
+		   (convert-sequence forms body-env))))
 	(loop for binding in (reverse bindings)
 	      for var in (reverse variables)
 	      for info = (cleavir-env:variable-info body-env var)
@@ -309,7 +311,8 @@
 		       for new-env = (augment env variable)
 			 then (augment new-env variable)
 		       collect new-env)))
-	     (ast (convert-sequence forms (first (last environments)))))
+	     (ast (cleavir-ast:make-progn-ast
+		   (convert-sequence forms (first (last environments))))))
 	(loop for binding in (reverse bindings)
 	      for var in (reverse variables)
 	      for environment in (rest (reverse (cons env environments)))
