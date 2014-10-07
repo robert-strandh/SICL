@@ -98,7 +98,7 @@
 ;;; A local function can not have a compiler macro associated with it.
 
 (defmethod convert-form (form (info cleavir-env:local-function-info) env)
-  (let ((function-ast (find-or-create-ast (cleavir-env:name info)))
+  (let ((function-ast (cleavir-env:identity info))
 	(argument-asts (convert-sequence (cdr form) env)))
     (cleavir-ast:make-call-ast function-ast argument-asts)))
 
