@@ -224,7 +224,7 @@
 		       (arg (getf remaining keyword default)))
 		  (if (eq arg default)
 		      ;; No argument was supplied for this keyword parameter
-		      (progn (pop ll)
+		      (progn (setf (gethash (third (pop ll)) table) nil)
 			     (go key))
 		      ;; We found an argument for this keyword parameter.
 		      (progn 
