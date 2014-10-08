@@ -121,7 +121,10 @@
 	'(20 21))
   (test '(flet ((f (&key (x 10) &allow-other-keys) x))
 	  (f))
-	10))
+	10)
+  (test '(flet ((f (&key (x 10) &allow-other-keys) x))
+	  (f :x 20))
+	20))
 
 (defun run-tests ()
   (test-constant-ast)
