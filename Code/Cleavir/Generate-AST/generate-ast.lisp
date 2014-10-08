@@ -184,7 +184,8 @@
      key
        (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
 	      (go out))
-	     (t (push (list (var-to-lexical-identity (second (first rest)) env)
+	     (t (push (list (first (first rest))
+			    (var-to-lexical-identity (second (first rest)) env)
 			    (var-to-lexical-identity (third (first rest)) env))
 		      result)
 		(pop rest)
