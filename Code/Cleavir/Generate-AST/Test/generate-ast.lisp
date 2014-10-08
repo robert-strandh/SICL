@@ -118,7 +118,10 @@
 	'(10 11))
   (test '(flet ((f (&key (x 10) (y (1+ x))) (list x y)))
 	  (f :x 20))
-	'(20 21)))
+	'(20 21))
+  (test '(flet ((f (&key (x 10) &allow-other-keys) x))
+	  (f))
+	10))
 
 (defun run-tests ()
   (test-constant-ast)
