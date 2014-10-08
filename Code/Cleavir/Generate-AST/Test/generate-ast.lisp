@@ -100,7 +100,10 @@
 	'(10 a))
   (test '(flet ((f (&key (x 10) (y (1+ x))) (list x y)))
 	  (f :y 'a))
-	'(10 a)))
+	'(10 a))
+  (test '(flet ((f (&key (x 10) (y (1+ x))) (list x y)))
+	  (f))
+	'(10 11)))
 
 (defun run-tests ()
   (test-constant-ast)
