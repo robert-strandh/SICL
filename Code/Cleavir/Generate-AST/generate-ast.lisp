@@ -121,9 +121,9 @@
      optional
        (cond ((null rest) (go out))
 	     ((eq (car rest) '&key) (pop rest) (go key))
-	     (t (let* ((var1 (first rest))
+	     (t (let* ((var1 (first (first rest)))
 		       (var1-ast (cleavir-ast:make-lexical-ast var1))
-		       (var2 (second rest))
+		       (var2 (second (first rest)))
 		       (var2-ast (cleavir-ast:make-lexical-ast var2)))
 		  (setq new-env
 			(cleavir-env:add-lexical-variable
@@ -136,9 +136,9 @@
      key
        (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
 	      (go out))
-	     (t (let* ((var1 (second rest))
+	     (t (let* ((var1 (second (first rest)))
 		       (var1-ast (cleavir-ast:make-lexical-ast var1))
-		       (var2 (third rest))
+		       (var2 (third (first rest)))
 		       (var2-ast (cleavir-ast:make-lexical-ast var2)))
 		  (setq new-env
 			(cleavir-env:add-lexical-variable
@@ -176,15 +176,19 @@
 	     ((eq (car rest) '&key)
 	      (push (pop rest) result)
 	      (go key))
-	     (t (push (var-to-lexical-identity (first rest) env) result)
-		(push (var-to-lexical-identity (second rest) env) result)
+	     (t (push (var-to-lexical-identity (first (first rest)) env)
+		      result)
+		(push (var-to-lexical-identity (second (first rest)) env)
+		      result)
 		(pop rest)
 		(go optional)))
      key
        (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
 	      (go out))
-	     (t (push (var-to-lexical-identity (second rest) env) result)
-		(push (var-to-lexical-identity (third rest) env) result)
+	     (t (push (var-to-lexical-identity (second (first rest)) env)
+		      result)
+		(push (var-to-lexical-identity (third (first rest)) env)
+		      result)
 		(pop rest)
 		(go key)))
      out)
