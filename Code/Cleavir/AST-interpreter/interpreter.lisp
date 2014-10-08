@@ -118,15 +118,28 @@
      required
        (cond ((null remaining)
 	      ;; We ran out of arguments. 
-	      (if (or (null ll) (member (first ll) lambda-list-keywords))
-		  ;; The remaining lambda list is either empty, or it
-		  ;; has &optional or &key in it.  In either case we
-		  ;; are done.
-		  (go end)
-		  ;; The remaining lambda list has a required
-		  ;; parameter in it.  Since there are no more
-		  ;; arguments, too few arguments were passed.
-		  (error "Too few arguments")))
+	      (cond ((null ll)
+		     ;; There are no more parameters in the lambda
+		     ;; list.  We are done.
+		     (go end))
+		    ((eq (first ll) '&optional)
+		     ;; There might be &optional parameters and maybe
+		     ;; also &key parameters.  The corresponding
+		     ;; SUPPLIED-P parameters must then be initialized
+		     ;; to NIL.
+		     (pop ll)
+		     (go no-optional))
+		    ((eq (first ll) '&key)
+		     ;; There might be &key parameters.  The
+		     ;; corresponding SUPPLIED-P parameters must then
+		     ;; be initialized to NIL.
+		     (pop ll)
+		     (go no-key))
+		    (t
+		     ;; There are more required parameters in the
+		     ;; lambda list, even though there are no more
+		     ;; arguments.
+		     (error "Too few arguments"))))
 	     ((null ll)
 	      ;; There are more arguments, but the remaining lambda
 	      ;; list is empty, so there are no parameters to match
@@ -154,8 +167,11 @@
 	      (go required)))
      optional
        (cond ((null remaining)
-	      ;; We ran out of arguments.  We are done.
-	      (go end))
+	      ;; We ran out of arguments.  But there might be more
+	      ;; &optional and perhaps also &key parameters left in
+	      ;; the lambda list.  We must initialize the
+	      ;; corresponding SUPPLIED-P parameters of those to NIL.
+	      (go no-optional))
 	     ((null ll)
 	      ;; There are more arguments, but the remaining lambda
 	      ;; list is empty, so there are no parameters to match
@@ -181,8 +197,11 @@
      key
        (let ((default (list nil))) ; for use with GETF
 	 (cond ((null remaining)
-		;; We ran out of arguments.  We are done.
-		(go end))
+		;; We ran out of arguments.  But there might be more
+		;; &key parameters left in the lambda list.  We must
+		;; initialize the corresponding SUPPLIED-P parameters
+		;; of those to NIL.
+		(go no-key))
 	       ((null ll)
 		;; There are more arguments, but the remaining lambda
 		;; list is empty, so there are no parameters to match
@@ -218,6 +237,40 @@
 			;; key from the remaining argument list.
 			(loop while (remf remaining keyword))
 			(go key)))))))
+     no-optional
+       ;; We come here when we have run out of arguments, but we might
+       ;; have more &optional parameters, and perhaps also &key
+       ;; parameters.  We must initialize the corresponding SUPPLIED-P
+       ;; parameters to NIL.
+       (cond ((null ll)
+	      ;; We ran out of parameters.
+	      (go end))
+	     ((eq (first ll) '&key)
+	      ;; We ran out of &optional parameters, but there might
+	      ;; still be &key parameters left.
+	      (pop ll)
+	      (go no-key))
+	     (t
+	      ;; We have at last one &optional parameter.  We must
+	      ;; initialize the corresponding SUPPLIED-P parameter to
+	      ;; NIL.
+	      (setf (gethash (second (pop ll)) table) nil)
+	      ;; There might be more &optional parameters. 
+	      (go no-optional)))
+     no-key
+       ;; We come here when we have run out of arguments, but we might
+       ;; have more &key parameters.  We must initialize the
+       ;; corresponding SUPPLIED-P parameters to NIL.
+       (cond ((or (null ll) (eq (car ll) '&allow-other-keys))
+	      ;; We ran out of parameters.
+	      (go end))
+	     (t
+	      ;; We have at least one &key parameter.  We must
+	      ;; initialize the corresponding SUPPLIED-P parameter to
+	      ;; NIL.
+	      (setf (gethash (third (pop ll)) table) nil)
+	      ;; There might be more &key parameters.
+	      (go no-key)))
      end)
     (cons table environment)))
 
