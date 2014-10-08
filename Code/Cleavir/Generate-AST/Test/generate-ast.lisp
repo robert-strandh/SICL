@@ -33,6 +33,11 @@
   (test '(let ((x 10)
 	       (y 20))
 	  (+ x y))
+	30)
+  (test '(let ((x 10))
+	  (let ((x 20)
+		(y x))
+	    (+ x y)))
 	30))
 
 (defun test-symbol-value-ast ()
