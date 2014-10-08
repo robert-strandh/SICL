@@ -27,7 +27,11 @@
 
 (defun test-lexical-ast ()
   (test '(let ((x 10)) x)
-	10))
+	10)
+  (test '(let ((x 10)
+	       (y 20))
+	  (+ x y))
+	30))
 
 (defun test-symbol-value-ast ()
   (test '*print-base*
