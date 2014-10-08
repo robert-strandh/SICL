@@ -182,8 +182,10 @@
 		(pop rest)
 		(go optional)))
      key
-       (cond ((or (null rest) (eq (car rest) '&allow-other-keys))
+       (cond ((null rest)
 	      (go out))
+	     ((eq (car rest) '&allow-other-keys)
+	      (push '&allow-other-keys result))
 	     (t (push (list (first (first rest))
 			    (var-to-lexical-identity (second (first rest)) env)
 			    (var-to-lexical-identity (third (first rest)) env))
