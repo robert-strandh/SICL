@@ -23,7 +23,9 @@
 ;;; Tests
 
 (defun test-constant-ast ()
-  (test 234 234))
+  (test 234 234)
+  (test '(quote a)
+	'a))
 
 (defun test-lexical-ast ()
   (test '(let ((x 10)) x)
