@@ -82,7 +82,10 @@
 	51)
   (test '(flet ((f (x &optional (y 234) (z (1+ y))) (+ x y z)))
 	  (f 10))
-	479))
+	479)
+  (test '(flet ((f (&key x) x))
+	  (f :x 10))
+	10))
 
 (defun run-tests ()
   (test-constant-ast)
