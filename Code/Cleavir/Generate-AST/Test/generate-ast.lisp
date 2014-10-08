@@ -63,7 +63,10 @@
   (test '(flet ((f (x) x)
 		(g (x) x))
 	  (+ (f 1) (g 2)))
-	3))
+	3)
+  (test '(flet ((f (x &optional (y 234)) (+ x y)))
+	  (f 10))
+	244))
 
 (defun run-tests ()
   (test-constant-ast)
