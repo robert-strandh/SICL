@@ -84,6 +84,9 @@
 	  (f 10))
 	479)
   (test '(flet ((f (&key x) x))
+	  (f))
+	nil)
+  (test '(flet ((f (&key x) x))
 	  (f :x 10))
 	10))
 
