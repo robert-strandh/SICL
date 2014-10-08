@@ -230,7 +230,7 @@
 		      (progn 
 			;; Enter the argument into the environment
 			(setf (gethash (second (first ll)) table)
-			      (pop remaining))
+			      arg)
 			;; Set the supplied-p parameter to T.
 			(setf (gethash (third (pop ll)) table) t)
 			;; Remove any keyword arguments with the same
