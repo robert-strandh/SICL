@@ -140,6 +140,11 @@
 	  (f :y 30))
 	'(10 nil)))
 
+(defun test-labels ()
+  (test '(labels ((f () 1))
+	  (+ (f) 2))
+	3))
+
 (defun run-tests ()
   (test-constant-ast)
   (test-lexical-ast)
@@ -148,4 +153,5 @@
   (test-if-ast)
   (test-tagbody-ast)
   (test-fdefinition-ast)
-  (test-call))
+  (test-call)
+  (test-labels))
