@@ -106,6 +106,27 @@
 ;;;
 ;;; Converting LABELS.
 
+(defmethod convert-special ((symbol (eql 'labels)) form env)
+  (let ((new-env env))
+    ;; Create a new environment with the additional names.
+    (loop for def in (cadr form)
+	  for name = (car def)
+	  for var-ast = (cleavir-ast:make-lexical-ast name)
+	  do (setf new-env (cleavir-env:add-local-function new-env name var-ast)))
+    (let ((init-asts
+	    (loop for (name lambda-list . body) in (cadr form)
+		  for fun = (convert-code lambda-list body new-env)
+		  collect (cleavir-ast:make-setq-ast
+			   (let ((info (cleavir-env:function-info new-env name)))
+			     (cleavir-env:identity info))
+			   fun))))
+      (multiple-value-bind (declarations forms)
+	  (cleavir-code-utilities:separate-ordinary-body (cddr form))
+	(setf new-env (augment-environment-with-declarations
+		       new-env declarations))
+	(cleavir-ast:make-progn-ast
+	 (append init-asts (convert-sequence forms new-env)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting LET and LET*
