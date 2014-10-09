@@ -146,7 +146,10 @@
 	3)
   (test '(labels ((f (n) (if (zerop n) 1 (* n (f (1- n))))))
 	  (f 5))
-	120))
+	120)
+  (test '(labels ((f (x &optional (y 234)) (+ x y)))
+	  (f 10))
+	244))
 
 (defun run-tests ()
   (test-constant-ast)
