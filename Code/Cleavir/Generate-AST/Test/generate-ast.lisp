@@ -143,7 +143,10 @@
 (defun test-labels ()
   (test '(labels ((f () 1))
 	  (+ (f) 2))
-	3))
+	3)
+  (test '(labels ((f (n) (if (zerop n) 1 (* n (f (1- n))))))
+	  (f 5))
+	120))
 
 (defun run-tests ()
   (test-constant-ast)
