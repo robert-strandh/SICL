@@ -157,8 +157,8 @@
 ;;; VARIABLE-TYPE.
 
 ;;; This class is used to augment an environment with the type of a
-;;; variable, introduced by a declaration in a LET, LET*, or LOCALLY
-;;; special form.
+;;; variable, introduced by a declaration in a special form that
+;;; allows such declarations.
 (defclass variable-type (entry)
   ((%name :initarg :name :reader name)
    (%type :initarg :type :reader type)))
@@ -169,6 +169,13 @@
     :name symbol
     :type type))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; FUNCTION-TYPE.
+
+;;; This class is used to augment an environment with the type of a
+;;; function, introduced by a declaration in a special form that
+;;; allows such declarations.
 (defclass function-type (entry)
   ((%name :initarg :name :reader name)
    (%type :initarg :type :reader type)))
