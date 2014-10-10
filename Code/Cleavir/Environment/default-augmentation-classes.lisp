@@ -26,9 +26,9 @@
 ;;; LEXICAL-VARIABLE.
 
 ;;; This class is used to augment an environment with a lexical
-;;; variable.  Client code can supply an IDENTITY object that is used
-;;; to distinguish between different lexical variables with the same
-;;; name. 
+;;; variable introduced by LET or LET*.  Client code can supply an
+;;; IDENTITY object that is used to distinguish between different
+;;; lexical variables with the same name.
 (defclass lexical-variable (entry)
   ((%name :initarg :name :reader name)
    (%identity :initarg :identity :reader identity)))
