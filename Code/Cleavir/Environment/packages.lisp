@@ -14,6 +14,7 @@
 	   #:space
 	   #:debug
 	   #:eval
+	   #:macro-function
 	   #:function
 	   #:block
 	   #:inline
@@ -68,6 +69,7 @@
    #:add-optimize
    #:add-inline
    #:eval
+   #:macro-function
    #:lexical-variable
    #:special-variable
    #:global-p
