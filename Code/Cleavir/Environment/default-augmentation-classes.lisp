@@ -220,6 +220,13 @@
     :name function-name
     :ignore ignore))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; VARIABLE-DYNAMIC-EXTENT.
+
+;;; This class is used to augment an environment with a DYNAMIC-EXTENT
+;;; declarations of a variable, introduced by a declaration in a
+;;; special form that allows such declarations.
 (defclass variable-dynamic-extent (entry)
   ((%name :initarg :name :reader name)))
 
