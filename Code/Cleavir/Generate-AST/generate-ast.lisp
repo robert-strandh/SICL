@@ -58,29 +58,6 @@
 
 (defgeneric convert (form environment))
 
-(defun convert-top-level-form (form)
-  (convert `(function (lambda () ,form)) nil))
-
-(defun convert-top-level-lamda-expression (lambda-expression)
-  (unless (and (consp lambda-expression)
-	       (eq (car lambda-expression) 'lambda))
-    (error "argument must be a lambda expression"))
-  (convert `(function ,lambda-expression) nil))
-
-(defun convert-for-inlining (lambda-expression)
-  (let* ((lambda-list (cadr lambda-expression))
-	 (let-bindings (loop for var in lambda-list
-			     for i from 0
-			     collect `(,var (arg ,i)))))
-    (let ((ast (convert `(let ,let-bindings ,@(cddr lambda-expression)) nil)))
-      ;; The AST looks like this:
-      ;; (progn (setq <a0> (arg 0)) (progn (setq <a1> (arg 1)) ....
-      (loop for arg in lambda-list
-	    collect (first (cleavir-ast:children (first (cleavir-ast:children ast))))
-	      into lexical-asts
-	    do (setf ast (second (cleavir-ast:children ast)))
-	    finally (return (values lexical-asts ast))))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Converting a sequence of forms.
