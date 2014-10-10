@@ -8,4 +8,5 @@
    (:file "query")
    (:file "augmentation-functions")
    (:file "default-augmentation-classes")
-   (:file "default-info-methods")))
+   (:file "default-info-methods")
+   (:file "eval")))
