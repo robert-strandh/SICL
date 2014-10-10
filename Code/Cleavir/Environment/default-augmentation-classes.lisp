@@ -152,6 +152,13 @@
     :name symbol
     :identity identity))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; VARIABLE-TYPE.
+
+;;; This class is used to augment an environment with the type of a
+;;; variable, introduced by a declaration in a LET, LET*, or LOCALLY
+;;; special form.
 (defclass variable-type (entry)
   ((%name :initarg :name :reader name)
    (%type :initarg :type :reader type)))
