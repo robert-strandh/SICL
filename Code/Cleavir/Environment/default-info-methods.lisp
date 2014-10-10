@@ -1,5 +1,21 @@
 (cl:in-package #:cleavir-environment)
 
+;;;; This file contains methods on the generic functions defined in
+;;;; the file query.lisp that are specialized to the classed defined
+;;;; in the file default-augmentation-classes.lisp.  
+;;;;
+;;;; The implementation here is a bit twisted in that we pretty much
+;;;; call a generic function for each elementary step.  The reason for
+;;;; this way of doing it is so as to allow for an implementation to
+;;;; specialize or override every such elementary step by defining
+;;;; methods on those generic functions.
+;;;;
+;;;; In addition, even though the augmentation environments are chains
+;;;; of small class instances resembling a list, we do not use
+;;;; iteration in order to traverse them.  Instead we use recursion
+;;;; where the default action is to make a recursive call, passing the
+;;;; next instance in the chain.
+
 (defgeneric make-info (environment defining-info))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
