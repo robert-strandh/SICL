@@ -30,7 +30,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; VARIABLE-INFO.
+;;; FUNCTION-INFO.
 
 (defgeneric function-info (environment function-name))
 
