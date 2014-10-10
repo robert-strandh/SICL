@@ -7,16 +7,28 @@
 ;;;; implementations where the creator does not have any particular
 ;;;; opinion about how to represent locally augmented environments.
 
-;;; The root of all locally augmented environments.  We represent a
-;;; locally augmented environment as a chain, i.e., each instance has
-;;; a NEXT slot that refers to the less specific environment.  The
-;;; chain ends with a reference to an object representing the global
-;;; environment.  Implementations that do not have first-class global
-;;; environments must still create a dummy class that represents their
-;;; particular global environment.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class ENTRY. 
+;;;
+;;; This class is the root of all locally augmented environments.  We
+;;; represent a locally augmented environment as a chain, i.e., each
+;;; instance has a NEXT slot that refers to the less specific
+;;; environment.  The chain ends with a reference to an object
+;;; representing the global environment.  Implementations that do not
+;;; have first-class global environments must still create a dummy
+;;; class that represents their particular global environment.
 (defclass entry ()
   ((%next :initarg :next :reader next)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; LEXICAL-VARIABLE.
+
+;;; This class is used to augment an environment with a lexical
+;;; variable.  Client code can supply an IDENTITY object that is used
+;;; to distinguish between different lexical variables with the same
+;;; name. 
 (defclass lexical-variable (entry)
   ((%name :initarg :name :reader name)
    (%identity :initarg :identity :reader identity)))
