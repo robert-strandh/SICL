@@ -134,6 +134,14 @@
     :name symbol
     :identity identity))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; TAG.
+
+;;; This class is used to augment an environment with a tag introduced
+;;; by TAGBODY for each go tag.  Client code can supply an IDENTITY
+;;; object that is used to distinguish between different tags with
+;;; the same name.
 (defclass tag (entry)
   ((%name :initarg :name :reader name)
    (%identity :initarg :identity :reader identity)))
