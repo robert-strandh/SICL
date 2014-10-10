@@ -368,10 +368,18 @@
 
 (defmethod convert-special
     ((symbol (eql 'locally)) form env)
+  ;; The following expression means "if this form is a top-level form,
+  ;; then make sure that forms compiled by a recursive call to CONVERT
+  ;; are also top-level forms".
+  (setf *top-level-form-p* *old-top-level-form-p*)
   (multiple-value-bind (declarations forms)
       (cleavir-code-utilities:separate-ordinary-body (cdr form))
     (let ((new-env (augment-environment-with-declarations
 		    env declarations)))
+      ;; The following expression means "if this form is a top-level
+      ;; form, then make sure that forms compiled by a recursive call
+      ;; to CONVERT are also top-level forms".
+      (setf *top-level-form-p* *old-top-level-form-p*)
       (cleavir-ast:make-progn-ast
        (convert-sequence forms new-env)))))
 
@@ -392,7 +400,11 @@
 	    for expander = (cleavir-env:eval lambda-expr env env)
 	    do (setf new-env
 		     (cleavir-env:add-local-macro new-env name expander)))
-      (convert-special 'locally `(locally ,@body) new-env))))
+      ;; The following expression means "if this form is a top-level
+      ;; form, then make sure that forms compiled by a recursive call
+      ;; to CONVERT are also top-level forms".
+      (setf *top-level-form-p* *old-top-level-form-p*)
+      (convert `(locally ,@body) new-env))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -447,6 +459,10 @@
     (loop for (name expansion) in (cadr form)
 	  do (setf new-env
 		   (cleavir-env:add-local-symbol-macro new-env name expansion)))
+    ;; The following expression means "if this form is a top-level
+    ;; form, then make sure that forms compiled by a recursive call to
+    ;; CONVERT are also top-level forms".
+    (setf *top-level-form-p* *old-top-level-form-p*)
     (convert `(progn ,@(cddr form)) new-env)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
