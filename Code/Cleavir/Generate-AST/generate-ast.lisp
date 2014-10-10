@@ -52,16 +52,11 @@
 ;;;
 ;;; Converting code to an abstract syntax tree.
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting ordinary Common Lisp code.
-
+;;; The main entry point for converting a form.
 (defgeneric convert (form environment))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Converting a sequence of forms.
-
+;;; Utility function for converting a sequence of forms, represented
+;;; as a list.
 (defun convert-sequence (forms environment)
   (loop for form in forms
 	collect (convert form environment)))
@@ -214,3 +209,55 @@
 
 (defun generate-ast (form environment)
   (convert form environment))
+
+;;; This variable should be bound by client code to one of the symbols
+;;; CL:COMPILE, CL:COMPILE-FILE, or CL:EVAL before the main entry
+;;; point is called.
+(defvar *compiler*)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Managing top-level forms.
+;;; 
+;;; We need to be able to test whether a form is a top-level form or
+;;; not.  A few special forms (LOCALLY, MACROLET, SYMBOL-MACROLET)
+;;; preserve this property in that if the special form itself is a
+;;; top-level form, then the body of the special form is also a
+;;; top-level form.  For all other forms, any subform of the form is
+;;; not considered a top-level form.  
+
+;;; This variable is true if and only if the form to be compiled is a
+;;; top-level form.
+(defparameter *top-level-form-p* t)
+
+;;; The reason for the following somewhat twisted logic is that we
+;;; want to avoid having to explicitly set *TOP-LEVEL-FORM-P* no false
+;;; in every method EXCEPT the ones for LOCALLY, MACROLET, and
+;;; SYMBOL-MACROLET.  This logic allows us to add some code ONLY to
+;;; these special forms in order to indicate that they preserve the
+;;; top-level property.
+;;;
+;;; The way this logic works is as follows: We define a second
+;;; variable named *OLD-TOP-LEVEL-FORM-P*.  This variable holds the
+;;; value of *TOP-LEVEL-FORM-P* as it was before CONVERT was called,
+;;; and this is the variable that we actually test in order to
+;;; determine whether a form is a top-level form.  To obtain that, we
+;;; define an :AROUND method on CONVERT that binds
+;;; *OLD-TOP-LEVEL-FORM-P* to the value of *TOP-LEVEL-FORM-P* for the
+;;; duration of the invocation of the primary method on CONVERT, and
+;;; that also binds *TOP-LEVEL-FORM-P* to false.  Any recursive
+;;; invocation of CONVERT will thus automatically see the value of
+;;; *OLD-TOP-LEVEL-FORM-P* as false.  The methods for LOCALLY,
+;;; MACROLET, and SYMBOL-MACROLET set *OLD-TOP-LEVEL-FORM-P* to true
+;;; so that when they recursively call CONVERT, then this true value
+;;; will be the value of *OLD-TOP-LEVEL-FORM-P*.  I hope this
+;;; explanation makes sense.
+
+(defvar *old-top-level-form-p*)
+
+(defmethod convert :around (form environment)
+  (declare (ignore form environment))
+  (let ((*old-top-level-form-p* *top-level-form-p*)
+	(*top-level-form-p* nil))
+    (call-next-method)))
