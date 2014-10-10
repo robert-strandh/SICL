@@ -81,6 +81,14 @@
     :name symbol
     :expansion expansion))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; FUNCTION.
+
+;;; This class is used to augment an environment with a local function
+;;; introduced by FLET or LABELS.  Client code can supply an IDENTITY
+;;; object that is used to distinguish between different lexical
+;;; variables with the same name.
 (defclass function (entry)
   ((%name :initarg :name :reader name)
    (%identity :initarg :identity :reader identity)))
