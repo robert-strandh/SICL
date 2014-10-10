@@ -203,6 +203,13 @@
     :name symbol
     :ignore ignore))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; FUNCTION-IGNORE.
+
+;;; This class is used to augment an environment with an IGNORE
+;;; declarations of a function, introduced by a declaration in a
+;;; special form that allows such declarations.
 (defclass function-ignore (entry)
   ((%name :initarg :name :reader name)
    (%ignore :initarg :ignore :reader ignore)))
