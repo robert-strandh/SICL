@@ -219,8 +219,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; CONVERT is responsible for converting a form to an abstract syntax
-;;; tree.  It is only called when it is known that the form to be
-;;; converted is not a top-level form.
+;;; tree.
 
 (defmethod convert (form environment)
   (cond ((and (not (consp form)) (not (symbolp form)))
