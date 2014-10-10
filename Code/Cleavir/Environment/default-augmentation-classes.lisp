@@ -6,6 +6,11 @@
 ;;;; know how to deal with them.  They can be used in new
 ;;;; implementations where the creator does not have any particular
 ;;;; opinion about how to represent locally augmented environments.
+;;;;
+;;;; An alternative strategy for an existing implementation is to
+;;;; modify its implementation of MACROEXPAND-1 so that it can handle
+;;;; both the native representation of augmented environments, and
+;;;; this one supplied by Cleavir.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
