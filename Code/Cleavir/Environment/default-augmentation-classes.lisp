@@ -100,6 +100,12 @@
     :name function-name
     :identity identity))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MACRO.
+
+;;; This class is used to augment an environment with a local macro
+;;; introduced by MACROLET.  
 (defclass macro (entry)
   ((%name :initarg :name :reader name)
    (%expander :initarg :expander :reader expander)))
@@ -110,6 +116,14 @@
     :name symbol
     :expander expander))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; BLOCK.
+
+;;; This class is used to augment an environment with a block
+;;; introduced by BLOCK.  Client code can supply an IDENTITY object
+;;; that is used to distinguish between different blocks with the same
+;;; name.
 (defclass block (entry)
   ((%name :initarg :name :reader name)
    (%identity :initarg :identity :reader identity)))
