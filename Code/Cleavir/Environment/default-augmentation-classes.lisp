@@ -250,6 +250,13 @@
     :next environment
     :name function-name))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; OPTIMIZE.
+
+;;; This class is used to augment an environment with an OPTIMIZE
+;;; declarations, introduced by a declaration in a special form that
+;;; allows such declarations.
 (defclass optimize (entry)
   ((%quality :initarg :quality :reader quality)
    (%value :initarg :value :reader value)))
