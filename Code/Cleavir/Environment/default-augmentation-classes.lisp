@@ -64,6 +64,13 @@
     :next environment
     :name symbol))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SYMBOL-MACRO.
+
+;;; This class is used to augment an environment with a symbol macro.
+;;; We use the expansion of the symbol macro rather than expander
+;;; function.
 (defclass symbol-macro (entry)
   ((%name :initarg :name :reader name)
    (%expansion :initarg :expansion :reader expansion)))
