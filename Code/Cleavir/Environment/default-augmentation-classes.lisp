@@ -186,6 +186,13 @@
     :name function-name
     :type type))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; VARIABLE-IGNORE.
+
+;;; This class is used to augment an environment with an IGNORE
+;;; declarations of a variable, introduced by a declaration in a
+;;; special form that allows such declarations.
 (defclass variable-ignore (entry)
   ((%name :initarg :name :reader name)
    (%ignore :initarg :ignore :reader ignore)))
