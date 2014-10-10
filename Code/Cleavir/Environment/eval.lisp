@@ -84,3 +84,52 @@
 
 (defmethod eval (form environment1 (environment2 entry))
   (eval form environment1 (next environment2)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function MACRO-FUNCTION.
+;;;
+;;; We define MACRO-FUNCTION as a generic function with two arguments:
+;;; a symbol and an environment.  
+;;;
+;;; An implementation can use this function in the following way.
+;;; Rather than defining implementation-specific methods on
+;;; environment augmentation functions that create instances of
+;;; corresponding implementation-specific environment augmentation
+;;; classes, the implementation might choose to handle both the
+;;; implementation-specific augmentation classes and the default
+;;; augmentation classes provided by Cleavir.  In order to make this
+;;; technique work, the implementation needs to do two things:
+;;;
+;;;   * Modify the existing implementation of CL:MACRO-FUNCTION so
+;;;     that it calls the generic MACRO-FUNCTION here.  If the
+;;;     optional argument to CL:MACRO-FUNCTION was supplied, it is
+;;;     passed directly as the second argument to the generic
+;;;     MACRO-FUNCTION.  If not, an argument representing the global
+;;;     environment is passed instead. 
+;;;
+;;;   * Supply one or more methods on the generic MACRO-FUNCTION,
+;;;     specialized to the implementation-specific global environment
+;;;     classes (for implementations with first-class global
+;;;     environments), or to an artificial class used as a proxy for
+;;;     the global environment (for implementations that do not have
+;;;     first-class global environments).  These methods should return
+;;;     NIL when no macro function is found.
+
+(defgeneric macro-function (symbol environment))
+
+;;; The default method specialized to ENTRY is called for entries that
+;;; are not of type MACRO.  This method just makes a recursive call,
+;;; passing the next environment as an argument.
+(defmethod macro-function (symbol (environment entry))
+  (macro-function symbol (next environment)))
+
+;;; This method captures is invoked when the environment is of type
+;;; MACRO so it might potentially contain the macro function that we
+;;; are looking for.  It is the one we are looking for if and only if
+;;; the NAME of the environment is the symbol we are passed as an
+;;; argument.  If not, we continue searching in the next environment.
+(defmethod macro-function (symbol (environment macro))
+  (if (eq symbol (name environment))
+      (expander environment)
+      (macro-function symbol (next environment))))
