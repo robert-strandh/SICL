@@ -1,5 +1,19 @@
 (cl:in-package #:cleavir-environment)
 
+;;;; This file contains classes that can be used to augment an
+;;;; environment with local information.  Existing implementations can
+;;;; not use these classes, because the existing macro expander must
+;;;; know how to deal with them.  They can be used in new
+;;;; implementations where the creator does not have any particular
+;;;; opinion about how to represent locally augmented environments.
+
+;;; The root of all locally augmented environments.  We represent a
+;;; locally augmented environment as a chain, i.e., each instance has
+;;; a NEXT slot that refers to the less specific environment.  The
+;;; chain ends with a reference to an object representing the global
+;;; environment.  Implementations that do not have first-class global
+;;; environments must still create a dummy class that represents their
+;;; particular global environment.
 (defclass entry ()
   ((%next :initarg :next :reader next)))
 
