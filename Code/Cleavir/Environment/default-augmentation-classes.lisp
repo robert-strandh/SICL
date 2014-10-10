@@ -267,6 +267,13 @@
     :quality quality
     :value value))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; INLINE.
+
+;;; This class is used to augment an environment with an INLINE
+;;; declarations of a function, introduced by a declaration in a
+;;; special form that allows such declarations.
 (defclass inline (entry)
   ((%name :initarg :name :reader name)
    (%inline :initarg :inline :reader inline)))
