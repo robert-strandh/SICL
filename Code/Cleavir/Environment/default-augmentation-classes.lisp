@@ -40,6 +40,15 @@
     :name symbol
     :identity identity))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; SPECIAL-VARIABLE.
+
+;;; This class is used to augment an environment with a special
+;;; variable.  This class is only used when a binding of a special
+;;; variable is seen, and that variable is not globally special.  By
+;;; `globally special', we mean that a proclamation has been used
+;;; directly or indirectly to proclaim the variable as special.  
 (defclass special-variable (entry)
   ((%name :initarg :name :reader name)))
 
