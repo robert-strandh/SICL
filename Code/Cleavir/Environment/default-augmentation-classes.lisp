@@ -235,6 +235,13 @@
     :next environment
     :name symbol))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; FUNCTION-DYNAMIC-EXTENT.
+
+;;; This class is used to augment an environment with a DYNAMIC-EXTENT
+;;; declarations of a function, introduced by a declaration in a
+;;; special form that allows such declarations.
 (defclass function-dynamic-extent (entry)
   ((%name :initarg :name :reader name)))
 
