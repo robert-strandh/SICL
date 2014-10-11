@@ -215,6 +215,9 @@
 ;;; point is called.
 (defvar *compiler*)
 
+;;; This variable indicates whether a form should be evaluated in
+;;; addition to be being processed by the compiler. 
+(defparameter *compile-time-too* nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -257,7 +260,8 @@
 (defvar *old-top-level-form-p*)
 
 (defmethod convert :around (form environment)
-  (declare (ignore form environment))
   (let ((*old-top-level-form-p* *top-level-form-p*)
 	(*top-level-form-p* nil))
+    (when (and *compile-time-too* *old-top-level-form-p*)
+      (cleavir-env:eval form environment environment ))
     (call-next-method)))
