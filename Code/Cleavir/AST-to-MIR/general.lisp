@@ -344,9 +344,9 @@
 (defparameter *go-info* nil)
 
 (defmethod compile-ast ((ast cleavir-ast:tagbody-ast) context)
-  (loop for item in (cleavir-ast:items ast)
-	do (when (typep item 'cleavir-ast:tag-ast)
-	     (setf (gethash item *go-info*)
+  (loop for item-ast in (cleavir-ast:item-asts ast)
+	do (when (typep item-ast 'cleavir-ast:tag-ast)
+	     (setf (gethash item-ast *go-info*)
 		   (cleavir-mir:make-nop-instruction nil))))
   (with-accessors ((results results)
 		   (successors successors))
@@ -358,14 +358,14 @@
 		       (car successors))
 		      (t
 		       (nil-fill results (car successors))))))
-      (loop for item in (reverse (cleavir-ast:items ast))
+      (loop for item-ast in (reverse (cleavir-ast:item-asts ast))
 	    do (setf next
-		     (if (typep item 'cleavir-ast:tag-ast)
-			 (let ((instruction (gethash item *go-info*)))
+		     (if (typep item-ast 'cleavir-ast:tag-ast)
+			 (let ((instruction (gethash item-ast *go-info*)))
 			   (setf (cleavir-mir:successors instruction)
 				 (list next))
 			   instruction)
-			 (compile-ast item (context '() (list next))))))
+			 (compile-ast item-ast (context '() (list next))))))
       next)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -577,7 +577,7 @@
 		      :inputs (list temp1 temp2)
 		      :outputs ()
 		      :successors (successors context))))))))))
-
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Compile a FDEFINITION-AST.
