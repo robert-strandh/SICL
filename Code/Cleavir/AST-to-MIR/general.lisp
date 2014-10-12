@@ -690,11 +690,7 @@
   (let ((*block-info* (make-hash-table :test #'eq))
 	(*go-info* (make-hash-table :test #'eq))
 	(*location-info* (make-hash-table :test #'eq)))
-    ;; The top-level ast must represent a thunk.
-    (assert (typep ast 'cleavir-ast:function-ast))
-    (let* ((body (compile-ast (cleavir-ast:body-ast ast) (context '() '())))
-	   (ll (translate-lambda-list (cleavir-ast:lambda-list ast))))
-      (cleavir-mir:make-enter-instruction ll body))))
+    (compile-ast ast (context '() '()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
