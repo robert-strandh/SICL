@@ -13,7 +13,7 @@
    #:immediate-ast #:make-immediate-ast
    #:constant-ast #:make-constant-ast #:value
    #:lexical-ast #:make-lexical-ast
-   #:symbol-value-ast #:make-symbol-value-ast #:symbol
+   #:symbol-value-ast #:make-symbol-value-ast #:symbol-ast
    #:set-symbol-value-ast #:make-set-symbol-value-ast #:symbol
    #:fdefinition-ast #:make-fdefinition-ast #:name
    #:call-ast #:make-call-ast #:callee-ast #:argument-asts
