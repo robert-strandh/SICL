@@ -35,7 +35,8 @@
 ;;; We do this by generating a call to SYMBOL-VALUE.
 
 (defmethod convert-form (form (info cleavir-env:special-variable-info) env)
-  (cleavir-ast:make-symbol-value-ast (cleavir-env:name info)))
+  (let ((symbol-ast (cleavir-ast:make-constant-ast (cleavir-env:name info))))
+    (cleavir-ast:make-symbol-value-ast symbol-ast)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
