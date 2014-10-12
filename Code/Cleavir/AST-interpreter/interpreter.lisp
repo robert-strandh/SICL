@@ -107,8 +107,9 @@
 			   (member go-tag-ast item-asts)))))))))
 
 (defmethod interpret-ast ((ast cleavir-ast:fdefinition-ast) env)
-  (declare (ignore env))
-  (fdefinition (cleavir-ast:name ast)))
+  (let* ((name-ast (cleavir-ast:name-ast ast))
+	 (name (interpret-ast name-ast env)))
+    (fdefinition name)))
 
 (defun load-environment (environment arguments lambda-list)
   (let ((table (make-hash-table :test #'eq))
