@@ -87,3 +87,14 @@
 			  collect (read-value datum environment))))
     (apply function arguments)
     (first (cleavir-mir:successors instruction))))
+
+(defmethod execute-instruction
+    ((instruction cleavir-mir:fdefinition-instruction) environment)
+  (let* ((inputs (cleavir-mir:inputs instruction))
+	 (outputs (cleavir-mir:outputs instruction))
+	 (function-name (read-value (first inputs) environment))
+	 (function (fdefinition function-name)))
+    (write-value (first outputs) environment function)
+    (first (cleavir-mir:successors instruction))))
+
+	 
