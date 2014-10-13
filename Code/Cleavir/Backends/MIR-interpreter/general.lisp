@@ -97,4 +97,11 @@
     (write-value (first outputs) environment function)
     (first (cleavir-mir:successors instruction))))
 
-	 
+(defmethod execute-instruction
+    ((instruction cleavir-mir:tailcall-instruction) environment)
+  (let* ((inputs (cleavir-mir:inputs instruction))
+	 (function-datum (first inputs))
+	 (function (read-value function-datum environment))
+	 (arguments (loop for datum in (rest inputs)
+			  collect (read-value datum environment))))
+    (throw 'return (apply function arguments))))	 
