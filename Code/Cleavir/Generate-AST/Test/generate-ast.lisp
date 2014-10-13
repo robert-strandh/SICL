@@ -10,9 +10,6 @@
 
 (defparameter *e* (make-instance 'bogus-environment))
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (setf *readtable* cleavir-io:*io-readtable*))
-
 (defun test (form value)
   (let* ((ast (cleavir-generate-ast:generate-ast form *e*))
 	 (v (cleavir-ast-interpreter:interpret ast)))
