@@ -14,8 +14,9 @@
 
 (defun store-lexical (lexical environment value)
   (loop for level in environment
-	do (multiple-value-bind (value present-p)
+	do (multiple-value-bind (old-value present-p)
 	       (gethash lexical level)
+	     (declare (ignore old-value))
 	     (when present-p
 	       (setf (gethash lexical level) value)
 	       (return (values))))
