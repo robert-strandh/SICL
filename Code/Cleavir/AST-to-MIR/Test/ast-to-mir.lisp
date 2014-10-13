@@ -22,3 +22,9 @@
 (defun test-lexical ()
   (test '(let ((x 10)) x)
 	10))
+
+(defun test-call ()
+  (test '(let ((x 10) (y 20)) (+ x y))
+	30))
+
+		  
