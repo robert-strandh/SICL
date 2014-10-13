@@ -6,4 +6,5 @@
 	       :cleavir-mir-interpreter)
   :serial t
   :components
-  ((:file "packages")))
+  ((:file "packages")
+   (:file "ast-to-mir")))
