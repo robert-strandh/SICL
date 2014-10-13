@@ -8,6 +8,7 @@
 
 (defun test (form value)
   (let* ((ast (cleavir-generate-ast:generate-ast form *e*))
-	 (v (cleavir-ast-interpreter:interpret ast)))
+	 (mir (cleavir-ast-to-mir:compile-toplevel ast))
+	 (v (cleavir-mir-interpreter:interpret-mir mir)))
     (assert (equalp v value))))
 
