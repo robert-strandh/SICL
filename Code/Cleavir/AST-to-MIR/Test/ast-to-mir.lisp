@@ -18,3 +18,7 @@
 
 (defun test-constant ()
   (test 234 234))
+
+(defun test-lexical ()
+  (test '(let ((x 10)) x)
+	10))
