@@ -31,4 +31,4 @@
 
 (defun test-if ()
   (test '(let ((x 10)) (if (> x 5) 1 2))
-	2))
+	1))
