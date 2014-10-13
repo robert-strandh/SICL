@@ -31,4 +31,6 @@
 
 (defun test-if ()
   (test '(let ((x 10)) (if (> x 5) 1 2))
-	1))
+	1)
+  (test '(let ((x 10)) (if (> x 20) 1 2))
+	2))
