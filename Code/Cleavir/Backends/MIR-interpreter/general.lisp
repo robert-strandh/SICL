@@ -115,6 +115,8 @@
 
 (defmethod execute-instruction
     ((instruction cleavir-mir:eq-instruction) environment)
-  (multiple-value-bind (x y) (cleavir-mir:inputs instruction)
-    (destructuring-bind (true false) (cleavir-mir:successors instruction)
-      (if (eq x y) true false))))
+  (destructuring-bind (x y) (cleavir-mir:inputs instruction)
+    (let ((xx (read-value x environment))
+	  (yy (read-value y environment)))
+      (destructuring-bind (true false) (cleavir-mir:successors instruction)
+	(if (eq xx yy) true false)))))
