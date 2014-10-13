@@ -12,3 +12,9 @@
 	 (v (cleavir-mir-interpreter:interpret-mir mir)))
     (assert (equalp v value))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Tests
+
+(defun test-constant ()
+  (test 234 234))
