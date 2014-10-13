@@ -25,6 +25,8 @@
 
 (defun test-call ()
   (test '(let ((x 10) (y 20)) (+ x y))
-	30))
+	30)
+  (test '(let ((x 10) (y 20)) (+ (1+ x) y))
+	31))
 
 		  
