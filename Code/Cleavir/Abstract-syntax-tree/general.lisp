@@ -178,7 +178,7 @@
 ;;; reference to a special variable.
 
 (defclass symbol-value-ast (ast one-value-ast-mixin side-effect-free-ast-mixin)
-  ((%symbol-ast :initarg :symbol :reader symbol-ast)))
+  ((%symbol-ast :initarg :symbol-ast :reader symbol-ast)))
 
 (defun make-symbol-value-ast (symbol-ast)
   (make-instance 'symbol-value-ast :symbol-ast symbol-ast))
