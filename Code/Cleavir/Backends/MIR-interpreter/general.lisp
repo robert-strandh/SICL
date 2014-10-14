@@ -113,6 +113,16 @@
 			  collect (read-value datum environment))))
     (throw 'return (apply function arguments))))	 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Execute EQ-INSTRUCTION.
+;;;
+;;; Recall that the EQ-INSTRUCTION is an instruction with two inputs,
+;;; no outputs, and two successors.  The two inputs are the objects to
+;;; be compared using EQ.  The first output is chosen if the
+;;; comparison yields true, and the second output is chosen if the
+;;; comparison yields false.
+
 (defmethod execute-instruction
     ((instruction cleavir-mir:eq-instruction) environment)
   (destructuring-bind (x y) (cleavir-mir:inputs instruction)
