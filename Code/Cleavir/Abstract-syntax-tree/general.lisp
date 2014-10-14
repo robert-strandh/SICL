@@ -452,7 +452,7 @@
    (%form-ast :initarg :form-ast :reader form-ast)
    (%type-specifiers :initarg :type-specifiers :reader type-specifiers)))
 
-(defun make-the-ast (form-ast &rest type-specifiers)
+(defun make-the-ast (form-ast type-specifiers)
   (make-instance 'the-ast
     :form-ast form-ast
     :type-specifiers type-specifiers))
