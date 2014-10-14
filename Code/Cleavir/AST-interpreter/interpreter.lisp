@@ -293,3 +293,35 @@
       (list (cleavir-ast:symbol ast))
       (list (interpret-ast (cleavir-ast:value-ast ast) env))
     (interpret-ast (cleavir-ast:body-ast ast) env)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Interpret THE-AST.
+;;;
+;;; Recall that the THE-AST contains a list of type specifiers.  This
+;;; list has a length of 1 if VALUES was not used for the VALUE type
+;;; of the THE form.
+;;;
+;;; The HyperSpec tells us that if there are fewer type specifiers
+;;; than values of the FORM, then the remaining type specifiers are
+;;; considered to be T.  In other words, in this case we only check
+;;; the type of as many values as there are type specifiers.  The
+;;; HyperSpec also tells us that if there are more type specifiers
+;;; than values, then for the purpose of type checking, missing values
+;;; are treated as NIL, so that NIL must be of the type specified by
+;;; the additional type specifiers.  Finally, the HyperSpec tells us
+;;; that independently of the number of type specifiers, the THE form
+;;; yields as may values as the FORM does. 
+
+(defmethod interpret-ast ((ast cleavir-ast:the-ast) env)
+  (let* ((form-ast (cleavir-ast:form-ast ast))
+	 (type-specifiers (cleavir-ast:type-specifiers ast))
+	 (values (multiple-value-list (interpret-ast form-ast env))))
+    (loop for value in values
+	  for type-specifier in type-specifiers
+	  do (assert (typep value type-specifier)))
+    (loop for type-specifier in (nthcdr (length values) type-specifiers)
+	  do (assert (typep nil type-specifier)))
+    (apply #'values values)))
+					
+	 
