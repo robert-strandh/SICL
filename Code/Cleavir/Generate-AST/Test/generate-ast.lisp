@@ -157,7 +157,8 @@
 
 (defun test-the ()
   (test '(the t 234)
-	234))
+	234)
+  (test-error '(the symbol 234)))
 
 (defun run-tests ()
   (test-constant-ast)
