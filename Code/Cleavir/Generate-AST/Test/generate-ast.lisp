@@ -159,6 +159,10 @@
   (test '(let* ((x 10)) x)
 	10)
   (test '(let* ((x 10) (y (1+ x))) (+ x y))
+	21)
+  (test '(let* ((x 10) (y (1+ x)))
+	  (declare (type integer x))
+	  (+ x y))
 	21))
 
 (defun test-the ()
