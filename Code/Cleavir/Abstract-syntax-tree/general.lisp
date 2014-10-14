@@ -92,10 +92,6 @@
 ;;; conversion between namespaces and again, namespaces are no longer
 ;;; present in the AST.
 ;;;
-;;; Some special operators are implemented as macros which is allowed
-;;; by the HyperSpec.  These are CATCH, THROW, UNWIND-PROTECT,
-;;; MULTIPLE-VALUE-PROG1, MULTIPLE-VALUE-CALL, and PROGV.
-;;;
 ;;; We also define ASTs that do not correspond to any Common Lisp
 ;;; special operators, because we simplify later code generation that
 ;;; way.
