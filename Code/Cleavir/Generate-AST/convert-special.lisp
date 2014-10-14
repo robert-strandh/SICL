@@ -485,3 +485,14 @@
      (if (and (consp value-type) (eq (car value-type) 'values))
 	 (cdr value-type)
 	 (list value-type)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Converting MULTIPLE-VALUE-CALL.
+
+(defmethod convert-special
+    ((symbol (eql 'multiple-value-call)) form environment)
+  (destructuring-bind (function-form . forms) (rest form)
+    (cleavir-ast:make-multiple-value-call-ast
+     (convert function-form environment)
+     (convert-sequence forms environment))))
