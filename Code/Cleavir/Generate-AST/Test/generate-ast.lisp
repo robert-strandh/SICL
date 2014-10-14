@@ -15,6 +15,13 @@
 	 (v (cleavir-ast-interpreter:interpret ast)))
     (assert (equalp v value))))
 
+(defun test-error (form)
+  (let* ((ast (cleavir-generate-ast:generate-ast form *e*)))
+    (multiple-value-bind (v1 v2)
+	(ignore-errors 
+	 (cleavir-ast-interpreter:interpret ast))
+      (assert (and (null v1) (typep v2 'condition))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Tests
