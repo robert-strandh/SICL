@@ -208,6 +208,8 @@
 
 (defmethod label ((instruction return-instruction)) "ret")
 
+(defmethod label ((instruction fdefinition-instruction)) "fdefinition")
+
 (defmethod draw-instruction ((instruction enclose-instruction) stream)
   (format stream "   ~a [label = \"enclose\"];~%"
 	  (instruction-id instruction))
