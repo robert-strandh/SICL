@@ -180,24 +180,6 @@
       nil
       (cadr binding)))
 
-(defun convert-simple-let (binding body env)
-  (let* ((var (if (symbolp binding) binding (car binding)))
-	 (var-ast (cleavir-ast:make-lexical-ast var))
-	 (init-form (if (symbolp binding) nil (cadr binding)))
-	 (new-env (cleavir-env:add-lexical-variable env var var-ast))
-	 (info (cleavir-env:variable-info new-env var)))
-    (multiple-value-bind (declarations forms)
-	(cleavir-code-utilities:separate-ordinary-body body)
-      ;; FIXME: handle declarations
-      ;; FIXME: in particular, if there is a SPECIAL declaration
-      ;; then generate totally different code. 
-      (declare (ignore declarations))
-      (cleavir-ast:make-progn-ast
-       (cons (cleavir-ast:make-setq-ast
-	      var-ast
-	      (convert init-form env))
-	     (convert-sequence forms new-env))))))
-
 ;;; Separate a list of canonicalized declaration specifiers into two
 ;;; disjoint sets, returned as two values.  The first set contains All
 ;;; the declerations specifiers that concern an ordinary variable
@@ -218,44 +200,6 @@
 	else
 	  collect spec into second
 	finally (return (values first second))))
-
-;;; We convert a LET form recursively.  If it has a single binding, we
-;;; convert it into a SETQ.  If it has more than one binding, we
-;;; convert it as follows:
-;;;
-;;; (let ((<var> <init-form>)
-;;;       <more-bindings>)
-;;;   <body>)
-;;; =>
-;;; (let ((temp <init-form>))
-;;;   (let (<more-bindings>)
-;;;     (let ((<var> temp))
-;;;       <body>)))
-
-(defmethod convert-special
-    ((symbol (eql 'let)) form env)
-  (destructuring-bind (bindings &rest body) (cdr form)
-    (if (= (length bindings) 1)
-	(convert-simple-let (car bindings) body env)
-	(let* ((first (car bindings))
-	       (var (if (symbolp first) first (car first)))
-	       (init-form (if (symbolp first) nil (cadr first)))
-	       (temp (gensym)))
-	  (multiple-value-bind (declarations forms)
-	      (cleavir-code-utilities:separate-ordinary-body body)
-	    (multiple-value-bind (first remaining)
-		(separate-declarations 
-		 (cleavir-code-utilities:canonicalize-declaration-specifiers 
-		  (mapcar #'cdr declarations))
-		 var)
-	      (convert
-	       `(let ((,temp ,init-form))
-		  (let ,(cdr bindings)
-		    (declare ,@remaining)
-		    (let ((,var ,temp))
-		      (declare ,@first)
-		      ,@forms)))
-	       env)))))))
 
 ;;; Given a list of canonicalized declaration specifiers for a single
 ;;; varible.  Return a type specifier resulting from all the type
