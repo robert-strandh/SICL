@@ -155,6 +155,10 @@
 	  (f 10))
 	244))
 
+(defun test-let* ()
+  (test '(let* ((x 10) x))
+	10))
+
 (defun test-the ()
   (test '(the t 234)
 	234)
@@ -170,4 +174,5 @@
   (test-fdefinition-ast)
   (test-call)
   (test-labels)
+  (test-let*)
   (test-the))
