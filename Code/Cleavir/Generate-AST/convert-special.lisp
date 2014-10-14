@@ -324,10 +324,10 @@
 		   (convert-sequence forms (first (last environments))))))
 	(loop for binding in (reverse bindings)
 	      for var in (reverse variables)
-	      for environment in (rest (reverse (cons env environments)))
-	      for info = (cleavir-env:variable-info environment var)
+	      for (new old) on (reverse (cons env environments))
+	      for info = (cleavir-env:variable-info new var)
 	      for init = (if (symbolp binding) nil (second binding))
-	      for init-ast = (convert init environment)
+	      for init-ast = (convert init old)
 	      do (setf ast
 		       (if (variable-is-special-p
 			    var canonical-declarations env)
