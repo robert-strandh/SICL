@@ -27,7 +27,17 @@
 (defmethod convert-form (form (info cleavir-env:lexical-variable-info) env)
   (when (eq (cleavir-env:ignore info) 'ignore)
     (warn "Reference to a variable declared IGNORE"))
-  (cleavir-env:identity info))
+  (let ((type (cleavir-env:type info)))
+    (if (subtypep t type)
+	;; The only way T can be a subtype of some other type is if
+	;; that other type is also T, so this is our way of testing
+	;; whether the type of hte variable is equivalent to T.  We
+	;; use this information to avoid wrapping a THE-AST around the
+	;; variable.
+	(cleavir-env:identity info)
+	;; Otherwise, we are not sure whether the type is equivalent
+	;; to T, so we wrap it.
+	(cleavir-ast:make-the-ast (cleavir-env:identity info) type))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
