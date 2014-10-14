@@ -535,9 +535,10 @@
 
 (defmethod convert-special
     ((symbol (eql 'the)) form environment)
-  (apply #'cleavir-ast:make-the-ast
-	 (convert (caddr form) environment)
-	 (mapcar #'cleavir-ast:make-constant-ast
-		 (if (and (consp (cadr form)) (eq (car (cadr form)) 'values))
-		     (cdr (cadr form))
-		     (list (cadr form))))))
+  (destructuring-bind (value-type subform) (rest form)
+    (apply #'cleavir-ast:make-the-ast
+	   (convert subform environment)
+	   (mapcar #'cleavir-ast:make-constant-ast
+		   (if (and (consp value-type) (eq (car value-type) 'values))
+		       (cdr value-type)
+		       (list value-type))))))
