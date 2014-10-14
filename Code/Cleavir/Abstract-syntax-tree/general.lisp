@@ -568,6 +568,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Class MULTIPLE-VALUE-CALL-AST.
+
+(defclass multiple-value-call-ast (ast)
+  ((%function-form-ast :initarg :function-form-ast :reader function-form-ast)
+   (%form-asts :initarg :form-asts :reader form-asts)))
+
+(defun make-multiple-value-call-ast (function-form-ast form-asts)
+  (make-instance 'multiple-value-call-ast
+    :function-form-ast function-form-ast
+    :form-asts form-asts))
+
+(cleavir-io:define-save-info multiple-value-call-ast
+  (:function-form-ast function-form-ast)
+  (:form-asts form-asts))
+
+(defmethod children ((ast multiple-value-call-ast))
+  (cons (function-form-ast ast)
+	(form-asts ast)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Class BIND-AST.
 ;;;
 ;;; This AST is used to create a dynamic binding for a symbol for the
@@ -617,3 +638,4 @@
 
 (defmethod children ((ast eq-ast))
   (list (arg1-ast ast) (arg2-ast ast)))
+
