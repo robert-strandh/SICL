@@ -155,6 +155,10 @@
 	  (f 10))
 	244))
 
+(defun test-the ()
+  (test '(the t 234)
+	234))
+
 (defun run-tests ()
   (test-constant-ast)
   (test-lexical-ast)
@@ -164,4 +168,5 @@
   (test-tagbody-ast)
   (test-fdefinition-ast)
   (test-call)
-  (test-labels))
+  (test-labels)
+  (test-the))
