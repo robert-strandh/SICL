@@ -104,6 +104,13 @@
     (write-value (first outputs) environment function)
     (first (cleavir-mir:successors instruction))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Execute TAILCALL-INSTRUCTION.
+;;;
+;;; We execute this instruction by throwing the values resulting from
+;;; the function call to the RETURN catch tag. 
+
 (defmethod execute-instruction
     ((instruction cleavir-mir:tailcall-instruction) environment)
   (let* ((inputs (cleavir-mir:inputs instruction))
