@@ -156,7 +156,7 @@
 	244))
 
 (defun test-let* ()
-  (test '(let* ((x 10) x))
+  (test '(let* ((x 10)) x)
 	10))
 
 (defun test-the ()
