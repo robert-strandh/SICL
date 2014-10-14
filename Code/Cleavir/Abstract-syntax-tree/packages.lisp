@@ -22,7 +22,8 @@
    #:required-only-p #:required #:argparse-ast #:body-ast
    #:go-ast #:make-go-ast #:tag-ast
    #:if-ast #:make-if-ast #:test-ast #:then-ast #:else-ast
-   #:multiple-value-call-ast #:function-form-ast 
+   #:multiple-value-call-ast #:make-multiple-value-call-ast
+   #:function-form-ast 
    #:load-time-value-ast #:make-load-time-value-ast #:read-only-p
    #:body-asts
    #:progn-ast #:make-progn-ast #:form-asts
