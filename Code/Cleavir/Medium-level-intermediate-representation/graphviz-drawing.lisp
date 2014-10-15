@@ -196,7 +196,20 @@
 	  (instruction-id instruction)
 	  (value-type instruction)))
 
-(defmethod label ((instruction enter-instruction)) "enter")
+(defun format-item (item)
+  (cond ((symbolp item)
+	 item)
+	((listp item)
+	 (mapcar #'format-item item))
+	((typep item 'cleavir-mir:lexical-location)
+	 (cleavir-mir:name item))
+	(t
+	 (error "unknown item in lambda list ~s" item))))
+
+(defmethod label ((instruction enter-instruction))
+  (with-output-to-string (stream)
+    (format stream "enter ~s"
+	    (mapcar #'format-item (cleavir-mir:lambda-list instruction)))))
 
 (defmethod label ((instruction nop-instruction)) "nop")
 
