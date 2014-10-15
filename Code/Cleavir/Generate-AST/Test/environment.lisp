@@ -70,6 +70,16 @@
 		`(if ,(second form) nil (progn ,@(rest (rest form)))))
     :compiler-macro nil))
 
+;;; Define LAMBDA as a macro.
+(defmethod cleavir-env:function-info
+    ((environment bogus-environment) (name (eql 'lambda)))
+  (make-instance 'cleavir-env:global-macro-info 
+    :name name
+    :expander (lambda (form env)
+		(declare (ignore env))
+		`(function ,form))
+    :compiler-macro nil))
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defparameter *special-operators*
     '(block catch eval-when flet function go if labels let let* load-time-value
