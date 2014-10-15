@@ -24,15 +24,6 @@
    #:augment-environment-with-declarations
    #:add-lexical-variable-entry
    #:add-symbol-macro-entry
-   #:constant-variable-info
-   #:macro-info
-   #:symbol-macro-info
-   #:location-info
-   #:special-location-info
-   #:global-location-info
-   #:function-info
-   #:inline-info #:ast #:parameters
-   #:variable-info
    #:find-function-cell
    #:special-operator-p
    #:symbol-macro-function
