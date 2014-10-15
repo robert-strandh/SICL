@@ -175,6 +175,12 @@
 	  (find-if #'f '(1 2 5 7)))
 	5))
 
+(defun test-symbol-macrolet ()
+  (test '(symbol-macrolet ((m (f 10)))
+	  (flet ((f (x) (+ x 2)))
+	    m))
+	12))
+
 (defun run-tests ()
   (test-constant-ast)
   (test-lexical-ast)
@@ -187,4 +193,5 @@
   (test-labels)
   (test-let*)
   (test-the)
+  (test-symbol-macrolet)
   (test-function))
