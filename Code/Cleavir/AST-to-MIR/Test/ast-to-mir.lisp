@@ -35,6 +35,16 @@
   (test '(let ((x 10)) (if (> x 20) 1 2))
 	2))
 
+(defun test-let* ()
+  (test '(let* ((x 10)) x)
+	10)
+  (test '(let* ((x 10) (y (1+ x))) (+ x y))
+	21)
+  (test '(let* ((x 10) (y (1+ x)))
+	  (declare (type integer x))
+	  (+ x y))
+	21))
+
 (defun test-function ()
   (test '(flet ((f (x) (> x 3)))
 	  (find-if #'f '(1 2 5 7)))
@@ -45,4 +55,5 @@
   (test-lexical)
   (test-call)
   (test-if)
+  (test-let*)
   (test-function))
