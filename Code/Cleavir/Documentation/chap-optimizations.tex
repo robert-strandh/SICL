@@ -183,7 +183,7 @@ closure in global variables like this:
   (setf *g* closure))
 \end{verbatim}
 
-In order for this program fragment to respect the semantics of \cl{}
+In order for this program fragment to respect the semantics of \commonlisp{}
 it can be argued that both closures must update a common variable.  It
 follows that both closures must assign to this common variable, and
 thus that this variable can not be assigned to in a single place as
@@ -241,14 +241,14 @@ al.  If we analyze it a bit more, we see that clearly no $\phi$
 function is required in $F$.  The method using iterated dominance
 frontiers thus computes more nodes than required.  
 
-However, notice that if \refFig{fig-ssa-join-1} represents a \cl{}
-program, then the node $F$ could not contain a reference to
-\texttt{x}, simply because no \cl{} construct allows the creation of
-an uninitialized lexical variable.  Therefore, in $F$, the variable
-\texttt{x} must be \emph{dead}.  The situation in
-\refFig{fig-ssa-join-1} can be quite common in \cl{} because variables
-often have very limited scope.  It is therefore desirable to avoid
-considering the node $F$ as needing a $\phi$ function.
+However, notice that if \refFig{fig-ssa-join-1} represents a
+\commonlisp{} program, then the node $F$ could not contain a reference
+to \texttt{x}, simply because no \commonlisp{} construct allows the
+creation of an uninitialized lexical variable.  Therefore, in $F$, the
+variable \texttt{x} must be \emph{dead}.  The situation in
+\refFig{fig-ssa-join-1} can be quite common in \commonlisp{} because
+variables often have very limited scope.  It is therefore desirable to
+avoid considering the node $F$ as needing a $\phi$ function.
 
 Now consider the control flow graph in \refFig{fig-ssa-join-2}.  The
 only difference from \refFig{fig-ssa-join-1} is that node $E$ does not

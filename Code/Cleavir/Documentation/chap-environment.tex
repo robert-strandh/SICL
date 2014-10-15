@@ -3,15 +3,16 @@
 
 \section{Introduction}
 
-Compiling a \cl{} program is done in constant interaction with an
-\emph{environment}.  The \hs{} stipulates%
+Compiling a \commonlisp{} program is done in constant interaction with
+an \emph{environment}.  The \hs{} stipulates%
 \footnote{See Section 3.2.1 of the \hs{}.}
 that there are four different environments that are relevant to
 compilation:
 
 \begin{itemize}
 \item The \emph{startup environment}.  This environment is the global
-  environment of the \cl{} system when the compiler was invoked.
+  environment of the \commonlisp{} system when the compiler was
+  invoked.
 \item The \emph{compilation environment}.  This environment is the
   local environment in which forms are compiled.  It is also the
   environment that is passed to macro expanders.

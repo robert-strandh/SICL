@@ -34,10 +34,10 @@ Functions that can not be expressed as simpler functions, and that are
 performance critical, have been given their own abstract syntax trees.
 For instance the function that given a \texttt{cons} cell returns the
 \texttt{car} of that \texttt{cons} cell (this is only part of what the
-\cl{} function \texttt{car} does) has been given its own abstract
+\commonlisp{} function \texttt{car} does) has been given its own abstract
 syntax tree class.  Implementations are under no obligation to use
 these classes.  It is perfectly possible for an implementation to
-represent every function call to a standard \cl{} function by a
+represent every function call to a standard \commonlisp{} function by a
 \texttt{call-ast}.  However, \sysname{} contains features that make it
 easier to optimize the resulting code if these classes are used.
 
@@ -207,7 +207,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The \texttt{block-ast} is used to represent the \cl{} special operator
+The \texttt{block-ast} is used to represent the \commonlisp{} special operator
 \texttt{block}.  The \texttt{block-ast} does not contain the name of
 the block because the \texttt{return-from-ast} contains a reference to
 the corresponding \texttt{block-ast}.
@@ -254,7 +254,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The \texttt{if-ast} corresponds directly to the \cl{} special operator
+The \texttt{if-ast} corresponds directly to the \commonlisp{} special operator
 \texttt{if}. 
 
 \subsection{\texttt{load-time-value-ast}}
@@ -288,7 +288,7 @@ Initarg & Reader & Description\\
 \hline
 \end{tabular}
 
-The \texttt{progn-ast} corresponds directly to the \cl{} special
+The \texttt{progn-ast} corresponds directly to the \commonlisp{} special
 operator \texttt{progn}.  It returns the values that are return by the
 last AST in the child forms.
 
