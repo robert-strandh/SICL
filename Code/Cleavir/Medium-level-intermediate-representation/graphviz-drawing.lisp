@@ -183,9 +183,12 @@
 			  :if-exists :supersede)
     (let ((*instruction-table* (make-hash-table :test #'eq))
 	  (*datum-table* (make-hash-table :test #'eq)))
-	(format stream "digraph G {~%")
-	(draw-instruction start stream)
-	(format stream "}~%"))))
+      (format stream "digraph G {~%")
+      (format stream "   start [label = \"START\"];~%")
+      (draw-instruction start stream)
+      (format stream "start -> ~a [style = bold];~%"
+	      (instruction-id start))
+      (format stream "}~%"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
