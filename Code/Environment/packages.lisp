@@ -50,8 +50,6 @@
    #:constant-variable-info
    #:macro-info
    #:symbol-macro-info
-   #:block-info
-   #:tag-info
    #:location-info
    #:special-location-info
    #:global-location-info

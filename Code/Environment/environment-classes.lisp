@@ -245,38 +245,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Mixin class and predicate for BLOCK-SPACE.
-
-(defclass block-space () ())
-
-(defgeneric block-space-p (object))
-
-(defmethod block-space-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod block-space-p ((object block-space))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin class and predicate for TAG-SPACE.
-
-(defclass tag-space () ())
-
-(defgeneric tag-space-p (object))
-
-(defmethod tag-space-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod tag-space-p ((object tag-space))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Mixin class and predicate for TYPE-SPACE.
 
 (defclass type-space () ())
@@ -316,8 +284,8 @@
 ;;; DEFINITION-ENTRY.
 ;;;
 ;;; For entries that have a complete definition in the environment.
-;;; This is the case for macros, symbol macros, constant variables,
-;;; blocks, and go tags.
+;;; This is the case for macros, symbol macros, and constant
+;;; variables.
 
 (defclass definition-entry ()
   ((%definition :initarg :definition :accessor definition)))
@@ -750,42 +718,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class BLOCK-ENTRY.
-
-(defclass block-entry
-    (base-entry named-entry block-space definition-entry)
-  ())
-
-(defgeneric block-entry-p (object))
-
-(defmethod block-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod block-entry-p ((object block-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class GO-TAG-ENTRY.
-
-(defclass go-tag-entry
-    (base-entry named-entry tag-space definition-entry)
-  ())
-
-(defgeneric go-tag-entry-p (object))
-
-(defmethod go-tag-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod go-tag-entry-p ((object go-tag-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class TYPE-ENTRY.
 
 (defclass type-entry
@@ -1047,20 +979,6 @@
 
 (defclass symbol-macro-info (info)
   ((%type :initarg :type :reader type)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class BLOCK-INFO.
-
-(defclass block-info (definition-info)
-  ())
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class TAG-INFO.
-
-(defclass tag-info (definition-info)
-  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
