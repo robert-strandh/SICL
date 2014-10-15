@@ -170,6 +170,11 @@
 	234)
   (test-error '(the symbol 234)))
 
+(defun test-function ()
+  (test '(flet ((f (x) (> x 3)))
+	  (find-if #'f '(1 2 5 7)))
+	5))
+
 (defun run-tests ()
   (test-constant-ast)
   (test-lexical-ast)
