@@ -186,4 +186,5 @@
   (test-call)
   (test-labels)
   (test-let*)
-  (test-the))
+  (test-the)
+  (test-function))
