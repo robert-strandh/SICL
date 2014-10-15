@@ -34,3 +34,8 @@
 	1)
   (test '(let ((x 10)) (if (> x 20) 1 2))
 	2))
+
+(defun test-function ()
+  (test '(flet ((f (x) (> x 3)))
+	  (find-if #'f '(1 2 5 7)))
+	5))
