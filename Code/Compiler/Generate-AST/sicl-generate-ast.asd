@@ -7,6 +7,5 @@
   :components
   ((:file "packages")
    (:file "cons-packages")
-   (:file "generate-ast")
    (:file "cons")))
 
