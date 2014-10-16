@@ -71,6 +71,11 @@
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:bit-aref-instruction) inputs outputs)
+  `(setq ,(first outputs)
+	 (row-major-aref ,(first inputs) ,(second inputs))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
