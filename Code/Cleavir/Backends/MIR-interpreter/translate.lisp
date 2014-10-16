@@ -41,3 +41,11 @@
   `(if (eq ,(first inputs) ,(second inputs))
        (go ,(first successors))
        (go ,(second successors))))
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-mir:typeq-instruction) inputs outputs successors)
+  `(if (typep ,(first inputs) ',(cleavir-mir:value-type instruction))
+       (go ,(first successors))
+       (go ,(second successors))))
+
+
