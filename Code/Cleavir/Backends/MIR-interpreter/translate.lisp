@@ -82,7 +82,12 @@
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
 (defmethod translate-simple-instruction
-    ((instruction cleavir-mir:short-float-instruction) inputs outputs)
+    ((instruction cleavir-mir:short-float-aref-instruction) inputs outputs)
+  `(setq ,(first outputs)
+	 (row-major-aref ,(first inputs) ,(second inputs))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:single-float-aref-instruction) inputs outputs)
   `(setq ,(first outputs)
 	 (row-major-aref ,(first inputs) ,(second inputs))))
 
