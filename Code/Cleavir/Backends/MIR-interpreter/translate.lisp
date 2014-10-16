@@ -7,3 +7,7 @@
 ;;; The inputs are forms to be evaluated.  The outputs are symbols
 ;;; that are names of variables.
 (defgeneric translate-simple-instruction (instruction inputs outputs))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:assignment-instruction) inputs outputs)
+  `(setq ,(first outputs) ,(first inputs)))
