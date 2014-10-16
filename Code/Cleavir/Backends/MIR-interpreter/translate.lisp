@@ -30,7 +30,16 @@
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-mir:tailcall-instruction) inputs outputs)
+  (declare (ignore outputs))
   `(return (funcall ,(first inputs) ,@(rest inputs))))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:the-instruction) inputs outputs)
+  (declare (ignore outputs))
+  `(unless (typep ,(first inputs) ',(cleavir-mir:value-type instruction))
+     (error 'type-error
+	    :expected-type ',(cleavir-mir:value-type instruction)
+	    :datum ,(first inputs))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
