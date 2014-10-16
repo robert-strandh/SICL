@@ -15,3 +15,10 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-mir:return-instruction) inputs outputs)
   `(return (values ,@inputs)))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:funcall-instruction) inputs outputs)
+  (let ((temps (loop for output in outputs collect (gensym))))
+    `(multiple-value-bind ,temps (funcall ,(first inputs) ,@(rest inputs))
+       (setq ,@(mapcar #'list outputs temps)))))
+
