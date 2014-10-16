@@ -131,6 +131,12 @@
   `(setf (row-major-aref ,(first inputs) ,(second inputs))
 	 ,(third inputs)))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:double-float-aset-instruction) inputs outputs)
+  (declare (ignore outputs))
+  `(setf (row-major-aref ,(first inputs) ,(second inputs))
+	 ,(third inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
