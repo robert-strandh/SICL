@@ -190,3 +190,10 @@
 	      (setq ,(first outputs)
 		    (- ,result (* 2 most-negative-fixnum)))
 	      (go ,(second successors)))))))
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-mir:fixnum-less-instruction) inputs outputs successors)
+  (declare (ignore outputs))
+  `(if (< ,(first inputs) ,(second inputs))
+       (go ,(first successors))
+       (go ,(second successors))))
