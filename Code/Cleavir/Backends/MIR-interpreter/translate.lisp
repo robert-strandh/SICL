@@ -31,3 +31,13 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-mir:tailcall-instruction) inputs outputs)
   `(return (funcall ,(first inputs) ,@(rest inputs))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-mir:eq-instruction) inputs outputs successors)
+  `(if (eq ,(first inputs) ,(second inputs))
+       (go ,(first successors))
+       (go ,(second successors))))
