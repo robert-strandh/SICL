@@ -56,6 +56,11 @@
   `(setq ,(first outputs)
 	 (cdr ,(first inputs))))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:rplaca-instruction) inputs outputs)
+  (declare (ignore outputs))
+  `(rplaca ,(first inputs) ,(second inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
