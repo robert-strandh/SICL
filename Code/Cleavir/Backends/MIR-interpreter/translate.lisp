@@ -61,6 +61,11 @@
   (declare (ignore outputs))
   `(rplaca ,(first inputs) ,(second inputs)))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:rplacd-instruction) inputs outputs)
+  (declare (ignore outputs))
+  `(rplacd ,(first inputs) ,(second inputs)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
