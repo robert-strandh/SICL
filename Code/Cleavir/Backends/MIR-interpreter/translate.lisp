@@ -46,6 +46,11 @@
   `(setq ,(first outputs)
 	 (fdefinition ,(first inputs))))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:car-instruction) inputs outputs)
+  `(setq ,(first outputs)
+	 (car ,(first inputs))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
