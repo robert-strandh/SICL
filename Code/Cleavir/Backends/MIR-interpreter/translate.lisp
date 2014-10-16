@@ -11,3 +11,7 @@
 (defmethod translate-simple-instruction
     ((instruction cleavir-mir:assignment-instruction) inputs outputs)
   `(setq ,(first outputs) ,(first inputs)))
+
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:return-instruction) inputs outputs)
+  `(return (values ,@inputs)))
