@@ -41,6 +41,11 @@
 	    :expected-type ',(cleavir-mir:value-type instruction)
 	    :datum ,(first inputs))))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:fdefinition-instruction) inputs outputs)
+  `(setq ,(first outputs)
+	 (fdefinition ,(first inputs))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-BRANCH-INSTRUCTION.
