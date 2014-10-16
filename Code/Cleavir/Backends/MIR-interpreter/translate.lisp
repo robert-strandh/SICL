@@ -197,3 +197,10 @@
   `(if (< ,(first inputs) ,(second inputs))
        (go ,(first successors))
        (go ,(second successors))))
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-mir:fixnum-not-greater-instruction) inputs outputs successors)
+  (declare (ignore outputs))
+  `(if (<= ,(first inputs) ,(second inputs))
+       (go ,(first successors))
+       (go ,(second successors))))
