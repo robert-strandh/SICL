@@ -174,3 +174,19 @@
 	      (setq ,(first outputs)
 		    (- ,result (* 2 most-negative-fixnum)))
 	      (go ,(second successors)))))))
+
+(defmethod translate-branch-instruction
+    ((instruction cleavir-mir:fixnum-sub-instruction) inputs outputs successors)
+  (let ((result (gensym)))
+    `(let ((,result (- ,(first inputs) ,(second inputs))))
+       (cond ((typep result 'fixnum)
+	      (setq ,(first outputs) ,result)
+	      (go ,(first successors)))
+	     ((plusp ,result)
+	      (setq ,(first outputs)
+		    (+ ,result (* 2 most-negative-fixnum)))
+	      (go ,(second successors)))
+	     (t
+	      (setq ,(first outputs)
+		    (- ,result (* 2 most-negative-fixnum)))
+	      (go ,(second successors)))))))
