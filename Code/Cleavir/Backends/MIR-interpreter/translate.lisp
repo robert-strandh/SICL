@@ -22,3 +22,6 @@
     `(multiple-value-bind ,temps (funcall ,(first inputs) ,@(rest inputs))
        (setq ,@(mapcar #'list outputs temps)))))
 
+(defmethod translate-simple-instruction
+    ((instruction cleavir-mir:tailcall-instruction) inputs outputs)
+  `(return (funcall ,(first inputs) ,@(rest inputs))))
