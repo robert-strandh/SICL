@@ -6,5 +6,4 @@
   :serial t
   :components
   ((:file "packages")
-   (:file "translate")
-   (:file "accessors")))
+   (:file "translate")))
