@@ -318,3 +318,10 @@
   `(if (= ,(first inputs) ,(second inputs))
        (go ,(gethash (first successors) *tags*))
        (go ,(gethash (second successors) *tags*))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Main entry point.
+
+(defun interpret-mir (initial-instruction)
+  (funcall (compile nil (translate initial-instruction))))

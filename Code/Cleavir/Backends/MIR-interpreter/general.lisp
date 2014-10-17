@@ -23,11 +23,11 @@
   (when *step* (break))
   (call-next-method))
 
-(defun interpret-mir (initial-instruction)
-  (let ((environment (list (make-hash-table :test #'eq))))
-    (let ((next initial-instruction))
-      (catch 'return
-	(loop do (setf next (execute-instruction next environment)))))))
+;; ;; (defun interpret-mir (initial-instruction)
+;; ;;   (let ((environment (list (make-hash-table :test #'eq))))
+;; ;;     (let ((next initial-instruction))
+;; ;;       (catch 'return
+;; ;; 	(loop do (setf next (execute-instruction next environment)))))))
 
 ;; (defun interpret-mir (enter-instruction environment arguments)
 ;;   (push (make-hash-table :test #'eq) environment)
@@ -320,3 +320,4 @@
 		  (loop do (setf next (execute-instruction next new-env)))))))))
     (write-value (first (cleavir-mir:outputs instruction)) environment fun))
   (first (cleavir-mir:successors instruction)))
+
