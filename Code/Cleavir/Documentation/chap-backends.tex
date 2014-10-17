@@ -51,6 +51,20 @@ the details of what it contains.
   parameter in order to determine whether to execute some
   initialization code that assigns a default value to the main
   parameter. 
+\item It may have a \texttt{\&rest} parameter.  This parameter is just
+  a symbol.
+\item It may have \texttt{\&key} parameters.  Each such parameter is a
+  list of three symbols.  The first symbol names the key to be
+  searched for in the argument list to find the argument.  The second
+  symbol names the main parameter.  The third symbol names a
+  \emph{supplied-p} parameter.  As with \texttt{\&optional}
+  parameters, the latter is included even when the original lambda
+  list did not contain it.  Again, the body of the function tests the
+  value of the \emph{supplied-p} parameter in order to determine
+  whether to execute some initialization code that assigns a default
+  value to the main parameter.
+\item It may contain the lambda-list keyword
+  \texttt{\&allow-other-keys}. 
 \end{itemize}
 
 %%  LocalWords:  Backends backend
