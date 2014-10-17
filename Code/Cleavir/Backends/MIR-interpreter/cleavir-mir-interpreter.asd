@@ -8,5 +8,4 @@
   ((:file "packages")
    (:file "translate")
    (:file "environment")
-   (:file "general")
    (:file "accessors")))
