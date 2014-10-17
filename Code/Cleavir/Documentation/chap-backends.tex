@@ -18,4 +18,30 @@ The MIR interpreter works as follows:
   \texttt{funcall}. 
 \end{itemize}
 
+Each nested function has the following shape:
+
+\begin{itemize}
+\item The outermost form is a lambda expression with a lambda list of
+  a particular form.  See below for details about the lambda list.
+\item The body of the lambda expression is a \texttt{let} special
+  form.  The variables of the \texttt{let} form are all the lexical
+  variables used by the function, but not used by an enclosing
+  function.  The \texttt{let} variables are all initialized to
+  \texttt{nil}. 
+\item The body of the \texttt{let} is a \texttt{block} special form.
+  The name of the block is \texttt{nil}.  This block is used in the
+  translation of the \texttt{return} instruction.  
+\item The body of the block is a \texttt{tagbody} special form.  Each
+  instruction generates a statement of the tagbody.  A statement may
+  be preceded by a \texttt{tag} if there is a \texttt{go} to that
+  statement. 
+\end{itemize}
+
+\begin{itemize}
+\item The lambda list of the function has no initialization forms.
+  An \texttt{\&optional} parameter is a list of two symbols, the
+  parameter itself and a \emph{supplied-p} parameter.  The latter is
+  included even when the original 
+\end{itemize}
+
 %%  LocalWords:  Backends backend
