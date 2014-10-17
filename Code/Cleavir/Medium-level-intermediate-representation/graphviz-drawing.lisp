@@ -70,9 +70,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Drawing datum CAPTURED-LOCATION.
+;;; Drawing datum INDEFINITE-LEXICAL-LOCATION.
 
-(defmethod draw-datum ((datum captured-location) stream)
+(defmethod draw-datum ((datum indefinite-lexical-location) stream)
   (format stream "  ~a [shape = octagon, style = filled];~%"
 	  (datum-id datum))
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"

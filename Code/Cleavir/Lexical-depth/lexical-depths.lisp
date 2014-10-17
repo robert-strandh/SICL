@@ -145,7 +145,7 @@
 	(*lexical-depths* lexical-depths)
 	(visited (make-hash-table :test #'eq)))
     ;; First find all lexical locations that should be turned
-    ;; into captured lexical locations.
+    ;; into indefinite lexical locations.
     (labels ((traverse (instruction)
 	       (unless (gethash instruction visited)
 		 (setf (gethash instruction visited) t)
@@ -154,7 +154,8 @@
 		       do (when (and (typep datum type)
 				     (/= (lexical-depth datum)
 					 (lexical-depth instruction)))
-			    (change-class datum 'cleavir-mir:captured-location)))
+			    (change-class datum
+					  'cleavir-mir:indefinite-lexical-location)))
 		 (loop for succ in (cleavir-mir:successors instruction)
 		       do (traverse succ))
 		 (when (typep instruction 'cleavir-mir:enclose-instruction)
@@ -170,7 +171,7 @@
 	       (unless (gethash instruction visited)
 		 (setf (gethash instruction visited) t)
 		 (loop with type = '(and cleavir-mir:lexical-location
-				         (not cleavir-mir:captured-location))
+				         (not cleavir-mir:indefinite-lexical-location))
 		       for datum in (cleavir-mir:outputs instruction)
 		       do (when (typep datum type)
 			    (change-class datum

@@ -10,7 +10,7 @@
    #:value
    #:lexical-location #:make-lexical-location
    #:dynamic-lexical-location #:make-dynamic-lexical-location #:new-temporary
-   #:captured-location #:make-captured-location
+   #:indefinite-lexical-location #:make-indefinite-lexical-location
    #:name
    #:load-time-input
    #:external-input #:make-external-input
