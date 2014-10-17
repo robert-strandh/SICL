@@ -9,7 +9,7 @@
    #:constant-input #:make-constant-input
    #:value
    #:lexical-location #:make-lexical-location
-   #:simple-location #:make-simple-location #:new-temporary
+   #:dynamic-lexical-location #:make-dynamic-lexical-location #:new-temporary
    #:captured-location #:make-captured-location
    #:name
    #:load-time-input

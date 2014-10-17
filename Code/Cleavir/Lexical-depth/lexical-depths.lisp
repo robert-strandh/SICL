@@ -173,7 +173,8 @@
 				         (not cleavir-mir:captured-location))
 		       for datum in (cleavir-mir:outputs instruction)
 		       do (when (typep datum type)
-			    (change-class datum 'cleavir-mir:simple-location)))
+			    (change-class datum
+					  'cleavir-mir:dynamic-lexical-location)))
 		 (loop for succ in (cleavir-mir:successors instruction)
 		       do (traverse succ))
 		 (when (typep instruction 'cleavir-mir:enclose-instruction)

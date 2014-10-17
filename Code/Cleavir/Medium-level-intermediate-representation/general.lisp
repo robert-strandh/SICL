@@ -224,23 +224,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Datum class SIMPLE-LOCATION.
+;;; Datum class DYNAMIC-LEXICAL-LOCATION.
 ;;;
 ;;; This datum is a special case of a LEXICAL-LOCATION.  It is used
 ;;; for locations that are only referred to within a single function,
 ;;; so that there is no possible capture.  A location of this type can
 ;;; be allocated in a register or on the stack.
 
-(defclass simple-location (lexical-location)
+(defclass dynamic-lexical-location (lexical-location)
   ())
 
-(defun make-simple-location (name)
-  (make-instance 'simple-location
+(defun make-dynamic-lexical-location (name)
+  (make-instance 'dynamic-lexical-location
     :name name))
 
 ;;; Generate a new lexical location
 (defun new-temporary ()
-  (make-simple-location (gensym)))
+  (make-dynamic-lexical-location (gensym)))
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
