@@ -22,6 +22,21 @@
 	  (setf var (gensym))
 	  (setf (gethash datum *vars*) var))
 	var)))
+
+(defun translate-lambda-list-item (item)
+  (cond ((symbolp item)
+	 item)
+	((consp item)
+	 (ecase (length item)
+	   (2 (list (translate-datum (first item))
+		    nil
+		    (translate-datum (second item))))
+	   (3 (list (list (first item)
+			  (translate-datum (second item)))
+		    nil
+		    (translate-datum (third item))))))
+	(t
+	 (translate-datum item))))
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
