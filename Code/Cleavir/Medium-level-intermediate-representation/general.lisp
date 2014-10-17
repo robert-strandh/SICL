@@ -688,33 +688,24 @@
 ;;;
 ;;; Instruction TYPEQ-INSTRUCTION.
 ;;;
-;;; This instruction takes two inputs; a datum and a constant input
-;;; that represents the type that the datum should be tested for.
+;;; This instruction takes one input, namely a datum for which a type
+;;; should be tested.  
 ;;;
 ;;; As a result of various transformations of the instruction graph,
 ;;; this instruction will either be eliminated (because we can
 ;;; determine statically the result of the test), or it will be
 ;;; replaced by a call to TYPEP.  When it is replaced by a call to
 ;;; TYPEP, we use the constant input as the second argument to TYPEP.
-;;;
-;;; However, constant inputs are always replaced by references to an
-;;; element of the linkage vector, and this transformation may take
-;;; place fairly early in the process.  But we need to know the type
-;;; that is tested for, for the purpose of type inference.  While we
-;;; could maintain enough information to determine the type from the
-;;; reference to the linkage vector, it is easier just to keep the
-;;; type specifier around in a separate slot.  This is the purpose of
-;;; the VALUE-TYPE slot.
 
 (defclass typeq-instruction (instruction two-successors-mixin)
   ((%value-type :initarg :value-type :reader value-type)))
 
-(defun make-typeq-instruction (inputs successors)
+(defun make-typeq-instruction (input successors value-type)
   (assert (typep (second inputs) 'constant-input))
   (make-instance 'typeq-instruction
-    :inputs inputs
+    :inputs (list input)
     :successors successors
-    :value-type (value (second inputs))))
+    :value-type value-type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
