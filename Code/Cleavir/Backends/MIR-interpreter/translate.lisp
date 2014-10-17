@@ -41,6 +41,73 @@
 (defun translate-lambda-list (lambda-list)
   (mapcar #'translate-lambda-list-item lambda-list))
 
+(defun layout-procedure (initial-instruction)
+  (labels ((layout (instruction)
+	     (let ((tag (gethash instruction *tags*)))
+	       (when (null tag)
+		 (setf (gethash instruction *tags*) (gensym))
+		 (let ((inputs (loop for i in (cleavir-mir:inputs instruction)
+				     collect (translate-datum i)))
+		       (outputs (loop for o in (cleavir-mir:outputs instruction)
+				      collect (translate-datum o))))
+		   (ecase (length (cleavir-mir:successors instruction))
+		     (0
+		      (list (translate-simple-instruction
+			     instruction inputs outputs)))
+		     (1
+		      (let* ((succ (first (cleavir-mir:successors instruction)))
+			     (preds (cleavir-mir:predecessors succ)))
+			(if (eq (gethash instruction *ownerships*)
+				(gethash succ *ownerships*))
+			    (if (gethash succ *tags*)
+				(list* (translate-simple-instruction
+					instruction inputs outputs)
+				       `(go ,(gethash succ *tags*))
+				       (layout succ))
+				(if (> (length preds) 1)
+				    (list* (translate-simple-instruction
+					    instruction inputs outputs)
+					   (gethash succ *tags*)
+					   (layout succ))
+				    (cons (translate-simple-instruction
+					   instruction inputs outputs)
+					  (layout succ))))
+			    (list* (translate-simple-instruction
+				    instruction inputs outputs)
+				   `(go (gethash succ *tags*))
+				   (layout succ)))))
+		     (2
+		      (let ((successors (cleavir-mir:successors instruction)))
+			(destructuring-bind (true false) successors
+			  (let ((tt (layout true))
+				(ff (layout false)))
+			    (cons (translate-branch-instruction
+				   instruction inputs outputs successors)
+				  (append (list (gethash true *tags*))
+					  tt
+					  (list (gethash false *tags*))
+					  ff))))))))))))
+    `(lambda ,(translate-lambda-list
+	       (cleavir-mir:lambda-list initial-instruction))
+       (block nil
+	 (let ,(loop for var being each hash-key of *ownerships*
+		     using (hash-value owner)
+		     when (and (typep var 'cleavir-mir:lexical-location)
+			       (eq owner initial-instruction)
+			       (not (member var (cleavir-mir:outputs
+						 initial-instruction))))
+		       collect (translate-datum var))
+	   (tagbody 
+	      ,@(layout (first (cleavir-mir:successors initial-instruction)))))))))
+
+(defun translate (initial-instruction)
+  (let* ((enter-inst
+	   (cleavir-mir:make-enter-instruction '() initial-instruction))
+	 (*ownerships* (cleavir-lexical-depth:compute-ownerships enter-inst))
+	 (*tags* (make-hash-table :test #'eq))
+	 (*vars* (make-hash-table :test #'eq)))
+    (layout-procedure enter-inst)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-SIMPLE-INSTRUCTION.
