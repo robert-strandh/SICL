@@ -37,11 +37,20 @@ Each nested function has the following shape:
   statement. 
 \end{itemize}
 
+The lambda list of the function has no initialization forms.  Here are
+the details of what it contains. 
+
 \begin{itemize}
-\item The lambda list of the function has no initialization forms.
-  An \texttt{\&optional} parameter is a list of two symbols, the
-  parameter itself and a \emph{supplied-p} parameter.  The latter is
-  included even when the original 
+\item It has zero or more required parameters.  Each required
+  parameter is a symbol naming a variable.  
+\item It may have \texttt{\&optional} parameters.  Each such parameter
+  is a list of two symbols.  The first symbol names the main parameter.
+  The second symbol names a \emph{supplied-p} parameter.  The latter
+  is included even when the original lambda list did not contain it.
+  The body of the function tests the value of the \emph{supplied-p}
+  parameter in order to determine whether to execute some
+  initialization code that assigns a default value to the main
+  parameter. 
 \end{itemize}
 
 %%  LocalWords:  Backends backend
