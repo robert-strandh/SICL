@@ -37,7 +37,10 @@
 		    (translate-datum (third item))))))
 	(t
 	 (translate-datum item))))
-    
+
+(defun translate-lambda-list (lambda-list)
+  (mapcar #'translate-lambda-list-item lambda-list))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-SIMPLE-INSTRUCTION.
