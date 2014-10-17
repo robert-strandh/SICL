@@ -10,6 +10,19 @@
 
 (defgeneric translate-branch-instruction (instruction inputs outputs successors))
 
+(defvar *ownerships*)
+(defvar *tags*)
+(defvar *vars*)
+
+(defun translate-datum (datum)
+  (if (typep datum 'cleavir-mir:constant-input)
+      `(quote ,(cleavir-mir:value datum))
+      (let ((var (gethash datum *vars*)))
+	(when (null var)
+	  (setf var (gensym))
+	  (setf (gethash datum *vars*) var))
+	var)))
+    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Methods on TRANSLATE-SIMPLE-INSTRUCTION.
