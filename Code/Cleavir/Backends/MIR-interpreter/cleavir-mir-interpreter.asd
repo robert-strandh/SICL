@@ -7,5 +7,4 @@
   :components
   ((:file "packages")
    (:file "translate")
-   (:file "environment")
    (:file "accessors")))
