@@ -15,6 +15,12 @@
 ;;; Methods on TRANSLATE-SIMPLE-INSTRUCTION.
 
 (defmethod translate-simple-instruction
+    ((instruction cleavir-mir:enclose-instruction) inputs outputs)
+  (declare (ignore inputs))
+  `(setq ,(first outputs)
+	 ,(layout-procedure (cleavir-mir:code instruction))))
+
+(defmethod translate-simple-instruction
     ((instruction cleavir-mir:assignment-instruction) inputs outputs)
   `(setq ,(first outputs) ,(first inputs)))
 
@@ -26,7 +32,10 @@
     ((instruction cleavir-mir:funcall-instruction) inputs outputs)
   (let ((temps (loop for output in outputs collect (gensym))))
     `(multiple-value-bind ,temps (funcall ,(first inputs) ,@(rest inputs))
-       (setq ,@(mapcar #'list outputs temps)))))
+       (setq ,@(loop for out in outputs
+		     for temp in temps
+		     collect out
+		     collect temp)))))
 
 (defmethod translate-simple-instruction
     ((instruction cleavir-mir:tailcall-instruction) inputs outputs)
@@ -150,14 +159,14 @@
 (defmethod translate-branch-instruction
     ((instruction cleavir-mir:eq-instruction) inputs outputs successors)
   `(if (eq ,(first inputs) ,(second inputs))
-       (go ,(first successors))
-       (go ,(second successors))))
+       (go ,(gethash (first successors) *tags*))
+       (go ,(gethash (second successors) *tags*))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-mir:typeq-instruction) inputs outputs successors)
   `(if (typep ,(first inputs) ',(cleavir-mir:value-type instruction))
-       (go ,(first successors))
-       (go ,(second successors))))
+       (go ,(gethash (first successors) *tags*))
+       (go ,(gethash (second successors) *tags*))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-mir:fixnum-add-instruction) inputs outputs successors)
@@ -165,15 +174,15 @@
     `(let ((,result (+ ,(first inputs) ,(second inputs))))
        (cond ((typep result 'fixnum)
 	      (setq ,(first outputs) ,result)
-	      (go ,(first successors)))
+	      (go ,(gethash (first successors) *tags*)))
 	     ((plusp ,result)
 	      (setq ,(first outputs)
 		    (+ ,result (* 2 most-negative-fixnum)))
-	      (go ,(second successors)))
+	      (go ,(gethash (second successors) *tags*)))
 	     (t
 	      (setq ,(first outputs)
 		    (- ,result (* 2 most-negative-fixnum)))
-	      (go ,(second successors)))))))
+	      (go ,(gethash (second successors) *tags*)))))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-mir:fixnum-sub-instruction) inputs outputs successors)
@@ -181,33 +190,33 @@
     `(let ((,result (- ,(first inputs) ,(second inputs))))
        (cond ((typep result 'fixnum)
 	      (setq ,(first outputs) ,result)
-	      (go ,(first successors)))
+	      (go ,(gethash (first successors) *tags*)))
 	     ((plusp ,result)
 	      (setq ,(first outputs)
 		    (+ ,result (* 2 most-negative-fixnum)))
-	      (go ,(second successors)))
+	      (go ,(gethash (second successors) *tags*)))
 	     (t
 	      (setq ,(first outputs)
 		    (- ,result (* 2 most-negative-fixnum)))
-	      (go ,(second successors)))))))
+	      (go ,(gethash (second successors) *tags*)))))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-mir:fixnum-less-instruction) inputs outputs successors)
   (declare (ignore outputs))
   `(if (< ,(first inputs) ,(second inputs))
-       (go ,(first successors))
-       (go ,(second successors))))
+       (go ,(gethash (first successors) *tags*))
+       (go ,(gethash (second successors) *tags*))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-mir:fixnum-not-greater-instruction) inputs outputs successors)
   (declare (ignore outputs))
   `(if (<= ,(first inputs) ,(second inputs))
-       (go ,(first successors))
-       (go ,(second successors))))
+       (go ,(gethash (first successors) *tags*))
+       (go ,(gethash (second successors) *tags*))))
 
 (defmethod translate-branch-instruction
     ((instruction cleavir-mir:fixnum-equal-instruction) inputs outputs successors)
   (declare (ignore outputs))
   `(if (= ,(first inputs) ,(second inputs))
-       (go ,(first successors))
-       (go ,(second successors))))
+       (go ,(gethash (first successors) *tags*))
+       (go ,(gethash (second successors) *tags*))))
