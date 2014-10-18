@@ -37,3 +37,21 @@
     :inputs (list input1 input2)
     :outputs (list output)
     :successors (if (null successor) '() (list successor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MEMSET1-INSTRUCTION
+;;;
+;;; This instruction stores an item in a memory location.  It takes
+;;; two inputs.  The first input is the address of a location in
+;;; memory.  The second input is the item to be stored in that
+;;; location.
+
+(defclass memset1-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-memset1-instruction (input1 input2 &optional successor)
+  (make-instance 'memset1-instruction
+    :inputs (list input1 input2)
+    :outputs '()
+    :successors (if (null successor) '() (list successor))))
