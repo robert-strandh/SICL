@@ -22,6 +22,13 @@
 (defclass raw-unsigned-integer (raw-datum)
   ())
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum RAW-SIGNED-INTEGER.
+
+(defclass raw-signed-integer (raw-datum)
+  ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions.
