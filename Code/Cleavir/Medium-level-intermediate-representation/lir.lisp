@@ -55,3 +55,22 @@
     :inputs (list input1 input2)
     :outputs '()
     :successors (if (null successor) '() (list successor))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; MEMSET2-INSTRUCTION
+;;;
+;;; This instruction stores an item in a memory location.  It takes
+;;; three inputs.  The first input is the base address of a location
+;;; in memory.  The second input is an offset.  The third input is the
+;;; item to be stored in the location in memory whose address is the
+;;; sum of the base address and the offset.
+
+(defclass memset2-instruction (instruction one-successor-mixin)
+  ())
+
+(defun make-memset2-instruction (input1 input2 input3 &optional successor)
+  (make-instance 'memset2-instruction
+    :inputs (list input1 input2 input3)
+    :outputs '()
+    :successors (if (null successor) '() (list successor))))
