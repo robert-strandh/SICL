@@ -16,6 +16,9 @@
 (define-condition both-or-no-individual-successors-must-be-given (error)
   ())
 
+(define-condition successor1-must-be-given (error)
+  ())
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Utilities.
@@ -40,6 +43,18 @@
 	 (error 'both-or-no-individual-successors-must-be-given))
 	(t
 	 (list s1 s2))))
+
+(defun construct-successors-bis (s s-p s1 s1-p s2 s2-p)
+  (cond (s-p
+	 (when  (or s1-p s2-p)
+	   (error 'successor-successors-mutually-exclusive))
+	 s)
+	((and (not s1-p) s2-p)
+	 (error 'successor1-must-be-given))
+	(s2-p
+	 (list s1 s2))
+	(t
+	 (list s1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
