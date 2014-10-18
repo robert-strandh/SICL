@@ -12,4 +12,5 @@
    (:file "standard-object")
    (:file "array")
    (:file "reduce")
-   (:file "graphviz-drawing")))
+   (:file "graphviz-drawing")
+   (:file "lir")))
