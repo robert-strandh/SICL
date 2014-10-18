@@ -4,8 +4,23 @@
 ;;;
 ;;; Data.
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Class RAW-DATUM.
+;;;
+;;; This class is the base class for all raw data.  It contains a size
+;;; attribute that determines the number of bits that this datum
+;;; consists of.
+
 (defclass raw-datum (datum)
   ((%size :initarg :size :reader size)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Datum RAW-UNSIGNED-INTEGER.
+
+(defclass raw-unsigned-integer (raw-datum)
+  ())
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -13,7 +28,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; MEMREF1-INSTRUCTION
+;;; LIR instruction MEMREF1-INSTRUCTION
 ;;;
 ;;; This instruction loads a memory location.  It takes a single input
 ;;; containing the address of the word to load.  It has a single
@@ -31,7 +46,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; MEMREF1-INSTRUCTION
+;;; LIR instruction MEMREF1-INSTRUCTION
 ;;;
 ;;; This instruction loads a memory location.  It takes a two inputs.
 ;;; The first input contains the base address of the datum to load.
@@ -51,7 +66,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; MEMSET1-INSTRUCTION
+;;; LIR instruction MEMSET1-INSTRUCTION
 ;;;
 ;;; This instruction stores an item in a memory location.  It takes
 ;;; two inputs.  The first input is the address of a location in
@@ -69,7 +84,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; MEMSET2-INSTRUCTION
+;;; LIR instruction MEMSET2-INSTRUCTION
 ;;;
 ;;; This instruction stores an item in a memory location.  It takes
 ;;; three inputs.  The first input is the base address of a location
