@@ -178,27 +178,6 @@
 (defclass signed-not-greater-instruction (instruction two-successors-mixin)
   ())
 
-(defun construct-inputs (i i-p i1 i1-p i2 i2-p)
-  (cond (i-p
-	 (when  (or i1-p i2-p)
-	   (error 'input-inputs-mutually-exclusive))
-	 i)
-	((or (not i1-p) (not i2-p))
-	 (error 'both-individual-inputs-must-be-given))
-	(t
-	 (list i1 i2))))
-
-(defun construct-successors (s s-p s1 s1-p s2 s2-p)
-  (cond (s-p
-	 (when  (or s1-p s2-p)
-	   (error 'successor-successors-mutually-exclusive))
-	 s)
-	((or (and s1-p (not s2-p))
-	     (and (not s1-p) s2-p))
-	 (error 'both-or-no-individual-successors-must-be-given))
-	(t
-	 (list s1 s2))))
-
 (defun make-signed-not-greater-instruction
     (&key
        ((:input1 i1) nil i1-p)
