@@ -261,6 +261,27 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; LIR instruction UNSIGNED-ADD-INSTRUCTION
+
+(defclass unsigned-add-instruction (instruction two-successors-mixin)
+  ())
+
+(defun make-unsigned-add-instruction
+    (&key
+       ((:input1 i1) nil i1-p)
+       ((:input2 i2) nil i2-p)
+       ((:inputs i) nil i-p)
+       ((:output o) nil o-p)
+       ((:successor1 s1) nil s1-p)
+       ((:successor2 s2) nil s2-p)
+       ((:successors s) nil s-p))
+  (make-instance 'unsigned-less-instruction
+    :inputs (construct-inputs i i-p i1 i1-p i2 i2-p)
+    :outputs (construct-output o o-p)
+    :successors (construct-successors s s-p s1 s1-p s2 s2-p)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; LIR instruction EQUAL-INSTRUCTION
 
 (defclass signed-equal-instruction (instruction two-successors-mixin)
