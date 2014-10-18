@@ -7,6 +7,9 @@
 (define-condition input-inputs-mutually-exclusive (error)
   ())
 
+(define-condition output-must-be-given (error)
+  ())
+
 (define-condition both-individual-inputs-must-be-given (error)
   ())
 
@@ -32,6 +35,11 @@
 	 (error 'both-individual-inputs-must-be-given))
 	(t
 	 (list i1 i2))))
+
+(defun construct-output (o o-p)
+  (if (not o-p)
+      (error 'output-must-be-given)
+      (list o)))
 
 (defun construct-successors (s s-p s1 s1-p s2 s2-p)
   (cond (s-p
