@@ -1,6 +1,6 @@
 (cl:in-package #:common-lisp-user)
 
-(defpackage #:cleavir-mir
+(defpackage #:cleavir-ir
   (:use #:common-lisp)
   (:export
    #:datum
@@ -126,7 +126,7 @@
    #:double-float-aset-instruction #:make-double-float-aset-instruction
    #:long-float-aset-instruction #:make-long-float-aset-instruction))
 
-(defpackage #:cleavir-mir-graphviz
+(defpackage #:cleavir-ir-graphviz
   (:use #:common-lisp #:cleavir-mir)
   (:export
    #:draw-flowchart))
