@@ -127,6 +127,6 @@
    #:long-float-aset-instruction #:make-long-float-aset-instruction))
 
 (defpackage #:cleavir-ir-graphviz
-  (:use #:common-lisp #:cleavir-mir)
+  (:use #:common-lisp #:cleavir-ir)
   (:export
    #:draw-flowchart))
