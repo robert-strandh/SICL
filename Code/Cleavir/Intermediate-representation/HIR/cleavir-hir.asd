@@ -11,5 +11,4 @@
    (:file "cons")
    (:file "standard-object")
    (:file "array")
-   (:file "graphviz-drawing")
-   (:file "lir")))
+   (:file "graphviz-drawing")))
