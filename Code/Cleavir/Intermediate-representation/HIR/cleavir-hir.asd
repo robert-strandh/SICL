@@ -1,10 +1,10 @@
 (cl:in-package #:common-lisp-user)
 
-(asdf:defsystem :cleavir-mir
+(asdf:defsystem :cleavir-hir
+  :depends-on (:cleavir-ir)
   :serial t
   :components
-  ((:file "packages")
-   (:file "general")
+  ((:file "general")
    (:file "fixnum")
    (:file "integer")
    (:file "float")
