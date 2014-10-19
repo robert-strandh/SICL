@@ -1,4 +1,4 @@
-(in-package #:cleavir-mir)
+(in-package #:cleavir-ir)
 
 ;;;; MIR stands for Medium-level Intermediate Representation.  In this
 ;;;; representation, an AST representing a top-level form is compiled

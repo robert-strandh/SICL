@@ -1,4 +1,4 @@
-(cl:in-package #:cleavir-mir)
+(cl:in-package #:cleavir-ir)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
