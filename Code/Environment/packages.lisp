@@ -25,6 +25,7 @@
 	   #:constantp
 	   )
   (:export
+   #:global-environment
    #:proclaim
    #:definition
    #:location

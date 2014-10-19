@@ -4,6 +4,7 @@
   (:use #:common-lisp)
   (:shadow #:type)
   (:export
+   #:global-environment
    #:definition
    #:location
    #:global-location #:make-global-location
