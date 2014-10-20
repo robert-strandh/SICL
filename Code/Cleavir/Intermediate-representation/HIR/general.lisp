@@ -110,16 +110,13 @@
 ;;; Datum class LOAD-TIME-INPUT.
 ;;;
 ;;; This datum typically corresponds to a LOAD-TIME-VALUE in source
-;;; code.  However, in the file compiler, we also convert each
-;;; CONSTANT-INPUT that can not be turned into an IMMEDIATE-INPUT into
-;;; a LOAD-TIME-INPUT datum.  
+;;; code.
 ;;;
 ;;; A datum of this type contains code to be run when the compiled
-;;; file is loaded, and the result of that code becomes the value of
-;;; some entry in the linkage vector.
+;;; file is loaded.
 
 (defclass load-time-input (datum)
-  (;; The first instruction of a MIR instruction graph that, when
+  (;; The first instruction of an instruction graph that, when
    ;; called, returns the value to put into the linkage vector.
    (%initial-instruction
     :initarg :initial-instruction
@@ -128,57 +125,6 @@
 (defun make-load-time-input (initial-instruction)
   (make-instance 'load-time-input
     :initial-instruction initial-instruction))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class EXTERNAL-INPUT.
-;;;
-;;; This datum corresponds to an index in the linkage vector of a code
-;;; object.  Later compilation stages typically replace a
-;;; CONSTANT-INPUT that can not be an IMMEDIATE-INPUT by an
-;;; EXTERNAL-INPUT.
-
-(defclass external-input (datum)
-  ((%value :initarg :value :reader value)))
-
-(defun make-external-input (value)
-  (make-instance 'external-input
-    :value value))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class REGISTER-LOCATION.
-;;;
-;;; This datum corresponds to a processor register.  It is
-;;; introduced by the register allocation phase.
-
-(defclass register-location (datum)
-  ((%name :initarg :name :reader name)))
-
-(defun make-register-location (name)
-  (make-instance 'register-location
-    :name name))
-
-(defmethod print-object ((object register-location) stream)
-  (print-unreadable-object (object stream :type t)
-    (format stream "~a" (name object))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class STATIC-LOCATION.
-;;;
-;;; This datum corresponds to a places in the static runtime
-;;; envirionment.  That environment is organized in LAYERS, with each
-;;; layer being a vector of values.  
-
-(defclass static-location (datum)
-  ((%layer :initarg :layer :reader layer)
-   (%index :initarg :index :reader index)))
-
-(defun make-static-location (layer index)
-  (make-instance 'static-location
-    :layer layer
-    :index index))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
