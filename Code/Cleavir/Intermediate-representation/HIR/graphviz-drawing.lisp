@@ -58,38 +58,6 @@
   (format stream "   ~a [fillcolor = yellow, label = \"~a\"]~%"
 	  (datum-id datum) (name datum)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing datum EXTERNAL-INPUT.
-
-(defmethod draw-datum ((datum external-input) stream)
-  (format stream "  ~a [shape = ellipse, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = pink, label = \"~a\"]~%"
-	  (datum-id datum) (value datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing datum STATIC-LOCATION.
-
-(defmethod draw-datum ((datum static-location) stream)
-  (format stream "  ~a [shape = ellipse, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = yellow, label = \"~a,~a\"]~%"
-	  (datum-id datum)
-	  (layer datum)
-	  (index datum)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Drawing datum DYNAMIC-LOCATION.
-
-(defmethod draw-datum ((datum dynamic-location) stream)
-  (format stream "  ~a [shape = ellipse, style = filled];~%"
-	  (datum-id datum))
-  (format stream "   ~a [fillcolor = darkorchid, label = \"~a\"]~%"
-	  (datum-id datum) (index datum)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Drawing instructions.
