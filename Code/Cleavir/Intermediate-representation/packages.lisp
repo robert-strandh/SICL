@@ -124,7 +124,8 @@
    #:short-float-aset-instruction #:make-short-float-aset-instruction
    #:single-float-aset-instruction #:make-single-float-aset-instruction
    #:double-float-aset-instruction #:make-double-float-aset-instruction
-   #:long-float-aset-instruction #:make-long-float-aset-instruction))
+   #:long-float-aset-instruction #:make-long-float-aset-instruction
+   #:hir-to-mir #:specialize))
 
 (defpackage #:cleavir-ir-graphviz
   (:use #:common-lisp #:cleavir-ir)
