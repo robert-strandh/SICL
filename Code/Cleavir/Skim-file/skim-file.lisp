@@ -85,3 +85,15 @@
 		    env declarations)))
       (loop for body-form in body-forms
 	    do (skim-form body-form new-env)))))
+
+(defmethod skim-special
+    ((symbol (eql 'macrolet)) form env)
+  (destructuring-bind (definitions &rest body) (rest form)
+    (let ((new-env env))
+      (loop for (name lambda-list . body) in definitions
+	    for lambda-expr = (cleavir-code-utilities:parse-macro
+			        name lambda-list body env)
+	    for expander = (cleavir-env:eval lambda-expr env env)
+	    do (setf new-env
+		     (cleavir-env:add-local-macro new-env name expander)))
+      (skim-form `(locally ,@body) new-env))))
