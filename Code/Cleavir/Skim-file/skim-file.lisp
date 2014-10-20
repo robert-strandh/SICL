@@ -107,6 +107,11 @@
     (skim-form `(progn ,@(cddr form)) new-env)))
 
 (defmethod skim-special
+    ((head (eql 'progn)) form env)
+  (loop for body-form in (rest form)
+	do (skim-form body-form env)))
+
+(defmethod skim-special
     ((symbol (eql 'eval-when)) form environment)
   (destructuring-bind (situations . body) (rest form)
     (cond ((or (and (or (member :compile-toplevel situations)
