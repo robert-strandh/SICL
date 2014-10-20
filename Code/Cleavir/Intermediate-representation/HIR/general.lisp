@@ -1,58 +1,42 @@
 (in-package #:cleavir-ir)
 
-;;;; Data are used as inputs to and outputs from instructions. 
-;;;;
-;;;; The possible types of data that can be found in a MIR
-;;;; program depend on the stage of translation.  Globally speaking,
-;;;; there are three kinds of data.  The first kind represents
-;;;; small constants that can occur directly in an instruction stream.
-;;;; The second kind represent more complex constants that must be
-;;;; represented separately.  The third kind represents a LEXICAL
-;;;; LOCATION and is an explicit (present in source code) or implicit
-;;;; (allocated by the compiler) lexical "place" used to store local
-;;;; variables and temporaries.  Lexical locations are important
-;;;; because we must decide where to put them, and that decision can
-;;;; be different in different parts of the code.
-;;;;
-;;;; An instruction I REFERS TO a lexical location L if and only if
-;;;; L is either one of the inputs or one of the outputs of I.
-;;;;
-;;;; A lexical location can be referred to by several different
-;;;; instructions that belong to procedures at different nesting
-;;;; depths.  Because of the way lexical locations are created, if a
-;;;; lexical location is referred to by two different instructions
-;;;; belonging to two different procedures, P and Q, and neither P is
-;;;; nested inside Q nor is Q nested inside P, then the lexical
-;;;; location is also referred to by some instruction belonging to a
-;;;; procedure C inside which both A and B are nested.
-;;;;
-;;;; A lexical location L is said to be PRESENT in a procedure P if
-;;;; and only if some instruction belonging to P refers to L.  A
-;;;; lexical location L is said to BELONG to a procedure P if L is
-;;;; present in P, and L is not present in a procedure inside which P
-;;;; is nested.  Because of the restriction in the previous paragraph,
-;;;; every lexical location belongs to some unique procedure.  The
-;;;; procedure P to which a lexical location belongs is called the
-;;;; OWNER of the lexical location.
-;;;;
-;;;; The LEXICAL DEPTH of a procedure is a quantity that is less than
-;;;; or equal to the NESTING depth of that procedure.  We define it
-;;;; recursively as follows: The lexical depth of a procedure P such
-;;;; that every lexical location that is present in P also belongs to
-;;;; P is defined to be 0.  For a procedure A with a lexical location
-;;;; present in it, but that belongs to a different procedure Q, let D
-;;;; be the greatest depth of any such procedure Q.  Then the lexical
-;;;; depth of P is D+1.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Data.
+;;;
+;;; Only Common Lisp objects are used as data in the high-level
+;;; intermediate representation, but they can be BOXED or UNBOXED. 
+;;;
+;;; Two kinds of data are possible in the high-level intermediate
+;;; representation.  The first kind is called CONSTANT-INPUT and is
+;;; used for any Common Lisp object considered to be literal data.
+;;; The second kind is called LEXICAL-LOCATION and is used both as
+;;; input and output to instructions. 
+;;;
+;;; An instruction I REFERS TO a lexical location L if and only if L
+;;; is either one of the inputs or one of the outputs of I.
+;;;
+;;; A lexical location can be referred to by several different
+;;; instructions that belong to procedures at different nesting
+;;; depths.  Because of the way lexical locations are created, if a
+;;; lexical location is referred to by two different instructions
+;;; belonging to two different procedures, P and Q, and neither P is
+;;; nested inside Q nor is Q nested inside P, then the lexical
+;;; location is also referred to by some instruction belonging to a
+;;; procedure C inside which both A and B are nested.
+;;;
+;;; A lexical location L is said to be PRESENT in a procedure P if and
+;;; only if some instruction belonging to P refers to L.  A lexical
+;;; location L is said to BELONG to a procedure P if L is present in
+;;; P, and L is not present in a procedure inside which P is nested.
+;;; Because of the restriction in the previous paragraph, every
+;;; lexical location belongs to some unique procedure.  The procedure
+;;; P to which a lexical location belongs is called the OWNER of the
+;;; lexical location.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Datum class CONSTANT-INPUT.
-;;;
-;;; In later compilation stages, this datum is eliminated.  If the
-;;; constant can be encoded as an immediate value, then an
-;;; IMMEDIATE-INPUT is used instead.  If not, then the constant is
-;;; allocated in the linkage vector of the code object, and an
-;;; EXTERNAL-INPUT is used instead.
 
 (defclass constant-input (datum)
   ((%value :initarg :value :reader value)))
