@@ -415,9 +415,11 @@
 (defclass funcall-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-funcall-instruction (inputs &optional (successor nil successor-p))
+(defun make-funcall-instruction
+    (inputs outputs &optional (successor nil successor-p))
   (make-instance 'funcall-instruction
     :inputs inputs
+    :outputs outputs
     :successors (if successor-p (list successor) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -606,11 +608,12 @@
 (defclass fdefinition-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-fdefinition-instruction (input output successor)
+(defun make-fdefinition-instruction
+    (input output &optional (successor nil successor-p))
   (make-instance 'fdefinition-instruction
     :inputs (list input)
     :outputs (list output)
-    :successors (list successor)))
+    :successors (if successor-p (list successor) '())))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
