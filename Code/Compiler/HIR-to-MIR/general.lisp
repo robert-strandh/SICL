@@ -36,4 +36,4 @@
 	 (cons (first (cleavir-ir:inputs instruction)))
 	 (object (second (cleavir-ir:inputs instruction)))
 	 (immediate (make-instance 'cleavir-ir:immediate-input :value -1)))
-    (cleavir-ir:make-memset2-instruction cons immediate successor)))
+    (cleavir-ir:make-memset2-instruction cons immediate object successor)))
