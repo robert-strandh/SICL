@@ -1,42 +1,5 @@
 (in-package #:cleavir-ir)
 
-;;;; MIR stands for Medium-level Intermediate Representation.  In this
-;;;; representation, an AST representing a top-level form is compiled
-;;;; into FLOWCHART.  A flowchart is a graph in which the nodes are
-;;;; INSTRUCTIONS and DATA.  There are two types of arcs: CONTROL ARCS
-;;;; and DATA ACRS.
-;;;;
-;;;; A CONTROL ARC represents the flow of control in the flowchart,
-;;;; and connects one instruction to another instruction.  If there is
-;;;; a control arc from an instruction I to an instruction J in a
-;;;; flowchart, then J is said to be A SUCCESSOR of I, and I is said
-;;;; to be A PREDECESSOR of J.  An instruction can have zero, one, or
-;;;; several successors.  Most instructions have a single successor.
-;;;; Some instruction types such as RETURN instructions have no
-;;;; successors.  Instruction types with two or more successors
-;;;; represent some kind of test that can have more than one outcome.
-;;;; An instruction can have zero, one, or several predecessors.  If
-;;;; an instruction has no predecessors, then it is an INITIAL
-;;;; INSTRUCTION of some subgraph of the flowchart, and then it can
-;;;; only be reached by CALLING it, as opposed to by the ordinary flow
-;;;; of control.  The entire flowchart is represented by such an
-;;;; initial instruction.
-;;;;
-;;;; A DATA ARC represents the input to or the output from an
-;;;; instruction.  A data arc with an instruction as its HEAD is an
-;;;; INPUT ARC.  A data arc with an instruction as its TAIL is an
-;;;; OUTPUT ARC.  The HEAD of an output arc is always a DATUM that can
-;;;; be written to.  The TAIL of an input arc is usually a DATUM,
-;;;; except that the input to an ENCLOSE instruction is the INITIAL
-;;;; INSTRUCTION of some subgraph.  The output of that same ENCLOSE
-;;;; instruction is a CLOSURE that, when called, transfers control to
-;;;; the initial instruction that is the input of the enclose
-;;;; instruction.
-;;;;
-;;;; An instruction J is said to be REACHABLE from some instruction I
-;;;; if and only if there is a (possibly empty) sequence of control
-;;;; arcs that corresponds to a path from I to J.
-;;;;
 ;;;; The initial instructions of a flowchart form a TREE, called the
 ;;;; NESTING TREE.  The root of the tree is the initial instruction of
 ;;;; the flowchart, and the parent in the tree of some initial
@@ -123,17 +86,6 @@
 ;;;; present in it, but that belongs to a different procedure Q, let D
 ;;;; be the greatest depth of any such procedure Q.  Then the lexical
 ;;;; depth of P is D+1.
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class DATUM.  
-;;;
-;;; This is the root class of all different kinds of data. 
-
-(defclass datum ()
-  ((%defining-instructions :initform '() :accessor defining-instructions)
-   (%using-instructions :initform '() :accessor using-instructions)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -701,7 +653,6 @@
   ((%value-type :initarg :value-type :reader value-type)))
 
 (defun make-typeq-instruction (input successors value-type)
-  (assert (typep (second inputs) 'constant-input))
   (make-instance 'typeq-instruction
     :inputs (list input)
     :successors successors
