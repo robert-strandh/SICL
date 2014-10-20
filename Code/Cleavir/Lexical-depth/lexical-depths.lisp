@@ -1,15 +1,10 @@
 (cl:in-package #:cleavir-lexical-depth)
 
-;;;; An instruction A is a DESCENDANT of an instruction B if and only
-;;;; if it is possible to reach A by starting at B and following
-;;;; SUCCESSOR references.  As defined here, the set of DESCENDANTS of
-;;;; an instruction includes the instruction itself.
-;;;;
-;;;; Recall that an ENTER-INSTRUCTION is the successor or no other
+;;;; Recall that an ENTER-INSTRUCTION is the successor of no other
 ;;;; instruction.
 ;;;;
 ;;;; The OWNER of an instruction A is the outermost ENTER-INSTRUCTION
-;;;; of all the ENTER-INSTRUCTIONs of which A is a descendant.  The
+;;;; of all the ENTER-INSTRUCTIONs from which A is reachable.  The
 ;;;; owner of a datum D is the outermost ENTER-INSTRUCTION of all the
 ;;;; owners of all the instructions using D.
 ;;;;
