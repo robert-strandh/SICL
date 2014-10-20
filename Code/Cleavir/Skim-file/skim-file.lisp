@@ -65,3 +65,10 @@
     (loop for spec in declaration-specifiers
 	  do (setf new-env (augment-environment-with-declaration spec new-env)))
     new-env))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Methods on SKIM-SPECIAL.
+
+(defmethod skim-special (symbol form env)
+  (declare (ignore symbol form env)))
