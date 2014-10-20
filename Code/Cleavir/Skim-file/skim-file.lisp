@@ -72,3 +72,12 @@
 
 (defmethod skim-special (symbol form env)
   (declare (ignore symbol form env)))
+
+(defmethod skim-special
+    ((symbol (eql 'locally)) form env)
+  (multiple-value-bind (declarations body-forms)
+      (cleavir-code-utilities:separate-ordinary-body (rest form))
+    (let ((new-env (augment-environment-with-declarations
+		    env declarations)))
+      (loop for body-form in body-forms
+	    do (skim-form body-form new-env)))))
