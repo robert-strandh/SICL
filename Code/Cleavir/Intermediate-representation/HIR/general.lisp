@@ -126,20 +126,6 @@
   (make-instance 'load-time-input
     :initial-instruction initial-instruction))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Datum class DYNAMIC-LOCATION.
-;;;
-;;; This datum corresponds to places in the stack frame where the
-;;; compiler might decide to put objects with dynamic extent.  
-
-(defclass dynamic-location (datum)
-  ((%index :initform 0 :initarg :index :reader index)))
-
-(defun make-dynamic-location (index)
-  (make-instance 'dynamic-location
-    :index index))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Instructions. 
