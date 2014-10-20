@@ -125,6 +125,8 @@
    #:single-float-aset-instruction #:make-single-float-aset-instruction
    #:double-float-aset-instruction #:make-double-float-aset-instruction
    #:long-float-aset-instruction #:make-long-float-aset-instruction
+   #:memref1-instruction #:make-memref1-instruction
+   #:memref2-instruction #:make-memref2-instruction
    #:hir-to-mir #:specialize))
 
 (defpackage #:cleavir-ir-graphviz
