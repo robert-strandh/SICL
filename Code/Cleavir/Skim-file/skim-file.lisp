@@ -99,6 +99,14 @@
       (skim-form `(locally ,@body) new-env))))
 
 (defmethod skim-special
+    ((head (eql 'symbol-macrolet)) form env)
+  (let ((new-env env))
+    (loop for (name expansion) in (cadr form)
+	  do (setf new-env
+		   (cleavir-env:add-local-symbol-macro new-env name expansion)))
+    (skim-form `(progn ,@(cddr form)) new-env)))
+
+(defmethod skim-special
     ((symbol (eql 'eval-when)) form environment)
   (destructuring-bind (situations . body) (rest form)
     (cond ((or (and (or (member :compile-toplevel situations)
