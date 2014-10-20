@@ -123,15 +123,15 @@
 (defclass memref1-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-memref1-instruction (input output &optional successor)
+(defun make-memref1-instruction (address output &optional successor)
   (make-instance 'memref1-instruction
-    :inputs (list input)
+    :inputs (list address)
     :outputs (list output)
     :successors (if (null successor) '() (list successor))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; LIR instruction MEMREF1-INSTRUCTION
+;;; LIR instruction MEMREF2-INSTRUCTION
 ;;;
 ;;; This instruction loads a memory location.  It takes a two inputs.
 ;;; The first input contains the base address of the datum to load.
@@ -143,9 +143,9 @@
 (defclass memref2-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-memref2-instruction (input1 input2 output &optional successor)
+(defun make-memref2-instruction (base-address offset output &optional successor)
   (make-instance 'memref2-instruction
-    :inputs (list input1 input2)
+    :inputs (list base-address offset)
     :outputs (list output)
     :successors (if (null successor) '() (list successor))))
 
@@ -161,9 +161,9 @@
 (defclass memset1-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-memset1-instruction (input1 input2 &optional successor)
+(defun make-memset1-instruction (address value &optional successor)
   (make-instance 'memset1-instruction
-    :inputs (list input1 input2)
+    :inputs (list address value)
     :outputs '()
     :successors (if (null successor) '() (list successor))))
 
@@ -180,9 +180,9 @@
 (defclass memset2-instruction (instruction one-successor-mixin)
   ())
 
-(defun make-memset2-instruction (input1 input2 input3 &optional successor)
+(defun make-memset2-instruction (base-address offset value &optional successor)
   (make-instance 'memset2-instruction
-    :inputs (list input1 input2 input3)
+    :inputs (list base-address offset value)
     :outputs '()
     :successors (if (null successor) '() (list successor))))
 
