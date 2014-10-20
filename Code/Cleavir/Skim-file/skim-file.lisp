@@ -1,6 +1,12 @@
 (cl:in-package #:cleavir-skim-file)
 
-(defgeneric skim-form (form environment))
+(defgeneric skim-special (symbol form environment))
+
+(defun skim-form (form environment)
+  (when (and (consp form) (symbolp (first form)))
+    (let ((info (cleavir-env:function-info environment (first form))))
+      (when (typep info 'cleavir-env:special-operator-info)
+	(skim-special (first form) form environment)))))
 
 (defun skim-file (filename environment)
   (with-open-file (stream filename :direction :input)
