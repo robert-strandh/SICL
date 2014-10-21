@@ -41,8 +41,8 @@
 		 :parameters parameters
 		 :location (make-global-location name)))
 
-(defun make-global-macro-entry (name expander)
-  (make-instance 'global-macro-entry
+(defun make-macro-entry (name expander)
+  (make-instance 'macro-entry
 		 :name name
 		 :definition expander))
 

@@ -429,12 +429,35 @@
 ;;;
 ;;; Class MACRO-ENTRY.
 ;;;
-;;; This class is not meant to be instantiated directly, and exists
-;;; only as the common parent class of the classes
-;;; GLOBAL-MACRO-ENTRY and LOCAL-MACRO-ENTRY.
+;;; Macro entries are base entries.  They occur in list
+;;; contained in the MACROS slot of a global environment.  A
+;;; macro entry represents a globally defined macro, as opposed to an
+;;; ordinary function or a special operator.
+;;;
+;;; There can simultaneously be a macro entry and either a
+;;; special operator entry or a function entry (but not both)
+;;; with the same name.  The HyperSpec specifically allows for a macro
+;;; and a special operator for the same name to exist.  A
+;;; function entry can exist at the same time as a macro entry
+;;; as a result of the macro entry being created using (SETF
+;;; MACRO-FUNCTION) but the function entry could not be removed,
+;;; for reasons indicated above.
+;;;
+;;; The only type of auxiliary entry that can refer to a macro
+;;; entry is a compiler-macro entry.
+;;;
+;;; A macro entry can only come into existence by the use of
+;;; (SETF MACRO-FUNCTION).  
+;;;
+;;; A macro entry may be removed in the following situations: 
+;;;
+;;;  * When (SETF FDEFINITION) is used to either create a
+;;;    function entry, or to making an existing function entry
+;;;    FBOUND by storing a new definition in its storage cell. 
+;;;
+;;;  * As a result of calling FMAKUNBOUND on the name of the entry. 
 
-(defclass macro-entry
-    (base-entry named-entry definition-entry)
+(defclass macro-entry (base-entry named-entry definition-entry)
   ())
 
 (defgeneric macro-entry-p (object)
@@ -444,51 +467,6 @@
   (:method ((object macro-entry))
     (declare (ignorable object))
     t))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class GLOBAL-MACRO-ENTRY.
-;;;
-;;; Global macro entries are base entries.  They occur in list
-;;; contained in the MACROS slot of a global environment.  A global
-;;; macro entry represents a globally defined macro, as opposed to an
-;;; ordinary function or a special operator.
-;;;
-;;; There can simultaneously be a global macro entry and either a
-;;; special operator entry or a global function entry (but not both)
-;;; with the same name.  The HyperSpec specifically allows for a macro
-;;; and a special operator for the same name to exist.  A global
-;;; function entry can exist at the same time as a global macro entry
-;;; as a result of the global macro entry being created using (SETF
-;;; MACRO-FUNCTION) but the global function entry could not be removed,
-;;; for reasons indicated above.
-;;;
-;;; The only type of auxiliary entry that can refer to a global macro
-;;; entry is a compiler-macro entry.
-;;;
-;;; A global macro entry can only come into existence by the use of
-;;; (SETF MACRO-FUNCTION).  
-;;;
-;;; A global macro entry may be removed in the following situations: 
-;;;
-;;;  * When (SETF FDEFINITION) is used to either create a global
-;;;    function entry, or to making an existing global function entry
-;;;    FBOUND by storing a new definition in its storage cell. 
-;;;
-;;;  * As a result of calling FMAKUNBOUND on the name of the entry. 
-
-(defclass global-macro-entry (macro-entry)
-  ())
-
-(defgeneric global-macro-entry-p (object))
-
-(defmethod global-macro-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod global-macro-entry-p ((object global-macro-entry))
-  (declare (ignorable object))
-  t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

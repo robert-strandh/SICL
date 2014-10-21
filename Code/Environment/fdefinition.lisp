@@ -25,7 +25,7 @@
     (typecase entry
       (function-entry
        (not (eq (car (storage (location entry))) +funbound+)))
-      (global-macro-entry
+      (macro-entry
        t)
       (special-operator-entry
        t)
@@ -158,12 +158,12 @@
 ;;;
 ;;; We take this to mean: If we find an existing
 ;;; special-operator-entry for the name, then we signal an error.  If
-;;; we find an existing global-macro-entry for the name, we replace it
+;;; we find an existing macro-entry for the name, we replace it
 ;;; with a global-function entry.  If we find an existing
 ;;; global-function entry, we replace the definition.  If no existing
 ;;; entry is found, we create one.
 ;;;
-;;; In the case of an existing global-macro-entry, we must remove it.
+;;; In the case of an existing macro-entry, we must remove it.
 ;;; If in addition, it has a compiler macro entry referring to it, we
 ;;; must remove that compiler macro entry as well.
 

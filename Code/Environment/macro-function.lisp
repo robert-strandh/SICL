@@ -46,7 +46,7 @@
 			       (and (typep entry 'auxiliary-entry)
 				    (eq (base-entry entry) function-entry)))
 			     (proclamations *global-environment*)))
-	    (push (make-instance 'global-macro-entry
+	    (push (make-instance 'macro-entry
 		    :name symbol
 		    :definition new-function)
 		  (macros *global-environment*)))
@@ -61,7 +61,7 @@
 		;; to this entry.
 		(setf (definition macro-entry) new-function)
 		;; Otherwise, we must create a new entry
-		(push (make-instance 'global-macro-entry
+		(push (make-instance 'macro-entry
 			:name symbol
 			:definition new-function)
 		      (macros *global-environment*))))))
