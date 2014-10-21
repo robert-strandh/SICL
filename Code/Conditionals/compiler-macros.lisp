@@ -44,27 +44,15 @@
 ;;; environment.  We then use a compiler macro to do the error
 ;;; checking.
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro OR.
-
 (define-compiler-macro or (&whole form &rest args)
   (declare (ignore args))
   (sicl-code-utilities:check-form-proper-list form)
   form)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro AND.
-
 (define-compiler-macro and (&whole form &rest args)
   (declare (ignore args))
   (sicl-code-utilities:check-form-proper-list form)
   form)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro WHEN.
 
 (define-compiler-macro when (&whole form &rest args)
   (declare (ignore args))
@@ -72,46 +60,16 @@
   (sicl-code-utilities:check-argcount form 1 nil)
   form)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro UNLESS.
-
 (define-compiler-macro unless (&whole form &rest args)
   (declare (ignore args))
   (sicl-code-utilities:check-form-proper-list form)
   (sicl-code-utilities:check-argcount form 1 nil)
   form)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macro COND.
-
 (define-compiler-macro cond (&whole form &rest args)
   (declare (ignore args))
   (sicl-code-utilities:check-form-proper-list form)
   form)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Macros CASE, ECASE, CCASE.
-;;;
-;;; A normal CASE/ECASE/CCASE clause has the form (KEYS FORM*) where
-;;; KEYS is a designator for a list of objects, except that for CASE,
-;;; the symbols T and OTHERWISE may not be used as such.  Instead,
-;;; when T or OTHERWISE are present in the CAR of a clause, then they
-;;; do not designate a list of objects, and instead that clause is an
-;;; otherwise-clause.  For ECASE and CCASE, T and OTHERWISE can be
-;;; used as as designators for lists, and they then designate the
-;;; singleton list containing itself. 
-;;;
-;;; In the glossary of the HyperSpec (under "list designator"), we
-;;; learn that a list designator is ether a non-NIL atom, in which
-;;; case the denoted list is the list containing that one atom, or
-;;; else it is a proper list, and the denoted list is that list.  In
-;;; particular, this means that if NIL (or equivalently `()') is used
-;;; in the CAR of a CASE clause, then the denoted list is the empty
-;;; list and NOT the list containing NIL.  Thus, to obtain the
-;;; singleton list containing NIL, the user has to use `(NIL)'. 
 
 (define-compiler-macro case (&whole form &rest args)
   (declare (ignore args))
