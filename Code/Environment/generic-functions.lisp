@@ -144,3 +144,18 @@
 ;;; variable in ENVIRONMENT and false otherwise.
 
 (defgeneric constant-variable (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF CONSTANT-VARIABLE). 
+;;;
+;;; This function is used in order to define SYMBOL as a constant
+;;; variable in ENVIRONMENT, with VALUE as its value.
+;;;
+;;; If SYMBOL already has a definition as a special variable or as a
+;;; symbol macro in ENVIRONMENT, then an error is signaled.
+;;;
+;;; If SYMBOL already has a definition as a constant variable, and its
+;;; current value is not EQL to VALUE, then an error is signaled.
+
+(defgeneric (setf constant-variable) (value symbol environment))
