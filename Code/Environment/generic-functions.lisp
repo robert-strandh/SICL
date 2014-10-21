@@ -39,3 +39,19 @@
 ;;; signaled.
 
 (defgeneric (setf fdefinition) (new-definition function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function MACRO-FUNCTION.
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:MACRO-FUNCTION.
+;;;
+;;; If SYMBOL has a definition as a macro in ENVIRONMENT, then the
+;;; corresponding macro expansion function is returned.
+;;;
+;;; If SYMBOL has no definition in the function namespace of
+;;; ENVIRONMENT, or if the definition is not a macro, then this
+;;; function returns NIL.
+
+(defgeneric macro-function (symbol environment))
