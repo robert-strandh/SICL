@@ -148,6 +148,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function BOUNDP.
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:BOUNDP. 
+;;;
+;;; It returns true if SYMBOL has a definition in ENVIRONMENT as a
+;;; constant variable, as a special variable, or as a symbol macro.
+;;; Otherwise, it returns false.
+
+(defgeneric boundp (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function CONSTANT-VARIABLE
 ;;;
 ;;; This function returns two values.  The first value is the value of
