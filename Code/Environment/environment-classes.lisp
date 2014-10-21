@@ -511,23 +511,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class LOCAL-MACRO-ENTRY.
-
-(defclass local-macro-entry (macro-entry)
-  ())
-
-(defgeneric local-macro-entry-p (object))
-
-(defmethod local-macro-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod local-macro-entry-p ((object local-macro-entry))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class SPECIAL-OPERATOR-ENTRY.
 ;;;
 ;;; Special operator entries are base entries.  They occur in the list
