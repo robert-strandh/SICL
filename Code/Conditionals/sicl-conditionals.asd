@@ -18,9 +18,13 @@
 
 (asdf:defsystem :sicl-conditionals
   :depends-on (:sicl-code-utilities)
+  :serial t
   :components
-  ((:file "packages" :depends-on ())
-   (:file "support" :depends-on ("packages"))
-   (:file "conditions" :depends-on ("packages"))
-   (:file "condition-reporters-en" :depends-on ("packages" "conditions"))
-   (:file "docstrings-en" :depends-on ("packages"))))
+  ((:file "packages")
+   (:file "support")
+   (:file "conditions")
+   (:file "condition-reporters-en")
+   (:file "docstrings-en")
+   (:file "macros")
+   (:file "compiler-macros")))
+
