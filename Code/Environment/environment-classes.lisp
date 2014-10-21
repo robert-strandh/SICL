@@ -12,8 +12,6 @@
 ;;;; provide additional information about other entries.  This type of
 ;;;; entry is used for declarations of type, inline, and dynamic
 ;;;; extent, but a compiler-macro entry is also an auxiliary entry.
-;;;; The class of a BASE ENTRY determines for which namespace it is
-;;;; relevant.
 ;;;;
 ;;;; When the information about some entity is wanted at some point in
 ;;;; the compilation process, the current environment is first
@@ -22,19 +20,6 @@
 ;;;; particular base entry that was found.  All this information is
 ;;;; then combined into an object called an INFO object which is
 ;;;; finally returned.
-;;;;
-;;;; An environment is divided into disconnected parts.  
-;;;;
-;;;; One part is always the same, and that is the global environment,
-;;;; which is the value of the variable *global-environment*.  The
-;;;; global environment is a class instance and it is divided into
-;;;; namespaces.  
-;;;;
-;;;; For compilation, another part consists of the extensions to the
-;;;; startup environment that happen when lexical variables, functions,
-;;;; macros etc, are introduced during the compilation of a form.
-;;;; This part is represented as a simply linked list of entries, with
-;;;; no regard to namespaces.
 
 (deftype function-name ()
   `(or symbol (cons (eql setf) (cons symbol null))))
