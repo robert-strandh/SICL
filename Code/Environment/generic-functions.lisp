@@ -161,6 +161,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function MAKUNBOUND.
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:MAKUNBOUND. 
+;;;
+;;; It makes SYMBOL unbound in ENVIRONMENT.  If SYMBOL is already
+;;; defined in ENVIRONMENT as a constant variable, as a lexical
+;;; variable, or as a symbol macro, then that definition is lost.
+
+(defgeneric makunbound (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function CONSTANT-VARIABLE
 ;;;
 ;;; This function returns two values.  The first value is the value of
