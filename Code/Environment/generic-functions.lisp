@@ -132,3 +132,15 @@
 ;;; compiler macro associated with it in ENVIRONMENT. 
 
 (defgeneric (setf compiler-macro-function) (new-definition function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function CONSTANT-VARIABLE
+;;;
+;;; This function returns two values.  The first value is the value of
+;;; SYMBOL as a constant variable in ENVIRONMENT, or NIL if SYMBOL
+;;; does not have a value as a constant variable in ENVIRONMENT.  The
+;;; second value is true if SYMBOL does have a value as a constant
+;;; variable in ENVIRONMENT and false otherwise.
+
+(defgeneric constant-variable (symbol environment))
