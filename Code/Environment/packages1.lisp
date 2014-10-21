@@ -28,5 +28,5 @@
    #:special-operator-p
    #:symbol-macro-function
    #:find-value-cell
-   #:ensure-global-function-entry))
+   #:ensure-function-entry))
 

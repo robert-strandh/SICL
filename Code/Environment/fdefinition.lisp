@@ -23,7 +23,7 @@
 		     :key #'name
 		     :test #'equal)))
     (typecase entry
-      (global-function-entry
+      (function-entry
        (not (eq (car (storage (location entry))) +funbound+)))
       (global-macro-entry
        t)
@@ -207,7 +207,7 @@
 			:key #'name :test #'equal)))
 	    (when (null function-entry)
 	      ;; No function entry found.  Create one.
-	      (setf function-entry (make-global-function-entry function-name))
+	      (setf function-entry (make-function-entry function-name))
 	      (push function-entry (functions *global-environment*)))
 	    ;; Now, we have a global function entry for the name,
 	    ;; whether it already existed, or we just created one.

@@ -29,12 +29,12 @@
 		   :name name
 		   :definition expander)))
 
-(defun make-global-function-entry (name &optional
+(defun make-function-entry (name &optional
 					  (lambda-list :none)
 					  ast
 					  parameters)
   (declare (cl:type function-name name))
-  (make-instance 'global-function-entry
+  (make-instance 'function-entry
 		 :name name
 		 :lambda-list lambda-list
 		 :ast ast

@@ -17,11 +17,11 @@
   (let ((entry (find-if (lambda (entry)
 			  ;; FIXME: Are there any other entry types
 			  ;; in this list?
-			  (and (typep entry 'global-function-entry)
+			  (and (typep entry 'function-entry)
 			       (eq (name entry) name)))
 			(functions *global-environment*))))
     (when (null entry)
-      (setf entry (make-global-function-entry name))
+      (setf entry (make-function-entry name))
       (push entry (functions *global-environment*)))
     (let ((existing-declaration
 	    (find-if (lambda (decl)
@@ -49,7 +49,7 @@
     ;; If there is not an base entry for the function, then create
     ;; one.
     (when (null base-entry)
-      (setf base-entry (make-global-function-entry name))
+      (setf base-entry (make-function-entry name))
       (push base-entry (functions *global-environment*)))
     ;; Next, check whether there is already an INLINE or a NOTINLINE
     ;; proclamation.
@@ -73,7 +73,7 @@
     ;; If there is not an base entry for the function, then create
     ;; one.
     (when (null base-entry)
-      (setf base-entry (make-global-function-entry name))
+      (setf base-entry (make-function-entry name))
       (push base-entry (functions *global-environment*)))
     ;; Next, check whether there is already an INLINE or a NOTINLINE
     ;; proclamation.

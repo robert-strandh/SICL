@@ -61,6 +61,6 @@
    #:defmacro
    #:deftype
    #:define-compiler-macro
-   #:ensure-global-function-entry
+   #:ensure-function-entry
    ))
 

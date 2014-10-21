@@ -6,7 +6,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Function ENSURE-GLOBAL-FUNCTION-ENTRY.
+;;; Function ENSURE-FUNCTION-ENTRY.
 ;;;
 ;;; Given a name and an optional lambda expression, make sure there is
 ;;; a global function entry in the global environment with that name.
@@ -18,13 +18,13 @@
 ;;; the function and store it in the function entry.  Return either
 ;;; the newly created entry or the existing entry.
 
-(defun ensure-global-function-entry
+(defun ensure-function-entry
     (name lambda-list ast parameters)
   (declare (cl:type function-name name))
   (let ((entry (find name (functions *global-environment*)
 		     :test #'equal :key #'name)))
     (if (null entry)
-	(let ((new-entry (make-global-function-entry
+	(let ((new-entry (make-function-entry
 			  name lambda-list ast parameters)))
 	  (push new-entry (functions *global-environment*))
 	  new-entry)
@@ -228,7 +228,7 @@
 		:key #'name :test #'equal)))
     (when (null function-entry)
       ;; No function entry found.  Create one.
-      (setf function-entry (make-global-function-entry function-name))
+      (setf function-entry (make-function-entry function-name))
       (push function-entry (functions *global-environment*)))
     (storage (location function-entry))))
 

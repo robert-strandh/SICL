@@ -358,9 +358,51 @@
 ;;;
 ;;; Class FUNCTION-ENTRY.
 ;;;
-;;; This class is not meant to be instantiated directly, and exists
-;;; only as the common parent class of the classes
-;;; GLOBAL-FUNCTION-ENTRY and LOCAL-FUNCTION-ENTRY.
+;;; Function entries are base entries.  They occur in the list
+;;; contained in the FUNCTIONS slot of a global environment.  A
+;;; function entry represents a globally defined ordinary function, as
+;;; opposed to a macro or a special operator.
+;;;
+;;; If a function entry exists for some name N, then there can not
+;;; simultaneously be a special operator entry for N.  An attempt to
+;;; create a function entry when there is already a special
+;;; operator entry will fail.
+;;; 
+;;; Creating a function entry with a name N when there is
+;;; already a macro entry with the name N causes the
+;;; macro entry to be removed.  However, creating a macro entry
+;;; with a name N when there is already a function entry with a
+;;; name N doesn not cause the function entry to be removed.
+;;; The reason for not removing it is that it might be referred to by
+;;; existing code and when that code was compiled, it was assumed that
+;;; the name N referred to a function.  For that reason, the entry can
+;;; not be removed.  Therefore, it is possible that there
+;;; simultaneously exist a macro entry and a function
+;;; entry for the same name N.  However, in that case, the storage
+;;; cell of the location of the function entry always contains
+;;; +funbound+.
+;;;
+;;; A function entry can come into existence in several ways:
+;;; 
+;;;  * Using (SETF FDEFINITION) on a name that is not the name of a
+;;;    special operator.  A LOCATION for the entry is created, and the
+;;;    storage cell will be set to the new definition.
+;;;
+;;;  * Proclaiming FTYPE, INLINE, NOTINLINE or DYNAMIC-EXTENT with
+;;;    FUNCTION using the name.  Again, A LOCATION for the entry is
+;;;    created, but the storage cell will be set to +funbound+.  The
+;;;    appropriate auxiliary entry is created and will refer to the
+;;;    base entry.
+;;;
+;;;  * When the compiler sees a compound form with the CAR containing
+;;;    a symbol that is not associated with an entry in the FUNCTION
+;;;    namespace.  In this case, a LOCATION for the entry is created
+;;;    and the storage cell of the entry is initialized to +funbound+.
+;;;    A warning is also signaled, indicating that the function is
+;;;    undefined.
+;;;
+;;; A function entry is never removed for reasons mentioned
+;;; above.
 
 (defclass function-entry
     (base-entry named-entry location-entry)
@@ -382,67 +424,6 @@
 (defmethod function-entry-p ((object function-entry))
   (declare (ignorable object))
   t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Class GLOBAL-FUNCTION-ENTRY.
-;;;
-;;; Global function entries are base entries.  They occur in the list
-;;; contained in the FUNCTIONS slot of a global environment.  A global
-;;; function entry represents a globally defined ordinary function, as
-;;; opposed to a macro or a special operator.
-;;;
-;;; If a global function entry exists for some name N, then there can
-;;; not simultaneously be a special operator entry for N.  An attempt
-;;; to create a global function entry when there is already a special
-;;; operator entry will fail. 
-;;; 
-;;; Creating a global function entry with a name N when there is
-;;; already a global macro entry with the name N causes the global
-;;; macro entry to be removed.  However, creating a global macro entry
-;;; with a name N when there is already a global function entry with a
-;;; name N doesn not cause the global function entry to be removed.
-;;; The reason for not removing it is that it might be referred to by
-;;; existing code and when that code was compiled, it was assumed that
-;;; the name N referred to a function.  For that reason, the entry can
-;;; not be removed.  Therefore, it is possible that there
-;;; simultaneously exist a global macro entry and a global function
-;;; entry for the same name N.  However, in that case, the storage
-;;; cell of the location of the global function entry always contains
-;;; +funbound+.
-;;;
-;;; A global function entry can come into existence in several ways:
-;;; 
-;;;  * Using (SETF FDEFINITION) on a name that is not the name of a
-;;;    special operator.  A LOCATION for the entry is created, and the
-;;;    storage cell will be set to the new definition.
-;;;
-;;;  * Proclaiming FTYPE, INLINE, NOTINLINE or DYNAMIC-EXTENT with
-;;;    FUNCTION using the name.  Again, A LOCATION for the entry is
-;;;    created, but the storage cell will be set to +funbound+.  The
-;;;    appropriate auxiliary entry is created and will refer to the
-;;;    base entry.
-;;;
-;;;  * When the compiler sees a compound form with the CAR containing
-;;;    a symbol that is not associated with an entry in the FUNCTION
-;;;    namespace.  In this case, a LOCATION for the entry is created
-;;;    and the storage cell of the entry is initialized to +funbound+.
-;;;    A warning is also signaled, indicating that the function is
-;;;    undefined.
-;;;
-;;; A global function entry is never removed for reasons mentioned
-;;; above.
-
-(defclass global-function-entry (function-entry)
-  ())
-
-(defgeneric global-function-entry-p (object)
-  (:method (object)
-    (declare (ignore object))
-    nil)
-  (:method ((object global-function-entry))
-    (declare (ignorable object))
-    t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
