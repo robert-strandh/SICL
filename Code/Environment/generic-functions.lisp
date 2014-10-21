@@ -25,3 +25,17 @@
 ;;; <object> is currently not specified. 
 
 (defgeneric fdefinition (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF FDEFINITION).
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:FDEFINITION. 
+;;;
+;;; NEW-DEFINITION must be a function.  If FUNCTION-NAME already names
+;;; a function or a macro, then the previous definition is lost.  If
+;;; FUNCTION-NAME already names a special operator, then an error is
+;;; signaled.
+
+(defgeneric (setf fdefinition) (new-definition function-name environment))
