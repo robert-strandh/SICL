@@ -2,6 +2,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function SPECIAL-OPERATOR.
+;;;
+;;; if FUNCTION-NAME has a definition as a special operator in
+;;; ENVIRONMENT, then that definition is returned.  The definition is
+;;; an the object that was used as an argument to (SETF
+;;; SPECIAL-OPERATOR).  The exact nature of this object is not
+;;; specified, other than that it can not be NIL.  If FUNCTION-NAME
+;;; does not have a definition as a special operator in ENVIRONMENT,
+;;; then NIL is returned. 
+
+(defgeneric special-operator (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FDEFINITION.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
