@@ -234,6 +234,28 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function (SETF SPECIAL-VARIABLE). 
+;;;
+;;; This function is used in order to define SYMBOL as a special
+;;; variable in ENVIRONMENT.
+;;;
+;;; If SYMBOL already has a definition as a constant variable or as a
+;;; symbol macro in ENVIRONMENT, then an error is signaled.
+;;; Otherwise, SYMBOL is defined as a special variable in ENVIRONMENT. 
+;;;
+;;; If SYMBOL already has a definition as a special variable, and
+;;; INITIALIZE-P is false, then this function has no effect.  The
+;;; current value is not altered, or if SYMBOL is currently unbound,
+;;; then it remains unbound.
+;;;
+;;; If INITIALIZE-P is true, then VALUE becomes the new value of the
+;;; special variable SYMBOL. 
+
+(defgeneric (setf special-variable)
+    (value symbol environment &optional (initialize-p t)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FIND-CLASS.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
