@@ -171,3 +171,22 @@
 ;;; class metaobject is returned.  Otherwise NIL is returned. 
 
 (defgeneric find-class (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF FIND-CLASS).
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function (SETF CL:FIND-CLASS). 
+;;;
+;;; This function is used in order to associate a class with a class
+;;; name in ENVIRONMENT.  
+;;;
+;;; If NEW-CLASS is a class metaobject, then that class metaobject is
+;;; associated with the name SYMBOL in ENVIRONMENT.  If SYMBOL already
+;;; names a class in ENVIRONMENT than that association is lost.
+;;;
+;;; If NEW-CLASS is NIL, then SYMBOL is no longer associated with a
+;;; class in ENVIRONMENT.
+
+(defgeneric (setf find-class) (new-class symbol environment))
