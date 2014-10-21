@@ -244,8 +244,7 @@
 ;;; require any storage to be accessed at runtime becuase its value is
 ;;; propagated at compile time.
 
-(defclass constant-variable-entry
-    (base-entry named-entry definition-entry)
+(defclass constant-variable-entry (base-entry named-entry definition-entry)
   ())
 
 (defgeneric constant-variable-entry-p (object))
@@ -437,15 +436,13 @@
 (defclass global-function-entry (function-entry)
   ())
 
-(defgeneric global-function-entry-p (object))
-
-(defmethod global-function-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod global-function-entry-p ((object global-function-entry))
-  (declare (ignorable object))
-  t)
+(defgeneric global-function-entry-p (object)
+  (:method (object)
+    (declare (ignore object))
+    nil)
+  (:method ((object global-function-entry))
+    (declare (ignorable object))
+    t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -454,15 +451,13 @@
 (defclass local-function-entry (function-entry)
   ())
 
-(defgeneric local-function-entry-p (object))
-
-(defmethod local-function-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod local-function-entry-p ((object local-function-entry))
-  (declare (ignorable object))
-  t)
+(defgeneric local-function-entry-p (object)
+  (:method (object)
+    (declare (ignore object))
+    nil)
+  (:method ((object local-function-entry))
+    (declare (ignorable object))
+    t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -476,15 +471,13 @@
     (base-entry named-entry definition-entry)
   ())
 
-(defgeneric macro-entry-p (object))
-
-(defmethod macro-entry-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod macro-entry-p ((object macro-entry))
-  (declare (ignorable object))
-  t)
+(defgeneric macro-entry-p (object)
+  (:method (object)
+    (declare (ignore object))
+    nil)
+  (:method ((object macro-entry))
+    (declare (ignorable object))
+    t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
