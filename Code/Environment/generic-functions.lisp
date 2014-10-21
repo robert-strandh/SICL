@@ -15,6 +15,21 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FMAKUNBOUND.
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:FMAKUNBOUND.
+;;;
+;;; Makes FUNCTION-NAME unbound in the function namespace of ENVIRONMENT. 
+;;;
+;;; If FUNCTION-NAME already has a definition in ENVIRONMENT as an
+;;; ordinary function, as a generic function, as a macro, or as a
+;;; special operator, then that definition is lost.
+
+(defgeneric fboundp (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function SPECIAL-OPERATOR.
 ;;;
 ;;; if FUNCTION-NAME has a definition as a special operator in
