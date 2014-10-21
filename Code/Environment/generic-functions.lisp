@@ -117,3 +117,18 @@
 ;;; ENVIRONMENT, then this function returns NIL.
 
 (defgeneric compiler-macro-function (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF COMPILER-MACRO-FUNCTION).
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function (SETF CL:COMPILER-MACRO-FUNCTION).
+;;;
+;;; NEW-DEFINITION can be a compiler macro function or NIL.  When it
+;;; is a compiler macro function, then it establishes NEW-DEFINITION
+;;; as a compiler macro for FUNCTION-NAME and any existing definition
+;;; is lost.  A value of NIL means that FUNCTION-NAME no longer has a
+;;; compiler macro associated with it in ENVIRONMENT. 
+
+(defgeneric (setf compiler-macro-function) (new-definition function-name environment))
