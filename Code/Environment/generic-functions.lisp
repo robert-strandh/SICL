@@ -216,6 +216,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function SPECIAL-VARIABLE
+;;;
+;;; This function returns two values.  The first value is the value of
+;;; SYMBOL as a special variable in ENVIRONMENT, or NIL if SYMBOL
+;;; does not have a value as a special variable in ENVIRONMENT.  The
+;;; second value is true if SYMBOL does have a value as a special
+;;; variable in ENVIRONMENT and false otherwise.
+;;;
+;;; Notice that the symbol can have a value even though this function
+;;; returns NIL and NIL.  The first such case is when the symbol has a
+;;; value as a constant variable in ENVIRONMENT.  The second case is
+;;; when the symbol was assigned a value using (SETF SYMBOL-VALUE)
+;;; without declaring the variable as SPECIAL.
+
+(defgeneric special-variable (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FIND-CLASS.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
