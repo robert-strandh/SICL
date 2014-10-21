@@ -41,7 +41,6 @@
    #:find-function
    #:macroexpand-1
    #:macroexpand
-   #:fully-expand-form
    #:find-type
    #:find-ftype
    #:augment-environment

@@ -16,7 +16,6 @@
    (:file "special-operator-p")
    (:file "macro-function")
    (:file "compiler-macros")
-   (:file "fully-expand-form")
    (:file "symbol-value")
    (:file "constantp")
    (:file "proclaim")))

@@ -18,7 +18,6 @@
    #:make-entry-from-declaration
    #:find-variable
    #:find-function
-   #:fully-expand-form
    #:find-type
    #:find-ftype
    #:augment-environment
