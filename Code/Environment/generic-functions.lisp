@@ -101,3 +101,19 @@
 ;;; symbol already names a special operator, that definition is kept.
 
 (defgeneric (setf macro-function) (new-function symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function COMPILER-MACRO-FUNCTION.
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:COMPILER-MACRO-FUNCTION.
+;;;
+;;; If FUNCTION-NAME has a definition as a compiler macro in
+;;; ENVIRONMENT, then the corresponding compiler macro function is
+;;; returned.
+;;;
+;;; If FUNCTION-NAME has no definition as a compiler macro in
+;;; ENVIRONMENT, then this function returns NIL.
+
+(defgeneric compiler-macro-function (function-name environment))
