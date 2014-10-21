@@ -55,3 +55,17 @@
 ;;; function returns NIL.
 
 (defgeneric macro-function (symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function (SETF MACRO-FUNCTION)
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function (SETF CL:MACRO-FUNCTION).
+;;;
+;;; NEW-FUNCTION must be a macro expansion function.  A call to this
+;;; function then always succeeds.  If the symbol already names a
+;;; macro or a function, then the previous definition is lost.  If the
+;;; symbol already names a special operator, that definition is kept.
+
+(defgeneric (setf macro-function) (new-function symbol environment))
