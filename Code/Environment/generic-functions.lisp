@@ -34,6 +34,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FBOUNDP.
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:FBOUNDP. 
+;;;
+;;; It returns true if FUNCTION-NAME has a definition in ENVIRONMENT
+;;; as an ordinary function, a generic function, a macro, or a special
+;;; operator.
+
+(defgeneric fboundp (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FDEFINITION.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
