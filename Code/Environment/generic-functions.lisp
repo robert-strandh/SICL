@@ -16,6 +16,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function (SETF SPECIAL-OPERATOR).
+;;;
+;;; Set the definition of FUNCTION-NAME to be a special operator.  The
+;;; exact nature of NEW-DEFINITION is not specified, except that a
+;;; value of NIL means that FUNCTION-NAME no longer has a definition
+;;; as a special operator in ENVIRONMENT.
+;;;
+;;; If a value other than NIL is given for NEW-DEFINITION, and
+;;; FUNCTION-NAME already has a definition as an ordinary function, as
+;;; a generic function, or as a macro, then an error is signaled.  As
+;;; a consequence, if it is desirable for FUNCTION-NAME to have a
+;;; definition both as a special operator and as a macro, then the
+;;; definition as a special operator should be set first.
+
+(defgeneric (setf special-operator) (new-definition function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function FDEFINITION.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
