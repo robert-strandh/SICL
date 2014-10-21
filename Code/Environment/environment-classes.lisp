@@ -446,21 +446,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; Class LOCAL-FUNCTION-ENTRY.
-
-(defclass local-function-entry (function-entry)
-  ())
-
-(defgeneric local-function-entry-p (object)
-  (:method (object)
-    (declare (ignore object))
-    nil)
-  (:method ((object local-function-entry))
-    (declare (ignorable object))
-    t))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; Class MACRO-ENTRY.
 ;;;
 ;;; This class is not meant to be instantiated directly, and exists
