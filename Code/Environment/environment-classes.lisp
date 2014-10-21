@@ -205,78 +205,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
-;;; We define a mixin class for each namespace.  In the local
-;;; environment, entries are just a linked list, so the namespaces are
-;;; all mixed up.  By making the namespace part of the entry type, we
-;;; can locate entries in a particular namespace in the local
-;;; environment.
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin class and predicate for FUNCTION-SPACE.
-
-(defclass function-space () ())
-
-(defgeneric function-space-p (object))
-
-(defmethod function-space-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod function-space-p ((object function-space))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin class and predicate for VARIABLE-SPACE.
-
-(defclass variable-space () ())
-
-(defgeneric variable-space-p (object))
-
-(defmethod variable-space-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod variable-space-p ((object variable-space))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin class and predicate for TYPE-SPACE.
-
-(defclass type-space () ())
-
-(defgeneric type-space-p (object))
-
-(defmethod type-space-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod type-space-p ((object type-space))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Mixin class and predicate for DECLARATION-SPACE.
-
-(defclass declaration-space () ())
-
-(defgeneric declaration-space-p (object))
-
-(defmethod declaration-space-p (object)
-  (declare (ignore object))
-  nil)
-
-(defmethod declaration-space-p ((object declaration-space))
-  (declare (ignorable object))
-  t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
 ;;; The nature of the entry.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -332,7 +260,7 @@
 ;;; propagated at compile time.
 
 (defclass constant-variable-entry
-    (base-entry named-entry variable-space definition-entry)
+    (base-entry named-entry definition-entry)
   ())
 
 (defgeneric constant-variable-entry-p (object))
@@ -391,7 +319,7 @@
 ;;; binding.
 
 (defclass special-variable-entry
-    (base-entry named-entry variable-space location-entry)
+    (base-entry named-entry location-entry)
   ((%defined-p :initform nil :initarg :defined-p :accessor defined-p)))
 
 (defgeneric special-variable-entry-p (object))
@@ -410,7 +338,7 @@
 ;;;
 
 (defclass lexical-variable-entry
-    (base-entry named-entry variable-space location-entry)
+    (base-entry named-entry location-entry)
   ())
 
 (defgeneric lexical-variable-entry-p (object))
@@ -429,7 +357,7 @@
 ;;;
 
 (defclass symbol-macro-entry
-    (base-entry named-entry variable-space definition-entry)
+    (base-entry named-entry definition-entry)
   ())
 
 (defgeneric symbol-macro-entry-p (object))
@@ -451,7 +379,7 @@
 ;;; GLOBAL-FUNCTION-ENTRY and LOCAL-FUNCTION-ENTRY.
 
 (defclass function-entry
-    (base-entry named-entry function-space location-entry)
+    (base-entry named-entry location-entry)
   (;; The AST is present if the function was declared INLINE when it
    ;; was defined.  Otherwise, the value of this slot is NIL.
    (%ast :initform nil :initarg :ast :accessor ast)
@@ -560,7 +488,7 @@
 ;;; GLOBAL-MACRO-ENTRY and LOCAL-MACRO-ENTRY.
 
 (defclass macro-entry
-    (base-entry named-entry function-space definition-entry)
+    (base-entry named-entry definition-entry)
   ())
 
 (defgeneric macro-entry-p (object))
@@ -650,7 +578,7 @@
 ;;; created.
 
 (defclass special-operator-entry
-    (base-entry named-entry function-space)
+    (base-entry named-entry)
   ())
 
 (defgeneric special-operator-entry-p (object))
@@ -703,7 +631,7 @@
 ;;; compiler entry is a global macro entry.
 
 (defclass compiler-macro-entry
-    (auxiliary-entry function-space definition-entry)
+    (auxiliary-entry definition-entry)
   ())
 
 (defgeneric compiler-macro-entry-p (object))
@@ -721,7 +649,7 @@
 ;;; Class TYPE-ENTRY.
 
 (defclass type-entry
-    (base-entry named-entry type-space definition-entry)
+    (base-entry named-entry definition-entry)
   ())
 
 (defgeneric type-entry-p (object))
