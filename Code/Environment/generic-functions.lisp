@@ -2,6 +2,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FBOUNDP.
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:FBOUNDP. 
+;;;
+;;; It returns true if FUNCTION-NAME has a definition in ENVIRONMENT
+;;; as an ordinary function, a generic function, a macro, or a special
+;;; operator.
+
+(defgeneric fboundp (function-name environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function SPECIAL-OPERATOR.
 ;;;
 ;;; if FUNCTION-NAME has a definition as a special operator in
@@ -31,19 +44,6 @@
 ;;; definition as a special operator should be set first.
 
 (defgeneric (setf special-operator) (new-definition function-name environment))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; Generic function FBOUNDP.
-;;;
-;;; This generic function is a generic version of the Common Lisp
-;;; function CL:FBOUNDP. 
-;;;
-;;; It returns true if FUNCTION-NAME has a definition in ENVIRONMENT
-;;; as an ordinary function, a generic function, a macro, or a special
-;;; operator.
-
-(defgeneric fboundp (function-name environment))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
