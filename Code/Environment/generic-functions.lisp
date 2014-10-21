@@ -159,3 +159,15 @@
 ;;; current value is not EQL to VALUE, then an error is signaled.
 
 (defgeneric (setf constant-variable) (value symbol environment))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Generic function FIND-CLASS.
+;;;
+;;; This generic function is a generic version of the Common Lisp
+;;; function CL:FIND-CLASS. 
+;;;
+;;; If SYMBOL has a definition as a class in ENVIRONMENT, then that
+;;; class metaobject is returned.  Otherwise NIL is returned. 
+
+(defgeneric find-class (symbol environment))
