@@ -201,6 +201,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
+;;; Generic function FUNCTION-INLINE.
+;;;
+;;; This generic function returns the proclaimed inline information of
+;;; the function associated with FUNCTION-NAME in ENVIRONMENT.
+;;;
+;;; If FUNCTION-NAME is not associated with an ordinary function or a
+;;; generic function in ENVIRONMENT, then an error is signaled.  
+;;;
+;;; If FUNCTION-NAME is associated with an ordinary function or a
+;;; generic function in ENVIRONMENT, then the return value of this
+;;; function is either NIL, INLINE, or NOTINLINE.  If no inline
+;;; proclamation has been made, then this generic function returns
+;;; NIL.
+
+(defgeneric function-inline (function-name environment)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
 ;;; Generic function BOUNDP.
 ;;;
 ;;; This generic function is a generic version of the Common Lisp
